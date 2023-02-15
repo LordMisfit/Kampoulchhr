@@ -1,0 +1,48 @@
+version "4.10"
+
+class UIKeybinds
+{
+	static string getKeyboard(string keybind) 
+	{
+		Array<int> keyInts;
+		Bindings.GetAllKeysForCommand(keyInts, keybind);
+		return Bindings.NameAllKeys(keyInts);
+	}
+}
+
+// An global variables thinker [attempting to get around ACS use for certain things >.>]
+class KCGlobalVariables : Thinker
+{
+	double timefreeze1duration;
+	double timefreeze1cooldown;
+	double timefreeze2duration;
+	double timefreeze2cooldown;
+	double timefreeze3duration;
+	double timefreeze3cooldown;
+	bool PlayingCCards;
+	array<int> MiscellaneousVars;
+	
+	KCGlobalVariables Init()
+	{
+		ChangeStatNum(STAT_STATIC); // Change this to STAT_STATIC if persisting between maps is desired.
+		return self;
+	}
+	
+	static KCGlobalVariables Get()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("KCGlobalVariables",STAT_STATIC); // Change this to STAT_STATIC if persisting between maps is desired.
+		let p = KCGlobalVariables(it.Next());
+		if (p == null)
+		{
+			p = new("KCGlobalVariables").Init();
+		}
+		return p;
+	}
+}
+
+#include "zscript/KC-actors.zc"
+#include "zscript/KC-effects.zc"
+#include "zscript/KC-events.zc"
+#include "zscript/KC-misc.zc"
+#include "zscript/KC-players.zc"
+#include "zscript/KC-tilt.zc"

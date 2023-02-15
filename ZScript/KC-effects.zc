@@ -1,0 +1,316 @@
+class KCTimeFreezer : PowerTimeFreezer
+{
+	Default
+	{
+		Powerup.Duration 2147483645;
+	}
+	
+	//===========================================================================
+	//
+	// InitEffect
+	//
+	//===========================================================================
+
+	override void InitEffect()
+	{
+		int freezemask;
+
+		Super.InitEffect();
+
+		if (Owner == null || Owner.player == null)
+			return;
+		
+		// When this powerup is in effect, pause the music.
+		S_PauseSound(false, false);
+
+		// Give the player and his teammates the power to move when time is frozen.
+		freezemask = 1 << Owner.PlayerNumber();
+		Owner.player.timefreezer |= freezemask;
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (playeringame[i] &&
+				players[i].mo != null &&
+				players[i].mo.IsTeammate(Owner)
+			   )
+			{
+				players[i].timefreezer |= freezemask;
+			}
+		}
+
+		// [RH] The effect ends one tic after the counter hits zero, so make
+		// sure we start at an odd count.
+		EffectTics += !(EffectTics & 1);
+		if ((EffectTics & 1) == 0)
+		{
+			EffectTics++;
+		}
+		// Make sure the effect starts and ends on an even tic.
+		if ((Level.maptime & 1) == 0)
+		{
+			Level.SetFrozen(true);
+		}
+		else
+		{
+			// Compensate for skipped tic, but beware of overflow.
+			if(EffectTics < 0x7fffffff)
+				EffectTics++;
+		}
+	}
+
+	//===========================================================================
+	//
+	// APowerTimeFreezer :: DoEffect
+	//
+	//===========================================================================
+
+	override void DoEffect()
+	{
+		Super.DoEffect();
+		// [RH] Do not change LEVEL_FROZEN on odd tics, or the Revenant's tracer
+		// will get thrown off.
+		// [ED850] Don't change it if the player is predicted either.
+		if (Level.maptime & 1 || (Owner != null && Owner.player != null && Owner.player.cheats & CF_PREDICTING))
+		{
+			return;
+		}
+		// [RH] The "blinking" can't check against EffectTics exactly or it will
+		// never happen, because InitEffect ensures that EffectTics will always
+		// be odd when Level.maptime is even.
+		Level.SetFrozen ( EffectTics > 4*32 
+			|| (( EffectTics > 3*32 && EffectTics <= 4*32 ) && ((EffectTics + 1) & 15) != 0 )
+			|| (( EffectTics > 2*32 && EffectTics <= 3*32 ) && ((EffectTics + 1) & 7) != 0 )
+			|| (( EffectTics >   32 && EffectTics <= 2*32 ) && ((EffectTics + 1) & 3) != 0 )
+			|| (( EffectTics >    0 && EffectTics <= 1*32 ) && ((EffectTics + 1) & 1) != 0 ));
+	}
+
+	//===========================================================================
+	//
+	// APowerTimeFreezer :: EndEffect
+	//
+	//===========================================================================
+
+	override void EndEffect()
+	{
+		Super.EndEffect();
+
+		// If there is an owner, remove the timefreeze flag corresponding to
+		// her from all players.
+		if (Owner != null && Owner.player != null)
+		{
+			int freezemask = ~(1 << Owner.PlayerNumber());
+			for (int i = 0; i < MAXPLAYERS; ++i)
+			{
+				players[i].timefreezer &= freezemask;
+			}
+		}
+
+		// Are there any players who still have timefreezer bits set?
+		for (int i = 0; i < MAXPLAYERS; ++i)
+		{
+			if (playeringame[i] && players[i].timefreezer != 0)
+			{
+				return;
+			}
+		}
+
+		// No, so allow other actors to move about freely once again.
+		Level.SetFrozen(false);
+
+		// Also, turn the music back on.
+		S_ResumeSound(false);
+	}
+}
+
+// Keeps Sounds/Music active during time Freeze powerups
+class TimeFreezerKeepSound : PowerTimeFreezer
+{
+	override void InitEffect()
+	{
+		Super.InitEffect();
+		S_ResumeSound(false);
+	}
+	
+	override void DoEffect()
+	{
+		Super.DoEffect();
+	}
+	
+	override void Tick()
+	{
+		Super.Tick();
+		S_ResumeSound(false);
+		EffectTics = 350;
+	}
+}
+
+class CustomInventoryExt : CustomInventory
+{
+	int user_type;
+	
+	bool PickupUseVoice;
+	bool PickupUseVoice2;
+	string PickupSnd2;
+	property PickUpVoice: PickupUseVoice;
+	property PickUpVoice2: PickupUseVoice2;
+	property PickupSound2: PickupSnd2;
+	
+	override String PickupMessage()
+	{
+		return PickupMsg;
+	}
+	
+	override void PlayPickupSound (Actor toucher)
+	{
+		double atten;
+		int chan;
+		int flags = 0;
+
+		if (bNoAttenPickupSound)
+		{
+			atten = ATTN_NONE;
+		}
+		/*
+		else if ((ItemFlags & IF_FANCYPICKUPSOUND) &&
+			(toucher == NULL || toucher->CheckLocalView()))
+		{
+			atten = ATTN_NONE;
+		}
+		*/
+		else
+		{
+			atten = ATTN_NORM;
+		}
+
+		if (toucher != NULL && toucher.CheckLocalView())
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+		}
+		else
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_MAYBE_LOCAL;
+		}
+		//Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		double maskpitch = 1.00;
+		if (PickupUseVoice) 
+		{
+			if (MiscItem && MiscItem.CanTalkUnderwater)
+			{
+				if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+			}
+		}
+		toucher.A_StopSound(chan);
+		toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
+		
+		if (PickupSnd2 != "")
+		{
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_MAYBE_LOCAL;
+			}
+			//Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
+			
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+			double maskpitch = 1.00;
+			if (PickupUseVoice2) 
+			{
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+				}
+			}
+			toucher.A_StopSound(chan);
+			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
+		}
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		Double Dbl;
+		Sector Sec;
+		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
+		if (pos.z <= Dbl && !owner)
+		{
+			if (cursector.damagetype == 'InstantDeath' ||
+					cursector.damagetype == 'Massacre')
+			{
+				if (bCOUNTITEM) level.total_items--;
+				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
+				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](CustomInventoryExt)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
+				Destroy();
+			}
+		}
+	}
+}
+
+
+// Used for a base item for all the items that don't do anything themselves but are used for/as detecting flags.
+class PlaceholderItem : CustomInventoryExt
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 1;
+		+INVENTORY.KEEPDEPLETED 
+	}
+
+	States
+	{
+		Use:
+			TNT1 A 0;
+			Stop;
+	}
+}
+
+class PlaceholderItemUndrop : PlaceholderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNCLEARABLE
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.HUBPOWER
+	}
+
+	States
+	{
+		Use:
+			TNT1 A 0;
+			Stop;
+	}
+}
+
+class PlayerStatPlaceholder : PlaceholderItemUndrop
+{ 
+	override void DoEffect() { }
+	override void Tick() { }
+}
+
+class PlayingDoom : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingDoom1 : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingDoom2 : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingTNT : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingPlutonia : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingHeretic : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingHexen : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingHexenDD : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+class PlayingStrife : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode

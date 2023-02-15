@@ -1,0 +1,120 @@
+class PlayerStatItem : Inventory
+{
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	
+	int ClassCheck;
+	int ClassicDoomType;
+	int buttons;
+	int TrueGameSkill;
+	int CanTalkUnderwater;
+	
+	double timefreeze1duration;
+	double timefreeze1cooldown;
+	double timefreeze2duration;
+	double timefreeze2cooldown;
+	double timefreeze3duration;
+	double timefreeze3cooldown;
+	
+	default 
+	{
+		+Inventory.PERSISTENTPOWER;
+		+Inventory.UNDROPPABLE;
+		+Inventory.UNTOSSABLE;
+		+Inventory.UNCLEARABLE;
+	}
+	
+	string ReturnKeyBind1(string keybindget)
+	{
+		string LegendStr = "";
+		string UserKeyString;
+		Array<String> UserKeys;
+		
+		UserKeys.Clear();
+		UserKeyString = UIKeybinds.getKeyboard(keybindget);
+		if (UserKeyString != "")
+		{
+			UserKeyString.Split(UserKeys,", ");
+			if (UserKeys[0] == "Space") UserKeys[0] = "SBar";
+			if (UserKeys[0] == "CapsLock") UserKeys[0] = "CapsL";
+			LegendStr.AppendFormat("%s", UserKeys[0]);
+		}
+		else 
+		{
+			LegendStr.AppendFormat("\c[red]unb\c-");
+		}
+		return LegendStr;
+	}
+	
+	override void DoEffect()
+	{
+		let playeractor = KCPlayerPawn(owner);
+		if (!playeractor) // Removes itself if given to a non-Player Class
+		{
+			owner.A_SetInventory("PlayerStatItem",0); super.DoEffect();
+		} 
+		else
+		if (playeractor) // Otherwise, Keep
+		{
+			// Load in Globalvars [Start]
+			let globalvars = KCGlobalVariables.Get();
+			if (globalvars)
+			{
+				// Initalization Stuff
+				InitStuff();
+				
+				// Check if player can breath/talk underwater
+				CanTalkUnderwater = 0;
+				if (owner.waterlevel < 3) 
+				{
+					CanTalkUnderwater = 1;
+				}
+				else
+				{
+					if (owner.CountInv("PowerIronFeet") || 
+							owner.CountInv("PowerMask"))
+					{
+						CanTalkUnderwater = 2;
+					}
+					else
+					{
+						if (random(1,32) <= random(1,4)) CanTalkUnderwater = 1;
+					}
+				}
+				if (kcdebug_airmeter) Console.Printf("CanTalkUnderwater %d", CanTalkUnderwater);
+
+				// Mode Check
+				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
+				if (ClassicDoomType & 1) { owner.A_SetInventory("PlayingDoom",1); } // Doom
+				if (ClassicDoomType & 2) { owner.A_SetInventory("PlayingHeretic",1); } // Heretic
+				if (ClassicDoomType & 4) { owner.A_SetInventory("PlayingHexen",1); } // HeXen
+				if (ClassicDoomType & 8) { owner.A_SetInventory("PlayingStrife",1); } // Strife
+				if (kcdebug_miscitemdebug) Console.Printf("%d", ClassicDoomType);
+				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
+				TrueGameSkill = skill;
+
+				//*************************************
+				//*************************************
+				//*************************************
+				// End Stuff
+				EndStuff();
+			}
+			super.DoEffect();
+		}
+	}
+	
+	void InitStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+	}
+	
+	void EndStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+	}
+}
