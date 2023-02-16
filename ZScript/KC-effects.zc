@@ -1,3 +1,11 @@
+class INTERMAPChecker : PlaceHolderItem
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
 class KCTimeFreezer : PowerTimeFreezer
 {
 	Default
@@ -278,6 +286,21 @@ class PlaceholderItem : CustomInventoryExt
 	}
 }
 
+class PlaceholderItemDepletable : PlaceholderItem
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED 
+	}
+
+	States
+	{
+		Use:
+			TNT1 A 0;
+			Stop;
+	}
+}
+
 class PlaceholderItemUndrop : PlaceholderItem
 {
 	default
@@ -289,6 +312,23 @@ class PlaceholderItemUndrop : PlaceholderItem
 		+INVENTORY.UNCLEARABLE
 		+INVENTORY.PERSISTENTPOWER
 		+INVENTORY.HUBPOWER
+	}
+
+	States
+	{
+		Use:
+			TNT1 A 0;
+			Stop;
+	}
+}
+
+class PlaceholderItemMax : PlaceholderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
 	}
 
 	States
@@ -314,3 +354,311 @@ class PlayingHeretic : PlayerStatPlaceholder { } // This works as an inventory f
 class PlayingHexen : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
 class PlayingHexenDD : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
 class PlayingStrife : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
+
+class KCPowerInvuln : PowerInvulnerable
+{
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	string texname;
+	
+	default
+	{
+		inventory.icon "PDIVA0";
+		Powerup.Duration -30;
+		Powerup.Color "78447E", 0.334; // "3F00DF", "D0AFD5"
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+
+	override void Tick ()
+	{
+		timer++;
+		if (timer % 36 >= 0 && timer % 36 <= 5) texname = "PDIVA0";
+		if (timer % 36 >= 6 && timer % 36 <= 11) texname = "PDIVB0";
+		if (timer % 36 >= 12 && timer % 36 <= 17) texname = "PDIVC0";
+		if (timer % 36 >= 18 && timer % 36 <= 23) texname = "PDIVD0";
+		if (timer % 36 >= 24 && timer % 36 <= 29) texname = "PDIVC0";
+		if (timer % 36 >= 30 && timer % 36 <= 35) texname = "PDIVB0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		if (EffectTics % 70 == 69) owner.A_StartSound("buffs/invulnpulse",200,CHANF_DEFAULT,frandom(0.75,1.0),ATTN_NORM);
+		fadeouttic = 106;
+		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/invulnfading",201,CHANF_DEFAULT,2.25,ATTN_NORM);
+		if (EffectTics > fadeouttic && owner) owner.A_StopSound(201);
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!owner.CountInv("INTERMAPChecker"))
+			{
+				if (owner.CountInv("KCTimeFreezer"))
+				{
+					//if (MiscItem && MiscItem.TimeFreezeIPBuff) ticpiece += (frandompick(4.0,4.0,5.0,5.0,5.0,5.0,5.0,5.0,6.0,6.0) * 0.4);
+					//																			else ticpiece += frandompick(4.0,4.0,5.0,5.0,5.0,5.0,5.0,5.0,6.0,6.0);
+					//if (owner.CountInv("MysteryItem")) ticpiece *= 0.25;
+					//if (owner.CountInv("MysteryItem2")) ticpiece *= 0.25;
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
+class KCPowerStrength : PowerStrength
+{
+	default
+	{
+		inventory.icon "PDBSA0";
+		Powerup.Duration -150;
+		Powerup.Color "FF0000", 0.5;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	double fadeintensity;
+
+/*
+	override bool HandlePickup (Inventory item)
+	{
+		fadeintensity = 1.00;
+		if (item.GetClass() == GetClass())
+		{ // Setting EffectTics to 0 will force Powerup's HandlePickup()
+		  // method to reset the tic count so you get the red flash again.
+			EffectTics = 0;
+			EffectTics2 = 0;
+		}
+		return Super.HandlePickup (item);
+	}
+*/
+
+	//===========================================================================
+	//
+	// APowerStrength :: DoEffect
+	//
+	//===========================================================================
+	int EffectTics2;
+	int Dire;
+	double ticpiece;
+
+	int timer;
+	int fadeouttic;
+	string texname;
+
+	override void Tick ()
+	{
+		bool debugtick = false;
+
+		timer++;
+		if (timer % 24 >= 0 && timer % 24 <= 2) texname = "PDBSA0";
+		if (timer % 24 >= 3 && timer % 24 <= 5) texname = "PDBSB0";
+		if (timer % 24 >= 6 && timer % 24 <= 8) texname = "PDBSC0";
+		if (timer % 24 >= 9 && timer % 24 <= 11) texname = "PDBSD0";
+		if (timer % 24 >= 12 && timer % 24 <= 14) texname = "PDBSE0";
+		if (timer % 24 >= 15 && timer % 24 <= 17) texname = "PDBSF0";
+		if (timer % 24 >= 18 && timer % 24 <= 20) texname = "PDBSG0";
+		if (timer % 24 >= 21 && timer % 24 <= 23) texname = "PDBSH0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		int Point1 = 225;
+		int Point2 = 450;
+		int increment = random(6,8) * random(3,4);
+		
+		
+		if (debugtick) Console.Printf("EffectTics: %d (%d), Dire: %d, Increment: %d", EffectTics2, EffectTics, Dire, Increment);
+
+		if (Dire == 0)
+		{
+			if (EffectTics2 <= Point1) { EffectTics2 = Point1; Dire = 1; }
+			else if (EffectTics2 >= Point2) { EffectTics2 = Point2; Dire = 2; }
+			else { Dire = random(1,2); }
+		}
+
+		if (Dire == 1)
+		{
+			if (owner && owner.CountInv("KCTimeFreezer") <= 0) EffectTics2 += increment;
+			if (EffectTics2 >= Point2) Dire = 2;
+		}
+		else
+		if (Dire == 2)
+		{
+			if (owner && owner.CountInv("KCTimeFreezer") <= 0) EffectTics2 -= increment;
+			if (EffectTics2 <= Point1) Dire = 1;
+		}
+		
+		int fadeouttic = 48;
+		if (EffectTics > fadeouttic && owner) owner.A_StopSound(204);
+		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/berserkfading",204,CHANF_DEFAULT,2.25,ATTN_NORM);
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!owner.CountInv("INTERMAPChecker"))
+			{
+				if (owner.CountInv("KCTimeFreezer"))
+				{
+					//if (MiscItem && MiscItem.TimeFreezeIPBuff) ticpiece += (frandompick(4.0,4.0,5.0,5.0,5.0,5.0,5.0,5.0,6.0,6.0) * 0.4);
+					//																			else ticpiece += frandompick(4.0,4.0,5.0,5.0,5.0,5.0,5.0,5.0,6.0,6.0);
+					//if (owner.CountInv("MysteryItem")) ticpiece *= 0.25;
+					//if (owner.CountInv("MysteryItem2")) ticpiece *= 0.25;
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
+			}
+		}
+		
+		// Begin fading when 15 seconds remain
+		fadeintensity = 1.0 * ((EffectTics * 1.0) / 525.0);
+		if (fadeintensity >= 1.00) fadeintensity = 1.00;
+
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
+	}
+	//===========================================================================
+	//
+	// APowerStrength :: GetBlend
+	//
+	//===========================================================================
+
+	override color GetBlend()
+	{
+		bool debugblend = false;
+		// slowly fade the berserk out
+		int cnt = 128 - (EffectTics2>>3);
+		cnt *= fadeintensity;
+		int blendclr = BlendColor.a*cnt/256;
+		if (debugblend) Console.Printf("cnt: %d, blendclr: %d, fade: %.2f", cnt, blendclr, fadeintensity);
+
+		if (cnt > 0)
+		{
+			return Color(blendclr,
+				BlendColor.r, BlendColor.g, BlendColor.b);
+		}
+		if (debugblend) Console.Printf("EffectTics2: %d, cnt: %d / 256, BlendColor.a: %d, fadeintensity: %.2f", EffectTics2, cnt, BlendColor.a*cnt/256, fadeintensity);
+		return 0;
+	}
+}
+
+// Dash Trails
+
+class PlayerDashing : PowerSpeed // Used to create trails behind the player for dashing
+{
+	default
+	{
+		Speed 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646;
+	}
+}
+
+// Dash Effects
+class DashPuff : PhoenixPuff { default { +NOINTERACTION } }
+
+class IsUnconscious : PlaceHolderItem { }
+
+class DashGauge : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashReady : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashCharges : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashMaxCharge : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashCharge : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+
+class DashTics : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashCooldown : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DashCost : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class IsStepping : PlaceholderItemDepletable { default { Inventory.MaxAmount 999999; } }

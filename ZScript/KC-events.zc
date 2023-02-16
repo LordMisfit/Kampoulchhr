@@ -25,9 +25,11 @@ class KC_StaticEventHandler : StaticEventHandler
 		
 		array<string> allSF;
 		StringTable.Localize("$STEP_FLATS").Split(allSF,":");
-		Console.Printf("Default Footsteps TXT Loaded");
+		Console.Printf("Default Footsteps TXT Loaded [Eventside]");
+		/*
 		StringTable.Localize("$STEP_FLATSOTEX").Split(allSF,":");
-		Console.Printf("OTex Footsteps TXT Loaded");
+		Console.Printf("OTex Footsteps TXT Loaded [Eventside]");
+		*/
 		
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)
 		{
@@ -120,7 +122,7 @@ class KC_StaticEventHandler : StaticEventHandler
 		}
 	}
 }
-//
+
 class KC_WaterHandler : StaticEventHandler 
 {
 	override void RenderOverlay(RenderEvent e)
@@ -138,7 +140,7 @@ class KC_WaterHandler : StaticEventHandler
 		{
 			if ((playbloom == -1 && p.mo.waterlevel >= 3))
 			{
-				if (dydudebug_shader)
+				if (kcdebug_shader)
 				{
 					PPShader.SetEnabled("KCwatershader", false);
 					PPShader.SetEnabled("KCwatershader", false);
@@ -171,6 +173,31 @@ class KC_WaterHandler : StaticEventHandler
 		{
 			PPShader.SetEnabled("KCwatershader", false);
 			PPShader.SetEnabled("KCwatershader", false);
+		}
+	}
+}
+
+class EVP_FootstepsInit : EventHandler
+{
+	override void PlayerEntered(PlayerEvent e)
+	{
+		if (Level.MapName != "TITLEMAP")
+		{
+			int numfound;
+			ThinkerIterator FStepFinder = ThinkerIterator.Create("EVP_Footsteps");
+			EVP_Footsteps mo;
+			while (mo = EVP_Footsteps(FStepFinder.Next()))
+			{
+				mo.Destroy();
+				numfound++;
+				if (kcdebug_footsteps1) Console.Printf("Destroying Old EVP_Footsteps Item #%d", numfound);
+			}
+			if (e.playerNumber == 0)
+			{
+				let fs = EVP_Footsteps(Actor.Spawn("EVP_Footsteps"));
+				if (fs) fs.Init(players[0].mo);
+				if (kcdebug_footsteps1) Console.Printf("Adding New EVP_Footsteps Item");
+			}
 		}
 	}
 }
