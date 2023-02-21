@@ -4,6 +4,14 @@ class KCStatusBarMain : BaseStatusBar
 	HUDFont mHUDFont;
 	HUDFont mIndexFont;
 	HUDFont mAmountFont;
+	HUDFont mSmallFont;
+	HUDFont mArmSaveFont;
+	HUDFont mConFont;
+	HUDFont mKCSFont;
+	HUDFont mKCMFont;
+	HUDFont mKCLFont;
+	HUDFont mKCLFont2;
+
 	InventoryBarState diparms;
 	
 	override void Init()
@@ -19,6 +27,29 @@ class KCStatusBarMain : BaseStatusBar
 		fnt = "INDEXFONT_DOOM";
 		mIndexFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft);
 		mAmountFont = HUDFont.Create("INDEXFONT");
+		
+		/*
+		fnt = "HUDFONT_RAVEN";
+		mHUDFont = HUDFont.Create(fnt, fnt.GetCharWidth("0") + 1, Mono_CellLeft, 1, 1);
+		fnt = "INDEXFONT_RAVEN";
+		mIndexFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft);
+		*/
+		fnt = "CONFONT";
+		mSmallFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft);
+		fnt = "CONFONT";
+		mConFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft);
+		fnt = "CONFONT";
+		mArmSaveFont = HUDFont.Create(fnt, fnt.GetCharWidth("0") - 1, Mono_CellLeft, 1, 1);
+
+		fnt = "INDEXFONT_KC";
+		mKCSFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft, 1, 1);
+		fnt = "INDEXFONT_KCM";
+		mKCMFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft, 1, 1);
+		fnt = "INDEXFONT_KCL";
+		mKCLFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft, 1, 1);
+		fnt = "INDEXFONT_KCL";
+		mKCLFont2 = HUDFont.Create(fnt, 0, false, 1, 1);
+
 		diparms = InventoryBarState.Create();
 	}
 
@@ -104,6 +135,7 @@ class KCStatusBarMain : BaseStatusBar
 				Vector2 PosDiff = (0.0, 0.0);
 				int ItemEffectTics = item.EffectTics;
 				int ItemEffectSecs = (item.EffectTics / thinker.TICRATE);
+				double ItemEffectSecsD = (item.EffectTics / thinker.TICRATE);
 				int ItemFontCLR = font.CR_White;
 				int ItemTicMod = 26;
 				int ItemEffectLevel = 0;
@@ -169,7 +201,22 @@ class KCStatusBarMain : BaseStatusBar
 						if (ItemEffectTics >= 1051) { if (ItemEffectTics % 50 >= 25) pos.y += 1; }
 						if (kchud_showpoweruptimers) 
 						{
-							if (!(gameinfo.gametype == GAME_Hexen && PowerFlight(item))) DrawString(mIndexFont, FormatNumber(ItemEffectSecs), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+							if (!(gameinfo.gametype == GAME_Hexen && PowerFlight(item))) 
+							{
+								/*
+								if (KCTimeFreezer(item) || KCTimeCooldown(item))
+								{
+									ItemEffectSecsD = double((ItemEffectTics * 1.0) / thinker.TICRATE);
+									string ItemEffectSecsDS = "";
+									ItemEffectSecsDS.AppendFormat("%.2f", ItemEffectSecsD);
+									DrawString(mKCMFont, ItemEffectSecsDS, (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+								}
+								else
+								{
+								}
+								*/
+								DrawString(mKCMFont, FormatNumber(ItemEffectSecs), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+							}
 						}
 						if (ItemEffectTics <= 175) 
 						{
@@ -187,7 +234,7 @@ class KCStatusBarMain : BaseStatusBar
 					{
 						pos.x += -8;
 						pos.y += -32;
-						DrawString(mBigFont, FormatNumber(ItemEffectLevel), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_RIGHT, font.cr_sapphire, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+						DrawString(mKCLFont, FormatNumber(ItemEffectLevel), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_RIGHT, font.cr_sapphire, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
 						pos.x -= -8;
 						pos.y -= -32;
 					}
