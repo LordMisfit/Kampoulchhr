@@ -7,6 +7,7 @@ class PlayerStatItem : Inventory
 	const SKILL_VERY_HARD = 4;
 	
 	int ClassCheck;
+	int itemtimer;
 	int ClassicDoomType;
 	int buttons;
 	int TrueGameSkill;
@@ -19,6 +20,13 @@ class PlayerStatItem : Inventory
 	double timefreeze2cooldown;
 	double timefreeze3duration;
 	double timefreeze3cooldown;
+	
+	double timefreezedurationinc1;
+	double timefreezedurationinc2;
+	
+	int timestopstate;
+	int timestopactivetics;
+	int timestopcooldowntics;
 	
 	default 
 	{
@@ -96,7 +104,10 @@ class PlayerStatItem : Inventory
 				if (kcdebug_miscitemdebug) Console.Printf("%d", ClassicDoomType);
 				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
 				TrueGameSkill = skill;
-
+				
+				// Time Freeze Trackers
+				TimeFreezeStuff();
+				
 				//*************************************
 				//*************************************
 				//*************************************
@@ -111,11 +122,54 @@ class PlayerStatItem : Inventory
 	{
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
+		
+		if (ClassCheck <= 1)
+		{
+			// Defensive [default]
+			timefreeze1duration = 10.0;
+			timefreeze1cooldown = 45.0;
+			// Offensive
+			timefreeze2duration = 10.0;
+			timefreeze2cooldown = 45.0;
+			// Neutral
+			timefreeze3duration = 20.0;
+			timefreeze3cooldown = 22.5;
+			
+			timefreezedurationinc1 = 0.05;
+			timefreezedurationinc2 = 0.1;
+		}
+	}
+	
+	void TimeFreezeStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		if (timestopstate)
+		{
+			if (timestopactivetics > 0) timestopactivetics--;
+			else
+			if (timestopactivetics == 0) timestopstate = 0;
+			else
+			if (timestopactivetics < 0)
+			{
+				timestopactivetics = 0;
+				timestopstate = 0;
+			}
+		}
+		else
+		{
+			if (timestopcooldowntics > 0) timestopcooldowntics--;
+			else if (timestopcooldowntics < 0) timestopcooldowntics = 0;
+		}
 	}
 	
 	void EndStuff()
 	{
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
+		
+		ClassCheck++;
+		itemtimer++;
 	}
 }
