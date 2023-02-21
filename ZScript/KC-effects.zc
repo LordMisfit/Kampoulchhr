@@ -6,7 +6,30 @@ class INTERMAPChecker : PlaceHolderItem
 	}
 }
 
-class KCTimeFreezer : PowerTimeFreezer
+
+// Keeps Sounds/Music active during time Freeze powerups
+class TimeFreezerKeepSound : PowerTimeFreezer
+{
+	override void InitEffect()
+	{
+		Super.InitEffect();
+		S_ResumeSound(false);
+	}
+	
+	override void DoEffect()
+	{
+		Super.DoEffect();
+	}
+	
+	override void Tick()
+	{
+		Super.Tick();
+		S_ResumeSound(false);
+		EffectTics = 350;
+	}
+}
+
+class KCTimeFreezer : TimeFreezerKeepSound
 {
 	Default
 	{
@@ -126,28 +149,6 @@ class KCTimeFreezer : PowerTimeFreezer
 
 		// Also, turn the music back on.
 		S_ResumeSound(false);
-	}
-}
-
-// Keeps Sounds/Music active during time Freeze powerups
-class TimeFreezerKeepSound : PowerTimeFreezer
-{
-	override void InitEffect()
-	{
-		Super.InitEffect();
-		S_ResumeSound(false);
-	}
-	
-	override void DoEffect()
-	{
-		Super.DoEffect();
-	}
-	
-	override void Tick()
-	{
-		Super.Tick();
-		S_ResumeSound(false);
-		EffectTics = 350;
 	}
 }
 

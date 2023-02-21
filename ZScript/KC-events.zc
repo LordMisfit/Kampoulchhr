@@ -26,12 +26,46 @@ class KC_EventHandler : EventHandler
 		{
 			int key1, key2;
 
+			[key1, key2] = Bindings.GetKeysForCommand("KC_CheatClear");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (KCPlayerPawn(player) && MiscItem)
+				{
+					if (MiscItem.timestopstate <= 0 && MiscItem.timestopcooldowntics > 0)
+					{
+						MiscItem.timestopcooldowntics = 0;
+					}
+				}
+			}
 			[key1, key2] = Bindings.GetKeysForCommand("KC_TimeStop");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
-				let MiscItem = KCPlayerPawn(player);
-				if (KCPlayerPawn(player))
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (KCPlayerPawn(player) && MiscItem)
 				{
+					if (MiscItem.timestopstate <= 0)
+					{
+						if (MiscItem.timestopcooldowntics <= 0)
+						{
+							MiscItem.timestopcooldowntics = 0;
+							MiscItem.timestopstate = 1;
+							MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
+							MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
+							player.A_StopSound(216);
+							player.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+						}
+					}
+					else
+					{
+						MiscItem.timestopactivetics = 0;
+						MiscItem.timestopstate = 0;
+						player.A_SetInventory("KCTimeFreezer",0);
+						
+						MiscItem.timestopcooldowntics = int(MiscItem.timefreeze1cooldown * TICRATE);
+						MiscItem.timestopcooldownmaxtics = int(MiscItem.timefreeze1cooldown * TICRATE);
+						MiscItem.timefreeze1timesused++;
+					}
 					Console.Printf("@#h$@#4$ [%d]", gametic);
 				}
 			}

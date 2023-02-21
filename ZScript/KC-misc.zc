@@ -20,13 +20,28 @@ class PlayerStatItem : Inventory
 	double timefreeze2cooldown;
 	double timefreeze3duration;
 	double timefreeze3cooldown;
-	
+	double timefreeze1durationbase;
+	double timefreeze2durationbase;
+	double timefreeze3durationbase;
+	double timefreeze1durationratio;
+	double timefreeze2durationratio;
+	double timefreeze3durationratio;
+	double timefreeze1cooldownratio;
+	double timefreeze2cooldownratio;
+	double timefreeze3cooldownratio;
+
 	double timefreezedurationinc1;
 	double timefreezedurationinc2;
+
+	int timefreeze1timesused;
+	int timefreeze2timesused;
+	int timefreeze3timesused;
 	
 	int timestopstate;
 	int timestopactivetics;
+	int timestopactivemaxtics;
 	int timestopcooldowntics;
+	int timestopcooldownmaxtics;
 	
 	default 
 	{
@@ -127,13 +142,19 @@ class PlayerStatItem : Inventory
 		{
 			// Defensive [default]
 			timefreeze1duration = 10.0;
+			timefreeze1durationbase = 10.0;
 			timefreeze1cooldown = 45.0;
+			timefreeze1cooldownratio = 1.0;
 			// Offensive
 			timefreeze2duration = 10.0;
+			timefreeze2durationbase = 10.0;
 			timefreeze2cooldown = 45.0;
+			timefreeze2cooldownratio = 1.0;
 			// Neutral
 			timefreeze3duration = 20.0;
+			timefreeze3durationbase = 20.0;
 			timefreeze3cooldown = 22.5;
+			timefreeze3cooldownratio = 1.0;
 			
 			timefreezedurationinc1 = 0.05;
 			timefreezedurationinc2 = 0.1;
@@ -144,24 +165,81 @@ class PlayerStatItem : Inventory
 	{
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
+		int TickTimer;
+
+		// Defensive [default]
+		timefreeze1duration = 10.0 + (timefreezedurationinc1 * timefreeze1timesused);
+		timefreeze1cooldown = 45.0 * timefreeze1cooldownratio;
+		// Offensive
+		timefreeze2duration = 10.0 + (timefreezedurationinc1 * timefreeze2timesused);
+		timefreeze2cooldown = 45.0 * timefreeze2cooldownratio;
+		// Neutral
+		timefreeze3duration = 20.0 + (timefreezedurationinc2 * timefreeze3timesused);
+		timefreeze3cooldown = 22.5 * timefreeze3cooldownratio;
 		
+		if (timefreeze1durationbase > 0.00)
+		{
+			timefreeze1durationratio = (timefreeze1duration * 1.0) / (timefreeze1durationbase * 1.0);
+			if (timefreeze1durationratio > 0.00) 
+			{
+				timefreeze1cooldownratio = 1.0 / (timefreeze1durationratio * 1.0);
+			}
+			if (kcdebug_timefreezechecks) Console.Printf("timefreeze1durationratio: %.8f, timefreeze1cooldownratio: %.8f", timefreeze1durationratio, timefreeze1cooldownratio);
+		}
 		if (timestopstate)
 		{
-			if (timestopactivetics > 0) timestopactivetics--;
+			if (timestopactivetics > 0)
+			{
+				double tickvol = 1.00;
+				if (timestopactivemaxtics > 0) tickvol = double(tickvol * (timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
+				owner.A_SetInventory("KCTimeFreezer",1);
+				TickTimer = timestopactivetics % 35;
+				if (TickTimer == 0)
+				{
+					owner.A_StopSound(218); 
+					owner.A_StartSound("TimeStopTick",218,CHANF_DEFAULT,(frandom(0.40,0.60) * tickvol),ATTN_NONE); 
+				}
+				if (timestopactivetics == 65) 
+				{
+					owner.A_StopSound(217); 
+					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
+				}
+				timestopactivetics--;
+				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f", tickvol);
+			}
 			else
-			if (timestopactivetics == 0) timestopstate = 0;
+			if (timestopactivetics == 0) 
+			{
+				timestopstate = 0;
+				owner.A_SetInventory("KCTimeFreezer",0);
+				if (timestopcooldowntics <= 0)
+				{
+					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
+					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
+					if (timestopcooldowntics == 0) timefreeze1timesused++;
+				}
+			}
 			else
 			if (timestopactivetics < 0)
 			{
 				timestopactivetics = 0;
 				timestopstate = 0;
+				owner.A_SetInventory("KCTimeFreezer",0);
+				if (timestopcooldowntics <= 0)
+				{
+					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
+					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
+					if (timestopcooldowntics == 0) timefreeze1timesused++;
+				}
 			}
 		}
 		else
 		{
+			owner.A_SetInventory("KCTimeFreezer",0);
 			if (timestopcooldowntics > 0) timestopcooldowntics--;
 			else if (timestopcooldowntics < 0) timestopcooldowntics = 0;
 		}
+		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldowntics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldowntics, timestopcooldownmaxtics, timefreeze1duration, timefreeze1cooldown);
 	}
 	
 	void EndStuff()
