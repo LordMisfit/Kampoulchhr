@@ -30,6 +30,8 @@ class PlayerStatItem : Inventory
 	double timefreeze2cooldownratio;
 	double timefreeze3cooldownratio;
 
+	double timefreeze1cooldownratio2;
+
 	double timefreezedurationinc1;
 	double timefreezedurationinc2;
 
@@ -207,7 +209,8 @@ class PlayerStatItem : Inventory
 					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
 				}
 				timestopactivetics--;
-				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f", tickvol);
+				timefreeze1cooldownratio2 = 1.0 - ((timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
+				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f, timefreeze1cooldownratio2: %.8f", tickvol, timefreeze1cooldownratio2);
 			}
 			else
 			if (timestopactivetics == 0) 
@@ -219,10 +222,11 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldowntics <= 0)
 				{
-					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
-					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
+					timestopcooldowntics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					timestopcooldownmaxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
 					owner.A_SetInventory("KCTimeCooldown",1);
+					timefreeze1cooldownratio2 = 0.0;
 				}
 			}
 			else
@@ -236,10 +240,11 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldowntics <= 0)
 				{
-					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
-					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
+					timestopcooldowntics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					timestopcooldownmaxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
 					owner.A_SetInventory("KCTimeCooldown",1);
+					timefreeze1cooldownratio2 = 0.0;
 				}
 			}
 		}

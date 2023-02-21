@@ -59,6 +59,12 @@ class KC_EventHandler : EventHandler
 
 							player.A_StopSound(216);
 							player.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+							Console.Printf("Time Freeze Activated");
+						}
+						else
+						{
+							player.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+							Console.Printf("\c[brick]Time Freeze Must Cool Down First!");
 						}
 					}
 					else
@@ -67,12 +73,14 @@ class KC_EventHandler : EventHandler
 						MiscItem.timestopstate = 0;
 						player.A_SetInventory("KCTimeFreezer1",0);
 						
-						MiscItem.timestopcooldowntics = int(MiscItem.timefreeze1cooldown * TICRATE);
-						MiscItem.timestopcooldownmaxtics = int(MiscItem.timefreeze1cooldown * TICRATE);
+						MiscItem.timestopcooldowntics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
+						MiscItem.timestopcooldownmaxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
 						player.A_SetInventory("KCTimeCooldown",1);
+						MiscItem.timefreeze1cooldownratio2 = 0.0;
+
 						MiscItem.timefreeze1timesused += 5;
+						Console.Printf("Time Freeze Cut Short");
 					}
-					Console.Printf("@#h$@#4$ [%d]", gametic);
 				}
 			}
 		}
