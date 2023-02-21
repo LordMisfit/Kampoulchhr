@@ -35,6 +35,9 @@ class KC_EventHandler : EventHandler
 					if (MiscItem.timestopstate <= 0 && MiscItem.timestopcooldowntics > 0)
 					{
 						MiscItem.timestopcooldowntics = 0;
+						player.A_SetInventory("KCTimeCooldown",0);
+						player.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+						player.A_SetBlend("252540",0.667,random(random(22,23),27));
 					}
 				}
 			}
@@ -52,6 +55,8 @@ class KC_EventHandler : EventHandler
 							MiscItem.timestopstate = 1;
 							MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
 							MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
+							player.A_SetBlend("4F644F",0.667,random(random(22,23),27));
+
 							player.A_StopSound(216);
 							player.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
 						}
@@ -60,11 +65,12 @@ class KC_EventHandler : EventHandler
 					{
 						MiscItem.timestopactivetics = 0;
 						MiscItem.timestopstate = 0;
-						player.A_SetInventory("KCTimeFreezer",0);
+						player.A_SetInventory("KCTimeFreezer1",0);
 						
 						MiscItem.timestopcooldowntics = int(MiscItem.timefreeze1cooldown * TICRATE);
 						MiscItem.timestopcooldownmaxtics = int(MiscItem.timefreeze1cooldown * TICRATE);
-						MiscItem.timefreeze1timesused++;
+						player.A_SetInventory("KCTimeCooldown",1);
+						MiscItem.timefreeze1timesused += 5;
 					}
 					Console.Printf("@#h$@#4$ [%d]", gametic);
 				}

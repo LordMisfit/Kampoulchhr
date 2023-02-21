@@ -186,13 +186,15 @@ class PlayerStatItem : Inventory
 			}
 			if (kcdebug_timefreezechecks) Console.Printf("timefreeze1durationratio: %.8f, timefreeze1cooldownratio: %.8f", timefreeze1durationratio, timefreeze1cooldownratio);
 		}
+		
 		if (timestopstate)
 		{
 			if (timestopactivetics > 0)
 			{
 				double tickvol = 1.00;
 				if (timestopactivemaxtics > 0) tickvol = double(tickvol * (timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
-				owner.A_SetInventory("KCTimeFreezer",1);
+				owner.A_SetInventory("KCTimeFreezer1",1);
+				owner.A_SetInventory("KCTimeCooldown",0);
 				TickTimer = timestopactivetics % 35;
 				if (TickTimer == 0)
 				{
@@ -212,11 +214,15 @@ class PlayerStatItem : Inventory
 			{
 				timestopstate = 0;
 				owner.A_SetInventory("KCTimeFreezer",0);
+				owner.A_SetInventory("KCTimeFreezer1",0);
+				owner.A_SetInventory("KCTimeFreezer2",0);
+				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldowntics <= 0)
 				{
 					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
 					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
-					if (timestopcooldowntics == 0) timefreeze1timesused++;
+					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
+					owner.A_SetInventory("KCTimeCooldown",1);
 				}
 			}
 			else
@@ -225,19 +231,41 @@ class PlayerStatItem : Inventory
 				timestopactivetics = 0;
 				timestopstate = 0;
 				owner.A_SetInventory("KCTimeFreezer",0);
+				owner.A_SetInventory("KCTimeFreezer1",0);
+				owner.A_SetInventory("KCTimeFreezer2",0);
+				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldowntics <= 0)
 				{
 					timestopcooldowntics = int(timefreeze1cooldown * TICRATE);
 					timestopcooldownmaxtics = int(timefreeze1cooldown * TICRATE);
-					if (timestopcooldowntics == 0) timefreeze1timesused++;
+					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
+					owner.A_SetInventory("KCTimeCooldown",1);
 				}
 			}
 		}
 		else
 		{
 			owner.A_SetInventory("KCTimeFreezer",0);
-			if (timestopcooldowntics > 0) timestopcooldowntics--;
-			else if (timestopcooldowntics < 0) timestopcooldowntics = 0;
+			owner.A_SetInventory("KCTimeFreezer1",0);
+			owner.A_SetInventory("KCTimeFreezer2",0);
+			owner.A_SetInventory("KCTimeFreezer3",0);
+			if (timestopcooldowntics > 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown",1);
+				timestopcooldowntics--;
+				if (timestopcooldowntics == 0) 
+				{
+					owner.A_SetInventory("KCTimeCooldown",0);
+					owner.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+					owner.A_SetBlend("252540",0.667,random(random(22,23),27));
+				}
+			}
+			else 
+			if (timestopcooldowntics <= 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown",0);
+				timestopcooldowntics = 0;
+			}
 		}
 		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldowntics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldowntics, timestopcooldownmaxtics, timefreeze1duration, timefreeze1cooldown);
 	}
