@@ -10,6 +10,79 @@ class KC_EventHandler : EventHandler
 	const SKILL_IMPOSSIBLE = 7;
 	const SKILL_OMEGA = 8;
 	
+	override void WorldTick()
+	{
+	}
+	
+	override void NewGame()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		if (globalvars.MapsFinished == 0) globalvars.MapsFinished = -1;
+		if (kcdebug_mapfinishcheck) Console.Printf("\c[gold]NewGame() (KC_EventHandler) [%d]", globalvars.MapsFinished);
+		Super.NewGame();
+	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		
+		Super.WorldThingSpawned(e);
+	}
+	
+	override void WorldThingRevived(WorldEvent e)
+	{
+		if (Level.MapName != "TITLEMAP")
+		{
+			let globalvars = KCGlobalVariables.Get();
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		}
+		Super.WorldThingRevived(e);
+	}
+	
+	override void WorldThingDamaged(WorldEvent e)
+	{
+		if (Level.MapName != "TITLEMAP")
+		{
+		}
+		Super.WorldThingDamaged(e);
+	}
+
+	override void WorldThingDied(WorldEvent e)
+	{
+		if (Level.MapName != "TITLEMAP")
+		{
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		}
+		Super.WorldThingDied(e);
+	}
+	
+	override void WorldLoaded(WorldEvent e)
+	{
+		if (kcdebug_checksumprintout) Console.Printf("\cyMapCheckSum:\cx %s", level.GetChecksum());
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		
+		Super.WorldLoaded(e);
+	}
+	
+	override void PlayerDied(PlayerEvent e) 
+	{
+		actor Player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		Super.PlayerDied(e);
+	}
+	
+	override void PlayerRespawned(PlayerEvent e) 
+	{
+		Super.PlayerRespawned(e);
+	}
+	
 	override bool InputProcess (InputEvent e)
 	{
 		if (e.Type == InputEvent.Type_KeyDown)
@@ -85,6 +158,17 @@ class KC_EventHandler : EventHandler
 			}
 		}
 	}
+	
+	override void UiTick()
+	{
+		super.UiTick();
+	}
+
+	override void RenderOverlay(RenderEvent e)
+	{
+		super.RenderOverlay(e);
+	}
+	
 }
 
 class KC_StaticEventHandler : StaticEventHandler
