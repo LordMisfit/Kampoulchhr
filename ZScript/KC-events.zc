@@ -28,6 +28,24 @@ class KC_EventHandler : EventHandler
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 		
+		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+		string nm, nn, no, np;
+		actor spawnee = e.thing;
+		actor source;
+		actor mastor;
+		source = spawnee.target;
+		mastor = spawnee.master;
+		string spawnname = spawnee.GetClassName();
+		int user_base = 0;
+		string usertype = "";
+		double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
+		int TruePlayerLevel = 0;
+		
+		if (spawnee.bISMONSTER || spawnee.bSHOOTABLE)
+		{
+			spawnee.A_SetInventory("CompatVulnItem",1);
+		}
+		
 		Super.WorldThingSpawned(e);
 	}
 	
@@ -118,7 +136,7 @@ class KC_EventHandler : EventHandler
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (KCPlayerPawn(player) && MiscItem)
+				if (KCPlayerPawn(player) && player.health > 0 && MiscItem)
 				{
 					if (MiscItem.timestopstate <= 0)
 					{

@@ -1,0 +1,66 @@
+//*************************************************************************************************
+//* A special inventory item intended for any NON-"EECreatre" class across other possible games,  *
+//* mapsets or mods [i.e. BlooM, etc] that will give them varied resistances and weaknesses based *
+//* on things like hybrids, etc.
+//*************************************************************************************************
+class CompatVulnItem : PlaceholderItem 
+{
+	string ownername;
+	string nl, nm, nn, no, np, nq, nr, ns, nt, nu, nv, nw, nx, ny, nz, na, nb, nc, nd, ne, nf, ng, nh, ni, nj, nk;
+	bool found;
+	double lastTOTALFactor;
+	
+	//*************************************
+	actor prevtarget;
+	actor prevmaster;
+	actor prevtracer;
+	state prevstate;
+	override void Tick()
+	{
+		super.Tick();
+		prevtarget = null;
+		if (owner) 
+		{
+			if (owner.target) prevtarget = owner.target;
+			if (owner.tracer) prevtracer = owner.tracer;
+			if (owner.master) prevmaster = owner.master;
+		}
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+
+		bool surprisehit;
+		if (owner)
+		{
+			if (!(owner.bISMONSTER || owner.bSHOOTABLE)) Destroy();
+			
+			ownername = owner.GetClassName();
+			if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
+			{
+				KCPlayerPawn FoundPlayer;
+				FoundPlayer = KCPlayerPawn(source);
+
+				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c-: pre-damage: %d, damagetype: %s", damage, damageType);
+				double TOTALFactor = 1.00;
+				if (FoundPlayer && MiscItem && MiscItem.timestopactivetics > 0) 
+				{
+					if (MiscItem.timestoptype == 1) TOTALFactor *= frandom(0.2,0.25);
+					if (MiscItem.timestoptype == 2) TOTALFactor *= frandom(4.0,5.0);
+				}
+				
+				newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+				lastTOTALFactor = TOTALFactor;
+				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c- (%s): post-damage: %d, damagetype: %s, TOTALFactor: %.8f", ownername, newdamage, damageType, TOTALFactor);
+				//
+				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && source) Console.Printf("(source: \c[green]%p\c-) %s", source, source.GetClassName());
+				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
+				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
+
+			}
+		}
+	}
+}
