@@ -6,6 +6,11 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	double TimeArmorEnergyTics;
+	double TimeArmorEnergyMaxTics;
+	int TimeArmorRelicsOwned;
+	string nm, nn, no, np;
+	
 	int oldhealthratio;
 	int NumOfAfasDrops;
 	int NumOfLegendMeds, MedCurrLvl, LegMedCap;
@@ -258,6 +263,9 @@ class PlayerStatItem : Inventory
 				//***************
 				LevelUpExpStuff();
 				
+				// Time Seraph Armor Trackers
+				TimeSeraphArmorStuff();
+
 				// Time Freeze Trackers
 				TimeFreezeStuff();
 				
@@ -652,6 +660,67 @@ class PlayerStatItem : Inventory
 		PrevSPD = PlayerSPD;
 		leveluptimes = 0;
 		leveluptimesmax = NumOfLegendMeds - MedCurrLvl;
+	}
+
+	void TimeSeraphArmorStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		double regenamt;
+		double drainamt;
+		
+		TimeArmorEnergyMaxTics = 0;
+		TimeArmorRelicsOwned = 0;
+		if (owner.CountInv("TimeSeraphCharm") > 0)
+		{
+			TimeArmorRelicsOwned++;
+			if (owner.CountInv("TimeSeraphPocketWatch")) TimeArmorRelicsOwned++;
+			if (owner.CountInv("TimeSeraphBangle")) TimeArmorRelicsOwned++;
+			
+			TimeArmorEnergyMaxTics = ((3600 * TimeArmorRelicsOwned) * TICRATE);
+			
+			if (TimeArmorEnergyTics > 0)
+			{
+				nm = "TSArmorTier1";
+				nn = "TSArmorTier2";
+				no = "TimeSeraphVisor";
+				drainamt = 0;
+				if (owner.CountInv(nm)) drainamt = 10;
+				if (owner.CountInv(nn)) drainamt = 40;
+				if (owner.CountInv(no)) drainamt += 2;
+				TimeArmorEnergyTics -= drainamt;
+				if (TimeArmorEnergyTics <= 0.0000) 
+				{
+					if (owner.CountInv(nm)) owner.A_SetInventory(nm,0);
+					if (owner.CountInv(nn)) owner.A_SetInventory(nn,0);
+					if (owner.CountInv(no)) owner.A_SetInventory(no,0);
+					TimeArmorEnergyTics = 0;
+				}
+			}
+
+			if (TimeArmorEnergyTics < TimeArmorEnergyMaxTics)
+			{
+				regenamt = (8.0 + (PlayerLevel * 0.000625));
+				regenamt *= TimeArmorRelicsOwned;
+				nm = "KCTimeFreezer1";
+				nn = "KCTimeFreezer2";
+				no = "KCTimeFreezer3";
+				if (owner.CountInv(nm) || owner.CountInv(nn) || owner.CountInv(no)) 
+				{
+					if (TimeArmorRelicsOwned == 1) regenamt *= 0.25;
+					if (TimeArmorRelicsOwned == 2) regenamt *= 0.275;
+					if (TimeArmorRelicsOwned >= 3) regenamt *= 0.325;
+				}
+				TimeArmorEnergyTics += regenamt;
+			}
+			
+			if (TimeArmorEnergyTics > TimeArmorEnergyMaxTics) TimeArmorEnergyTics = TimeArmorEnergyMaxTics;
+		}
+		else
+		{
+			TimeArmorEnergyTics = 0;
+		}
+		if (kcdebug_timeserapharmor && TimeArmorRelicsOwned) Console.Printf("TimeArmorRelicsOwned: %d, TimeArmorEnergyTics: %.4f / %.4f, \c[sapphire]regenamt: %.4f\c-, \c[red]drainamt: %.4f\c-", TimeArmorRelicsOwned, TimeArmorEnergyTics, TimeArmorEnergyMaxTics, regenamt, drainamt);
 	}
 
 	void TimeFreezeStuff()

@@ -1,0 +1,204 @@
+class TimeSeraphCharm : CustomInventoryExt
+{
+	default
+	{
+		//$Category EE Artifacts
+		Inventory.PickupMessage "";
+		Inventory.Icon "TSCHA0";
+		Tag "Time Seraph's Charm";
+		+FLOATBOB
+		+DONTGIB
+		-COUNTITEM;
+		+INVENTORY.INVBAR
+		+INVENTORY.HUBPOWER
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.KEEPDEPLETED
+		Inventory.PickupFlash "PickupFlash";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		scale 0.1667;
+	}
+	
+	States
+	{
+		Spawn:
+			TSCH A 1
+			{
+				actor player = players[0].mo;
+				if (player.CountInv("TimeSeraphCharm")) Destroy();
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
+				}
+			}
+			stop;
+		Use:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (player.CountInv("TSArmorTier2"))
+					{
+						player.A_SetInventory("TSArmorTier2",0);
+						player.A_SetInventory("TSArmorTier1",1);
+					}
+					else
+					if (player.CountInv("TSArmorTier1"))
+					{
+						player.A_SetInventory("TSArmorTier2",0);
+						player.A_SetInventory("TSArmorTier1",0);
+					}
+					else
+					{
+						player.A_SetInventory("TSArmorTier1",0);
+						player.A_SetInventory("TSArmorTier1",1);
+					}
+				}
+			}
+			Fail;
+	}
+}
+
+class TimeSeraphPocketWatch : CustomInventoryExt
+{
+	default
+	{
+		//$Category EE Artifacts
+		Inventory.PickupMessage "";
+		Inventory.Icon "TSPWA0";
+		Tag "Time Seraph's Charm";
+		+FLOATBOB
+		+DONTGIB
+		-COUNTITEM;
+		+INVENTORY.INVBAR
+		+INVENTORY.HUBPOWER
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.KEEPDEPLETED
+		Inventory.PickupFlash "PickupFlash";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		scale 0.125;
+	}
+	
+	States
+	{
+		Spawn:
+			TSPW A 1
+			{
+				actor player = players[0].mo;
+				if (player.CountInv("TimeSeraphPocketWatch")) Destroy();
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
+				}
+			}
+			stop;
+		Use:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (Player.CountInv("TSArmorTier2"))
+					{
+						player.A_SetInventory("TSArmorTier2",0);
+						player.A_SetInventory("TSArmorTier1",0);
+					}
+					else
+					if (Player.CountInv("TSArmorTier1"))
+					{
+						player.A_SetInventory("TSArmorTier2",1);
+						player.A_SetInventory("TSArmorTier1",0);
+					}
+					else
+					{
+						player.A_SetInventory("TSArmorTier2",1);
+						player.A_SetInventory("TSArmorTier1",0);
+					}
+				}
+			}
+			Fail;
+	}
+}
+
+class TimeSeraphBangle : CustomInventoryExt
+{
+	default
+	{
+		//$Category EE Artifacts
+		Inventory.PickupMessage "";
+		Inventory.Icon "TSBGA0";
+		Tag "Time Seraph's Charm";
+		+FLOATBOB
+		+DONTGIB
+		-COUNTITEM;
+		+INVENTORY.INVBAR
+		+INVENTORY.HUBPOWER
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.KEEPDEPLETED
+		Inventory.PickupFlash "PickupFlash";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		scale 0.125;
+	}
+	
+	States
+	{
+		Spawn:
+			TSBG A 1
+			{
+				actor player = players[0].mo;
+				if (player.CountInv("TimeSeraphBangle")) Destroy();
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
+				}
+			}
+			stop;
+		Use:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (Player.CountInv("TimeSeraphVisor"))
+					{
+						player.A_SetInventory("TimeSeraphVisor",0);
+					}
+					else
+					{
+						player.A_SetInventory("TimeSeraphVisor",1);
+					}
+				}
+			}
+			Fail;
+	}
+}
