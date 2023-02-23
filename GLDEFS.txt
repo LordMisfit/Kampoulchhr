@@ -1,5 +1,56 @@
 //GLDEFs
 
+pulselight TSARTIFACTAQUA
+{
+	color 0.0 0.93359375 0.90625
+	size 16
+	secondarysize 32
+	interval 0.8
+	attenuate 1
+	dontlightself 1
+}
+
+pulselight TSARTIFACTLIME
+{
+	color 0.33984375 0.95703125 0.0
+	size 16
+	secondarysize 32
+	interval 0.8
+	attenuate 1
+	dontlightself 1
+}
+
+pulselight TSARTIFACTPURPLE
+{
+	color 0.9375 0.796875 0.99609375
+	size 16
+	secondarysize 32
+	interval 0.8
+	attenuate 1
+	dontlightself 1
+}
+
+object TimeSeraphCharm
+{
+	frame TSCHB { light TSARTIFACTAQUA }
+	frame TSCHC { light TSARTIFACTLIME }
+	frame TSCHD { light TSARTIFACTPURPLE }
+}
+
+object TimeSeraphPocketWatch
+{
+	frame TSPWB { light TSARTIFACTAQUA }
+	frame TSPWC { light TSARTIFACTLIME }
+	frame TSPWD { light TSARTIFACTPURPLE }
+}
+
+object TimeSeraphBangle
+{
+	frame TSBGB { light TSARTIFACTAQUA }
+	frame TSBGC { light TSARTIFACTLIME }
+	frame TSBGD { light TSARTIFACTPURPLE }
+}
+
 //Underwater shader
 HardwareShader PostProcess scene
 {

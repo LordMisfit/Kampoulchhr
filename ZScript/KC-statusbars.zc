@@ -424,7 +424,10 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		if (isInventoryBarVisible())
 		{
-			DrawInventoryBar(diparms, (48, 169), 7, DI_ITEM_LEFT_TOP);
+			int numboxes = kc_inventorybarboxes;
+			if (numboxes <= 1) numboxes = 1;
+			if (numboxes >= 20) numboxes = 20;
+			DrawInventoryBar(diparms, (48, 169), numboxes, DI_ITEM_LEFT_TOP);
 		}
 		
 	}
@@ -640,10 +643,34 @@ class KCStatusBarMain : BaseStatusBar
 			DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
 			invY -= 20;
 		}
-		if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
+		
+		inventory item = CPlayer.mo.InvSel;
+		if (item != null) // if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
 		{
-			DrawInventoryIcon(CPlayer.mo.InvSel, (-14, invY + 17), DI_DIMDEPLETED);
-			DrawString(mHUDFont, FormatNumber(CPlayer.mo.InvSel.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
+			double itemalpha = 1.0;
+			vector2 itemscale = (1.0, 1.0);
+			if (item.GetClassName() == "TimeSeraphCharm") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.25;
+				itemscale.y *= 0.25;
+			}
+			else
+			if (item.GetClassName() == "TimeSeraphPocketWatch") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.1667;
+				itemscale.y *= 0.1667;
+			}
+			else
+			if (item.GetClassName() == "TimeSeraphBangle") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.1667;
+				itemscale.y *= 0.1667;
+			}
+			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
+			DrawString(mHUDFont, FormatNumber(item.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
 		}
 		if (deathmatch)
 		{

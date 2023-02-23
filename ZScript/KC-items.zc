@@ -24,20 +24,53 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 	{
 		actor player = players[0].mo;
 		string type = GetClassName();
-		int colorphase;
+		int colorphase = 0;
 		// 0 = Platinum [neutral]
 		// 1 = Aqua-Blue
 		// 2 = Lime-Green
 		// 3 = Violet-Purple
-		
-		if (Distance3D(player) <= 1024)
+		Actor mo;
+		int artifactsnearby;
+		if (type != "TimeSeraphCharm")
 		{
-			colorphase = numartifacts;
+			int charmsfound = 0;
+			ThinkerIterator CharmFinder = ThinkerIterator.Create("TimeSeraphCharm");
+			while (mo = Actor(CharmFinder.Next()))
+			{
+				charmsfound++;
+				artifactsnearby++;
+			}
+			if (charmsfound) colorphase += 1;
 		}
-		else
+		if (type != "TimeSeraphPocketWatch")
 		{
-			colorphase = 0;
+			int watchesfound = 0;
+			ThinkerIterator WatchFinder = ThinkerIterator.Create("TimeSeraphPocketWatch");
+			while (mo = Actor(WatchFinder.Next()))
+			{
+				watchesfound++;
+				artifactsnearby++;
+			}
+			if (watchesfound) colorphase += 1;
 		}
+		if (type != "TimeSeraphBangle")
+		{
+			int banglesfound = 0;
+			ThinkerIterator BangleFinder = ThinkerIterator.Create("TimeSeraphBangle");
+			while (mo = Actor(BangleFinder.Next()))
+			{
+				banglesfound++;
+				artifactsnearby++;
+			}
+			
+			if (banglesfound) colorphase += 1;
+		}
+		if (artifactsnearby) colorphase += 1;
+		else 
+		{
+			if (Distance3D(player) <= frandom(480.0,544.0)) colorphase += 1;
+		}
+		if (colorphase >= 3) colorphase = 3;
 		return colorphase;
 	}
 	
@@ -56,7 +89,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		//$Category EE Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSCHA0";
-		Tag "Time Seraph's Charm";
+		Tag "Time Seraph's Charm: Allows movement within frozen time if paired with the Pocket Watch. Allows user to summon the Time Seraph's armor for protection. Using this will toggle level 1 protection on or off.";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
@@ -111,7 +144,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 			{
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem)
+				if (MiscItem && player.CountInv("TimeSeraphCharm"))
 				{
 					if (player.CountInv("TSArmorTier2"))
 					{
@@ -142,7 +175,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		//$Category EE Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSPWA0";
-		Tag "Time Seraph's Charm";
+		Tag "Time Seraph's Pocket Watch: Allows Perception of Frozen Time. Upgrades Time Seraph's Armor to Level 2 potency if used as an item and you possess the charm.";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
@@ -197,7 +230,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			{
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem)
+				if (MiscItem && player.CountInv("TimeSeraphCharm"))
 				{
 					if (Player.CountInv("TSArmorTier2"))
 					{
@@ -228,7 +261,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 		//$Category EE Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSBGA0";
-		Tag "Time Seraph's Charm";
+		Tag "Time Seraph's Bangle: Creates a scanning visor over the eyes for various vision related perks when used. Toggleable.";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
