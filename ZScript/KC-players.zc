@@ -1,6 +1,28 @@
 class KCPlayerPawn : PlayerPawn
 {
 	bool isvoodoodoll;
+
+	int originalheight;
+	int originalradius;
+	int originalmass;
+	
+	override void BeginPlay()
+	{
+		// Player is always considered a Voodoo Doll during BeginPlay, so height/radius have to be saved before the initial change and then reverted back to it for PostBeginPlay/etc when proper doll detection actually works >____>;
+		// Also 'isvoodoodoll' CAN'T be set right now, has to be done in PostBeginPlay/Tick as well <____<;
+		originalheight = height;
+		originalradius = radius;
+		originalmass = mass;
+
+		A_SetSize(16,56,false);
+		scale.x = 1.0;
+		scale.y = 1.0;
+		Mass = 100;
+		vel.x = vel.y = vel.z = 0;
+		if (kcdebug_showvoodoodoll) Console.Printf("VoodooDoll [BeginPlay] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
+
+		Super.BeginPlay(); 
+	}
 	
 	override void Tick()
 	{
@@ -22,6 +44,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		super.Tick();
 	}
+	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
 		int olddmg = damage;

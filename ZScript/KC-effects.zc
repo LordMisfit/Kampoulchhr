@@ -458,6 +458,15 @@ class PlayerStatPlaceholder : PlaceholderItemUndrop
 	override void DoEffect() { }
 	override void Tick() { }
 }
+class ExpPts : PlayerStatPlaceholder { }
+class ExpPtsNeeded : PlayerStatPlaceholder { }
+class ExpPtsLeft : PlayerStatPlaceholder { }
+class PlayerLevel : PlayerStatPlaceholder { }
+class PlayerMaxHP : PlayerStatPlaceholder { }
+class PlayerATK : PlayerStatPlaceholder { }
+class PlayerDEF : PlayerStatPlaceholder { }
+class PlayerSPD : PlayerStatPlaceholder { }
+class PlayerLuck : PlayerStatPlaceholder { }
 
 class PlayingDoom : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
 class PlayingDoom1 : PlayerStatPlaceholder { } // This works as an inventory flag to indicate the game mode
@@ -778,3 +787,11 @@ class DashCost : PlaceHolderItem
 }
 
 class IsStepping : PlaceholderItemDepletable { default { Inventory.MaxAmount 999999; } }
+
+class SilentLevelUp : PlaceHolderItem
+{
+	default
+	{
+		Inventory.MaxAmount 0x7FFFFFFD;
+	}
+}

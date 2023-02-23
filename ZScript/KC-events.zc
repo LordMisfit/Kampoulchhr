@@ -43,7 +43,7 @@ class KC_EventHandler : EventHandler
 		
 		if (spawnee.bISMONSTER || spawnee.bSHOOTABLE)
 		{
-			spawnee.A_SetInventory("CompatVulnItem",1);
+			if (!KCPlayerPawn(spawnee)) spawnee.A_SetInventory("CompatVulnItem",1);
 		}
 		
 		Super.WorldThingSpawned(e);

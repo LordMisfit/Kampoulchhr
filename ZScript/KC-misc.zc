@@ -6,13 +6,41 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	int NumOfAfasDrops;
 	int ClassCheck;
 	int itemtimer;
 	int ClassicDoomType;
 	int buttons;
 	int TrueGameSkill;
 	int CanTalkUnderwater;
-	int PlayerLevel, TruePlayerLevel;
+	int PlayerLevel, TruePlayerLevel, ActualLevel;
+	int PlayerATK, TruePlayerATK;
+	int PlayerDEF, TruePlayerDEF;
+	int PlayerSPD, TruePlayerSPD;
+	int PlayerLUCK, TruePlayerLUCK, TempLUCK;
+	int PrevATK, PrevDEF, PrevSPD, PrevLUCK;
+	int HPMaxGain, MassGain;
+	int SurvivalRate;
+	int CurrentHealth;
+	int MaxHealthTrue;
+	int MaxHealthTrueRF;
+	int HealthLevelAdd;
+	int HealthNoRPGAdd;
+	double HealthNoRPGAdd2;
+	int HealthBonusAdd;
+	int MaxHealthLimit;
+	int TotalMass, BaseMass, PreBuffMass;
+	int MassLevelAdd;
+	int MassNoRPGAdd;
+	double MassNoRPGAdd2;
+	int MassBonusAdd;
+
+	int LevelCap;
+	int StaminaLevel;
+	int AccuracyLevel;
+	int Experience;
+	Array<int> LevelExpRequirement;
+	int InitEXPTables;
 	
 	double timefreeze1duration;
 	double timefreeze1cooldown;
@@ -123,6 +151,108 @@ class PlayerStatItem : Inventory
 				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
 				TrueGameSkill = skill;
 				
+				// Init Level Table
+				if (itemtimer <= 2)
+				{
+					LevelCap = 1000;
+					LevelExpRequirement.Resize((LevelCap+1));
+					
+					// EXP Tables
+					if (InitEXPTables == 0)
+					{
+						double ExpValue;
+						int BaseEXPRequirement = 16; // clamp(exex_baseexprequirement, 250, 11200);
+						BaseEXPRequirement *= (0.875 + (TrueGameSkill * 0.0625));
+
+						double BaseExtra = 1; // clamp(exex_baseexpextra, 0, 100);
+						double BaseAccel1 = 6; // clamp(exex_baseexpaccel1, 0, 100);
+						double BaseAccel2 = 0.0384; // clamp(exex_baseexpaccel2, 0.0, 5.0);
+						double BaseMulti1 = 48; // clamp(exex_expmulti1, 1, 1024);
+						double BaseMulti2 = 50; // clamp(exex_expmulti2, 1, 10000);
+						
+						double BaseMulti3 = 1.0;
+						int baseval;
+						int addval;
+						double mulval;
+						int preval = 0;
+						
+						double BaseMulti3b = 2.0;
+						double BaseMulti4 = 1.0;
+						double BaseMulti5 = 0.01;
+
+						// Sets up the actual EXP requirement tables based from BaseEXPRequirement above.
+						for (int CuLv = 0; CuLv < (LevelCap+1); CuLv++)
+						{
+							if (CuLv >= 0 && CuLv <= 31) BaseMulti4 = 1.0;
+							if (CuLv >= 32 && CuLv <= 56) BaseMulti4 = 1.334;
+							if (CuLv >= 57 && CuLv <= 80) BaseMulti4 = 1.667;
+							if (CuLv >= 81 && CuLv <= 100) BaseMulti4 = 2;
+							if (CuLv >= 101 && CuLv <= 109) BaseMulti4 = 4;
+							if (CuLv >= 110 && CuLv <= 118) BaseMulti4 = 6;
+							if (CuLv >= 119 && CuLv <= 127) BaseMulti4 = 8;
+							if (CuLv >= 128 && CuLv <= 136) BaseMulti4 = 10;
+							if (CuLv >= 137 && CuLv <= 145) BaseMulti4 = 12;
+							if (CuLv >= 146 && CuLv <= 154) BaseMulti4 = 14;
+							if (CuLv >= 155 && CuLv <= 163) BaseMulti4 = 16;
+							if (CuLv >= 164 && CuLv <= 172) BaseMulti4 = 18;
+							if (CuLv >= 173 && CuLv <= 181) BaseMulti4 = 20;
+							if (CuLv >= 182 && CuLv <= 190) BaseMulti4 = 22;
+							if (CuLv >= 191 && CuLv <= 199) BaseMulti4 = 24;
+							if (CuLv >= 200 && CuLv <= 219) BaseMulti4 = 26;
+							if (CuLv >= 220 && CuLv <= 239) BaseMulti4 = 28;
+							if (CuLv >= 240 && CuLv <= 259) BaseMulti4 = 30;
+							if (CuLv >= 260 && CuLv <= 279) BaseMulti4 = 32;
+							if (CuLv >= 280 && CuLv <= 299) BaseMulti4 = 34;
+							if (CuLv >= 300 && CuLv <= 319) BaseMulti4 = 36;
+							if (CuLv >= 320 && CuLv <= 339) BaseMulti4 = 38;
+							if (CuLv >= 340 && CuLv <= 359) BaseMulti4 = 40;
+							if (CuLv >= 360 && CuLv <= 379) BaseMulti4 = 42;
+							if (CuLv >= 380 && CuLv <= 399) BaseMulti4 = 44;
+							if (CuLv >= 400 && CuLv <= 439) BaseMulti4 = 46;
+							if (CuLv >= 440 && CuLv <= 479) BaseMulti4 = 50;
+							if (CuLv >= 480 && CuLv <= 519) BaseMulti4 = 52;
+							if (CuLv >= 520 && CuLv <= 559) BaseMulti4 = 54;
+							if (CuLv >= 560 && CuLv <= 599) BaseMulti4 = 56;
+							if (CuLv >= 600 && CuLv <= 639) BaseMulti4 = 58;
+							if (CuLv >= 640 && CuLv <= 679) BaseMulti4 = 60;
+							if (CuLv >= 680 && CuLv <= 719) BaseMulti4 = 62;
+							if (CuLv >= 720 && CuLv <= 759) BaseMulti4 = 64;
+							if (CuLv >= 760 && CuLv <= 799) BaseMulti4 = 66;
+							if (CuLv >= 800 && CuLv <= 849) BaseMulti4 = 68;
+							if (CuLv >= 850 && CuLv <= 899) BaseMulti4 = 70;
+							if (CuLv >= 900 && CuLv <= 949) BaseMulti4 = 72;
+							if (CuLv >= 950 && CuLv <= 999) BaseMulti4 = 74;
+							if (CuLv >= 100) BaseMulti4 = 75;
+							
+							BaseMulti3 = (BaseMulti4 + (CuLv * ((BaseMulti4 * BaseMulti5) * BaseMulti3b)));
+							
+							baseval = BaseEXPRequirement * (((CuLv * BaseExtra) + 1));
+							baseval *= (1.00 + ((CuLv + 1) * 0.000625));
+							
+							mulval = (((CuLv * (BaseAccel1 * ((BaseMulti1 + CuLv) / BaseMulti1))) + BaseMulti2) / BaseMulti2);
+							addval = (((BaseEXPRequirement * (CuLv * BaseAccel2)) * BaseMulti3) * ((BaseMulti4) * 1.5));
+							ExpValue = baseval;
+							if (kcdebug_exptables) Console.Printf("ExpValue: %d (%d)", ExpValue, baseval);
+							ExpValue *= mulval;
+							if (kcdebug_exptables) Console.Printf("(*) ExpValue: %d (%.8f)", ExpValue, mulval);
+							ExpValue += addval;
+							if (kcdebug_exptables) Console.Printf("(+) ExpValue: %d (%d)", ExpValue, addval);
+							
+							if (CuLv > 0) 
+							{
+								preval = LevelExpRequirement[(CuLv-1)];
+							}
+							LevelExpRequirement[CuLv] = ExpValue;
+							if (kcdebug_exptables) Console.Printf("\czLevel \cy%d\c- \czEXP Requirement: \cy%d \cz(prev: \cy%d)\cz, Multi: %.8f, baseval: %d, mulval: %.8f, addval: %d, diff: %d\c-", CuLv, ExpValue, preval, BaseMulti3, baseval, mulval, addval, (ExpValue-preval));
+						}
+						if (kcdebug_exptables) Console.Printf("BaseEXPRequirement: %4f, BaseExtra: %4f / 100, BaseAccel1: %4f / 100, BaseAccel2: %3f / 25000, BaseMulti1: %3f / 1024, BaseMulti2: %3f / 10000", BaseEXPRequirement, BaseExtra, BaseAccel1, BaseAccel2, BaseMulti1, BaseMulti2);
+
+						InitEXPTables++;
+					}
+				}
+				
+				//
+				
 				// Time Freeze Trackers
 				TimeFreezeStuff();
 				
@@ -164,6 +294,278 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
+	void LevelUpProcess(int type)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+
+		int levelmodulo, levelbonustype;
+		levelmodulo = PlayerLevel % 20;
+		if (levelmodulo == 0) levelbonustype = 0;
+		else if (levelmodulo == 4) levelbonustype = 1;
+		else if (levelmodulo == 5) levelbonustype = randompick(2,2,2,2,2,1);
+		else if (levelmodulo == 8) levelbonustype = 1;
+		else if (levelmodulo == 10) levelbonustype = randompick(2,2,2,2,2,1);
+		else if (levelmodulo == 12) levelbonustype = 1;
+		else if (levelmodulo == 15) levelbonustype = randompick(2,2,2,2,2,1);
+		else if (levelmodulo == 16) levelbonustype = 1;
+		else levelbonustype = 2;
+		if (kcdebug_levelupdisplays) Console.Printf("\cyLevel Check\c-: %d, \cxModulo\c-: %d, \czBonus Type\c-: %d", PlayerLevel, levelmodulo, levelbonustype);
+		
+		double RandomizedStatChance, RandomizedStatChance2;
+		RandomizedStatChance = 1.00000000; // 192;
+		if (levelbonustype == 0) // Levels 20, 40, 60, 80, 100, 120, 140, 160, 180 & 200
+		{
+			RandomizedStatChance -= (0.1 * random[statitem](4,8)); // 112 to 152
+		}
+		else
+		if (levelbonustype == 1) // Levels [0/2/4/6/8/10/12/14/16/18]4, [0/2/4/6/8/10/12/14/16/18]8, [1/3/5/7/9/11/13/15/17/19]2, & [1/3/5/7/9/11/13/15/17/19]6
+		{
+			RandomizedStatChance -= (0.02 * random[statitem](4,8)); // 160 to 176
+		}
+		else
+		if (levelbonustype == 2) // Any other level that's not a multiple of 4 or 20
+		{
+			RandomizedStatChance -= (0.004 * random[statitem](4,8));
+		}
+		double RNDSCSubtractor1 = 0;
+		double RNDSCSubtractor2 = 0;
+		RNDSCSubtractor1 = (PlayerLevel * 0.32);
+		RNDSCSubtractor1 = clamp(RNDSCSubtractor1, 0.00000, 0.33334);
+		if (PlayerLevel > 100)
+		{
+			RNDSCSubtractor2 = ((PlayerLevel - 100) * 0.4);
+			RNDSCSubtractor2 = clamp(RNDSCSubtractor2, 0.00000, 0.33334);
+		}
+		if (kcdebug_levelupdisplays) Console.Printf("\cyRNDSCSubtractor1\c-: %.8f, \cxRNDSCSubtractor2\c-: %.8f", RNDSCSubtractor1, RNDSCSubtractor2);
+
+		double RNDSCSubtractor = 0;
+		RNDSCSubtractor += RNDSCSubtractor1; // Adds [level 1-100] range value
+		RNDSCSubtractor += RNDSCSubtractor2; // Adds [level 101-200] range value
+		RandomizedStatChance -= RNDSCSubtractor;
+		if (RandomizedStatChance < 0.005208334) RandomizedStatChance = 0.005208334;
+		if (kcdebug_levelupdisplays) Console.Printf("\cyRNDSCSubtractor\c-: %.8f, \cxRandomizedStatChance\c-: %.8f", RNDSCSubtractor, RandomizedStatChance);
+
+		RandomizedStatChance2 = 1.00000000;
+		if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.041666667; // 23
+		if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.041666667; // 22
+		if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.041666667; // 21
+		if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.041666667; // 20
+		if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.083333334; // 18
+		if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.083333334; // 16
+		if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.083333334; // 14
+		if (kcdebug_levelupdisplays) Console.Printf("\cyStat Chance 1\c-: %.8f, \cxStat Chance 2\c-: %.8f", RandomizedStatChance, RandomizedStatChance2);
+		
+		//********************************
+		//*Random Levelups to Stat Values*
+		//********************************
+		int SeedIncreaseAmt;
+		double LvlSkillMulti;
+		double RollValue;
+		double BaseChance1;
+		double BaseChance2;
+		int LvlStatMulti = 1;
+		// Luck Boost [1]
+		BaseChance1 = (0.2 + (NumOfAfasDrops * 0.0125)) * (1.0 + (NumOfAfasDrops * 0.0625));
+		BaseChance2 = 0.083333334 * (1.0 + (NumOfAfasDrops * 0.025));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [2]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.003125)) * (1.0 + (NumOfAfasDrops * 0.03125));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.0125));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [3]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.00078125)) * (1.0 + (NumOfAfasDrops * 0.015625));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.00625));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+
+		// Speed Boost [1]
+		BaseChance1 = (0.125 + (NumOfAfasDrops * 0.0125)) * (1.0 + (NumOfAfasDrops * 0.0625));
+		BaseChance2 = 0.083333334 * (1.0 + (NumOfAfasDrops * 0.025));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [2]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.003125)) * (1.0 + (NumOfAfasDrops * 0.03125));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.0125));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [3]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.00078125)) * (1.0 + (NumOfAfasDrops * 0.015625));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.00625));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		
+		// Attack Boost [1]
+		BaseChance1 = (0.25 + (NumOfAfasDrops * 0.0125)) * (1.0 + (NumOfAfasDrops * 0.0625));
+		BaseChance2 = 0.083333334 * (1.0 + (NumOfAfasDrops * 0.025));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [2]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.003125)) * (1.0 + (NumOfAfasDrops * 0.03125));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.0125));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [3]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.00078125)) * (1.0 + (NumOfAfasDrops * 0.015625));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.00625));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		
+		// Defense Boost [1]
+		BaseChance1 = (0.1875 + (NumOfAfasDrops * 0.0125)) * (1.0 + (NumOfAfasDrops * 0.0625));
+		BaseChance2 = 0.083333334 * (1.0 + (NumOfAfasDrops * 0.025));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [2]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.003125)) * (1.0 + (NumOfAfasDrops * 0.03125));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.0125));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [3]
+		BaseChance1 *= (0.2 + (NumOfAfasDrops * 0.00078125)) * (1.0 + (NumOfAfasDrops * 0.015625));
+		BaseChance2 *= 0.825 * (1.0 + (NumOfAfasDrops * 0.00625));
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+
+		// Health/HP Boost
+		CurrentHealth = owner.player.mo.health;
+		HPMaxGain = 0;
+		
+		if (PlayerLevel >= 151 && PlayerLevel <= 200)				HPMaxGain += floor(PlayerLevel * frandompick(0.0525,0.06));
+		else if (PlayerLevel >= 101 && PlayerLevel <= 150)	HPMaxGain += floor(PlayerLevel * frandompick(0.045,0.0525));
+		else if (PlayerLevel >= 51 && PlayerLevel <= 100)		HPMaxGain += floor(PlayerLevel * frandompick(0.0375,0.045));
+		else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick(0.03,0.0375));
+		
+		HPMaxGain += 													randompick(0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3);
+		if (levelbonustype == 0) HPMaxGain += randompick(1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3);
+		if (levelbonustype == 1) HPMaxGain += randompick(0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3);
+		if (levelbonustype == 2) HPMaxGain += randompick(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2);
+		if (TrueGameSkill <= SKILL_VERY_EASY) 
+		{
+			HPMaxGain += randompick(1,1,2,2,3);
+			HPMaxGain += (MaxHealthTrue / (216 - (NumOfAfasDrops * 8)));
+		}
+		if (TrueGameSkill == SKILL_EASY) 
+		{
+			HPMaxGain += randompick(0,1,1,2,2);
+			HPMaxGain += (MaxHealthTrue / (270 - (NumOfAfasDrops * 6.4)));
+		}
+		if (TrueGameSkill == SKILL_NORMAL) 
+		{
+			HPMaxGain += randompick(0,0,1,1,2);
+			HPMaxGain += (MaxHealthTrue / (324 - (NumOfAfasDrops * 3.2)));
+		}
+		if (TrueGameSkill == SKILL_HARD) 
+		{
+			HPMaxGain += randompick(0,0,0,1,1);
+			HPMaxGain += (MaxHealthTrue / (378 - (NumOfAfasDrops * 3.2)));
+		}
+		if (TrueGameSkill == SKILL_VERY_HARD)
+		{
+			HPMaxGain += randompick(0,0,0,0,1);
+			HPMaxGain += (MaxHealthTrue / (432 - (NumOfAfasDrops * 1.6)));
+		}
+		if (HPMaxGain < 1) HPMaxGain = 1;
+		owner.player.mo.health += HPMaxGain;
+		HealthLevelAdd += HPMaxGain;
+		if (type == 1) 
+		{
+			HealthNoRPGAdd += HPMaxGain;
+			if (!exex_expenabled)
+			{
+				if (skill <= 0) HPMaxGain *= (4.0 + (NumOfAfasDrops * 0.08));
+				if (skill == 1) HPMaxGain *= (3.5 + (NumOfAfasDrops * 0.07));
+				if (skill == 2) HPMaxGain *= (3.0 + (NumOfAfasDrops * 0.06));
+				if (skill == 3) HPMaxGain *= (2.5 + (NumOfAfasDrops * 0.05));
+				if (skill >= 4) HPMaxGain *= (2.0 + (NumOfAfasDrops * 0.04));
+			}
+		}
+		//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+		if (kcdebug_levelupdisplays) Console.Printf("HPMaxGain: %d", HPMaxGain);
+		
+		// Mass/Balance
+		double BaseMass = 1.0;
+		let playerset = KCPlayerPawn(owner);
+		if (playerset) BaseMass = playerset.originalmass;
+		MassGain = 0;
+
+		if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick(0.0525,0.06));
+		else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick(0.045,0.0525));
+		else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick(0.0375,0.045));
+		else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick(0.03,0.0375));
+
+		MassGain += 													randompick(0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
+		if (levelbonustype == 0) MassGain += randompick(1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+		if (levelbonustype == 1) MassGain += randompick(0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
+		if (levelbonustype == 2) MassGain += randompick(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+		if (TrueGameSkill <= SKILL_VERY_EASY) 
+		{
+			MassGain += randompick(0,0,0,0,0,1,1,2,2,3);
+			MassGain += (BaseMass / (324 - (NumOfAfasDrops * 16)));
+		}
+		if (TrueGameSkill == SKILL_EASY) 
+		{
+			MassGain += randompick(0,0,0,0,0,0,1,1,2,2);
+			MassGain += (BaseMass / (405 - (NumOfAfasDrops * 12.8)));
+		}
+		if (TrueGameSkill == SKILL_NORMAL) 
+		{
+			MassGain += randompick(0,0,0,0,0,0,0,1,1,2);
+			MassGain += (BaseMass / (486 - (NumOfAfasDrops * 9.6)));
+		}
+		if (TrueGameSkill == SKILL_HARD) 
+		{
+			MassGain += randompick(0,0,0,0,0,0,0,0,1,1);
+			MassGain += (BaseMass / (557 - (NumOfAfasDrops * 6.4)));
+		}
+		if (TrueGameSkill == SKILL_VERY_HARD)
+		{
+			MassGain += randompick(0,0,0,0,0,0,0,0,0,1);
+			MassGain += (BaseMass / (648 - (NumOfAfasDrops * 3.2)));
+		}
+		MassLevelAdd += MassGain;
+		if (type == 1) 
+		{
+			MassNoRPGAdd += MassGain;
+			if (!exex_expenabled)
+			{
+				if (skill <= 0) MassGain *= (2.0 + (NumOfAfasDrops * 0.04));
+				if (skill == 1) MassGain *= (1.75 + (NumOfAfasDrops * 0.045));
+				if (skill == 2) MassGain *= (1.5 + (NumOfAfasDrops * 0.03));
+				if (skill == 3) MassGain *= (1.25 + (NumOfAfasDrops * 0.025));
+				if (skill >= 4) MassGain *= (1.0 + (NumOfAfasDrops * 0.02));
+			}
+		}
+		
+		if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/bellring",101,CHANF_DEFAULT,frandom(0.6,0.75),ATTN_NORM,frandom(1.25,1.5));
+	}
+
 	void TimeFreezeStuff()
 	{
 		let globalvars = KCGlobalVariables.Get();
