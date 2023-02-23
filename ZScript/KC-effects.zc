@@ -795,3 +795,31 @@ class SilentLevelUp : PlaceHolderItem
 		Inventory.MaxAmount 0x7FFFFFFD;
 	}
 }
+
+class OverFullHealth3 : PlaceHolderItem { }
+class OverFullHealth2 : PlaceHolderItem { }
+class OverFullHealth1 : PlaceHolderItem { }
+class FullHealth : PlaceHolderItem { }
+class NormalHealth : PlaceHolderItem { }
+class DecentHealth : PlaceHolderItem { }
+class LowHealth : PlaceHolderItem { } 
+class CriticalHealth : PlaceHolderItem { }
+class PlayerIsDead : PlaceholderItem 
+{
+	default
+	{
+		Inventory.MaxAmount 1; 
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		if (owner == null) Destroy();
+		if (owner && owner.health > 0)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[olive]Removing PlayerIsDead Item...");
+			Destroy();
+		}
+		super.Tick();
+	}
+}

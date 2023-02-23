@@ -6,7 +6,9 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	int oldhealthratio;
 	int NumOfAfasDrops;
+	int NumOfLegendMeds, MedCurrLvl, LegMedCap;
 	int ClassCheck;
 	int itemtimer;
 	int ClassicDoomType;
@@ -251,7 +253,10 @@ class PlayerStatItem : Inventory
 					}
 				}
 				
-				//
+				//***************
+				//* Leveling Up *
+				//***************
+				LevelUpExpStuff();
 				
 				// Time Freeze Trackers
 				TimeFreezeStuff();
@@ -564,6 +569,89 @@ class PlayerStatItem : Inventory
 		}
 		
 		if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/bellring",101,CHANF_DEFAULT,frandom(0.6,0.75),ATTN_NORM,frandom(1.25,1.5));
+	}
+
+	
+	void LevelUpExpStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		Experience = owner.CountInv("ExpPts");
+		owner.A_SetInventory("ExpPtsLeft",(LevelExpRequirement[(PlayerLevel)]-Experience));
+		owner.A_SetInventory("ExpPtsNeeded",LevelExpRequirement[(PlayerLevel)]);
+		PlayerLevel = owner.CountInv("PlayerLevel");
+		PlayerATK = owner.CountInv("PlayerATK");
+		PlayerDEF = owner.CountInv("PlayerDEF");
+		PlayerSPD = owner.CountInv("PlayerSPD");
+		PlayerLuck = owner.CountInv("PlayerLuck");
+
+		int levelmodulo, levelbonustype;
+		int leveluptimes = 0;
+		int leveluptimesmax = LevelCap - PlayerLevel;
+		int StatIncrease;
+		PrevATK = PlayerATK;
+		PrevDEF = PlayerDEF;
+		PrevSPD = PlayerSPD;
+		for (leveluptimes = 0; leveluptimes < leveluptimesmax; leveluptimes++)
+		{
+			if (kcdebug_levelup) Console.Printf("%d / %d", leveluptimes, leveluptimesmax);
+			if (Experience >= LevelExpRequirement[PlayerLevel])
+			{
+				if (PlayerLevel < LevelCap)
+				{
+					PlayerLevel += 1;
+					
+					LevelUpProcess(0);
+					
+					owner.A_SetInventory("PlayerLevel",PlayerLevel);
+					owner.A_SetInventory("PlayerATK",PlayerATK);
+					owner.A_SetInventory("PlayerDEF",PlayerDEF);
+					owner.A_SetInventory("PlayerSPD",PlayerSPD);
+					owner.A_SetInventory("PlayerLUCK",PlayerLUCK);
+					if (!owner.CountInv("SilentLevelUp"))
+					{
+						string LevelUpMsg = "";
+						LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
+						if (exex_extraatkdefspd)
+						{
+							if ((PlayerATK > PrevATK) || (PlayerDEF > PrevDEF) || (PlayerSPD > PrevSPD)) LevelUpMsg.AppendFormat("\n\n");
+							if (PlayerATK > PrevATK) LevelUpMsg.AppendFormat("\n\c[brick]Attack Increased Even More than Normal!");
+							if (PlayerDEF > PrevDEF) LevelUpMsg.AppendFormat("\n\c[olive]Defense Increased Even More than Normal!");
+							if (PlayerSPD > PrevSPD) LevelUpMsg.AppendFormat("\n\c[lightblue]Speed Increased Even More than Normal!");
+						}
+						owner.A_Print(LevelUpMsg);
+						owner.A_SetBlend("00 00 FF",0.3,3,"00 00 FF",0.0);
+					}
+				}
+			}
+		}
+		if (exex_expenabled) 
+		{
+			TruePlayerLevel = PlayerLevel;
+			TruePlayerATK = PlayerATK;
+			TruePlayerDEF = PlayerDEF;
+			TruePlayerSPD = PlayerSPD;
+		}
+		else
+		{
+			TruePlayerLevel = 0;
+			TruePlayerATK = 0;
+			TruePlayerDEF = 0;
+			TruePlayerSPD = 0;
+		}
+
+		int oldhealth = owner.health;
+		if (owner.CountInv("NormalHealth")) oldhealthratio = 0;
+		if (owner.CountInv("DecentHealth")) oldhealthratio = 1;
+		if (owner.CountInv("LowHealth")) oldhealthratio = 2;
+		if (owner.CountInv("CriticalHealth")) oldhealthratio = 3;
+		
+		PrevATK = PlayerATK;
+		PrevDEF = PlayerDEF;
+		PrevSPD = PlayerSPD;
+		leveluptimes = 0;
+		leveluptimesmax = NumOfLegendMeds - MedCurrLvl;
 	}
 
 	void TimeFreezeStuff()
