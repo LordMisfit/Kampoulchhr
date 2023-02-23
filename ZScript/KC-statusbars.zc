@@ -415,11 +415,13 @@ class KCStatusBarMain : BaseStatusBar
 		{
 			double itemalpha = 1.0;
 			vector2 itemscale = (1.0, 1.0);
+			bool showamt = true;
 			if (item.GetClassName() == "TimeSeraphCharm") 
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.25;
 				itemscale.y *= 0.25;
+				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphPocketWatch") 
@@ -427,6 +429,7 @@ class KCStatusBarMain : BaseStatusBar
 				itemalpha *= 1.0;
 				itemscale.x *= 0.1667;
 				itemscale.y *= 0.1667;
+				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphBangle") 
@@ -434,9 +437,10 @@ class KCStatusBarMain : BaseStatusBar
 				itemalpha *= 1.0;
 				itemscale.x *= 0.1667;
 				itemscale.y *= 0.1667;
+				showamt = false;
 			}
 			DrawInventoryIcon(item, (160, 198), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
-			if (item.Amount > 1)
+			if (item.Amount > 1 && showamt)
 			{
 				DrawString(mAmountFont, FormatNumber(CPlayer.mo.InvSel.Amount), (175, 198-mIndexFont.mFont.GetHeight()), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
 			}
@@ -671,6 +675,7 @@ class KCStatusBarMain : BaseStatusBar
 		inventory item = CPlayer.mo.InvSel;
 		if (item != null) // if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
 		{
+			bool showamt = true;
 			double itemalpha = 1.0;
 			vector2 itemscale = (1.0, 1.0);
 			if (item.GetClassName() == "TimeSeraphCharm") 
@@ -678,6 +683,7 @@ class KCStatusBarMain : BaseStatusBar
 				itemalpha *= 1.0;
 				itemscale.x *= 0.25;
 				itemscale.y *= 0.25;
+				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphPocketWatch") 
@@ -685,6 +691,7 @@ class KCStatusBarMain : BaseStatusBar
 				itemalpha *= 1.0;
 				itemscale.x *= 0.1667;
 				itemscale.y *= 0.1667;
+				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphBangle") 
@@ -692,9 +699,10 @@ class KCStatusBarMain : BaseStatusBar
 				itemalpha *= 1.0;
 				itemscale.x *= 0.1667;
 				itemscale.y *= 0.1667;
+				showamt = false;
 			}
 			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
-			DrawString(mHUDFont, FormatNumber(item.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
+			if (showamt) DrawString(mHUDFont, FormatNumber(item.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
 		}
 		if (deathmatch)
 		{

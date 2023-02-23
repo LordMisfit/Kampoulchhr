@@ -49,13 +49,11 @@ class KCPlayerPawn : PlayerPawn
 		super.Tick();
 	}
 	
-	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false)
 	{
-		int olddmg = damage;
+		string nm, nn, no, np;
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int prevdmg = damage;
-		double TSArmor1DmgChance;
-		int TimeSeraphArmor = 0;
-		int TSArmorDmgDivisor = 1;
 		if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
@@ -68,10 +66,40 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
+			if (mod == 'Fire' || 
+					mod == 'Magma' || 
+					mod == 'Flare' || 
+					mod == 'SpecialFire')
+			{
+				flags |= DMG_THRUSTLESS;
+				damage = 0;
+				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
+				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
+			}
+			if (mod == 'Ice' || 
+					mod == 'Chill')
+			{
+				flags |= DMG_THRUSTLESS;
+				damage = 0;
+				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
+				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
+			}
+			if (mod == 'Thunder' || 
+					mod == 'Electric' || 
+					mod == 'Lightning' || 
+					mod == 'Shock')
+			{
+				flags |= DMG_THRUSTLESS;
+				damage = 0;
+				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
+				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
+			}
+			
 			TSArmor1DmgChance = double((damage * 1.0) / (TSArmorDmgDivisor * 1.0));
 			damage /= TSArmorDmgDivisor; 
 			if (kcdebug_playerdamagemobj) Console.Printf("TimeSeraphArmor: %d, TSArmorDmgDivisor: %d, TSArmor1DmgChance: %.8f", TimeSeraphArmor, TSArmorDmgDivisor, TSArmor1DmgChance);
 			flags |= DMG_NO_ARMOR; // TimeSeraphArmor's presence overrides other armors, thus they don't take damage
+			
 			if (damage <= 0)
 			{
 				damage = 0;
@@ -81,11 +109,71 @@ class KCPlayerPawn : PlayerPawn
 				{
 					flags |= DMG_THRUSTLESS;
 					if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified: TSArmor1DmgRoll: %.8f [out of 1.00000000] / TSArmor1DmgChance: %.8f", TSArmor1DmgRoll, TSArmor1DmgChance);
-					return 0; // Null all potential future checks and just inflict no damage
+					tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 				}
 				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage: %d [prevdmg: %d]", damage, prevdmg);
 			}
+			
+			if (MiscItem)
+			{
+				nm = "TSArmorTier1";
+				nn = "TSArmorTier2";
+				no = "TimeSeraphVisor";
+				double TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
+				if (skill <= 0) 
+				{
+					TSTicDmg = (olddmg * frandom(TICRATE*0.25,TICRATE));
+					TSTicDmg *= frandom(0.5,1.5);
+				}
+				if (skill == 1) 
+				{
+					TSTicDmg = (olddmg * frandom(TICRATE*0.375,TICRATE));
+					TSTicDmg *= frandom(0.75,1.75);
+				}
+				if (skill == 2) 
+				{
+					TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
+					TSTicDmg *= frandom(1.00,2.00);
+				}
+				if (skill == 3) 
+				{
+					TSTicDmg = (olddmg * frandom(TICRATE*0.625,TICRATE));
+					TSTicDmg *= frandom(1.25,2.25);
+				}
+				if (skill >= 4) 
+				{
+					TSTicDmg = (olddmg * frandom(TICRATE*0.75,TICRATE));
+					TSTicDmg *= frandom(1.5,2.5);
+				}
+				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
+				if (CountInv(nn)) TSTicDmg *= frandom(0.334,0.667);
+				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
+				MiscItem.TimeArmorEnergyTics -= TSTicDmg;
+				if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
+				{
+					if (CountInv(nm)) A_SetInventory(nm,0);
+					if (CountInv(nn)) A_SetInventory(nn,0);
+					if (CountInv(no)) A_SetInventory(no,0);
+					MiscItem.TimeArmorEnergyTics = 0;
+				}
+				if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
+			}
 		}
+		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
+	}
+	
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		string nm, nn, no, np;
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		int olddmg = damage;
+		int prevdmg = damage;
+		double TSArmor1DmgChance;
+		int TimeSeraphArmor = 0;
+		int TSArmorDmgDivisor = 1;
+		bool tsafullnulldmg = false;
+		[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
+		if (TimeSeraphArmor && tsafullnulldmg) return 0;
 		
 		prevdmg = damage;
 		if (level.isFrozen()) 
