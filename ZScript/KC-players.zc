@@ -2,6 +2,9 @@ class KCPlayerPawn : PlayerPawn
 {
 	bool isvoodoodoll;
 
+	int firsttic;
+	int buttons, input;
+
 	int originalheight;
 	int originalradius;
 	int originalmass;
@@ -37,6 +40,7 @@ class KCPlayerPawn : PlayerPawn
 		else
 		{
 			isvoodoodoll = false;
+			buttons = GetPlayerInput(INPUT_BUTTONS);
 		}
 		
 		if (self.isFrozen()) 

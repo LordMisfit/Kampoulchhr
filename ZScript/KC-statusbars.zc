@@ -53,6 +53,319 @@ class KCStatusBarMain : BaseStatusBar
 		diparms = InventoryBarState.Create();
 	}
 
+	override void Tick()
+	{
+		Super.Tick();
+	}
+	
+	// Except for the placement information this gets all info from the struct that gets passed in.
+	void DrawInventoryBar(InventoryBarState parms, Vector2 position, int NumFields, int flags = 0, double BGAlpha = 1.)
+	{
+		if (kcdebug_invbardisplays) Console.Printf("\c[yellow][DrawInventoryBar Init]\c- boxsize: %d x %d, selectofs: %d x %d", parms.boxsize.x, parms.boxsize.y, parms.selectofs.x, parms.selectofs.y);
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		Font fnt = "INDEXFONT_KC";
+		parms.amountfont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true, 1, 1);
+		parms.box = TexMan.CheckForTexture("ARTIBOX", TexMan.TYPE_MiscPatch);
+		parms.selector = TexMan.CheckForTexture("SELECTBO", TexMan.TYPE_MiscPatch);
+		double ItemAlpha2 = parms.itemalpha;
+		if (kcdebug_invbarfix)
+		{
+			parms.boxsize = (30, 30);
+			parms.boxofs = (2, 2);
+			parms.selectofs = (0, 0);
+			parms.innersize = (26, 26);
+		}
+		
+		double width = parms.boxsize.X * NumFields;
+		[position, flags] = AdjustPosition(position, flags, width, parms.boxsize.Y);
+		
+		CPlayerPawn.InvFirst = ValidateInvFirst(NumFields);
+		if (CPlayerPawn.InvFirst == null) return;	// Player has no listed inventory items.
+		
+		Vector2 boxsize = parms.boxsize;
+		// First draw all the boxes
+		for (int i = 0; i < NumFields; i++)
+		{
+			DrawTexture(parms.box, position + (boxsize.X * i, 0), flags | DI_ITEM_LEFT_TOP, BGAlpha);
+		}
+		
+		// now the items and the rest
+		
+		Vector2 ItemPos = position + boxsize / 2;
+		//Console.Printf("position.x: %d, position.y: %d", position.x, position.y);
+		//Console.Printf("ItemPos.x: %d, ItemPos.y: %d", ItemPos.x, ItemPos.y);
+		Vector2 TextPos = position + boxsize - (1, 1 + parms.amountfont.mFont.GetHeight());
+		Vector2 TextPosExtra;
+
+		int i = 0;
+		Inventory item;
+		bool InventoryLimits;
+		double InvIconAlpha, InvIconAlphaPulse, InvIconScaleX, InvIconScaleY;
+		int InvIconAlphaTimer = level.time % 35;
+		CPlayer.inventorytics = 0; // Makes it you can immediateLY "use" items after selecting through them.
+		
+		int ItemHeldRatio;
+		int TextTranslation = font.CR_UNTRANSLATED;
+		for (item = CPlayerPawn.InvFirst; item != NULL && i < NumFields; item = item.NextInv())
+		{
+			// Main Icons
+			for (int j = 0; j < 2; j++)
+			{
+				if (j ^ !!(flags & DI_DRAWCURSORFIRST))
+				{
+					if (item == CPlayerPawn.InvSel)
+					{
+						double FlashAlpha = BGAlpha;
+						if (flags & DI_ARTIFLASH) FlashAlpha *= itemflashFade;
+						DrawTexture(parms.selector, position + parms.selectofs + (boxsize.X * i, 0), flags | DI_ITEM_LEFT_TOP, FlashAlpha);
+					}
+				}
+				else
+				{
+					InvIconScaleX = 1.0;
+					InvIconScaleY = 1.0;
+					if (item is "Coin")
+					{
+						InvIconAlpha = 0.875;
+					}
+					else
+					{
+						if (item.GetClassName() == "TimeSeraphCharm") 
+						{
+							InvIconAlpha = 1.0;
+							InvIconScaleX *= 0.25;
+							InvIconScaleY *= 0.25;
+						}
+						else
+						if (item.GetClassName() == "TimeSeraphPocketWatch") 
+						{
+							InvIconAlpha = 1.0;
+							InvIconScaleX *= 0.1667;
+							InvIconScaleY *= 0.1667;
+						}
+						else
+						if (item.GetClassName() == "TimeSeraphBangle") 
+						{
+							InvIconAlpha = 1.0;
+							InvIconScaleX *= 0.1667;
+							InvIconScaleY *= 0.1667;
+						}
+						else
+						{
+							if (item.Amount <= 0) 
+							{
+								InvIconAlpha = 0.4375; 
+								InvIconScaleX *= 0.875;
+								InvIconScaleY *= 0.875;
+							}
+							else 
+							if (item.Amount >= item.MaxAmount) 
+							{
+								if (InvIconAlphaTimer == 0) InvIconAlphaPulse = -0.125;
+								if (InvIconAlphaTimer == 1 || InvIconAlphaTimer == 39) InvIconAlphaPulse = -0.1125;
+								if (InvIconAlphaTimer == 2 || InvIconAlphaTimer == 38) InvIconAlphaPulse = -0.1000;
+								if (InvIconAlphaTimer == 3 || InvIconAlphaTimer == 37) InvIconAlphaPulse = -0.0875;
+								if (InvIconAlphaTimer == 4 || InvIconAlphaTimer == 36) InvIconAlphaPulse = -0.075;
+								if (InvIconAlphaTimer == 5 || InvIconAlphaTimer == 35) InvIconAlphaPulse = -0.0625;
+								if (InvIconAlphaTimer == 6 || InvIconAlphaTimer == 34) InvIconAlphaPulse = -0.05;
+								if (InvIconAlphaTimer == 7 || InvIconAlphaTimer == 33) InvIconAlphaPulse = -0.0375;
+								if (InvIconAlphaTimer == 8 || InvIconAlphaTimer == 32) InvIconAlphaPulse = -0.025;
+								if (InvIconAlphaTimer == 9 || InvIconAlphaTimer == 31) InvIconAlphaPulse = -0.0125;
+								if (InvIconAlphaTimer == 10 || InvIconAlphaTimer == 30) InvIconAlphaPulse = -0.00;
+								if (InvIconAlphaTimer == 11 || InvIconAlphaTimer == 29) InvIconAlphaPulse = 0.0125;
+								if (InvIconAlphaTimer == 12 || InvIconAlphaTimer == 28) InvIconAlphaPulse = 0.025;
+								if (InvIconAlphaTimer == 13 || InvIconAlphaTimer == 27) InvIconAlphaPulse = 0.0375;
+								if (InvIconAlphaTimer == 14 || InvIconAlphaTimer == 26) InvIconAlphaPulse = 0.05;
+								if (InvIconAlphaTimer == 15 || InvIconAlphaTimer == 25) InvIconAlphaPulse = 0.0625;
+								if (InvIconAlphaTimer == 16 || InvIconAlphaTimer == 24) InvIconAlphaPulse = 0.075;
+								if (InvIconAlphaTimer == 17 || InvIconAlphaTimer == 23) InvIconAlphaPulse = 0.0875;
+								if (InvIconAlphaTimer == 18 || InvIconAlphaTimer == 22) InvIconAlphaPulse = 0.10;
+								if (InvIconAlphaTimer == 19 || InvIconAlphaTimer == 21) InvIconAlphaPulse = 0.125;
+								if (InvIconAlphaTimer == 20) InvIconAlphaPulse = 0.1375;
+								InvIconAlphaPulse *= 2;
+								InvIconAlpha = 0.75 + InvIconAlphaPulse;
+								InvIconScaleX *= 1.0 + ((InvIconAlphaPulse * 0.25));
+								InvIconScaleY *= 1.0 + ((InvIconAlphaPulse * 0.25));
+							}
+							else 
+							{
+								InvIconAlpha = 0.875;
+								InvIconScaleX *= 0.9375;
+								InvIconScaleY *= 0.9375;
+							}
+							if (CPlayerPawn && CPlayerPawn.buttons & BT_ZOOM) 
+							{
+								InvIconAlpha *= 0.25;
+								InvIconScaleX *= 0.8;
+								InvIconScaleY *= 0.8;
+							}
+						}
+					}
+
+					DrawInventoryIcon(item, ItemPos + (boxsize.X * i, 0), flags | DI_ITEM_CENTER, InvIconAlpha, (-1, -1), (InvIconScaleX, InvIconScaleY) );
+				}
+			}
+			
+			// Hotkeys
+			string LegendStr = "";
+			string UserKeyString;
+			Array<String> UserKeys;
+			int LegendFlags = flags;
+			int LegendFontCLR = font.cr_green;
+			double LegendAlpha = 0.9;
+			Vector2 LegendScale = (0.875, 0.875);
+			Vector2 LegendPos = position + (boxsize.X * i, 0); // (324, -25) + (0, yadd)
+			Vector2 LegendPosV = LegendPos;
+			vector2 ValPos = (5, 20); //(482, 20);
+			//Console.Printf("(%s, i: %d) position.x: %d, position.y: %d, boxsize.X * i: %d", item.GetClassName(), i, position.x, position.y, (boxsize.X * i));
+			//Console.Printf("(%s, i: %d) LegendPos.x: %d, LegendPos.y: %d", item.GetClassName(), i, LegendPos.x, LegendPos.y);
+			//Console.Printf("(%s, i: %d) LegendPosV.x: %d, LegendPosV.y: %d", item.GetClassName(), i, (LegendPosV.x + ValPos.x), (LegendPosV.y + ValPos.y));
+
+			if (item is "TimeSeraphCharm") 
+			{
+				UserKeyString = UIKeybinds.getKeyboard("QTimeCharm");
+				if (UserKeyString != "")
+				{
+					UserKeyString.Split(UserKeys,", ");
+					LegendStr.AppendFormat("%s", UserKeys[0]);
+				}
+			}
+			if (item is "TimeSeraphPocketWatch") 
+			{
+				UserKeyString = UIKeybinds.getKeyboard("QTimePWatch");
+				if (UserKeyString != "")
+				{
+					UserKeyString.Split(UserKeys,", ");
+					LegendStr.AppendFormat("%s", UserKeys[0]);
+				}
+			}
+			if (item is "TimeSeraphBangle") 
+			{
+				UserKeyString = UIKeybinds.getKeyboard("QTimeBangle");
+				if (UserKeyString != "")
+				{
+					UserKeyString.Split(UserKeys,", ");
+					LegendStr.AppendFormat("%s", UserKeys[0]);
+				}
+			}
+
+			if (LegendStr != "") 
+			{
+				//Console.Printf(LegendStr);
+				//Console.Printf("x: %d, y: %d", LegendPosV.x, LegendPosV.y);
+				DrawString(mConFont, LegendStr, LegendPosV + ValPos, flags | DI_TEXT_ALIGN_CENTER, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			
+			// Amount & Limits
+			int TextSize = 1;
+			if (parms.amountfont != null && (item.Amount >= 0 || (flags & DI_ALWAYSSHOWCOUNTERS)))
+			{
+				if (item.MaxAmount > 0) ItemHeldRatio = (item.Amount * 1000) / item.MaxAmount;
+													 else ItemHeldRatio = 0;
+				
+				if (item is "TimeSeraphCharm" || 
+						item is "TimeSeraphPocketWatch" || 
+						item is "TimeSeraphBangle")
+				{
+				}
+				else
+				if (item is "Coin")
+				{
+					if (TextSize <= 0) fnt = "INDEXFONT_KC";
+					if (TextSize == 1) fnt = "INDEXFONT_KCM";
+					if (TextSize >= 2) fnt = "INDEXFONT_KCL";
+
+					parms.amountfont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true, 1, 1);
+					if (TextSize <= 0) TextPosExtra = (0,0);
+					if (TextSize == 1) TextPosExtra = (0,0);
+					if (TextSize >= 2) TextPosExtra = (0,5);
+					
+					if (item is "Coin")
+					{
+						TextTranslation = font.CR_GOLD;
+					}
+					DrawString(parms.amountfont, FormatNumber(item.Amount, 0, 6), TextPos + (boxsize.X * i, 0) + (-14,0) + TextPosExtra, flags | DI_TEXT_ALIGN_CENTER, TextTranslation, ItemAlpha2);
+				}
+				else
+				{
+					if (TextSize <= 0) fnt = "INDEXFONT_KC";
+					if (TextSize == 1) fnt = "INDEXFONT_KCM";
+					if (TextSize >= 2) fnt = "INDEXFONT_KCL";
+
+					parms.amountfont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true, 1, 1);
+
+					if (kc_imposeinventorylimits)
+					{
+						if (TextSize <= 0) TextPosExtra = (0,0);
+						if (TextSize == 1) TextPosExtra = (-1,0);
+						if (TextSize >= 2) TextPosExtra = (-3,1);
+						if (item.Amount <= 0) TextTranslation = font.cr_black;
+						else if (item.Amount >= item.MaxAmount) TextTranslation = Font.cr_sapphire;
+						else
+						{
+							if (ItemHeldRatio >= 0 && ItemHeldRatio <= 99) TextTranslation = font.cr_darkred;
+							if (ItemHeldRatio >= 100 && ItemHeldRatio <= 199) TextTranslation = font.cr_red;
+							if (ItemHeldRatio >= 200 && ItemHeldRatio <= 299) TextTranslation = font.cr_brick;
+							if (ItemHeldRatio >= 300 && ItemHeldRatio <= 399) TextTranslation = font.cr_orange;
+							if (ItemHeldRatio >= 400 && ItemHeldRatio <= 499) TextTranslation = font.cr_yellow;
+							if (ItemHeldRatio >= 500 && ItemHeldRatio <= 599) TextTranslation = font.cr_gold;
+							if (ItemHeldRatio >= 600 && ItemHeldRatio <= 699) TextTranslation = font.cr_olive;
+							if (ItemHeldRatio >= 700 && ItemHeldRatio <= 799) TextTranslation = font.cr_darkgreen;
+							if (ItemHeldRatio >= 800 && ItemHeldRatio <= 899) TextTranslation = font.cr_green;
+							if (ItemHeldRatio >= 900 && ItemHeldRatio <= 999) TextTranslation = font.cr_cyan;
+						}
+						DrawString(parms.amountfont, FormatNumber(item.Amount, 0, 6), TextPos + (boxsize.X * i, 0) + (-26,-19) + TextPosExtra, flags | DI_TEXT_ALIGN_LEFT, TextTranslation, ItemAlpha2);
+
+						if (TextSize <= 0) TextPosExtra = (0,0);
+						if (TextSize == 1) TextPosExtra = (0,0);
+						if (TextSize >= 2) TextPosExtra = (-1,1);
+						DrawString(parms.amountfont, "/", TextPos + (boxsize.X * i, 0) + (-14,-10) + TextPosExtra, flags | DI_TEXT_ALIGN_CENTER, Font.CR_WHITE, ItemAlpha2);
+
+						if (TextSize <= 0) TextPosExtra = (0,0);
+						if (TextSize == 1) TextPosExtra = (1,0);
+						if (TextSize >= 2) TextPosExtra = (1,2);
+						DrawString(parms.amountfont, FormatNumber(item.MaxAmount, 0, 10), TextPos + (boxsize.X * i, 0) + (-2,-2) + TextPosExtra, flags | DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD, ItemAlpha2);
+						
+						TextPosExtra = (0,0);
+					}
+					else
+					{
+						if (item.Amount <= 0) TextTranslation = Font.CR_DARKRED;
+						else if (item.Amount >= item.MaxAmount) TextTranslation = Font.CR_LIGHTBLUE;
+						else
+						{
+							if (ItemHeldRatio <= 250) TextTranslation = Font.CR_RED;
+							else if (ItemHeldRatio > 250 && ItemHeldRatio <= 500) TextTranslation = Font.CR_ORANGE;
+							else if (ItemHeldRatio > 500 && ItemHeldRatio <= 750) TextTranslation = Font.CR_YELLOW;
+							else if (ItemHeldRatio > 750 && ItemHeldRatio <= 1000) TextTranslation = Font.CR_GREEN;
+						}
+						if (TextSize <= 0) TextPosExtra = (0,0);
+						if (TextSize == 1) TextPosExtra = (1,0);
+						if (TextSize >= 2) TextPosExtra = (1,2);
+						DrawString(parms.amountfont, FormatNumber(item.Amount, 0, 6), TextPos + (boxsize.X * i, 0) + (-2,-2) + TextPosExtra, flags | DI_TEXT_ALIGN_RIGHT, TextTranslation, ItemAlpha2);
+
+						TextPosExtra = (0,0);
+					}
+				}
+			}
+			i++;
+		}
+
+		// Is there something to the left?
+		if (CPlayerPawn.FirstInv() != CPlayerPawn.InvFirst)
+		{
+			DrawTexture(parms.left, position + (-parms.arrowoffset.X, parms.arrowoffset.Y), flags | DI_ITEM_RIGHT|DI_ITEM_VCENTER);
+		}
+		// Is there something to the right?
+		if (item != NULL)
+		{
+			DrawTexture(parms.right, position + parms.arrowoffset + (width, 0), flags | DI_ITEM_LEFT|DI_ITEM_VCENTER);
+		}
+	}
+	
 	override void Draw (int state, double TicFrac)
 	{
 		Super.Draw (state, TicFrac);
@@ -341,10 +654,11 @@ class KCStatusBarMain : BaseStatusBar
 			DrawFullscreenKeys();
 		}
 		
-		if (isInventoryBarVisible())
-		{
-			DrawInventoryBar(diparms, (0, 0), 7, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
-		}
+			int numboxes = kc_inventorybarboxes;
+			if (numboxes <= 1) numboxes = 1;
+			if (numboxes >= 20) numboxes = 20;
+			DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
+			//Console.Printf("End Of ScreenBlocks Check");
 	}
 	
 	protected virtual void DrawFullscreenKeys()

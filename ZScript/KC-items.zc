@@ -1,4 +1,55 @@
-class TimeSeraphCharm : CustomInventoryExt
+class BaseTimeSeraphArtifact : CustomInventoryExt
+{
+	void PickupArtifactFirstTime()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
+		}
+	}
+	
+	int CheckNumArtifacts()
+	{
+		actor player = players[0].mo;
+		int numartifacts;
+		if (player.CountInv("TimeSeraphCharm")) numartifacts++;
+		if (player.CountInv("TimeSeraphPocketWatch")) numartifacts++;
+		if (player.CountInv("TimeSeraphBangle")) numartifacts++;
+		return numartifacts;
+	}
+	
+	int DecideColorPhase(int numartifacts)
+	{
+		actor player = players[0].mo;
+		string type = GetClassName();
+		int colorphase;
+		// 0 = Platinum [neutral]
+		// 1 = Aqua-Blue
+		// 2 = Lime-Green
+		// 3 = Violet-Purple
+		
+		if (Distance3D(player) <= 1024)
+		{
+			colorphase = numartifacts;
+		}
+		else
+		{
+			colorphase = 0;
+		}
+		return colorphase;
+	}
+	
+	void CheckExistance()
+	{
+		actor player = players[0].mo;
+		string type = GetClassName();
+		if (player.CountInv(type)) Destroy();
+	}
+}
+
+class TimeSeraphCharm : BaseTimeSeraphArtifact
 {
 	default
 	{
@@ -23,21 +74,36 @@ class TimeSeraphCharm : CustomInventoryExt
 	States
 	{
 		Spawn:
-			TSCH A 1
+			TSCH A 0 BRIGHT
 			{
 				actor player = players[0].mo;
-				if (player.CountInv("TimeSeraphCharm")) Destroy();
+				invoker.CheckExistance();
+				
+				int numartifacts = invoker.CheckNumArtifacts();
+				int colorphase = invoker.DecideColorPhase(numartifacts);
+				if (colorphase <= 0) return resolvestate("Idle0");
+				if (colorphase == 1) return resolvestate("Idle1");
+				if (colorphase == 2) return resolvestate("Idle2");
+				if (colorphase >= 3) return resolvestate("Idle3");
+				return resolvestate("Idle0");
 			}
 			Loop;
+		Idle0:
+			TSCH A 1 BRIGHT;
+			goto Spawn;
+		Idle1:
+			TSCH B 1 BRIGHT;
+			goto Spawn;
+		Idle2:
+			TSCH C 1 BRIGHT;
+			goto Spawn;
+		Idle3:
+			TSCH D 1 BRIGHT;
+			goto Spawn;
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem)
-				{
-					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
-				}
+				invoker.PickupArtifactFirstTime();
 			}
 			stop;
 		Use:
@@ -69,7 +135,7 @@ class TimeSeraphCharm : CustomInventoryExt
 	}
 }
 
-class TimeSeraphPocketWatch : CustomInventoryExt
+class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 {
 	default
 	{
@@ -94,21 +160,36 @@ class TimeSeraphPocketWatch : CustomInventoryExt
 	States
 	{
 		Spawn:
-			TSPW A 1
+			TSPW A 0 BRIGHT
 			{
+				invoker.CheckExistance();
 				actor player = players[0].mo;
-				if (player.CountInv("TimeSeraphPocketWatch")) Destroy();
+
+				int numartifacts = invoker.CheckNumArtifacts();
+				int colorphase = invoker.DecideColorPhase(numartifacts);
+				if (colorphase <= 0) return resolvestate("Idle0");
+				if (colorphase == 1) return resolvestate("Idle1");
+				if (colorphase == 2) return resolvestate("Idle2");
+				if (colorphase >= 3) return resolvestate("Idle3");
+				return resolvestate("Idle0");
 			}
 			Loop;
+		Idle0:
+			TSPW A 1 BRIGHT;
+			goto Spawn;
+		Idle1:
+			TSPW B 1 BRIGHT;
+			goto Spawn;
+		Idle2:
+			TSPW C 1 BRIGHT;
+			goto Spawn;
+		Idle3:
+			TSPW D 1 BRIGHT;
+			goto Spawn;
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem)
-				{
-					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
-				}
+				invoker.PickupArtifactFirstTime();
 			}
 			stop;
 		Use:
@@ -140,7 +221,7 @@ class TimeSeraphPocketWatch : CustomInventoryExt
 	}
 }
 
-class TimeSeraphBangle : CustomInventoryExt
+class TimeSeraphBangle : BaseTimeSeraphArtifact
 {
 	default
 	{
@@ -165,21 +246,36 @@ class TimeSeraphBangle : CustomInventoryExt
 	States
 	{
 		Spawn:
-			TSBG A 1
+			TSBG A 1 BRIGHT
 			{
+				invoker.CheckExistance();
 				actor player = players[0].mo;
-				if (player.CountInv("TimeSeraphBangle")) Destroy();
+
+				int numartifacts = invoker.CheckNumArtifacts();
+				int colorphase = invoker.DecideColorPhase(numartifacts);
+				if (colorphase <= 0) return resolvestate("Idle0");
+				if (colorphase == 1) return resolvestate("Idle1");
+				if (colorphase == 2) return resolvestate("Idle2");
+				if (colorphase >= 3) return resolvestate("Idle3");
+				return resolvestate("Idle0");
 			}
 			Loop;
+		Idle0:
+			TSBG A 1 BRIGHT;
+			goto Spawn;
+		Idle1:
+			TSBG B 1 BRIGHT;
+			goto Spawn;
+		Idle2:
+			TSBG C 1 BRIGHT;
+			goto Spawn;
+		Idle3:
+			TSBG D 1 BRIGHT;
+			goto Spawn;
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem)
-				{
-					MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
-				}
+				invoker.PickupArtifactFirstTime();
 			}
 			stop;
 		Use:
