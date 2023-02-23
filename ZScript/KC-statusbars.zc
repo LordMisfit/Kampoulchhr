@@ -410,10 +410,33 @@ class KCStatusBarMain : BaseStatusBar
 			DrawImage("STFBANY", (143, 168), DI_ITEM_OFFSETS|DI_TRANSLATABLE);
 		}
 		
-		if (CPlayer.mo.InvSel != null && !Level.NoInventoryBar)
+		inventory item = CPlayer.mo.InvSel;
+		if (item != null && !Level.NoInventoryBar) // if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
 		{
-			DrawInventoryIcon(CPlayer.mo.InvSel, (160, 198), DI_DIMDEPLETED);
-			if (CPlayer.mo.InvSel.Amount > 1)
+			double itemalpha = 1.0;
+			vector2 itemscale = (1.0, 1.0);
+			if (item.GetClassName() == "TimeSeraphCharm") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.25;
+				itemscale.y *= 0.25;
+			}
+			else
+			if (item.GetClassName() == "TimeSeraphPocketWatch") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.1667;
+				itemscale.y *= 0.1667;
+			}
+			else
+			if (item.GetClassName() == "TimeSeraphBangle") 
+			{
+				itemalpha *= 1.0;
+				itemscale.x *= 0.1667;
+				itemscale.y *= 0.1667;
+			}
+			DrawInventoryIcon(item, (160, 198), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
+			if (item.Amount > 1)
 			{
 				DrawString(mAmountFont, FormatNumber(CPlayer.mo.InvSel.Amount), (175, 198-mIndexFont.mFont.GetHeight()), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
 			}
@@ -422,6 +445,7 @@ class KCStatusBarMain : BaseStatusBar
 		{
 			DrawTexture(GetMugShot(5), (143, 168), DI_ITEM_OFFSETS);
 		}
+		
 		if (isInventoryBarVisible())
 		{
 			int numboxes = kc_inventorybarboxes;
