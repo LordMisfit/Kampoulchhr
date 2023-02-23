@@ -48,14 +48,50 @@ class KCPlayerPawn : PlayerPawn
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
 		int olddmg = damage;
+		int prevdmg = damage;
+		double TSArmor1DmgChance;
+		int TimeSeraphArmor = 0;
+		int TSArmorDmgDivisor = 1;
+		if (CountInv("TSArmorTier2"))
+		{
+			TimeSeraphArmor = 2;
+			TSArmorDmgDivisor = 1000000;
+		}
+		else if (CountInv("TSArmorTier1"))
+		{
+			TimeSeraphArmor = 1;
+			TSArmorDmgDivisor = 1000;
+		}
+		if (TimeSeraphArmor)
+		{
+			TSArmor1DmgChance = double((damage * 1.0) / (TSArmorDmgDivisor * 1.0));
+			damage /= TSArmorDmgDivisor; 
+			if (kcdebug_playerdamagemobj) Console.Printf("TimeSeraphArmor: %d, TSArmorDmgDivisor: %d, TSArmor1DmgChance: %.8f", TimeSeraphArmor, TSArmorDmgDivisor, TSArmor1DmgChance);
+			flags |= DMG_NO_ARMOR; // TimeSeraphArmor's presence overrides other armors, thus they don't take damage
+			if (damage <= 0)
+			{
+				damage = 0;
+				double TSArmor1DmgRoll = frandom(0.000,1.000);
+				if (TSArmor1DmgRoll <= TSArmor1DmgChance) damage = 1;
+				if (damage <= 0)
+				{
+					flags |= DMG_THRUSTLESS;
+					if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified: TSArmor1DmgRoll: %.8f [out of 1.00000000] / TSArmor1DmgChance: %.8f", TSArmor1DmgRoll, TSArmor1DmgChance);
+					return 0; // Null all potential future checks and just inflict no damage
+				}
+				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage: %d [prevdmg: %d]", damage, prevdmg);
+			}
+		}
+		
+		prevdmg = damage;
 		if (level.isFrozen()) 
 		{
 			if (kcdebug_timefreezechecks) Console.Printf("level.isFrozen(): %d", level.isFrozen());
 			if (isvoodoodoll) return 0;
 			else
 			{
-				if (damage > 0 && random(1,16384)) damage = 1;
-																			else damage = 0;
+				if (damage > 0 && random(1,16384) <= 1) damage = 1;
+																					 else damage = 0;
 				if (damage <= 0)
 				{
 					if (kcdebug_timefreezechecks) Console.Printf("damage: %d [prev: %d]", damage, olddmg);
@@ -66,6 +102,7 @@ class KCPlayerPawn : PlayerPawn
 		//******************************
 		let ret = super.DamageMobj(inflictor, source, damage, mod, flags, angle);
 		//******************************
+		if (kcdebug_playerdamagemobj) Console.Printf("Final Damage: %d [vs %d]", ret, olddmg);
 		return ret;
 	}
 }
