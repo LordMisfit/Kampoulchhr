@@ -1,3 +1,12 @@
+class EmptyPowerup : PowerSpeed
+{
+	default
+	{
+		+POWERSPEED.NOTRAIL;
+		Speed 1.0;
+	}
+}
+
 class INTERMAPChecker : PlaceHolderItem
 {
 	default
@@ -195,7 +204,7 @@ class KCTimeFreezer3 : KCTimeFreezer
 	}
 }
 
-class KCTimeCooldown : PowerSpeed
+class KCTimeCooldown : EmptyPowerup
 {
 	int EffectTics2;
 	int Dire;
@@ -207,17 +216,15 @@ class KCTimeCooldown : PowerSpeed
 
 	Default
 	{
-		+POWERSPEED.NOTRAIL;
 		Powerup.Duration 2147483645;
 		//Powerup.Colormap 0.0, 0.0, 0.0, 0.5, 0.5, 0.5;
 		Powerup.Color "252540", 0.334;
 		Inventory.Icon "TMFRZIC0";
-		Speed 1.0;
 	}
 
 	override void Tick ()
 	{
-		PowerSpeed.Tick();
+		EmptyPowerup.Tick();
 		bool debugtick = false;
 
 		timer++;
@@ -267,6 +274,7 @@ class KCTimeCooldown : PowerSpeed
 
 class CustomInventoryExt : CustomInventory
 {
+	string texname;
 	int user_type;
 	
 	bool PickupUseVoice;
@@ -848,5 +856,37 @@ class TSArmorTier2 : PlaceHolderItem
 	{
 		inventory.icon "";
 		Inventory.MaxAmount 1;
+	}
+}
+
+class TSArtifactsInUse : EmptyPowerup
+{
+	string texname;
+	default
+	{
+		Powerup.Duration 2147483645;
+		inventory.icon "";
+		Inventory.MaxAmount 1;
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		texname = "TSACA0";
+		
+		if (MiscItem)
+		{
+			if (MiscItem.TimeArmorRelicsUsedBits == 1) texname = "TSACA0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 2) texname = "TSACB0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 3) texname = "TSACC0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 4) texname = "TSACD0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 5) texname = "TSACE0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 6) texname = "TSACF0";
+			if (MiscItem.TimeArmorRelicsUsedBits == 7) texname = "TSACG0";
+		}
+		if (kcdebug_timeserapharmor) Console.Printf("texname: %s", texname);
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		super.Tick();
 	}
 }

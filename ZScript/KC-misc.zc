@@ -9,6 +9,7 @@ class PlayerStatItem : Inventory
 	double TimeArmorEnergyTics;
 	double TimeArmorEnergyMaxTics;
 	int TimeArmorRelicsOwned;
+	int TimeArmorRelicsUsedBits;
 	string nm, nn, no, np;
 	
 	int oldhealthratio;
@@ -671,11 +672,19 @@ class PlayerStatItem : Inventory
 		
 		TimeArmorEnergyMaxTics = 0;
 		TimeArmorRelicsOwned = 0;
+		owner.A_SetInventory("TSArtifactsInUse",0);
+		TimeArmorRelicsUsedBits = 0;
 		if (owner.CountInv("TimeSeraphCharm") > 0)
 		{
 			TimeArmorRelicsOwned++;
-			if (owner.CountInv("TimeSeraphPocketWatch")) TimeArmorRelicsOwned++;
-			if (owner.CountInv("TimeSeraphBangle")) TimeArmorRelicsOwned++;
+			if (owner.CountInv("TimeSeraphPocketWatch")) 
+			{
+				TimeArmorRelicsOwned++;
+			}
+			if (owner.CountInv("TimeSeraphBangle"))
+			{
+				TimeArmorRelicsOwned++;
+			}
 			
 			TimeArmorEnergyMaxTics = ((3600 * TimeArmorRelicsOwned) * TICRATE);
 			
@@ -685,9 +694,23 @@ class PlayerStatItem : Inventory
 				nn = "TSArmorTier2";
 				no = "TimeSeraphVisor";
 				drainamt = 0;
-				if (owner.CountInv(nm)) drainamt = 10;
-				if (owner.CountInv(nn)) drainamt = 40;
-				if (owner.CountInv(no)) drainamt += 2;
+				if (owner.CountInv(nn)) 
+				{
+					drainamt += 40;
+					TimeArmorRelicsUsedBits += 3;
+				}
+				else
+				if (owner.CountInv(nm)) 
+				{
+					drainamt += 10;
+					TimeArmorRelicsUsedBits += 1;
+				}
+				if (owner.CountInv(no)) 
+				{
+					TimeArmorRelicsUsedBits += 4;
+					drainamt += 2;
+				}
+				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				TimeArmorEnergyTics -= drainamt;
 				if (TimeArmorEnergyTics <= 0.0000) 
 				{

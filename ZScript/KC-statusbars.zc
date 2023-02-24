@@ -136,22 +136,22 @@ class KCStatusBarMain : BaseStatusBar
 						if (item.GetClassName() == "TimeSeraphCharm") 
 						{
 							InvIconAlpha = 1.0;
-							InvIconScaleX *= 0.25;
-							InvIconScaleY *= 0.25;
+							InvIconScaleX *= 0.3;
+							InvIconScaleY *= 0.3;
 						}
 						else
 						if (item.GetClassName() == "TimeSeraphPocketWatch") 
 						{
 							InvIconAlpha = 1.0;
-							InvIconScaleX *= 0.1667;
-							InvIconScaleY *= 0.1667;
+							InvIconScaleX *= 0.2;
+							InvIconScaleY *= 0.2;
 						}
 						else
 						if (item.GetClassName() == "TimeSeraphBangle") 
 						{
 							InvIconAlpha = 1.0;
-							InvIconScaleX *= 0.1667;
-							InvIconScaleY *= 0.1667;
+							InvIconScaleX *= 0.25;
+							InvIconScaleY *= 0.25;
 						}
 						else
 						{
@@ -419,24 +419,24 @@ class KCStatusBarMain : BaseStatusBar
 			if (item.GetClassName() == "TimeSeraphCharm") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.25;
-				itemscale.y *= 0.25;
+				itemscale.x *= 0.3;
+				itemscale.y *= 0.3;
 				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphPocketWatch") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.1667;
-				itemscale.y *= 0.1667;
+				itemscale.x *= 0.2;
+				itemscale.y *= 0.2;
 				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphBangle") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.1667;
-				itemscale.y *= 0.1667;
+				itemscale.x *= 0.25;
+				itemscale.y *= 0.25;
 				showamt = false;
 			}
 			DrawInventoryIcon(item, (160, 198), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
@@ -494,6 +494,23 @@ class KCStatusBarMain : BaseStatusBar
 				if (PowerFrightener(item)) ItemFontCLR = font.CR_Gold;
 				if (PowerInfiniteAmmo(item)) ItemFontCLR = font.cr_olive;
 				if (PowerDoubleFiringSpeed(item)) ItemFontCLR = font.cr_red;
+				if (TSArtifactsInUse(item))
+				{
+					if (kcdebug_timeserapharmor) Console.Printf("TSArtifactsInUse");
+					if (MiscItem)
+					{
+						if (MiscItem.TimeArmorRelicsUsedBits == 1) ItemFontCLR = font.CR_LightBlue;
+						if (MiscItem.TimeArmorRelicsUsedBits == 2) ItemFontCLR = font.CR_LightBlue;
+						if (MiscItem.TimeArmorRelicsUsedBits == 3) ItemFontCLR = font.CR_Green;
+						if (MiscItem.TimeArmorRelicsUsedBits == 4) ItemFontCLR = font.CR_LightBlue;
+						if (MiscItem.TimeArmorRelicsUsedBits == 5) ItemFontCLR = font.CR_Green;
+						if (MiscItem.TimeArmorRelicsUsedBits == 6) ItemFontCLR = font.CR_Green;
+						if (MiscItem.TimeArmorRelicsUsedBits == 7) ItemFontCLR = font.CR_Purple;
+						ItemEffectTics = MiscItem.TimeArmorEnergyTics;
+						ItemEffectSecs = 100 * ((MiscItem.TimeArmorEnergyTics * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 1.0));
+						if (kcdebug_timeserapharmor) Console.Printf("MiscItem.TimeArmorRelicsUsedBits: %d, MiscItem.TimeArmorEnergyTics: %d", MiscItem.TimeArmorRelicsUsedBits, MiscItem.TimeArmorEnergyTics);
+					}
+				}
 				if (KCTimeFreezer(item))
 				{
 					if (MiscItem && MiscItem.timestopstate >= 1)
@@ -530,19 +547,24 @@ class KCStatusBarMain : BaseStatusBar
 						pos.x = -20;
 						pos.y += POWERUPICONSIZE * 3 / 2;
 					}
-					if (ItemEffectTics < 350000 && ItemEffectTics != 0 && ItemEffectTics > -10000) // don't show timers for powerups with timers longer than 9999 seconds V:
+					int maxticlimit = 350000;
+					if (TSArtifactsInUse(item)) maxticlimit = 3500000;
+					if (ItemEffectTics < maxticlimit && ItemEffectTics != 0 && ItemEffectTics > -10000) // don't show timers for powerups with timers longer than 9999 seconds V:
 					{
 						pos.y += 1;
-						if (ItemEffectTics <= 175) // Shake the timer fast when it has less than 5 seconds left
+						if (!TSArtifactsInUse(item))
 						{
-							if (ItemEffectTics % 10 >= 9) pos.y += 1; 
-							else if (ItemEffectTics % 10 >= 7) pos.y += 2; 
-							else if (ItemEffectTics % 10 >= 5) pos.y += 1; 
-							else if (ItemEffectTics % 10 >= 3) pos.y += 2; 
-							else if (ItemEffectTics % 10 >= 1) pos.y += 1; 
+							if (ItemEffectTics <= 175) // Shake the timer fast when it has less than 5 seconds left
+							{
+								if (ItemEffectTics % 10 >= 9) pos.y += 1; 
+								else if (ItemEffectTics % 10 >= 7) pos.y += 2; 
+								else if (ItemEffectTics % 10 >= 5) pos.y += 1; 
+								else if (ItemEffectTics % 10 >= 3) pos.y += 2; 
+								else if (ItemEffectTics % 10 >= 1) pos.y += 1; 
+							}
+							if (ItemEffectTics >= 177 && ItemEffectTics <= 1050) { if (ItemEffectTics % 30 >= 15) pos.y += 1; }
+							if (ItemEffectTics >= 1051) { if (ItemEffectTics % 50 >= 25) pos.y += 1; }
 						}
-						if (ItemEffectTics >= 177 && ItemEffectTics <= 1050) { if (ItemEffectTics % 30 >= 15) pos.y += 1; }
-						if (ItemEffectTics >= 1051) { if (ItemEffectTics % 50 >= 25) pos.y += 1; }
 						if (kchud_showpoweruptimers) 
 						{
 							if (!(gameinfo.gametype == GAME_Hexen && PowerFlight(item))) 
@@ -559,28 +581,40 @@ class KCStatusBarMain : BaseStatusBar
 								{
 								}
 								*/
-								DrawString(mKCMFont, FormatNumber(ItemEffectSecs), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+								if (TSArtifactsInUse(item))
+								{
+									string ItemEffectSecsDS = "";
+									ItemEffectSecsDS.AppendFormat("%d%", ItemEffectSecs);
+									DrawString(mKCMFont, ItemEffectSecsDS, (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+								}
+								else
+								{
+									DrawString(mKCMFont, FormatNumber(ItemEffectSecs), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_CENTER, ItemFontCLR, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+								}
 							}
 						}
-						if (ItemEffectTics <= 175) 
+						if (!TSArtifactsInUse(item))
 						{
-							if (ItemEffectTics % 10 >= 9) pos.y -= 1; 
-							else if (ItemEffectTics % 10 >= 7) pos.y -= 2; 
-							else if (ItemEffectTics % 10 >= 5) pos.y -= 1; 
-							else if (ItemEffectTics % 10 >= 3) pos.y -= 2; 
-							else if (ItemEffectTics % 10 >= 1) pos.y -= 1; 
+							if (ItemEffectTics <= 175) 
+							{
+								if (ItemEffectTics % 10 >= 9) pos.y -= 1; 
+								else if (ItemEffectTics % 10 >= 7) pos.y -= 2; 
+								else if (ItemEffectTics % 10 >= 5) pos.y -= 1; 
+								else if (ItemEffectTics % 10 >= 3) pos.y -= 2; 
+								else if (ItemEffectTics % 10 >= 1) pos.y -= 1; 
+							}
+							if (ItemEffectTics >= 177 && ItemEffectTics <= 1050) { if (ItemEffectTics % 30 >= 15) pos.y -= 1; }
+							if (ItemEffectTics >= 1051) { if (ItemEffectTics % 50 >= 25) pos.y -= 1; }
 						}
-						if (ItemEffectTics >= 177 && ItemEffectTics <= 1050) { if (ItemEffectTics % 30 >= 15) pos.y -= 1; }
-						if (ItemEffectTics >= 1051) { if (ItemEffectTics % 50 >= 25) pos.y -= 1; }
 						pos.y -= 1;
-					}
-					if (ItemEffectLevel > 0)
-					{
-						pos.x += -8;
-						pos.y += -32;
-						DrawString(mKCLFont, FormatNumber(ItemEffectLevel), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_RIGHT, font.cr_sapphire, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
-						pos.x -= -8;
-						pos.y -= -32;
+						if (ItemEffectLevel > 0)
+						{
+							pos.x += -8;
+							pos.y += -32;
+							DrawString(mKCLFont, FormatNumber(ItemEffectLevel), (pos.x+POWERUPICONSIZE, pos.y) + PosDiff, DI_TEXT_ALIGN_RIGHT, font.cr_sapphire, (0.9*transp), -1, 4, (1.0, 1.0)); // 41, -43
+							pos.x -= -8;
+							pos.y -= -32;
+						}
 					}
 				}
 			}
@@ -681,24 +715,24 @@ class KCStatusBarMain : BaseStatusBar
 			if (item.GetClassName() == "TimeSeraphCharm") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.25;
-				itemscale.y *= 0.25;
+				itemscale.x *= 0.3;
+				itemscale.y *= 0.3;
 				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphPocketWatch") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.1667;
-				itemscale.y *= 0.1667;
+				itemscale.x *= 0.2;
+				itemscale.y *= 0.2;
 				showamt = false;
 			}
 			else
 			if (item.GetClassName() == "TimeSeraphBangle") 
 			{
 				itemalpha *= 1.0;
-				itemscale.x *= 0.1667;
-				itemscale.y *= 0.1667;
+				itemscale.x *= 0.25;
+				itemscale.y *= 0.25;
 				showamt = false;
 			}
 			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);

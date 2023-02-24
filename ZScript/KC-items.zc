@@ -104,6 +104,21 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		scale 0.1667;
 	}
 	
+	override void Tick()
+	{
+		super.Tick();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		texname = "TSCHA0";
+		if (MiscItem)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) texname = "TSCHB0";
+			if (MiscItem.TimeArmorRelicsOwned == 2) texname = "TSCHC0";
+			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSCHD0";
+		}
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+	
 	States
 	{
 		Spawn:
@@ -190,6 +205,21 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		scale 0.125;
 	}
 	
+	override void Tick()
+	{
+		super.Tick();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		texname = "TSPWA0";
+		if (MiscItem)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) texname = "TSPWB0";
+			if (MiscItem.TimeArmorRelicsOwned == 2) texname = "TSPWC0";
+			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSPWD0";
+		}
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+	
 	States
 	{
 		Spawn:
@@ -274,6 +304,21 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 		Inventory.Amount 1;
 		Inventory.MaxAmount 1;
 		scale 0.125;
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		texname = "TSBGA0";
+		if (MiscItem)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) texname = "TSBGB0";
+			if (MiscItem.TimeArmorRelicsOwned == 2) texname = "TSBGC0";
+			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSBGD0";
+		}
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 	
 	States
