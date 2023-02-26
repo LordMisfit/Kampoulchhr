@@ -389,6 +389,51 @@ class HeiwaWeapon : KCWeaponBase
 	}
 }
 
+class DualTommyGunPickup : CustomInventoryExt
+{
+	default
+	{
+		Inventory.PickupMessage "You picked up an Extra Thompson Machine Gun! \c[gold]Can Now Dual Wield!\c-";
+		Inventory.PickupSound "TOMPKP";
+		+DONTGIB
+		-COUNTITEM;
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		Scale 0.6;
+	}
+	
+	states
+	{
+		Spawn:
+			TOMM A 0 NoDelay;
+			TOMM A 4
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (player.CountInv("DualTommyGuns"))
+				{
+					A_SpawnItemEx("TommyGun",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+					Destroy();
+				}
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (player) 
+				{
+					player.A_GiveInventory("DualTommyGuns",1);
+					player.A_GiveInventory("TommAmmo",50);
+				}
+			}
+			stop;
+	}
+}
+
 // Tommy Gun
 class TommyGun : KCWeaponBase
 {
@@ -400,6 +445,8 @@ class TommyGun : KCWeaponBase
 		Weapon.AmmoGive 50;
 		Weapon.AmmoUse1 1;
 		Weapon.AmmoUse2 1;
+		Weapon.BobSpeed 0.334;
+		Weapon.BobStyle "Smooth";
 		Inventory.PickupSound "TOMPKP";
 		Decal "Bulletchip";
 		Attacksound "DSTOMFR";
@@ -414,7 +461,6 @@ class TommyGun : KCWeaponBase
 		double offsetmulti = 1.0;
 		double accuracyx = 1.0;
 		double accuracyy = 1.0;
-		invoker.tommybarrageno++;
 		barrageangoffset = 0.0;
 		if (type == 0)
 		{
@@ -465,17 +511,22 @@ class TommyGun : KCWeaponBase
 	states
 	{
 		Spawn:
-			TOMM A 4;
-			Loop;
-		Pickup:
-			TNT1 A 0
+			TOMM A 0 NoDelay;
+			TOMM A 4
 			{
 				let globalvars = KCGlobalVariables.Get();
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (player.CountInv("TommyGun")) player.A_SetInventory("DualTommyGuns",1);
+				if (player.CountInv("TommyGun")) 
+				{
+					if (!player.CountInv("DualTommyGuns"))
+					{
+						A_SpawnItemEx("DualTommyGunPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						A_Destroy();
+					}
+				}
 			}
-			stop;
+			Loop;
 		
 		Select:
 			TOMG A 0
@@ -512,6 +563,10 @@ class TommyGun : KCWeaponBase
 			Loop;
 			
 		LeftReady:
+			TOM2 A 0
+			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
+			}
 			TOM2 A 1
 			{
 			}
@@ -525,6 +580,7 @@ class TommyGun : KCWeaponBase
 			}
 			TOMF ABCD 2 bright 
 			{
+				invoker.tommybarrageno++;
 				if (CountInv("DualTommyGuns"))
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
@@ -543,8 +599,9 @@ class TommyGun : KCWeaponBase
 			Goto Ready;
 		
 		LeftFire:
-			TOF3 A 0 Bright
+			TOF3 A 0 bright 
 			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
 			}
 			TOF3 ABCD 2 bright 
 			{
@@ -552,6 +609,10 @@ class TommyGun : KCWeaponBase
 				return resolvestate(null);
 			}
 		LeftFireEnd:
+			TOM2 A 0
+			{
+				A_Overlay(3,"LeftReady",false);
+			}
 			Stop;
 
 		AltFire:
@@ -562,9 +623,20 @@ class TommyGun : KCWeaponBase
 			}
 			TOF2 EFGHIJKLKJIHGFEDBCABCD 2 Bright
 			{
-				if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
-				A_TommyShot(1,0);
-				if (CountInv("DualTommyGuns")) A_TommyShot(1,1);
+				invoker.tommybarrageno++;
+				if (CountInv("DualTommyGuns"))
+				{
+					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
+					A_TommyShot(1,0);
+					if (CountInv("DualTommyGuns")) A_TommyShot(1,1);
+					return resolvestate(null);
+				}
+				else
+				{
+					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+					A_TommyShot(1,0);
+					return resolvestate(null);
+				}
 				return resolvestate(null);
 			}
 			Goto Ready;
@@ -572,6 +644,7 @@ class TommyGun : KCWeaponBase
 		LeftAltFire:
 			TOF4 E 0 Bright
 			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
 			}
 			TOF4 EFGHIJKLKJIHGFEDBCABCD 2 Bright
 			{
@@ -587,6 +660,10 @@ class TommyGun : KCWeaponBase
 				}
 			}
 		LeftAltFireEnd:
+			TOM2 A 0
+			{
+				A_Overlay(3,"LeftReady",false);
+			}
 			Stop;
 	}
 }
