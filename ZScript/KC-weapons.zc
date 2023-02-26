@@ -1,0 +1,528 @@
+class KCWeaponBase : Weapon
+{
+	int temp1;
+	int tommybarrageno;
+	
+	int ActualLevel;
+	int kickspeed;
+	int punchspeed;
+	int uppercutspeed;
+	int buttons;
+	int PlayerLevel;
+	
+	bool PickupUseVoice;
+	bool PickupUseVoice2;
+	string PickupSnd2;
+	property PickUpVoice: PickupUseVoice;
+	property PickUpVoice2: PickupUseVoice2;
+	property PickupSound2: PickupSnd2;
+	
+	default
+	{
+		+WEAPON.NOAUTOAIM;
+		+DONTGIB;
+	}
+	override void PlayPickupSound (Actor toucher)
+	{
+		double atten;
+		int chan;
+		int flags = 0;
+
+		if (bNoAttenPickupSound)
+		{
+			atten = ATTN_NONE;
+		}
+		/*
+		else if ((ItemFlags & IF_FANCYPICKUPSOUND) &&
+			(toucher == NULL || toucher->CheckLocalView()))
+		{
+			atten = ATTN_NONE;
+		}
+		*/
+		else
+		{
+			atten = ATTN_NORM;
+		}
+
+		if (toucher != NULL && toucher.CheckLocalView())
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+		}
+		else
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_MAYBE_LOCAL;
+		}
+		//Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		double maskpitch = 1.00;
+		if (PickupUseVoice) 
+		{
+			if (MiscItem && MiscItem.CanTalkUnderwater)
+			{
+				if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+			}
+		}
+		toucher.A_StopSound(chan);
+		toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
+		
+		if (PickupSnd2 != "")
+		{
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_MAYBE_LOCAL;
+			}
+			//Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
+			
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+			double maskpitch = 1.00;
+			if (PickupUseVoice2) 
+			{
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+				}
+			}
+			toucher.A_StopSound(chan);
+			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
+		}
+	}
+	
+	action bool A_CheckBerserk()
+	{
+		actor player = players[0].mo;
+		bool check = false;
+		if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) check = true;
+		return check;
+	}
+
+	action bool A_CheckInfiniteAmmo()
+	{
+		actor player = players[0].mo;
+		bool check = false;
+		if (player.CountInv("PowerInfiniteAmmo")) check = true;
+		return check;
+	}
+	
+	action void A_Destroy()
+	{
+		self.Destroy();
+	}
+	
+	action double A_LowerRaiseCheck(double movespeed)
+	{
+		string nm, nn, no, np, nq, nr;
+		double bufffactor = 1.0;
+		double weaponfactor = 1.0;
+		if (player.mo)
+		{
+			let MiscItem = PlayerStatItem(Player.mo.FindInventory("PlayerStatItem"));
+			int TruePlayerLevel = invoker.ActualLevel;
+			
+			if (MiscItem) 
+			{
+				movespeed *= (1.0 + (TruePlayerLevel * 0.02));
+				
+				movespeed *= bufffactor;
+				
+				if (player.ReadyWeapon is "TommyGun") weaponfactor -= 0.10;
+				nm = "ImpalerXBow";
+				if (player.ReadyWeapon is nm)  
+				{
+					double temp = (-0.25 + (TruePlayerLevel * 0.025));
+					if (temp < -0.25) temp = -0.25;
+					if (temp > 0.25) temp = 0.25;
+					weaponfactor += temp;
+				}
+				nm = "DualImpalerXBow";
+				if (player.ReadyWeapon is nm)  
+				{
+					double temp = (-0.375 + (TruePlayerLevel * 0.025));
+					if (temp < -0.375) temp = -0.375;
+					if (temp > 0.25) temp = 0.25;
+					weaponfactor += temp;
+				}
+				nm = "ScepterOfSouls";
+				if (player.ReadyWeapon is nm) weaponfactor += 0.1667;
+				nm = "DualScepterOfSouls";
+				if (player.ReadyWeapon is nm) weaponfactor += 0.125;
+				movespeed *= weaponfactor;
+				
+				if (player.mo.CountInv("PowerStrength") || player.mo.CountInv("KCPowerStrength")) movespeed *= 1.5;
+			}
+			if (movespeed > 80) movespeed = 80;
+			
+			if (kcdebug_weaponstatdisplays) Console.Printf("movespeed: %d, bufffactor: %.4f, weaponfactor: %.4f", movespeed, bufffactor, weaponfactor);
+		}
+		return movespeed;
+	}
+	
+	action void A_Lower(int movespeed = 6)
+	{
+		movespeed = A_LowerRaiseCheck(movespeed);
+		if (kcdebug_weaponstatdisplays) Console.Printf("A_Lower: (%d)", movespeed);
+		let player = player;
+
+		if (null == player)
+		{
+			return;
+		}
+		if (null == player.ReadyWeapon)
+		{
+			player.mo.BringUpWeapon();
+			return;
+		}
+		let psp = player.GetPSprite(PSP_WEAPON);
+		if (!psp) return;
+		if (player.morphTics || player.cheats & CF_INSTANTWEAPSWITCH)
+		{
+			psp.y = WEAPONBOTTOM;
+		}
+		else
+		{
+			psp.y += movespeed;
+		}
+		if (psp.y < WEAPONBOTTOM)
+		{ // Not lowered all the way yet
+			return;
+		}
+		ResetPSprite(psp);
+		
+		if (player.playerstate == PST_DEAD)
+		{ // Player is dead, so don't bring up a pending weapon
+			// Player is dead, so keep the weapon off screen
+			player.SetPsprite(PSP_FLASH, null);
+			psp.SetState(player.ReadyWeapon.FindState('DeadLowered'));
+			return;
+		}
+		// [RH] Clear the flash state. Only needed for Strife.
+		player.SetPsprite(PSP_FLASH, null);
+		player.mo.BringUpWeapon ();
+		return;
+	}
+	
+	action void A_Raise(int movespeed = 6)
+	{
+		movespeed = A_LowerRaiseCheck(movespeed);
+		if (kcdebug_weaponstatdisplays) Console.Printf("A_Raise: (%d)", movespeed);
+		let player = player;
+
+		if (null == player)
+		{
+			return;
+		}
+		if (player.PendingWeapon != WP_NOCHANGE)
+		{
+			player.mo.DropWeapon();
+			return;
+		}
+		if (player.ReadyWeapon == null)
+		{
+			return;
+		}
+		let psp = player.GetPSprite(PSP_WEAPON);
+		if (!psp) return;
+
+		if (psp.y <= WEAPONBOTTOM)
+		{
+			ResetPSprite(psp);
+		}
+		psp.y -= movespeed;
+		if (psp.y > WEAPONTOP)
+		{ // Not raised all the way yet
+			return;
+		}
+		psp.y = WEAPONTOP;
+		
+		psp.SetState(player.ReadyWeapon.GetReadyState());
+		return;
+	}
+	
+	action int A_WeaponCheckDoubleFireRate()
+	{
+		int result = 0;
+		if (CountInv("PowerDoubleFiringSpeed")) result = 1;
+		return result;
+	}
+	
+	action void A_WeaponReady(int flags = 0)
+	{
+		if (CountInv("IsUnconscious"))
+		{
+			if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (Pre [Base]) (%s): %d [%d]", GetClassName(), flags, gametic);
+			// Enforces Various Locks on weapons if the player is "Unconscious"
+			if (!(flags & WRF_NOBOB)) flags |= WRF_NOBOB; // Turns on WRF_NOBOB
+			if (!(flags & WRF_NOFIRE)) flags |= WRF_NOFIRE; // Turns on WRF_NOFIRE
+			if (!(flags & WRF_NOPRIMARY)) flags |= WRF_NOPRIMARY; // Turns on WRF_NOPRIMARY
+			if (!(flags & WRF_NOSECONDARY)) flags |= WRF_NOSECONDARY; // Turns on WRF_NOSECONDARY
+			if (!(flags & WRF_NOSWITCH)) flags |= WRF_NOSWITCH; // Turns on WRF_NOSWITCH
+			if (!(flags & WRF_DISABLESWITCH)) flags |= WRF_DISABLESWITCH; // Turns on WRF_DISABLESWITCH
+
+			if ((flags & WRF_ALLOWRELOAD)) flags &= ~WRF_ALLOWRELOAD; // Turns off WRF_ALLOWRELOAD
+			if ((flags & WRF_ALLOWZOOM)) flags &= ~WRF_ALLOWZOOM; // Turns off WRF_ALLOWZOOM
+			if ((flags & WRF_ALLOWUSER1)) flags &= ~WRF_ALLOWUSER1; // Turns off WRF_ALLOWUSER1
+			if ((flags & WRF_ALLOWUSER2)) flags &= ~WRF_ALLOWUSER2; // Turns off WRF_ALLOWUSER2
+			if ((flags & WRF_ALLOWUSER3)) flags &= ~WRF_ALLOWUSER3; // Turns off WRF_ALLOWUSER3
+			if ((flags & WRF_ALLOWUSER4)) flags &= ~WRF_ALLOWUSER4; // Turns off WRF_ALLOWUSER4
+			if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (post [Base]) (%s): %d [%d]", GetClassName(), flags, gametic);
+		}
+
+		if (!player) return;
+														DoReadyWeaponToSwitch(player, !(flags & WRF_NOSWITCH));
+		if ((flags & WRF_NOFIRE) != WRF_NOFIRE)			DoReadyWeaponToFire(player.mo, !(flags & WRF_NoPrimary), !(flags & WRF_NoSecondary));
+		if (!(flags & WRF_NOBOB))						DoReadyWeaponToBob(player);
+
+		A_Overlay(-1000,"GrandControlLayer",true);
+		player.WeaponState |= GetButtonStateFlags(flags);
+		DoReadyWeaponDisableSwitch(player, flags & WRF_DisableSwitch);
+		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [Base]) (%s): %d [%d]", GetClassName(), flags, gametic);
+	}
+	
+	action int A_HoldInWeapon(int type = 0)
+	{
+		int buttons;
+
+		int result = 0;
+		if (CountInv("IsUnconscious")) { }
+		else
+		{
+			buttons = GetPlayerInput(INPUT_BUTTONS);
+			if (buttons & BT_ALTATTACK) result = 1;
+			else if (buttons & BT_ATTACK) result = 2;
+		}
+		return result;
+	}
+	
+	action void A_QMWKickInit()
+	{
+		A_GunFlash("LightDone",GFF_NOEXTCHANGE); // A_ClearFlash;
+		if (random(1,256) >= 253)
+		{
+			if (CountInv("PlayingStrife") > 0) { } // Strife mode makes the punch work like the Punch Dagger where it NEVER makes sound
+			else { A_AlertMonsters(); } // Sometimes a swing will be enough to wake up all monsters in the area.
+		}
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		Double Dbl;
+		Sector Sec;
+		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
+		if (pos.z <= Dbl && !owner)
+		{
+			if (cursector.damagetype == 'InstantDeath' ||
+					cursector.damagetype == 'Massacre')
+			{
+				if (bCOUNTITEM) level.total_items--;
+				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
+				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](EEWeapon)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
+				Destroy();
+			}
+		}
+	}
+	
+	States
+	{
+		GrandControlLayer: // layer -1000
+			TNT1 A 1
+			{
+			}
+			loop;
+	}
+}
+
+// ??????? ????? Weapon Base Class
+class HeiwaWeapon : KCWeaponBase
+{
+	default
+	{
+		KCWeaponBase.PickUpVoice true;
+	}
+
+	action void A_WeaponReady(int flags = 0)
+	{
+		if (CountInv("IsUnconscious"))
+		{
+			if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (Pre [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
+			// Enforces Various Locks on weapons if the player is "Unconscious"
+			if (!(flags & WRF_NOBOB)) flags |= WRF_NOBOB; // Turns on WRF_NOBOB
+			if (!(flags & WRF_NOFIRE)) flags |= WRF_NOFIRE; // Turns on WRF_NOFIRE
+			if (!(flags & WRF_NOPRIMARY)) flags |= WRF_NOPRIMARY; // Turns on WRF_NOPRIMARY
+			if (!(flags & WRF_NOSECONDARY)) flags |= WRF_NOSECONDARY; // Turns on WRF_NOSECONDARY
+			if (!(flags & WRF_NOSWITCH)) flags |= WRF_NOSWITCH; // Turns on WRF_NOSWITCH
+			if (!(flags & WRF_DISABLESWITCH)) flags |= WRF_DISABLESWITCH; // Turns on WRF_DISABLESWITCH
+
+			if ((flags & WRF_ALLOWRELOAD)) flags &= ~WRF_ALLOWRELOAD; // Turns off WRF_ALLOWRELOAD
+			if ((flags & WRF_ALLOWZOOM)) flags &= ~WRF_ALLOWZOOM; // Turns off WRF_ALLOWZOOM
+			if ((flags & WRF_ALLOWUSER1)) flags &= ~WRF_ALLOWUSER1; // Turns off WRF_ALLOWUSER1
+			if ((flags & WRF_ALLOWUSER2)) flags &= ~WRF_ALLOWUSER2; // Turns off WRF_ALLOWUSER2
+			if ((flags & WRF_ALLOWUSER3)) flags &= ~WRF_ALLOWUSER3; // Turns off WRF_ALLOWUSER3
+			if ((flags & WRF_ALLOWUSER4)) flags &= ~WRF_ALLOWUSER4; // Turns off WRF_ALLOWUSER4
+			if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (post [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
+		}
+
+		if (!player) return;
+														DoReadyWeaponToSwitch(player, !(flags & WRF_NoSwitch));
+		if ((flags & WRF_NoFire) != WRF_NoFire)			DoReadyWeaponToFire(player.mo, !(flags & WRF_NoPrimary), !(flags & WRF_NoSecondary));
+		if (!(flags & WRF_NoBob))						DoReadyWeaponToBob(player);
+
+		A_Overlay(-1000,"GrandControlLayer",true);
+		player.WeaponState |= GetButtonStateFlags(flags);
+		
+		DoReadyWeaponDisableSwitch(player, flags & WRF_DisableSwitch);
+		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
+	}
+}
+
+// Tommy Gun
+class TommyGun : KCWeaponBase
+{
+	default
+	{
+		Inventory.PickupMessage "You picked up a Thompson Machine Gun!";
+		Weapon.AmmoType1 "TommAmmo";
+		Weapon.AmmoType2 "TommAmmo";
+		Weapon.AmmoGive 50;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 1;
+		Inventory.PickupSound "TOMPKP";
+		Decal "Bulletchip";
+		Attacksound "DSTOMFR";
+		Scale 0.6;
+		Weapon.Kickback 150;
+	}
+	
+	action void A_TommyShot(int type, int handedness)
+	{
+		int temp1 = randompick(3,3,3,3,3,3,4,4,4,4,5,5) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
+		double barrageangoffset = 0.0;
+		double offsetmulti = 1.0;
+		double accuracyx = 1.0;
+		double accuracyy = 1.0;
+		invoker.tommybarrageno++;
+		barrageangoffset = 0.0;
+		if (type == 0)
+		{
+			accuracyx = frandom(0.5,1.0);
+			accuracyy = frandom(0.5,1.0);
+			if (invoker.tommybarrageno <= 1) barrageangoffset = -0.5;
+			if (invoker.tommybarrageno == 2) barrageangoffset = 0.0;
+			if (invoker.tommybarrageno == 3) barrageangoffset = 0.0;
+			if (invoker.tommybarrageno >= 4) barrageangoffset = 0.5;
+		}
+		else
+		{
+			accuracyx = frandom(3.0,6.0);
+			accuracyy = frandom(3.0,6.0);
+			if (invoker.tommybarrageno <= 1) barrageangoffset = 2.0;
+			if (invoker.tommybarrageno == 2) barrageangoffset = 4.0;
+			if (invoker.tommybarrageno == 3) barrageangoffset = 6.0;
+			if (invoker.tommybarrageno == 4) barrageangoffset = 8.0;
+			if (invoker.tommybarrageno == 5) barrageangoffset = 10.0;
+			if (invoker.tommybarrageno == 6) barrageangoffset = 12.0;
+			if (invoker.tommybarrageno == 7) barrageangoffset = 14.0;
+			if (invoker.tommybarrageno == 8) barrageangoffset = 16.0;
+			if (invoker.tommybarrageno == 9) barrageangoffset = 14.0;
+			if (invoker.tommybarrageno == 10) barrageangoffset = 12.0;
+			if (invoker.tommybarrageno == 11) barrageangoffset = 10.0;
+			if (invoker.tommybarrageno == 12) barrageangoffset = 8.0;
+			if (invoker.tommybarrageno == 13) barrageangoffset = 6.0;
+			if (invoker.tommybarrageno == 14) barrageangoffset = 4.0;
+			if (invoker.tommybarrageno == 15) barrageangoffset = 2.0;
+			if (invoker.tommybarrageno == 16) barrageangoffset = 0.0;
+			if (invoker.tommybarrageno == 17) barrageangoffset = -2.0;
+			if (invoker.tommybarrageno == 18) barrageangoffset = -4.0;
+			if (invoker.tommybarrageno == 19) barrageangoffset = -6.0;
+			if (invoker.tommybarrageno == 20) barrageangoffset = -4.0;
+			if (invoker.tommybarrageno == 21) barrageangoffset = -2.0;
+			if (invoker.tommybarrageno >= 22) barrageangoffset = 0.0;
+			if (handedness == 1) barrageangoffset *= -1;
+			barrageangoffset *= offsetmulti;
+			if (kcdebug_weaponstatdisplays) Console.Printf("invoker.tommybarrageno: %d, barrageangoffset: %.4f [tic: %d]", invoker.tommybarrageno, barrageangoffset, gametic);
+		}
+		if (kcdebug_weaponstatdisplays) Console.Printf("dmg: %d, accuracyx: %.4f, accuracyy: %.4f [tic: %d]", temp1, accuracyx, accuracyy, gametic);
+		double currang = angle;
+		A_SetAngle(angle+barrageangoffset);
+		A_FireBullets(accuracyx,accuracyy,-1,(temp1),"BulletPuff",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
+		A_SetAngle(currang);
+	}
+	
+	states
+	{
+		Spawn:
+			TOMM A 4;
+			Loop;
+		Select:
+			TOMG A 1 A_Raise(12);
+			Loop;
+		Deselect:
+			TOMG A 1 A_Lower(12);
+			Loop;
+		Ready:
+			TOMG A 1 A_WeaponReady();
+			Loop;
+		
+		Fire:
+			TOF2 A 0 Bright
+			{
+				invoker.tommybarrageno = 0;
+			}
+			TOMF ABCD 2 bright 
+			{
+				if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+				A_TommyShot(0,0);
+				return resolvestate(null);
+			}
+			Goto Ready;
+		
+		AltFire:
+			TOF2 E 0 Bright
+			{
+				invoker.tommybarrageno = 0;
+			}
+			TOF2 EFGHIJKLKJIHGFEDBCABCD 2 Bright
+			{
+				if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+				A_TommyShot(1,0);
+				return resolvestate(null);
+			}
+			Goto Ready;
+	}
+}
+
+class TommAmmo : Ammo
+{
+	default
+	{
+		+INVENTORY.IGNORESKILL;
+		Radius 10;
+		Inventory.Amount 50;
+		Inventory.MaxAmount 500;
+		Ammo.BackpackAmount 50;
+		Ammo.BackpackMaxAmount 1000;
+		Inventory.PickupMessage "Picked up some ammo for the tommygun.";
+		Inventory.Icon "TOMAA0";
+	}
+	
+	States
+	{
+		Spawn:
+			TOMA A 1 Bright;
+			Loop;
+	}
+}

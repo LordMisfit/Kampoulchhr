@@ -495,7 +495,7 @@ class KCPowerInvuln : PowerInvulnerable
 	
 	default
 	{
-		inventory.icon "PDIVA0";
+		inventory.icon "PINVD0";
 		Powerup.Duration -30;
 		Powerup.Color "78447E", 0.334; // "3F00DF", "D0AFD5"
 		+INVENTORY.PERSISTENTPOWER;
@@ -506,12 +506,12 @@ class KCPowerInvuln : PowerInvulnerable
 	override void Tick ()
 	{
 		timer++;
-		if (timer % 36 >= 0 && timer % 36 <= 5) texname = "PDIVA0";
-		if (timer % 36 >= 6 && timer % 36 <= 11) texname = "PDIVB0";
-		if (timer % 36 >= 12 && timer % 36 <= 17) texname = "PDIVC0";
-		if (timer % 36 >= 18 && timer % 36 <= 23) texname = "PDIVD0";
-		if (timer % 36 >= 24 && timer % 36 <= 29) texname = "PDIVC0";
-		if (timer % 36 >= 30 && timer % 36 <= 35) texname = "PDIVB0";
+		if (timer % 36 >= 0 && timer % 36 <= 5) texname = "PINVA0";
+		if (timer % 36 >= 6 && timer % 36 <= 11) texname = "PINVB0";
+		if (timer % 36 >= 12 && timer % 36 <= 17) texname = "PINVC0";
+		if (timer % 36 >= 18 && timer % 36 <= 23) texname = "PINVD0";
+		if (timer % 36 >= 24 && timer % 36 <= 29) texname = "PINVC0";
+		if (timer % 36 >= 30 && timer % 36 <= 35) texname = "PINVB0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		if (EffectTics % 70 == 69) owner.A_StartSound("buffs/invulnpulse",200,CHANF_DEFAULT,frandom(0.75,1.0),ATTN_NORM);
@@ -556,7 +556,7 @@ class KCPowerStrength : PowerStrength
 {
 	default
 	{
-		inventory.icon "PDBSA0";
+		inventory.icon "PSTRA0";
 		Powerup.Duration -150;
 		Powerup.Color "FF0000", 0.5;
 		+INVENTORY.PERSISTENTPOWER;
@@ -597,6 +597,7 @@ class KCPowerStrength : PowerStrength
 		bool debugtick = false;
 
 		timer++;
+		/*
 		if (timer % 24 >= 0 && timer % 24 <= 2) texname = "PDBSA0";
 		if (timer % 24 >= 3 && timer % 24 <= 5) texname = "PDBSB0";
 		if (timer % 24 >= 6 && timer % 24 <= 8) texname = "PDBSC0";
@@ -606,6 +607,7 @@ class KCPowerStrength : PowerStrength
 		if (timer % 24 >= 18 && timer % 24 <= 20) texname = "PDBSG0";
 		if (timer % 24 >= 21 && timer % 24 <= 23) texname = "PDBSH0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		*/
 
 		int Point1 = 225;
 		int Point2 = 450;

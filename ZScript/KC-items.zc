@@ -376,3 +376,43 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			Fail;
 	}
 }
+
+
+// Invuln Sphere
+class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
+{
+	default
+	{
+		+DONTGIB
+		+FLOATBOB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		+INVENTORY.ADDITIVETIME
+		Inventory.PickupMessage "\c[green]Invulnerability!";
+		Inventory.PickupSound "powerups/invuln";
+	}
+	
+	States
+	{
+		Spawn:
+			PINV ABCDCB 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					//A_StopSound(CHAN_VOICE);
+					//A_StartSound("Dinah/What",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+				}
+				A_GiveInventory("KCPowerInvuln");
+			}
+			Stop;
+	}
+}
