@@ -454,8 +454,22 @@ class TommyGun : KCWeaponBase
 		Weapon.Kickback 150;
 	}
 	
+	action bool A_DualTMGCheck()
+	{
+		bool check = false;
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		if (CountInv("DualTommyGuns") && !CountInv("DualTommyGunsDisabled")) check = true;
+		return check;
+	}
+	
 	action void A_TommyShot(int type, int handedness)
 	{
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		
 		int temp1 = randompick(3,3,3,3,3,3,4,4,4,4,5,5) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
 		double barrageangoffset = 0.0;
 		double offsetmulti = 1.0;
@@ -501,6 +515,11 @@ class TommyGun : KCWeaponBase
 			barrageangoffset *= offsetmulti;
 			if (kcdebug_weaponstatdisplays) Console.Printf("invoker.tommybarrageno: %d, barrageangoffset: %.4f [tic: %d]", invoker.tommybarrageno, barrageangoffset, gametic);
 		}
+		if (A_DualTMGCheck())
+		{
+			accuracyx *= frandom(1.75,2.5);
+			accuracyy *= frandom(1.75,2.5);
+		}
 		if (kcdebug_weaponstatdisplays) Console.Printf("dmg: %d, accuracyx: %.4f, accuracyy: %.4f [tic: %d]", temp1, accuracyx, accuracyy, gametic);
 		double currang = angle;
 		A_SetAngle(angle+barrageangoffset);
@@ -534,7 +553,7 @@ class TommyGun : KCWeaponBase
 				let globalvars = KCGlobalVariables.Get();
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+				if (A_DualTMGCheck()) A_Overlay(3,"LeftReady",false);
 			}
 			TOMG A 1 A_Raise(12);
 			Loop;
@@ -544,7 +563,7 @@ class TommyGun : KCWeaponBase
 				let globalvars = KCGlobalVariables.Get();
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+				if (A_DualTMGCheck()) A_Overlay(3,"LeftReady",false);
 			}
 			TOMG A 1 A_Lower(12);
 			Loop;
@@ -554,11 +573,11 @@ class TommyGun : KCWeaponBase
 				let globalvars = KCGlobalVariables.Get();
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+				if (A_DualTMGCheck()) A_Overlay(3,"LeftReady",false);
 			}
 			TOMG A 1 
 			{
-				A_WeaponReady();
+				A_WeaponReady(WRF_ALLOWUSER4);
 			}
 			Loop;
 			
@@ -571,21 +590,31 @@ class TommyGun : KCWeaponBase
 			{
 			}
 			Stop;
+			
+		LeftPrep:
+			TOM2 A 0
+			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
+			}
+			TOM2 A 12
+			{
+			}
+			Stop;
 		
 		Fire:
 			TOMF A 0 Bright
 			{
 				invoker.tommybarrageno = 0;
-				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftFire",false);
+				if (A_DualTMGCheck()) A_Overlay(3,"LeftFire",false);
 			}
 			TOMF ABCD 2 bright 
 			{
 				invoker.tommybarrageno++;
-				if (CountInv("DualTommyGuns"))
+				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
 					A_TommyShot(0,0);
-					if (CountInv("DualTommyGuns")) A_TommyShot(0,1);
+					A_TommyShot(0,1);
 					return resolvestate(null);
 				}
 				else
@@ -619,16 +648,16 @@ class TommyGun : KCWeaponBase
 			TOF2 E 0 Bright
 			{
 				invoker.tommybarrageno = 0;
-				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftAltFire",false);
+				if (A_DualTMGCheck()) A_Overlay(3,"LeftAltFire",false);
 			}
 			TOF2 EFGHIJKLKJIHGFEDBCABCD 2 Bright
 			{
 				invoker.tommybarrageno++;
-				if (CountInv("DualTommyGuns"))
+				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
 					A_TommyShot(1,0);
-					if (CountInv("DualTommyGuns")) A_TommyShot(1,1);
+					A_TommyShot(1,1);
 					return resolvestate(null);
 				}
 				else
@@ -648,7 +677,7 @@ class TommyGun : KCWeaponBase
 			}
 			TOF4 EFGHIJKLKJIHGFEDBCABCD 2 Bright
 			{
-				if (CountInv("DualTommyGuns"))
+				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
 					return resolvestate(null);
@@ -665,6 +694,39 @@ class TommyGun : KCWeaponBase
 				A_Overlay(3,"LeftReady",false);
 			}
 			Stop;
+			
+		User4:
+			"####" # 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (player.CountInv("DualTommyGuns"))
+				{
+					A_StopSound(10);
+					A_StartSound("TOMPKP",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+					if (player.CountInv("DualTommyGunsDisabled"))
+					{
+						player.A_SetInventory("DualTommyGunsDisabled",0);
+						A_Overlay(3,"LeftPrep",false);
+					}
+					else 
+					{
+						player.A_SetInventory("DualTommyGunsDisabled",1);
+						A_Overlay(3,null,false);
+					}
+				}
+				else
+				{
+					A_StopSound(10);
+					A_StartSound("inv_fail",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+				}
+			}
+			"####" # 8
+			{
+				A_SetTics(random(8,12));
+			}
+			goto Ready;
 	}
 }
 
