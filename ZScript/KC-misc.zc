@@ -674,17 +674,17 @@ class PlayerStatItem : Inventory
 		TimeArmorRelicsOwned = 0;
 		owner.A_SetInventory("TSArtifactsInUse",0);
 		TimeArmorRelicsUsedBits = 0;
+		if (owner.CountInv("TimeSeraphPocketWatch")) 
+		{
+			TimeArmorRelicsOwned++;
+		}
+		if (owner.CountInv("TimeSeraphBangle"))
+		{
+			TimeArmorRelicsOwned++;
+		}
 		if (owner.CountInv("TimeSeraphCharm") > 0)
 		{
 			TimeArmorRelicsOwned++;
-			if (owner.CountInv("TimeSeraphPocketWatch")) 
-			{
-				TimeArmorRelicsOwned++;
-			}
-			if (owner.CountInv("TimeSeraphBangle"))
-			{
-				TimeArmorRelicsOwned++;
-			}
 			
 			TimeArmorEnergyMaxTics = ((3600 * TimeArmorRelicsOwned) * TICRATE);
 			

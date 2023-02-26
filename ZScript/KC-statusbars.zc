@@ -675,36 +675,12 @@ class KCStatusBarMain : BaseStatusBar
 		DrawImage(CPlayer.HasWeaponsInSlot(6)? "STYSNUM6" : "STGNUM6", (123, 182), DI_ITEM_OFFSETS);
 		DrawImage(CPlayer.HasWeaponsInSlot(7)? "STYSNUM7" : "STGNUM7", (135, 182), DI_ITEM_OFFSETS);
 	}
-
-	protected void DrawFullScreenStuff ()
+	
+	int A_DrawInvSelected(int invY = 0)
 	{
-		Vector2 iconbox = (40, 20);
-		// Draw health
-		let berserk = CPlayer.mo.FindInventory("PowerStrength");
-		DrawImage(berserk? "PSTRA0" : "MEDIA0", (20, -2));
-		DrawString(mHUDFont, FormatNumber(CPlayer.health, 3), (44, -20));
-		
-		let armor = CPlayer.mo.FindInventory("BasicArmor");
-		if (armor != null && armor.Amount > 0)
-		{
-			DrawInventoryIcon(armor, (20, -22));
-			DrawString(mHUDFont, FormatNumber(armor.Amount, 3), (44, -40));
-		}
-		Inventory ammotype1, ammotype2;
-		[ammotype1, ammotype2] = GetCurrentAmmo();
-		int invY = -20;
-		if (ammotype1 != null)
-		{
-			DrawInventoryIcon(ammotype1, (-14, -4));
-			DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 3), (-30, -20), DI_TEXT_ALIGN_RIGHT);
-			invY -= 20;
-		}
-		if (ammotype2 != null && ammotype2 != ammotype1)
-		{
-			DrawInventoryIcon(ammotype2, (-14, invY + 17));
-			DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
-			invY -= 20;
-		}
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		
 		inventory item = CPlayer.mo.InvSel;
 		if (item != null) // if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
@@ -736,22 +712,173 @@ class KCStatusBarMain : BaseStatusBar
 				showamt = false;
 			}
 			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
-			if (showamt) DrawString(mHUDFont, FormatNumber(item.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT);
+			if (showamt) DrawString(mHUDFont, FormatNumber(item.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT);
 		}
+		return invY;
+	}
+	int A_DrawAmmo(int invY = 0)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		Inventory ammotype1, ammotype2;
+		[ammotype1, ammotype2] = GetCurrentAmmo();
+		if (ammotype1 != null)
+		{
+			DrawInventoryIcon(ammotype1, (-14, -4));
+			DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 4), (-30, -20), DI_TEXT_ALIGN_RIGHT);
+			invY -= 20;
+		}
+		if (ammotype2 != null && ammotype2 != ammotype1)
+		{
+			DrawInventoryIcon(ammotype2, (-14, invY + 17));
+			DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT);
+			invY -= 20;
+		}
+		return invY;
+	}
+	void A_DrawArmor()
+	{
+		int fontclr = font.CR_UNTRANSLATED;
+		double fontalpha = 1.0;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))
+		{
+			fontclr = font.cr_darkred;
+			fontalpha = 0.5;
+		}
+		
+		int ivx = 20; // 20;
+		int ivy = -2; // -22;
+		int svx = 44; // 44;
+		int svy = -20; //-40;
+		let armor = CPlayer.mo.FindInventory("BasicArmor");
+		if (armor != null && armor.Amount > 0)
+		{
+			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
+			DrawString(mHUDFont, FormatNumber(armor.Amount, 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.0, 1.0));
+			ivx += 0;
+			ivy -= 20;
+			svx += 0;
+			svy -= 20;
+		}
+		
+		if (MiscItem)
+		{
+			if (CPlayer.mo.CountInv("TimeSeraphCharm"))
+			{
+				fontclr = font.CR_Gray;
+				fontalpha = 0.5;
+				if (MiscItem.TimeArmorRelicsUsedBits == 1) 
+				{
+					fontclr = font.CR_LightBlue;
+					fontalpha = 0.667;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 2)
+				{
+					fontclr = font.CR_LightBlue;
+					fontalpha = 0.667;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 3)
+				{
+					fontclr = font.CR_Green;
+					fontalpha = 0.834;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 4)
+				{
+					fontclr = font.CR_LightBlue;
+					fontalpha = 0.667;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 5)
+				{
+					fontclr = font.CR_Green;
+					fontalpha = 0.834;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 6)
+				{
+					fontclr = font.CR_Green;
+					fontalpha = 0.834;
+				}
+				if (MiscItem.TimeArmorRelicsUsedBits == 7)
+				{
+					fontclr = font.CR_Purple;
+					fontalpha = 1.000;
+				}
+				
+				if (MiscItem.TimeArmorEnergyMaxTics > 0)
+				{
+					let armor2 = CPlayer.mo.FindInventory("TSArtifactsInUse");
+					if (armor2)
+					{
+						vector2 iconscale = (1.0, 1.0);
+						iconscale.x *= 0.20;
+						iconscale.y *= 0.20;
+						DrawInventoryIcon(armor2, (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					}
+					else
+					{
+						let armor3 = CPlayer.mo.FindInventory("TimeSeraphCharm");
+						if (armor3) 
+						{
+							vector2 iconscale = (1.0, 1.0);
+							iconscale.x *= 0.375;
+							iconscale.y *= 0.375;
+							DrawInventoryIcon(armor3, (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+						}
+					}
+					
+					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
+					string perstr = "";
+					perstr.AppendFormat("%d", percent);
+					perstr.AppendFormat("%%");
+					DrawString(mHUDFont, perstr, (svx+56, svy-20), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.0, 1.0));
+				}
+			}
+		}
+	}
+	void A_DrawHealth()
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		let berserk = CPlayer.mo.FindInventory("PowerStrength");
+		DrawImage(berserk? "PSTRA0" : "MEDIA0", (20, -2));
+		DrawString(mHUDFont, FormatNumber(CPlayer.health, 4), (44, -20));
+	}
+	
+	protected void DrawFullScreenStuff()
+	{
+		Vector2 iconbox = (40, 20);
+		// Draw health
+		A_DrawHealth();
+		
+		// Draw Armor
+		A_DrawArmor();
+		
+		// Draw Ammo
+		int invY = A_DrawAmmo(-20);
+		
+		// Inventory [Selected]
+		invY = A_DrawInvSelected(invY);
+		
 		if (deathmatch)
 		{
-			DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 3), (-3, 1), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
+			DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 4), (-3, 1), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
 		}
 		else
 		{
 			DrawFullscreenKeys();
 		}
 		
-			int numboxes = kc_inventorybarboxes;
-			if (numboxes <= 1) numboxes = 1;
-			if (numboxes >= 20) numboxes = 20;
-			DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
-			//Console.Printf("End Of ScreenBlocks Check");
+		int numboxes = kc_inventorybarboxes;
+		if (numboxes <= 1) numboxes = 1;
+		if (numboxes >= 20) numboxes = 20;
+		DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
+		//Console.Printf("End Of ScreenBlocks Check");
 	}
 	
 	protected virtual void DrawFullscreenKeys()

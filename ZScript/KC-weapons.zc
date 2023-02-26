@@ -517,8 +517,9 @@ class TommyGun : KCWeaponBase
 		}
 		if (A_DualTMGCheck())
 		{
-			accuracyx *= frandom(1.75,2.5);
-			accuracyy *= frandom(1.75,2.5);
+			double genaccu = frandompick(1.75,1.875,2.0,2.125,2.25,2.375,2.5);
+			accuracyx *= genaccu;
+			accuracyy *= genaccu;
 		}
 		if (kcdebug_weaponstatdisplays) Console.Printf("dmg: %d, accuracyx: %.4f, accuracyy: %.4f [tic: %d]", temp1, accuracyx, accuracyy, gametic);
 		double currang = angle;
