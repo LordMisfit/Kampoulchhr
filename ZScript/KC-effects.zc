@@ -7,15 +7,6 @@ class EmptyPowerup : PowerSpeed
 	}
 }
 
-class INTERMAPChecker : PlaceHolderItem
-{
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
-}
-
-
 // Keeps Sounds/Music active during time Freeze powerups
 class TimeFreezerKeepSound : PowerTimeFreezer
 {
@@ -458,6 +449,22 @@ class PlaceholderItemMax : PlaceholderItem
 		Use:
 			TNT1 A 0;
 			Stop;
+	}
+}
+
+class INTERMAPChecker : PlaceHolderItem
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class DualTommyGuns : PlaceHolderItem 
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
 	}
 }
 

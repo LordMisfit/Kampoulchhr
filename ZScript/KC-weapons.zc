@@ -467,41 +467,127 @@ class TommyGun : KCWeaponBase
 		Spawn:
 			TOMM A 4;
 			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (player.CountInv("TommyGun")) player.A_SetInventory("DualTommyGuns",1);
+			}
+			stop;
+		
 		Select:
+			TOMG A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+			}
 			TOMG A 1 A_Raise(12);
 			Loop;
 		Deselect:
+			TOMG A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+			}
 			TOMG A 1 A_Lower(12);
 			Loop;
 		Ready:
-			TOMG A 1 A_WeaponReady();
+			TOMG A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftReady",false);
+			}
+			TOMG A 1 
+			{
+				A_WeaponReady();
+			}
 			Loop;
+			
+		LeftReady:
+			TOM2 A 1
+			{
+			}
+			Stop;
 		
 		Fire:
-			TOF2 A 0 Bright
+			TOMF A 0 Bright
 			{
 				invoker.tommybarrageno = 0;
+				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftFire",false);
 			}
 			TOMF ABCD 2 bright 
 			{
-				if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
-				A_TommyShot(0,0);
+				if (CountInv("DualTommyGuns"))
+				{
+					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
+					A_TommyShot(0,0);
+					if (CountInv("DualTommyGuns")) A_TommyShot(0,1);
+					return resolvestate(null);
+				}
+				else
+				{
+					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+					A_TommyShot(0,0);
+					return resolvestate(null);
+				}
 				return resolvestate(null);
 			}
 			Goto Ready;
 		
+		LeftFire:
+			TOF3 A 0 Bright
+			{
+			}
+			TOF3 ABCD 2 bright 
+			{
+				if (CountInv("TommAmmo") <= 1) return resolvestate("LeftFireEnd");
+				return resolvestate(null);
+			}
+		LeftFireEnd:
+			Stop;
+
 		AltFire:
 			TOF2 E 0 Bright
 			{
 				invoker.tommybarrageno = 0;
+				if (CountInv("DualTommyGuns")) A_Overlay(3,"LeftAltFire",false);
 			}
 			TOF2 EFGHIJKLKJIHGFEDBCABCD 2 Bright
 			{
 				if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
 				A_TommyShot(1,0);
+				if (CountInv("DualTommyGuns")) A_TommyShot(1,1);
 				return resolvestate(null);
 			}
 			Goto Ready;
+
+		LeftAltFire:
+			TOF4 E 0 Bright
+			{
+			}
+			TOF4 EFGHIJKLKJIHGFEDBCABCD 2 Bright
+			{
+				if (CountInv("DualTommyGuns"))
+				{
+					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
+					return resolvestate(null);
+				}
+				else
+				{
+					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+					return resolvestate(null);
+				}
+			}
+		LeftAltFireEnd:
+			Stop;
 	}
 }
 
