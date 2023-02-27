@@ -179,7 +179,8 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
-			if (mod == 'Plasma')
+			if (mod == 'Plasma' ||
+					mod == 'BFGSplash')
 			{
 				if (random(1,2) <= 1) flags |= DMG_THRUSTLESS;
 				damage *= 0.5;
