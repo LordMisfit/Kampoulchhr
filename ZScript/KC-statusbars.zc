@@ -850,6 +850,72 @@ class KCStatusBarMain : BaseStatusBar
 		DrawString(mHUDFont, FormatNumber(CPlayer.health, 4), (44, -20));
 	}
 	
+	void DrawFSHUDKeys()
+	{
+		//********
+		//* Keys *
+		//********
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		Vector2 KeyPos = (240, -6); // (-10, 24)
+		int RowSize = 6;
+		Vector2 KeyScale = (1.0, 1.0);
+		if (gameinfo.gametype == GAME_Doom) 
+		{
+			KeyPos = (240, -6);
+			RowSize = 3;
+			KeyScale = (1.25, 1.25);
+		}
+		if (gameinfo.gametype == GAME_Heretic) 
+		{
+			KeyPos = (240, -6);
+			RowSize = 3;
+			KeyScale = (1.25, 1.25);
+		}
+		if (gameinfo.gametype == GAME_Hexen) 
+		{ 
+			KeyPos = (212, -8); // 256, -6
+			RowSize = 2; // Hexen's key icons are far and away the largest, so this is capped to 11, the number of keys Hexen uses.
+			KeyScale = (0.625, 0.625);
+		}
+		if (gameinfo.gametype == GAME_Strife) 
+		{
+			KeyPos = (216, -5); // 256, -6
+			RowSize = 4; // Strife has an absurd TWENTY-EIGHT key types, at least the ones that the HUD normalLY shows. :V
+			KeyScale = (0.575, 0.575);
+		}
+		int BaseXPos = KeyPos.x;
+		int BaseYPos = KeyPos.y;
+
+		int RowC = 0;
+		double RowW = 0;
+		bool ShowKeys = true;
+	
+		if (ShowKeys)
+		{
+			for (let i = CPlayerPawn.Inv; i != null; i = i.Inv)
+			{
+				if (i is "Key" && i.Icon.IsValid())
+				{
+					//Console.Printf("x: %d, y: %d, type: %s", KeyPos.x, KeyPos.y, i.GetClassName());
+					DrawTexture(i.Icon, KeyPos, DI_SCREEN_LEFT_BOTTOM|DI_ITEM_CENTER, 1.0, (-1, -1), KeyScale);
+					Vector2 size = TexMan.GetScaledSize(i.Icon);
+					size.x *= KeyScale.x;
+					size.y *= KeyScale.y;
+					KeyPos.Y -= size.Y + 2; // + = down, - = up
+					RowW = max(RowW, size.X);
+					if (++RowC == RowSize)
+					{
+						KeyPos.Y = BaseYPos;
+						KeyPos.X += RowW + 2;
+						RowW = 0;
+						RowC = 0;
+					}
+				}
+			}
+		}
+	}
+
 	protected void DrawFullScreenStuff()
 	{
 		Vector2 iconbox = (40, 20);
@@ -865,13 +931,16 @@ class KCStatusBarMain : BaseStatusBar
 		// Inventory [Selected]
 		invY = A_DrawInvSelected(invY);
 		
+		// Draw Keys
+		DrawFSHUDKeys();
+		
 		if (deathmatch)
 		{
 			DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 4), (-3, 1), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
 		}
 		else
 		{
-			DrawFullscreenKeys();
+			//DrawFullscreenKeys();
 		}
 		
 		int numboxes = kc_inventorybarboxes;

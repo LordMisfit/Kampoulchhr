@@ -882,7 +882,11 @@ class PlayerStatItem : Inventory
 		{
 			if (kcdebug_actordmgdisplays) Console.Printf("    (\czPlayerStatItem input [STEP 5 (\cwsuper.DamageMobj\cz)]\c-: \cydmg = %d\c-)", damage);
 			
-			double TOTALFactor = 1.0;
+			double TSAFactor = 1.0;
+			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
+			
+			double TOTALFactor = 1.0
+												 * TSAFactor;
 			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 		}
 		

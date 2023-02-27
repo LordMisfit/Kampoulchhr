@@ -752,3 +752,19 @@ class TommAmmo : Ammo
 			Loop;
 	}
 }
+
+class TommAmmoBig : TommAmmo
+{
+	default
+	{
+		Inventory.Amount 250;
+		Inventory.PickupMessage "Picked up a ton of ammo for the tommygun.";
+	}
+	
+	States
+	{
+		Spawn:
+			TOMA B 1 Bright;
+			Loop;
+	}
+}
