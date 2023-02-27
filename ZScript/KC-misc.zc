@@ -408,8 +408,8 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		HPRegenTimerMax = 7000 - ((StaminaLevel * 5) * 35);
-		HPDegenTimerMax = 1750 + ((StaminaLevel * 5) * 17.5);
+		HPRegenTimerMax = 3500; // - ((StaminaLevel * 5) * 35);
+		HPDegenTimerMax = 3500; // + ((StaminaLevel * 5) * 17.5);
 		CurrentHealth = owner.player.mo.health;
 		int HealthBonusAdd2 = HealthBonusAdd;
 		int HealthLevelAdd2 = HealthLevelAdd;
