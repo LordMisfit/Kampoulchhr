@@ -915,15 +915,504 @@ class KCStatusBarMain : BaseStatusBar
 			}
 		}
 	}
+	
+	
+	int, int DrawFSHUDWSlotsAmmoRatio(int AmmoRatio, int AmmoAmount, int AmmoMaxAmount, int typea)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 
+		int wsfontclr = font.cr_gray;
+		if (typea == 1) // Sigil
+		{
+			AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
+			if (AmmoAmount <= 0) wsfontclr = font.cr_black;
+			else if (MiscItem.oldhealthratio == 3) wsfontclr = font.cr_darkred;
+			else if (MiscItem.oldhealthratio == 2) wsfontclr = font.cr_red;
+			else if (MiscItem.oldhealthratio == 1 || (MiscItem.oldhealthratio == 0 && AmmoAmount <= AmmoMaxAmount)) wsfontclr = font.cr_brick;
+			else if (AmmoRatio >= 100 && AmmoRatio <= 133) wsfontclr = font.cr_teal;
+			else if (AmmoRatio >= 134 && AmmoRatio <= 166) wsfontclr = font.cr_cyan;
+			else if (AmmoRatio >= 167 && AmmoRatio <= 199) wsfontclr = font.cr_sapphire;
+			else if (AmmoRatio >= 200 && AmmoRatio <= 249) wsfontclr = font.cr_lightblue;
+			else if (AmmoRatio >= 250 && AmmoRatio <= 299) wsfontclr = font.cr_purple;
+			else if (AmmoRatio >= 300) wsfontclr = font.cr_gold;
+			else wsfontclr = font.cr_gray;
+		}
+		else
+		if (typea == 0) // Most
+		{
+			AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
+			if (AmmoAmount <= 0) wsfontclr = font.cr_black;
+			else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
+			else if (AmmoRatio >= 10 && AmmoRatio <= 19) wsfontclr = font.cr_red;
+			else if (AmmoRatio >= 20 && AmmoRatio <= 29) wsfontclr = font.cr_brick;
+			else if (AmmoRatio >= 30 && AmmoRatio <= 39) wsfontclr = font.cr_orange;
+			else if (AmmoRatio >= 40 && AmmoRatio <= 49) wsfontclr = font.cr_yellow;
+			else if (AmmoRatio >= 50 && AmmoRatio <= 59) wsfontclr = font.cr_gold;
+			else if (AmmoRatio >= 60 && AmmoRatio <= 69) wsfontclr = font.cr_olive;
+			else if (AmmoRatio >= 70 && AmmoRatio <= 79) wsfontclr = font.cr_darkgreen;
+			else if (AmmoRatio >= 80 && AmmoRatio <= 89) wsfontclr = font.cr_green;
+			else if (AmmoRatio >= 90 && AmmoRatio <= 99) wsfontclr = font.cr_cyan;
+			else if (AmmoAmount >= AmmoMaxAmount) wsfontclr = font.cr_sapphire;
+			else wsfontclr = font.cr_gray;
+		}
+		else
+		if (typea <= -1) // No Ammo Types [i.e Hand to Hand]
+		{
+			wsfontclr = font.cr_gray;
+		}
+		
+		return AmmoRatio, wsfontclr;
+	}
+	
+	int, int, int, int, int, int, string, string DrawFSHUDWeaponSlots(int x, int y, int VisiblePlayerLevel, int CurrHealth, int PlayerMaxHP, int AmmoRatio, string wsname, string wsammoname)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		let PlayerWeapon = MiscItem.weapon;
+		
+		//******************
+		//** weapon slots **
+		//******************
+		int wsspace = 14; // 14
+		double wsalpha = 0.667;
+		double wsalphadefault = 0.667;
+		double wsalphadefault2 = 1.00;
+		vector2 wsscale = (1.0, 1.0); // (1.0, 1.0)
+		vector2 wsscaledefault = (1.0, 1.0); // (1.0, 1.0)
+		vector2 wsscaledefault2 = (1.125, 1.125); // (1.0, 1.0)
+		int wsfontclr = font.cr_gray;
+		int startposx = -175; // -150
+		int startposy = ((wsspace * -2) - (wsspace * 0.1));
+		int wsflags = DI_TEXT_ALIGN_LEFT;
+		let wsweapon = PlayerWeapon;
+		int wsnum;
+		int baseinc = 1;
+		int weaponsincurslot;
+		int priority = 0;
+		//Console.Printf("%p, %s, wsalpha: %.8f", wsweapon, wsweapon.GetClassName(), wsalpha);
+		
+		x = startposx;
+		y = startposy;
+		// Slot 1
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
+		wsname = "Fist";
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);
+
+			wsnum = 1;
+			wsfontclr = font.cr_gray;
+			
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "Chainsaw";
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);
+			
+			wsnum = 1;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+		
+		x += wsspace;
+		// Slot 2
+		weaponsincurslot = 1;
+		wsname = "Pistol";
+		wsammoname = "Clip";
+		let ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 2;
+			if (wsweapon is wsname) 
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x += wsspace;
+		
+		// Slot 3
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
+		wsname = "Shotgun";
+		wsammoname = "Shell";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 3;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "SuperShotgun";
+		wsammoname = "Shell";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 3;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+
+		x += wsspace;
+		// Slot 4
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
+		wsname = "Chaingun";
+		wsammoname = "Clip";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 4;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "TommyGun";
+		wsammoname = "TommAmmo";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 4;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+
+		x += wsspace;
+		// Slot 5
+		weaponsincurslot = 1;
+		wsname = "RocketLauncher";
+		wsammoname = "RocketAmmo";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 5;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		
+		// Starts a new row
+		x = startposx;
+		y += wsspace;
+		// Slot 6
+		weaponsincurslot = 1;
+		wsname = "PlasmaRifle";
+		wsammoname = "Cell";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+
+			wsnum = 6;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+
+		x += wsspace;
+		// Slot 7
+		weaponsincurslot = 1;
+		wsname = "BFG9000";
+		wsammoname = "Cell";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 7;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		
+		/*
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
+		x += wsspace;
+		// Slot 8
+		weaponsincurslot = 2;
+		wsname = "SigilDD";
+		wsammoname = "";
+		//ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, CurrHealth, PlayerMaxHP, 1);
+			
+			wsnum = 8;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "CandleWhip";
+		wsammoname = "CandleAmmo";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 8;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
+		x += wsspace;
+		// Slot 9
+		weaponsincurslot = 2;
+		wsname = "CrazyBallDD";
+		wsammoname = "CzBall";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 9;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "EvilWarriorShield";
+		wsammoname = "PikeAmmo";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 9;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+
+		x += wsspace;
+		wsname = "";
+		// Slot 0
+		weaponsincurslot = 1;
+		if (MiscItem.CompatPackMode & 256) weaponsincurslot = 2;
+		if (weaponsincurslot > 1)
+		{
+			baseinc = 2;
+			x -= baseinc;
+			y -= baseinc;
+		}
+		wsname = "FosnianCandle";
+		wsammoname = "FCandleAmmo";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 0;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		if (weaponsincurslot > 1)
+		{
+			x += (baseinc * 2);
+			y += (baseinc * 2);
+			if (MiscItem.CompatPackMode & 256)
+			{
+				wsname = "ScepterOfSouls";
+				wsammoname = "PikeAmmo";
+			}
+			ammotype = CPlayerPawn.FindInventory(wsammoname);
+			if (CPlayerPawn.CountInv(wsname))
+			{
+				[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+				
+				wsnum = 0;
+				if (wsweapon is wsname)
+				{
+					wsalpha = wsalphadefault2;
+					wsscale = wsscaledefault2;
+				}
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+				wsalpha = wsalphadefault;
+				wsscale = wsscaledefault;
+			}
+			if (MiscItem.CompatPackMode & 256)
+			{
+				wsname = "DualScepterOfSouls";
+				wsammoname = "PikeAmmo";
+			}
+			ammotype = CPlayerPawn.FindInventory(wsammoname);
+			if (CPlayerPawn.CountInv(wsname))
+			{
+				[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+				
+				wsnum = 0;
+				if (wsweapon is wsname)
+				{
+					wsalpha = wsalphadefault2;
+					wsscale = wsscaledefault2;
+				}
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x+1, y+1), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+				wsalpha = wsalphadefault;
+				wsscale = wsscaledefault;
+			}
+			x -= baseinc;
+			y -= baseinc;
+		}
+		*/
+		return x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname;
+	}
+	
 	protected void DrawFullScreenStuff()
 	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		int VisiblePlayerLevel = 0;
+		int VisiblePlayerATK = 0;
+		int VisiblePlayerDEF = 0;
+		int VisiblePlayerSPD = 0;
 		Vector2 iconbox = (40, 20);
+		int CurrHealth;
+		if (CPlayer) CurrHealth = CPlayer.health;
+		int PlayerMaxHP = 100; // MaxHealthTrue;
 		// Draw health
 		A_DrawHealth();
 		
 		// Draw Armor
 		A_DrawArmor();
+		
+		// Draw Weapon Slots
+		int x;
+		int y;
+		string wsname;
+		string wsammoname;
+		int AmmoRatio;
+		[x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname] = DrawFSHUDWeaponSlots(x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname);
+		let ammotype = CPlayerPawn.FindInventory(wsammoname);
 		
 		// Draw Ammo
 		int invY = A_DrawAmmo(-20);

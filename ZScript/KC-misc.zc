@@ -6,10 +6,13 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	int CompatPackMode;
 	double TimeArmorEnergyTics;
 	double TimeArmorEnergyMaxTics;
 	int TimeArmorRelicsOwned;
 	int TimeArmorRelicsUsedBits;
+
+	actor weapon;
 	string nm, nn, no, np;
 	
 	int oldhealthratio;
@@ -259,6 +262,9 @@ class PlayerStatItem : Inventory
 					}
 				}
 				
+				// Misc
+				weapon = owner.player.ReadyWeapon;
+
 				//***************
 				//* Leveling Up *
 				//***************
