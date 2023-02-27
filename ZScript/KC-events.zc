@@ -46,6 +46,20 @@ class KC_EventHandler : EventHandler
 			if (!KCPlayerPawn(spawnee)) spawnee.A_SetInventory("CompatVulnItem",1);
 		}
 		
+		if (DoomImpBall(spawnee) || 
+				FatShot(spawnee)) 
+		{
+			spawnee.DamageType = 'Fire';
+		}
+		if (CacodemonBall(spawnee)) 
+		{
+			spawnee.DamageType = 'Lightning';
+		}
+		if (ArachnotronPlasma(spawnee)) 
+		{
+			spawnee.DamageType = 'Plasma';
+		}
+		
 		Super.WorldThingSpawned(e);
 	}
 	

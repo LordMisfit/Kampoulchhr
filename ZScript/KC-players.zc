@@ -1,7 +1,21 @@
 class KCPlayerPawn : PlayerPawn
 {
 	bool isvoodoodoll;
-
+	int neverbleeds;
+	
+	actor DmgSource;
+	actor DmgInflictor;
+	int DmgFlags;
+	bool tookflrdmg;
+	int damagecntfrag;
+	int mobjdmg;
+	int playoutputdmg;
+	int playtookdamage;
+	
+	double TotalAirControl;
+	double basexscale, baseyscale;
+	double scalexmulti, scaleymulti;
+	
 	int firsttic;
 	int buttons, input;
 
@@ -11,6 +25,11 @@ class KCPlayerPawn : PlayerPawn
 	
 	override void BeginPlay()
 	{
+		basexscale = scale.x;
+		baseyscale = scale.y;
+		scalexmulti = 1.00;
+		scaleymulti = 1.00;
+		
 		// Player is always considered a Voodoo Doll during BeginPlay, so height/radius have to be saved before the initial change and then reverted back to it for PostBeginPlay/etc when proper doll detection actually works >____>;
 		// Also 'isvoodoodoll' CAN'T be set right now, has to be done in PostBeginPlay/Tick as well <____<;
 		originalheight = height;
@@ -25,6 +44,42 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_showvoodoodoll) Console.Printf("VoodooDoll [BeginPlay] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
 
 		Super.BeginPlay(); 
+	}
+	override void PostBeginPlay()
+	{
+		// VOODOO Doll Protection
+		if (!player || !player.mo || player.mo != self)
+		{
+			A_SetSize(16,56,false);
+			scale.x = 1.0;
+			scale.y = 1.0;
+			Mass = 100;
+			isvoodoodoll = true;
+			if (kcdebug_showvoodoodoll) Console.Printf("VoodooDoll [PostBeginPlay] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
+			Super.PostBeginPlay(); 
+			return;
+		}
+		else
+		{
+			A_SetSize(originalradius,originalheight,false);
+			Mass = originalmass;
+			scale.x = basexscale;
+			scale.y = baseyscale;
+			if (kcdebug_showvoodoodoll) Console.Printf("Player [PostBeginPlay] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
+		}
+		
+		if (bNOBLOOD == 1) 
+		{
+			if (bNOBLOODDECALS == 0) bNOBLOODDECALS == 1;
+			neverbleeds = 1;
+		}
+		if (bNOBLOODDECALS == 1) 
+		{
+			if (bNOBLOOD == 0) bNOBLOOD == 1;
+			neverbleeds = 1;
+		}
+		
+		Super.PostBeginPlay(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO PostBeginPlay() BREAK :V
 	}
 	
 	override void Tick()
@@ -49,11 +104,38 @@ class KCPlayerPawn : PlayerPawn
 		super.Tick();
 	}
 	
+	void A_CheckNeverBleed(int type, int damage, int flags)
+	{
+		if (type == 0)
+		{
+			if (neverbleeds == 0)
+			{
+				if (bNOBLOOD) bNOBLOOD = false;
+				if (bNOBLOODDECALS) bNOBLOODDECALS = false;
+			}
+		}
+		else
+		{
+			if (flags & !DMG_EXPLOSION)
+			{
+				if (neverbleeds == 0)
+				{
+					bNOBLOOD = true;
+					bNOBLOODDECALS = true;
+				}
+			}
+		}
+		if (kcdebug_playerdamagemobj) Console.Printf("(A_CheckNeverBleed [player], type: %d, damage: %d)", type, damage);
+	}
+
 	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false)
 	{
+		A_CheckNeverBleed(0, damage, flags);
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int prevdmg = damage;
+		bool temperateshield = false;
+		
 		if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
@@ -72,6 +154,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'SpecialFire')
 			{
 				flags |= DMG_THRUSTLESS;
+				temperateshield = true;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
@@ -80,6 +163,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Chill')
 			{
 				flags |= DMG_THRUSTLESS;
+				temperateshield = true;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
@@ -90,9 +174,15 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Shock')
 			{
 				flags |= DMG_THRUSTLESS;
+				temperateshield = true;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
+			}
+			if (mod == 'Plasma')
+			{
+				if (random(1,2) <= 1) flags |= DMG_THRUSTLESS;
+				damage *= 0.5;
 			}
 			
 			TSArmor1DmgChance = double((damage * 1.0) / (TSArmorDmgDivisor * 1.0));
@@ -148,15 +238,24 @@ class KCPlayerPawn : PlayerPawn
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.334,0.667);
 				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
-				MiscItem.TimeArmorEnergyTics -= TSTicDmg;
-				if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
+				if (!temperateshield)
 				{
-					if (CountInv(nm)) A_SetInventory(nm,0);
-					if (CountInv(nn)) A_SetInventory(nn,0);
-					if (CountInv(no)) A_SetInventory(no,0);
-					MiscItem.TimeArmorEnergyTics = 0;
+					MiscItem.TimeArmorEnergyTics -= TSTicDmg;
+					if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
+					{
+						if (CountInv(nm)) A_SetInventory(nm,0);
+						if (CountInv(nn)) A_SetInventory(nn,0);
+						if (CountInv(no)) A_SetInventory(no,0);
+						MiscItem.TimeArmorEnergyTics = 0;
+					}
+					if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
 				}
-				if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
+				else
+				{
+					MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
+					if (kcdebug_playerdamagemobj) Console.Printf("[Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
+				}
 			}
 		}
 		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
@@ -164,6 +263,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
+		if (kcdebug_playerdamagemobj) Console.Printf("damagetype: %s", mod);
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int olddmg = damage;
@@ -173,7 +273,7 @@ class KCPlayerPawn : PlayerPawn
 		int TSArmorDmgDivisor = 1;
 		bool tsafullnulldmg = false;
 		[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
-		if (TimeSeraphArmor && tsafullnulldmg) return 0;
+		if (TimeSeraphArmor && tsafullnulldmg) damage = 0;
 		
 		prevdmg = damage;
 		if (level.isFrozen()) 
@@ -187,10 +287,15 @@ class KCPlayerPawn : PlayerPawn
 				if (damage <= 0)
 				{
 					if (kcdebug_timefreezechecks) Console.Printf("damage: %d [prev: %d]", damage, olddmg);
-					return 0;
+					damage = 0;
 				}
 			}
 		}
+
+		DmgSource = source;
+		DmgInflictor = inflictor;
+		DmgFlags = flags;
+		mobjdmg = damage;
 		//******************************
 		let ret = super.DamageMobj(inflictor, source, damage, mod, flags, angle);
 		//******************************

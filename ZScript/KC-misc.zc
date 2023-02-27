@@ -899,6 +899,15 @@ class PlayerStatItem : Inventory
 		{
 			double TOTALFactor = 1.0;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			
+			if (playeractor && newdamage <= 0) 
+			{
+				playeractor.A_CheckNeverBleed(1, newdamage, playeractor.DmgFlags);
+				if (playeractor.DmgFlags & DMG_INFLICTOR_IS_PUFF && playeractor.DmgInflictor)
+				{
+					playeractor.DmgInflictor.bPUFFONACTORS = true;
+				}
+			}
 		}
 	}
 	
