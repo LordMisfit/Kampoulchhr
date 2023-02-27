@@ -13,7 +13,9 @@ class PlayerStatItem : Inventory
 	int TimeArmorRelicsUsedBits;
 
 	actor weapon;
-	string nm, nn, no, np;
+	string nm, nn, no, np, nq, nr;
+	int sttabs;
+	int genticsHUD;
 	
 	int oldhealthratio;
 	int NumOfAfasDrops;
@@ -369,12 +371,6 @@ class PlayerStatItem : Inventory
 				//***************
 				LevelUpExpStuff();
 				
-				//*******************
-				//* Set Max HP Item *
-				//*******************
-				owner.player.health = owner.player.mo.health = CurrentHealth;
-				owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
-				
 				//****************************
 				//* Health/Max Health Checks *
 				//****************************
@@ -390,6 +386,12 @@ class PlayerStatItem : Inventory
 
 				// Time Freeze Trackers
 				TimeFreezeStuff();
+				
+				//*******************
+				//* Set Max HP Item *
+				//*******************
+				owner.player.health = owner.player.mo.health = CurrentHealth;
+				owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
 				
 				//*************************************
 				//*************************************
@@ -543,6 +545,180 @@ class PlayerStatItem : Inventory
 				BaseRegenMulti = 1.0;
 				if (!owner.CountInv("NoRegeneration"))
 				{
+					if (CurrentHealth < MaxHealthTrue)
+					{
+						if (kc_hpwillregen)
+						{
+							int inc = 20;
+							inc += ((TruePlayerLevel * 0.05) + (TruePlayerDEF * 0.05));
+							
+							BaseRegenMulti = inc;
+							if (HPRegenBoostTimer > 0) inc *= 2.5;
+							if (HPRegenBoostTimer < 0) inc *= 0.4;
+							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Regen]: %d", HPRegenBoostTimer);
+							
+							double ssa = 1.00;
+							if (owner.CountInv("TSArmorTier2")) ssa += 0.025;
+							if (owner.CountInv("TSArmorTier1")) ssa += 0.00625;
+							inc *= ssa;
+							
+							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
+							//if (owner.CountInv("TimeFreezeTimer")) inc *= 35;
+
+							if (berserked) inc = floor(inc * frandom(1.5,2.0));
+
+							if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = floor(inc * 0.4);
+							if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = floor(inc * 0.5);
+							if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = floor(inc * 0.6);
+							if (owner.player.jumpTics < 0) inc = floor(inc * 0.4);
+							if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
+							if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+							
+							if (kc_healthregendegentype >= 1)
+							{
+								if (CurrentHealth <= (MaxHealthTrue * 0.02)) inc = floor(inc * 4);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.10)) inc = floor(inc * 1.80);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.25)) inc = floor(inc * 1.20);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.50)) inc = floor(inc * 1.05);
+							}
+							else
+							{
+								if (CurrentHealth <= (MaxHealthTrue * 0.02)) inc = floor(inc * 10);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.10)) inc = floor(inc * 5);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.25)) inc = floor(inc * 1.25);
+								else if (CurrentHealth <= (MaxHealthTrue * 0.50)) inc = floor(inc * 1.0625);
+							}
+							
+							if (BaseRegenMulti) BaseRegenMulti = (inc / BaseRegenMulti);
+							if (kcdebug_hpregen) Console.Printf("BaseRegenMulti [Regen]: %.8f", BaseRegenMulti);
+							if (inc < 0) inc = 0;
+							HPRegenTimer += inc;
+							genticsHUD = inc;
+							
+							if (HPRegenTimer > HPRegenTimerMax)
+							{
+								HPRegenTimer -= HPRegenTimerMax;
+								if (HPRegenTimer < 0) HPRegenTimer = 0;
+								
+								if (CurrentHealth < MaxHealthTrue)
+								{
+									int rec = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.4) / 100;
+									if (berserked) rec = randompick(1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.8) / 100;
+									if (rec < 1) rec = 1;
+
+									//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
+									CurrentHealth += rec;
+									if (CurrentHealth >= MaxHealthTrue) CurrentHealth = MaxHealthTrue;
+									owner.player.health = owner.player.mo.health = CurrentHealth;
+								}
+							}
+							else
+							{
+								if (HPRegenTimer < 0) HPRegenTimer = 0;
+							}
+							if (kcdebug_hpregen) Console.Printf("RegenTimer: %d / %d  (inc: %d)", HPRegenTimer, HPRegenTimerMax, inc);
+						}
+						else
+						{
+							HPRegenTimer = 0;
+						}
+					}
+					else
+					if (CurrentHealth > MaxHealthTrue)
+					{
+						if (kc_hpwilldegen)
+						{
+							int inc = 20;
+							inc -= ((TruePlayerLevel * 0.025) + (TruePlayerDEF * 0.025));
+							
+							BaseRegenMulti = inc;
+							if (HPRegenBoostTimer > 0) inc *= 0.4;
+							if (HPRegenBoostTimer < 0) inc *= 2.5;
+							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Degen]: %d", HPRegenBoostTimer);
+							
+							
+							double ssa = 1.00;
+							if (owner.CountInv("TSArmorTier2")) ssa -= 0.025;
+							if (owner.CountInv("TSArmorTier1")) ssa -= 0.00625;
+							inc *= ssa;
+							
+							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
+							
+							//if (owner.CountInv("TimeFreezeTimer")) inc *= 0.0285714285714286;
+							
+							if (berserked) inc = ceil(inc * frandom(0.5,0.667));
+							
+							if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = ceil(inc * 2.5);
+							if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = ceil(inc * 2.0);
+							if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = ceil(inc * 1.666666666666667);
+							if (owner.player.jumpTics < 0) inc = ceil(inc * 2.5);
+							if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
+							if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
+							
+							if (kc_healthregendegentype >= 1)
+							{
+								if (CurrentHealth >= (MaxHealthTrue * 3.0)) inc = ceil(inc * 2.0);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.75)) inc = ceil(inc * 1.875);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.50)) inc = ceil(inc * 1.75);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.25)) inc = ceil(inc * 1.625);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.00)) inc = ceil(inc * 1.5);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.75)) inc = ceil(inc * 1.375);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.25);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.125);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
+							}
+							else
+							{
+								if (CurrentHealth >= (MaxHealthTrue * 3.0)) inc = ceil(inc * 3.0);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.75)) inc = ceil(inc * 2.75);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.50)) inc = ceil(inc * 2.5);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.25)) inc = ceil(inc * 2.25);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.00)) inc = ceil(inc * 2.0);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.75)) inc = ceil(inc * 1.75);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.5);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.25);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
+							}
+							
+							if (BaseRegenMulti) BaseRegenMulti = (inc / BaseRegenMulti);
+							if (kcdebug_hpregen) Console.Printf("BaseDegenMulti [Degen]: %.8f", BaseRegenMulti);
+							if (inc < 0) inc = 0;
+							HPDegenTimer += inc;
+							genticsHUD = inc;
+							if (HPDegenTimer > HPDegenTimerMax)
+							{
+								HPDegenTimer -= HPDegenTimerMax;
+								if (HPDegenTimer < 0) HPDegenTimer = 0;
+								
+								if (CurrentHealth > MaxHealthTrue)
+								{
+									int loss = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.4) / 100;
+									if (berserked) loss = randompick(1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.2) / 100;
+									if (loss < 1) loss = 1;
+									
+									//if (loss && kchud_showhpapdmgrecregen > 1) A_LossHUD(loss, 0, false);
+									CurrentHealth -= loss;
+									if (CurrentHealth <= MaxHealthTrue) CurrentHealth = MaxHealthTrue;
+									owner.player.health = owner.player.mo.health = CurrentHealth;
+								}
+							}
+							else
+							{
+								if (HPDegenTimer < 0) HPDegenTimer = 0;
+							}
+							if (kcdebug_hpregen) Console.Printf("DegenTimer: %d / %d  (inc: %d)", HPDegenTimer, HPDegenTimerMax, inc);
+						}
+						else
+						{
+							HPDegenTimer = 0;
+						}
+					}
+					else
+					{
+						HPRegenTimer = 0;
+						HPDegenTimer = 0;
+						if (kcdebug_hpregen) Console.Printf("Regen/Degen Neutral");
+					}
 					//
 					//
 					//
