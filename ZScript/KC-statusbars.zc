@@ -800,11 +800,37 @@ class KCStatusBarMain : BaseStatusBar
 		int ivy = -2; // -22;
 		int svx = 44; // 44;
 		int svy = -20; //-40;
+		int hudarmortype;
 		let armor = CPlayer.mo.FindInventory("BasicArmor");
 		if (armor != null && armor.Amount > 0)
 		{
+			textureid icon = armor.icon;
+			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch)) 
+			{
+				hudarmortype = 1;
+				fontclr = font.cr_green;
+			}
+			if (icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
+			{
+				hudarmortype = 1;
+				fontclr = font.cr_green;
+			}
+			if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch))
+			{
+				hudarmortype = 2;
+				fontclr = font.cr_lightblue;
+			}
 			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
-			DrawString(mHUDFont, FormatNumber(armor.Amount, 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.0, 1.0));
+			DrawString(mKCLFont, FormatNumber(armor.Amount, 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+			
+			// Show Max Armor
+			if (hudarmortype > 0)
+			{
+				string MaxAPS = " / ";
+				MaxAPS.AppendFormat("%d", armor.maxamount);
+				DrawString(mKCMFont, MaxAPS, (94, -37), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+			}
+			
 			ivx += 0;
 			ivy -= 20;
 			svx += 0;
@@ -890,8 +916,10 @@ class KCStatusBarMain : BaseStatusBar
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int MaxHealthTrue = 100;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
 		
-		int HealthColor = font.CR_red;
+		int HealthColor = font.CR_brick;
 		if (CPlayerPawn.player.poisoncount) HealthColor = font.CR_darkgreen;
 		if (CPlayer.cheats & CF_BUDDHA2) HealthColor = font.CR_orange;
 		if (CPlayer.cheats & CF_GODMODE2) HealthColor = font.CR_sapphire;
@@ -907,8 +935,8 @@ class KCStatusBarMain : BaseStatusBar
 		DrawString(mKCLFont, FormatNumber(CPlayer.health, 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Show Max Health
-		string MaxHPS = "\c[white] / ";
-		MaxHPS.AppendFormat("\c[green]100");
+		string MaxHPS = "\c[brick] / ";
+		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
 		DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 	}
 	

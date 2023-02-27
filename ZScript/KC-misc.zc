@@ -30,9 +30,18 @@ class PlayerStatItem : Inventory
 	int PlayerSPD, TruePlayerSPD;
 	int PlayerLUCK, TruePlayerLUCK, TempLUCK;
 	int PrevATK, PrevDEF, PrevSPD, PrevLUCK;
+	
+	double BaseRegenMulti;
+	double atkfct, deffct, spdfct, jmpfct, suvfct;
+
 	int HPMaxGain, MassGain;
 	int SurvivalRate;
+
+	int PrevHealthRatio;
+	int HealthRatio;
 	int CurrentHealth;
+	int BaseStartMaxHealth;
+
 	int MaxHealthTrue;
 	int MaxHealthTrueRF;
 	int HealthLevelAdd;
@@ -53,6 +62,14 @@ class PlayerStatItem : Inventory
 	Array<int> LevelExpRequirement;
 	int InitEXPTables;
 	
+	int HPRegenBoostTimer;
+	int HPRegenBonPenTimer;
+	int HPRegenTimer;
+	int HPDegenTimer;
+	int HPRegenTimerMax;
+	int HPDegenTimerMax;
+	bool berserked;
+
 	double timefreeze1duration;
 	double timefreeze1cooldown;
 	double timefreeze2duration;
@@ -151,6 +168,9 @@ class PlayerStatItem : Inventory
 					}
 				}
 				if (kcdebug_airmeter) Console.Printf("CanTalkUnderwater %d", CanTalkUnderwater);
+
+				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
+				else berserked = false;
 
 				// Mode Check
 				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
@@ -262,6 +282,85 @@ class PlayerStatItem : Inventory
 					}
 				}
 				
+				// Initial Stats Setup
+				if (ClassCheck <= 6)
+				{
+					if (ClassCheck <= 0) 
+					{
+						PlayerLevel = 0;
+						MaxHealthTrue = 100;
+						PlayerATK = 2;
+						PlayerDEF = 2;
+						PlayerSPD = 2;
+						PlayerLuck = 2;
+
+						atkfct = deffct = spdfct = jmpfct = suvfct = 1.00;
+						double variance = 0.10;
+						/*
+						if (TrueGameSkill == SKILL_VERY_EASY)
+						{
+							MaxHealthTrue = 90;
+							variance = 0.05;
+						}
+						if (TrueGameSkill == SKILL_EASY)
+						{
+							MaxHealthTrue = 75; 
+							variance = 0.075;
+						}
+						if (TrueGameSkill == SKILL_NORMAL)
+						{
+							MaxHealthTrue = 60; 
+							variance = 0.10;
+						}
+						if (TrueGameSkill == SKILL_HARD)
+						{
+							MaxHealthTrue = 45; 
+							variance = 0.125;
+						}
+						if (TrueGameSkill == SKILL_VERY_HARD)
+						{
+							MaxHealthTrue = 30;
+							variance = 0.15;
+						}
+						*/
+						TempLUCK = PlayerLuck;
+						atkfct += frandom(-variance,variance);
+						deffct += frandom(-variance,variance);
+						spdfct += frandom(-variance,variance);
+						jmpfct += frandom(-variance,variance);
+						suvfct += frandom(-variance,variance);
+						if (kcdebug_startupinfo) Console.Printf("atkfct: %.8f, deffct: %.8f, spdfct: %.8f, jmpfct: %.8f, suvfct: %.8f, Luck: %d", atkfct, deffct, spdfct, jmpfct, suvfct, PlayerLuck);
+						
+						
+						if (MaxHealthTrue < 1) MaxHealthTrue = 1;
+						HealthLevelAdd = 0;
+						HealthNoRPGAdd = 0;
+						HealthNoRPGAdd2 = 0;
+						owner.player.health = owner.player.mo.health = CurrentHealth = MaxHealthTrue;
+						owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+						owner.A_SetInventory("PlayerATK",PlayerATK);
+						owner.A_SetInventory("PlayerDEF",PlayerDEF);
+						owner.A_SetInventory("PlayerSPD",PlayerSPD);
+						owner.A_SetInventory("PlayerLUCK",PlayerLUCK);
+						BaseStartMaxHealth = MaxHealthTrue; // Sets the original Max Health as at the start of a game [for various checks, including Sigil damage]
+						if (kcdebug_startupinfo) Console.Printf("MaxHP: %d", MaxHealthTrue);
+					}
+				}
+				if (kc_expgains) 
+				{
+					TruePlayerLevel = PlayerLevel;
+					TruePlayerATK = PlayerATK;
+					TruePlayerDEF = PlayerDEF;
+					TruePlayerSPD = PlayerSPD;
+				}
+				else
+				{
+					TruePlayerLevel = 0;
+					TruePlayerATK = 0;
+					TruePlayerDEF = 0;
+					TruePlayerSPD = 0;
+				}
+				
 				// Misc
 				weapon = owner.player.ReadyWeapon;
 
@@ -269,6 +368,22 @@ class PlayerStatItem : Inventory
 				//* Leveling Up *
 				//***************
 				LevelUpExpStuff();
+				
+				//*******************
+				//* Set Max HP Item *
+				//*******************
+				owner.player.health = owner.player.mo.health = CurrentHealth;
+				owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+				
+				//****************************
+				//* Health/Max Health Checks *
+				//****************************
+				MaxHealthStuff();
+				
+				//******************
+				//* HP Regen/Degen *
+				//******************
+				HPRegenStuff();
 				
 				// Time Seraph Armor Trackers
 				TimeSeraphArmorStuff();
@@ -284,6 +399,165 @@ class PlayerStatItem : Inventory
 			}
 			super.DoEffect();
 		}
+	}
+	
+	void MaxHealthStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		HPRegenTimerMax = 7000 - ((StaminaLevel * 5) * 35);
+		HPDegenTimerMax = 1750 + ((StaminaLevel * 5) * 17.5);
+		CurrentHealth = owner.player.mo.health;
+		int HealthBonusAdd2 = HealthBonusAdd;
+		int HealthLevelAdd2 = HealthLevelAdd;
+		HealthNoRPGAdd2 = 0;
+		if (!kc_expgains)
+		{
+			if (skill <= 0) HealthBonusAdd2 *= 4.0;
+			if (skill == 1) HealthBonusAdd2 *= 3.5;
+			if (skill == 2) HealthBonusAdd2 *= 3.0;
+			if (skill == 3) HealthBonusAdd2 *= 2.5;
+			if (skill >= 4) HealthBonusAdd2 *= 2.0;
+			HealthLevelAdd2 = 0;
+			if (skill <= 0) HealthLevelAdd2 = (HealthNoRPGADD * 4.0);
+			if (skill == 1) HealthLevelAdd2 = (HealthNoRPGADD * 3.5);
+			if (skill == 2) HealthLevelAdd2 = (HealthNoRPGADD * 3.0);
+			if (skill == 3) HealthLevelAdd2 = (HealthNoRPGADD * 2.5);
+			if (skill >= 4) HealthLevelAdd2 = (HealthNoRPGADD * 2.0);
+		}
+		MaxHealthTrue = (BaseStartMaxHealth + int(HealthNoRPGAdd2) + HealthLevelAdd2 + HealthBonusAdd2);
+		if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
+	}
+	//
+	void HPRegenStuff()
+	{
+		weapon = owner.player.ReadyWeapon;
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+
+		if (CurrentHealth <= 0)
+		{
+			Owner.A_SetInventory("PlayerIsDead", 1); 
+		}
+		else
+		if (CurrentHealth > 0)
+		{
+			if (kcdebug_hpregen) Console.Printf("Health: %d / %d", CurrentHealth, MaxHealthTrue);
+			
+			Owner.A_SetInventory("PlayerIsDead", 0);
+			//****************************************
+			//*Get Health Ratio & Health Level Checks*
+			//****************************************
+			int TempMaxHealthTrue = MaxHealthTrue;
+			if (playeractor && TempMaxHealthTrue > 0)
+			{
+				HealthRatio = (CurrentHealth * 1000) / TempMaxHealthTrue;
+				HealthRatio = clamp(HealthRatio, 0, 3000);
+				
+				if (HealthRatio != PrevHealthRatio)
+				{
+					if (HealthRatio > 1500)
+					{
+						if (HealthRatio > 2250)
+						{
+							if (HealthRatio > 2875)
+							{
+								Owner.A_SetInventory("OverFullHealth3", 1);
+								Owner.A_SetInventory("OverFullHealth2", 0);
+								Owner.A_SetInventory("OverFullHealth1", 0);
+							}
+							else
+							{
+								Owner.A_SetInventory("OverFullHealth3", 0);
+								Owner.A_SetInventory("OverFullHealth2", 1);
+								Owner.A_SetInventory("OverFullHealth1", 0);
+							}
+						}
+						else
+						{
+							Owner.A_SetInventory("OverFullHealth3", 0);
+							Owner.A_SetInventory("OverFullHealth2", 0);
+							Owner.A_SetInventory("OverFullHealth1", 1);
+						}
+						Owner.A_SetInventory("NormalHealth", 1);
+						Owner.A_SetInventory("DecentHealth", 0);
+						Owner.A_SetInventory("LowHealth", 0);
+						Owner.A_SetInventory("CriticalHealth", 0);
+					}
+					else
+					{
+						Owner.A_SetInventory("OverFullHealth3", 0);
+						Owner.A_SetInventory("OverFullHealth2", 0);
+						Owner.A_SetInventory("OverFullHealth1", 0);
+						if (HealthRatio < 625)
+						{
+							if (HealthRatio < 167)
+							{
+								if (HealthRatio < 21)
+								{
+									Owner.A_SetInventory("NormalHealth", 0);
+									Owner.A_SetInventory("DecentHealth", 0);
+									Owner.A_SetInventory("LowHealth", 0);
+									Owner.A_SetInventory("CriticalHealth", 1);
+								}
+								else 
+								{
+									Owner.A_SetInventory("NormalHealth", 0);
+									Owner.A_SetInventory("DecentHealth", 0);
+									Owner.A_SetInventory("LowHealth", 1);
+									Owner.A_SetInventory("CriticalHealth", 0);
+								}
+							}
+							else 
+							{
+								Owner.A_SetInventory("NormalHealth", 0);
+								Owner.A_SetInventory("DecentHealth", 1);
+								Owner.A_SetInventory("LowHealth", 0);
+								Owner.A_SetInventory("CriticalHealth", 0);
+							}
+						}
+						else
+						{
+							Owner.A_SetInventory("NormalHealth", 1);
+							Owner.A_SetInventory("DecentHealth", 0);
+							Owner.A_SetInventory("LowHealth", 0);
+							Owner.A_SetInventory("CriticalHealth", 0);
+						}
+					}
+					if (CurrentHealth >= TempMaxHealthTrue) Owner.A_SetInventory("FullHealth", 1); else Owner.A_SetInventory("FullHealth", 0);
+					
+					PrevHealthRatio = HealthRatio;
+				}
+			}
+			
+			if (!owner.CountInv("INTERMAPChecker"))
+			{
+				if (!owner.CountInv("IsUnconscious"))
+				{
+					//
+				}
+				
+				// HP Regeneration
+				BaseRegenMulti = 1.0;
+				if (!owner.CountInv("NoRegeneration"))
+				{
+					//
+					//
+					//
+				}
+				//
+				//
+				//
+			}
+			//
+			//
+			//
+		}
+		//
+		//
+		//
 	}
 	
 	void InitStuff()
@@ -517,7 +791,7 @@ class PlayerStatItem : Inventory
 		if (type == 1) 
 		{
 			HealthNoRPGAdd += HPMaxGain;
-			if (!exex_expenabled)
+			if (!kc_expgains)
 			{
 				if (skill <= 0) HPMaxGain *= (4.0 + (NumOfAfasDrops * 0.08));
 				if (skill == 1) HPMaxGain *= (3.5 + (NumOfAfasDrops * 0.07));
@@ -573,7 +847,7 @@ class PlayerStatItem : Inventory
 		if (type == 1) 
 		{
 			MassNoRPGAdd += MassGain;
-			if (!exex_expenabled)
+			if (!kc_expgains)
 			{
 				if (skill <= 0) MassGain *= (2.0 + (NumOfAfasDrops * 0.04));
 				if (skill == 1) MassGain *= (1.75 + (NumOfAfasDrops * 0.045));
@@ -641,7 +915,7 @@ class PlayerStatItem : Inventory
 				}
 			}
 		}
-		if (exex_expenabled) 
+		if (kc_expgains) 
 		{
 			TruePlayerLevel = PlayerLevel;
 			TruePlayerATK = PlayerATK;
@@ -892,8 +1166,12 @@ class PlayerStatItem : Inventory
 			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
 			
 			double TOTALFactor = 1.0
-												 * TSAFactor;
+												 * TSAFactor
+												 * atkfct;
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("\c[gold]Damage (!passive - Total): %.8f", TOTALFactor);
+
 			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("FDamage (!passive): %d", newdamage);
 		}
 		
 		// ******************
@@ -903,8 +1181,10 @@ class PlayerStatItem : Inventory
 		// ******************
 		if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
 		{
-			double TOTALFactor = 1.0;
+			double TOTALFactor = 1.0
+												 * deffct;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("\c[gold]Damage (passive - Total): %.8f", TOTALFactor);
 			
 			if (playeractor && newdamage <= 0) 
 			{
@@ -917,6 +1197,7 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
+	double HUDSpeed;
 	override double GetSpeedFactor() 
 	{
 		let weapon = owner.player.ReadyWeapon;
@@ -924,6 +1205,10 @@ class PlayerStatItem : Inventory
 		let playeractor = KCPlayerPawn(owner);
 		
 		Speed = 1.00;
-		return Speed; 
+		HUDSpeed = Speed;
+		
+		Speed *= spdfct;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Final]: %.8f, HUDSpeed: %.2f", Speed, HUDSpeed);
+		return Speed;
 	}
 }
