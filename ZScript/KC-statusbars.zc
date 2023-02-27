@@ -884,15 +884,32 @@ class KCStatusBarMain : BaseStatusBar
 			}
 		}
 	}
+	
 	void A_DrawHealth()
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		
+		int HealthColor = font.CR_red;
+		if (CPlayerPawn.player.poisoncount) HealthColor = font.CR_darkgreen;
+		if (CPlayer.cheats & CF_BUDDHA2) HealthColor = font.CR_orange;
+		if (CPlayer.cheats & CF_GODMODE2) HealthColor = font.CR_sapphire;
+		bool IsInvuln = false;
+		if (CPlayerPawn.bINVULNERABLE || 
+				 CPlayerPawn.CountInv("PowerInvulnerable") || CPlayerPawn.CountInv("KCPowerInvuln") || 
+				 CPlayer.cheats & CF_GODMODE2 || CPlayer.cheats & CF_GODMODE) IsInvuln = true;
+		if (IsInvuln) HealthColor = font.CR_Gold;
+
+		// Show Current Health
 		let berserk = CPlayer.mo.FindInventory("PowerStrength");
 		DrawImage(berserk? "PSTRA0" : "MEDIA0", (20, -2));
-		DrawString(mHUDFont, FormatNumber(CPlayer.health, 4), (44, -20));
+		DrawString(mKCLFont, FormatNumber(CPlayer.health, 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
+		
+		// Show Max Health
+		string MaxHPS = "\c[white] / ";
+		MaxHPS.AppendFormat("\c[green]100");
+		DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 	}
 	
 	void DrawFSHUDKeys()
@@ -1053,6 +1070,8 @@ class KCStatusBarMain : BaseStatusBar
 
 			wsnum = 1;
 			wsfontclr = font.cr_gray;
+			let berserk = CPlayer.mo.FindInventory("PowerStrength");
+			if (berserk) wsfontclr = font.cr_fire;
 			
 			if (wsweapon is wsname)
 			{
