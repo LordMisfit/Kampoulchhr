@@ -244,14 +244,21 @@ class KCPlayerPawn : PlayerPawn
 					MiscItem.TimeArmorEnergyTics -= TSTicDmg;
 					if (MiscItem)
 					{
+						double basedmul = 0.2;
+
+						double basevol = 0.5;
+						double extravol = (0.5 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+						basevol += extravol;
+						if (basevol > 1.0) basevol = 1.0;
+
 						double blendtics = random(8,12);
 						double baseblendtics = blendtics;
-						double exblendtics = ((baseblendtics * 7.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 0.25)));
+						double exblendtics = ((baseblendtics * 11.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
 						blendtics += exblendtics;
 						if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
 
 						double alphablend = 0.0625;
-						double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 0.25));
+						double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
 						alphablend += extrablend;
 						if (alphablend >= 0.75) alphablend = 0.75;
 						string flashclr = "efefef";
@@ -263,6 +270,7 @@ class KCPlayerPawn : PlayerPawn
 						if (MiscItem.TimeArmorRelicsUsedBits == 6) flashclr = "57f700";
 						if (MiscItem.TimeArmorRelicsUsedBits == 7) flashclr = "e8afff";
 						A_SetBlend(flashclr,alphablend,blendtics);
+						A_StartSound("tsarmor/hit",201,CHANF_DEFAULT,basevol,ATTN_NONE,frandom(1.00,1.334));
 					}
 					if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
 					{
