@@ -242,6 +242,28 @@ class KCPlayerPawn : PlayerPawn
 				if (!temperateshield)
 				{
 					MiscItem.TimeArmorEnergyTics -= TSTicDmg;
+					if (MiscItem)
+					{
+						double blendtics = random(8,12);
+						double baseblendtics = blendtics;
+						double exblendtics = ((baseblendtics * 7.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 0.25)));
+						blendtics += exblendtics;
+						if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
+
+						double alphablend = 0.0625;
+						double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 0.25));
+						alphablend += extrablend;
+						if (alphablend >= 0.75) alphablend = 0.75;
+						string flashclr = "efefef";
+						if (MiscItem.TimeArmorRelicsUsedBits == 1) flashclr = "53fffb";
+						if (MiscItem.TimeArmorRelicsUsedBits == 2) flashclr = "53fffb";
+						if (MiscItem.TimeArmorRelicsUsedBits == 3) flashclr = "57f700";
+						if (MiscItem.TimeArmorRelicsUsedBits == 4) flashclr = "53fffb";
+						if (MiscItem.TimeArmorRelicsUsedBits == 5) flashclr = "57f700";
+						if (MiscItem.TimeArmorRelicsUsedBits == 6) flashclr = "57f700";
+						if (MiscItem.TimeArmorRelicsUsedBits == 7) flashclr = "e8afff";
+						A_SetBlend(flashclr,alphablend,blendtics);
+					}
 					if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
 					{
 						if (CountInv(nm)) A_SetInventory(nm,0);
