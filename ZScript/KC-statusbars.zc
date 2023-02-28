@@ -712,7 +712,7 @@ class KCStatusBarMain : BaseStatusBar
 				showamt = false;
 			}
 			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
-			if (showamt) DrawString(mHUDFont, FormatNumber(item.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT);
+			if (showamt) DrawString(mKCLFont, FormatNumber(item.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, font.cr_untranslated, 1.0, -1, 4, (1.5, 1.5));
 		}
 		return invY;
 	}
@@ -725,6 +725,7 @@ class KCStatusBarMain : BaseStatusBar
 		int AmmoAmount;
 		int AmmoMaxAmount;
 		int wsfontclr = font.cr_gray;
+		double wsalpha = 1.0;
 		
 		Inventory ammotype1, ammotype2;
 		[ammotype1, ammotype2] = GetCurrentAmmo();
@@ -751,7 +752,7 @@ class KCStatusBarMain : BaseStatusBar
 			}
 
 			DrawInventoryIcon(ammotype1, (-14, -4));
-			DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 4), (-30, -20), DI_TEXT_ALIGN_RIGHT, wsfontclr);
+			DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 4), (-30, -20), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
 		if (ammotype2 != null && ammotype2 != ammotype1)
@@ -778,7 +779,7 @@ class KCStatusBarMain : BaseStatusBar
 			}
 
 			DrawInventoryIcon(ammotype2, (-14, invY + 17));
-			DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, wsfontclr);
+			DrawString(mKCLFont, FormatNumber(ammotype2.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
 		return invY;
@@ -790,11 +791,6 @@ class KCStatusBarMain : BaseStatusBar
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
-		if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))
-		{
-			fontclr = font.cr_darkred;
-			fontalpha = 0.5;
-		}
 		
 		int ivx = 20; // 20;
 		int ivy = -2; // -22;
@@ -820,6 +816,11 @@ class KCStatusBarMain : BaseStatusBar
 				hudarmortype = 2;
 				fontclr = font.cr_lightblue;
 			}
+			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))
+			{
+				fontalpha = 0.25;
+				fontclr = font.cr_darkgray;
+			}
 			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			DrawString(mKCLFont, FormatNumber(armor.Amount, 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 			
@@ -828,7 +829,7 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				string MaxAPS = " / ";
 				MaxAPS.AppendFormat("%d", armor.maxamount);
-				DrawString(mKCMFont, MaxAPS, (94, -37), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
 			
 			ivx += 0;
@@ -905,7 +906,7 @@ class KCStatusBarMain : BaseStatusBar
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
-					DrawString(mHUDFont, perstr, (svx+56, svy-20), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.0, 1.0));
+					DrawString(mKCLFont, perstr, (svx+60, svy-20), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
