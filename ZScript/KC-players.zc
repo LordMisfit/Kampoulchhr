@@ -241,45 +241,49 @@ class KCPlayerPawn : PlayerPawn
 				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
 				if (!temperateshield)
 				{
-					MiscItem.TimeArmorEnergyTics -= TSTicDmg;
-					if (MiscItem)
+					if (!level.isFrozen())
 					{
-						double basedmul = 0.2;
+						MiscItem.TimeArmorEnergyTics -= TSTicDmg;
+						if (MiscItem)
+						{
+							double basedmul = 0.2;
 
-						double basevol = 0.5;
-						double extravol = (0.5 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
-						basevol += extravol;
-						if (basevol > 1.0) basevol = 1.0;
+							double basevol = 0.5;
+							double extravol = (0.5 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+							basevol += extravol;
+							if (basevol > 1.0) basevol = 1.0;
 
-						double blendtics = random(8,12);
-						double baseblendtics = blendtics;
-						double exblendtics = ((baseblendtics * 11.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
-						blendtics += exblendtics;
-						if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
+							double blendtics = random(8,12);
+							double baseblendtics = blendtics;
+							double exblendtics = ((baseblendtics * 11.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+							blendtics += exblendtics;
+							if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
 
-						double alphablend = 0.0625;
-						double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
-						alphablend += extrablend;
-						if (alphablend >= 0.75) alphablend = 0.75;
-						string flashclr = "efefef";
-						if (MiscItem.TimeArmorRelicsUsedBits == 1) flashclr = "53fffb";
-						if (MiscItem.TimeArmorRelicsUsedBits == 2) flashclr = "53fffb";
-						if (MiscItem.TimeArmorRelicsUsedBits == 3) flashclr = "57f700";
-						if (MiscItem.TimeArmorRelicsUsedBits == 4) flashclr = "53fffb";
-						if (MiscItem.TimeArmorRelicsUsedBits == 5) flashclr = "57f700";
-						if (MiscItem.TimeArmorRelicsUsedBits == 6) flashclr = "57f700";
-						if (MiscItem.TimeArmorRelicsUsedBits == 7) flashclr = "e8afff";
-						A_SetBlend(flashclr,alphablend,blendtics);
-						A_StartSound("tsarmor/hit",201,CHANF_DEFAULT,basevol,ATTN_NONE,frandom(1.00,1.334));
+							double alphablend = 0.0625;
+							double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
+							alphablend += extrablend;
+							if (alphablend >= 0.75) alphablend = 0.75;
+							string flashclr = "efefef";
+							if (MiscItem.TimeArmorRelicsUsedBits == 1) flashclr = "53fffb";
+							if (MiscItem.TimeArmorRelicsUsedBits == 2) flashclr = "53fffb";
+							if (MiscItem.TimeArmorRelicsUsedBits == 3) flashclr = "57f700";
+							if (MiscItem.TimeArmorRelicsUsedBits == 4) flashclr = "53fffb";
+							if (MiscItem.TimeArmorRelicsUsedBits == 5) flashclr = "57f700";
+							if (MiscItem.TimeArmorRelicsUsedBits == 6) flashclr = "57f700";
+							if (MiscItem.TimeArmorRelicsUsedBits == 7) flashclr = "e8afff";
+							A_SetBlend(flashclr,alphablend,blendtics);
+							A_StartSound("tsarmor/hit",random(201,225),CHANF_DEFAULT,basevol,ATTN_NONE,frandom(1.00,1.334));
+							if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("basevol: %.8f, blendtics: %d, alphablend: %.8f, flashclr: '%s', TSTicDmg: %.8f", basevol, blendtics, alphablend, flashclr, TSTicDmg);
+						}
+						if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
+						{
+							if (CountInv(nm)) A_SetInventory(nm,0);
+							if (CountInv(nn)) A_SetInventory(nn,0);
+							if (CountInv(no)) A_SetInventory(no,0);
+							MiscItem.TimeArmorEnergyTics = 0;
+						}
+						if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
 					}
-					if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
-					{
-						if (CountInv(nm)) A_SetInventory(nm,0);
-						if (CountInv(nn)) A_SetInventory(nn,0);
-						if (CountInv(no)) A_SetInventory(no,0);
-						MiscItem.TimeArmorEnergyTics = 0;
-					}
-					if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
 				}
 				else
 				{
