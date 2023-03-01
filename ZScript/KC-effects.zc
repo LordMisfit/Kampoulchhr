@@ -492,6 +492,66 @@ class DualDevastatorsDisabled : PlaceHolderItem
 	}
 }
 
+class KillsCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class ItemsCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class SecretsCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+class DamageCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 100;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+class BonusCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 100;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+class PoisonCount : PlaceHolderItem
+{
+	default
+	{
+		inventory.icon "";
+		Inventory.MaxAmount 0x7FFFFFFD;
+		+INVENTORY.KEEPDEPLETED 
+	}
+}
+
+
+
 class PlayerStatPlaceholder : PlaceholderItemUndrop
 { 
 	override void DoEffect() { }
@@ -1053,3 +1113,43 @@ class KCPowerTorch : PowerLightAmp
 		}
 	}
 }
+
+class DedMonsterFlag : PlaceHolderItem 
+{
+	int fuse;
+	int ownerorigrender;
+	double ownerorigalpha;
+	override void PostBeginPlay()
+	{
+		if (owner) 
+		{
+			ownerorigrender = owner.GetRenderStyle();
+			ownerorigalpha = owner.alpha;
+			if (kc_deadmonsterfade > 0) fuse = (kc_deadmonsterfade);
+			if (kc_deadmonsterfade < 0) fuse = (abs(kc_deadmonsterfade) * TICRATE);
+			if (kc_deadmonsterfade == 0) fuse = (randompick(15,30,45,60,75,90,105,120,135,150,165,180) * TICRATE);
+		}
+		else Destroy();
+		super.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		if (kc_deadmonsterfade != 0 && owner.CountInv("NoDeathFadeOut") <= 0) fuse--;
+		
+		if (fuse <= 0 && owner.CountInv("NoDeathFadeOut") <= 0)
+		{
+			double fadeoutint = 0.019964;
+			If (Owner)
+			{
+				if (fuse == 0) owner.A_SetRenderStyle(1.0,STYLE_Add);
+				if (fuse < 0) owner.A_FadeOut(fadeoutint,FTF_REMOVE);
+			}
+		}
+		
+		if (Owner == NULL) Destroy();
+	}
+}
+
+class NoDeathFadeOut : PlaceHolderItem { default { +INVENTORY.KEEPDEPLETED; Inventory.MaxAmount 1; } }
+class NoRessurrectMessage : PlaceHolderItem { default { +INVENTORY.KEEPDEPLETED; Inventory.MaxAmount 1; } }
