@@ -60,6 +60,32 @@ class KC_EventHandler : EventHandler
 			spawnee.DamageType = 'Plasma';
 		}
 		
+		//
+		Inventory invspawnee;
+		invspawnee = Inventory(spawnee);
+		if (invspawnee)
+		{
+			invspawnname = invspawnee.GetClassName();
+			if (invspawnname == "GreenArmor" ||
+					invspawnname == "BlueArmor")
+			{
+				invspawnee.Pickupsound = "GetArmorFull";
+			}
+			if (invspawnname == "Stimpack" ||
+					invspawnname == "Medikit")
+			{
+				invspawnee.Pickupsound = "gethealthkit";
+			}
+			if (invspawnname == "HealthBonus")
+			{
+				invspawnee.Pickupsound = "gethealthbonus";
+			}
+			if (invspawnname == "ArmorBonus")
+			{
+				invspawnee.Pickupsound = "getarmorbonus";
+			}
+		}
+		
 		Super.WorldThingSpawned(e);
 	}
 	

@@ -1,3 +1,127 @@
+class TSArtifactSpawner : CustomInventoryExt
+{
+	default
+	{
+		radius 1;
+		height 2;
+		+NOINTERACTION;
+	}
+	
+	states
+	{
+		Spawn:
+			TNT1 A 0 BRIGHT NoDelay
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				
+				int bits;
+				if (player.CountInv("TimeSeraphCharm")) bits += 1;
+				if (player.CountInv("TimeSeraphPocketWatch")) bits += 2;
+				if (player.CountInv("TimeSeraphBangle")) bits += 4;
+				
+				string spawntype;
+				int randsel;
+				if (kcdebug_timeserapharmor) Console.Printf("bits: %d", bits);
+				
+				if (!player.CountInv("TimeSeraphCharm"))
+				{
+					if (kcdebug_timeserapharmor) Console.Printf("!bit [1] check: %d", bits);
+					if (player.CountInv("TimeSeraphPocketWatch") && player.CountInv("TimeSeraphBangle"))
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!1-6] check: %d", bits);
+						spawntype = "TimeSeraphCharm";
+					}
+					else
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!1-!6] check: %d", bits);
+						randsel = random(1,256);
+						if (randsel <= 224) spawntype = "TimeSeraphCharm";
+						if (randsel >= 225 && randsel <= 256)
+						{
+							if (!player.CountInv("TimeSeraphBangle"))
+							{
+								randsel = random(1,256);
+								if (randsel <= 192) spawntype = "TimeSeraphBangle";
+								if (randsel >= 193) spawntype = "TimeSeraphPocketWatch";
+							}
+							else
+							{
+								spawntype = "TimeSeraphPocketWatch";
+							}
+						}
+					}
+				}
+				else
+				if (!player.CountInv("TimeSeraphPocketWatch"))
+				{
+					if (kcdebug_timeserapharmor) Console.Printf("!bit [2] check: %d", bits);
+					if (player.CountInv("TimeSeraphCharm") && player.CountInv("TimeSeraphBangle"))
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!2-5] check: %d", bits);
+						spawntype = "TimeSeraphPocketWatch";
+					}
+					else
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!2-!5] check: %d", bits);
+						randsel = random(1,256);
+						if (randsel <= 224) spawntype = "TimeSeraphPocketWatch";
+						if (randsel >= 225 && randsel <= 256)
+						{
+							if (!player.CountInv("TimeSeraphBangle"))
+							{
+								randsel = random(1,256);
+								if (randsel <= 192) spawntype = "TimeSeraphBangle";
+								if (randsel >= 193) spawntype = "TimeSeraphCharm";
+							}
+							else
+							{
+								spawntype = "TimeSeraphCharm";
+							}
+						}
+					}
+				}
+				else
+				if (!player.CountInv("TimeSeraphBangle"))
+				{
+					if (kcdebug_timeserapharmor) Console.Printf("!bit [4] check: %d", bits);
+					if (player.CountInv("TimeSeraphCharm") && player.CountInv("TimeSeraphPocketWatch"))
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!4-3] check: %d", bits);
+						spawntype = "TimeSeraphBangle";
+					}
+					else
+					{
+						if (kcdebug_timeserapharmor) Console.Printf("bit [!4-!3] check: %d", bits);
+						randsel = random(1,256);
+						if (randsel <= 224) spawntype = "TimeSeraphBangle";
+						if (randsel >= 225 && randsel <= 256)
+						{
+							if (!player.CountInv("TimeSeraphCharm"))
+							{
+								randsel = random(1,256);
+								if (randsel <= 128) spawntype = "TimeSeraphCharm";
+								if (randsel >= 129) spawntype = "TimeSeraphPocketWatch";
+							}
+							else
+							{
+								spawntype = "TimeSeraphPocketWatch";
+							}
+						}
+					}
+				}
+				
+				if (bits < 7 && spawntype != "") 
+				{
+					if (kcdebug_timeserapharmor) Console.Printf("spawntype: %s", spawntype);
+					A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
+				}
+				Destroy();
+			}
+			Loop;
+	}
+}
+
 class BaseTimeSeraphArtifact : CustomInventoryExt
 {
 	void PickupArtifactFirstTime()
@@ -31,46 +155,119 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 		// 3 = Violet-Purple
 		Actor mo;
 		int artifactsnearby;
+		int charmsfound = 0;
+		int watchesfound = 0;
+		int banglesfound = 0;
+		double checkdist = frandom(480.0,544.0);
 		if (type != "TimeSeraphCharm")
 		{
-			int charmsfound = 0;
 			ThinkerIterator CharmFinder = ThinkerIterator.Create("TimeSeraphCharm");
 			while (mo = Actor(CharmFinder.Next()))
 			{
-				charmsfound++;
-				artifactsnearby++;
+				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphCharm") > 0)
+				{
+					charmsfound++;
+					artifactsnearby++;
+					if (kcdebug_timeserapharmor) Console.Printf("CharmFinder \c[green][owned]\c-: %p [%s]", mo, mo.GetClassName());
+				}
+				else
+				{
+					CustomInventoryExt mo2;
+					mo2 = CustomInventoryExt(mo);
+					if (mo2)
+					{
+						if (Distance3D(mo2) <= checkdist)
+						{
+							if (!mo2.owner)
+							{
+								charmsfound++;
+								artifactsnearby++;
+								if (kcdebug_timeserapharmor) Console.Printf("CharmFinder \c[brick][loose]\c-: %p [%s]", mo, mo.GetClassName());
+							}
+						}
+					}
+				}
+				if (charmsfound) 
+				{
+					colorphase += 1;
+					break;
+				}
 			}
-			if (charmsfound) colorphase += 1;
 		}
 		if (type != "TimeSeraphPocketWatch")
 		{
-			int watchesfound = 0;
 			ThinkerIterator WatchFinder = ThinkerIterator.Create("TimeSeraphPocketWatch");
 			while (mo = Actor(WatchFinder.Next()))
 			{
-				watchesfound++;
-				artifactsnearby++;
+				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphPocketWatch") > 0)
+				{
+					watchesfound++;
+					artifactsnearby++;
+					if (kcdebug_timeserapharmor) Console.Printf("WatchFinder \c[green][owned]\c-: %p [%s]", mo, mo.GetClassName());
+				}
+				else
+				{
+					CustomInventoryExt mo2;
+					mo2 = CustomInventoryExt(mo);
+					if (mo2)
+					{
+						if (Distance3D(mo2) <= checkdist)
+						{
+							if (!mo2.owner)
+							{
+								watchesfound++;
+								artifactsnearby++;
+								if (kcdebug_timeserapharmor) Console.Printf("WatchFinder \c[brick][loose]\c-: %p [%s]", mo, mo.GetClassName());
+							}
+						}
+					}
+				}
+				if (watchesfound) 
+				{
+					colorphase += 1;
+					break;
+				}
 			}
-			if (watchesfound) colorphase += 1;
 		}
 		if (type != "TimeSeraphBangle")
 		{
-			int banglesfound = 0;
 			ThinkerIterator BangleFinder = ThinkerIterator.Create("TimeSeraphBangle");
 			while (mo = Actor(BangleFinder.Next()))
 			{
-				banglesfound++;
-				artifactsnearby++;
+				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphBangle") > 0)
+				{
+					banglesfound++;
+					artifactsnearby++;
+					if (kcdebug_timeserapharmor) Console.Printf("BangleFinder \c[green][owned]\c-: %p [%s]", mo, mo.GetClassName());
+				}
+				else
+				{
+					CustomInventoryExt mo2;
+					mo2 = CustomInventoryExt(mo);
+					if (mo2)
+					{
+						if (Distance3D(mo2) <= checkdist)
+						{
+							if (!mo2.owner)
+							{
+								banglesfound++;
+								artifactsnearby++;
+								if (kcdebug_timeserapharmor) Console.Printf("BangleFinder \c[brick][loose]\c-: %p [%s]", mo, mo.GetClassName());
+							}
+						}
+					}
+				}
+				if (banglesfound) 
+				{
+					colorphase += 1;
+					break;
+				}
 			}
-			
-			if (banglesfound) colorphase += 1;
 		}
+		
 		if (artifactsnearby) colorphase += 1;
-		else 
-		{
-			if (Distance3D(player) <= frandom(480.0,544.0)) colorphase += 1;
-		}
 		if (colorphase >= 3) colorphase = 3;
+		if (kcdebug_timeserapharmor) Console.Printf("[%s] charmsfound: %d, watchesfound: %d, banglesfound: %d, artifactsnearby: %d, colorphase: %d [tic: %d]", GetClassName(), charmsfound, watchesfound, banglesfound, artifactsnearby, colorphase, gametic);
 		return colorphase;
 	}
 	
@@ -89,7 +286,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		//$Category EE Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSCHA0";
-		Tag "Time Seraph's Charm: Allows movement within frozen time if paired with the Pocket Watch. Allows user to summon the Time Seraph's armor for protection. Using this will toggle level 1 protection on or off.";
+		Tag "";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
@@ -106,9 +303,10 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		super.Tick();
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		string itemname = GetClassName();
+
 		texname = "TSCHA0";
 		if (MiscItem)
 		{
@@ -117,6 +315,18 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSCHD0";
 		}
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		string tagg = "???? ??????'? ?????";
+		if (player.CountInv(itemname) > 0)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
+			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
+			if (MiscItem.TimeArmorRelicsOwned == 3) tagg = "\c[purple]";
+			tagg.AppendFormat("Time Seraph's Charm\c-");
+			tagg.AppendFormat(": Said to allow the holder movement within frozen time if paired with the \c[gold]Pocket Watch\c-. Allows user to summon the \c[purple]Time Seraph's armor\c- for protection. Using this will toggle \c[lightblue]level 1\c- protection on or off.");
+		}
+		SetTag(tagg);
+		super.Tick();
 	}
 	
 	States
@@ -151,7 +361,9 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				invoker.PickupArtifactFirstTime();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				player.A_SetInventory("CharmEnergyGive",1);
 			}
 			stop;
 		Use:
@@ -190,7 +402,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		//$Category EE Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSPWA0";
-		Tag "Time Seraph's Pocket Watch: Allows Perception of Frozen Time. Upgrades Time Seraph's Armor to Level 2 potency if used as an item and you possess the charm.";
+		Tag "";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
@@ -207,9 +419,10 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		super.Tick();
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		string itemname = GetClassName();
+
 		texname = "TSPWA0";
 		if (MiscItem)
 		{
@@ -218,6 +431,18 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSPWD0";
 		}
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		string tagg = "???? ??????'? ?????? ?????";
+		if (player.CountInv(itemname) > 0)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
+			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
+			if (MiscItem.TimeArmorRelicsOwned == 3) tagg = "\c[purple]";
+			tagg.AppendFormat("Time Seraph's Pocket Watch\c-");
+			tagg.AppendFormat(": Said to allow its holder the Perception of Frozen Time. Upgrades \c[purple]Time Seraph's Armor\c- to \c[green]Level 2\c- potency if used as an item and you possess the charm.");
+		}
+		SetTag(tagg);
+		super.Tick();
 	}
 	
 	States
@@ -252,7 +477,9 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				invoker.PickupArtifactFirstTime();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				player.A_SetInventory("PWatchEnergyGive",1);
 			}
 			stop;
 		Use:
@@ -308,9 +535,10 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		super.Tick();
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		string itemname = GetClassName();
+
 		texname = "TSBGA0";
 		if (MiscItem)
 		{
@@ -319,6 +547,18 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			if (MiscItem.TimeArmorRelicsOwned == 3) texname = "TSBGD0";
 		}
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		string tagg = "???? ??????'? ??????";
+		if (player.CountInv(itemname) > 0)
+		{
+			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
+			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
+			if (MiscItem.TimeArmorRelicsOwned == 3) tagg = "\c[purple]";
+			tagg.AppendFormat("Time Seraph's Bangle\c-");
+			tagg.AppendFormat(": Creates a scanning visor over the eyes for various vision related perks when used. Toggleable. [boosts damage dealt by 12.5%]");
+		}
+		SetTag(tagg);
+		super.Tick();
 	}
 	
 	States
@@ -353,7 +593,9 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				invoker.PickupArtifactFirstTime();
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				player.A_SetInventory("BangleEnergyGive",1);
 			}
 			stop;
 		Use:

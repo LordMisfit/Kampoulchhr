@@ -1,5 +1,11 @@
 class KCStatusBarMain : BaseStatusBar
 {
+	DynamicValueInterpolator mHealthInterpolator;
+	DynamicValueInterpolator mArmorInterpolator;
+	DynamicValueInterpolator mEXPInterpolator;
+	int prevhealthtick, healthtick;
+	int prevarmortick, armortick;
+	int prevEXPtick, EXPtick;
 	HUDFont mBigFont;
 	HUDFont mHUDFont;
 	HUDFont mIndexFont;
@@ -11,8 +17,18 @@ class KCStatusBarMain : BaseStatusBar
 	HUDFont mKCMFont;
 	HUDFont mKCLFont;
 	HUDFont mKCLFont2;
-
 	InventoryBarState diparms;
+	InventoryBarState diparms_sbar;
+	private int wiggle;
+	int HPDmgShakeX, HPDmgShakeY;
+	int APDmgShakeX, APDmgShakeY;
+	int TSEDmgShakeX, TSEDmgShakeY;
+	double HPRecPulseSpd;
+	double APRecPulseSpd;
+	double TSERecPulseSpd;
+	int HPShakeInc, APShakeInc, TSEShakeInc;
+	int HPPulseInc, APPulseInc;
+	int HPPulseTimer, APPulseTimer;
 	
 	override void Init()
 	{
@@ -51,12 +67,71 @@ class KCStatusBarMain : BaseStatusBar
 		mKCLFont2 = HUDFont.Create(fnt, 0, false, 1, 1);
 
 		diparms = InventoryBarState.Create();
+		diparms_sbar = InventoryBarState.CreateNoBox(mIndexFont, boxsize:(31, 31), arrowoffs:(0,-10));
+		if (kcdebug_hudinitdisplays)
+		{
+			Console.Printf("diparms: boxsize: %d x %d, boxofs: %d x %d, selectofs: %d x %d, innersize: %d x %d", diparms.boxsize.x, diparms.boxsize.y, diparms.boxofs.x, diparms.boxofs.y, diparms.selectofs.x, diparms.selectofs.y, diparms.innersize.x, diparms.innersize.y);
+			Console.Printf("diparms_sbar: boxsize: %d x %d, boxofs: %d x %d, selectofs: %d x %d, innersize: %d x %d", diparms_sbar.boxsize.x, diparms_sbar.boxsize.y, diparms_sbar.boxofs.x, diparms_sbar.boxofs.y, diparms_sbar.selectofs.x, diparms_sbar.selectofs.y, diparms_sbar.innersize.x, diparms_sbar.innersize.y);
+		}
+		mHealthInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		mArmorInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		mEXPInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		healthtick = armortick = EXPtick = 8;
+	}
+	
+	override int GetProtrusion(double Scaleratio) const
+	{
+		return Scaleratio > 0.7? 8 : 0;
+	}
+
+	override void NewGame ()
+	{
+		Super.NewGame();
+		mHealthInterpolator.Reset(0);
+		mArmorInterpolator.Reset(0);
+		mEXPInterpolator.Reset(0);
 	}
 
 	override void Tick()
 	{
 		Super.Tick();
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		double tickinc = 0.1;
+		if (MiscItem && MiscItem.itemtimer <= 2) tickinc = 1.0;
+		healthtick = CPlayerPawn.CountInv("PlayerMaxHP") * tickinc;
+		// Transformations Go Here
+		if (healthtick < 1) healthtick = 1;
+		if (healthtick != prevhealthtick) mHealthInterpolator = DynamicValueInterpolator.Create(CPlayerPawn.health, 0.25, 1, healthtick);
+		name armorclasstype = "BasicArmor";
+		let armor = BasicArmor(CPlayerPawn.FindInventory(armorclasstype));
+		if (armor != null && armor.Amount > 0) 
+		{
+			if (armortick < 1) armortick = 1;
+			if (armortick != prevarmortick) mArmorInterpolator = DynamicValueInterpolator.Create(armor.Amount, 0.25, 1, armortick);
+		}
+		EXPtick = CPlayerPawn.CountInv("ExpPtsNeeded") * tickinc;
+		if (EXPtick < 1) EXPtick = 1;
+		if (EXPtick != prevEXPtick) mEXPInterpolator = DynamicValueInterpolator.Create(CPlayerPawn.CountInv("ExpPts"), 0.25, 1, EXPTick);
+		//Console.Printf("HealthTick: %d [%d], ArmorTick %d [%d], EXPTick %d [%d]", healthtick, prevhealthtick, armortick, prevarmortick, EXPtick, prevEXPtick);
+		
+		mHealthInterpolator.Update(CPlayerPawn.health);
+		if (armor != null && armor.Amount > 0) mArmorInterpolator.Update(armor.Amount);
+		mEXPInterpolator.Update(CPlayerPawn.CountInv("ExpPts"));
+		
+		prevhealthtick = healthtick;
+		prevarmortick = armortick;
+		prevEXPtick = EXPtick;
+
+		// wiggle the chain if it moves
+		if (Level.time & 1)
+		{
+			wiggle = (mHealthInterpolator.GetValue() != CPlayerPawn.health) && Random[ChainWiggle](0, 1);
+		}
 	}
+	
+	//
 	
 	// Except for the placement information this gets all info from the struct that gets passed in.
 	void DrawInventoryBar(InventoryBarState parms, Vector2 position, int NumFields, int flags = 0, double BGAlpha = 1.)
@@ -138,6 +213,12 @@ class KCStatusBarMain : BaseStatusBar
 							InvIconAlpha = 1.0;
 							InvIconScaleX *= 0.3;
 							InvIconScaleY *= 0.3;
+							if (item.Amount <= 0) 
+							{
+								InvIconAlpha = 0.1; 
+								InvIconScaleX *= 0.4375;
+								InvIconScaleY *= 0.4375;
+							}
 						}
 						else
 						if (item.GetClassName() == "TimeSeraphPocketWatch") 
@@ -145,6 +226,12 @@ class KCStatusBarMain : BaseStatusBar
 							InvIconAlpha = 1.0;
 							InvIconScaleX *= 0.2;
 							InvIconScaleY *= 0.2;
+							if (item.Amount <= 0) 
+							{
+								InvIconAlpha = 0.1; 
+								InvIconScaleX *= 0.4375;
+								InvIconScaleY *= 0.4375;
+							}
 						}
 						else
 						if (item.GetClassName() == "TimeSeraphBangle") 
@@ -152,6 +239,12 @@ class KCStatusBarMain : BaseStatusBar
 							InvIconAlpha = 1.0;
 							InvIconScaleX *= 0.25;
 							InvIconScaleY *= 0.25;
+							if (item.Amount <= 0)
+							{
+								InvIconAlpha = 0.1; 
+								InvIconScaleX *= 0.4375;
+								InvIconScaleY *= 0.4375;
+							}
 						}
 						else
 						{
@@ -224,7 +317,7 @@ class KCStatusBarMain : BaseStatusBar
 			//Console.Printf("(%s, i: %d) LegendPos.x: %d, LegendPos.y: %d", item.GetClassName(), i, LegendPos.x, LegendPos.y);
 			//Console.Printf("(%s, i: %d) LegendPosV.x: %d, LegendPosV.y: %d", item.GetClassName(), i, (LegendPosV.x + ValPos.x), (LegendPosV.y + ValPos.y));
 
-			if (item is "TimeSeraphCharm") 
+			if (item is "TimeSeraphCharm" && item.Amount > 0) 
 			{
 				UserKeyString = UIKeybinds.getKeyboard("QTimeCharm");
 				if (UserKeyString != "")
@@ -233,7 +326,7 @@ class KCStatusBarMain : BaseStatusBar
 					LegendStr.AppendFormat("%s", UserKeys[0]);
 				}
 			}
-			if (item is "TimeSeraphPocketWatch") 
+			if (item is "TimeSeraphPocketWatch" && item.Amount > 0) 
 			{
 				UserKeyString = UIKeybinds.getKeyboard("QTimePWatch");
 				if (UserKeyString != "")
@@ -242,7 +335,7 @@ class KCStatusBarMain : BaseStatusBar
 					LegendStr.AppendFormat("%s", UserKeys[0]);
 				}
 			}
-			if (item is "TimeSeraphBangle") 
+			if (item is "TimeSeraphBangle" && item.Amount > 0) 
 			{
 				UserKeyString = UIKeybinds.getKeyboard("QTimeBangle");
 				if (UserKeyString != "")
@@ -369,7 +462,7 @@ class KCStatusBarMain : BaseStatusBar
 	override void Draw (int state, double TicFrac)
 	{
 		Super.Draw (state, TicFrac);
-
+		/*
 		if (state == HUD_StatusBar)
 		{
 			BeginStatusBar();
@@ -380,18 +473,28 @@ class KCStatusBarMain : BaseStatusBar
 			BeginHUD();
 			DrawFullScreenStuff ();
 		}
+		*/
+		BeginHUD();
+		
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		if (!CPlayerPawn.CountInv("NoHUD")) DrawFullScreenStuff();
 	}
 
 	protected void DrawMainBar (double TicFrac)
 	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
 		DrawImage("STBAR", (0, 168), DI_ITEM_OFFSETS);
 		DrawImage("STTPRCNT", (90, 171), DI_ITEM_OFFSETS);
 		DrawImage("STTPRCNT", (221, 171), DI_ITEM_OFFSETS);
 		
 		Inventory a1 = GetCurrentAmmo();
-		if (a1 != null) DrawString(mHUDFont, FormatNumber(a1.Amount, 3), (44, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
-		DrawString(mHUDFont, FormatNumber(CPlayer.health, 3), (90, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
-		DrawString(mHUDFont, FormatNumber(GetArmorAmount(), 3), (221, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
+		if (a1 != null) DrawString(mHUDFont, FormatNumber(a1.Amount, 4), (44, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
+		DrawString(mHUDFont, FormatNumber(CPlayer.health, 4), (90, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
+		DrawString(mHUDFont, FormatNumber(GetArmorAmount(), 4), (221, 171), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW);
 
 		DrawBarKeys();
 		DrawBarAmmo();
@@ -416,28 +519,46 @@ class KCStatusBarMain : BaseStatusBar
 			double itemalpha = 1.0;
 			vector2 itemscale = (1.0, 1.0);
 			bool showamt = true;
-			if (item.GetClassName() == "TimeSeraphCharm") 
+			if (item.GetClassName() == "TimeSeraphCharm")
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.3;
 				itemscale.y *= 0.3;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			else
-			if (item.GetClassName() == "TimeSeraphPocketWatch") 
+			if (item.GetClassName() == "TimeSeraphPocketWatch")
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.2;
 				itemscale.y *= 0.2;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			else
-			if (item.GetClassName() == "TimeSeraphBangle") 
+			if (item.GetClassName() == "TimeSeraphBangle")
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.25;
 				itemscale.y *= 0.25;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			DrawInventoryIcon(item, (160, 198), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
 			if (item.Amount > 1 && showamt)
@@ -496,7 +617,6 @@ class KCStatusBarMain : BaseStatusBar
 				if (PowerDoubleFiringSpeed(item)) ItemFontCLR = font.cr_red;
 				if (TSArtifactsInUse(item))
 				{
-					if (kcdebug_timeserapharmor) Console.Printf("TSArtifactsInUse");
 					if (MiscItem)
 					{
 						if (MiscItem.TimeArmorRelicsUsedBits == 1) ItemFontCLR = font.CR_LightBlue;
@@ -676,7 +796,7 @@ class KCStatusBarMain : BaseStatusBar
 		DrawImage(CPlayer.HasWeaponsInSlot(7)? "STYSNUM7" : "STGNUM7", (135, 182), DI_ITEM_OFFSETS);
 	}
 	
-	int A_DrawInvSelected(int invY = 0)
+	int A_DrawFSInvSelected(int invY = 0)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -688,35 +808,105 @@ class KCStatusBarMain : BaseStatusBar
 			bool showamt = true;
 			double itemalpha = 1.0;
 			vector2 itemscale = (1.0, 1.0);
-			if (item.GetClassName() == "TimeSeraphCharm") 
+			if (item is "TimeSeraphCharm") 
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.3;
 				itemscale.y *= 0.3;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			else
-			if (item.GetClassName() == "TimeSeraphPocketWatch") 
+			if (item is "TimeSeraphPocketWatch") 
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.2;
 				itemscale.y *= 0.2;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			else
-			if (item.GetClassName() == "TimeSeraphBangle") 
+			if (item is "TimeSeraphBangle") 
 			{
 				itemalpha *= 1.0;
 				itemscale.x *= 0.25;
 				itemscale.y *= 0.25;
 				showamt = false;
+				if (item.Amount <= 0) 
+				{
+					itemalpha *= 0.1; 
+					itemscale.x *= 0.4375;
+					itemscale.y *= 0.4375;
+				}
 			}
 			DrawInventoryIcon(item, (-14, invY + 17), DI_DIMDEPLETED, itemalpha, (-1, -1), itemscale);
-			if (showamt) DrawString(mKCLFont, FormatNumber(item.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, font.cr_untranslated, 1.0, -1, 4, (1.5, 1.5));
+			
+			if (item is "TimeSeraphCharm" ||
+					item is "TimeSeraphPocketWatch" ||
+					item is "TimeSeraphBangle") 
+			{
+				// Hotkeys
+				string LegendStr = "";
+				string UserKeyString;
+				Array<String> UserKeys;
+				int LegendFontCLR = font.cr_green;
+				double LegendAlpha = 0.9;
+				Vector2 LegendScale = (0.875, 0.875);
+				LegendScale.x *= 1.5;
+				LegendScale.y *= 1.5;
+	
+				if (item is "TimeSeraphCharm" && item.Amount > 0) 
+				{
+					UserKeyString = UIKeybinds.getKeyboard("QTimeCharm");
+					if (UserKeyString != "")
+					{
+						UserKeyString.Split(UserKeys,", ");
+						LegendStr.AppendFormat("%s", UserKeys[0]);
+					}
+				}
+				if (item is "TimeSeraphPocketWatch" && item.Amount > 0) 
+				{
+					UserKeyString = UIKeybinds.getKeyboard("QTimePWatch");
+					if (UserKeyString != "")
+					{
+						UserKeyString.Split(UserKeys,", ");
+						LegendStr.AppendFormat("%s", UserKeys[0]);
+					}
+				}
+				if (item is "TimeSeraphBangle" && item.Amount > 0) 
+				{
+					UserKeyString = UIKeybinds.getKeyboard("QTimeBangle");
+					if (UserKeyString != "")
+					{
+						UserKeyString.Split(UserKeys,", ");
+						LegendStr.AppendFormat("%s", UserKeys[0]);
+					}
+				}
+	
+				if (LegendStr != "") 
+				{
+					DrawString(mConFont, LegendStr, (-30, invY), DI_TEXT_ALIGN_RIGHT, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+				}
+			}
+			else
+			if (showamt)
+			{
+				DrawString(mKCLFont, FormatNumber(item.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, font.cr_untranslated, 1.0, -1, 4, (1.5, 1.5));
+			}
 		}
 		return invY;
 	}
-	int A_DrawAmmo(int invY = 0)
+	int A_DrawFSAmmo(int invY = 0)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -784,7 +974,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		return invY;
 	}
-	void A_DrawArmor()
+	void A_DrawFSArmor()
 	{
 		int fontclr = font.CR_UNTRANSLATED;
 		double fontalpha = 1.0;
@@ -821,8 +1011,8 @@ class KCStatusBarMain : BaseStatusBar
 				fontalpha = 0.25;
 				fontclr = font.cr_darkgray;
 			}
+			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
-			DrawString(mKCLFont, FormatNumber(armor.Amount, 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 			
 			// Show Max Armor
 			if (hudarmortype > 0)
@@ -840,7 +1030,7 @@ class KCStatusBarMain : BaseStatusBar
 		
 		if (MiscItem)
 		{
-			if (CPlayer.mo.CountInv("TimeSeraphCharm"))
+			if (MiscItem.TimeArmorRelicsOwned > 0 && MiscItem.TimeArmorRelicsOwnedBits > 0)
 			{
 				fontclr = font.CR_Gray;
 				fontalpha = 0.5;
@@ -892,13 +1082,28 @@ class KCStatusBarMain : BaseStatusBar
 					}
 					else
 					{
-						let armor3 = CPlayer.mo.FindInventory("TimeSeraphCharm");
-						if (armor3) 
+						if (CPlayer.mo.CountInv("TimeSeraphCharm") > 0) 
 						{
 							vector2 iconscale = (1.0, 1.0);
 							iconscale.x *= 0.375;
 							iconscale.y *= 0.375;
-							DrawInventoryIcon(armor3, (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+							DrawImage("TSCHA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+						}
+						else
+						if (CPlayer.mo.CountInv("TimeSeraphPocketWatch") > 0) 
+						{
+							vector2 iconscale = (1.0, 1.0);
+							iconscale.x *= 0.375;
+							iconscale.y *= 0.375;
+							DrawImage("TSPWA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+						}
+						else
+						if (CPlayer.mo.CountInv("TimeSeraphBangle") > 0) 
+						{
+							vector2 iconscale = (1.0, 1.0);
+							iconscale.x *= 0.375;
+							iconscale.y *= 0.375;
+							DrawImage("TSBGA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 						}
 					}
 					
@@ -912,7 +1117,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
-	void A_DrawHealth()
+	void A_DrawFSHealth()
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -933,7 +1138,7 @@ class KCStatusBarMain : BaseStatusBar
 		// Show Current Health
 		let berserk = CPlayer.mo.FindInventory("PowerStrength");
 		DrawImage(berserk? "PSTRA0" : "MEDIA0", (20, -2));
-		DrawString(mKCLFont, FormatNumber(CPlayer.health, 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
+		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Show Max Health
 		string MaxHPS = "\c[brick] / ";
@@ -1516,11 +1721,13 @@ class KCStatusBarMain : BaseStatusBar
 		int CurrHealth;
 		if (CPlayer) CurrHealth = CPlayer.health;
 		int PlayerMaxHP = 100; // MaxHealthTrue;
-		// Draw health
-		A_DrawHealth();
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) PlayerMaxHP = MiscItem.MaxHealthTrue;
 		
-		// Draw Armor
-		A_DrawArmor();
+		// Draw health
+		A_DrawFSHealth();
+		
+		// Draw Armor [and Time Seraph Armor info]
+		A_DrawFSArmor();
 		
 		// Draw Weapon Slots
 		int x;
@@ -1532,10 +1739,10 @@ class KCStatusBarMain : BaseStatusBar
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
 		
 		// Draw Ammo
-		int invY = A_DrawAmmo(-20);
+		int invY = A_DrawFSAmmo(-20);
 		
 		// Inventory [Selected]
-		invY = A_DrawInvSelected(invY);
+		invY = A_DrawFSInvSelected(invY);
 		
 		// Draw Keys
 		DrawFSHUDKeys();
