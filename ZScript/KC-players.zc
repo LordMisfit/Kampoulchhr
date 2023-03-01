@@ -281,6 +281,9 @@ class KCPlayerPawn : PlayerPawn
 							if (CountInv(nn)) A_SetInventory(nn,0);
 							if (CountInv(no)) A_SetInventory(no,0);
 							MiscItem.TimeArmorEnergyTics = 0;
+							
+							A_StopSound(551);
+							A_StartSound("tsarmor/depleted",551,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 						}
 						if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("TSTicDmg: %.8f", TSTicDmg);
 					}
