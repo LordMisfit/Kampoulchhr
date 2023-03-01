@@ -1224,7 +1224,15 @@ class PlayerStatItem : Inventory
 				//if (owner.CountInv("KCPowerTorch")) owner.A_SetInventory("KCPowerTorch",0);
 			}
 			
-			if (TimeArmorEnergyTics > TimeArmorEnergyMaxTics) TimeArmorEnergyTics = TimeArmorEnergyMaxTics;
+			if (TimeArmorEnergyTics > TimeArmorEnergyMaxTics) 
+			{
+				TimeArmorEnergyTics = TimeArmorEnergyMaxTics;
+				if (TimeArmorRelicsUsedBits <= 0)
+				{
+					A_StopSound(551);
+					A_StartSound("tsarmor/fullcharge",551,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+				}
+			}
 		}
 		else
 		{
