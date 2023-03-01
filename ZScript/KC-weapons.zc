@@ -964,11 +964,16 @@ class Devastator : KCWeaponBase
 		Fire:
 			TNT1 A 0 
 			{
-				invoker.speedtype = randompick(0,0,1,1,1);
-				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype = randompick(0,0,0,0,1);
-				invoker.speedtype2 = 1;
-				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype2 = randompick(0,0,1,1,1);
-				if (A_DualDevCheck()) return resolvestate("FireDual");
+				invoker.speedtype = randompick(0,0,1,1,1) + 1;
+				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype = randompick(0,0,0,0,1) + 1;
+				invoker.speedtype2 = 1 + 1;
+				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype2 = randompick(0,0,1,1,1) + 1;
+				if (A_DualDevCheck()) 
+				{
+					invoker.speedtype -= 1;
+					invoker.speedtype2 -= 1;
+					return resolvestate("FireDual");
+				}
 				return resolvestate(null);
 			}
 			DEV1 B 1 
@@ -1100,12 +1105,14 @@ class Devastator : KCWeaponBase
 		AltFire:
 			TNT1 A 0 
 			{
-				invoker.speedtype = randompick(1,2,2);
-				if (invoker.shotsfired > (invoker.shotsfiredthreshold*0.334)) invoker.speedtype = randompick(1,1,1,2);
-				invoker.speedtype2 = randompick(1,2,2,2,2);
-				if (invoker.shotsfired > (invoker.shotsfiredthreshold*0.334)) invoker.speedtype2 = randompick(0,1,1,1,1,2);
+				invoker.speedtype = randompick(1,2,2) + 1;
+				if (invoker.shotsfired > (invoker.shotsfiredthreshold*0.334)) invoker.speedtype = randompick(1,1,1,2) + 1;
+				invoker.speedtype2 = randompick(1,2,2,2,2) + 1;
+				if (invoker.shotsfired > (invoker.shotsfiredthreshold*0.334)) invoker.speedtype2 = randompick(0,1,1,1,1,2) + 1;
 				if (A_DualDevCheck()) 
 				{
+					invoker.speedtype -= 1;
+					invoker.speedtype2 -= 1;
 					if (CountInv("MiniRockets") >= 6) return resolvestate("AltFireDual");
 					return resolvestate("Ready");
 				}
