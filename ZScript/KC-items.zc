@@ -620,6 +620,103 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 }
 
 // Doom Powerups
+class HealthBonus2 : CustomInventoryExt replaces HealthBonus
+{
+	default
+	{
+		//$Sprite "BON1A0"
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.Pickupsound "gethealthbonus";
+		Inventory.PickupMessage "Picked up a \cnhealth bonus\c-.";
+	}
+	
+	States
+	{
+		Spawn:
+			BON1 AABBCCDDCCBB 3 BRIGHT;
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				//A_EmulateGiveHealthBonusACI(1,8,100,1);
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				int CurrentHealth = player.health;
+				int HealthValue;
+				int MaxHealthTrue;
+				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxHealthLimit = MaxHealthTrue * 2;
+				
+				if (CurrentHealth < MaxHealthLimit)
+				{
+					HealthValue = MaxHealthTrue * 0.01;
+					if (HealthValue < 1) HealthValue = 1;
+				
+					// if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
+					CurrentHealth += HealthValue;
+					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+					//Console.Printf("HealthValue: %d", HealthValue);
+		
+					player.health = CurrentHealth;
+				}
+			}
+			Stop;
+	}
+}
+
+class HealthBonusBig : CustomInventoryExt
+{
+	default
+	{
+		//$Sprite "BON3A0"
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		Scale 1.125;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.Pickupsound "gethealthbonus" ;
+		Inventory.PickupMessage "Picked up a \cnlarge health bonus\c-.";
+	}
+	
+	States
+	{
+		Spawn:
+			BON3 A 0;
+			goto Float;
+		Float:
+			BON3 ABCDCB 6 BRIGHT;
+			Loop;
+		Pickup:
+			NULL A 0
+			{
+				//A_EmulateGiveHealthBonusACI(10,8,100,1); 
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				int CurrentHealth = player.health;
+				int HealthValue;
+				int MaxHealthTrue;
+				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxHealthLimit = MaxHealthTrue * 2;
+				
+				if (CurrentHealth < MaxHealthLimit)
+				{
+					HealthValue = MaxHealthTrue * 0.10;
+					if (HealthValue < 10) HealthValue = 10;
+				
+					// if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
+					CurrentHealth += HealthValue;
+					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+					//Console.Printf("HealthValue: %d", HealthValue);
+		
+					player.health = CurrentHealth;
+				}
+			}
+			Stop;
+	}
+}
 
 class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 {

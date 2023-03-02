@@ -157,6 +157,34 @@ object InvulnerabilitySphere2
 	Frame PINV { Light INVULNSPHERE }
 }
 
+// Health Potion
+pulselight HEALTHPOTION
+{
+	color 0.0 0.0 0.3
+	size 12
+	secondarySize 15
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+object HealthBonus2
+{
+	frame BON1 { light HEALTHPOTION }
+}
+pulselight HEALTHPOTIONBIG
+{
+	color 0.0 0.0 0.3
+	size 21
+	secondarySize 24
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+object HealthBonusBig
+{
+	frame BON3 { light HEALTHPOTIONBIG }
+}
+
 //Underwater shader
 HardwareShader PostProcess scene
 {
