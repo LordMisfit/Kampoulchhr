@@ -1657,6 +1657,140 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	}
 }
 
+class ArmorBonusSilent : ArmorBonus2
+{
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PrevArmorAmt = Owner.CountInv(armorclasstype);
+		int PrevArmorType;
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d", PrevArmorType, PrevArmorAmt);
+
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+		bool result = false;
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem();
+			armor.Amount = 0;
+			armor.MaxAmount = MaxSaveAmount;
+			Owner.AddInventory (armor);
+		}
+
+		if (BonusCount > 0 && armor.BonusCount < BonusMax)
+		{
+			armor.BonusCount = min(armor.BonusCount + BonusCount, BonusMax);
+			result = true;
+		}
+
+		int saveAmount = min(GetSaveAmount(), MaxSaveAmount);
+
+		if (saveAmount <= 0)
+		{ // If it can't give you anything, it's as good as used.
+			return BonusCount > 0 ? result : true;
+		}
+
+		// If you already have more armor than this item can give you, you can't
+		// use it.
+		if (armor.Amount >= MaxSaveAmount + armor.BonusCount)
+		{
+			return result;
+		}
+
+		if (armor.Amount <= 0)
+		{ // Should never be less than 0, but might as well check anyway
+			armor.Amount = 0;
+			armor.Icon = Icon;
+			armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+			armor.MaxAbsorb = MaxAbsorb;
+			armor.ArmorType = GetClassName();
+			armor.MaxFullAbsorb = MaxFullAbsorb;
+			armor.ActualSaveAmount = MaxSaveAmount;
+		}
+		else
+		{
+			armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
+			if (kcdebug_armordisplays) Console.Printf("armor.Amount: %d", armor.Amount);
+			/*
+			if (PrevArmorType == 0)
+			{
+				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M0]: %.4f", armor.SavePercent);
+			}
+			if (PrevArmorType == 1)
+			{
+				if (armor.Amount > (ArmorItemMax1-1))
+				{
+					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNJ0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1]: %.4f", armor.SavePercent);
+				}
+				else 
+				{
+					if (armor.Amount >= ((ArmorItemMax1*0.5)-1))
+					{
+						if (armor.Icon != TexMan.checkForTexture("KGWNI0")) armor.Icon = TexMan.checkForTexture("KGWNI0");
+					}
+					//armor.SavePercent = clamp(50, 0, 100) / 100;
+					armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1-1]: %.4f", armor.SavePercent);
+				}
+			}
+			else
+			if (PrevArmorType == 2)
+			{
+				if (armor.Amount > (ArmorItemMax2-1))
+				{
+					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNK0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2]: %.4f", armor.SavePercent);
+				}
+				else
+				{
+					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNJ0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2-1]: %.4f", armor.SavePercent);
+				}
+			}
+			else
+			if (PrevArmorType == 3)
+			{
+				if (armor.Amount > (ArmorItemMax3-1))
+				{
+					armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNL0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3]: %.4f", armor.SavePercent);
+				}
+				else
+				{
+					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNK0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3-1]: %.4f", armor.SavePercent);
+				}
+			}
+			if (PrevArmorType == 4)
+			{
+				armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
+				armor.Icon = TexMan.checkForTexture("KGWNL0");
+				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M4]: %.4f", armor.SavePercent);
+			}
+			*/
+		}
+		
+		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
+		armor.MaxAmount = max(armor.MaxAmount, MaxSaveAmount);
+		
+		int armordiff = Owner.CountInv(armorclasstype) - PrevArmorAmt;
+		if (kcdebug_armordisplays) Console.Printf("%d", Owner.CountInv(armorclasstype));
+		
+		return true;
+	}
+}
+
 class ArmorBonusBig : ArmorBonus2
 {
 	default

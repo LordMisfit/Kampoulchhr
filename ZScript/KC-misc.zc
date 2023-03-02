@@ -8,6 +8,12 @@ class PlayerStatItem : Inventory
 	
 	int IsMorphed, WasMorphed, WasMorphProj;
 	int MorphTimer;
+	int CharacterClass;
+	bool cankick;
+	
+	int ArmorTier;
+	int armsav;
+	int armtier;
 	
 	int CompatPackMode;
 	double TimeArmorEnergyTics;
@@ -16,6 +22,9 @@ class PlayerStatItem : Inventory
 	int TimeArmorRelicsUsedBits;
 	int TimeArmorRelicsOwnedBits;
 
+	int EWShieldKills;
+	int HellWarriorMaxCharge;
+	int HellWarriorShieldLevel;
 	int KillComboCount;
 
 	actor weapon;
@@ -28,9 +37,13 @@ class PlayerStatItem : Inventory
 	int NumOfLegendMeds, MedCurrLvl, LegMedCap;
 	int ClassCheck;
 	int itemtimer;
-	int ClassicDoomType;
 	int buttons;
 	int TrueGameSkill;
+	int CurrentArmorClass;
+	int CurrentMaxArmor;
+	int ArmorResistance;
+	int ClassicDoomType;
+	int ModType;
 	int OneLinerCooldown;
 	int CanTalkUnderwater;
 	int PlayerLevel, TruePlayerLevel, ActualLevel;
@@ -63,6 +76,10 @@ class PlayerStatItem : Inventory
 	int MassNoRPGAdd;
 	double MassNoRPGAdd2;
 	int MassBonusAdd;
+	int AirLevelAdd;
+	int AirNoRPGAdd;
+	int AirNoRPGAdd2;
+	int AirBonusAdd;
 
 	int LevelCap;
 	int StaminaLevel;
@@ -736,21 +753,18 @@ class PlayerStatItem : Inventory
 						HPDegenTimer = 0;
 						if (kcdebug_hpregen) Console.Printf("Regen/Degen Neutral");
 					}
-					//
-					//
-					//
+					
+					if (HPRegenBoostTimer > 0) HPRegenBoostTimer--;
+					if (HPRegenBoostTimer < 0) HPRegenBoostTimer++;
+					if (kcdebug_hpregen && HPRegenBoostTimer) Console.Printf("HPRegenBoostTimer: %d", HPRegenBoostTimer);
 				}
-				//
-				//
-				//
+				else
+				{
+					BaseRegenMulti = 0.0;
+				}
 			}
-			//
-			//
-			//
+			
 		}
-		//
-		//
-		//
 	}
 	
 	void InitStuff()
@@ -758,6 +772,85 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+		if (itemtimer <= 2 && kc_deathexitaffectsstats)
+		{
+			if (itemtimer == 0) ClassCheck = globalvars.ClassCheck = 0;
+			PlayerLevel = globalvars.PlayerLevel = 0;
+			TruePlayerLevel = globalvars.TruePlayerLevel = 0;
+			Experience = globalvars.Experience = 0;
+			globalvars.atkfct = atkfct = 1.0;
+			globalvars.deffct = deffct = 1.0;
+			globalvars.spdfct = spdfct = 1.0;
+			globalvars.jmpfct = jmpfct = 1.0;
+			globalvars.suvfct = suvfct = 1.0;
+			globalvars.PlayerATK = PlayerATK = 0;
+			globalvars.PlayerDEF = PlayerDEF = 0;
+			globalvars.PlayerSPD = PlayerSPD = 0;
+			globalvars.PlayerLuck = PlayerLuck = 0;
+			globalvars.HealthLevelAdd = HealthLevelAdd = 0;
+			globalvars.HealthNoRPGAdd = HealthNoRPGAdd = 0;
+			globalvars.HealthNoRPGAdd2 = HealthNoRPGAdd2 = 0;
+			globalvars.HealthBonusAdd = HealthBonusAdd = 0;
+			globalvars.MassLevelAdd = MassLevelAdd = 0;
+			globalvars.MassNoRPGAdd = MassNoRPGAdd = 0;
+			globalvars.MassNoRPGAdd2 = MassNoRPGAdd2 = 0;
+			globalvars.MassBonusAdd = MassBonusAdd = 0;
+			globalvars.AirLevelAdd = AirLevelAdd = 0;
+			globalvars.AirNoRPGAdd = AirNoRPGAdd = 0;
+			globalvars.AirNoRPGAdd2 = AirNoRPGAdd2 = 0;
+			globalvars.AirBonusAdd = AirBonusAdd = 0;
+			if (itemtimer == 0 && kcdebug_deathexitdebug) Console.Printf("kc_deathexitaffectsstats: YES", kc_deathexitaffectsstats);
+		}
+		else
+		{
+			ClassCheck = globalvars.ClassCheck;
+			PlayerLevel = globalvars.PlayerLevel;
+			TruePlayerLevel = globalvars.TruePlayerLevel;
+			Experience = globalvars.Experience;
+			atkfct = globalvars.atkfct;
+			deffct = globalvars.deffct;
+			spdfct = globalvars.spdfct;
+			jmpfct = globalvars.jmpfct;
+			suvfct = globalvars.suvfct;
+			PlayerATK = globalvars.PlayerATK;
+			PlayerDEF = globalvars.PlayerDEF;
+			PlayerSPD = globalvars.PlayerSPD;
+			PlayerLuck = globalvars.PlayerLuck;
+			MaxHealthTrue = globalvars.MaxHealthTrue;
+			HealthLevelAdd = globalvars.HealthLevelAdd;
+			HealthNoRPGAdd = globalvars.HealthNoRPGAdd;
+			HealthNoRPGAdd2 = globalvars.HealthNoRPGAdd2;
+			HealthBonusAdd = globalvars.HealthBonusAdd;
+			MassLevelAdd = globalvars.MassLevelAdd;
+			MassNoRPGAdd = globalvars.MassNoRPGAdd;
+			MassNoRPGAdd2 = globalvars.MassNoRPGAdd2;
+			MassBonusAdd = globalvars.MassBonusAdd;
+			AirLevelAdd = globalvars.AirLevelAdd;
+			AirNoRPGAdd = globalvars.AirNoRPGAdd;
+			AirNoRPGAdd2 = globalvars.AirNoRPGAdd2;
+			AirBonusAdd = globalvars.AirBonusAdd;
+			BaseStartMaxHealth = globalvars.BaseStartMaxHealth;
+			if (itemtimer == 0) 
+			{
+				if (MaxHealthTrue) owner.player.mo.health = MaxHealthTrue;
+				if (kcdebug_deathexitdebug)
+				{
+					Console.Printf("MaxHealthTrue: %d, HealthLevelAdd: %d, HealthNoRPGAdd: %d, HealthBonusAdd: %d, HealthBonusAdd2: %d, BaseStartMaxHealth: %d", MaxHealthTrue, HealthLevelAdd, HealthBonusAdd, HealthNoRPGAdd, HealthNoRPGAdd2, BaseStartMaxHealth);
+					Console.Printf("kc_deathexitaffectsstats: NO", kc_deathexitaffectsstats);
+				}
+			}
+		}
+		owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+		if (itemtimer <= 2) owner.A_SetInventory("ExpPts",globalvars.Experience);
+		
+		weapon = owner.player.ReadyWeapon;
+		HellWarriorShieldLevel = owner.CountInv("HellWarriorShieldLevel");
+		HellWarriorMaxCharge = 1000;
+		if (playeractor.GetClassName() == "HeiwaPlayer") CharacterClass = 15;
+		
+		cankick = true;
+		
+		//
 		if (ClassCheck <= 1)
 		{
 			// Defensive [default]
@@ -1366,6 +1459,93 @@ class PlayerStatItem : Inventory
 		
 		ClassCheck++;
 		itemtimer++;
+		
+		if (IsMorphed > 0)
+		{
+			if (IsMorphed == 1 && MorphTimer == 0) 
+			{
+				owner.health = MaxHealthTrue * 0.3;
+				if (owner.CountInv("HitByMorphProj"))
+				{
+					WasMorphProj = 1;
+					owner.A_SetInventory("HitByMorphProj",0);
+					ArmorTier = 0;
+				}
+			}
+			MorphTimer++;
+		}
+		else
+		{
+			if (WasMorphed == 1 && MorphTimer > 0) 
+			{
+				owner.health = MaxHealthTrue;
+				if (skill <= 1) armsav *= 0.75;
+				if (skill == 1) armsav *= 0.625;
+				if (skill == 2) armsav *= 0.5;
+				if (skill == 3) armsav *= 0.375;
+				if (skill >= 4) armsav *= 0.25;
+				if (WasMorphProj) 
+				{
+					armsav *= 0.5;
+					WasMorphProj = 0;
+				}
+				if (armsav > 0)
+				{
+					ArmorTier = armtier;
+					if (ArmorTier == 1) owner.A_GiveInventory("KCGreenArmor",1);
+					if (ArmorTier == 2) owner.A_GiveInventory("KCBlueArmor",1);
+					if (ArmorTier > 0) 
+					{
+						owner.A_TakeInventory("KCArmor",(armsav-1));
+						if (kcdebug_morphdisplays) Console.Printf("armsav: %d, ArmorTier: %d, armtier: %d [%d]", armsav, ArmorTier, armtier, gametic);
+						for (int i; i < (armsav-1); i++) 
+						{
+							owner.A_GiveInventory("ArmorBonusSilent",1); 
+							if (kcdebug_morphdisplays) Console.Printf("i: %d, armamt: %d, armsav: %d [%d]", i, owner.CountInv("KCArmor"), armsav, gametic);
+						}
+					}
+				}
+			}
+			else
+			{
+				armsav = owner.CountInv("KCArmor");
+				armtier = ArmorTier;
+			}
+			MorphTimer = 0;
+		}
+		if (kcdebug_morphdisplays) Console.Printf("armsav: %d, armtier: %d [%d]", armsav, armtier, gametic);
+		WasMorphed = IsMorphed;
+		
+		owner.player.mo.maxhealth = MaxHealthTrue;
+		// Set Global Vars [End]
+		// Set Global Vars [End]
+		globalvars.BaseStartMaxHealth = BaseStartMaxHealth;
+		globalvars.HealthLevelAdd = HealthLevelAdd;
+		globalvars.HealthNoRPGADD = HealthNoRPGADD;
+		globalvars.HealthNoRPGADD2 = HealthNoRPGADD2;
+		globalvars.HealthBonusAdd = HealthBonusAdd;
+		globalvars.MassLevelAdd = MassLevelAdd;
+		globalvars.MassNoRPGAdd = MassNoRPGAdd;
+		globalvars.MassNoRPGAdd2 = MassNoRPGAdd2;
+		globalvars.MassBonusAdd = MassBonusAdd;
+		globalvars.AirLevelAdd = AirLevelAdd;
+		globalvars.AirNoRPGAdd = AirNoRPGAdd;
+		globalvars.AirNoRPGAdd2 = AirNoRPGAdd2;
+		globalvars.AirBonusAdd = AirBonusAdd;
+		globalvars.MaxHealthTrue = MaxHealthTrue;
+		globalvars.Experience = Experience;
+		globalvars.PlayerLevel = PlayerLevel;
+		globalvars.TruePlayerLevel = TruePlayerLevel;
+		globalvars.ClassCheck = ClassCheck;
+		globalvars.atkfct = atkfct;
+		globalvars.deffct = deffct;
+		globalvars.spdfct = spdfct;
+		globalvars.jmpfct = jmpfct;
+		globalvars.suvfct = suvfct;
+		globalvars.PlayerATK = PlayerATK;
+		globalvars.PlayerDEF = PlayerDEF;
+		globalvars.PlayerSPD = PlayerSPD;
+		globalvars.PlayerLuck = PlayerLuck;
 	}
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive)
@@ -1397,14 +1577,8 @@ class PlayerStatItem : Inventory
 			// Level
 			double LVLFactor = 1.00;
 			if (kc_expgains) LVLFactor = (1.00 + (TruePlayerLevel * baseatkfct));
-			if (IsMorphed == 1)
-			{
-				tempmax = 2.334;
-			}
-			else
-			{
-				tempmax = 5.00;
-			}
+			if (IsMorphed == 1) tempmax = 2.334;
+										 else tempmax = 5.00;
 			if (kc_expgains) tempmax *= 1.0;
 			if (LVLFactor >= tempmax) LVLFactor = tempmax;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Level): %.8f", LVLFactor);
@@ -1412,14 +1586,8 @@ class PlayerStatItem : Inventory
 			// Attack
 			double ATKFactor = 1.00;
 			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * baseatkfct) + (random(1,PlayerLuck) * frandompick(0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
-			if (IsMorphed == 1)
-			{
-				tempmax = 2.334;
-			}
-			else
-			{
-				tempmax = 5.00;
-			}
+			if (IsMorphed == 1) tempmax = 2.334;
+										 else tempmax = 5.00;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
 			if (ATKFactor >= tempmax) ATKFactor = tempmax;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - EAttack): %.8f", ATKFactor);
@@ -1466,14 +1634,8 @@ class PlayerStatItem : Inventory
 			// Level
 			double LVLFactor = 1.00;
 			if (kc_expgains) LVLFactor = (1.00 - (TruePlayerLevel * basedeffct));
-			if (IsMorphed == 1)
-			{
-				tempmax = 0.60;
-			}
-			else
-			{
-				tempmax = 0.20;
-			}
+			if (IsMorphed == 1) tempmax = 0.60;
+										 else tempmax = 0.20;
 			if (kc_expgains) tempmax *= 1.0;
 			if (LVLFactor <= tempmax) LVLFactor = tempmax;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Level): %.8f", LVLFactor);
@@ -1481,14 +1643,8 @@ class PlayerStatItem : Inventory
 			// Defense
 			double DEFFactor = 1.00;
 			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * basedeffct) - (random(1,PlayerLuck) * frandompick(0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
-			if (IsMorphed == 1)
-			{
-				tempmax = 0.60;
-			}
-			else
-			{
-				tempmax = 0.20;
-			}
+			if (IsMorphed == 1) tempmax = 0.60;
+										 else tempmax = 0.20;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
 			if (DEFFactor <= tempmax) DEFFactor = tempmax;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - EDefense): %.8f", DEFFactor);
@@ -1549,14 +1705,8 @@ class PlayerStatItem : Inventory
 												else BaseFactor *= (1.00 + (TruePlayerLevel * BaseMul));
 		}
 		double tempmax;
-		if (IsMorphed == 1)
-		{
-			tempmax = 7.5;
-		}
-		else
-		{
-			tempmax = 2.5;
-		}
+		if (IsMorphed == 1) tempmax = 7.5;
+									 else tempmax = 2.5;
 		if (kc_expgains) tempmax *= 1.0;
 		if (BaseFactor >= tempmax) BaseFactor = tempmax;
 		Speed *= BaseFactor;

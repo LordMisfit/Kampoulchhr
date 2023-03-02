@@ -1552,3 +1552,116 @@ class KCPowerSpread2 : Powerup
 		//Console.Printf("EffectTics: %d", EffectTics);
 	}
 }
+
+class HitByMorphProj : PlaceholderItem 
+{
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		timer++;
+		if (Owner == NULL) Destroy();
+		else if (timer >= 3) Destroy();
+		
+		Super.Tick();
+	}
+}
+class HellWarriorShieldLevel : PlaceHolderItem { default { Inventory.MaxAmount 10; } }
+class EWShieldIdleMode : PlaceholderItem { }
+class EWShieldDefendMode : PlaceholderItem { }
+class EWShieldDefendModeExtra : PlaceholderItem { }
+class HWShieldBlockHold : PlaceholderItem { }
+
+class ShieldingBuff : PlaceHolderItem
+{
+	default
+	{
+		Inventory.MaxAmount 1; 
+	} 
+}
+
+class ShieldingBuffPainless : PlaceHolderItem
+{
+	override void OnDestroy()
+	{
+		if (owner) owner.bNOPAIN = false;
+		super.OnDestroy();
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		else owner.bNOPAIN = true;
+	}
+}
+
+// Hell Warrior Shield [moved from KDIZD CompatPack]
+class HWShieldDefense : ShieldingBuffPainless 
+{
+}
+class HWShieldDefenseExtra : ShieldingBuffPainless
+{
+}
+
+// Imp Warlord Shielding
+class ImpWarlordShieldDefend : ShieldingBuffPainless // 0.5
+{ 
+}
+class ImpWarlordShieldDefendExtra : ShieldingBuffPainless // 0.1
+{
+}
+
+// Death Knight Shielding
+class DKnightShieldDefend : ShieldingBuffPainless // 0.25
+{
+}
+class DKnightShieldDefendExtra : ShieldingBuffPainless // 0.05
+{
+}
+
+// Acolyte "Shielding"
+class AcolyteShieldDefend : ShieldingBuffPainless // 0.75
+{
+}
+class AcolyteShieldDefendExtra : ShieldingBuffPainless // 0.30
+{
+}
+
+// Centaur/Slaughtaur Shielding
+class CentaurShieldDefend : ShieldingBuffPainless // 0.333
+{ 
+} 
+
+class CentaurShieldDefendExtra : ShieldingBuffPainless // 0.0666
+{ 
+}
+class SlaughtaurShieldDefend : ShieldingBuffPainless // 0.167
+{ 
+}
+class SlaughtaurShieldDefendExtra : ShieldingBuffPainless // 0.0333
+{
+}
+
+// Maulotaur "Shielding"
+class MaulotaurChargeDefense : ShieldingBuffPainless // 0.25
+{
+}
+
+// Heresiarch "Shielding"
+class HeresiarchShieldDefense : ShieldingBuffPainless // 0.125
+{
+}
+
+// Nightmare PhaseOut Defense
+class NightmarePhaseOutDefense : ShieldingBuffPainless
+{ 
+}
+class OnCeiling : PlaceHolderItem { default { Inventory.MaxAmount 1; } }
+
+class IsFinalDoom : PlaceholderItemDepletable { } // This works as an inventory flag to indicate the game mode

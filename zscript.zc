@@ -13,7 +13,43 @@ class UIKeybinds
 // An global variables thinker [attempting to get around ACS use for certain things >.>]
 class KCGlobalVariables : Thinker
 {
+	int GameMode;
 	int MapsFinished;
+	int ClassCheck;
+	int PlayerLevel;
+	int TruePlayerLevel;
+	int PlayerLuck;
+	int PlayerATK;
+	int PlayerDEF;
+	int PlayerSPD;
+	int Experience;
+	int MaxHealthTrue;
+	int HealthLevelAdd;
+	int HealthNoRPGAdd;
+	int HealthNoRPGAdd2;
+	int HealthBonusAdd;
+	int MassLevelAdd;
+	int MassNoRPGAdd;
+	double MassNoRPGAdd2;
+	int MassBonusAdd;
+	int AirLevelAdd;
+	int AirNoRPGAdd;
+	int AirNoRPGAdd2;
+	int AirBonusAdd;
+	int BaseStartMaxHealth;
+	int DashCharge;
+	int BaseDashChargeMax;
+	int TotalMonstersKilled;
+	int TotalItemsGrabbed;
+	int TotalSecretsFound;
+	double atkfct, deffct, spdfct, jmpfct, suvfct;
+	array<bool> AllKills, AllItems, AllSecrets, AllCompletion;
+	array<int> NumKills, NumItems, NumSecrets;
+	array<int> MaxKills, MaxItems, MaxSecrets;
+	array<int> MapNum;
+	array<int> AllKillsTimer, AllItemsTimer, AllSecretsTimer, AllCompletionTimer;
+	array<bool> AllKillsSound, AllItemsSound, AllSecretsSound, AllCompletionSound;
+
 	double timefreeze1duration;
 	double timefreeze1cooldown;
 	double timefreeze2duration;
