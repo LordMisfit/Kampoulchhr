@@ -33,7 +33,7 @@ class KCStatusBarMain : BaseStatusBar
 	override void Init()
 	{
 		Super.Init();
-		SetSize(32, 320, 200);
+		SetSize(0, 320, 200);
 
 		// Create the font used for the fullscreen HUD
 		Font fnt = "HUDFONT_DOOM";
@@ -1021,10 +1021,16 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				//Console.Printf("hudarmortype: %d", hudarmortype);
 				string MaxAPS = " / ";
-				if (hudarmortype == 1) MaxAPS.AppendFormat("100");
-				if (hudarmortype == 2) MaxAPS.AppendFormat("200");
-				if (hudarmortype == 3) MaxAPS.AppendFormat("400");
-				if (hudarmortype == 4) MaxAPS.AppendFormat("800");
+				if (MiscItem)
+				{
+					if (hudarmortype == 1) MaxAPS.AppendFormat("%d", (MiscItem.MaxHealthTrue));
+					if (hudarmortype == 2) MaxAPS.AppendFormat("%d", (MiscItem.MaxHealthTrue * 2));
+				}
+				else
+				{
+					if (hudarmortype == 1) MaxAPS.AppendFormat("100");
+					if (hudarmortype == 2) MaxAPS.AppendFormat("200");
+				}
 				//MaxAPS.AppendFormat("%d", armor.maxamount);
 				DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}

@@ -619,6 +619,134 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	}
 }
 
+// Doom Health Items
+class Stimpack2 : CustomInventoryExt replaces Stimpack
+{
+	default
+	{
+		Inventory.PickupMessage "Picked up a \cpstimpack\c-.";
+		// Inventory.PickupSound "getstimpack";
+	}
+	
+	States
+	{
+		Spawn:
+			STIM A 0 NoDelay;
+			STIM A -1;
+			Stop;
+		Success:
+			TNT1 A 0
+			{
+				A_StartSound("gethealthkit",5);
+				A_PickupMedicalItem(0.10,1.00);
+			}
+			Stop;
+		Pickup:
+			TNT1 A 0 
+			{
+				if (A_CheckHealthLevels(1.0)) { return resolvestate("Success"); } 
+				return resolvestate(null); 
+			}
+			Fail;
+	}
+}
+
+class MiniBerserk : CustomInventoryExt
+{
+	default
+	{
+		//$Sprite "MBSKA0"
+		//$Category Powerups
+		+COUNTITEM;
+		+DONTGIB;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "You have found a \crMini Berserk Pack\c-! Rip and Tear em' apart!";
+		Inventory.PickupSound "getberserkpack";
+	}
+	
+	States
+	{
+		Spawn:
+			MBSK A 0 NoDelay;
+			MBSK A -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				if (A_CheckHealthLevels(1.00)) 
+				{
+					A_PickupMedicalItem(0.25,1.00);
+					A_StartSound("gethealthkit",5);
+				}
+				A_GiveInventory("PowerStrength");
+				//A_BerserkWeaponSwitch();
+			}
+			Stop;
+	}
+}
+
+class Medikit2 : CustomInventoryExt replaces Medikit
+{
+	default
+	{
+		Inventory.PickupMessage "Picked up a \cpmedikit\c-.";
+		// Inventory.PickupSound "getmedikit";
+	}
+	
+	States
+	{
+		Spawn:
+			MEDI A 0 NoDelay;
+			MEDI A -1;
+			Stop;
+		Success:
+			TNT1 A 0
+			{
+				A_StartSound("gethealthkit",5);
+				A_PickupMedicalItem(0.25,1.00);
+			}
+			Stop;
+		Pickup:
+			TNT1 A 0 
+			{
+				if (A_CheckHealthLevels(1.0)) { return resolvestate("Success"); }
+				return resolvestate(null); 
+			}
+			Fail;
+	}
+}
+
+class Berserk2 : CustomInventoryExt replaces Berserk
+{
+	default
+	{
+		+COUNTITEM;
+		+DONTGIB;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "You have found a \crBerserk Pack\c-! Rip and Tear em' apart!";
+		Inventory.PickupSound "getberserkpack";
+	}
+	
+	States
+	{
+		Spawn:
+			PSTR A -1;
+			Stop;
+		Pickup:
+			TNT1 A 0 
+			{
+				if (A_CheckHealthLevels(1.00)) 
+				{
+					A_PickupMedicalItem(1.00,1.00);
+					A_StartSound("gethealthkit",5);
+				}
+				A_GiveInventory("PowerStrength");
+				//A_BerserkWeaponSwitch();
+			}
+			Stop;
+	}
+}
+
 // Doom Powerups
 class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 {
@@ -849,7 +977,7 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 				
 					player.health = CurrentHealth;
 				}
-				player.A_GiveInventory("BlueArmorForMegasphere", 1); //A_MegaSphereArmor();
+				player.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 			}
 			Stop;
 	}
@@ -1357,6 +1485,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		Armor.MaxSaveAmount 200;
 		+COUNTITEM;
 		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupSound "getarmorbonus";
 	}
 	
 	override String PickupMessage()
@@ -1368,6 +1497,24 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	override void PostBeginPlay()
 	{
 		super.PostBeginPlay();
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 0.01);
+			if (SaveAmount < 1) SaveAmount = 1;
+			MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+		}
+		else
+		{
+			SaveAmount = 1;
+			MaxSaveAmount = 200;
+		}
+		KCArmorBonus.Tick();
 	}
 	
 	override bool Use (bool pickup)
@@ -1510,6 +1657,52 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	}
 }
 
+class ArmorBonusBig : ArmorBonus2
+{
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.Pickupsound "getarmorbonus";
+		Inventory.Icon "BON4A0";
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.Pickupmessage "Picked up a \cdsuper armor bonus\c-.";
+		Armor.SavePercent 33.335;
+		Armor.SaveAmount 10;
+		Armor.MaxSaveAmount 200;
+		Inventory.PickupSound "getarmorbonus";
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 0.10);
+			if (SaveAmount < 1) SaveAmount = 1;
+			MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+		}
+		else
+		{
+			SaveAmount = 10;
+			MaxSaveAmount = 200;
+		}
+		KCArmorBonus.Tick();
+	}
+	
+	States
+	{
+		Spawn:
+			BON4 AABBCCDDCCBB 3;
+			Loop;
+
+	}
+}
+
 class KCGreenArmor : KCArmorPickup replaces GreenArmor
 {
 	//mixin HUDRecovery;
@@ -1521,6 +1714,21 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		Inventory.Icon "ARM1A0";
 		Armor.SavePercent 33.335;
 		Armor.SaveAmount 100;
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue);
+		}
+		else
+		{
+			SaveAmount = 100;
+		}
+		super.Tick();
 	}
 	
 	override bool Use (bool pickup)
@@ -1589,6 +1797,15 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 	}
 }
 
+class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
+{
+	default
+	{
+		Armor.SavePercent 50;
+		Armor.SaveAmount 200;
+	}
+}
+
 class KCBlueArmor : KCArmorPickup replaces BlueArmor
 {
 	//mixin HUDRecovery;
@@ -1600,6 +1817,21 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		Inventory.Icon "ARM2A0";
 		Armor.SavePercent 50;
 		Armor.SaveAmount 200;
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+		}
+		else
+		{
+			SaveAmount = 200;
+		}
+		super.Tick();
 	}
 	
 	override bool Use (bool pickup)

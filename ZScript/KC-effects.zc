@@ -378,6 +378,43 @@ class CustomInventoryExt : CustomInventory
 			}
 		}
 	}
+	
+	action bool A_CheckHealthLevels(double maxhealthratio = 1.0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int CurrentHealth = player.health;
+		int HealthValue;
+		int MaxHealthTrue;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		
+		bool result = false;
+		if (currenthealth < MaxHealthLimit) result = true;
+
+		return result;
+	}
+
+	// Stimpacks/Medikits/Berserk Packs (All games)
+	action void A_PickupMedicalItem(double healfactor, double maxhealthratio = 1.0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int CurrentHealth = player.health;
+		int HealAmount;
+		int HealthValue;
+		int MaxHealthTrue;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		
+		HealAmount = MaxHealthTrue * healfactor;
+		if (CurrentHealth < MaxHealthLimit)
+		{
+			CurrentHealth += HealAmount;
+			if (CurrentHealth >= MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+			player.health = CurrentHealth;
+		}
+	}
 }
 
 
