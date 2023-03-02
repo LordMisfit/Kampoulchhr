@@ -6,6 +6,9 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	int IsMorphed, WasMorphed, WasMorphProj;
+	int MorphTimer;
+	
 	int CompatPackMode;
 	double TimeArmorEnergyTics;
 	double TimeArmorEnergyMaxTics;
@@ -208,14 +211,14 @@ class PlayerStatItem : Inventory
 					if (InitEXPTables == 0)
 					{
 						double ExpValue;
-						int BaseEXPRequirement = 16; // clamp(exex_baseexprequirement, 250, 11200);
+						int BaseEXPRequirement = 16; // clamp(kc_baseexprequirement, 250, 11200);
 						BaseEXPRequirement *= (0.875 + (TrueGameSkill * 0.0625));
 
-						double BaseExtra = 1; // clamp(exex_baseexpextra, 0, 100);
-						double BaseAccel1 = 6; // clamp(exex_baseexpaccel1, 0, 100);
-						double BaseAccel2 = 0.0384; // clamp(exex_baseexpaccel2, 0.0, 5.0);
-						double BaseMulti1 = 48; // clamp(exex_expmulti1, 1, 1024);
-						double BaseMulti2 = 50; // clamp(exex_expmulti2, 1, 10000);
+						double BaseExtra = 1; // clamp(kc_baseexpextra, 0, 100);
+						double BaseAccel1 = 6; // clamp(kc_baseexpaccel1, 0, 100);
+						double BaseAccel2 = 0.0384; // clamp(kc_baseexpaccel2, 0.0, 5.0);
+						double BaseMulti1 = 48; // clamp(kc_expmulti1, 1, 1024);
+						double BaseMulti2 = 50; // clamp(kc_expmulti2, 1, 10000);
 						
 						double BaseMulti3 = 1.0;
 						int baseval;
@@ -1092,7 +1095,7 @@ class PlayerStatItem : Inventory
 					{
 						string LevelUpMsg = "";
 						LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
-						if (exex_extraatkdefspd)
+						if (kc_extraatkdefspd)
 						{
 							if ((PlayerATK > PrevATK) || (PlayerDEF > PrevDEF) || (PlayerSPD > PrevSPD)) LevelUpMsg.AppendFormat("\n\n");
 							if (PlayerATK > PrevATK) LevelUpMsg.AppendFormat("\n\c[brick]Attack Increased Even More than Normal!");
@@ -1371,19 +1374,71 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+
 		// ******************
 		// ******************
 		// **Offensive Code**
 		// ******************
 		// ******************
+		double baseatkfct = 0.00625;
+		if (skill <= 0) baseatkfct = 0.0075;
+		if (skill == 1) baseatkfct = 0.006875;
+		if (skill == 2) baseatkfct = 0.00625;
+		if (skill == 3) baseatkfct = 0.005625;
+		if (skill >= 4) baseatkfct = 0.005;
+		if (kc_expgains) baseatkfct *= 1.0;
+		if (IsMorphed == 1) baseatkfct *= 0.334;
+		baseatkfct *= kc_patkfactor;
+		double tempmax;
 		if (!passive && damage > 0) // If the owner [usually the player] of the item is the ATTACKER
 		{
 			if (kcdebug_actordmgdisplays) Console.Printf("    (\czPlayerStatItem input [STEP 5 (\cwsuper.DamageMobj\cz)]\c-: \cydmg = %d\c-)", damage);
+			
+			// Level
+			double LVLFactor = 1.00;
+			if (kc_expgains) LVLFactor = (1.00 + (TruePlayerLevel * baseatkfct));
+			if (IsMorphed == 1)
+			{
+				tempmax = 2.334;
+			}
+			else
+			{
+				tempmax = 5.00;
+			}
+			if (kc_expgains) tempmax *= 1.0;
+			if (LVLFactor >= tempmax) LVLFactor = tempmax;
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Level): %.8f", LVLFactor);
+			
+			// Attack
+			double ATKFactor = 1.00;
+			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * baseatkfct) + (random(1,PlayerLuck) * frandompick(0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
+			if (IsMorphed == 1)
+			{
+				tempmax = 2.334;
+			}
+			else
+			{
+				tempmax = 5.00;
+			}
+			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
+			if (ATKFactor >= tempmax) ATKFactor = tempmax;
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - EAttack): %.8f", ATKFactor);
+			
+			double SkillFactor = 1.00;
+			if (Skill == SKILL_VERY_HARD) SkillFactor *= 0.75;
+			if (Skill == SKILL_HARD) SkillFactor *= 0.875;
+			if (Skill == SKILL_NORMAL) SkillFactor *= 1.00;
+			if (Skill == SKILL_EASY) SkillFactor *= 1.125;
+			if (Skill == SKILL_VERY_EASY) SkillFactor *= 1.25;
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Skill): %.8f", SkillFactor);
 			
 			double TSAFactor = 1.0;
 			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
 			
 			double TOTALFactor = 1.0
+												 * LVLFactor
+												 * ATKFactor
+												 * SkillFactor
 												 * TSAFactor
 												 * atkfct;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("\c[gold]Damage (!passive - Total): %.8f", TOTALFactor);
@@ -1397,9 +1452,63 @@ class PlayerStatItem : Inventory
 		// **Defensive Code**
 		// ******************
 		// ******************
+		double basedeffct = 0.0025;
+		if (skill <= 0) basedeffct = 0.0030;
+		if (skill == 1) basedeffct = 0.00275;
+		if (skill == 2) basedeffct = 0.0025;
+		if (skill == 3) basedeffct = 0.00225;
+		if (skill >= 4) basedeffct = 0.0020;
+		if (kc_expgains) basedeffct *= 1.0;
+		if (IsMorphed == 1) basedeffct *= 0.334;
+		basedeffct *= kc_pdeffactor;
 		if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
 		{
+			// Level
+			double LVLFactor = 1.00;
+			if (kc_expgains) LVLFactor = (1.00 - (TruePlayerLevel * basedeffct));
+			if (IsMorphed == 1)
+			{
+				tempmax = 0.60;
+			}
+			else
+			{
+				tempmax = 0.20;
+			}
+			if (kc_expgains) tempmax *= 1.0;
+			if (LVLFactor <= tempmax) LVLFactor = tempmax;
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Level): %.8f", LVLFactor);
+			
+			// Defense
+			double DEFFactor = 1.00;
+			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * basedeffct) - (random(1,PlayerLuck) * frandompick(0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
+			if (IsMorphed == 1)
+			{
+				tempmax = 0.60;
+			}
+			else
+			{
+				tempmax = 0.20;
+			}
+			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
+			if (DEFFactor <= tempmax) DEFFactor = tempmax;
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - EDefense): %.8f", DEFFactor);
+			
+			// Difficulty Level
+			double SkillFactor = 1.00;
+			if (Skill == SKILL_VERY_EASY) SkillFactor *= 0.75;
+			if (Skill == SKILL_EASY) SkillFactor *= 0.875;
+			if (Skill == SKILL_NORMAL) SkillFactor *= 1.00;
+			if (Skill == SKILL_HARD) SkillFactor *= 1.125;
+			if (Skill == SKILL_VERY_HARD) SkillFactor *= 1.25;
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Skill): %.8f", SkillFactor);
+
+			double TSAFactor = 1.0;
+			
 			double TOTALFactor = 1.0
+												 * LVLFactor
+												 * DEFFactor
+												 * SkillFactor
+												 * TSAFactor
 												 * deffct;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("\c[gold]Damage (passive - Total): %.8f", TOTALFactor);
@@ -1418,13 +1527,166 @@ class PlayerStatItem : Inventory
 	double HUDSpeed;
 	override double GetSpeedFactor() 
 	{
+		name armorclasstype = "KCArmor";
 		let weapon = owner.player.ReadyWeapon;
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+		CurrentHealth = owner.health;
+		
 		Speed = 1.00;
 		HUDSpeed = Speed;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base]: %.8f", Speed);
 		
+		double BaseFactor = 1.0;
+		double BaseMul = 0.004375;
+		BaseMul *= 1.0;
+		if (IsMorphed == 1) BaseMul *= 3;
+		BaseMul *= kc_pspdfactor;
+		if (kc_expgains)
+		{
+			if (kc_extraatkdefspd) BaseFactor *= (1.00 + (TruePlayerLevel * BaseMul) + (TruePlayerSPD * BaseMul));
+												else BaseFactor *= (1.00 + (TruePlayerLevel * BaseMul));
+		}
+		double tempmax;
+		if (IsMorphed == 1)
+		{
+			tempmax = 7.5;
+		}
+		else
+		{
+			tempmax = 2.5;
+		}
+		if (kc_expgains) tempmax *= 1.0;
+		if (BaseFactor >= tempmax) BaseFactor = tempmax;
+		Speed *= BaseFactor;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base (level+extra)]: %.8f, BaseMul: %.8f, exex_pspdfactor: %.8f, TPLBase: %.8f, TPLBaseS: %.8f", BaseFactor, BaseMul, kc_pspdfactor, (TruePlayerLevel * BaseMul), (TruePlayerSPD * BaseMul));
+		
+		double HealthFactor = 1.0;
+		if (CurrentHealth >= (MaxHealthTrue * 3)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.5;
+			if (skill == 1) HealthFactor *= 1.375;
+			if (skill == 2) HealthFactor *= 1.25;
+			if (skill == 3) HealthFactor *= 1.125;
+			if (skill >= 4) HealthFactor *= 1.0625;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 2.75))
+		{
+			if (skill <= 0) HealthFactor *= 1.4375;
+			if (skill == 1) HealthFactor *= 1.328125;
+			if (skill == 2) HealthFactor *= 1.21875;
+			if (skill == 3) HealthFactor *= 1.109375;
+			if (skill >= 4) HealthFactor *= 1.0546875;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 2.5)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.375;
+			if (skill == 1) HealthFactor *= 1.28125;
+			if (skill == 2) HealthFactor *= 1.1875;
+			if (skill == 3) HealthFactor *= 1.09375;
+			if (skill >= 4) HealthFactor *= 1.046875;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 2.25)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.3125;
+			if (skill == 1) HealthFactor *= 1.234375;
+			if (skill == 2) HealthFactor *= 1.15625;
+			if (skill == 3) HealthFactor *= 1.078125;
+			if (skill >= 4) HealthFactor *= 1.0390625;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 2.0)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.25;
+			if (skill == 1) HealthFactor *= 1.1875;
+			if (skill == 2) HealthFactor *= 1.125;
+			if (skill == 3) HealthFactor *= 1.0625;
+			if (skill >= 4) HealthFactor *= 1.03125;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 1.75)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.1875;
+			if (skill == 1) HealthFactor *= 1.140625;
+			if (skill == 2) HealthFactor *= 1.09375;
+			if (skill == 3) HealthFactor *= 1.046875;
+			if (skill >= 4) HealthFactor *= 1.0234375;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 1.5)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.125;
+			if (skill == 1) HealthFactor *= 1.09375;
+			if (skill == 2) HealthFactor *= 1.0625;
+			if (skill == 3) HealthFactor *= 1.03125;
+			if (skill >= 4) HealthFactor *= 1.015625;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 1.25)) 
+		{
+			if (skill <= 0) HealthFactor *= 1.09375;
+			if (skill == 1) HealthFactor *= 1.0625;
+			if (skill == 2) HealthFactor *= 1.03125; 
+			if (skill == 3) HealthFactor *= 1.015625;
+			if (skill >= 4) HealthFactor *= 1.0078125;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 0.75)) 
+		{
+			HealthFactor *= 1.00;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 0.5)) 
+		{
+			if (skill <= 0) HealthFactor *= 0.984375;
+			if (skill == 1) HealthFactor *= 0.96875;
+			if (skill == 2) HealthFactor *= 0.9375;
+			if (skill == 3) HealthFactor *= 0.90625;
+			if (skill >= 4) HealthFactor *= 0.875;
+		}
+		else if (CurrentHealth >= (MaxHealthTrue * 0.25))
+		{
+			if (skill <= 0) HealthFactor *= 0.96875;
+			if (skill == 1) HealthFactor *= 0.9375;
+			if (skill == 2) HealthFactor *= 0.875;
+			if (skill == 3) HealthFactor *= 0.8125;
+			if (skill >= 4) HealthFactor *= 0.75;
+		}
+		else if (CurrentHealth > 1)
+		{
+			if (skill <= 0) HealthFactor *= 0.9375;
+			if (skill == 1) HealthFactor *= 0.875;
+			if (skill == 2) HealthFactor *= 0.75;
+			if (skill == 3) HealthFactor *= 0.625;
+			if (skill >= 4) HealthFactor *= 0.5;
+		}
+		else if (CurrentHealth == 1)
+		{
+			if (skill <= 0) HealthFactor *= 0.46875;
+			if (skill == 1) HealthFactor *= 0.4375;
+			if (skill == 2) HealthFactor *= 0.375;
+			if (skill == 3) HealthFactor *= 0.3125;
+			if (skill >= 4) HealthFactor *= 0.25;
+		}
+		else if (CurrentHealth <= 0)
+		{
+			HealthFactor *= 0.0;
+		}
+		
+		Speed *= HealthFactor;
+		HUDSpeed *= HealthFactor;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [health]: %.8f", HealthFactor);
+		
+		double BerserkFactor = 1.0;
+		if (berserked) 
+		{
+			if (skill <= 0) BerserkFactor *= 1.1875;
+			if (skill == 1) BerserkFactor *= 1.15625;
+			if (skill == 2) BerserkFactor *= 1.125;
+			if (skill == 3) BerserkFactor *= 1.09375;
+			if (skill >= 4) BerserkFactor *= 1.0625;
+			Speed *= BerserkFactor;
+			HUDSpeed *= BerserkFactor;
+			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Berserk]: %.8f", BerserkFactor);
+		}
+		//
+		//
+		//
 		Speed *= spdfct;
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Final]: %.8f, HUDSpeed: %.2f", Speed, HUDSpeed);
 		return Speed;
