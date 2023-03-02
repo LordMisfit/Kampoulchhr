@@ -99,6 +99,17 @@ class PlayerStatItem : Inventory
 	Array<int> LevelExpRequirement;
 	int InitEXPTables;
 	
+	int totalkillsgame;
+	int totalmaxkills;
+	int totalitemsgame;
+	int totalmaxitems;
+	int totalsecretsgame;
+	int totalmaxsecrets;
+	int totalcompleted;
+	int totalallkills;
+	int totalallitems;
+	int totalallsecrets;
+	
 	int HPRegenBoostTimer;
 	int HPRegenBonPenTimer;
 	int HPRegenTimer;
@@ -1956,6 +1967,86 @@ class PlayerDashJump : Inventory
 			TruePlayerSPD = MiscItem.PlayerSPD;
 			TruePlayerLUCK = MiscItem.PlayerLUCK;
 		}
+		MaxDashTics = randompick(6,6,7,7,7) + (TruePlayerLevel / 20);
+		if (berserked) MaxDashTics *= (1.34 + (TruePlayerLevel * 0.004));
+		int DashLvlTier1Thresh = 25;
+		int DashLvlTier2Thresh = 50;
+		int DashLvlTier3Thresh = 75;
+		int DashLvlTier4Thresh = 100;
+
+		double baseAddDashLevel = 1.25;
+		int AddDashLevel = (TruePlayerLevel * baseAddDashLevel);
+		double ADashFactor = 1.5;
+		if (skill <= SKILL_VERY_EASY) baseAddDashLevel = 1.625;
+		if (skill == SKILL_EASY) baseAddDashLevel = 1.5;
+		if (skill == SKILL_NORMAL) baseAddDashLevel = 1.375;
+		if (skill == SKILL_HARD) baseAddDashLevel = 1.25;
+		if (skill >= SKILL_VERY_HARD) baseAddDashLevel = 1.125;
+
+		AddDashLevel = (TruePlayerLevel * (baseAddDashLevel * ADashFactor));
+		if (TruePlayerLevel >= DashLvlTier1Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier1Thresh) * ((baseAddDashLevel * 0.25) * ADashFactor));
+		if (TruePlayerLevel >= DashLvlTier2Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier2Thresh) * ((baseAddDashLevel * 0.0625) * ADashFactor));
+		if (TruePlayerLevel >= DashLvlTier3Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier3Thresh) * ((baseAddDashLevel * 0.015625) * ADashFactor));
+		if (TruePlayerLevel >= DashLvlTier4Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier4Thresh) * ((baseAddDashLevel * 0.00390625) * ADashFactor));
+		
+		if (itemtimer <= 2)
+		{
+			if (globalvars) 
+			{
+				if (kc_deathexitaffectsstats) 
+				{
+					BaseDashChargeMax = random(27,30);
+					if (skill == SKILL_VERY_EASY) BaseDashChargeMax = random(32,35);
+					if (skill == SKILL_EASY) BaseDashChargeMax = random(30,32);
+					if (skill == SKILL_NORMAL) BaseDashChargeMax = random(27,30);
+					if (skill == SKILL_HARD) BaseDashChargeMax = random(25,27);
+					if (skill >= SKILL_VERY_HARD) BaseDashChargeMax = random(22,25);
+				}
+				else
+				{
+					if (globalvars.ClassCheck <= 2)
+					{
+						BaseDashChargeMax = random(27,30);
+						if (skill == SKILL_VERY_EASY) BaseDashChargeMax = random(32,35);
+						if (skill == SKILL_EASY) BaseDashChargeMax = random(30,32);
+						if (skill == SKILL_NORMAL) BaseDashChargeMax = random(27,30);
+						if (skill == SKILL_HARD) BaseDashChargeMax = random(25,27);
+						if (skill >= SKILL_VERY_HARD) BaseDashChargeMax = random(22,25);
+					}
+					else
+					{
+						BaseDashChargeMax = globalvars.BaseDashChargeMax;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (BaseDashChargeMax == 0) BaseDashChargeMax = globalvars.BaseDashChargeMax;
+		}
+		
+		double ExDashCharge2 = ExtraDashCharge;
+		double AddDashLevel2 = AddDashLevel;
+		double PerkFactor2 = 0;
+		if (!kc_expgains) 
+		{
+			if (skill <= 0) ExDashCharge2 *= 4.0;
+			if (skill == 1) ExDashCharge2 *= 3.5;
+			if (skill == 2) ExDashCharge2 *= 3.0;
+			if (skill == 3) ExDashCharge2 *= 2.5;
+			if (skill >= 4) ExDashCharge2 *= 2.0;
+			AddDashLevel2 = 0;
+			if (MiscItem)
+			{
+				AddDashLevel2 += (MiscItem.totalcompleted * 1.0);
+				AddDashLevel2 += (MiscItem.totalallkills * 0.3334);
+				AddDashLevel2 += (MiscItem.totalallitems * 0.3334);
+				AddDashLevel2 += (MiscItem.totalallsecrets * 0.3334);
+				if (berserked) AddDashLevel2 *= 1.125;
+			}
+		}
+		DashMaxCharge = BaseDashChargeMax + AddDashLevel2 + ExDashCharge2 + PerkFactor2;
+		if (kcdebug_showdashinformation) Console.Printf("DashMaxCharge: %d (BaseDashChargeMax: %d, AddDashLevel2: %d (%d), ExtraDashCharge2: %d (%d), PerkFactor2: %d", DashMaxCharge, BaseDashChargeMax, AddDashLevel2, AddDashLevel, ExDashCharge2, ExtraDashCharge, PerkFactor2);
 		
 		//******************
 		//*Check Dash Timer*
