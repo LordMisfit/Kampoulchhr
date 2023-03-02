@@ -409,6 +409,7 @@ class KCPlayer : KCPlayerPawn
 		Player.StartItem "Fist";
 		Player.StartItem "Clip", 50;
 		Player.StartItem "PlayerStatItem";
+		Player.StartItem "PlayerDashJump";
 		Player.WeaponSlot 1, "Fist", "Chainsaw";
 		Player.WeaponSlot 2, "Pistol";
 		Player.WeaponSlot 3, "Shotgun", "SuperShotgun";
@@ -552,7 +553,7 @@ class EVP_Footsteps : Actor
 	{
 		let KCPlayPawn = KCPlayerPawn(plr);
 		let MiscItem = PlayerStatItem(plr.FindInventory("PlayerStatItem"));
-		//let DashItem = PlayerDashJump(plr.FindInventory("PlayerDashJump"));
+		let DashItem = PlayerDashJump(plr.FindInventory("PlayerDashJump"));
 		if (MiscItem)
 		{
 			bool berserked;
