@@ -185,6 +185,97 @@ object HealthBonusBig
 	frame BON3 { light HEALTHPOTIONBIG }
 }
 
+pulselight ARMORBONUSGREEN
+{
+  color 0.1 0.3 0.1
+  size 12
+  secondarySize 15
+  interval 1.0
+	dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSBLUE
+{
+  color 0.004 0.004 0.8907
+  size 12
+  secondarySize 15
+  interval 1.0
+	dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSSTONE
+{
+  color 0.629 0.488 0.336
+  size 12
+  secondarySize 15
+  interval 1.0
+	dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSDIAMOND
+{
+  color 0.355 0.601 0.722
+  size 12
+  secondarySize 15
+  interval 1.0
+	dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+
+object ArmorBonus2
+{
+	frame BON2 { light ARMORBONUSGREEN }
+}
+
+//Armor
+object KCGreenArmor
+{
+	frame ARM1A { light GREENARMOR1 }
+	frame ARM1B { light GREENARMOR2 }
+}
+
+object KCBlueArmor
+{
+	frame ARM2A { light BLUEARMOR1 }
+	frame ARM2B { light BLUEARMOR2 }
+}
+
+pointlight SUPERARMORBONUS1
+{
+	color 0.0 0.7 0.0
+	size 6
+}
+
+pointlight SUPERARMORBONUS2
+{
+	color 0.0 0.7 0.0
+	size 7
+}
+
+pointlight SUPERARMORBONUS3
+{
+	color 0.0 0.7 0.0
+	size 8
+}
+
+pointlight SUPERARMORBONUS4
+{
+	color 0.0 0.7 0.0
+	size 9
+}
+
+object SuperArmorBonus
+{
+	frame BON4A { light SUPERARMORBONUS1 }
+	frame BON4B { light SUPERARMORBONUS2 }
+	frame BON4C { light SUPERARMORBONUS3 }
+	frame BON4D { light SUPERARMORBONUS4 }
+}
+
 //Underwater shader
 HardwareShader PostProcess scene
 {

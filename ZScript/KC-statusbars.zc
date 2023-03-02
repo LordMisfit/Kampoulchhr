@@ -104,8 +104,8 @@ class KCStatusBarMain : BaseStatusBar
 		// Transformations Go Here
 		if (healthtick < 1) healthtick = 1;
 		if (healthtick != prevhealthtick) mHealthInterpolator = DynamicValueInterpolator.Create(CPlayerPawn.health, 0.25, 1, healthtick);
-		name armorclasstype = "BasicArmor";
-		let armor = BasicArmor(CPlayerPawn.FindInventory(armorclasstype));
+		name armorclasstype = "KCArmor";
+		let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
 		if (armor != null && armor.Amount > 0) 
 		{
 			if (armortick < 1) armortick = 1;
@@ -988,9 +988,10 @@ class KCStatusBarMain : BaseStatusBar
 		int svx = 44; // 44;
 		int svy = -20; //-40;
 		int hudarmortype;
-		let armor = CPlayer.mo.FindInventory("BasicArmor");
+		let armor = CPlayer.mo.FindInventory("KCArmor");
 		if (armor != null && armor.Amount > 0)
 		{
+			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
 			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch)) 
 			{

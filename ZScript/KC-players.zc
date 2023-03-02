@@ -1,27 +1,78 @@
 class KCPlayerPawn : PlayerPawn
 {
-	bool isvoodoodoll;
-	int neverbleeds;
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	const SKILL_EXTREME = 5;
+	const SKILL_HORRIBLE = 6;
+	const SKILL_IMPOSSIBLE = 7;
+	const SKILL_OMEGA = 8;
 	
-	actor DmgSource;
-	actor DmgInflictor;
-	int DmgFlags;
-	bool tookflrdmg;
+	double airreplen, airreplentimer;
+	double ArmorEnc, TempArmorEnc;
 	int damagecntfrag;
 	int mobjdmg;
 	int playoutputdmg;
 	int playtookdamage;
 	
+	bool wasongroundprevtic, wasongroundcurrtic;
+	double PlayerDefenseIgnoreFactor, PlayerArmorIgnoreFactor, PlayerArmorIgnoreFactorGeneral;
+	int ActualLevel;
+	int TruePlayerLevel;
+	int TruePlayerATK;
+	int TruePlayerDEF;
+	int TruePlayerSPD;
+	
+	actor DmgSource;
+	actor DmgInflictor;
+	int DmgFlags;
+	bool tookflrdmg;
+	
+	bool takendrowndmg;
+	bool willgasp;
+	
+	int PoisonDmgPainInt;
+	int AirTime, MaxAirTime;
+	int InWaterTime;
+	
+	bool isvoodoodoll;
+	int neverbleeds;
+	bool recalledall;
+	double truespeed;
+	int armortier;
+	int beattimer;
+	int beatpulse, hudbeatpulse;
+	
+	int lasthealth;
+	int breathdirection; // 0 = down [size decreases], 1 = up [size increases]
+	int breathframe;
+	
+	int DashTimer; int MaxDashTimer; 
+	int cooldash; bool sounddash; 
+	int thrudash; bool isdashing;
+	double floordashvel, airdashvel, dashjumpstrength;
+	double dashvelx, dashvely, dashvelz;
+
+	int dashcooldown;
+	int dashcooldownmax;
+	
+	int deadtimer;
+	int fadetime;
+	int originalheight;
+	int originalradius;
+	int originalmass;
+	
+	int firsttic;
+	int buttons, input;
+	
 	double TotalAirControl;
 	double basexscale, baseyscale;
 	double scalexmulti, scaleymulti;
 	
-	int firsttic;
-	int buttons, input;
-
-	int originalheight;
-	int originalradius;
-	int originalmass;
+	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+	string nm, nn, no, np;
 	
 	override void BeginPlay()
 	{

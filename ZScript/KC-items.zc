@@ -1011,3 +1011,649 @@ class SpreadSphere2 : CustomInventoryExt
 			Stop;
 	}
 }
+
+//***********
+//** Armor **
+//***********
+// A specialized armor class for various armor types to allow future extra functions/features, maybe? V:
+class KCArmor : BasicArmor
+{
+	Default
+	{
+		Inventory.Amount 0;
+		+Inventory.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		Armor.Tick();
+		AbsorbCount = 0;
+		if (!Icon.isValid())
+		{
+			String icontex = gameinfo.ArmorIcon1;
+
+			if (SavePercent >= gameinfo.Armor2Percent && gameinfo.ArmorIcon2.Length() != 0)
+				icontex = gameinfo.ArmorIcon2;
+
+			if (icontex.Length() != 0)
+				Icon = TexMan.CheckForTexture (icontex, TexMan.TYPE_Any);
+		}
+	}
+	
+	override Inventory CreateCopy (Actor other)
+	{
+		// BasicArmor that is in use is stored in the inventory as BasicArmor.
+		// BasicArmor that is in reserve is not.
+		let copy = KCArmor(Spawn("KCArmor"));
+		copy.SavePercent = SavePercent != 0 ? SavePercent : 0.33335;	// slightly more than 1/3 to avoid roundoff errors.
+		copy.Amount = Amount;
+		copy.MaxAmount = MaxAmount;
+		copy.Icon = Icon;
+		copy.BonusCount = BonusCount;
+		copy.ArmorType = ArmorType;
+		copy.ActualSaveAmount = ActualSaveAmount;
+		GoAwayAndDie ();
+		return copy;
+	}
+	
+	override bool HandlePickup(Inventory item)
+	{
+		return item.GetClass() == 'KCArmor';
+	}
+	
+	override void AbsorbDamage (int damage, Name damageType, out int newdamage, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+
+		string infl, sour, vict;
+		if (owner == null) vict = "NONE"; else vict = owner.GetClassName();
+		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
+		if (source == null) sour = "NONE"; else sour = source.GetClassName();
+		int saved;
+		double initSavePercent = SavePercent;
+		
+		KCPlayerPawn PlayPawn;
+		PlayPawn = KCPlayerPawn(owner);
+		if (PlayPawn)
+		{
+			SavePercent *= (1.0 - PlayPawn.PlayerArmorIgnoreFactor);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]SavePercent:\c- \c[brick]%.4f\c- \c[gold][%.4f]\c", SavePercent, initSavePercent);
+		}
+		
+		if (!DamageTypeDefinition.IgnoreArmor(damageType))
+		{
+			int full = MAX(0, MaxFullAbsorb - AbsorbCount);
+			
+			if (damage < full)
+			{
+				saved = damage;
+			}
+			else
+			{
+				saved = full + int((damage - full) * SavePercent);
+				if (MaxAbsorb > 0 && saved + AbsorbCount > MaxAbsorb) 
+				{
+					saved = MAX(0,  MaxAbsorb - AbsorbCount);
+				}
+			}
+			
+			int oldsaved = saved;
+			double savebase = 0.0;
+			if (MiscItem)
+			{
+				if (savebase >= 0.75) savebase = 0.75;
+			}
+			saved *= (1.0 - savebase);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post IP]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+
+			if (random(1,16) <= (random(7,9) + (8 - (skill * 2)))) 
+			{
+				oldsaved = saved;
+				savebase = 0.0;
+				savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+				if (savebase >= 0.25) savebase = 0.25;
+				saved *= (1.0 - savebase);
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Special]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+			}
+			
+			if (MiscItem)
+			{
+				savebase = 0.00;
+				if (MiscItem)
+				{
+					if (savebase >= 0.75) savebase = 0.75;
+				}
+				saved *= (1.0 - savebase);
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Wine]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+			}
+
+			if (Amount < saved)
+			{
+				saved = Amount;
+			}
+			newdamage -= saved;
+			Amount -= saved;
+			AbsorbCount += saved;
+			if (Amount == 0)
+			{
+				// The armor has become useless
+				SavePercent = 0;
+				ArmorType = 'None'; // Not NAME_BasicArmor.
+				// Now see if the player has some more armor in their inventory
+				// and use it if so. As in Strife, the best armor is used up first.
+				KCArmorPickup best = null;
+				Inventory probe = Owner.Inv;
+				while (probe != null)
+				{
+					let inInv = KCArmorPickup(probe);
+					if (inInv != null)
+					{
+						if (best == null || best.SavePercent < inInv.SavePercent)
+						{
+							best = inInv;
+						}
+					}
+					probe = probe.Inv;
+				}
+				if (best != null)
+				{
+					Owner.UseInventory(best);
+				}
+			}
+			damage = newdamage;
+		}
+		SavePercent = initSavePercent;
+
+		// Once the armor has absorbed its part of the damage, then apply its damage factor, if any, to the player
+		if ((damage > 0) && (ArmorType != 'None')) // KCArmor is not going to have any damage factor, so skip it.
+		{
+			newdamage = ApplyDamageFactors(ArmorType, damageType, damage, damage);
+		}
+	}
+}
+
+class KCArmorBonus : BasicArmorBonus
+{
+	override Inventory CreateCopy (Actor other)
+	{
+		let copy = KCArmorBonus(Super.CreateCopy(other));
+		copy.SavePercent = SavePercent;
+		copy.SaveAmount = SaveAmount;
+		copy.MaxSaveAmount = MaxSaveAmount;
+		copy.BonusCount = BonusCount;
+		copy.BonusMax = BonusMax;
+		copy.MaxAbsorb = MaxAbsorb;
+		copy.MaxFullAbsorb = MaxFullAbsorb;
+
+		return copy;
+	}
+	
+	override bool Use (bool pickup)
+	{
+		let armor = KCArmor(Owner.FindInventory("KCArmor"));
+		bool result = false;
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn("KCArmor"));
+			armor.BecomeItem ();
+			armor.Amount = 0;
+			armor.MaxAmount = MaxSaveAmount;
+			Owner.AddInventory (armor);
+		}
+
+		if (BonusCount > 0 && armor.BonusCount < BonusMax)
+		{
+			armor.BonusCount = min(armor.BonusCount + BonusCount, BonusMax);
+			result = true;
+		}
+
+		int saveAmount = min(GetSaveAmount(), MaxSaveAmount);
+
+		if (saveAmount <= 0)
+		{ // If it can't give you anything, it's as good as used.
+			return BonusCount > 0 ? result : true;
+		}
+
+		// If you already have more armor than this item can give you, you can't
+		// use it.
+		if (armor.Amount >= MaxSaveAmount + armor.BonusCount)
+		{
+			return result;
+		}
+
+		if (armor.Amount <= 0)
+		{ // Should never be less than 0, but might as well check anyway
+			armor.Amount = 0;
+			armor.Icon = Icon;
+			armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+			armor.MaxAbsorb = MaxAbsorb;
+			armor.ArmorType = GetClassName();
+			armor.MaxFullAbsorb = MaxFullAbsorb;
+			armor.ActualSaveAmount = MaxSaveAmount;
+		}
+
+		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
+		armor.MaxAmount = max(armor.MaxAmount, MaxSaveAmount);
+		return true;
+	}
+	
+	override void SetGiveAmount(Actor receiver, int amount, bool bycheat)
+	{
+		SaveAmount *= amount;
+	}
+	
+	int GetSaveAmount ()
+	{
+		return !bIgnoreSkill ? int(SaveAmount * G_SkillPropertyFloat(SKILLP_ArmorFactor)) : SaveAmount;
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		Double Dbl;
+		Sector Sec;
+		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
+		if (pos.z <= Dbl && !owner)
+		{
+			if (cursector.damagetype == 'InstantDeath' ||
+					cursector.damagetype == 'Massacre')
+			{
+				if (bCOUNTITEM) level.total_items--;
+				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
+				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](KCArmorBonus)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
+				Destroy();
+			}
+		}
+	}
+	
+	Default
+	{
+		+Inventory.AUTOACTIVATE
+		+Inventory.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Armor.SavePercent 33.335;
+	}
+}
+
+class KCArmorPickup : BasicArmorPickup
+{
+	override Inventory CreateCopy (Actor other)
+	{
+		let copy = KCArmorPickup(Super.CreateCopy (other));
+		copy.SavePercent = SavePercent;
+		copy.SaveAmount = SaveAmount;
+		copy.MaxAbsorb = MaxAbsorb;
+		copy.MaxFullAbsorb = MaxFullAbsorb;
+
+		return copy;
+	}
+
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+
+		int SaveAmount = GetSaveAmount();
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem ();
+			Owner.AddInventory (armor);
+		}
+		else
+		{
+			// If you already have more armor than this item gives you, you can't
+			// use it.
+			if (armor.Amount >= SaveAmount + armor.BonusCount)
+			{
+				return false;
+			}
+			// Don't use it if you're picking it up and already have some.
+			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+		}
+		
+		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+		armor.Amount = SaveAmount + armor.BonusCount;
+		armor.MaxAmount = SaveAmount;
+		armor.Icon = Icon;
+		armor.MaxAbsorb = MaxAbsorb;
+		armor.MaxFullAbsorb = MaxFullAbsorb;
+		armor.ArmorType = GetClassName();
+		armor.ActualSaveAmount = SaveAmount;
+		return true;
+	}
+	
+	override void SetGiveAmount(Actor receiver, int amount, bool bycheat)
+	{
+		SaveAmount *= amount;
+	}
+	
+	int GetSaveAmount ()
+	{
+		return !bIgnoreSkill ? int(SaveAmount * G_SkillPropertyFloat(SKILLP_ArmorFactor)) : SaveAmount;
+	}
+}
+
+class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
+{
+	//mixin HUDRecovery;
+	int user_type;
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.PickupMessage "$GOTARMBONUS"; // "Picked up an armor bonus.";
+		Inventory.Icon "ARM1A0";
+		Armor.SavePercent 33.335;
+		Armor.SaveAmount 1;
+		Armor.MaxSaveAmount 200;
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+	}
+	
+	override String PickupMessage()
+	{
+		string msg = PickupMsg;
+		return msg;
+	}
+
+	override void PostBeginPlay()
+	{
+		super.PostBeginPlay();
+	}
+	
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PrevArmorAmt = Owner.CountInv(armorclasstype);
+		int PrevArmorType;
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d", PrevArmorType, PrevArmorAmt);
+
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+		bool result = false;
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem();
+			armor.Amount = 0;
+			armor.MaxAmount = MaxSaveAmount;
+			Owner.AddInventory (armor);
+		}
+
+		if (BonusCount > 0 && armor.BonusCount < BonusMax)
+		{
+			armor.BonusCount = min(armor.BonusCount + BonusCount, BonusMax);
+			result = true;
+		}
+
+		int saveAmount = min(GetSaveAmount(), MaxSaveAmount);
+
+		if (saveAmount <= 0)
+		{ // If it can't give you anything, it's as good as used.
+			return BonusCount > 0 ? result : true;
+		}
+
+		// If you already have more armor than this item can give you, you can't
+		// use it.
+		if (armor.Amount >= MaxSaveAmount + armor.BonusCount)
+		{
+			return result;
+		}
+
+		if (armor.Amount <= 0)
+		{ // Should never be less than 0, but might as well check anyway
+			armor.Amount = 0;
+			armor.Icon = Icon;
+			armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+			armor.MaxAbsorb = MaxAbsorb;
+			armor.ArmorType = GetClassName();
+			armor.MaxFullAbsorb = MaxFullAbsorb;
+			armor.ActualSaveAmount = MaxSaveAmount;
+		}
+		else
+		{
+			if (kcdebug_armordisplays) Console.Printf("armor.Amount: %d", armor.Amount);
+			/*
+			if (PrevArmorType == 0)
+			{
+				armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
+				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M0]: %.4f", armor.SavePercent);
+			}
+			if (PrevArmorType == 1)
+			{
+				if (armor.Amount > (ArmorItemMax1-1))
+				{
+					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNJ0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1]: %.4f", armor.SavePercent);
+				}
+				else 
+				{
+					if (armor.Amount >= ((ArmorItemMax1*0.5)-1))
+					{
+						if (armor.Icon != TexMan.checkForTexture("KGWNI0")) armor.Icon = TexMan.checkForTexture("KGWNI0");
+					}
+					//armor.SavePercent = clamp(50, 0, 100) / 100;
+					armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1-1]: %.4f", armor.SavePercent);
+				}
+			}
+			else
+			if (PrevArmorType == 2)
+			{
+				if (armor.Amount > (ArmorItemMax2-1))
+				{
+					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNK0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2]: %.4f", armor.SavePercent);
+				}
+				else
+				{
+					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNJ0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2-1]: %.4f", armor.SavePercent);
+				}
+			}
+			else
+			if (PrevArmorType == 3)
+			{
+				if (armor.Amount > (ArmorItemMax3-1))
+				{
+					armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNL0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3]: %.4f", armor.SavePercent);
+				}
+				else
+				{
+					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
+					armor.Icon = TexMan.checkForTexture("KGWNK0");
+					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3-1]: %.4f", armor.SavePercent);
+				}
+			}
+			if (PrevArmorType == 4)
+			{
+				armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
+				armor.Icon = TexMan.checkForTexture("KGWNL0");
+				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M4]: %.4f", armor.SavePercent);
+			}
+			*/
+		}
+		
+		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
+		armor.MaxAmount = max(armor.MaxAmount, MaxSaveAmount);
+		
+		int armordiff = Owner.CountInv(armorclasstype) - PrevArmorAmt;
+		if (kcdebug_armordisplays) Console.Printf("%d", Owner.CountInv(armorclasstype));
+		//if (armordiff) A_RecoverHUD(armordiff, 1, true);
+		
+		return true;
+	}
+	
+	States
+	{
+		Spawn:
+			BON2 ABCDCB 6;
+			Loop;
+	}
+}
+
+class KCGreenArmor : KCArmorPickup replaces GreenArmor
+{
+	//mixin HUDRecovery;
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.PickupMessage "$GOTARMOR"; // "Picked up the armor.";
+		Inventory.Icon "ARM1A0";
+		Armor.SavePercent 33.335;
+		Armor.SaveAmount 100;
+	}
+	
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PrevArmorAmt = Owner.CountInv(armorclasstype);
+		int PrevArmorType;
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);
+		
+		int SaveAmount = GetSaveAmount();
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+		if (kcdebug_armordisplays) Console.Printf("SaveAmount: %d", SaveAmount);
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem ();
+			Owner.AddInventory (armor);
+		}
+		else
+		{
+			// If you already have more armor than this item gives you, you can't
+			// use it.
+			if (armor.Amount >= SaveAmount + armor.BonusCount)
+			{
+				return false;
+			}
+			// Don't use it if you're picking it up and already have some.
+			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+		}
+		
+		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+		armor.Amount = SaveAmount + armor.BonusCount;
+		armor.MaxAmount = SaveAmount;
+		armor.Icon = Icon;
+		armor.MaxAbsorb = MaxAbsorb;
+		armor.MaxFullAbsorb = MaxFullAbsorb;
+		armor.ArmorType = GetClassName();
+		armor.ActualSaveAmount = SaveAmount;
+		return true;
+	}
+	int cycle;
+	States
+	{
+		Spawn:
+			ARM1 A 6 NoDelay
+			{
+				if (cycle % 2 == 1) A_SetTics(7);
+			}
+			ARM1 B 7 Bright
+			{
+				if (cycle % 2 == 1) A_SetTics(6);
+			}
+			ARM1 B 0
+			{
+				cycle++;
+			}
+			Loop;
+	}
+}
+
+class KCBlueArmor : KCArmorPickup replaces BlueArmor
+{
+	//mixin HUDRecovery;
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.PickupMessage "$GOTMEGA"; // "Picked up the MegaArmor!";
+		Inventory.Icon "ARM2A0";
+		Armor.SavePercent 50;
+		Armor.SaveAmount 200;
+	}
+	
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PrevArmorAmt = Owner.CountInv(armorclasstype);
+		int PrevArmorType;
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);
+		
+		int SaveAmount = GetSaveAmount();
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+		if (kcdebug_armordisplays) Console.Printf("SaveAmount: %d", SaveAmount);
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem ();
+			Owner.AddInventory (armor);
+		}
+		else
+		{
+			// If you already have more armor than this item gives you, you can't
+			// use it.
+			if (armor.Amount >= SaveAmount + armor.BonusCount)
+			{
+				return false;
+			}
+			// Don't use it if you're picking it up and already have some.
+			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+		}
+		
+		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+		armor.Amount = SaveAmount + armor.BonusCount;
+		armor.MaxAmount = SaveAmount;
+		armor.Icon = Icon;
+		armor.MaxAbsorb = MaxAbsorb;
+		armor.MaxFullAbsorb = MaxFullAbsorb;
+		armor.ArmorType = GetClassName();
+		armor.ActualSaveAmount = SaveAmount;
+		return true;
+	}
+	
+	States
+	{
+		Spawn:
+			ARM2 A 6 NoDelay;
+			ARM2 B 6 Bright;
+			Loop;
+	}
+}
