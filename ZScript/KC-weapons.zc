@@ -13,6 +13,10 @@ class KCWeaponBase : Weapon
 	int uppercutspeed;
 	int buttons;
 	int PlayerLevel;
+
+	const spread1angle = 7.5;
+	const spread2angle = 3.75;
+	const spread2pitch = 3.75;
 	
 	bool PickupUseVoice;
 	bool PickupUseVoice2;
@@ -240,43 +244,168 @@ class KCWeaponBase : Weapon
 		double pptc = player.pitch;
 		if (player.CountInv("KCPowerSpread2"))
 		{
-			player.angle -= 7.5;
-			player.pitch -= 7.5;
+			player.angle -= spread2angle;
+			player.pitch -= spread2pitch;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 			player.pitch = pptc;
 
-			player.angle -= 7.5;
-			player.pitch += 7.5;
+			player.angle -= spread2angle;
+			player.pitch += spread2pitch;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 			player.pitch = pptc;
 
-			player.angle += 7.5;
-			player.pitch -= 7.5;
+			player.angle += spread2angle;
+			player.pitch -= spread2pitch;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 			player.pitch = pptc;
 
-			player.angle += 7.5;
-			player.pitch += 7.5;
+			player.angle += spread2angle;
+			player.pitch += spread2pitch;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 			player.pitch = pptc;
 		}
 		if (player.CountInv("KCPowerSpread2") || player.CountInv("KCPowerSpread1"))
 		{
-			player.angle -= 15.0;
+			player.angle -= spread1angle;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 			
-			player.angle += 15.0;
+			player.angle += spread1angle;
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
 			player.angle = pang;
 		}
 		A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy);
 	}
 
+	action Actor, Actor A_FireProjectileEx(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)	
+	{
+		let player = self.player;
+		if (!player) return null;
+
+		let weapon = player.ReadyWeapon;
+
+		FTranslatedLineTarget t;
+
+			// Only use ammo if called from a weapon
+		if (useammo && weapon && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weapon.DepleteAmmo(weapon.bAltFire, true))
+				return null;	// out of ammo
+		}
+
+		if (missiletype) 
+		{
+			double ang = self.Angle - 90;
+			Vector2 ofs = AngleToVector(ang, spawnofs_xy);
+			double shootangle = self.Angle;
+
+			if (flags & FPF_AIMATANGLE) shootangle += angle;
+
+			// Temporarily adjusts the pitch
+			double saved_player_pitch = self.Pitch;
+			self.Pitch += pitch;
+
+			Actor misl, realmisl;
+			[misl, realmisl] = SpawnPlayerMissile (missiletype, shootangle, ofs.X, ofs.Y, spawnheight, t, false, (flags & FPF_NOAUTOAIM) != 0);
+			self.Pitch = saved_player_pitch;
+
+			if (realmisl && flags & FPF_TRANSFERTRANSLATION)
+				realmisl.Translation = Translation;
+
+			// automatic handling of seeker missiles
+			if (misl)
+			{
+				if (t.linetarget && !t.unlinked && misl.bSeekerMissile)
+					misl.tracer = t.linetarget;
+				if (!(flags & FPF_AIMATANGLE))
+				{
+					// This original implementation is to aim straight ahead and then offset
+					// the angle from the resulting direction. 
+					misl.Angle += angle;
+					misl.VelFromAngle(misl.Vel.XY.Length());
+				}
+			}
+			if (kcdebug_weaponstatdisplays)
+			{
+				if (misl) Console.Printf("\c[green](A_FireProjectileEx)\c- misl: %p [%s]", misl, misl.GetClassName());
+				if (realmisl) Console.Printf("\c[green](A_FireProjectileEx)\c- realmisl: %p [%s]", realmisl, realmisl.GetClassName());
+			}
+			return misl, realmisl;
+		}
+		return null, null;
+	}
+	
+	action Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
+	{
+		actor misl1, misl2, misl3, misl4, misl5, misl6, misl7;
+		actor realmisl1, realmisl2, realmisl3, realmisl4, realmisl5, realmisl6, realmisl7;
+		
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		double pang = player.angle;
+		double pptc = player.pitch;
+		if (player.CountInv("KCPowerSpread2"))
+		{
+			player.angle -= spread2angle;
+			player.pitch -= spread2pitch;
+			[misl7, realmisl7] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle -= spread2angle;
+			player.pitch += spread2pitch;
+			[misl6, realmisl6] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle += spread2angle;
+			player.pitch -= spread2pitch;
+			[misl5, realmisl5] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle += spread2angle;
+			player.pitch += spread2pitch;
+			[misl4, realmisl4] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+			player.pitch = pptc;
+		}
+		if (player.CountInv("KCPowerSpread2") || player.CountInv("KCPowerSpread1"))
+		{
+			player.angle -= spread1angle;
+			[misl3, realmisl3] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+			
+			player.angle += spread1angle;
+			[misl2, realmisl2] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
+			player.angle = pang;
+		}
+		[misl1, realmisl1] = A_FireProjectileEx(missiletype, angle, useammo, spawnofs_xy, spawnheight, flags, pitch);
+		if (kcdebug_weaponstatdisplays)
+		{
+			if (misl1) Console.Printf("\c[yellow](A_FireProjectile)\c- misl1: %p [%s]", misl1, misl1.GetClassName());
+			if (realmisl1) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl1: %p [%s]", realmisl1, realmisl1.GetClassName());
+			if (misl2) Console.Printf("\c[yellow](A_FireProjectile)\c- misl2: %p [%s]", misl2, misl2.GetClassName());
+			if (realmisl2) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl2: %p [%s]", realmisl2, realmisl2.GetClassName());
+			if (misl3) Console.Printf("\c[yellow](A_FireProjectile)\c- misl3: %p [%s]", misl3, misl3.GetClassName());
+			if (realmisl3) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl3: %p [%s]", realmisl3, realmisl3.GetClassName());
+			if (misl4) Console.Printf("\c[yellow](A_FireProjectile)\c- misl4: %p [%s]", misl4, misl4.GetClassName());
+			if (realmisl4) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl4: %p [%s]", realmisl4, realmisl4.GetClassName());
+			if (misl5) Console.Printf("\c[yellow](A_FireProjectile)\c- misl5: %p [%s]", misl5, misl5.GetClassName());
+			if (realmisl5) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl5: %p [%s]", realmisl5, realmisl5.GetClassName());
+			if (misl6) Console.Printf("\c[yellow](A_FireProjectile)\c- misl6: %p [%s]", misl6, misl6.GetClassName());
+			if (realmisl6) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl6: %p [%s]", realmisl6, realmisl6.GetClassName());
+			if (misl7) Console.Printf("\c[yellow](A_FireProjectile)\c- misl7: %p [%s]", misl7, misl7.GetClassName());
+			if (realmisl7) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl7: %p [%s]", realmisl7, realmisl7.GetClassName());
+		}
+		return misl1, realmisl1, misl2, realmisl2, misl3, realmisl3, misl4, realmisl4, misl5, realmisl5, misl6, realmisl6, misl7, realmisl7;
+	}
+	
 	action bool A_CheckBerserk()
 	{
 		actor player = players[0].mo;
