@@ -2048,6 +2048,9 @@ class PlayerDashJump : Inventory
 		DashMaxCharge = BaseDashChargeMax + AddDashLevel2 + ExDashCharge2 + PerkFactor2;
 		if (kcdebug_showdashinformation) Console.Printf("DashMaxCharge: %d (BaseDashChargeMax: %d, AddDashLevel2: %d (%d), ExtraDashCharge2: %d (%d), PerkFactor2: %d", DashMaxCharge, BaseDashChargeMax, AddDashLevel2, AddDashLevel, ExDashCharge2, ExtraDashCharge, PerkFactor2);
 		
+		if (berserked) DashMaxCharge *= 1.125;
+		if (itemtimer == 0) DashCharge = DashMaxCharge;
+
 		//******************
 		//*Check Dash Timer*
 		//******************
