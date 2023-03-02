@@ -283,7 +283,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 {
 	default
 	{
-		//$Category EE Artifacts
+		//$Category KC Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSCHA0";
 		Tag "";
@@ -399,7 +399,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 {
 	default
 	{
-		//$Category EE Artifacts
+		//$Category KC Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSPWA0";
 		Tag "";
@@ -515,7 +515,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 {
 	default
 	{
-		//$Category EE Artifacts
+		//$Category KC Artifacts
 		Inventory.PickupMessage "";
 		Inventory.Icon "TSBGA0";
 		Tag "Time Seraph's Bangle: Creates a scanning visor over the eyes for various vision related perks when used. Toggleable.";
@@ -619,6 +619,205 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	}
 }
 
+// Doom Powerups
+class Soulsphere2 : CustomInventoryExt replaces SoulSphere
+{
+	default
+	{
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "\cnSoulSphere!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			SOUL ABCD 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				int CurrentHealth = player.health;
+				int HealthValue;
+				int MaxHealthTrue;
+				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxHealthLimit = MaxHealthTrue * 2;
+				
+				if (CurrentHealth < MaxHealthLimit)
+				{
+					HealthValue = MaxHealthTrue;
+					//if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
+					CurrentHealth += HealthValue;
+					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+		
+					player.health = CurrentHealth;
+				}
+			}
+			Stop;
+	}
+}
+
+class MiniSoulsphere : CustomInventoryExt
+{
+	default
+	{
+		Height 16;
+		Radius 8;
+		Scale 0.5;
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "\cnMiniature SoulSphere!";
+		Inventory.PickupSound "misc/p_pkup2";
+	}
+	
+	States
+	{
+		Spawn:
+			SOUL ABCD 4 Bright
+			{
+				A_SetTics(random(3,6));
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				int CurrentHealth = player.health;
+				int HealthValue;
+				int MaxHealthTrue;
+				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxHealthLimit = MaxHealthTrue * 2;
+				
+				if (CurrentHealth < MaxHealthLimit)
+				{
+					HealthValue = (MaxHealthTrue * 0.5);
+					//if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
+					CurrentHealth += HealthValue;
+					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+		
+					player.health = CurrentHealth;
+				}
+			}
+			Stop;
+	}
+}
+
+class Megasphere2 : CustomInventory replaces MegaSphere
+{
+	default
+	{
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "\cjMegaSphere!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			MEGA ABCD 6 BRIGHT;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				int CurrentHealth = player.health;
+				int HealthValue;
+				int MaxHealthTrue;
+				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxHealthLimit = MaxHealthTrue * 2;
+				int HealAmount;
+				int ptemp1, ptemp2;
+				
+				if (CurrentHealth < MaxHealthLimit)
+				{
+					HealAmount = MaxHealthLimit;
+					//if ((dvds_showdamagemessages & 1) && HealAmount > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealAmount);
+					CurrentHealth += HealAmount;
+					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+				
+					player.health = CurrentHealth;
+				}
+				player.A_GiveInventory("BlueArmorForMegasphere", 1); //A_MegaSphereArmor();
+			}
+			Stop;
+	}
+}
+
+class RadSuit2 : RadSuit replaces RadSuit
+{
+	default
+	{
+		Height 46;
+		+DONTGIB
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.ADDITIVETIME
+		Inventory.MaxAmount 0;
+		Inventory.PickupMessage "\c[lightgreen]Radiation Shielding Suit";
+		Inventory.PickupSound "powerups/suit";
+		Powerup.Type "KCPowerIronFeet";
+	}
+
+	States
+	{
+		Spawn:
+			SUIT A -1 Bright;
+			Stop;
+	}
+}
+
+class BlurSphere2 : CustomInventoryExt replaces BlurSphere
+{
+	default
+	{
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+VISIBILITYPULSE
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		+INVENTORY.BIGPOWERUP;
+		RenderStyle "Translucent";
+		Inventory.PickupMessage "\c[brick]Invisibility!";
+		Inventory.PickupSound "powerups/invis";
+	}
+	
+	States
+	{
+		Spawn:
+			PINS ABCDCB 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					//A_StopSound(CHAN_VOICE);
+					//A_StartSound("Dinah/What",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+				}
+				A_GiveInventory("KCPowerInvisibility");
+			}
+			Stop;
+	}
+}
 
 // Invuln Sphere
 class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
@@ -654,6 +853,62 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 					//A_StartSound("Dinah/What",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
 				A_GiveInventory("KCPowerInvuln");
+			}
+			Stop;
+	}
+}
+
+class SpreadSphere1 : CustomInventoryExt
+{
+	default
+	{
+		//$Category KC Powerups
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "\cfSpreader Sphere\c-";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			SRSH ABCD 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("KCPowerSpread1");
+			}
+			Stop;
+	}
+}
+
+class SpreadSphere2 : CustomInventoryExt
+{
+	default
+	{
+		//$Category KC Powerups
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "\cfSpreader Sphere Mk. 2!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			SRSH EFGH 6 Bright; // ABCD 3 Bright
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				A_GiveInventory("KCPowerSpread2");
 			}
 			Stop;
 	}

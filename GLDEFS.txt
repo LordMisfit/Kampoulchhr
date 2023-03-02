@@ -51,6 +51,112 @@ object TimeSeraphBangle
 	frame TSBGD { light TSARTIFACTPURPLE }
 }
 
+//
+// Powerups
+PulseLight SOULSPHERE
+{
+	Color 0.3281 0.3281 1.0
+	Size 48
+	SecondarySize 64
+	Interval 2.0
+	Offset 0 0 0
+}
+PulseLight SOULSPHEREMINI
+{
+	Color 0.3281 0.3281 1.0
+	Size 24
+	SecondarySize 32
+	Interval 2.0
+	Offset 0 0 0
+}
+object SoulSphere
+{
+	Frame SOUL { Light SOULSPHERE }
+}
+object SoulSphere2
+{
+	Frame SOUL { Light SOULSPHERE }
+}
+object MiniSoulSphere
+{
+	Frame SOUL { Light SOULSPHEREMINI }
+}
+
+PulseLight MEGASPHERE
+{
+	Color 0.75 0.65625 0.5625
+	Size 48
+	SecondarySize 64
+	Interval 2.0
+	Offset 0 0 0
+}
+object MegaSphere
+{
+	Frame MEGA { Light MEGASPHERE }
+}
+object MegaSphere2
+{
+	Frame MEGA { Light MEGASPHERE }
+}
+
+PulseLight SPREADSPHERE1
+{
+	Color 0.984 0.652 0.128
+	Size 56
+	SecondarySize 64
+	Interval 2.0
+	Offset 0 0 0
+}
+object SpreadSphere1
+{
+	Frame SRSHA { Light SPREADSPHERE1 }
+	Frame SRSHB { Light SPREADSPHERE1 }
+	Frame SRSHC { Light SPREADSPHERE1 }
+	Frame SRSHD { Light SPREADSPHERE1 }
+}
+
+PulseLight SPREADSPHERE2
+{
+	Color 0.961 1.0 0.004
+	Size 64
+	SecondarySize 72
+	Interval 2.0
+	Offset 0 0 0
+}
+object SpreadSphere2
+{
+	Frame SRSHE { Light SPREADSPHERE2 }
+	Frame SRSHF { Light SPREADSPHERE2 }
+	Frame SRSHG { Light SPREADSPHERE2 }
+	Frame SRSHH { Light SPREADSPHERE2 }
+}
+
+PulseLight BLURSPHERE
+{
+	Color 0.652 0.0 0.628
+	Size 40
+	SecondarySize 48
+	Interval 2.0
+	Offset 0 0 0
+}
+object BlurSphere
+{
+	Frame PINS { Light BLURSPHERE }
+}
+object BlurSphere2
+{
+	Frame PINS { Light BLURSPHERE }
+}
+
+object InvulnerabilitySphere
+{
+	Frame PINV { Light INVULNSPHERE }
+}
+object InvulnerabilitySphere2
+{
+	Frame PINV { Light INVULNSPHERE }
+}
+
 //Underwater shader
 HardwareShader PostProcess scene
 {
