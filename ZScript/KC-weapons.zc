@@ -1,5 +1,659 @@
-class KCProjectile : Actor
+class KCProjectile : KampoulchhrBase
 {
+	bool isillusionaryproj;
+	int user_projtimer;
+	float user_ignoreaoeimmunity;
+	int saveddmg; // Save damage from things like A_CustomPunch for puffs
+	int user_canafflict;
+	int user_ailmentmaxchance;
+	
+	int user_hitsparkrand;
+	int user_sparksizelevel;
+	double user_sparkscalemulti;
+	int user_noseektimer;
+	
+	actor OriginalActor;
+	string OriginalActorType;
+	bool REFLECTEDMONSTERPROJ;
+	
+	double bonusmultiplier;
+	
+	int xyspreadtime;
+	int zspreadtime;
+	int ipprojid;
+	double basespreadspeed;
+
+	bool hitawall;
+	bool hitaceiling;
+	bool hitafloor;
+
+	int timesrippedoverall;
+	int maxtimesrippedoverall;
+	
+	int BaseSigilMaxHealth;
+	int MaxHealthTrue;
+	int stamdamagefactor;
+	int accudamagefactor;
+	
+	int PlayerLevel;
+	PlayerPawn playpawn;
+	KCCreature kcactor;
+	
+	private class<Inventory> iDTech1Check, iDTech1Check2, iDTech1Check3, iDTech1Check4, iDTech1Check5, iDTech1Check6, iDTech1Check7, iDTech1Check8;
+
+	default
+	{
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		if (bonusmultiplier <= 0.0) bonusmultiplier = 1.0;
+
+		if (target) 
+		{
+			playpawn = PlayerPawn(target);
+			if (playpawn)
+			{
+				let MiscItem = PlayerStatItem(playpawn.FindInventory("PlayerStatItem"));
+				if (MiscItem) PlayerLevel = MiscItem.TruePlayerLevel;
+			}
+			
+			if (target.bNOBLOOD == true && 
+					target.bNOPAIN == true &&
+					target.bNOTARGETSWITCH == true &&
+					target.bNOINFIGHTING == true &&
+					target.bFULLVOLACTIVE == false && 
+					target.bFULLVOLDEATH == false &&
+					target.bBOSS == false) isillusionaryproj = true;
+					
+			let IsPlayer = PlayerPawn(target);
+			let IsAMonster = KCCreature(target);
+			if (IsAMonster)
+			{
+				OriginalActor = IsAMonster;
+				OriginalActorType = IsAMonster.GetClassName();
+			}
+		}
+	}
+	
+	void A_KCPostPain()
+	{
+		string nm;
+		nm = "JustKicked"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustPunched"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustUppercutted"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustShieldDashed"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+	}
+	
+	override void Tick()
+	{
+		if (target)
+		{
+			if (PlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("KCTimeFreezer") ||
+						target.CountInv("KCTimeFreezer1") ||
+						target.CountInv("KCTimeFreezer2") ||
+						target.CountInv("KCTimeFreezer3") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!dydudebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+						if (dydudebug_timefreezedebugaffectproj) bNOTIMEFREEZE = false;
+					}
+					else
+					{
+						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+		
+		if (OriginalActor != null) 
+		{ 
+			if (target != OriginalActor && target == KCPlayerPawn(target)) REFLECTEDMONSTERPROJ = true;
+		}
+		
+		if (REFLECTEDMONSTERPROJ && bDONTREFLECT == false) 
+		{
+			//Console.Printf("REFLECTEDMONSTERPROJ (%d)", level.time);
+			bDONTREFLECT = true;
+		}
+		
+		Super.Tick();
+	}
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+		
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			if (dydudebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("\c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
+			
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					//if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					//if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					//if (A_CheckFriendCollisionProjTypeFriendlyDoom()) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic()) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen()) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife()) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers()) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendly1()) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		
+		// We don't really care about others making the check.
+		return true;
+	}
+	
+	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
+	{
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCProjectile, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		damage = super.DoSpecialDamage(target, damage, damagetype);
+		// New Code goes here
+		return damage;
+	}
+	//
+	//
+	//
+}
+
+class KCEffectProjectile : KCProjectile
+{
+	default
+	{
+		+HITMASTER;
+	}
+	
+	void A_InflictHalve(int basetime = 35, int sndchannel = 401)
+	{
+		actor player = players[0].mo;
+		if (!player.CountInv("PowerHalve"))
+		{
+			player.SetInventory("PowerHalve",1);
+			let BluntItem = PowerHalve(player.FindInventory("PowerHalve"));
+			if (BluntItem) BluntItem.EffectTics = basetime;
+		}
+		else
+		{
+			let BluntItem = PowerHalve(player.FindInventory("PowerHalve"));
+			if (BluntItem) BluntItem.EffectTics += basetime;
+		}
+		player.A_StartSound("debuff/atkdown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictHalve)");
+	}
+	
+	void A_InflictWeaken(int basetime = 35, int sndchannel = 401)
+	{
+		actor player = players[0].mo;
+		if (!player.CountInv("PowerWeaken"))
+		{
+			player.SetInventory("PowerWeaken",1);
+			let SapItem = PowerWeaken(player.FindInventory("PowerWeaken"));
+			if (SapItem) SapItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SapItem = PowerWeaken(player.FindInventory("PowerWeaken"));
+			if (SapItem) SapItem.EffectTics += basetime;
+		}
+		player.A_StartSound("debuff/defdown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictWeaken)");
+	}
+	
+	void A_InflictSlow(int basetime = 35, int sndchannel = 401)
+	{
+		actor player = players[0].mo;
+		if (!player.CountInv("PowerSlow"))
+		{
+			player.SetInventory("PowerSlow",1);
+			let SlowItem = PowerSlow(player.FindInventory("PowerSlow"));
+			if (SlowItem) SlowItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SlowItem = PowerSlow(player.FindInventory("PowerSlow"));
+			if (SlowItem) SlowItem.EffectTics += basetime;
+		}
+		player.A_StartSound("debuff/spddown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSlow)");
+	}
+	
+	int A_StatusEffectChecker(int basechance)
+	{
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile [\c[green]%s\c[orange])", GetClassName());
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+
+		user_ailmentmaxchance = basechance;
+		if (master && master == player)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- master == player");
+			if (player.CountInv("EWShieldIdleMode") > 0) 
+			{
+				if (player.CountInv("EWShieldDefendMode") > 0)
+				{
+					if (player.CountInv("EWShieldDefendModeExtra") > 0) 
+					{
+						user_ailmentmaxchance *= 20;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
+					}
+					else 
+					{
+						user_ailmentmaxchance *= 12;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
+					}
+				}
+				else
+				{
+					user_ailmentmaxchance *= 4;
+					if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
+				}
+			}
+		}
+
+		user_canafflict = 1;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Health Check");
+			if (master.health <= 0) 
+			{
+				user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
+			}
+
+			if (master.CountInv("EvadeAnAttack") > 0 || 
+					master.CountInv("PlayerDashing") > 0) 
+					{
+						user_canafflict = 0;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
+					}
+		}
+
+		KCPlayerPawn playpawn;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check");
+			playpawn = KCPlayerPawn(master);
+			if (playpawn)
+			{
+				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
+			}
+			else
+			{
+				if (master.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
+			}
+		}
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
+		return user_ailmentmaxchance;
+	}
+}
+
+
+// Base FastProjectile Class
+class KCFastProjectile : KCProjectile abstract
+{
+	Default
+	{
+		Projectile;
+		MissileHeight 0;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
+	virtual void Effect()
+	{
+		class<Actor> trail = MissileName;
+		if (trail != null)
+		{
+			double hitz = pos.z - 8;
+
+			if (hitz < floorz)
+			{
+				hitz = floorz;
+			}
+			// Do not clip this offset to the floor.
+			hitz += MissileHeight;
+			
+			Actor act = Spawn (trail, (pos.xy, hitz), ALLOW_REPLACE);
+			if (act != null)
+			{
+				if (bGetOwner && target != null)
+					act.target = target;
+				else
+					act.target = self;
+				
+				act.angle = angle;
+				act.pitch = pitch;
+			}
+		}
+	}
+	
+	//----------------------------------------------------------------------------
+	//
+	// AFastProjectile :: Tick
+	//
+	// Thinker for the ultra-fast projectiles used by Heretic and Hexen
+	//
+	//----------------------------------------------------------------------------
+
+	override void Tick ()
+	{
+		if (target)
+		{
+			if (KCPlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("KCTimeFreezer") ||
+						target.CountInv("KCTimeFreezer1") ||
+						target.CountInv("KCTimeFreezer2") ||
+						target.CountInv("KCTimeFreezer3") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!dydudebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+					else
+					{
+						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+		
+		ClearInterpolation();
+		double oldz = pos.Z;
+
+		if (isFrozen())
+			return;
+
+		// [RH] Ripping is a little different than it was in Hexen
+		FCheckPosition tm;
+		tm.DoRipping = bRipper;
+
+		int count = 8;
+		if (radius > 0)
+		{
+			while (abs(Vel.X) >= radius * count || abs(Vel.Y) >= radius * count)
+			{
+				// we need to take smaller steps.
+				count += count;
+			}
+		}
+
+		if (height > 0)
+		{
+			while (abs(Vel.Z) >= height * count)
+			{
+				count += count;
+			}
+		}
+
+		// Handle movement
+		bool ismoved = Vel != (0, 0, 0)
+			// Check Z position set during previous tick.
+			// It should be strictly equal to the argument of SetZ() function.
+			|| (   (pos.Z != floorz           ) /* Did it hit the floor?   */
+				&& (pos.Z != ceilingz - Height) /* Did it hit the ceiling? */ );
+
+		if (ismoved)
+		{
+			// force some lateral movement so that collision detection works as intended.
+			if (bMissile && Vel.X == 0 && Vel.Y == 0 && !IsZeroDamage())
+			{
+				VelFromAngle(MinVel);
+			}
+
+			Vector3 frac = Vel / count;
+			int changexy = frac.X != 0 || frac.Y != 0;
+			int ripcount = count / 8;
+			for (int i = 0; i < count; i++)
+			{
+				if (changexy)
+				{
+					if (--ripcount <= 0)
+					{
+						tm.ClearLastRipped();	// [RH] Do rip damage each step, like Hexen
+					}
+					
+					if (!TryMove (Pos.XY + frac.XY, true, false, tm))
+					{ // Blocked move
+						if (!bSkyExplode)
+						{
+							let l = tm.ceilingline;
+							if (l &&
+								l.backsector &&
+								l.backsector.GetTexture(sector.ceiling) == skyflatnum)
+							{
+								let posr = PosRelative(l.backsector);
+								if (pos.Z >= l.backsector.ceilingplane.ZatPoint(posr.XY))
+								{
+									// Hack to prevent missiles exploding against the sky.
+									// Does not handle sky floors.
+									Destroy ();
+									return;
+								}
+							}
+							// [RH] Don't explode on horizon lines.
+							if (BlockingLine != NULL && BlockingLine.special == Line_Horizon)
+							{
+								Destroy ();
+								return;
+							}
+						}
+
+						ExplodeMissile (BlockingLine, BlockingMobj);
+						return;
+					}
+				}
+				AddZ(frac.Z);
+				UpdateWaterLevel();
+				oldz = pos.Z;
+				if (oldz <= floorz)
+				{ // Hit the floor
+
+					if (floorpic == skyflatnum && !bSkyExplode)
+					{
+						// [RH] Just remove the missile without exploding it
+						//		if this is a sky floor.
+						Destroy ();
+						return;
+					}
+
+					SetZ(floorz);
+					HitFloor ();
+                    Destructible.ProjectileHitPlane(self, SECPART_Floor);
+					ExplodeMissile (NULL, NULL);
+					return;
+				}
+				if (pos.Z + height > ceilingz)
+				{ // Hit the ceiling
+
+					if (ceilingpic == skyflatnum && !bSkyExplode)
+					{
+						Destroy ();
+						return;
+					}
+
+					SetZ(ceilingz - Height);
+                    Destructible.ProjectileHitPlane(self, SECPART_Ceiling);
+					ExplodeMissile (NULL, NULL);
+					return;
+				}
+				CheckPortalTransition();
+				if (changexy && ripcount <= 0) 
+				{
+					ripcount = count >> 3;
+
+					// call the 'Effect' method.
+					Effect();
+				}
+			}
+		}
+		if (!CheckNoDelay())
+			return;		// freed itself
+		// Advance the state
+		if (tics != -1)
+		{
+			if (tics > 0) tics--;
+			while (!tics)
+			{
+				if (!SetState (CurState.NextState))
+				{ // mobj was removed
+					return;
+				}
+			}
+		}
+	}
+}
+
+class KCEffectFastProjectile : KCFastProjectile
+{
+	default
+	{
+		+HITMASTER;
+	}
+	
+	int A_StatusEffectChecker(int basechance)
+	{
+		if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile [\c[green]%s\c[orange])", GetClassName());
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+
+		user_ailmentmaxchance = basechance;
+		if (master && master == player)
+		{
+			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
+			if (player.CountInv("EWShieldIdleMode") > 0) 
+			{
+				if (player.CountInv("EWShieldDefendMode") > 0)
+				{
+					if (player.CountInv("EWShieldDefendModeExtra") > 0) 
+					{
+						user_ailmentmaxchance *= 20;
+						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
+					}
+					else 
+					{
+						user_ailmentmaxchance *= 12;
+						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
+					}
+				}
+				else
+				{
+					user_ailmentmaxchance *= 4;
+					if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
+				}
+			}
+		}
+
+		user_canafflict = 1;
+		if (master)
+		{
+			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Check");
+			if (master.health <= 0) 
+			{
+				user_canafflict = 0;
+				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
+			}
+
+			if (master.CountInv("EvadeAnAttack") > 0 || 
+					master.CountInv("PlayerDashing") > 0) 
+					{
+						user_canafflict = 0;
+						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
+					}
+		}
+
+		KCPlayerPawn playpawn;
+		if (master)
+		{
+			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check");
+			playpawn = KCPlayerPawn(master);
+			if (playpawn)
+			{
+				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
+			}
+			else
+			{
+				if (master.bINVULNERABLE) user_canafflict = 0;
+				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
+			}
+		}
+		if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
+		return user_ailmentmaxchance;
+	}
 }
 
 class KCWeaponBase : Weapon

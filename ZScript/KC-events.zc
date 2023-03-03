@@ -608,17 +608,92 @@ class KC_EventHandler : EventHandler
 				
 				if (playdmgsounds)
 				{
-					//
-					//
-					//
+					if (kc_q3aqchitsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype) && victim.CountInv("TempNoHitSound") <= 0)
+					{
+						victim.A_SetInventory("TempNoHitSound",1);
+						
+						if (source || inflicter) 
+						{
+							if (kcdebug_hitsounds && source) Console.Printf("[hitsound] source: %s", source.GetClassName());
+							if (kcdebug_hitsounds && inflicter) Console.Printf("[hitsound] inflicter: %s", inflicter.GetClassName());
+							if (source) playpawn = PlayerPawn(source);
+							if (playpawn == null && inflicter) playpawn = PlayerPawn(inflicter);
+							if (victim.bFRIENDLY)
+							{
+								if (kc_q3aqchitsoundtype == 0) playedsound = "misc/hitally";
+								if (kc_q3aqchitsoundtype == 1) playedsound = "misc/hitpally";
+								if (kc_q3aqchitsoundtype >= 0) 
+								{
+									victim.A_StopSound(13);
+									victim.A_StartSound(playedsound, 13, CHANF_DEFAULT, (kc_q3aqchitsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+								}
+							}
+							else
+							if (playpawn) 
+							{
+								if (kcdebug_hitsounds) Console.Printf("[hitsound] playpawn: %s", playpawn.GetClassName());
+								if (!victim.bFRIENDLY)
+								{
+									if (kc_q3aqchitsoundtype == 0) playedsound = "misc/hit";
+									if (kc_q3aqchitsoundtype == 1) playedsound = "misc/hitpunch";
+									if (kc_q3aqchitsoundtype >= 0) 
+									{
+										victim.A_StopSound(13);
+										victim.A_StartSound(playedsound, 13, CHANF_DEFAULT, (kc_q3aqchitsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+									}
+								}
+							}
+							else
+							{
+								if (source) othermon = Actor(source);
+								if (othermon == null && inflicter) othermon = Actor(inflicter);
+								if (othermon) 
+								{
+									if (kcdebug_hitsounds) Console.Printf("[hitsound] othermon: %s", othermon.GetClassName());
+									if (othermon.bFRIENDLY && !victim.bFRIENDLY)
+									{
+										if (kc_q3aqchitsoundtype == 0) playedsound = "misc/hit2";
+										if (kc_q3aqchitsoundtype == 1) playedsound = "misc/hitpunch2";
+										if (kc_q3aqchitsoundtype >= 0) 
+										{
+											victim.A_StopSound(13);
+											victim.A_StartSound(playedsound, 13, CHANF_DEFAULT, (kc_q3aqchitsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+										}
+									}
+									else
+									if (!othermon.bFRIENDLY && !victim.bFRIENDLY && kc_hitsoundsmisc >= 0)
+									{
+										double rndpitch = frandom(0.50,1.00);
+										if (random(1,2) <= 1 && rndpitch > 0.00) rndpitch = (1.00 / rndpitch);
+
+										if (random(1,2) <= 1) playedsound = "misc/hitmine2";
+																		 else playedsound = "misc/hitmine";
+										victim.A_StopSound(13);
+										victim.A_StartSound(playedsound, 13, CHANF_DEFAULT, (kc_hitsoundsvol * frandompick(0.75,1.25)), ATTN_NONE, rndpitch);
+									}
+								}
+							}
+						}
+					}
 				}
-				//
-				//
-				//
 			}
-			//
-			//
-			//
+			
+			/*
+			// Adding in Argv's SingleDamageRipper code :V
+			if (inflicter is "SingleDamageRipper")
+			{
+				SingleDamageRipper(inflicter).ActorsAlreadyHit.Push(victim);
+				SingleDamageRipper(inflicter).timesrippedoverall++;
+				if (SingleDamageRipper(inflicter).timesrippedoverall < 0) SingleDamageFastRipper(inflicter).timesrippedoverall = 0;
+			}
+
+			if (inflicter is "SingleDamageFastRipper")
+			{
+				SingleDamageFastRipper(inflicter).ActorsAlreadyHit.Push(victim);
+				SingleDamageFastRipper(inflicter).timesrippedoverall++;
+				if (SingleDamageFastRipper(inflicter).timesrippedoverall < 0) SingleDamageFastRipper(inflicter).timesrippedoverall = 0;
+			}
+			*/
 		}
 		Super.WorldThingDamaged(e);
 	}
