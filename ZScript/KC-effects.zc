@@ -705,13 +705,13 @@ class PowerNoDrown : PowerProtection
 		bool debugblend = false;
 		// slowly fade the color out
 		int cnt = 128 - (EffectTics>>2);
-		if (exex_divinghelmvisuals)
+		if (kc_divinghelmvisuals)
 		{
 			cnt = 128 - (EffectTics2>>4);
 			cnt *= fadeintensity;
 		}
 		int blendclr = BlendColor.a*cnt/256;
-		if (exex_divinghelmvisuals)
+		if (kc_divinghelmvisuals)
 		{
 			if (owner && owner.waterlevel >= 3) blendclr *= 1.0;
 																		else blendclr *= 0.05;
@@ -824,7 +824,7 @@ class PowerNoDrown : PowerProtection
 			Owner.player.mo.ResetAirSupply();
 		}
 		
-		if (exex_masknoise && owner.waterlevel >= 3 && !(Level.maptime & 0x3f))
+		if (kc_masknoise && owner.waterlevel >= 3 && !(Level.maptime & 0x3f))
 		{
 			double maskpitch = frandompick(frandom(1.125,1.275),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.375,1.5));
 			if (owner.waterlevel >= 3) maskpitch *= 1.259921885;
@@ -888,7 +888,7 @@ class KCPowerIronFeet : PowerIronFeet
 		
 		if (!owner.CountInv("PowerNoDrown"))
 		{
-			if ((gameinfo.gametype & 8 || (exex_masknoise && owner.waterlevel >= 3)) && !(Level.maptime & 0x3f))
+			if ((gameinfo.gametype & 8 || (kc_masknoise && owner.waterlevel >= 3)) && !(Level.maptime & 0x3f))
 			{
 				double maskpitch = frandompick(frandom(1.125,1.275),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.375,1.5));
 				if (owner.waterlevel >= 3) maskpitch *= 1.259921885;
@@ -1534,6 +1534,58 @@ class DedMonsterFlag : PlaceHolderItem
 		}
 		
 		if (Owner == NULL) Destroy();
+	}
+}
+
+class TempNoWeakSound : PlaceHolderItem
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+		+NOTIMEFREEZE;
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < kc_q3aqchitsounddelay) 
+			{
+				timer++;
+			}
+			else Destroy();
+		}
+		if (Owner == NULL) Destroy();
+		
+		Super.Tick();
+	}
+}
+
+class TempNoHitSound : PlaceHolderItem
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+		+NOTIMEFREEZE;
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < kc_q3aqchitsounddelay) 
+			{
+				timer++;
+			}
+			else Destroy();
+		}
+		if (Owner == NULL) Destroy();
+		
+		Super.Tick();
 	}
 }
 

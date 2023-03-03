@@ -386,14 +386,61 @@ class KC_EventHandler : EventHandler
 						if (flags & DMG_EXPLOSION) comblog.AppendFormat(" \c[brick][AOE]\c-");
 						if (victim.health <= 0) 
 						{
-							//
-							//
-							//
+							comblog.AppendFormat(" \c[brick]%s dies!\c-", victname);
 						}
-						//
-						//
-						//
 					}
+					else
+					{
+						comblog.AppendFormat("\c[red]%s\c- took \c[purple]no damage\c- from", victname);
+						if (inflicter && source && (inflicter != source)) comblog.AppendFormat(" \c[purple]%s's", attkernam);
+						if (inflicter) comblog.AppendFormat(" \c[red]%s\c-!", atkrname);
+						comblog.AppendFormat(" [\c[lightblue]%s\c-]", mod);
+					}
+					if (kcdebug_showgametic) comblog.AppendFormat(" [%d]", gametic);
+					
+					Console.Printf(comblog);
+				}
+				
+				if (kcdebug_hitsounds) Console.Printf("hitsounds");
+				bool makesound;
+				string playedsound = "";
+				PlayerPawn playpawn;
+				Actor othermon;
+				int playweaksound = 0;
+				//*******************
+				//* Weakness Sounds *
+				//*******************
+				int tempdmgval = 10000;
+				double tempdmgfactor = victim.damagefactor;
+				victim.damagefactor = 1.0;
+				int moddedDMG = victim.ApplyDamageFactor(mod, tempdmgval);
+				let SpecVuln = CompatVulnItem(victim.FindInventory("CompatVulnItem"));
+				if (SpecVuln) moddedDMG *= SpecVuln.lastTOTALFactor;
+				victim.damagefactor = tempdmgfactor;
+				double outputdmgfactor = 1.0;
+				outputdmgfactor *= moddedDMG;
+				outputdmgfactor /= tempdmgval;
+				bool playwsounds = false;
+				if (mod == 'SilentMassacre') playwsounds = false;
+				if (isCCardsIllusion) playwsounds = false;
+				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d", playwsounds);
+				
+				if (playwsounds)
+				{
+					if (initdmg > 0 && !(flags & DMG_NO_FACTOR)) 
+					{
+						if (!(mod == '' || mod == 'Normal' || mod == 'Crush' || mod == 'Falling' || mod == 'Drowning'))
+						{
+							if (moddedDMG <= (tempdmgval * 0.25)) playweaksound = -3;
+							if (moddedDMG >= (tempdmgval * 0.25) && moddedDMG <= (tempdmgval * 0.3999999)) playweaksound = -2;
+							if (moddedDMG >= (tempdmgval * 0.4) && moddedDMG <= (tempdmgval * 0.6666667)) playweaksound = -1;
+							if (moddedDMG >= (tempdmgval * 1.5) && moddedDMG <= (tempdmgval * 2.4999999)) playweaksound = 1;
+							if (moddedDMG >= (tempdmgval * 2.5) && moddedDMG <= (tempdmgval * 3.9999999)) playweaksound = 2;
+							if (moddedDMG >= (tempdmgval * 4.0)) playweaksound = 3;
+							if (kcdebug_hitsounds) Console.Printf("moddedDMG: %d (%.8f) (%s), playweaksound: %d, damagefactor: %.8f", moddedDMG, outputdmgfactor, mod, playweaksound, victim.damagefactor);
+						}
+					}
+					if (kcdebug_hitsounds) Console.Printf("playweaksound: %d", playweaksound);
 					//
 					//
 					//
