@@ -2010,7 +2010,7 @@ class PlayerStatItem : Inventory
 		if (kc_expgains) tempmax *= 1.0;
 		if (BaseFactor >= tempmax) BaseFactor = tempmax;
 		Speed *= BaseFactor;
-		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base (level+extra)]: %.8f, BaseMul: %.8f, exex_pspdfactor: %.8f, TPLBase: %.8f, TPLBaseS: %.8f", BaseFactor, BaseMul, kc_pspdfactor, (TruePlayerLevel * BaseMul), (TruePlayerSPD * BaseMul));
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base (level+extra)]: %.8f, BaseMul: %.8f, kc_pspdfactor: %.8f, TPLBase: %.8f, TPLBaseS: %.8f", BaseFactor, BaseMul, kc_pspdfactor, (TruePlayerLevel * BaseMul), (TruePlayerSPD * BaseMul));
 		
 		double HealthFactor = 1.0;
 		if (CurrentHealth >= (MaxHealthTrue * 3)) 

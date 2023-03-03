@@ -441,6 +441,173 @@ class KC_EventHandler : EventHandler
 						}
 					}
 					if (kcdebug_hitsounds) Console.Printf("playweaksound: %d", playweaksound);
+
+					string weakplayedsound = "";
+					if (kc_hitweaksounds && victim.bISMONSTER && playweaksound != 0 && victim.CountInv("TempNoWeakSound") <= 0)
+					{
+						victim.A_SetInventory("TempNoWeakSound",1);
+			
+						if (playweaksound == -3) weakplayedsound = "Misc/ResistanceHitHigh";
+						if (playweaksound == -2) weakplayedsound = "Misc/ResistanceHitMid";
+						if (playweaksound == -1) weakplayedsound = "Misc/ResistanceHit";
+						if (playweaksound == 1) weakplayedsound = "Misc/WeaknessHit";
+						if (playweaksound == 2) weakplayedsound = "Misc/WeaknessHitMid";
+						if (playweaksound == 3) weakplayedsound = "Misc/WeaknessHitHigh";
+			
+						if (initdmg > 0) makesound = true;
+						//if (oldhealth > 0 && oldhealth > health) makesound = true;
+						if (makesound)
+						{
+							if (source) 
+							{
+								if (kcdebug_hitsounds) Console.Printf("[weaksounds] source: %s", source.GetClassName());
+								playpawn = PlayerPawn(source);
+								if (victim.bFRIENDLY)
+								{
+									victim.A_StartSound(weakplayedsound, 11, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+								}
+								else
+								if (playpawn) 
+								{
+									if (kcdebug_hitsounds) Console.Printf("[weaksounds] playpawn: %s", playpawn.GetClassName());
+									if (!victim.bFRIENDLY) victim.A_StartSound(weakplayedsound, 11, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 1.0);
+								}
+								else
+								{
+									othermon = Actor(source);
+									if (othermon) 
+									{
+										if (kcdebug_hitsounds) Console.Printf("[weaksounds] othermon: %s", othermon.GetClassName());
+										if (othermon.bFRIENDLY && !victim.bFRIENDLY) victim.A_StartSound(weakplayedsound, 11, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 1.5);
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				bool playdthsounds = false;
+				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdthsounds = true;
+				if (mod == 'SilentMassacre') playdthsounds = false;
+				if (isCCardsIllusion) playdthsounds = false;
+				
+				if (playdthsounds)
+				{
+					if (victim.health <= 0 && kc_q3aqckillsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype))
+					{
+						if (source || inflicter)
+						{
+							if (kcdebug_hitsounds && source) Console.Printf("[deathsound] source: %s", source.GetClassName());
+							if (kcdebug_hitsounds && inflicter) Console.Printf("[deathsound] inflicter: %s", inflicter.GetClassName());
+							if (source) playpawn = PlayerPawn(source);
+							if (playpawn == null && inflicter) playpawn = PlayerPawn(inflicter);
+							if (victim.bFRIENDLY)
+							{
+								if (kcdebug_hitsounds) Console.Printf("[deathsound] victim is friendly: %s", victim.GetClassName());
+								/*
+								if (?(victim))
+								{
+									if (kcdebug_hitsounds) Console.Printf("[deathsound] victim is DDAFDNPC Type: %s", victim.GetClassName());
+									playedsound = "misc/whoops";
+									if (kc_q3aqchitsoundtype >= 0) 
+									{
+										victim.A_StopSound(12);
+										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE, frandom(0.80,0.888889));
+									}
+								}
+								else
+								{
+								*/
+									if (kc_q3aqckillsoundtype == 0) playedsound = "misc/killsndAlly";
+									if (kc_q3aqckillsoundtype == 1) playedsound = "misc/killsndDEDAlly";
+									if (kc_q3aqckillsoundtype >= 0) 
+									{
+										victim.A_StopSound(12);
+										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+									}
+							//}
+							}
+							else
+							if (playpawn) 
+							{
+								if (kcdebug_hitsounds) Console.Printf("[deathsound] playpawn: %s", playpawn.GetClassName());
+								/*
+								if (?(victim))
+								{
+									playedsound = "misc/whoops";
+									if (kc_q3aqchitsoundtype >= 0) 
+									{
+										victim.A_StopSound(12);
+										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE, frandom(1.25,1.5));
+									}
+								}
+								else
+								*/
+								if (!victim.bFRIENDLY)
+								{
+									if (kc_q3aqckillsoundtype == 0) playedsound = "misc/killsnd";
+									if (kc_q3aqckillsoundtype == 1) playedsound = "misc/killsndDED";
+									if (kc_q3aqckillsoundtype >= 0) 
+									{
+										victim.A_StopSound(12);
+										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+									}
+								}
+							}
+							else
+							{
+								if (source) othermon = Actor(source);
+								if (othermon == null && inflicter) othermon = Actor(inflicter);
+								if (othermon) 
+								{
+									if (kcdebug_hitsounds) Console.Printf("[deathsound] othermon: %s", othermon.GetClassName());
+									/*
+									if (?(victim))
+									{
+										playedsound = "misc/whoops";
+										if (kc_q3aqchitsoundtype >= 0) 
+										{
+											victim.A_StopSound(12);
+											victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE, frandom(0.80,0.888889));
+										}
+									}
+									else
+									*/
+									if (othermon.bFRIENDLY && !victim.bFRIENDLY)
+									{
+										if (kcdebug_hitsounds) Console.Printf("[deathsound] othermon: %s kills %s (ally kills)", othermon.GetClassName(), victim.GetClassName());
+										if (kc_q3aqckillsoundtype == 0) playedsound = "misc/killsnd2";
+										if (kc_q3aqckillsoundtype == 1) playedsound = "misc/killsndDED2";
+										if (kc_q3aqckillsoundtype >= 0) 
+										{
+											victim.A_StopSound(12);
+											victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE);
+										}
+									}
+									else
+									if (!othermon.bFRIENDLY && !victim.bFRIENDLY && kc_hitsoundsmisc >= 0)
+									{
+										double rndpitch = frandom(0.334,1.0);
+										if (random(1,2) <= 1 && rndpitch > 0.00) rndpitch = (1.00 / rndpitch);
+
+										playedsound = "misc/killinfight"; //"misc/killsndduck";
+										if (kcdebug_hitsounds) Console.Printf("[deathsound ('%s': %.8f)] othermon: %s kills %s (full infighting)", playedsound, rndpitch, othermon.GetClassName(), victim.GetClassName());
+										victim.A_StopSound(12);
+										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandompick(1.5,2.5)), ATTN_NONE, rndpitch);
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				bool playdmgsounds = false;
+				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdmgsounds = true;
+				if (mod == 'SilentMassacre') playdmgsounds = false;
+				if (isCCardsIllusion) playdmgsounds = false;
+				
+				if (playdmgsounds)
+				{
 					//
 					//
 					//
