@@ -148,6 +148,263 @@ class KC_EventHandler : EventHandler
 	{
 		if (Level.MapName != "TITLEMAP")
 		{
+			if (kcdebug_hitsounds) Console.Printf("hitsounds (WorldThingDamaged check)");
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			let globalvars = KCGlobalVariables.Get();
+			actor victim = e.Thing;
+			actor source = e.DamageSource;
+			actor inflicter = e.inflictor;
+			int dmg = e.damage;
+			int initdmg = e.damage;
+			string mod = e.damagetype;
+			int flags = e.DamageFlags;
+			int PLuck;
+			int TrueLuck;
+			int TruePlayerLevel = 0;
+			bool isCCardsIllusion = false;
+			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+
+			if (kcdebug_worlddamaged) 
+			{
+				string debugmsg = "WorldThingDamaged";
+				debugmsg.AppendFormat(" [gametic: %d]:", gametic);
+				if (victim) debugmsg.AppendFormat(" %p [%s],", victim, victim.GetClassName());
+				if (source) debugmsg.AppendFormat(" source: %p [%s]", source, source.GetClassName()); else debugmsg.AppendFormat("\c[red] no source\c-");
+				if (inflicter) debugmsg.AppendFormat(" inflicter: %p [%s]", inflicter, inflicter.GetClassName()); else debugmsg.AppendFormat("\c[orange] no inflicter\c-");
+				debugmsg.AppendFormat(", damage: %d, damagetype: %s, flags: %d", dmg, mod, flags);
+				Console.Printf(debugmsg);
+			}
+			
+			if (MiscItem) 
+			{
+				PLuck = MiscItem.PlayerLUCK;
+				if (skill <= 0) TrueLuck = random((PLuck*0.75),PLuck);
+				if (skill == 1) TrueLuck = random((PLuck*0.625),PLuck);
+				if (skill == 2) TrueLuck = random((PLuck*0.5),PLuck);
+				if (skill == 3) TrueLuck = random((PLuck*0.375),PLuck);
+				if (skill >= 4) TrueLuck = random((PLuck*0.25),PLuck);
+				TrueLuck *= kc_pluckfactor;
+			}
+			
+			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+			string nm, nn, no, np;
+			
+			if (victim)
+			{
+				if (victim.bNOBLOOD == true && 
+						victim.bNOPAIN == true &&
+						victim.bNOTARGETSWITCH == true &&
+						victim.bNOINFIGHTING == true &&
+						victim.bFULLVOLACTIVE == false && 
+						victim.bFULLVOLDEATH == false &&
+						victim.bBOSS == false) isCCardsIllusion = true;
+						
+				if (kcdebug_hitsounds) Console.Printf("hitsounds (victim check)");
+				int oldhealth = victim.health;
+				string victname = victim.GetTag();
+				string atkrname = "(?)";
+				int user_type;
+				string vict = "NONE";
+				string infl = "NONE";
+				string sour = "NONE";
+				int landdamagebonus;
+
+				if (victim) vict = victim.GetClassName();
+				if (inflicter) infl = inflicter.GetClassName();
+				if (source) sour = source.GetClassName();
+
+				bool showdmglog;
+				bool practicetarget;
+				
+				int specialtype;
+				nm = "CCardGhostMarker";
+				if (victim.CountInv(nm)) specialtype += 1;
+				nm = "CCardAssassinMarker";
+				if (victim.CountInv(nm)) specialtype += 2;
+				nm = "CCardRespawnedMarker";
+				if (victim.CountInv(nm)) specialtype += 4;
+				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
+				if (kcdebug_worlddamaged) Console.Printf("[%s] SpecialType [WorldDamaged]: %d", vict, specialtype);
+				
+				/*
+				// Ally Check
+				actor IsRebel;
+				if (!KCPlayerPawn(victim) && KCPlayerPawn(source))
+				{
+					if (victim.bFRIENDLY)
+					{
+						if (victim.master && KCPlayerPawn(victim.master))
+						{
+							if (e.damage)
+							{
+								e.damage = 0;
+								if (kcdebug_worlddamaged) Console.Printf("Victim is Player's ally! No Damage inflicted!");
+								Super.WorldThingDamaged(e);
+								return;
+							}
+						}
+						else
+						{
+							if (IsRebel = Rebel(victim) && e.damage)
+							{
+								e.damage = 0;
+								if (kcdebug_worlddamaged) Console.Printf("Victim is Strife Rebel! No Damage inflicted!");
+								Super.WorldThingDamaged(e);
+								return;
+							}
+						}
+					}
+				}
+				*/
+				
+				if (victim.bCOUNTKILL || specialtype) showdmglog = true;
+				if (PracticeTarget(victim) || PracticeTarget2(victim)) 
+				{
+					practicetarget = true;
+					showdmglog = true;
+				}
+				if (KCPlayerPawn(victim)) showdmglog = false;
+				if (mod == 'SilentMassacre') showdmglog = false;
+				if (isCCardsIllusion) showdmglog = false;
+				if (showdmglog)
+				{
+					if (kcdebug_worlddamaged) Console.Printf("showdmglog");
+
+					if (kcdebug_worlddamaged) Console.Printf("\c[purple]Attack: %s, \c[brick]Attacker: %s", infl, sour);
+					
+					if (victim.health > 0 && victim.bISMONSTER)
+					{
+						if (source && KCPlayerPawn(source)) //
+						{
+							let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+							if (MiscItem) landdamagebonus = MiscItem.landdmgbonus;
+							if (kcdebug_worlddamaged) Console.Printf("landdamagebonus: %d", landdamagebonus);
+						}
+						if (!practicetarget)
+						{
+							if (infl == "PlayerWhistle")
+							{
+								double ang;
+								if (source) ang = source.angle;
+								else if (inflicter) ang = inflicter.angle;
+								double force = frandompick(13.75,15,16.25);
+								force *= 0.25;
+								if (inflicter && (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength"))) force *= frandompick(1.5,2,2.5);
+								
+								if (!victim.bDONTTHRUST || !victim.bCANNOTPUSH)
+								{
+									victim.Vel.Z += force;
+									victim.thrust(force, (ang + frandompick(-3,-1.5,-1.5,0,0,0,0,0,1.5,1.5,3)));
+								}
+							}
+							/*
+							if (infl == "UppercutPuff")
+							{
+								double ang;
+								if (source) ang = source.angle;
+								else if (inflicter) ang = inflicter.angle;
+								double force = frandompick(27.5,30,32.5);
+								force *= 0.25;
+								if (source)
+								{
+									if (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength")) force *= frandompick(1.125,1.25,1.375);
+								}
+
+								if (random(1,8) <= 1) force *= 1.5;
+								if (!victim.bDONTTHRUST || !victim.bCANNOTPUSH)
+								{
+									victim.Vel.Z += force;
+									victim.thrust(force, (ang + frandompick(-6,-3,-3,0,0,0,0,0,3,3,6)));
+								}
+							}
+							if (KickPuff(inflicter) || KickPuffNoThrust(inflicter) || BadKickPuff(inflicter))
+							{
+								double ang;
+								if (source) ang = source.angle;
+								else if (inflicter) ang = inflicter.angle;
+								double force = frandompick(27.5,30,32.5);
+								force *= 0.05;
+								if (random(1,2) <= 1) force *= -1;
+								if (source)
+								{
+									if (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength")) force *= frandompick(1.125,1.25,1.375);
+								}
+
+								if (random(1,8) <= 1) force *= 1.5;
+								if (!victim.bDONTTHRUST || !victim.bCANNOTPUSH)
+								{
+									victim.Vel.Z += force;
+									victim.Thrust(force, (ang + (frandompick(-6,-3,-3,0,0,0,0,0,3,3,6) * 0.25)));
+								}
+							}
+							*/
+						}
+						
+						if (!victim.bINVULNERABLE || !practicetarget || !isCCardsIllusion)
+						{
+						}
+					}
+				}
+				
+				if (victim.health <= 0 && mod == 'Ice') victim.bCANTSEEK = true;
+				
+				string attkernam;
+				if (!victim.GetTag()) victname = vict;
+				if (source)
+				{
+					if (source.GetTag()) attkernam = source.GetTag();
+													else attkernam = source.GetClassName();
+				}
+				if (inflicter)
+				{
+					if (inflicter.GetTag()) atkrname = inflicter.GetTag();
+														 else atkrname = inflicter.GetClassName();
+				}
+				string comblog = "";
+				comblog.AppendFormat("\c[red]*\c- ");
+				showdmglog = false;
+				if (victim.bCOUNTKILL || specialtype) showdmglog = true;
+				if (PracticeTarget(victim) || PracticeTarget2(victim)) showdmglog = true;
+				if (KCPlayerPawn(victim)) showdmglog = false;
+				if (mod == 'SilentMassacre') showdmglog = false;
+				if (isCCardsIllusion) showdmglog = false;
+				if (kc_combatlog && showdmglog)
+				{
+					//Console.Printf("showdmglog 2");
+					if (mod == 'NONE') mod = 'Typeless';
+					if (dmg)
+					{
+						comblog.AppendFormat("\c[brick]%d\c-", dmg);
+						if (victim.CountInv("JustSurprised") > 0) comblog.AppendFormat(" \c[sapphire]SURPRISE\c-");
+						if (victim.CountInv("TookCriticalHit") > 0) comblog.AppendFormat(" \c[orange]CRITICAL\c-");
+						comblog.AppendFormat(" damage dealt to \c[red]%s\c- by", victname);
+						if (source && !inflicter) comblog.AppendFormat(" \c[purple]%s\c-", attkernam);
+						else if (inflicter && source && (inflicter != source)) comblog.AppendFormat(" \c[purple]%s's\c-", attkernam);
+						if (inflicter) comblog.AppendFormat(" \c[red]%s\c-!", atkrname);
+						comblog.AppendFormat(" [\c[lightblue]%s\c-]", mod);
+						if (flags & DMG_EXPLOSION) comblog.AppendFormat(" \c[brick][AOE]\c-");
+						if (victim.health <= 0) 
+						{
+							//
+							//
+							//
+						}
+						//
+						//
+						//
+					}
+					//
+					//
+					//
+				}
+				//
+				//
+				//
+			}
+			//
+			//
+			//
 		}
 		Super.WorldThingDamaged(e);
 	}
@@ -303,7 +560,7 @@ class KC_EventHandler : EventHandler
 						ExpGain *= frandom(0.05,0.125);
 						
 						if ((source && source.bFRIENDLY) || (inflicter && inflicter.bFRIENDLY) || (mastor && mastor.bFRIENDLY)) ExpGain *= frandom(0.65,0.90);
-						//if (KCPlayerPawn(source) && infl == "PlayerWhistle") ExpGain *= frandom(1.1875,1.3125);
+						if (KCPlayerPawn(source) && infl == "PlayerWhistle") ExpGain *= frandom(1.1875,1.3125);
 						
 						double alterchance = 1.0;
 						if (source)
@@ -331,10 +588,10 @@ class KC_EventHandler : EventHandler
 						{
 							int OExpGain = ExpGain;
 							double tallyextra;
-							/*
 							tallyextra = (MiscItem.totalallkills * 0.005) + (MiscItem.totalallitems * 0.0025) + (MiscItem.totalallsecrets * 0.0025) + (MiscItem.totalcompleted * 0.01);
 							ExpGain *= (1.00 + tallyextra);
 							if (kcdebug_worlddied) Console.Printf("[tallyextra] x%.4f, ExpGain: %d [%d]", 1.00+tallyextra, ExpGain, OExpGain);
+							/*
 							if (MiscItem.KillComboCount > 0)
 							{
 								double combomultiplieramt;
@@ -359,7 +616,6 @@ class KC_EventHandler : EventHandler
 						}
 						EXPGain *= kc_expmultiplier;
 						
-						/*
 						KCCreature KCC;
 						KCC = KCCreature(victim);
 						if ((KCC && KCC.expshare >= 0.001) && !(playerkill || allykill)) 
@@ -369,9 +625,8 @@ class KC_EventHandler : EventHandler
 							if (ExpGain < 1) ExpGain = 1;
 							if (kcdebug_worlddied && ExpGain) Console.Printf("[KCC.expshare] x%.4f, ExpGain: %d [%d]", KCC.expshare, ExpGain, OExpGain);
 						}
-						*/
 						
-						if (giveexp && exex_expenabled && Level.MapName != "TITLEMAP")
+						if (giveexp && kc_expgains && Level.MapName != "TITLEMAP")
 						{
 							if (ExpGain < 1) ExpGain = 1;
 
@@ -536,6 +791,20 @@ class KC_EventHandler : EventHandler
 						player.A_SetInventory("KCTimeCooldown",0);
 						player.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
 						player.A_SetBlend("252540",0.667,random(random(22,23),27));
+					}
+				}
+			}
+			[key1, key2] = Bindings.GetKeysForCommand("Whistl");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (player.health > 0 && MiscItem.whistlecooldown == 0)
+					{
+						player.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+						if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
+																																									 else MiscItem.whistlecooldown = random(42,49);
 					}
 				}
 			}

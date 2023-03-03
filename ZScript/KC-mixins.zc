@@ -1,0 +1,139 @@
+mixin class StunItems
+{
+	bool dideffect;
+	
+	action int A_GetPlayerLvl(int type = 0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) 
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl - StunItems mixin)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+	
+	void A_StunInduce(int basestun = 5, double lvlfactor = 0.0667, bool checkberserk = true, double bersmult = 1.5, bool destroyitem = false, bool martialarts = false)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvl(1);
+		bool surprised;
+		if (!dideffect)
+		{
+			if (owner)
+			{
+				if (owner.bBOSS)
+				{
+					bool reducestun = false;
+					if (TruePlayerLevel <= 60 && random(1,16) <= 1) reducestun = true;
+					else if (TruePlayerLevel <= random(37,38) && random(1,16) <= 5) reducestun = true;
+					else if (TruePlayerLevel <= 15 && random(1,16) <= 9) reducestun = true;
+					
+					if (reducestun) 
+					{
+						if (TruePlayerLevel <= 60) basestun *= frandompick(0.334,0.5,0.5,0.5,0.667);
+						else if (TruePlayerLevel <= 30) basestun *= frandompick(0.167,0.25,0.25,0.25,0.334);
+						if (kcdebug_punchkickstundisplays) Console.Printf("[Boss Reduce Stun] basestun: %d ", basestun);
+					}
+				}
+				else
+				{
+					bool reducestun = false;
+					if (TruePlayerLevel <= 60 && random(1,32) <= 1) reducestun = true;
+					else if (TruePlayerLevel <= random(37,38) && random(1,32) <= 5) reducestun = true;
+					else if (TruePlayerLevel <= 15 && random(1,32) <= 9) reducestun = true;
+					
+					if (reducestun) 
+					{
+						if (TruePlayerLevel <= 60) basestun *= frandompick(0.5,0.75,0.75,0.75,1.0);
+						else if (TruePlayerLevel <= 30) basestun *= frandompick(0.25,0.375,0.375,0.375,0.5);
+						if (kcdebug_punchkickstundisplays) Console.Printf("[Monster Reduce Stun] basestun: %d ", basestun);
+					}
+				}
+				
+				basestun += (TruePlayerLevel * lvlfactor);
+				if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) basestun *= bersmult;
+				if (skill <= 0) basestun *= frandom(1.25,1.375);
+				if (skill == 1) basestun *= frandom(1.125,1.25);
+				if (skill == 2) basestun *= frandom(0.975,1.025);
+				if (skill == 3) basestun *= frandom(0.75,0.875);
+				if (skill >= 4) basestun *= frandom(0.625,0.75);
+				if (basestun < 1) basestun = 1;
+				int tic = owner.tics + basestun;
+				if (kcdebug_punchkickstundisplays) Console.Printf("stun tics [%s]: \c[gold]%d\c- (old: %d, basestun: %d)", GetClassName(), tic, owner.tics, basestun);
+				owner.A_SetTics(tic);
+				dideffect = true;
+			}
+		}
+	}
+	
+	bool A_PainStateChecker()
+	{
+		bool isit = false;
+		if (
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Bonk")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Breakfast")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Zap")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Chop")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Cricket")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Lead")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Bop")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Beats")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Dust")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.CherryBomb")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.BRocket")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Spinner")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Popper")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Dashing")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Boiling")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Tank")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Suck")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Musak")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.DoomSpell")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Magic")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Holy")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Dark")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Eldritch")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Fire")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Ice")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Plasma")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Thunder")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Electric")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Lightning")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Shock")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Sceptre")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Fist")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Kick")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.PoisonNeedle")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Deadlight")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Chainsaw")) ||
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Gauntlets"))
+			 )
+			isit = true;
+			
+		return isit;
+	}
+}
+
+mixin class MonsterCollider
+{
+	int targetdummyhitcooldown;
+	Actor lastattacker;
+	Actor lastattackeratk;
+	Actor playeriskiller;
+	
+	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+	string nm, nn, no, np;
+	//
+	//
+	//
+}

@@ -1,3 +1,324 @@
+class KampoulchhrBase : Actor
+{
+	int projprevdmg;
+	int monsprevdmg;
+	// General
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	const SKILL_EXTREME = 5;
+	const SKILL_HORRIBLE = 6;
+	const SKILL_IMPOSSIBLE = 7;
+	const SKILL_OMEGA = 8;
+	
+	double temp1, temp2;
+	double expshare;
+	int user_legendaryevolved;
+	int user_paintomissile;
+	int user_chargechance;
+	int user_Fuse;
+	int user_fusemax;
+	int user_spread, user_spread1, user_spread2;
+	int user_pelletsfired, user_currenttracer, user_aimangleorigin; 
+	int user_defendtimer, user_defendtimermax, user_defendcycles;
+	int user_statsbaseextra;
+	int bullet_tracer_mode;
+	int user_icekilledtimes;
+	int chasetimer;
+	int jumpchasetimer;
+	int jumptimer;
+	double basescalex, basescaley;
+	double basealpha;
+	int user_MaxHP, user_HPCritRange, user_HPBuffRange, user_HPLowBuffRange, user_HPXDeathRange, user_HPXDeathRange2, user_HPLowRange;
+	int hsexphealth;
+	double oldVelZ;
+	int user_random;
+	int user_randompain;
+	int finaldamagedealt;
+	int finaldamagedealt2;
+	
+	int nightmarephasetimer;
+	int nightmarephaserand;
+	int nightmarealphatimeroffset;
+	
+	default
+	{
+		+CASTSPRITESHADOW;
+		-NOSPRITESHADOW;
+	}
+	
+	override void Tick()
+	{
+		// add the following line to your actor's Tick() method
+		oldVelZ = vel.z;
+		
+		super.Tick();
+	}
+	
+	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
+	{
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KampoulchhrBase, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		
+		damage = super.DoSpecialDamage(target, damage, damagetype);
+		
+		string vict = "";
+		if (target) vict = target.GetClassName();
+		// New Code goes here
+		if (damagetype == 'Fire') { }
+		if (damagetype == 'Sigil') { }
+		if (damagetype == 'SpectralLow') { }
+		return damage;
+	}
+}
+
+class KCCreature : KampoulchhrBase
+{
+	mixin MonsterCollider;
+	//
+	//
+	//
+}
+
+class PlayerWhistle : KampoulchhrBase
+{
+	default
+	{
+		-SOLID
+		+NOBLOCKMAP
+		+NOINTERACTION
+		+NOGRAVITY
+		+NOTELESTOMP
+		+MISSILE
+		Speed 1;
+		Height 1;
+		Radius 1;
+		Tag "Whistling";
+	}
+	
+	int A_GetPlayerLvlProj(int type = 0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) 
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvlProj - PlayerWhistle)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 1 NoDelay 
+			{
+				double vol = frandom(0.86,1.14);
+				int range = 256;
+				int dmg = random(1,4);
+				if (target)
+				{
+					let MiscItem = PlayerStatItem(target.player.mo.FindInventory("PlayerStatItem"));
+					if (MiscItem)
+					{
+						int TruePlayerLevel = A_GetPlayerLvlProj(1);
+						if (TruePlayerLevel >= 25) 
+						{
+							dmg = random(2,4);
+							dmg += random(0,1);
+						}
+						if (TruePlayerLevel >= 50) 
+						{
+							dmg = random(3,4);
+							dmg += random(0,2);
+						}
+						if (TruePlayerLevel >= 75) 
+						{
+							dmg = random(4,5);
+							dmg += random(0,1);
+						}
+						if (TruePlayerLevel >= 100) 
+						{
+							dmg = random(5,6);
+							dmg += random(0,2);
+						}
+						if (TruePlayerLevel >= 125) 
+						{
+							dmg = random(6,7);
+							dmg += random(0,1);
+						}
+						if (TruePlayerLevel >= 150) 
+						{
+							dmg = random(7,7);
+							dmg += random(0,2);
+						}
+						if (TruePlayerLevel >= 175) 
+						{
+							dmg = random(8,9);
+							dmg += random(0,1);
+						}
+						if (TruePlayerLevel >= 200) 
+						{
+							dmg = random(9,10);
+							dmg += random(0,2);
+						}
+						
+						dmg += (TruePlayerLevel * frandompick(0.09375,0.125,0.15625));
+						if (TruePlayerLevel >= 50) dmg += (TruePlayerLevel * frandompick(0.046875,0.0625,0.078125));
+						if (TruePlayerLevel >= 100) dmg += (TruePlayerLevel * frandompick(0.046875,0.0625,0.078125));
+						if (TruePlayerLevel >= 150) dmg += (TruePlayerLevel * frandompick(0.0234375,0.03125,0.0390625));
+						if (TruePlayerLevel >= 200) dmg += (TruePlayerLevel * frandompick(0.0234375,0.03125,0.0390625));
+						
+						range = 64;
+						range += (TruePlayerLevel * frandompick(0.75,1,1.25));
+					}
+					if (target.CountInv("PowerStrength") || target.CountInv("KCPowerStrength")) 
+					{
+						range *= frandom(4.5,5.5);
+						dmg *= frandom(9,11);
+						vol *= 1.2;
+					}
+				}
+				
+				A_StartSound("player/whistle5",CHAN_VOICE,CHANF_DEFAULT,vol,ATTN_NONE,frandom(0.76,1.24));
+				A_Explode((dmg),range,XF_NOSPLASH,true,(range * 0.5),0,0,"","Beats");
+			}
+			TNT1 A 1 
+			{
+				A_AlertMonsters();
+			}
+			stop;
+	}
+}
+
+// Practice Target
+class PracticeTarget : KCCreature //21333
+{
+	default
+	{
+		Tag "Practicing Target";
+		//$Angled
+		//$Color 6
+		//$Category KC Monsters
+		//$Sprite "PRDUA0"
+		Radius 16;
+		Height 48;
+		Health 10000000;
+		Mass 275000000;
+		PainChance 255;
+		
+		Scale 0.4325; // 0.25
+		
+		+ISMONSTER;
+		+SHOOTABLE;
+		+NOBLOOD;
+		+FORCEYBILLBOARD;
+		+NEVERTARGET;
+		+NOPAIN;
+		-SOLID;
+		-COUNTKILL;
+	}
+		
+	States
+	{
+		Spawn:
+			PRDU A 0 NoDelay Bright
+			{
+				targetdummyhitcooldown = -1;
+			}
+		See:
+			PRDU A 1 
+			{
+				if (targetdummyhitcooldown > 0) 
+				{
+					targetdummyhitcooldown--;
+					//Console.Printf("targetdummyhitcooldown: %d", targetdummyhitcooldown);
+				}
+				if (targetdummyhitcooldown == 0) 
+				{
+					int oldhealth = health;
+					//A_EEHealThing(10000000, SpawnHealth(), 1);
+					string dps = "";
+					dps.AppendFormat("\c[brick]DPS:\c- \c[gold]%d\c- / sec", abs(oldhealth-health));
+					A_PrintBold(dps);
+					targetdummyhitcooldown--;
+				}
+			}
+			Loop;
+		Pain: goto See;
+		Death:
+			TNT1 A -1 A_SpawnItemEx("PracticeTarget", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
+			Stop;
+	}
+}
+
+class PracticeTarget2 : KCCreature
+{
+	default
+	{
+		Tag "Practicing Target";
+		//$Angled
+		//$Color 6
+		//$Category KC Monsters
+		//$Sprite "PRDUA0"
+		Radius 16;
+		Height 48;
+		Health 10000000;
+		Mass 275000000;
+		PainChance 255;
+		
+		Scale 0.4325; // 0.25
+		
+		+ISMONSTER;
+		+SHOOTABLE;
+		+NOBLOOD;
+		+FORCEYBILLBOARD;
+		+NEVERTARGET;
+		+NOPAIN;
+		+SOLID;
+		-COUNTKILL;
+	}
+	
+	States
+	{
+		Spawn:
+			PRDU A 0 NoDelay Bright
+			{
+				targetdummyhitcooldown = -1;
+			}
+		See:
+			PRDU A 1
+			{
+				if (targetdummyhitcooldown > 0) 
+				{
+					targetdummyhitcooldown--;
+					//Console.Printf("targetdummyhitcooldown: %d", targetdummyhitcooldown);
+				}
+				if (targetdummyhitcooldown == 0) 
+				{
+					int oldhealth = health;
+					//A_EEHealThing(10000000, SpawnHealth(), 1);
+					string dps = "";
+					dps.AppendFormat("\c[brick]DPS:\c- \c[gold]%d\c- / sec", abs(oldhealth-health));
+					A_PrintBold(dps);
+					targetdummyhitcooldown--;
+				}
+			}
+			Loop;
+		Pain: goto See;
+		Death:
+			TNT1 A -1 A_SpawnItemEx("PracticeTarget2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
+			Stop;
+	}
+}
+
 class ItemFallSpot : Actor
 {
 	default

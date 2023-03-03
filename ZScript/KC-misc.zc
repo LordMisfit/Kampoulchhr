@@ -11,6 +11,10 @@ class PlayerStatItem : Inventory
 	int CharacterClass;
 	bool cankick;
 	
+	int whistlecooldown;
+	int landdmgbonus;
+	
+	int nummaps;
 	int ArmorTier;
 	int armsav;
 	int armtier;
@@ -219,7 +223,9 @@ class PlayerStatItem : Inventory
 
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
 				else berserked = false;
-
+				
+				if (whistlecooldown) whistlecooldown--;
+				
 				// Mode Check
 				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
 				if (ClassicDoomType & 1) { owner.A_SetInventory("PlayingDoom",1); } // Doom
@@ -437,18 +443,61 @@ class PlayerStatItem : Inventory
 				//******************
 				HPRegenStuff();
 				
+				
 				//***************************
 				//* Inventory/Weapon Limits *
 				//***************************
 				InventoryWeaponLimits();
 				
+				
+				//************
+				//* Counters *
+				//************
+				GameStatTracker();
+				
+				
 				//******************************
 				//* Time Seraph Armor Trackers *
 				//******************************
 				TimeSeraphArmorStuff();
-
+				
+				
 				// Time Freeze Trackers
 				TimeFreezeStuff();
+				
+				
+				//***************
+				//* Land Damage *
+				//***************
+				landdmgbonus = 0;
+				if (kcdebug_landdamage && owner.vel.z) Console.Printf("    \ceLanding Damage (ZVel: %.8f, OnGround: %d, WaterLevel: %d)", owner.vel.z, owner.player.onground, owner.waterlevel);
+				if (owner.waterlevel <= 0 && !owner.player.onground)
+				{
+					if (owner.vel.z < -162.0)
+					{
+						landdmgbonus = 4;
+						if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 4 - 13.9453125x Melee Dmg]");
+					}
+					else
+					if (owner.vel.z < -54.0)
+					{
+						landdmgbonus = 3;
+						if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 3 - 6.5625x Melee Dmg]");
+					}
+					else
+					if (owner.vel.z < -18.0)
+					{
+						landdmgbonus = 2;
+						if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 2 - 3.5x Melee Dmg]");
+					}
+					else
+					if (owner.vel.z < -6.0)
+					{
+						landdmgbonus = 1;
+						if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 1 - 2x Melee Dmg]");
+					}
+				}
+				
 				
 				//*******************
 				//* Set Max HP Item *
@@ -513,17 +562,13 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-
-		if (CurrentHealth <= 0)
-		{
-			Owner.A_SetInventory("PlayerIsDead", 1); 
-		}
+		if (CurrentHealth <= 0) Owner.A_SetInventory("PlayerIsDead", 1); 
 		else
 		if (CurrentHealth > 0)
 		{
+			Owner.A_SetInventory("PlayerIsDead", 0);
 			if (kcdebug_hpregen) Console.Printf("Health: %d / %d", CurrentHealth, MaxHealthTrue);
 			
-			Owner.A_SetInventory("PlayerIsDead", 0);
 			//****************************************
 			//*Get Health Ratio & Health Level Checks*
 			//****************************************
@@ -863,6 +908,117 @@ class PlayerStatItem : Inventory
 		//
 	}
 	
+	void GameStatTracker()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		//
+		totalkillsgame = 0;
+		totalmaxkills = 0;
+		totalitemsgame = 0;
+		totalmaxitems = 0;
+		totalsecretsgame = 0;
+		totalmaxsecrets = 0;
+		totalallkills = 0;
+		totalallitems = 0;
+		totalallsecrets = 0;
+		totalcompleted = 0;
+		int levelnums = level.levelnum;
+		if (kcdebug_gametracker) Console.Printf("\c[gold]MapNo: %d", levelnums);
+		if (level.time >= 1)
+		{
+			nummaps = globalvars.MapsFinished;
+			for (int i = 0; i <= globalvars.MapsFinished; i++)
+			{
+				if (kcdebug_gametracker) Console.Printf("\c[orange]MapNo: %d vs Ref: %d (i: %d)", levelnums, globalvars.MapNum[i], i);
+				if (levelnums == globalvars.MapNum[i])
+				{
+					if (kcdebug_gametracker) Console.Printf("\c[blue]MapNum Match");
+					globalvars.NumKills[i] = level.killed_monsters;
+					globalvars.MaxKills[i] = level.total_monsters;
+					globalvars.NumItems[i] = level.found_items;
+					globalvars.MaxItems[i] = level.total_items;
+					globalvars.NumSecrets[i] = level.found_secrets;
+					globalvars.MaxSecrets[i] = level.total_secrets;
+				}
+				// Kills
+				if (globalvars.AllKills[i] == false && globalvars.NumKills[i] >= globalvars.MaxKills[i])
+				{
+					globalvars.AllKills[i] = true;
+				}
+				else
+				if (globalvars.AllKills[i] == true && globalvars.NumKills[i] < globalvars.MaxKills[i])
+				{
+					globalvars.AllKills[i] = false;
+				}
+				// Items
+				if (globalvars.AllItems[i] == false && globalvars.NumItems[i] >= globalvars.MaxItems[i]) 
+				{
+					globalvars.AllItems[i] = true;
+				}
+				else
+				if (globalvars.AllItems[i] == true && globalvars.NumItems[i] < globalvars.MaxItems[i]) 
+				{
+					globalvars.AllItems[i] = false;
+				}
+				// Secrets
+				if (globalvars.AllSecrets[i] == false && globalvars.NumSecrets[i] >= globalvars.MaxSecrets[i]) 
+				{
+					globalvars.AllSecrets[i] = true;
+				}
+				else
+				if (globalvars.AllSecrets[i] == true && globalvars.NumSecrets[i] < globalvars.MaxSecrets[i])
+				{
+					globalvars.AllSecrets[i] = false;
+				}
+				// Full Completion
+				if (globalvars.AllKills[i] &&
+						globalvars.AllItems[i] &&
+						globalvars.AllSecrets[i])
+				{
+					globalvars.AllCompletion[i] = true;
+					if (globalvars.AllCompletionSound[i] == false && (globalvars.MaxKills[i] > 0 || globalvars.MaxSecrets[i] > 0 || globalvars.MaxItems[i] > 0)) 
+					{
+						owner.A_StartSound("stats/allcompletion",1004,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+						owner.A_PrintBold(String.Format("\c[gold]Level 100% Completed!\c-"), frandom(1.37,1.6));
+						globalvars.AllCompletionSound[i] = true;
+					}
+				}
+				else
+				{
+					globalvars.AllCompletion[i] = false;
+					globalvars.AllCompletionSound[i] = false;
+				}
+
+				totalkillsgame += globalvars.NumKills[i];
+				totalmaxkills += globalvars.MaxKills[i];
+				totalitemsgame += globalvars.NumItems[i];
+				totalmaxitems += globalvars.MaxItems[i];
+				totalsecretsgame += globalvars.NumSecrets[i];
+				totalmaxsecrets += globalvars.MaxSecrets[i];
+				if (globalvars.AllKills[i]) totalallkills++;
+				if (globalvars.AllItems[i]) totalallitems++;
+				if (globalvars.AllSecrets[i]) totalallsecrets++;
+				if (globalvars.AllCompletion[i]) totalcompleted++;
+				
+				if (kcdebug_gametracker)
+				{
+					Console.Printf("\c[red](Map#: %d [queue#: %d]) Kills: %d / %d, [AllKills: %d]", globalvars.MapNum[i], i, globalvars.NumKills[i], globalvars.MaxKills[i], globalvars.AllKills[i]);
+					Console.Printf("\c[lightblue](Map#: %d [queue#: %d]) Items: %d / %d, [AllItems: %d]", globalvars.MapNum[i], i, globalvars.NumItems[i], globalvars.MaxItems[i], globalvars.AllItems[i]);
+					Console.Printf("\c[gold](Map#: %d [queue#: %d]) Secrets: %d / %d, [AllSecrets: %d]", globalvars.MapNum[i], i, globalvars.NumSecrets[i], globalvars.MaxSecrets[i], globalvars.AllSecrets[i]);
+					Console.Printf("\c[fire](Map#: %d [queue#: %d]) [AllCompletion: %d]", globalvars.MapNum[i], i, globalvars.AllCompletion[i]);
+				}
+			}
+			if (kcdebug_gametracker)
+			{
+				Console.Printf("\c[red]Total Kills: %d / %d", totalkillsgame, totalmaxkills);
+				Console.Printf("\c[lightblue]Total Items: %d / %d", totalitemsgame, totalmaxitems);
+				Console.Printf("\c[gold]Total Secrets: %d / %d", totalsecretsgame, totalmaxsecrets);
+				Console.Printf("\c[fire]Total 100%: %d / %d", totalcompleted, (globalvars.MapsFinished+1));
+			}
+		}
+	}
+	
 		void CalcInvLimit(name itemtype, int baseholdamount, double baselvlfactor, double baseholdmultibp1, double baseholdmultibp2, int invintervals)
 		{
 			int dropamt;
@@ -888,14 +1044,8 @@ class PlayerStatItem : Inventory
 				if (kcdebug_inventorylimits) Console.Printf("baseholdamount  [\c[green]%s\c-]: %.2f (baselvlfactor: %.4f)", itemname, int(baseholdamount), baselvlfactor);
 				if (kc_expgains)
 				{
-					if (isammo) 
-					{
-						if (kc_dynamicammolimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
-					}
-					else
-					{
-						if (kc_dynamicinventorylimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
-					}
+					if (isammo && kc_dynamicammolimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+					else if (kc_dynamicinventorylimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
 				}
 				if (kcdebug_inventorylimits) Console.Printf("leveladd  [\c[green]%s\c-]: %.2f", itemname, int(leveladd));
 				itemsmax = (baseholdamount + int(leveladd));
@@ -907,14 +1057,8 @@ class PlayerStatItem : Inventory
 				}
 				if (currentitemtype.MaxAmount < 1) currentitemtype.MaxAmount = 1;
 				
-				if (!isammo)
-				{
-					if (currentitemtype.Amount > currentitemtype.MaxAmount) { dropamt = currentitemtype.MaxAmount - currentitemtype.Amount; owner.A_DropInventory(itemname,dropamt); }
-				}
-				else
-				{
-					if (currentitemtype.Amount > currentitemtype.MaxAmount) currentitemtype.Amount = currentitemtype.MaxAmount;
-				}
+				if (!isammo && currentitemtype.Amount > currentitemtype.MaxAmount) { dropamt = currentitemtype.MaxAmount - currentitemtype.Amount; owner.A_DropInventory(itemname,dropamt); }
+				else if (currentitemtype.Amount > currentitemtype.MaxAmount) currentitemtype.Amount = currentitemtype.MaxAmount;
 			}
 		}
 	
