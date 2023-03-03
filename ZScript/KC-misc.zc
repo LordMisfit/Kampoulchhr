@@ -437,7 +437,14 @@ class PlayerStatItem : Inventory
 				//******************
 				HPRegenStuff();
 				
-				// Time Seraph Armor Trackers
+				//***************************
+				//* Inventory/Weapon Limits *
+				//***************************
+				InventoryWeaponLimits();
+				
+				//******************************
+				//* Time Seraph Armor Trackers *
+				//******************************
 				TimeSeraphArmorStuff();
 
 				// Time Freeze Trackers
@@ -457,6 +464,18 @@ class PlayerStatItem : Inventory
 			}
 			super.DoEffect();
 		}
+	}
+	
+	int A_CheckActualLevel(int type = 0)
+	{
+		int Level = 0;
+		if (kc_expgains) 
+		{
+			if (type == 0) Level = PlayerLevel;
+			if (type >= 1) Level = TruePlayerLevel;
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - PlayerStatItem)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
 	}
 	
 	void MaxHealthStuff()
@@ -619,16 +638,19 @@ class PlayerStatItem : Inventory
 							inc *= ssa;
 							
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
-							//if (owner.CountInv("TimeFreezeTimer")) inc *= 35;
+							if (timestoptype) inc *= 25;
 
 							if (berserked) inc = floor(inc * frandom(1.5,2.0));
 
-							if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = floor(inc * 0.4);
-							if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = floor(inc * 0.5);
-							if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = floor(inc * 0.6);
-							if (owner.player.jumpTics < 0) inc = floor(inc * 0.4);
-							if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
-							if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+							if (!timestoptype)
+							{
+								if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = floor(inc * 0.4);
+								if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = floor(inc * 0.5);
+								if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = floor(inc * 0.6);
+								if (owner.player.jumpTics < 0) inc = floor(inc * 0.4);
+								if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
+								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+							}
 							
 							if (kc_healthregendegentype >= 1)
 							{
@@ -700,16 +722,19 @@ class PlayerStatItem : Inventory
 							
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
 							
-							//if (owner.CountInv("TimeFreezeTimer")) inc *= 0.0285714285714286;
+							if (timestoptype) inc *= 0.04;
 							
 							if (berserked) inc = ceil(inc * frandom(0.5,0.667));
 							
-							if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = ceil(inc * 2.5);
-							if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = ceil(inc * 2.0);
-							if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = ceil(inc * 1.666666666666667);
-							if (owner.player.jumpTics < 0) inc = ceil(inc * 2.5);
-							if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
-							if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
+							if (!timestoptype)
+							{
+								if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = ceil(inc * 2.5);
+								if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = ceil(inc * 2.0);
+								if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = ceil(inc * 1.666666666666667);
+								if (owner.player.jumpTics < 0) inc = ceil(inc * 2.5);
+								if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
+								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
+							}
 							
 							if (kc_healthregendegentype >= 1)
 							{
@@ -788,6 +813,110 @@ class PlayerStatItem : Inventory
 			
 		}
 	}
+	
+	void InventoryWeaponLimits()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		if (!owner.CountInv("INTERMAPChecker"))
+		{
+			int dropamt;
+			string itemname;
+			int baseholdamount;
+			double leveladd;
+			int itemsmax;
+			int itemid;
+			double baselvlfactor = 50.0;
+			if (owner.CountInv("PlayingHexen")) baselvlfactor = 33.4;
+			double minf = 1.0;
+			if (minf < 0.5) minf = 0.5;
+			baselvlfactor *= minf;
+			double baseholdmultibp1 = 1.5; // 1.25
+			double baseholdmultibp2 = 2.0; // 1.5
+			
+			//*******************
+			//* Inventory Items *
+			//*******************
+			//
+			
+			//**************
+			//* Ammo Types *
+			//**************
+			baselvlfactor = 200.0;
+			minf = 1.0;
+			if (minf < 0.5) minf = 0.5;
+			baselvlfactor *= minf;
+			baseholdmultibp1 = 2.0; // 1.5
+			baseholdmultibp2 = 4.0; // 2.0
+			if (owner.CountInv("PlayingHexen")) baselvlfactor = 150.0;
+			
+			CalcInvLimit("Clip", 200, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Shell", 50, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("RocketAmmo", 50, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Cell", 300, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("TommAmmo", 500, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("MiniRockets", 200, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+		}
+		//
+		//
+		//
+	}
+	
+		void CalcInvLimit(name itemtype, int baseholdamount, double baselvlfactor, double baseholdmultibp1, double baseholdmultibp2, int invintervals)
+		{
+			int dropamt;
+			string itemname;
+			double leveladd;
+			int itemsmax;
+			int itemid;
+			
+			let currentitemtype = owner.FindInventory(itemtype);
+			if (currentitemtype)
+			{
+				let isammo = Ammo(currentitemtype);
+
+				itemname = currentitemtype.GetClassName();
+
+				if (!kc_expgains)
+				{
+					double PerkFactor2 = 0.0;
+				}
+				
+				if (owner.CountInv("Backpack")) baseholdamount *= baseholdmultibp1;
+				if (baseholdamount < 1) baseholdamount = 1;
+				if (kcdebug_inventorylimits) Console.Printf("baseholdamount  [\c[green]%s\c-]: %.2f (baselvlfactor: %.4f)", itemname, int(baseholdamount), baselvlfactor);
+				if (kc_expgains)
+				{
+					if (isammo) 
+					{
+						if (kc_dynamicammolimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+					}
+					else
+					{
+						if (kc_dynamicinventorylimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+					}
+				}
+				if (kcdebug_inventorylimits) Console.Printf("leveladd  [\c[green]%s\c-]: %.2f", itemname, int(leveladd));
+				itemsmax = (baseholdamount + int(leveladd));
+				currentitemtype.MaxAmount = itemsmax;
+				if (invintervals > 1)
+				{
+					int extra = currentitemtype.MaxAmount % invintervals;
+					currentitemtype.MaxAmount -= extra;
+				}
+				if (currentitemtype.MaxAmount < 1) currentitemtype.MaxAmount = 1;
+				
+				if (!isammo)
+				{
+					if (currentitemtype.Amount > currentitemtype.MaxAmount) { dropamt = currentitemtype.MaxAmount - currentitemtype.Amount; owner.A_DropInventory(itemname,dropamt); }
+				}
+				else
+				{
+					if (currentitemtype.Amount > currentitemtype.MaxAmount) currentitemtype.Amount = currentitemtype.MaxAmount;
+				}
+			}
+		}
 	
 	void InitStuff()
 	{
@@ -1237,6 +1366,7 @@ class PlayerStatItem : Inventory
 			TruePlayerDEF = 0;
 			TruePlayerSPD = 0;
 		}
+		ActualLevel = A_CheckActualLevel(1);
 
 		int oldhealth = owner.health;
 		if (owner.CountInv("NormalHealth")) oldhealthratio = 0;
@@ -1471,6 +1601,10 @@ class PlayerStatItem : Inventory
 				timestopcooldowntics = 0;
 			}
 		}
+		timestoptype = 0;
+		if (owner.CountInv("KCTimeFreezer1")) timestoptype = 1;
+		if (owner.CountInv("KCTimeFreezer2")) timestoptype = 2;
+		if (owner.CountInv("KCTimeFreezer3")) timestoptype = 3;
 		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldowntics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldowntics, timestopcooldownmaxtics, timefreeze1duration, timefreeze1cooldown);
 	}
 	
@@ -2064,10 +2198,11 @@ class PlayerDashJump : Inventory
 		double trueanglesin = abs(sin(angle));
 		if (kcdebug_showdashinformation) Console.Printf("[angle] cos: %.8f, sin: %.8f", trueanglecos, trueanglesin);
 		
-		MaxDashTics = 18;
+		MaxDashTics = 9;
 		if (kc_allowdashing > 0)
 		{
-			MaxDashTics = 18 + (TruePlayerSPD / 32);
+			MaxDashTics = randompick(9,9,10,10,10) + (TruePlayerSPD / 24);
+			if (berserked) MaxDashTics *= (1.34 + (TruePlayerLevel * 0.004));
 			if (CountInv("HWShieldBlockHold"))
 			{
 				MaxDashTics *= frandompick(1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
@@ -2128,7 +2263,7 @@ class PlayerDashJump : Inventory
 			DashCost *= 1.5;
 			MaxDashCooldown *= 1.75;
 		}
-
+		
 		if (berserked) MaxDashCooldown *= 0.625;
 		double ssa = 1.0;
 		// Future Placement for Perm Items
@@ -2205,7 +2340,7 @@ class PlayerDashJump : Inventory
 		}
 		else
 		{
-		 if (!doubletapdash && (BTInput & BT_USER3)) dashactivated = true;
+			if (!doubletapdash && (BTInput & BT_USER3)) dashactivated = true;
 		}
 		
 		if (!Waiting &&

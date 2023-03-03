@@ -1,3 +1,77 @@
+OptionValue "YesNo_DefaultYes"
+{
+	0, "No"
+	1, "Yes [DEFAULT]"
+}
+
+OptionValue "YesNo_DefaultNo"
+{
+	0, "No [DEFAULT]"
+	1, "Yes"
+}
+
+OptionValue "OnOff_DefaultOff"
+{
+	0, "Off [DEFAULT]"
+	1, "On"
+}
+
+OptionValue "OnOff_DefaultOn"
+{
+	0, "Off"
+	1, "On [DEFAULT]"
+}
+
+// MENUS
+
+OptionMenu "KC-DebugMenuMain"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Debugging Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Ghosts of 'Shields'",		"? can block/destroy/reflect projectiles. These are actually done with invisible 'shield' actors spawned when doing these actions. This options makes those shields visible when attacking [so you can see the 'magic' in action :V].",		"kcdebug_showvisibleshieldparts",			"OnOff_DefaultOff"
+	KCOption "Dash Meter",		"Shows dash-related info for the meter on the HUD.",		"kcdebug_dashmeter",			"OnOff_DefaultOff"
+	KCOption "Dashing [General]",		"Shows dash-related general info.",		"kcdebug_showdashinformation",			"OnOff_DefaultOff"
+	KCOption "Defense Buff Item Displays",		"Shows debugging for various defense buff items.",		"kcdebug_defensebuffs",				"OnOff_DefaultOff"
+	KCOption "Armor Stat/Property Displays",		"Shows the player's armor information [saveamount/maxabsorb/etc].",		"kcdebug_armordisplays",				"OnOff_DefaultOff"
+	KCOption "HP Regen/Degen",		"Shows HP Regen/Degen Debug Info.",		"kcdebug_hpregen",			"OnOff_DefaultOff"
+	KCOption "Max Health Calc Displays",		"Shows debugging for calculation of player's max health.",		"kcdebug_maxhealthcalc",				"OnOff_DefaultOff"
+	KCOption "Item Pitfall Displays",		"Shows debug information when items fall into bottomless pits.",		"kcdebug_itempitfalls",				"OnOff_DefaultOff"
+	KCOption "Footstep Displays",		"Shows debugging for calculation of footsteps and related calculations.",		"kcdebug_footsteps1",				"OnOff_DefaultOff"
+	KCOption "Footstep Displays [2]",		"Shows more specific debugging info related to footsteps. Intended to find missing textures that don't have a sound assigned to them, and changes to the footstep sound for them from the usual 'default' sound to a squeak-toy sound. Will also print information only about said missing textures for means of logging.",		"kcdebug_footsteps2",				"OnOff_DefaultOff"
+	KCOption "Inventory Limit Displays",		"Shows information about expanding inventory limits.",		"kcdebug_inventorylimits",			"OnOff_DefaultOff"
+}
+
+OptionMenu "KCOptions"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - MAIN OPTIONS"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCSubMenu "Tilt++ v1.65 Options",		"Tilt++ v1.65 Options.",		"TiltPlusPlusMenu"
+	StaticText " "
+	KCOption "$HUDMNU_NAMETAGS",		"For best use, please set this to 'BOTH'.",		"displaynametags", "DisplayTagsTypes"
+	KCOption "$HUDMNU_NAMETAGCOLOR",		"Tag Color for Weapon and Inventory Item Highlights",		"nametagcolor", "TextColors", "displaynametags"
+	KCOption "Fast Monsters",		"Difficulty/Skill 5 does NOT turn this on by default. :V",		"sv_fastmonsters", 					"OnOff"
+	KCOption "Monsters Respawn",		"Difficulty/Skill 5 does NOT turn this on by default. :V",		"sv_monsterrespawn", 				"OnOff"
+	KCOption "Enhanced Night-Vision Mode",		"Light-Amp or Nightvision?",		"gl_enhanced_nightvision", 				"OnOff"
+	KCOption "$DSPLYMNU_SPRITESHADOW",			"Toggle the Sprite Shadow mode [as introduced in GZDoom 4.6.0].",			"r_actorspriteshadow", "SpriteShadowModes"
+	KCOption "Allow jump",		"Jumping is recommended to have on for evasive purposes, if for nothing else. [shortcut from Gameplay Options]",		"sv_jump", 						"JumpCrouchFreeLook"
+	KCOption "Allow crouch",		"Crouch is recommended to have on for evasive purposes, if for nothing else. [shortcut from Gameplay Options]",		"sv_crouch", 						"JumpCrouchFreeLook"
+	KCOption "Allow freelook",		"Freelook is recommended to have on. [shortcut from Gameplay Options]",		"sv_freelook", 					"JumpCrouchFreeLook"
+	KCOption "Falling Damage",		"Toggles Fall Damage. [shortcut from Gameplay Options]",		"sv_fallingdamage", 					"FallingDM"
+	KCOption "Enable Textured Display [Automap]",		"Textured uses a more BUILD-game styled texture that shows the floor textures on the map.",		"am_textured", "OnOff"
+	KCOption "Show Things as Sprites [Automap]",		"'Rotated' is recommended.",		"am_showthingsprites", "STSTypes"
+	StaticText " "
+	KCSubMenu "Debugging Options",		"Debug Displays that're more meant for the creator/playtesters to deal with possible bugs or balance tweaks. Most of these options show up as messages that constantly repeat in your messages & console, so be warned! :V",		"KC-DebugMenuMain"
+}
+
+
 LISTMENU "MainMenu"
 {
 	Selector "M_SKULL1", -32, -5
@@ -5,6 +79,7 @@ LISTMENU "MainMenu"
 	Position 97, 72
 	
 	TextItem "New Game",			"n",	"PlayerclassMenu"
+	TextItem "Mod Options",	"s",	"KCOptions"
 	TextItem "Engine Options",		"o",	"OptionsMenu"
 	TextItem "Read This",			"h",	"ReadThisMenu"
 	TextItem "Load Game",		"l",	"LoadGameMenu"

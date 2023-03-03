@@ -1,9 +1,8 @@
-class EmptyPowerup : PowerSpeed
+class EmptyPowerup : Powerup
 {
 	default
 	{
-		+POWERSPEED.NOTRAIL;
-		Speed 1.0;
+		Powerup.Duration 2147483645;
 	}
 }
 
@@ -799,7 +798,7 @@ class PowerNoDrown : PowerProtection
 						EffectTics--;
 					}
 				}
-				if (dydudebug_airmeter) 
+				if (kcdebug_airmeter) 
 				{
 					if (ticpiecemax > 1) Console.Printf("[PowerNoDrown] - EffectTics: %d, Ticpiece: %d / %d", EffectTics, ticpiece, ticpiecemax);
 					else Console.Printf("[PowerNoDrown] - EffectTics: %d", EffectTics);
