@@ -572,6 +572,35 @@ class PlaceholderItemMax : PlaceholderItem
 	}
 }
 
+
+class MonsterLevel : PlaceHolderItem 
+{
+	default
+	{
+		Inventory.MaxAmount 1000;
+		+INVENTORY.KEEPDEPLETED
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNCLEARABLE
+	}
+	
+	override void DoEffect() { }
+	override void Tick() { }
+}
+
+class MonsterRating : PlaceHolderItem 
+{
+	default
+	{
+		Inventory.MaxAmount 10;
+		+INVENTORY.KEEPDEPLETED
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNCLEARABLE
+	}
+	
+	override void DoEffect() { }
+	override void Tick() { }
+}
+
 class INTERMAPChecker : PlaceHolderItem
 {
 	default
