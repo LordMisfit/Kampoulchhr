@@ -1180,22 +1180,169 @@ class KC_EventHandler : EventHandler
 					}
 				}
 			}
-			//
-			//
-			//
+			
+			// Random Inventory Item Drops
+			droptimes = 1;
+			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+			luckbase = 0.0625 + (monsterrating * 0.015625);
+			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+			if (inflicter && ((source && KCPlayerPawn(source))))
+			{
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+			}
+			else
+			if (inflicter && KCPlayerPawn(inflicter))
+			{
+				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+			}
+			if (victim.bBOSS) droptimes *= bossdropmulti;
+			for (int i; i < droptimes; i++)
+			{
+				// Primary [Type 1]
+				basechance = kc_inventorydroprate1;
+				basechance *= skillmult;
+				luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
+				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				maxchance = basechance;
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [primaryinv]: %d (%d)", maxchance, basechance);
+				if (random(1,maxchance) <= 1)
+				{
+					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					double raredropsndvol = frandom(1.75,2.25);
+					int raredropsndchannel = randompick(191,192,222,223,264,265);
+					//victim.A_StartSound("misc/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					//user_type = random(1,145);
+					//if (user_type >= 1 && user_type <= 60) { victim.A_SpawnItemEx("CherryBombPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					//if (user_type >= 61 && user_type <= 100) { victim.A_SpawnItemEx("SpinnerPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					//if (user_type >= 101 && user_type <= 125) { victim.A_SpawnItemEx("BRocketPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					//if (user_type >= 126 && user_type <= 140) { victim.A_SpawnItemEx("PopperPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					//if (user_type >= 141 && user_type <= 144) { victim.A_SpawnItemEx("SnakePickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					//if (user_type >= 145) { victim.A_SpawnItemEx("KilletanteEffigy",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+				}
+				
+				// Secondary [Type 2]
+				basechance = kc_inventorydroprate2;
+				basechance *= skillmult;
+				luckbase = 0.5 + (monsterrating * 0.125); // (512)
+				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				maxchance = basechance;
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: %d (%d)", maxchance, basechance);
+				if (random(1,maxchance) <= 1)
+				{
+					//
+					//
+					//
+				}
+				
+				// Rare Powerup Drop [Type 3]
+				basechance = kc_inventorydroprate3;
+				basechance *= skillmult;
+				luckbase = 2.0 + (monsterrating * 0.5); // (512) 
+				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				maxchance = basechance;
+				
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: %d (%d)", maxchance, basechance);
+				if (random(1,maxchance) <= 1)
+				{
+					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					double raredropsndvol = frandom(1.75,2.25);
+					int raredropsndchannel = randompick(191,192,222,223,264,265);
+					string raredropsndname = "rareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					if (gameinfo.gametype & 1) // Doom Mode
+					{
+						user_type = random(1,22);
+						if (user_type >= 1 && user_type <= 7) victim.A_SpawnItemEx("BlurSphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						if (user_type >= 8 && user_type <= 13) victim.A_SpawnItemEx("Infrared",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						if (user_type >= 14 && user_type <= 19) victim.A_SpawnItemEx("RadSuit",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						if (user_type >= 20 && user_type <= 22) victim.A_SpawnItemEx("InvulnerabilitySphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					}
+					if (gameinfo.gametype & 2) // Heretic Mode
+					{
+						user_type = random(1,13);
+						if (user_type >= 1 && user_type <= 6) victim.A_SpawnItemEx("ArtiInvisibility",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						if (user_type >= 7 && user_type <= 12) victim.A_SpawnItemEx("ArtiTomeOfPower",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						if (user_type >= 13) victim.A_SpawnItemEx("ArtiInvulnerability",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					}
+					if (gameinfo.gametype & 4) // Hexen Mode
+					{
+						user_type = random(1,20);
+						victim.A_SpawnItemEx("ArtiInvulnerability2",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					}
+					if (gameinfo.gametype & 8) // Strife Mode
+					{
+					}
+				}
+				
+				// Extremely Rare Drops [Type 5]
+				basechance = kc_inventorydroprate5;
+				basechance *= skillmult;
+				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				maxchance = basechance;
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: %d (%d)", maxchance, basechance);
+				if (random(1,maxchance) <= 1)
+				{
+					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					double raredropsndvol = frandom(1.75,2.25);
+					int raredropsndchannel = randompick(193,194,224,225,266,267);
+					string raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					
+					victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+				}
+				
+				/*
+				// ?? [Type 10]
+				basechance = kc_inventorydroprate10;
+				basechance *= skillmult;
+				luckbase = 1.25 + (monsterrating * 0.3125);
+				// Weapons and IP Attacks do not effect drop rates here V:
+				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				maxchance = basechance;
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [ultimarare]: %d (%d)", maxchance, basechance);
+				if (random(1,maxchance) <= 1)
+				{
+					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					double raredropsndvol = frandom(1.75,2.25);
+					int raredropsndchannel = randompick(193,194,224,225,266,267);
+					string raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					raredropsndvol = frandom(1.75,2.25);
+					raredropsndchannel = randompick(293,294,324,325,366,367);
+					raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					raredropsndvol = frandom(1.75,2.25);
+					raredropsndchannel = randompick(393,394,424,425,466,467);
+					raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					raredropsndvol = frandom(1.75,2.25);
+					raredropsndchannel = randompick(493,494,524,525,566,567);
+					raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+					raredropsndvol = frandom(1.75,2.25);
+					raredropsndchannel = randompick(593,594,624,625,666,667);
+					raredropsndname = "ultrarareitem/spawn";
+					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					
+					victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+				}
+				*/
+			}
 		}
-		
-		
-		// Special Actor Conditions
-		if (vict == "ZBell")
-		{
-			//
-			//
-			//
-		}
-		//
-		//
-		//
 		
 		return PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill;
 	}
