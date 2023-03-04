@@ -928,6 +928,7 @@ class PlayerStatItem : Inventory
 		if (level.time >= 1)
 		{
 			nummaps = globalvars.MapsFinished;
+			if (kcdebug_gametracker) Console.Printf("\c[orange]nummaps: %d", nummaps);
 			for (int i = 0; i <= globalvars.MapsFinished; i++)
 			{
 				if (kcdebug_gametracker) Console.Printf("\c[orange]MapNo: %d vs Ref: %d (i: %d)", levelnums, globalvars.MapNum[i], i);
