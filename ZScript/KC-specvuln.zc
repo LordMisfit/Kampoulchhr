@@ -46,20 +46,78 @@ class CompatVulnItem : PlaceholderItem
 
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c-: pre-damage: %d, damagetype: %s", damage, damageType);
 				double TOTALFactor = 1.00;
+				// Time Stop
 				if (FoundPlayer && MiscItem && MiscItem.timestopactivetics > 0) 
 				{
-					if (MiscItem.timestoptype == 1) TOTALFactor *= frandom(0.2,0.25);
-					if (MiscItem.timestoptype == 2) TOTALFactor *= frandom(4.0,5.0);
+					double factor1 = frandompick(0.2,0.25);
+					if (MiscItem.timestoptype == 1)
+					{
+						TOTALFactor *= factor1;
+						owner.A_StopSound(14);
+						owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+					}
+					if (MiscItem.timestoptype == 2) 
+					{
+						TOTALFactor /= factor1;
+						owner.A_StopSound(14);
+						owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+					}
 				}
-				
 				newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 				lastTOTALFactor = TOTALFactor;
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c- (%s): post-damage: %d, damagetype: %s, TOTALFactor: %.8f", ownername, newdamage, damageType, TOTALFactor);
-				//
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && source) Console.Printf("(source: \c[green]%p\c-) %s", source, source.GetClassName());
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
-
+				
+				if (source && 
+						prevtarget != source && 
+						(PlayerPawn(source) || source.bFRIENDLY) && 
+						!owner.bFRIENDLY && 
+						!owner.bDORMANT)
+				{
+					int initdmg = newdamage;
+					surprisehit = true;
+					A_StopSound(32);
+					if (owner.InStateSequence(owner.curstate,owner.ResolveState("Spawn")))
+					{
+						owner.A_SetInventory("JustSurprised",1);
+						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+						newdamage *= frandompick(1.3334,1.50);
+					}
+					else
+					{
+						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+						newdamage *= frandompick(1.1667,1.25);
+					}
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), newdamage, initdmg);
+				}
+				//
+				if (inflictor)
+				{
+					//if ((KickPuff(inflictor) || KickPuffNoThrust(inflictor) || BadKickPuff(inflictor) || damageType == 'Kick') && newdamage > 0) owner.A_SetInventory("JustKicked",1);
+					//if ((UppercutPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustUppercutted",1);
+					//if ((FistPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustPunched",1);
+					if (damageType == 'DashingSD' && newdamage > 0) owner.A_SetInventory("JustShieldDashed",1);
+				}
+				//
+				bool wasblastedimpact = false;
+				if (inflictor == null && source == null && damageType == 'Melee') 
+				{
+					wasblastedimpact = true;
+					if (owner.bBLASTED && random(1,20) <= 19) 
+					{
+						newdamage *= 0.0625;
+						owner.bBLASTED = false;
+					}
+					else
+					{
+						newdamage *= 0.25;
+					}
+					if (owner.vel.x != 0.0) owner.vel.x *= 0.1;
+					if (owner.vel.y != 0.0) owner.vel.y *= 0.1;
+					if (dydudebug_actordmgdisplays && wasblastedimpact) Console.Printf("(\c[green]%s\c-) (\czwasblastedimpact?: %d", owner.GetClassName(), wasblastedimpact);
+				}
 			}
 		}
 	}

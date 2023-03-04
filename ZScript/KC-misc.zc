@@ -2416,16 +2416,32 @@ class PlayerDashJump : Inventory
 		ssa = 1.0;
 		// Future Placement for Perm Items
 		MaxDashCooldown *= ssa;
-		if (skill <= 0 && DashCost <= 8) DashCost = 8;
-		if (skill == 1 && DashCost <= 16) DashCost = 16;
-		if (skill == 2 && DashCost <= 24) DashCost = 24;
-		if (skill == 3 && DashCost <= 32) DashCost = 32;
-		if (skill >= 4 && DashCost <= 40) DashCost = 40;
+		if (owner.CountInv("KCTimeFreezer1") ||
+				owner.CountInv("KCTimeFreezer2") ||
+				owner.CountInv("KCTimeFreezer3"))
+		{
+			DashCost *= 0.10;
+			if (skill <= 0 && DashCost <= 1) DashCost = 1;
+			if (skill == 1 && DashCost <= 1) DashCost = 1;
+			if (skill == 2 && DashCost <= 2) DashCost = 2;
+			if (skill == 3 && DashCost <= 3) DashCost = 3;
+			if (skill >= 4 && DashCost <= 4) DashCost = 4;
+		}
+		else
+		{
+			if (skill <= 0 && DashCost <= 8) DashCost = 8;
+			if (skill == 1 && DashCost <= 16) DashCost = 16;
+			if (skill == 2 && DashCost <= 24) DashCost = 24;
+			if (skill == 3 && DashCost <= 32) DashCost = 32;
+			if (skill >= 4 && DashCost <= 40) DashCost = 40;
+		}
 		if (skill <= 0 && MaxDashCooldown <= 1) MaxDashCooldown = 1;
 		if (skill == 1 && MaxDashCooldown <= 1) MaxDashCooldown = 1;
 		if (skill == 2 && MaxDashCooldown <= 2) MaxDashCooldown = 2;
 		if (skill == 3 && MaxDashCooldown <= 2) MaxDashCooldown = 2;
 		if (skill >= 4 && MaxDashCooldown <= 3) MaxDashCooldown = 3;
+		
+		
 		
 		bool doubletapdash = GetCVar("kc_doubledash");
 		if (kcdebug_showdashinformation) Console.Printf("DashCost [start]: %d, DashCooldown: %d", DashCost, MaxDashCooldown);

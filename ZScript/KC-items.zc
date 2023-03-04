@@ -1,3 +1,178 @@
+class CustomInventoryExt : CustomInventory
+{
+	string texname;
+	int user_type;
+	
+	bool PickupUseVoice;
+	bool PickupUseVoice2;
+	string PickupSnd2;
+	property PickUpVoice: PickupUseVoice;
+	property PickUpVoice2: PickupUseVoice2;
+	property PickupSound2: PickupSnd2;
+	
+	override String PickupMessage()
+	{
+		return PickupMsg;
+	}
+	
+	override void PlayPickupSound (Actor toucher)
+	{
+		double atten;
+		int chan;
+		int flags = 0;
+
+		if (bNoAttenPickupSound)
+		{
+			atten = ATTN_NONE;
+		}
+		/*
+		else if ((ItemFlags & IF_FANCYPICKUPSOUND) &&
+			(toucher == NULL || toucher->CheckLocalView()))
+		{
+			atten = ATTN_NONE;
+		}
+		*/
+		else
+		{
+			atten = ATTN_NORM;
+		}
+
+		if (toucher != NULL && toucher.CheckLocalView())
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+		}
+		else
+		{
+			if (PickupUseVoice) chan = CHAN_VOICE;
+										 else chan = CHAN_ITEM;
+			flags = CHANF_MAYBE_LOCAL;
+		}
+		//Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		double maskpitch = 1.00;
+		if (PickupUseVoice) 
+		{
+			if (MiscItem && MiscItem.CanTalkUnderwater)
+			{
+				if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+			}
+		}
+		toucher.A_StopSound(chan);
+		toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
+		
+		if (PickupSnd2 != "")
+		{
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				if (PickupUseVoice2) chan = CHAN_VOICE;
+												else chan = CHAN_ITEM;
+				flags = CHANF_MAYBE_LOCAL;
+			}
+			//Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
+			
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+			double maskpitch = 1.00;
+			if (PickupUseVoice2) 
+			{
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+				}
+			}
+			toucher.A_StopSound(chan);
+			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
+		}
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		Double Dbl;
+		Sector Sec;
+		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
+		if (pos.z <= Dbl && !owner)
+		{
+			if (cursector.damagetype == 'InstantDeath' ||
+					cursector.damagetype == 'Massacre')
+			{
+				if (bCOUNTITEM) level.total_items--;
+				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
+				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](CustomInventoryExt)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
+				Destroy();
+			}
+		}
+	}
+	
+	action bool A_CheckHealthLevels(double maxhealthratio = 1.0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int CurrentHealth = player.health;
+		int HealthValue;
+		int MaxHealthTrue;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		
+		bool result = false;
+		if (currenthealth < MaxHealthLimit) result = true;
+
+		return result;
+	}
+
+	// Stimpacks/Medikits/Berserk Packs (All games)
+	action void A_PickupMedicalItem(double healfactor, double maxhealthratio = 1.0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int CurrentHealth = player.health;
+		int HealAmount;
+		int HealthValue;
+		int MaxHealthTrue;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		
+		HealAmount = MaxHealthTrue * healfactor;
+		if (CurrentHealth < MaxHealthLimit)
+		{
+			CurrentHealth += HealAmount;
+			if (CurrentHealth >= MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+			player.health = CurrentHealth;
+		}
+	}
+	
+	action void A_GiveBerserk(int basetime, bool bswitch = false, string type = "PowerStrength")
+	{
+		actor player = players[0].mo;
+		if (!player.CountInv(type))
+		{
+			player.SetInventory(type,1);
+			let BerkserkItem = PowerStrength(player.FindInventory(type));
+			if (BerkserkItem) BerkserkItem.EffectTics = basetime;
+		}
+		else
+		{
+			let BerkserkItem = PowerStrength(player.FindInventory(type));
+			if (BerkserkItem) BerkserkItem.EffectTics += basetime;
+		}
+
+		if (kc_berserkweaponswitch && bswitch)
+		{
+			if (player.CountInv("Fist")) { player.A_SelectWeapon("Fist"); } 
+		}
+	}
+}
+
 class TSArtifactSpawner : CustomInventoryExt
 {
 	default
@@ -678,7 +853,8 @@ class MiniBerserk : CustomInventoryExt
 					A_PickupMedicalItem(0.25,1.00);
 					A_StartSound("gethealthkit",5);
 				}
-				A_GiveInventory("PowerStrength");
+				
+				A_GiveBerserk(int(33.75 * TICRATE),false);
 				//A_BerserkWeaponSwitch();
 			}
 			Stop;
@@ -740,7 +916,8 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 					A_PickupMedicalItem(1.00,1.00);
 					A_StartSound("gethealthkit",5);
 				}
-				A_GiveInventory("PowerStrength");
+				
+				A_GiveBerserk(int(135 * TICRATE),false);
 				//A_BerserkWeaponSwitch();
 			}
 			Stop;
