@@ -137,3 +137,248 @@ mixin class MonsterCollider
 	//
 	//
 }
+
+mixin class CollisionChecker
+{
+	string infl;
+	actor projowner;
+	// Checks for certain projectiles from charmed/friendly allies to pass through other friendlies instead of colliding
+	int A_CheckFriendCollisionProjTypeFriendlyDoom()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyDoom:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+
+	int A_CheckFriendCollisionProjTypeFriendlyHeretic()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyHeretic:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+	
+	int A_CheckFriendCollisionProjTypeFriendlyHexen()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyHexen:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+
+	int A_CheckFriendCollisionProjTypeFriendlyStrife()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyStrife:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+	
+	int A_CheckFriendCollisionProjTypeFriendlyOthers()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyOthers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+
+	int A_CheckFriendCollisionProjTypeFriendly1()
+	{
+		infl = GetClassName();
+		
+		int type;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendly1:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+
+	// Checks for certain projectiles from players to pass through friendlies instead of colliding
+	int A_CheckFriendCollisionProjTypePlayer(Actor actr)
+	{
+		infl = actr.GetClassName();
+		projowner = actr.target;
+		actor PlayPawn = PlayerPawn(projowner);
+		actor ProjD;
+		ProjD = KCProjectile(actr);
+		
+		int type;
+		if (ProjD && PlayPawn) type = 1;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypePlayer:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+
+	// Checks for certain projectiles from players to pass through friendlies instead of colliding
+	int A_CheckFriendCollisionProjTypePlayer2(Actor actr)
+	{
+		infl = actr.GetClassName();
+
+		int type;
+		if (
+				// Circus 2 Stuff
+				infl == "Sparkles" ||
+				//CrazyBits1(actr) ||
+				infl == "Popcorn_Shrap1" ||
+				infl == "Popcorn_Shrap7" ||
+				infl == "CrazyBalls" ||
+				infl == "CrazyBall" ||
+				infl == "CrazyBallDD"
+			 ) type = 1;
+		
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypePlayer2:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+	
+	// Checks for certain projectiles from players to pass through friendlies instead of colliding
+	int A_CheckCollisionProjShieldExemptionE(Actor actr)
+	{
+		infl = actr.GetClassName();
+
+		int type;
+	
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]A_CheckCollisionProjShieldExemptionE:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+	
+	int A_CheckCollisionProjShieldExemption(Actor actr)
+	{
+		infl = actr.GetClassName();
+
+		int type;
+		//if () type = 1;
+	
+		if (kcdebug_generalcollisions) Console.Printf("\c[brick]A_CheckCollisionProjShieldExemption:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		return type;
+	}
+}
+
+mixin class InvWeaponShare
+{
+	// Misc
+	const BerserkRecoilMulti = 2.5;
+	const minxymoveneg = -3.814697266;
+	const minxymovepos = 3.814697266;
+	const minzmoveneg = -1.907348633;
+	const minzmovepos = 1.907348633;
+	
+	// Spreader Aura Level 1 Angles
+	const spread1angle1 = -15.0;
+	const spread1angle2 = 15.0;
+	const spread1horz1 = 0.0;
+	const spread1horz2 = 0.0;
+	const spread1height1 = 0.0;
+	const spread1height2 = 0.0;
+
+	// Spreader Aura Level 2 Angles/Pitches
+	const spread2angle1 = -7.5;
+	const spread2angle2 = 7.5;
+	const spread2horz1 = 0.0;
+	const spread2horz2 = 0.0;
+	const spread2pitch1 = -7.5;
+	const spread2pitch2 = 7.5;
+	const spread2height1 = 0.0;
+	const spread2height2 = 0.0;
+	
+	//===========================================================================
+	//
+	// A_ThrowGrenadeAngle
+	//
+	// Throws a grenade (like Hexen's fighter flechette) with the added options to tweak
+	// the randomized angle-range used, and if to use fixed/doubles or ints for the angles.
+	//
+	//===========================================================================
+	action bool, Actor A_ThrowGrenadeAngle(class<Actor> missile, double zheight = 0, double zheightoffset = 35, double xyvel = 0, double zvel = 0, double angularspreadmin = -4.0, double angularspreadmax = 3.0, bool usefixedangles = false, bool useammo = true, bool checkspawn = true)
+	{
+		if (kcdebug_attackstuff) Console.Printf("zheight: %.4f, xyvel: %.4f, zvel: %.4f, angularspreadmin: %.4f, angularspreadmax: %.4f", zheight, xyvel, zvel, angularspreadmin, angularspreadmax);
+		double anglemin = angularspreadmin;
+		double anglemax = angularspreadmax;
+		if (!usefixedangles)
+		{
+			anglemin = int(angularspreadmin); 
+			anglemax = int(angularspreadmax);
+		}
+		else
+		{
+			anglemin = angularspreadmin; 
+			anglemax = angularspreadmax;
+		}
+		if (kcdebug_attackstuff) Console.Printf("anglemin: %.4f, anglemax: %.4f", anglemin, anglemax);
+
+		if (missile == NULL)
+		{
+			return false, null;
+		}
+		if (stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			let player = self.player;
+			if (player == null) return false, null;
+			let weapon = player.ReadyWeapon;
+			// Used from a weapon, so use some ammo
+
+			if (weapon == NULL || (useammo && !weapon.DepleteAmmo(weapon.bAltFire)))
+			{
+				return true, null;
+			}
+		}
+
+		let bo = Spawn(missile, pos + (0, 0, (-Floorclip + GetBobOffset() + zheight + zheightoffset + (player? player.crouchoffset : 0.))), ALLOW_REPLACE);
+		if (bo)
+		{
+			if (dydudebug_attackfuncinfo) Console.Printf("bo [spawned]");
+			self.PlaySpawnSound(bo);
+			if (xyvel != 0)
+				bo.Speed = xyvel;
+			if (usefixedangles) bo.Angle = Angle + (frandom[grenade](anglemin, anglemax) * (360./256.));
+										 else bo.Angle = Angle + (random[grenade](anglemin, anglemax) * (360./256.));
+
+			let pitch = -self.Pitch;
+			let angle = bo.Angle;
+
+			// There are two vectors we are concerned about here: xy and z. We rotate
+			// them separately according to the shooter's pitch and then sum them to
+			// get the final velocity vector to shoot with.
+
+			double xy_xyscale = bo.Speed * cos(pitch);
+			double xy_velz = bo.Speed * sin(pitch);
+			double xy_velx = xy_xyscale * cos(angle);
+			double xy_vely = xy_xyscale * sin(angle);
+
+			pitch = self.Pitch;
+			double z_xyscale = zvel * sin(pitch);
+			double z_velz = zvel * cos(pitch);
+			double z_velx = z_xyscale * cos(angle);
+			double z_vely = z_xyscale * sin(angle);
+
+			bo.Vel.X = xy_velx + z_velx + Vel.X / 2;
+			bo.Vel.Y = xy_vely + z_vely + Vel.Y / 2;
+			bo.Vel.Z = xy_velz + z_velz;
+
+			bo.target = self;
+			if (checkspawn) 
+			{
+				if (dydudebug_attackfuncinfo) Console.Printf("bo: checkspawn: %d", checkspawn);
+				if (!bo.CheckMissileSpawn(radius))
+				{
+					if (dydudebug_attackfuncinfo) Console.Printf("bo: null");
+					bo = null;
+				}
+			}
+			return true, bo;
+		} 
+		else
+		{
+			return false, null;
+		}
+	}
+}

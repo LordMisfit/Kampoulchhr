@@ -340,7 +340,6 @@ class KCEffectProjectile : KCProjectile
 	}
 }
 
-
 // Base FastProjectile Class
 class KCFastProjectile : KCProjectile abstract
 {
@@ -877,6 +876,13 @@ class KCWeaponBase : Weapon
 	int buttons;
 	int PlayerLevel;
 
+	// Misc
+	const BerserkRecoilMulti = 2.5;
+	const minxymoveneg = -3.814697266;
+	const minxymovepos = 3.814697266;
+	const minzmoveneg = -1.907348633;
+	const minzmovepos = 1.907348633;
+
 	const spread1angle = 7.5;
 	const spread2angle = 3.75;
 	const spread2pitch = 3.75;
@@ -1269,6 +1275,139 @@ class KCWeaponBase : Weapon
 		return misl1, realmisl1, misl2, realmisl2, misl3, realmisl3, misl4, realmisl4, misl5, realmisl5, misl6, realmisl6, misl7, realmisl7;
 	}
 	
+	action void A_CustomPunchEx(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
+	{
+		let player = self.player;
+		if (!player) return;
+
+		let weapon = player.ReadyWeapon;
+
+		double angle;
+		double pitch;
+		FTranslatedLineTarget t;
+		int	actualdamage;
+
+		if (!norandom)
+			damage *= random[cwpunch](1, 8);
+
+		angle = self.Angle + random2[cwpunch]() * (5.625 / 256);
+		if (range == 0) range = DEFMELEERANGE;
+		pitch = AimLineAttack (angle, range, t, 0., ALF_CHECK3D);
+
+		// only use ammo when actually hitting something!
+		if ((flags & CPF_USEAMMO) && t.linetarget && weapon && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weapon.DepleteAmmo(weapon.bAltFire, true))
+				return;	// out of ammo
+		}
+
+		if (pufftype == NULL)
+			pufftype = 'BulletPuff';
+		int puffFlags = LAF_ISMELEEATTACK | ((flags & CPF_NORANDOMPUFFZ) ? LAF_NORANDOMPUFFZ : 0);
+
+		Actor puff;
+		[puff, actualdamage] = LineAttack (angle, range, pitch, damage, 'Melee', pufftype, puffFlags, t);
+
+		if (!t.linetarget)
+		{
+			if (MissSound) A_StartSound(MissSound, CHAN_WEAPON);
+		}
+		else
+		{
+			if (lifesteal > 0 && !(t.linetarget.bDontDrain))
+			{
+				if (flags & CPF_STEALARMOR)
+				{
+					if (armorbonustype == NULL)
+					{
+						armorbonustype = 'ArmorBonus';
+					}
+					if (armorbonustype != NULL)
+					{
+						let armorbonus = BasicArmorBonus(Spawn(armorbonustype));
+						if (armorbonus)
+						{
+							armorbonus.SaveAmount *= int(actualdamage * lifesteal);
+							if (lifestealmax > 0) armorbonus.MaxSaveAmount = lifestealmax;
+							armorbonus.bDropped = true;
+							armorbonus.ClearCounters();
+
+							if (!armorbonus.CallTryPickup(self))
+							{
+								armorbonus.Destroy ();
+							}
+						}
+					}
+				}
+				else
+				{
+					GiveBody (int(actualdamage * lifesteal), lifestealmax);
+				}
+			}
+			if (weapon != NULL)
+			{
+				if (MeleeSound) A_StartSound(MeleeSound, CHAN_WEAPON);
+				else			A_StartSound(weapon.AttackSound, CHAN_WEAPON);
+			}
+
+			if (!(flags & CPF_NOTURN))
+			{
+				// turn to face target
+				self.Angle = t.angleFromSource;
+			}
+
+			if (flags & CPF_PULLIN) self.bJustAttacked = true;
+			if (flags & CPF_DAGGER) t.linetarget.DaggerAlert (self);
+		}
+	}
+
+	action void A_CustomPunch(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
+	{
+		
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		double pang = player.angle;
+		double pptc = player.pitch;
+		if (player.CountInv("KCPowerSpread2"))
+		{
+			player.angle -= spread2angle;
+			player.pitch -= spread2pitch;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle -= spread2angle;
+			player.pitch += spread2pitch;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle += spread2angle;
+			player.pitch -= spread2pitch;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+			player.pitch = pptc;
+
+			player.angle += spread2angle;
+			player.pitch += spread2pitch;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+			player.pitch = pptc;
+		}
+		if (player.CountInv("KCPowerSpread2") || player.CountInv("KCPowerSpread1"))
+		{
+			player.angle -= spread1angle;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+			
+			player.angle += spread1angle;
+			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+			player.angle = pang;
+		}
+		A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
+	}
+
 	action bool A_CheckBerserk()
 	{
 		actor player = players[0].mo;
@@ -1503,6 +1642,147 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	action void A_GetPunchSwingRecoil(int attacktype = 0)
+	{
+		int debugrecoil = kcdebug_showrecoilinformation;
+		let weapon = player.ReadyWeapon;
+		string weaponname = weapon.GetClassName();
+		string actorname = GetClassName();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int BerserkAdd;
+		int PlayerLevel;
+		int PlayerATK;
+		int PlayerSPD;
+		double recoil;
+		double recoilmulti;
+		
+		if (MiscItem)
+		{
+			PlayerLevel = MiscItem.TruePlayerLevel;
+			PlayerATK = MiscItem.TruePlayerATK;
+			PlayerSPD = MiscItem.TruePlayerSPD;
+		}
+		
+		if (kc_meleerecoil)
+		{
+			int IsMoving = 0;
+			if (vel.x < minxymoveneg || vel.x > minxymovepos) IsMoving++;
+			if (vel.y < minxymoveneg || vel.y > minxymovepos) IsMoving++;
+			if (vel.z < minzmoveneg || vel.z > minzmovepos) IsMoving++;
+
+			if (CountInv("PlayerDashing")) { }
+			else if (IsMoving) { }
+			else
+			{
+				// Base "Recoil"
+				double baserecoil = -0.0500;
+				if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) BerserkAdd = randompick(1,1,1,1,1,1,1,2,2); else BerserkAdd = 0;
+
+				recoil = baserecoil * random(0,4);
+				if (attacktype == 0) recoil = baserecoil * (random(0,4) + BerserkAdd);
+				if (attacktype == 1) recoil = baserecoil * (random(2,10) + BerserkAdd);
+				if (attacktype == 2) recoil = baserecoil * (random(4,8) + BerserkAdd);
+				if (attacktype == 3) recoil = baserecoil * (random(8,20) + BerserkAdd);
+				if (debugrecoil) Console.Printf("\cxRecoil [Base]: %.8f", recoil);
+
+				// Berserk
+				if (CountInv("PowerStrength") || CountInv("KCPowerStrength"))
+				{
+					recoil *= BerserkRecoilMulti;
+					if (debugrecoil) Console.Printf("\cxRecoil [Berserk]: %.8f", recoil);
+				}
+
+				// Stat/Level Mitigation
+				recoilmulti = (1.0 - (PlayerLevel * 0.00078125) - (PlayerATK * 0.000390625) - (PlayerSPD * 0.0015625));
+				recoil *= recoilmulti;
+				if (recoilmulti < 0.0) recoilmulti = 0.0;
+				if (debugrecoil) Console.Printf("\cxRecoil [Stats]: %.8f, Multiplier: %.8f", recoil, recoilmulti);
+
+				// Random Chance for 0 recoil
+				if (attacktype == 1)
+				{
+					if (random(1,96) <= 1) recoil = 0.0;
+				}
+				else
+				{
+					if (random(1,48) <= 1) recoil = 0.0;
+				}
+				if (debugrecoil) Console.Printf("\cxRecoil [Final]: %.8f", recoil);
+
+
+				A_Recoil(recoil);
+			}
+		}
+	}
+
+	action void A_GetKickSwingRecoil(int attacktype = 0)
+	{
+		bool debugmelee = kcdebug_showmeleeinformation;
+		bool debugrecoil = kcdebug_showrecoilinformation;
+		let weapon = player.ReadyWeapon;
+		string weaponname = weapon.GetClassName();
+		string actorname = GetClassName();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PlayerLevel;
+		int PlayerATK;
+		int PlayerSPD;
+		double recoil;
+		double recoilmulti;
+		
+		if (MiscItem)
+		{
+			PlayerLevel = MiscItem.TruePlayerLevel;
+			PlayerATK = MiscItem.TruePlayerATK;
+			PlayerSPD = MiscItem.TruePlayerSPD;
+		}
+		
+		if (kc_meleerecoil)
+		{
+			int IsMoving = 0;
+			if (vel.x < minxymoveneg || vel.x > minxymovepos) IsMoving++;
+			if (vel.y < minxymoveneg || vel.y > minxymovepos) IsMoving++;
+			if (vel.z < minzmoveneg || vel.z > minzmovepos) IsMoving++;
+
+			if (CountInv("PlayerDashing")) { }
+			else if (IsMoving) { }
+			else
+			{
+				// Base "Recoil"
+				double baserecoil = -0.0500;
+				recoil = baserecoil * random(-4,4);
+				if (debugrecoil) Console.Printf("\cxRecoil [Base]: %.8f", recoil);
+
+				// Berserk
+				if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) 
+				{
+					recoil *= BerserkRecoilMulti;
+					if (debugrecoil) Console.Printf("\cxRecoil [Berserk]: %.8f", recoil);
+				}
+
+				// Stat/Level Mitigation
+				recoilmulti = (1.0 - (PlayerLevel * 0.00078125) - (PlayerATK * 0.000390625) - (PlayerSPD * 0.0015625));
+				recoil *= recoilmulti;
+				if (recoilmulti < 0.0) recoilmulti = 0.0;
+				if (debugrecoil) Console.Printf("\cxRecoil [Stats]: %.8f, Multiplier: %.8f", recoil, recoilmulti);
+
+				// Random Chance for 0 recoil
+				if (attacktype == 1)
+				{
+					if (random(1,96) <= 1) recoil = 0.0;
+				}
+				else
+				{
+					if (random(1,48) <= 1) recoil = 0.0;
+				}
+				if (debugrecoil) Console.Printf("\cxRecoil [Final]: %.8f", recoil);
+
+				A_Recoil(recoil);
+			}
+		}
+	}
+	
 	States
 	{
 		GrandControlLayer: // layer -1000
@@ -1553,6 +1833,405 @@ class HeiwaWeapon : KCWeaponBase
 		
 		DoReadyWeaponDisableSwitch(player, flags & WRF_DisableSwitch);
 		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
+	}
+}
+
+// *****************
+// * Fist [Marine] *
+// *****************
+class FistPlayerBlock : PlaceholderItem { }
+class FistPlayerBlock2 : PlaceholderItem { }
+class FistPlayerBlock3 : PlaceholderItem { }
+class FistPlayerBlock4 : PlaceholderItem { }
+class FistPlayerBlockExtra : PlaceholderItem { }
+class FistPlayerBlockExtra2 : PlaceholderItem { }
+class FistPlayerBlockItem : PlaceholderItem { }
+class FistPlayerBlockHold : PlaceholderItem { } 
+class FistPlayerSpeedFactor : FistPlayerBlockItem { }
+class FistPlayerSpeedFactor2 : FistPlayerBlockItem { }
+class FistPlayerSpeedFactor3 : FistPlayerBlockItem { }
+class FistPlayerSpeedFactor4 : FistPlayerBlockItem { }
+
+class FistMarine : KCWeaponBase
+{
+	default
+	{
+		Weapon.SelectionOrder 3700;
+		Weapon.Kickback 100;
+		+WEAPON.NOALERT;
+		+WEAPON.MELEEWEAPON;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.UNTOSSABLE;
+		Tag "Fist";
+		Obituary "%o chewed on %k's fist.";
+	}
+	
+	States
+	{
+		Ready:
+			PUNG A 1
+			{
+				A_WeaponReady(WRF_ALLOWUSER4);
+				if (CountInv("FistPlayerBlockItem") > 0) { return resolvestate("User4Hold"); }
+				return resolvestate(null);
+			}
+			loop;
+		Deselect:
+			PUNG A 1 
+			{
+				A_Lower(18);
+			}
+			loop;
+		Select: 
+			PUNG A 1 
+			{
+				A_Raise(18);
+			}
+			loop;
+		Fire: // 22 Tics, 17 (-5) [MAMLv2], 12 (-5) [MAMLv4]
+			TNT1 A 0 
+			{
+			}
+		PunchSuccess:
+			TNT1 A 0 A_GiveInventory("UsingMeleeAttack",1);
+			TNT1 A 0 A_Jump(128,"RightPunch");
+			goto LeftPunch;
+	/*
+		LeftPunch:
+			PUNG B 4
+			{
+			}
+			PUNG C 4
+			{
+				if (random(1,256) <= 4) { A_AlertMonsters(); }
+				A_StartSound("fistswingheavy",1);
+				A_GetPunchSwingRecoil(0);
+				A_CustomPunch(A_GetPunchDamage(0,0,false),1,CPF_NOTURN,"FistPuff",A_GetMeleeRange(0),0,0,"","","");
+
+				if (A_CheckMeleeDestroyProj(1) > 0)
+				{
+					if (random(1,8) <= 1)
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,16);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,48);
+					}
+					else
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,16);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,48);
+					}
+				}
+			}
+			PUNG D 5
+			{
+			}
+			PUNG C 4
+			{
+			}
+			PUNG B 5
+			{
+				A_Refire();
+			}
+			PUNG B 0 A_SetInventory("UsingMeleeAttack",0);
+			goto Ready;
+
+		RightPunch:
+			PUNG F 4
+			{
+			}
+			PUNG G 4
+			{
+				if (random(1,256) <= 4) { A_AlertMonsters(); }
+				A_StartSound("fistswingheavy",1);
+				A_GetPunchSwingRecoil(0);
+				A_SpreadAuraCustomPunch(A_GetPunchDamage(0,0,false),1,CPF_NOTURN,"FistPuff",A_GetMeleeRange(0),0,0,"","","");
+
+				if (A_CheckMeleeDestroyProj(1) > 0)
+				{
+					if (random(1,8) <= 1)
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,16);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,48);
+					}
+					else
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,16);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,48);
+					}
+				}
+			}
+			PUNG H 5
+			{
+			}
+			PUNG G 4
+			{
+			}
+			PUNG F 5
+			{
+				A_Refire();
+			}
+			PUNG F 0 A_SetInventory("UsingMeleeAttack",0);
+			goto Ready;
+		
+		AltFire:
+			TNT1 A 0 
+			{
+				A_GiveInventory("UsingMeleeAttack",1);
+			}
+			goto UppercutStart;
+		// 23 Tics [18 (MAMlv1), 14 (MAMlv2), 11 (MAMlv3), 8 (MAMlv4), 6 (MAMlv5)]
+		UppercutStart:
+			MPU0 A 1 { }
+			MPU0 B 1 { }
+			MPU0 C 1 { }
+			MPU0 D 1 { }
+			MPU0 E 1 { A_UppercutBonus(); }
+			MPU1 A 1
+			{
+				if (random(1,256) >= 253)
+				{
+					if (CountInv("PlayingStrife")) { } // Strife mode makes the punch work like the Punch Dagger where it NEVER makes sound
+					else { A_AlertMonsters(); } // Sometimes a swing will be enough to wake up all monsters in the area.
+				}
+				if (random(1,256) <= 75) { A_StartSound("*grunt",CHAN_VOICE); }
+				A_StartSound("fistswingheavy",1); // D [Left] or B [Right] 
+			}
+			MPU1 B 1 { }
+			MPU1 C 1 { }
+			MPU1 D 1 { }
+			MPU1 E 1 { }
+			MPU1 F 1
+			{
+				A_GetPunchSwingRecoil(1);
+				A_SpreadAuraCustomPunch(A_GetPunchDamage(1,0,false),1,CPF_NOTURN,"UppercutPuff",A_GetMeleeRange(1),0,0,"","","");
+
+				if (A_CheckMeleeDestroyProj(1) > 0)
+				{
+					if (random(1,8) <= 1)
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,10);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",52,10);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",28,42);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",52,42);
+					}
+					else
+					{
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,10);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",52,10);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",28,42);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",52,42);
+					}
+				}
+			}
+			MPU1 G 1 { }
+			MPU1 F 1 { }
+			MPU1 E 1 { }
+			MPU1 D 1 { }
+			MPU1 C 1 { }
+			MPU1 B 1 { }
+			MPU1 A 1 { }
+			MPU1 A 0 { return resolvestate("UppercutEnd"); }
+		UppercutEnd:
+			TNT1 A 0
+			{
+				A_UppercutBonusTake(); 
+				A_SetInventory("UsingMeleeAttack",0); 
+			}
+			MPU0 E 1 { }
+			MPU0 D 1 { }
+			MPU0 C 1 { }
+			MPU0 B 1 { }
+			MPU0 A 1 { }
+			TNT1 A 0
+			{
+				A_SetMartialArtsMastery(0);
+				A_Refire();
+				return resolvestate("Ready");
+			}
+			goto Ready;
+
+		User1:
+			TNT1 A 0 
+			{
+				A_Overlay(-2,"Kick",true);
+				return resolvestate("Ready");
+			}
+		Kick:
+			TNT1 A 0
+			{
+				A_QMWKickInit();
+			}
+			goto KickStart;
+		KickStart: // 19/13 (Deg/Illu) Tics, 13/7 (-6) [MAMlv3], 12/6 (-1) [MAMlv5]
+			LEG2 A 2 
+			{
+			}
+			LEG2 B 2
+			{
+				A_StartSound("fistswingmedium0",1);
+			}
+			LEG2 C 1
+			{
+				if (random(1,256) >= 128) 
+				{
+					A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
+				}
+			}
+			LEG2 D 1
+			{
+			}
+			LEG2 E 2 
+			{
+				A_GetKickSwingRecoil(0);
+				A_SpreadAuraCustomPunch(A_GetKickDamage(0,0,false),1,CPF_NOTURN,"KickPuff",A_GetMeleeRange(4),0,0,"","","");
+	
+				if (A_CheckMeleeDestroyProj(1) > 0)
+				{
+					if (random(1,8) <= 1)
+					{
+						A_SetInventory("ActorVar1",28);
+
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",CountInv("ActorVar1"),24);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",CountInv("ActorVar1"),56);
+						A_MeleeShieldPiece("ShieldPartMeleeReflect",CountInv("ActorVar1"),88);
+					}
+					else
+					{
+						A_SetInventory("ActorVar1",28);
+
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",CountInv("ActorVar1"),24);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",CountInv("ActorVar1"),56);
+						A_MeleeShieldPiece("ShieldPartMeleeNoReflect",CountInv("ActorVar1"),88);
+					}
+				}
+			}
+			LEG2 F 5 
+			{
+			}
+			LEG2 E 2 
+			{
+			}
+			LEG2 D 1 
+			{ 
+			}
+			LEG2 C 1 
+			{ 
+			}
+			LEG2 B 1
+			{
+			}
+			LEG2 A 1 
+			{ 
+			}
+			LEG2 A 0 { return resolvestate("KickEnd"); }
+		KickEnd:
+			TNT1 A 0
+			{
+				A_KickBonusOff();
+				A_SetMartialArtsMastery(0);
+			}
+			stop;
+
+		// Guard
+		User4:
+			DPDF A 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF B 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF C 1
+			{
+				A_GiveInventory("FistPlayerBlockItem",1);
+				A_PFistBlockOn(10051);
+			}
+			DPDF D 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF E 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF F 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF G 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF H 1
+			{
+				A_PFistBlockOn(10051);
+			}
+			DPDF I 1
+			{
+				A_PFistBlockOn(10051);
+			}
+		User4Hold:
+			DPDF J 1 // BRIGHT
+			{
+				A_GiveInventory("FistPlayerBlockHold",1);
+				A_WeaponReady(WRF_NOFIRE|WRF_DISABLESWITCH);
+				return resolvestate(null);
+			}
+			EWS2 G 0 A_Refire("User4End");
+			loop;
+		User4End:
+			DPDF I 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF H 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF G 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF F 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF E 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF D 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF C 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF B 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF A 1
+			{
+				A_PFistBlockOn(10051); 
+				A_SetInventory("FistPlayerBlockHold",0);
+			}
+			DPDF A 0
+			{
+				A_PFistBlockOff();
+			}
+			Goto Ready;
+	*/
 	}
 }
 

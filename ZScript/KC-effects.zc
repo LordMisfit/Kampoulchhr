@@ -1572,6 +1572,105 @@ class JustSurprised : PlaceholderItem
 	}
 }
 
+class HitByMorphProj : PlaceholderItem 
+{
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		timer++;
+		if (Owner == NULL) Destroy();
+		else if (timer >= 3) Destroy();
+		
+		Super.Tick();
+	}
+}
+
+class JustKicked : PlaceholderItem 
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < 35) 
+			{
+				timer++;
+				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(3,4,4,4,4,5)),0.0834,true,frandom(1.334,1.667),true);
+			}
+			else Destroy();
+		}
+		
+		if (Owner == NULL) Destroy();
+
+		Super.Tick();
+	}
+}
+
+class JustPunched : PlaceholderItem 
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < 35) 
+			{
+				timer++;
+				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(1,1,1,2)),0.0667,true,frandom(1.334,1.667),true);
+			}
+			else Destroy();
+		}
+		
+		if (Owner == NULL) Destroy();
+
+		Super.Tick();
+	}
+}
+
+class JustUppercutted : PlaceholderItem 
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < 35) 
+			{
+				timer++;
+				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*3),0.10,true,frandom(1.334,1.667),true);
+			}
+			else Destroy();
+		}
+		if (Owner == NULL) Destroy();
+		
+		Super.Tick();
+	}
+}
+
+
 class KCPowerSpread1 : Powerup
 {
 	string texname;
@@ -1655,23 +1754,6 @@ class KCPowerSpread2 : Powerup
 	}
 }
 
-class HitByMorphProj : PlaceholderItem 
-{
-	int timer;
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
-	
-	override void Tick()
-	{
-		timer++;
-		if (Owner == NULL) Destroy();
-		else if (timer >= 3) Destroy();
-		
-		Super.Tick();
-	}
-}
 class HellWarriorShieldLevel : PlaceHolderItem { default { Inventory.MaxAmount 10; } }
 class EWShieldIdleMode : PlaceholderItem { }
 class EWShieldDefendMode : PlaceholderItem { }
@@ -1915,7 +1997,7 @@ class PowerGuard : PowerProtection
 					damageType == 'Slime' ||
 					damageType == 'Magma') TOTALFactor = 0.875;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
-			if (dydudebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
 		}
 	}
 	
@@ -1974,7 +2056,7 @@ class PowerWeaken : PowerProtection
 					damageType == 'Slime' ||
 					damageType == 'Magma') TOTALFactor = 1.142857142857143;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
-			if (dydudebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
 		}
 	}
 	
@@ -2088,3 +2170,5 @@ class PowerSlow : PowerSpeed
 	}
 }
 
+class UsingMeleeWeapon : PlaceholderItem { } // Checks to see if your current selected weapon is "Melee Class" [for HUD displays]
+class UsingMeleeAttack : PlaceholderItem { }
