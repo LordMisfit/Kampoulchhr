@@ -892,12 +892,15 @@ class KC_EventHandler : EventHandler
 				{
 					int temp = 1;
 					let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-					if (MiscItem) temp = (1 + (TrueLuck * 0.08334));
+					if (MiscItem) 
+					{
+						temp = (1 + (TrueLuck * 0.08334));
+						temp *= 2.5;
+					}
 					if (random(1,16) <= temp) // Weapons
 					{
 						double rand = 1.0;
-						user_type = random(1,9);
-						int temp2 = random(1,16);
+						user_type = random(1,11);
 						droptype = "Backpack";
 						if (user_type == 1) 
 						{
@@ -1020,6 +1023,18 @@ class KC_EventHandler : EventHandler
 								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 							}
 						}
+						if (user_type == 11)
+						{
+							droptype = "ImpalerXBow";
+							if (player.CountInv(droptype)) 
+							{
+								droptype = "Backpack";
+								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							}
+						}
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					else // Ammo
@@ -1030,7 +1045,7 @@ class KC_EventHandler : EventHandler
 						if (MiscItem) temp = (48 + (TrueLuck * 0.25));
 						if (random(1,256) <= temp) 
 						{
-							user_type = random(1,10);
+							user_type = random(1,11);
 							if (user_type == 1) droptype = "ClipBox";
 							if (user_type == 2) droptype = "ClipBox";
 							if (user_type == 3) droptype = "ShellBox";
@@ -1041,10 +1056,11 @@ class KC_EventHandler : EventHandler
 							if (user_type == 8) droptype = "CellPack";
 							if (user_type == 9) droptype = "MiniRocketBox";
 							if (user_type == 10) droptype = "SawBox";
+							if (user_type == 11) droptype = "ImpalerBolts";
 						}
 						else
 						{
-							user_type = random(1,10);
+							user_type = random(1,11);
 							if (user_type == 1) droptype = "Clip";
 							if (user_type == 2) droptype = "Clip";
 							if (user_type == 3) droptype = "Shell";
@@ -1055,6 +1071,7 @@ class KC_EventHandler : EventHandler
 							if (user_type == 8) droptype = "Cell";
 							if (user_type == 9) droptype = "MiniRocket";
 							if (user_type == 10) droptype = "Saws";
+							if (user_type == 11) droptype = "ImpalerBolts";
 						}
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}

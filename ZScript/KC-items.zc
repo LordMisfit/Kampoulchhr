@@ -2117,6 +2117,36 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		Armor.SavePercent 50;
 		Armor.SaveAmount 200;
 	}
+	
+	override void BeginPlay()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+		}
+		else
+		{
+			SaveAmount = 200;
+		}
+		super.BeginPlay();
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+		}
+		else
+		{
+			SaveAmount = 200;
+		}
+		super.Tick();
+	}
 }
 
 class KCBlueArmor : KCArmorPickup replaces BlueArmor
