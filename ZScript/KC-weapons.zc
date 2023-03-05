@@ -3685,7 +3685,7 @@ class FistPlayerSpeedFactor2 : FistPlayerBlockItem { }
 class FistPlayerSpeedFactor3 : FistPlayerBlockItem { }
 class FistPlayerSpeedFactor4 : FistPlayerBlockItem { }
 
-class FistMarine : MarineWeapon
+class FistMarine : MarineWeapon replaces Fist
 {
 	default
 	{
@@ -3981,6 +3981,327 @@ class FistMarine : MarineWeapon
 			{
 				A_PFistBlockOff();
 			}
+			Goto Ready;
+	}
+}
+class ChainsawMarine : MarineWeapon replaces Chainsaw
+{
+	Default
+	{
+		Weapon.Kickback 0;
+		Weapon.SelectionOrder 2200;
+		Weapon.UpSound "weapons/sawup";
+		Weapon.ReadySound "weapons/sawidle";
+		Inventory.PickupMessage "$GOTCHAINSAW";
+		Obituary "$OB_MPCHAINSAW";
+		Tag "$TAG_CHAINSAW";
+		+WEAPON.MELEEWEAPON		
+		+WEAPON.NOAUTOSWITCHTO
+	}
+	States
+	{
+		Ready:
+			SAWG CD 4 A_WeaponReady;
+			Loop;
+		Deselect:
+			SAWG C 1 A_Lower;
+			Loop;
+		Select:
+			SAWG C 1 A_Raise;
+			Loop;
+		Fire:
+			SAWG AB 4 A_Saw;
+			SAWG B 0 A_ReFire;
+			Goto Ready;
+		Spawn:
+			CSAW A -1;
+			Stop;
+	}
+}
+class PistolMarine : MarineWeapon replaces Pistol
+{
+	Default
+	{
+		Weapon.SelectionOrder 1900;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "Clip";
+		Obituary "$OB_MPPISTOL";
+		+WEAPON.WIMPY_WEAPON
+		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
+		Tag "$TAG_PISTOL";
+	}
+	States
+	{
+		Ready:
+			PISG A 1 A_WeaponReady();
+			Loop;
+		Deselect:
+			PISG A 1 A_Lower;
+			Loop;
+		Select:
+			PISG A 1 A_Raise;
+			Loop;
+		Fire:
+			PISG A 4;
+			PISG B 6 A_FirePistol;
+			PISG C 4;
+			PISG B 5 A_ReFire;
+			Goto Ready;
+		Flash:
+			PISF A 7 Bright A_Light1;
+			Goto LightDone;
+			PISF A 7 Bright A_Light1;
+			Goto LightDone;
+		Spawn:
+			PIST A -1;
+			Stop;
+	}
+}
+class ShotgunMarine : MarineWeapon replaces Shotgun
+{
+	Default
+	{
+		Weapon.SelectionOrder 1300;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "Shell";
+		Inventory.PickupMessage "$GOTSHOTGUN";
+		Obituary "$OB_MPSHOTGUN";
+		Tag "$TAG_SHOTGUN";
+	}
+	States
+	{
+		Ready:
+			SHTG A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			SHTG A 1 A_Lower;
+			Loop;
+		Select:
+			SHTG A 1 A_Raise;
+			Loop;
+		Fire:
+			SHTG A 3;
+			SHTG A 7 A_FireShotgun;
+			SHTG BC 5;
+			SHTG D 4;
+			SHTG CB 5;
+			SHTG A 3;
+			SHTG A 7 A_ReFire;
+			Goto Ready;
+		Flash:
+			SHTF A 4 Bright A_Light1;
+			SHTF B 3 Bright A_Light2;
+			Goto LightDone;
+		Spawn:
+			SHOT A -1;
+			Stop;
+	}
+}
+class SSGMarine : MarineWeapon replaces SuperShotgun
+{
+	Default
+	{
+		Weapon.SelectionOrder 400;
+		Weapon.AmmoUse 2;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "Shell";
+		Inventory.PickupMessage "$GOTSHOTGUN2";
+		Obituary "$OB_MPSSHOTGUN";
+		Tag "$TAG_SUPERSHOTGUN";
+	}
+	States
+	{
+		Ready:
+			SHT2 A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			SHT2 A 1 A_Lower;
+			Loop;
+		Select:
+			SHT2 A 1 A_Raise;
+			Loop;
+		Fire:
+			SHT2 A 3;
+			SHT2 A 7 A_FireShotgun2;
+			SHT2 B 7;
+			SHT2 C 7 A_CheckReload;
+			SHT2 D 7 A_OpenShotgun2;
+			SHT2 E 7;
+			SHT2 F 7 A_LoadShotgun2;
+			SHT2 G 6;
+			SHT2 H 6 A_CloseShotgun2;
+			SHT2 A 5 A_ReFire;
+			Goto Ready;
+		// unused states
+			SHT2 B 7;
+			SHT2 A 3;
+			Goto Deselect;
+		Flash:
+			SHT2 I 4 Bright A_Light1;
+			SHT2 J 3 Bright A_Light2;
+			Goto LightDone;
+		Spawn:
+			SGN2 A -1;
+			Stop;
+	}
+}
+class ChaingunMarine : MarineWeapon replaces Chaingun
+{
+	Default
+	{
+		Weapon.SelectionOrder 700;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "Clip";
+		Inventory.PickupMessage "$GOTCHAINGUN";
+		Obituary "$OB_MPCHAINGUN";
+		Tag "$TAG_CHAINGUN";
+	}
+	States
+	{
+		Ready:
+			CHGG A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			CHGG A 1 A_Lower;
+			Loop;
+		Select:
+			CHGG A 1 A_Raise;
+			Loop;
+		Fire:
+			CHGG AB 4 A_FireCGun;
+			CHGG B 0 A_ReFire;
+			Goto Ready;
+		Flash:
+			CHGF A 5 Bright A_Light1;
+			Goto LightDone;
+			CHGF B 5 Bright A_Light2;
+			Goto LightDone;
+		Spawn:
+			MGUN A -1;
+			Stop;
+	}
+}
+class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
+{
+	Default
+	{
+		Weapon.SelectionOrder 2500;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 2;
+		Weapon.AmmoType "RocketAmmo";
+		+WEAPON.NOAUTOFIRE
+		Inventory.PickupMessage "$GOTLAUNCHER";
+		Tag "$TAG_ROCKETLAUNCHER";
+	}
+	States
+	{
+		Ready:
+			MISG A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			MISG A 1 A_Lower;
+			Loop;
+		Select:
+			MISG A 1 A_Raise;
+			Loop;
+		Fire:
+			MISG B 8 A_GunFlash;
+			MISG B 12 A_FireMissile;
+			MISG B 0 A_ReFire;
+			Goto Ready;
+		Flash:
+			MISF A 3 Bright A_Light1;
+			MISF B 4 Bright;
+			MISF CD 4 Bright A_Light2;
+			Goto LightDone;
+		Spawn:
+			LAUN A -1;
+			Stop;
+	}
+}
+class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
+{
+	Default
+	{
+		Weapon.SelectionOrder 100;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 40;
+		Weapon.AmmoType "Cell";
+		Inventory.PickupMessage "$GOTPLASMA";
+		Tag "$TAG_PLASMARIFLE";
+	}
+	States
+	{
+		Ready:
+			PLSG A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			PLSG A 1 A_Lower;
+			Loop;
+		Select:
+			PLSG A 1 A_Raise;
+			Loop;
+		Fire:
+			PLSG A 3 A_FirePlasma;
+			PLSG B 20 A_ReFire;
+			Goto Ready;
+		Flash:
+			PLSF A 4 Bright A_Light1;
+			Goto LightDone;
+			PLSF B 4 Bright A_Light1;
+			Goto LightDone;
+		Spawn:
+			PLAS A -1;
+			Stop;
+	}
+}
+class BFG9000Marine : MarineWeapon replaces BFG9000
+{
+	Default
+	{
+		Height 20;
+		Weapon.SelectionOrder 2800;
+		Weapon.AmmoUse1 40;
+		Weapon.AmmoUse2 40;
+		Weapon.AmmoGive 40;
+		Weapon.AmmoType1 "Cell";
+		Weapon.AmmoType2 "Cell";
+		+WEAPON.NOAUTOFIRE;
+		Inventory.PickupMessage "$GOTBFG9000";
+		Tag "$TAG_BFG9000";
+	}
+	States
+	{
+		Ready:
+			BFGG A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			BFGG A 1 A_Lower;
+			Loop;
+		Select:
+			BFGG A 1 A_Raise;
+			Loop;
+		Fire:
+			BFGG A 20 A_BFGsound;
+			BFGG B 10 A_GunFlash;
+			BFGG B 10 A_FireBFG;
+			BFGG B 20 A_ReFire;
+			Goto Ready;
+		Flash:
+			BFGF A 11 Bright A_Light1;
+			BFGF B 6 Bright A_Light2;
+			Goto LightDone;
+		Spawn:
+			BFUG A -1;
+			Stop;
+		AltFire:
+			BFGG A 10 A_BFGsound;
+			BFGG BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB 1 A_FireOldBFG;
+			BFGG B 0 A_Light0;
+			BFGG B 20 A_ReFire;
 			Goto Ready;
 	}
 }
