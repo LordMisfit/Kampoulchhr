@@ -10,6 +10,14 @@ class PlayerStatItem : Inventory
 	int MorphTimer;
 	int EvasionRate;
 	double SPDEvadeCheck;
+	int drowndebufflevel, drowndebufftimer;
+	bool drowndebuginit;
+	int drowndebuffmaxtimer, drownmaxtimermod;
+	
+	int actualjumpheight;
+	double actualjumpheight2;
+	int TrueJumpHeight;
+	
 	int CharacterClass;
 	bool cankick;
 	
@@ -20,6 +28,7 @@ class PlayerStatItem : Inventory
 	int ArmorTier;
 	int armsav;
 	int armtier;
+	int armoritemdifficulty;
 	
 	int CompatPackMode;
 	double TimeArmorEnergyTics;
@@ -468,7 +477,7 @@ class PlayerStatItem : Inventory
 				//*********
 				//* JumpZ *
 				//*********
-				//JumpStuff();
+				JumpStuff();
 				
 				//***************************
 				//* Inventory/Weapon Limits *
@@ -1063,6 +1072,261 @@ class PlayerStatItem : Inventory
 				if (SurviveRNGVal <= SurvivalRate) Console.Printf("    \cdSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
 																			else Console.Printf("    \cgSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
 			}
+		}
+	}
+	
+	
+	void JumpStuff()
+	{
+		name armorclasstype = "KCArmor";
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		if (!owner.CountInv("INTERMAPChecker"))
+		{
+			double CharacterJumpZ = 8.25;
+			if (IsMorphed == 1) 
+			{
+				CharacterJumpZ *= 0.334;
+			}
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Character Base]: %.8f", CharacterJumpZ);
+
+			// Level
+			double LevelJumpZ = 1.00;
+			double baseval = 0.004375;
+			baseval *= kc_pjumpfactor;
+			if (kc_expgains) 
+			{
+				if (IsMorphed == 1)
+				{
+					LevelJumpZ += (ActualLevel * (baseval * 0.334));
+				}
+				else
+				{
+					LevelJumpZ += (ActualLevel * baseval);
+				}
+				LevelJumpZ *= (1.0 + (NumOfAfasDrops * 0.015625));
+				if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Level]: %.8f", LevelJumpZ);
+			}
+			
+			// Speed
+			double SpeedJumpZ = 1.00;
+			baseval = 0.004375;
+			baseval *= kc_pjumpfactor;
+			if (kc_expgains && kc_extraatkdefspd) 
+			{
+				if (IsMorphed == 1)
+				{
+					SpeedJumpZ += (TruePlayerSPD * (baseval * 0.334));
+				}
+				else
+				{
+					SpeedJumpZ += (TruePlayerSPD * baseval);
+				}
+				SpeedJumpZ *= (1.0 + (NumOfAfasDrops * 0.015625));
+				if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Speed]: %.8f", SpeedJumpZ);
+			}
+			
+			double HealthJumpZ = 1.0;
+			if (CurrentHealth >= (MaxHealthTrue * 3)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.5;
+				if (skill == 1) HealthJumpZ *= 1.375;
+				if (skill == 2) HealthJumpZ *= 1.25;
+				if (skill == 3) HealthJumpZ *= 1.125;
+				if (skill >= 4) HealthJumpZ *= 1.0625;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 2.75))
+			{
+				if (skill <= 0) HealthJumpZ *= 1.4375;
+				if (skill == 1) HealthJumpZ *= 1.328125;
+				if (skill == 2) HealthJumpZ *= 1.21875;
+				if (skill == 3) HealthJumpZ *= 1.109375;
+				if (skill >= 4) HealthJumpZ *= 1.0546875;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 2.5)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.375;
+				if (skill == 1) HealthJumpZ *= 1.28125;
+				if (skill == 2) HealthJumpZ *= 1.1875;
+				if (skill == 3) HealthJumpZ *= 1.09375;
+				if (skill >= 4) HealthJumpZ *= 1.046875;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 2.25)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.3125;
+				if (skill == 1) HealthJumpZ *= 1.234375;
+				if (skill == 2) HealthJumpZ *= 1.15625;
+				if (skill == 3) HealthJumpZ *= 1.078125;
+				if (skill >= 4) HealthJumpZ *= 1.0390625;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 2.0)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.25;
+				if (skill == 1) HealthJumpZ *= 1.1875;
+				if (skill == 2) HealthJumpZ *= 1.125;
+				if (skill == 3) HealthJumpZ *= 1.0625;
+				if (skill >= 4) HealthJumpZ *= 1.03125;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 1.75)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.1875;
+				if (skill == 1) HealthJumpZ *= 1.140625;
+				if (skill == 2) HealthJumpZ *= 1.09375;
+				if (skill == 3) HealthJumpZ *= 1.046875;
+				if (skill >= 4) HealthJumpZ *= 1.0234375;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 1.5)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.125;
+				if (skill == 1) HealthJumpZ *= 1.09375;
+				if (skill == 2) HealthJumpZ *= 1.0625;
+				if (skill == 3) HealthJumpZ *= 1.03125;
+				if (skill >= 4) HealthJumpZ *= 1.015625;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 1.25)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 1.09375;
+				if (skill == 1) HealthJumpZ *= 1.0625;
+				if (skill == 2) HealthJumpZ *= 1.03125; 
+				if (skill == 3) HealthJumpZ *= 1.015625;
+				if (skill >= 4) HealthJumpZ *= 1.0078125;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 0.75)) 
+			{
+				HealthJumpZ *= 1.00;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 0.5)) 
+			{
+				if (skill <= 0) HealthJumpZ *= 0.984375;
+				if (skill == 1) HealthJumpZ *= 0.96875;
+				if (skill == 2) HealthJumpZ *= 0.9375;
+				if (skill == 3) HealthJumpZ *= 0.90625;
+				if (skill >= 4) HealthJumpZ *= 0.875;
+			}
+			else if (CurrentHealth >= (MaxHealthTrue * 0.25))
+			{
+				if (skill <= 0) HealthJumpZ *= 0.96875;
+				if (skill == 1) HealthJumpZ *= 0.9375;
+				if (skill == 2) HealthJumpZ *= 0.875;
+				if (skill == 3) HealthJumpZ *= 0.8125;
+				if (skill >= 4) HealthJumpZ *= 0.75;
+			}
+			else if (CurrentHealth > 1)
+			{
+				if (skill <= 0) HealthJumpZ *= 0.9375;
+				if (skill == 1) HealthJumpZ *= 0.875;
+				if (skill == 2) HealthJumpZ *= 0.75;
+				if (skill == 3) HealthJumpZ *= 0.625;
+				if (skill >= 4) HealthJumpZ *= 0.5;
+			}
+			else if (CurrentHealth == 1)
+			{
+				if (skill <= 0) HealthJumpZ *= 0.46875;
+				if (skill == 1) HealthJumpZ *= 0.4375;
+				if (skill == 2) HealthJumpZ *= 0.375;
+				if (skill == 3) HealthJumpZ *= 0.3125;
+				if (skill >= 4) HealthJumpZ *= 0.25;
+			}
+			else if (CurrentHealth <= 0)
+			{
+				HealthJumpZ *= 0.0;
+			}
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Health]: %.8f", HealthJumpZ);
+
+			// Buffs
+			double BuffJumpZ = 1.00;
+			if (Owner.CountInv("PowerHaste")) BuffJumpZ *= 1.25;
+			if (Owner.CountInv("PowerSlow")) BuffJumpZ *= 0.834;
+			if (berserked) BuffJumpZ *= 1.334;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Buffs]: %.8f", BuffJumpZ);
+
+			// Armor
+			double ArmorJumpZ = 1.00;
+			double armordiffmod = 1.00;
+			if (armoritemdifficulty == 1) armordiffmod = 2.0;
+			if (armoritemdifficulty == 2) armordiffmod = 2.5;
+			if (armoritemdifficulty >= 3) armordiffmod = 5.0;
+			int ArmorAmt = owner.CountInv(armorclasstype);
+			double ArmorEnc = 0.00;
+			ArmorEnc *= kc_armorencumbrance;
+			if (owner.waterlevel >= 3) 
+			{
+				ArmorEnc *= 1.25;
+			}
+			double lvlfact = 0.02;
+			if (skill <= 0) lvlfact = 0.04;
+			if (skill == 1) lvlfact = 0.035;
+			if (skill == 2) lvlfact = 0.03;
+			if (skill == 3) lvlfact = 0.025;
+			if (skill >= 4) lvlfact = 0.02;
+			if (owner.waterlevel >= 3) 
+			{
+				lvlfact *= 0.75;
+			}
+			if (ArmorEnc > 0.0) ArmorEnc *= (1.0 - (ActualLevel * lvlfact));
+			ArmorJumpZ -= ArmorEnc;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Armor]: %.8f, ArmorEnc: %.8f, kc_armorencumbrance: %.8f", ArmorJumpZ, ArmorEnc, kc_armorencumbrance);
+
+			// Special
+			double SpecialJumpZ = 1.00;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [SpecialItems]: %.8f", SpecialJumpZ);
+
+			// Weapon Checks
+			weapon = owner.player.ReadyWeapon;
+			double WeaponJumpZ = 1.00;
+			double WeaponJumpEx = 0.00;
+			/*
+			If (weapon is "EvilWarriorShield")
+			{
+				if (berserked)
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) WeaponJumpEx -= (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+																							else WeaponJumpEx -= (0.05 * (1.0 + (HellWarriorShieldLevel * 0.003125)));
+				}
+				else
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) WeaponJumpEx -= (0.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
+																							else WeaponJumpEx -= (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+				}
+			}
+			*/
+			
+			WeaponJumpEx *= kc_weaponencumbrance;
+			WeaponJumpZ += WeaponJumpEx;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [WeaponEquipped]: %.8f, WeaponJumpEx: %.8f, kc_weaponencumbrance: %.8f", WeaponJumpZ, WeaponJumpEx, kc_weaponencumbrance);
+			
+			double FistBlockJumpZ = 1.00;
+			if (Owner.CountInv("FistPlayerSpeedFactor")) FistBlockJumpZ = 0.75;
+			if (Owner.CountInv("FistPlayerSpeedFactor2")) FistBlockJumpZ = 0.825;
+			if (Owner.CountInv("FistPlayerSpeedFactor3")) FistBlockJumpZ = 0.90;
+			if (Owner.CountInv("FistPlayerSpeedFactor4")) FistBlockJumpZ = 0.975;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Fist-Blocking]: %.8f", FistBlockJumpZ);
+			
+			// Drowning Debuff
+			double DrownDebuffJumpZ = 1.00;
+			if (drowndebufflevel) DrownDebuffJumpZ = 1.00 - (drowndebufflevel * frandompick(0.06,0.075,0.09));
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [DrownDebuff]: %.8f", DrownDebuffJumpZ);
+			
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [jmpfct]: %.8f", jmpfct);
+			
+			double TotalJumpZ = CharacterJumpZ
+												* LevelJumpZ
+												* SpeedJumpZ
+												* HealthJumpZ
+												* BuffJumpZ
+												* ArmorJumpZ
+												* WeaponJumpZ
+												* SpecialJumpZ
+												* FistBlockJumpZ
+												* DrownDebuffJumpZ
+												* jmpfct;
+
+			PlayerPawn(Owner).JumpZ = TotalJumpZ;
+			actualjumpheight = ((TotalJumpZ * 35 / TICRATE) * 18);
+			actualjumpheight2 = (((TotalJumpZ*2)**2)/2+owner.maxstepheight)/((TotalJumpZ**2)/2+owner.maxstepheight);
+			TrueJumpHeight = ((TotalJumpZ * (TotalJumpZ + 1.0)) / 2) + owner.maxstepheight;
+			if (kcdebug_jumpingcalcs) Console.Printf("TotalJumpZ: %.8f [\c[gold]actualjumpheight: %d\c- / \c[fire]actualjumpheight2: %d\c-x / \c[blue]TrueJumpHeight: %d\c-] (CharacterJumpZ: %.8f, LevelJumpZ: %.8f, SpeedJumpZ: %.8f, HealthJumpZ: %.8f, BuffJumpZ: %.8f, ArmorJumpZ: %.8f, SpecialJumpZ: %.8f, WeaponJumpZ: %.8f, jmpfct: %.8f), owner.maxstepheight: %d, NumOfAfasDrops: %d, \c[red]TICRATE: %d\c-", TotalJumpZ, actualjumpheight, actualjumpheight2, TrueJumpHeight, CharacterJumpZ, LevelJumpZ, SpeedJumpZ, HealthJumpZ, BuffJumpZ, ArmorJumpZ, SpecialJumpZ, WeaponJumpZ, jmpfct, owner.maxstepheight, NumOfAfasDrops, TICRATE);
 		}
 	}
 	
