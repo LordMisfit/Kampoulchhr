@@ -412,7 +412,7 @@ class KCPlayer : KCPlayerPawn
 		Player.StartItem "PlayerDashJump";
 		Player.WeaponSlot 1, "FistMarine", "ChainsawMarine";
 		Player.WeaponSlot 2, "PistolMarine";
-		Player.WeaponSlot 3, "ShotgunMarine", "SSGMarine";
+		Player.WeaponSlot 3, "ShotgunMarine", "SuperShotgunMarine";
 		Player.WeaponSlot 4, "ChaingunMarine", "TommyGun";
 		Player.WeaponSlot 5, "RocketLauncherMarine", "Devastator";
 		Player.WeaponSlot 6, "PlasmaRifleMarine";
@@ -486,6 +486,11 @@ class KCPlayer : KCPlayerPawn
 
 class HeiwaPlayer : KCPlayerPawn
 {
+	default
+	{
+		Player.WeaponSlot 4, "TommyGun";
+		Player.WeaponSlot 5, "Devastator";
+	}
 }
 
 class EVP_Footsteps : Actor

@@ -170,14 +170,14 @@ mixin class DmgCalc
 		String nm, nn, no, np;
 
 		// Character Check [base damage]
-		damage = random(6,12);
-		if (altfire == 1) damage *= 6.64;
+		damage = random(18,24);
+		if (altfire == 1) damage = random(126,148);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
 
 		// [STRIFE] Stamina Upgrades
 		int stamdamagefactor = player.Stamina;
 		previousdamage = damage;
-		damage = floor(damage * (1.00 + (stamdamagefactor * 0.375)));
+		damage = floor(damage * (1.00 + (stamdamagefactor * 0.5)));
 		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
 
 		previousdamage = damage;
@@ -187,13 +187,13 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,192) <= (191 - (TruePlayerLevel * 0.01875)))
 			{
-				if (altfire == 0) adddmg = randompick(1,1,1,2,2);
-				if (altfire == 1) adddmg = randompick(4,5,6,7,8);
+				if (altfire == 0) adddmg = randompick(2,2,3);
+				if (altfire == 1) adddmg = randompick(8,10,10);
 			}
 			else
 			{
-				if (altfire == 0) adddmg = randompick(2,3,3,4,4);
-				if (altfire == 1) adddmg = randompick(7,8,9,10,11);
+				if (altfire == 0) adddmg = randompick(4,5,6);
+				if (altfire == 1) adddmg = randompick(14,16,18);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;
@@ -261,13 +261,13 @@ mixin class DmgCalc
 		double previousdamage;
 		int strengthcounter;
 
-		damage = random(19,42);
+		damage = random(45,60);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f", damage);
 
 		// [STRIFE] Stamina Upgrades
 		int stamdamagefactor = player.Stamina;
 		previousdamage = damage;
-		damage = floor(damage * (1.00 + (stamdamagefactor * 0.375)));
+		damage = floor(damage * (1.00 + (stamdamagefactor * 0.5625)));
 		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
 
 		// Strength Stat Check [7 pts = roughly double the character's base punch damage]
@@ -278,11 +278,11 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,128) <= (127 - (TruePlayerLevel * 0.025)))
 			{
-				adddmg = randompick(2,2,2,3,3,4);
+				adddmg = randompick(3,5,8);
 			}
 			else
 			{
-				adddmg = randompick(5,6,7,9,10,11);
+				adddmg = randompick(6,8,10);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;
