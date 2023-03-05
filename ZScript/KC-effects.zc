@@ -2172,3 +2172,28 @@ class PowerSlow : PowerSpeed
 
 class UsingMeleeWeapon : PlaceholderItem { } // Checks to see if your current selected weapon is "Melee Class" [for HUD displays]
 class UsingMeleeAttack : PlaceholderItem { }
+
+class GiveTempMortalSurvive : PlaceHolderItem 
+{
+	int times;
+	default
+	{
+		Inventory.MaxAmount 1;
+	}
+	
+	override void Tick()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		super.Tick();
+
+		if (owner && owner == player && MiscItem)
+		{
+			int maxtimes = 4;
+			if (skill <= 1) maxtimes = 5;
+			if (skill >= 3) maxtimes = 3;
+			if (times >= maxtimes) Destroy();
+		}
+		else Destroy();
+	}
+}
