@@ -104,6 +104,77 @@ player/airjump	NINJJUMP
 $pitchshift player/dash 0
 $pitchshift player/airjump 0
 
+fistswingheavy11	DQPNSW11
+fistswingheavy12	DQPNSW12
+fistswingheavy13	DQPNSW13
+fistswingheavy14	DQPNSW14
+fistswingheavy21	DQPNSW21
+fistswingheavy22	DQPNSW22
+fistswingheavy23	DQPNSW23
+fistswingheavy24	DQPNSW24
+
+$random fistswingheavy1 { fistswingheavy11 fistswingheavy12 fistswingheavy13 fistswingheavy14 }
+$random fistswingheavy2 { fistswingheavy21 fistswingheavy22 fistswingheavy23 fistswingheavy24 }
+$random fistswingheavy0 { fistswingheavy1 fistswingheavy2 }
+
+fistswingmedium11	DQPNSW31
+fistswingmedium12	DQPNSW32
+fistswingmedium13	DQPNSW33
+fistswingmedium14	DQPNSW34
+fistswingmedium21	DQPNSW41
+fistswingmedium22	DQPNSW42
+fistswingmedium23	DQPNSW43
+fistswingmedium24	DQPNSW44
+
+$random fistswingmedium1 { fistswingmedium11 fistswingmedium12 fistswingmedium13 fistswingmedium14 }
+$random fistswingmedium2 { fistswingmedium21 fistswingmedium22 fistswingmedium23 fistswingmedium24 }
+$random fistswingmedium0 { fistswingmedium1 fistswingmedium2 }
+
+fistswinglight11	DQPNSW51
+fistswinglight12	DQPNSW52
+fistswinglight13	DQPNSW53
+fistswinglight14	DQPNSW54
+fistswinglight21	DQPNSW61
+fistswinglight22	DQPNSW62
+fistswinglight23	DQPNSW63
+fistswinglight24	DQPNSW64
+
+$random fistswinglight1 { fistswinglight11 fistswinglight12 fistswinglight13 fistswinglight14 }
+$random fistswinglight2 { fistswinglight21 fistswinglight22 fistswinglight23 fistswinglight24 }
+$random fistswinglight0 { fistswinglight1 fistswinglight2 }
+
+fistswing		    DSFISTGO
+fistswingheavy	DSFISTG1
+fistswingmedium	DSFISTG2
+fistswinglight	DSFISTG3
+$pitchshift fistswing 0
+$pitchshift fistswingheavy 0
+$pitchshift fistswingmedium 0
+$pitchshift fistswinglight 0
+
+fisthitberserk	DSFISTH2
+$pitchshift fisthitberserk 0
+
+FistHitWall		DSFISTW1
+fisthitberserkwall	DSFISTW2
+$pitchshift FistHitWall 0
+$pitchshift fisthitberserkwall 0
+
+$limit Fistswing 0
+$limit Fistswingheavy 0
+$limit Fistswingheavy1 0
+$limit Fistswingheavy2 0
+$limit Fistswingmedium 0
+$limit Fistswingmedium1 0
+$limit Fistswingmedium2 0
+$limit Fistswinglight 0
+$limit Fistswinglight1 0
+$limit Fistswinglight2 0
+$limit FistHit 0
+$limit FistHitWall 0
+$limit fisthitberserk 0
+$limit fisthitberserkwall 0
+
 // Weakness/Resistance Hit Sounds
 misc/WeaknessHit MELEE-WH
 misc/WeaknessHitMid MELEE-MH

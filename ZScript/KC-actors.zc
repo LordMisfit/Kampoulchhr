@@ -1,6 +1,6 @@
 class KampoulchhrBase : Actor
 {
-	//mixin DmgCalc;
+	mixin DmgCalc;
 	mixin CollisionChecker;
 	//mixin InvWeaponShare;
 	
@@ -88,6 +88,61 @@ class KCCreature : KampoulchhrBase
 	//
 	//
 	//
+	int A_CheckMeleeDestroyProj(int type = 0)
+	{
+		int TruePlayerLevel = CountInv("MonsterLevel");
+
+		int debugmelee = kcdebug_meleeinformation;
+		int MeleeDestroyProjectiles = 0;
+		double MaxCheck = 16;
+		double checkvalfactor = frandom(0.075,0.125);
+		checkvalfactor *= 0.5;
+		if (type == 0) // Punch
+		{
+			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
+			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
+			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			checkvalfactor *= 0.5;
+		}
+		if (type == 1) // Uppercut
+		{
+			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
+			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
+			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			checkvalfactor *= 0.875;
+		}
+		if (type == 2) // Kick
+		{
+			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
+			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
+			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			checkvalfactor *= frandompick(0.875,1,1.125);
+		}
+		checkvalfactor *= 1.5;
+		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) checkvalfactor *= frandompick(3,3.5,3.5,4.0,4.0,4.0,4.375,4.375,4.375,4.375,4.375,4.75,4.75,4.75,5.125,5.125,5.5);
+		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.666675 - (((TruePlayerLevel+1) * checkvalfactor) * 6));
+																														 else MaxCheck = (4 - ((TruePlayerLevel+1) * checkvalfactor));
+
+		if (MaxCheck <= 0.01) MaxCheck = 0.01;
+		double randomroll = frandom(0.1,MaxCheck);
+		if (randomroll <= 1.0) MeleeDestroyProjectiles = 1;
+		if (debugmelee) Console.Printf("\c[green]MeleeDestroyProjectiles [actors]:\c- type: %d, RandomRoll / MaxCheck: %.4f / %.4f, MeleeDestroyProjectiles: %d, checkvalfactor: %.4f (\c[gold]%.4f\c-)", type, randomroll, MaxCheck, MeleeDestroyProjectiles, checkvalfactor, (checkvalfactor * (TruePlayerLevel+1)));
+
+		return MeleeDestroyProjectiles;
+	}
+
+	// Used to Create Multiple "Shields" for Punches/Melee
+	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0)
+	{
+		A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+	}
+	
 }
 
 class PlayerWhistle : KampoulchhrBase
@@ -325,6 +380,136 @@ class PracticeTarget2 : KCCreature
 		Death:
 			TNT1 A -1 A_SpawnItemEx("PracticeTarget2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
 			Stop;
+	}
+}
+
+
+// Melee Hitsparks
+class MeleeHitSpark1 : KCPuff
+{
+	default
+	{
+		Scale 0.375;
+		VSpeed 0;
+		RenderStyle "Translucent";
+		+NOINTERACTION 
+		+SPECTRAL
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay 
+			{
+				A_HitSparkGetSize();
+				A_HitSparkGetSize2();
+			}
+		Finish:
+			TNT1 A 0 
+			{
+				A_HitSparkResize();
+			}
+			HTS1 AABBCC 1 BRIGHT 
+			{
+				A_Fadeout(alpha/12); 
+			}
+			stop;
+	}
+}
+
+class MeleeHitSpark2 : MeleeHitSpark1
+{ 
+	default
+	{
+		Scale 0.375;
+		VSpeed 0;
+		RenderStyle "Translucent";
+		+NOINTERACTION 
+		+SPECTRAL
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay 
+			{
+				A_HitSparkGetSize();
+				A_HitSparkGetSize2();
+			}
+		Finish:
+			TNT1 A 0 
+			{
+				A_HitSparkResize(); 
+			}
+			HTS2 AABBCCDD 1 BRIGHT 
+			{
+				A_Fadeout(alpha/12); 
+			}
+			stop;
+	}
+}
+
+class MeleeHitSpark3 : MeleeHitSpark1
+{ 
+	default
+	{
+		Scale 0.375;
+		VSpeed 0;
+		RenderStyle "Translucent";
+		+NOINTERACTION 
+		+SPECTRAL
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay 
+			{
+				A_HitSparkGetSize();
+				A_HitSparkGetSize2();
+			}
+		Finish:
+			TNT1 A 0 
+			{
+				A_HitSparkResize();
+			}
+			HTS3 AABBCCDD 1 BRIGHT 
+			{
+				A_Fadeout(alpha/12); 
+			}
+			stop;
+	}
+}
+
+class MeleeHitSpark4 : MeleeHitSpark1
+{
+	default
+	{
+		Scale 0.375;
+		VSpeed 0;
+		RenderStyle "Translucent";
+		+NOINTERACTION 
+		+SPECTRAL
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay 
+			{
+				A_HitSparkGetSize();
+				A_HitSparkGetSize2();
+			}
+		Finish:
+			TNT1 A 0 
+			{
+				A_HitSparkResize();
+			}
+			HTS4 AABBCCDD 1 BRIGHT 
+			{
+				A_Fadeout(alpha/12); 
+			}
+			stop;
 	}
 }
 

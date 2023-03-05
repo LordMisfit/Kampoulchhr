@@ -151,7 +151,7 @@ class CustomInventoryExt : CustomInventory
 		}
 	}
 	
-	action void A_GiveBerserk(int basetime, bool bswitch = false, string type = "PowerStrength")
+	action void A_GiveBerserk(int basetime, bool bswitch = false, string type = "KCPowerStrength")
 	{
 		actor player = players[0].mo;
 		if (!player.CountInv(type))
@@ -168,7 +168,7 @@ class CustomInventoryExt : CustomInventory
 
 		if (kc_berserkweaponswitch && bswitch)
 		{
-			if (player.CountInv("Fist")) { player.A_SelectWeapon("Fist"); } 
+			if (player.CountInv("FistMarine")) { player.A_SelectWeapon("FistMarine"); } 
 		}
 	}
 }

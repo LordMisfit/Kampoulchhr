@@ -124,6 +124,219 @@ mixin class StunItems
 	}
 }
 
+mixin class DmgCalc
+{
+	action int A_GetPlayerLvl(int type = 0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) 
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl - DmgCalc mixin)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+
+	action int A_GetPunchDamage(int altfire = 0, int shockwave = 0, bool istarget = false)
+	{
+		Weapon weapon;
+		if (istarget && target) weapon = target.player.ReadyWeapon;
+		else weapon = player.ReadyWeapon;
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int PlayerLevel;
+		int TruePlayerLevel = A_GetPlayerLvl(1);
+		if (MiscItem) 
+		{
+			PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			PlayerLevel = TruePlayerLevel;
+		}
+		
+		string weaponname;
+		weaponname = weapon.GetClassName();
+		string actorname = GetClassName();
+		double damage;
+		double previousdamage;
+		int strengthcounter;
+		String nm, nn, no, np;
+
+		// Character Check [base damage]
+		damage = random(6,12);
+		if (altfire == 1) damage *= 6.64;
+		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
+
+		// [STRIFE] Stamina Upgrades
+		int stamdamagefactor = player.Stamina;
+		previousdamage = damage;
+		damage = floor(damage * (1.00 + (stamdamagefactor * 0.375)));
+		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
+
+		previousdamage = damage;
+		for (strengthcounter = 0; strengthcounter < PlayerATK; strengthcounter++)
+		{
+			double adddmg;
+			int rngroll;
+			if (random(1,192) <= (191 - (TruePlayerLevel * 0.01875)))
+			{
+				if (altfire == 0) adddmg = randompick(1,1,1,2,2);
+				if (altfire == 1) adddmg = randompick(4,5,6,7,8);
+			}
+			else
+			{
+				if (altfire == 0) adddmg = randompick(2,3,3,4,4);
+				if (altfire == 1) adddmg = randompick(7,8,9,10,11);
+				rngroll = 1;
+			}
+			adddmg *= kc_strmeleescale;
+			if (kcdebug_meleedmg) Console.Printf("kc_strmeleescale: %.8f", kc_strmeleescale);
+			double mindmg = (1.0 * kc_strmeleescale);
+			if (adddmg < mindmg) adddmg = mindmg;
+			damage += adddmg;
+			if (kcdebug_meleedmg) Console.Printf("\c[fire]strengthcounter %d / %d [Punch/Uppercut (type: %d)]: %.8f (rngroll: %d)\c-", strengthcounter+1, PlayerATK, altfire, adddmg, rngroll);
+		}
+		if (kcdebug_meleedmg) Console.Printf("\c[fire]StrDmg: %.8f\c- - (Strength: %d) - (Previous Dmg: %.8f)", damage, PlayerATK, previousdamage);
+
+		// Berserk Check
+		previousdamage = damage;
+		if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) damage = floor(damage * 10);
+		if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f) [%s, %s]", damage, previousdamage, weaponname, actorname);
+
+		double PerkFactor;
+		double temp1, temp2;
+		previousdamage = damage;
+		if (shockwave)
+		{
+			if (altfire == 0) damage = floor(damage * (0.04166667 * randompick(1,1,2,2,2,2,2,3)));
+			if (altfire == 1) damage = floor(damage * (0.05 * randompick(1,1,2,2,2,2,2,3)));
+			if (kcdebug_meleedmg) Console.Printf("MeleeDmg [Shockwave]: (\c[green]%s\c-) %.8f - (Previous Dmg: %.8f)", weaponname, damage, previousdamage);
+		}
+		
+		previousdamage = damage;
+		if (kcdebug_meleedmg && altfire == 0) Console.Printf("MeleeDmgAltCheck: (\c[green]%s\c-) %.8f - (Previous Dmg: %.8f) [Punch]", weaponname, damage, previousdamage);
+		if (kcdebug_meleedmg && altfire == 1) Console.Printf("MeleeDmgAltCheck: (\c[green]%s\c-) %.8f - (Previous Dmg: %.8f) [Uppercut]", weaponname, damage, previousdamage);
+		
+		if (istarget)
+		{
+			if (kcdebug_meleedmg && altfire == 0) Console.Printf("\cyFinalMeleeDmg: (Weapon: \c[green]%s\c- - Puff: \c[darkgreen]%s\c-) %.8f\c- - \cx(Previous Dmg: %.8f) [Punch]\c-", weaponname, actorname, damage, previousdamage);
+			if (kcdebug_meleedmg && altfire == 1) Console.Printf("\cyFinalMeleeDmg: (Weapon: \c[green]%s\c- - Puff: \c[darkgreen]%s\c-) %.8f\c- - \cx(Previous Dmg: %.8f) [Uppercut]\c-", weaponname, actorname, damage, previousdamage);
+		}
+		else
+		{
+			if (kcdebug_meleedmg && altfire == 0) Console.Printf("\cyFinalMeleeDmg: (Weapon: \c[green]%s\c- - Source: \c[darkgreen]%s\c-) %.8f\c- - \cx(Previous Dmg: %.8f) [Punch]\c-", weaponname, actorname, damage, previousdamage);
+			if (kcdebug_meleedmg && altfire == 1) Console.Printf("\cyFinalMeleeDmg: (Weapon: \c[green]%s\c- - Source: \c[darkgreen]%s\c-) %.8f\c- - \cx(Previous Dmg: %.8f) [Uppercut]\c-", weaponname, actorname, damage, previousdamage);
+		}
+		
+		return int(damage);
+	}
+	
+	action int A_GetKickDamage(int altfire = 0, int shockwave = 0, bool istarget = false)
+	{
+		Weapon weapon;
+		if (istarget && target) weapon = target.player.ReadyWeapon;
+		else weapon = player.ReadyWeapon;
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int PlayerLevel;
+		int TruePlayerLevel = A_GetPlayerLvl(1);
+		if (MiscItem) 
+		{
+			PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			PlayerLevel = TruePlayerLevel;
+		}
+
+		string weaponname = weapon.GetClassName();
+		string actorname = GetClassName();
+		double damage;
+		double previousdamage;
+		int strengthcounter;
+
+		damage = random(19,42);
+		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f", damage);
+
+		// [STRIFE] Stamina Upgrades
+		int stamdamagefactor = player.Stamina;
+		previousdamage = damage;
+		damage = floor(damage * (1.00 + (stamdamagefactor * 0.375)));
+		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
+
+		// Strength Stat Check [7 pts = roughly double the character's base punch damage]
+		previousdamage = damage;
+		for (strengthcounter = 0; strengthcounter < PlayerATK; strengthcounter++)
+		{
+			double adddmg;
+			int rngroll;
+			if (random(1,128) <= (127 - (TruePlayerLevel * 0.025)))
+			{
+				adddmg = randompick(2,2,2,3,3,4);
+			}
+			else
+			{
+				adddmg = randompick(5,6,7,9,10,11);
+				rngroll = 1;
+			}
+			adddmg *= kc_strmeleescale;
+			if (kcdebug_meleedmg) Console.Printf("kc_strmeleescale: %.8f", kc_strmeleescale);
+			double mindmg = (1.0 * kc_strmeleescale);
+			if (adddmg < mindmg) adddmg = mindmg;
+			damage += adddmg;
+			if (kcdebug_meleedmg) Console.Printf("\c[fire]strengthcounter %d / %d [Kick]: %.8f (rngroll: %d)\c-", strengthcounter+1, PlayerATK, adddmg, rngroll);
+		}
+		if (kcdebug_meleedmg) Console.Printf("\c[fire]StrDmg: %.8f\c- - (Strength: %d) - (Previous Dmg: %.8f)", damage, PlayerATK, previousdamage);
+
+		// Reduce Check
+		previousdamage = damage;
+		if (altfire == 0) damage = floor(damage * (1.00 + (0.05 * random(-4,4))));
+		if (altfire == 1) damage = floor(damage * (1.00 + (0.075 * random(-4,4))));
+		if (kcdebug_meleedmg) Console.Printf("ReduceDmg: %.8f - (Previous Dmg: %.8f)", damage, previousdamage);
+
+		// Berserk Check
+		previousdamage = damage;
+		if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) damage = floor(damage * 10);
+		if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f)", damage, previousdamage);
+
+		double PerkFactor;
+		double temp1, temp2;
+
+		previousdamage = damage;
+		if (shockwave)
+		{
+			if (altfire == 0) damage = floor(damage * (0.04166667 * randompick(1,2,2,2,2,2,3)));
+			if (altfire == 1) damage = floor(damage * (0.05 * randompick(1,2,2,2,2,2,3)));
+			if (kcdebug_meleedmg) Console.Printf("MeleeDmg [Shockwave]: (%s) %.8f - (Previous Dmg: %.8f (Shockwave)", weaponname, damage, previousdamage);
+		}
+
+		previousdamage = damage;
+		if (altfire == 0) damage = floor(damage * 1.0);
+		if (altfire == 1) damage = floor(damage * 0.25);
+		if (kcdebug_meleedmg && altfire == 0) Console.Printf("MeleeDmgAltCheck: (%s) %.8f - (Previous Dmg: %.8f) [Kick]", weaponname, damage, previousdamage);
+		if (kcdebug_meleedmg && altfire == 1) Console.Printf("MeleeDmgAltCheck: (%s) %.8f - (Previous Dmg: %.8f) [Roundhouse Kick]", weaponname, damage, previousdamage);
+
+		if (istarget)
+		{
+			if (kcdebug_meleedmg && altfire == 0) Console.Printf("\cyFinalMeleeDmg: (Weapon: %s - Puff: %s) %.8f\c- - \cx(Previous Dmg: %.8f) [Kick]\c-", weaponname, actorname, damage, previousdamage);
+			if (kcdebug_meleedmg && altfire == 1) Console.Printf("\cyFinalMeleeDmg: (Weapon: %s - Puff: %s) %.8f\c- - \cx(Previous Dmg: %.8f) [Roundhouse Kick]\c-", weaponname, actorname, damage, previousdamage);
+		}
+		else
+		{
+			if (kcdebug_meleedmg && altfire == 0) Console.Printf("\cyFinalMeleeDmg: (Weapon: %s - Source: %s) %.8f\c- - \cx(Previous Dmg: %.8f) [Kick]\c-", weaponname, actorname, damage, previousdamage);
+			if (kcdebug_meleedmg && altfire == 1) Console.Printf("\cyFinalMeleeDmg: (Weapon: %s - Source: %s) %.8f\c- - \cx(Previous Dmg: %.8f) [Roundhouse Kick]\c-", weaponname, actorname, damage, previousdamage);
+		}
+		
+		return int(damage);
+	}
+}
+
 mixin class MonsterCollider
 {
 	int targetdummyhitcooldown;
