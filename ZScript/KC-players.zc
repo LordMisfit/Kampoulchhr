@@ -501,7 +501,7 @@ class KCPlayerPawn : PlayerPawn
 					}
 					combatlogmsg.AppendFormat(" [%s]", mod);
 					if (flags & DMG_EXPLOSION) combatlogmsg.AppendFormat(" \c[brick][AOE]\c-");
-					if (dydudebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);
+					if (kcdebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);
 					Console.Printf(combatlogmsg);
 				}
 				if (kcdebug_playerdamagemobj) Console.Printf("Evasion - no damage");
@@ -1023,9 +1023,40 @@ class KCPlayerPawn : PlayerPawn
 				isinvuln = true;
 			}
 		}
-		//
-		//
-		//
+		
+		if (kcdebug_playerdamagemobj)
+		{
+			olddmg = damage;
+			int projdam;
+			double endmgmultS = 1.0;
+			double endmgmultI = 1.0;
+			if (source) endmgmultS = source.DamageMultiply;
+			if (!source && inflictor) endmgmultI = inflictor.DamageMultiply;
+			projdam = damage * endmgmultS * endmgmultI;
+			Console.Printf("Projected Dmg: %d vs (%d), Source's DamageMultiply: %.8f, Inflictor's DamageMultiply: %.8f", projdam, olddmg, endmgmultS, endmgmultI);
+		}
+		
+		olddmg = damage;
+		damage *= kc_pdmgtakenfactor;
+		if (kcdebug_playerdamagemobj) Console.Printf("PDamage [Damage Cheat]: %d [%d]", damage, olddmg);
+		
+		if (kcdebug_playerdamagemobj) Console.Printf("PDamage [Final] - Final Damage: %d", damage);
+		
+		if (kcdebug_playerdamagemobj && armoramt) Console.Printf("Armor Amount: %d", armoramt);
+		DmgSource = source;
+		DmgInflictor = inflictor;
+		DmgFlags = flags;
+		mobjdmg = damage;
+		if (kcdebug_playerdamagemobj) Console.Printf("damage [pre-ssa]: %d", damage);
+		if (mod != 'SigilDrain') 
+		{
+			if (!flags & DMG_NO_SARMOR)
+			{
+				double ssa = 1.00;
+				damage = int(damage * ssa);
+				if (kcdebug_playerdamagemobj) Console.Printf("damage [post-ssa]: %d, ssa: %.8f", damage, ssa);
+			}
+		}
 		
 		//***************************
 		//* Time Seraph Armor Stuff *
@@ -1056,11 +1087,6 @@ class KCPlayerPawn : PlayerPawn
 				}
 			}
 		}
-
-		DmgSource = source;
-		DmgInflictor = inflictor;
-		DmgFlags = flags;
-		mobjdmg = damage;
 		
 		if (mod == 'Slime' || mod == 'Lava' || mod == 'Magma' || mod == 'IceWater') tookflrdmg = true;
 		if (mod == 'IceWater') mod = 'Ice';
@@ -1260,7 +1286,7 @@ class KCPlayerPawn : PlayerPawn
 					combatlogmsg.AppendFormat("  armor bypass)\c-");
 				}
 				if (flags & DMG_EXPLOSION) combatlogmsg.AppendFormat(" \c[brick][AOE]\c-");
-				if (dydudebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);
+				if (kcdebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);
 				Console.Printf(combatlogmsg);
 			}
 		}
@@ -1305,7 +1331,7 @@ class KCPlayerPawn : PlayerPawn
 			if (player.damagecount < 0) player.damagecount = 0;
 			player.damagecount += damagetakefactor;
 			if (player.damagecount > 100) player.damagecount = 100;
-			if (dydudebug_countdisplays) Console.Printf("player.damagecount: %d, damagetakefactor: %d, dmg: %d / %d", player.damagecount, damagetakefactor, ret, MiscItem.MaxHealthTrue);
+			if (kcdebug_countdisplays) Console.Printf("player.damagecount: %d, damagetakefactor: %d, dmg: %d / %d", player.damagecount, damagetakefactor, ret, MiscItem.MaxHealthTrue);
 		}
 		
 		if (armdmg && armortier)

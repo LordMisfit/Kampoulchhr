@@ -550,7 +550,7 @@ class KCProjectile : KampoulchhrBase
 		// Non-passive means the one moving into the other is performing the checks.
 		if (!passive)
 		{
-			if (dydudebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("\c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
+			if (kcdebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("\c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
 			
 			// if fired by a player actor, check for friendliness from the passive actor
 			if (playpawn) 
@@ -975,14 +975,14 @@ class KCEffectFastProjectile : KCFastProjectile
 	
 	int A_StatusEffectChecker(int basechance)
 	{
-		if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile [\c[green]%s\c[orange])", GetClassName());
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile [\c[green]%s\c[orange])", GetClassName());
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 
 		user_ailmentmaxchance = basechance;
 		if (master && master == player)
 		{
-			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
 			if (player.CountInv("EWShieldIdleMode") > 0) 
 			{
 				if (player.CountInv("EWShieldDefendMode") > 0)
@@ -990,18 +990,18 @@ class KCEffectFastProjectile : KCFastProjectile
 					if (player.CountInv("EWShieldDefendModeExtra") > 0) 
 					{
 						user_ailmentmaxchance *= 20;
-						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
 					}
 					else 
 					{
 						user_ailmentmaxchance *= 12;
-						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
 					}
 				}
 				else
 				{
 					user_ailmentmaxchance *= 4;
-					if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
+					if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
 				}
 			}
 		}
@@ -1009,38 +1009,38 @@ class KCEffectFastProjectile : KCFastProjectile
 		user_canafflict = 1;
 		if (master)
 		{
-			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Check");
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Check");
 			if (master.health <= 0) 
 			{
 				user_canafflict = 0;
-				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
 			}
 
 			if (master.CountInv("EvadeAnAttack") > 0 || 
 					master.CountInv("PlayerDashing") > 0) 
 					{
 						user_canafflict = 0;
-						if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
 					}
 		}
 
 		KCPlayerPawn playpawn;
 		if (master)
 		{
-			if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check");
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check");
 			playpawn = KCPlayerPawn(master);
 			if (playpawn)
 			{
 				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
-				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
 			}
 			else
 			{
 				if (master.bINVULNERABLE) user_canafflict = 0;
-				if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
 			}
 		}
-		if (dydudebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
 		return user_ailmentmaxchance;
 	}
 }
@@ -3685,7 +3685,7 @@ class HeiwaWeapon : KCWeaponBase
 				double recoil = frandompick(-0.125,-0.075,-0.025,0.025,0.075,0.125);
 				if (A_CheckBerserk()) BerserkAdd = randompick(1,1,1,1,2,2,2,2,3); else BerserkAdd = 0;
 				recoil = recoil * (random(7,17) + BerserkAdd);
-				if (dydudebug_weaponrecoil) Console.Printf("\cxRecoil [Base]: %.8f", recoil);
+				if (kcdebug_weaponrecoil) Console.Printf("\cxRecoil [Base]: %.8f", recoil);
 				
 				double reclbase = 0.0234375;
 				double output = 1.0;

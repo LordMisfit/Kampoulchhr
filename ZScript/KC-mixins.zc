@@ -548,7 +548,7 @@ mixin class InvWeaponShare
 		let bo = Spawn(missile, pos + (0, 0, (-Floorclip + GetBobOffset() + zheight + zheightoffset + (player? player.crouchoffset : 0.))), ALLOW_REPLACE);
 		if (bo)
 		{
-			if (dydudebug_attackfuncinfo) Console.Printf("bo [spawned]");
+			if (kcdebug_attackfuncinfo) Console.Printf("bo [spawned]");
 			self.PlaySpawnSound(bo);
 			if (xyvel != 0)
 				bo.Speed = xyvel;
@@ -580,10 +580,10 @@ mixin class InvWeaponShare
 			bo.target = self;
 			if (checkspawn) 
 			{
-				if (dydudebug_attackfuncinfo) Console.Printf("bo: checkspawn: %d", checkspawn);
+				if (kcdebug_attackfuncinfo) Console.Printf("bo: checkspawn: %d", checkspawn);
 				if (!bo.CheckMissileSpawn(radius))
 				{
-					if (dydudebug_attackfuncinfo) Console.Printf("bo: null");
+					if (kcdebug_attackfuncinfo) Console.Printf("bo: null");
 					bo = null;
 				}
 			}
