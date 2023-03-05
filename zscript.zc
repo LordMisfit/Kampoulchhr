@@ -10,6 +10,24 @@ class UIKeybinds
 	}
 }
 
+enum ECheckSolidFootingFlags
+{
+	CSF_SOLIDGROUND = 1,
+	CSF_SOLIDACTORS = 2,
+	
+	CSF_ALL = CSF_SOLIDGROUND|CSF_SOLIDACTORS,
+}
+
+enum DMObj
+{
+	DMG_NO_DODGE = 8192,
+	DMG_CANTKILL = 16384,
+	DMG_NODASHAVOID = 32768,
+	DMG_IGNOREDEF = 65536,
+	DMG_NO_SARMOR = 131072,
+	DMG_FIXEDDMG = 262144,
+}
+
 // An global variables thinker [attempting to get around ACS use for certain things >.>]
 class KCGlobalVariables : Thinker
 {
@@ -89,3 +107,10 @@ class KCGlobalVariables : Thinker
 #include "zscript/KC-statusbars.zc"
 #include "zscript/KC-weapons.zc"
 #include "zscript/KC-tilt.zc"
+
+/*
+// Aetherius to KC steps
+~dvds_expgains~ -> ~kc_expgains~
+// EE to KC steps
+~exex_expenabled~ -> ~kc_expgains~
+*/

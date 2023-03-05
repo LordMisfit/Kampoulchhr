@@ -1,3 +1,11 @@
+OptionValue "dmgdiffdebug"
+{
+	0, "Off [DEFAULT]"
+	1, "On [only #]"
+	2, "On [# and %]"
+	3, "On [only %]"
+}
+
 OptionValue "YesNo_DefaultYes"
 {
 	0, "No"
@@ -58,6 +66,8 @@ OptionMenu "KC-DebugMenuMain"
 	KCOption "Player Survival Calculation",		"i.e. 'Last Chance Hit Point' or 'Guts', or the chance of surviving with 1 HP left. This shows the debug info behind calculations.",		"kcdebug_survivalrate",			"OnOff_DefaultOff"
 	KCOption "Player Jump Calculations",		"Shows background information in calculating Player Jump strength/height",		"kcdebug_jumpingcalcs",			"OnOff_DefaultOff"
 	KCOption "Player Mass/Balance Calculations",		"Shows the calculation of mass/balance for the player.",		"kcdebug_masscalcs",				"OnOff_DefaultOff"
+	KCOption "Damage Difference Displays",		"Shows the difference in damage taken versus base damage input.",		"kcdebug_dmgdiffdebug",				"dmgdiffdebug"
+	KCOption "MapInfo Displays",		"Shows a printout of various map-related information.",		"kcdebug_mapinfo",				"OnOff_DefaultOff"
 }
 
 OptionMenu "KCOptions"

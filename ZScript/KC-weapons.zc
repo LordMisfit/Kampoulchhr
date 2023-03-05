@@ -5240,8 +5240,13 @@ class Devastator : MarineWeapon
 	States
 	{
 		Spawn:
-			DVST A -1;
+			DVGG A 4
+			{
+				A_SpawnItemEx("DevastatorGenerator",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+				A_Destroy();
+			}
 			Loop;
+		
 		Ready:
 			DEVG A 0
 			{
@@ -5722,7 +5727,7 @@ class DevastatorGenerator : CustomInventory
 		Scale 0.75;
 		Inventory.MaxAmount 2;
 		Inventory.PickupSound "misc/w_pkup";
-		Inventory.PickupMessage "You got a Devastator!";
+		Inventory.PickupMessage "You got a c\[orange]Devastator Weapon!";
 	}
 	
 	States
