@@ -50,15 +50,24 @@ class CompatVulnItem : PlaceholderItem
 				if (FoundPlayer && MiscItem && MiscItem.timestopactivetics > 0) 
 				{
 					double factor1 = frandompick(0.2,0.25);
+					double factor2 = frandompick(0.6,0.75);
 					if (MiscItem.timestoptype == 1)
 					{
 						TOTALFactor *= factor1;
+						if (damageType == 'Bullet' || 
+								damageType == 'Pellet' ||
+								damageType == 'Ripsaw' ||
+								damageType == 'SawShot') TOTALFactor *= factor2;
 						owner.A_StopSound(14);
 						owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
 					}
 					if (MiscItem.timestoptype == 2) 
 					{
 						TOTALFactor /= factor1;
+						if (damageType == 'Bullet' || 
+								damageType == 'Pellet' ||
+								damageType == 'Ripsaw' ||
+								damageType == 'SawShot') TOTALFactor /= factor2;
 						owner.A_StopSound(14);
 						owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
 					}

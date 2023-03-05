@@ -1351,7 +1351,10 @@ class KCStatusBarMain : BaseStatusBar
 		
 		x += wsspace;
 		// Slot 2
-		weaponsincurslot = 1;
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
 		wsname = "PistolMarine";
 		wsammoname = "Clip";
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -1369,6 +1372,28 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "Glock21";
+		wsammoname = "Clip";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 2;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
+
 		x += wsspace;
 		
 		// Slot 3
@@ -1549,13 +1574,10 @@ class KCStatusBarMain : BaseStatusBar
 			wsscale = wsscaledefault;
 		}
 		
-		/*
-		baseinc = 2;
-		x -= baseinc;
-		y -= baseinc;
 		x += wsspace;
+		/*
 		// Slot 8
-		weaponsincurslot = 2;
+		weaponsincurslot = 1;
 		wsname = "SigilDD";
 		wsammoname = "";
 		//ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -1573,54 +1595,10 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
-		x += (baseinc * 2);
-		y += (baseinc * 2);
-		wsname = "CandleWhip";
-		wsammoname = "CandleAmmo";
-		ammotype = CPlayerPawn.FindInventory(wsammoname);
-		if (CPlayerPawn.CountInv(wsname))
-		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
-			
-			wsnum = 8;
-			if (wsweapon is wsname)
-			{
-				wsalpha = wsalphadefault2;
-				wsscale = wsscaledefault2;
-			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
-			wsalpha = wsalphadefault;
-			wsscale = wsscaledefault;
-		}
-		x -= baseinc;
-		y -= baseinc;
-
-		baseinc = 2;
-		x -= baseinc;
-		y -= baseinc;
+		*/ 
 		x += wsspace;
 		// Slot 9
-		weaponsincurslot = 2;
-		wsname = "CrazyBallDD";
-		wsammoname = "CzBall";
-		ammotype = CPlayerPawn.FindInventory(wsammoname);
-		if (CPlayerPawn.CountInv(wsname))
-		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
-			
-			wsnum = 9;
-			if (wsweapon is wsname)
-			{
-				wsalpha = wsalphadefault2;
-				wsscale = wsscaledefault2;
-			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
-			wsalpha = wsalphadefault;
-			wsscale = wsscaledefault;
-		}
-
-		x += (baseinc * 2);
-		y += (baseinc * 2);
+		weaponsincurslot = 1;
 		wsname = "EvilWarriorShield";
 		wsammoname = "PikeAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -1638,22 +1616,13 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
-		x -= baseinc;
-		y -= baseinc;
 
 		x += wsspace;
 		wsname = "";
 		// Slot 0
 		weaponsincurslot = 1;
-		if (MiscItem.CompatPackMode & 256) weaponsincurslot = 2;
-		if (weaponsincurslot > 1)
-		{
-			baseinc = 2;
-			x -= baseinc;
-			y -= baseinc;
-		}
-		wsname = "FosnianCandle";
-		wsammoname = "FCandleAmmo";
+		wsname = "SawThrower";
+		wsammoname = "Saws";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
 		{
@@ -1669,54 +1638,6 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
-		if (weaponsincurslot > 1)
-		{
-			x += (baseinc * 2);
-			y += (baseinc * 2);
-			if (MiscItem.CompatPackMode & 256)
-			{
-				wsname = "ScepterOfSouls";
-				wsammoname = "PikeAmmo";
-			}
-			ammotype = CPlayerPawn.FindInventory(wsammoname);
-			if (CPlayerPawn.CountInv(wsname))
-			{
-				[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
-				
-				wsnum = 0;
-				if (wsweapon is wsname)
-				{
-					wsalpha = wsalphadefault2;
-					wsscale = wsscaledefault2;
-				}
-				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
-				wsalpha = wsalphadefault;
-				wsscale = wsscaledefault;
-			}
-			if (MiscItem.CompatPackMode & 256)
-			{
-				wsname = "DualScepterOfSouls";
-				wsammoname = "PikeAmmo";
-			}
-			ammotype = CPlayerPawn.FindInventory(wsammoname);
-			if (CPlayerPawn.CountInv(wsname))
-			{
-				[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
-				
-				wsnum = 0;
-				if (wsweapon is wsname)
-				{
-					wsalpha = wsalphadefault2;
-					wsscale = wsscaledefault2;
-				}
-				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x+1, y+1), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
-				wsalpha = wsalphadefault;
-				wsscale = wsscaledefault;
-			}
-			x -= baseinc;
-			y -= baseinc;
-		}
-		*/
 		return x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname;
 	}
 	

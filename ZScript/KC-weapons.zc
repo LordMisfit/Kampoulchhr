@@ -2170,7 +2170,8 @@ class KCWeaponBase : Weapon
 		return null, null;
 	}
 	
-	action Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
+	//action Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
+	action void A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
 	{
 		actor misl1, misl2, misl3, misl4, misl5, misl6, misl7;
 		actor realmisl1, realmisl2, realmisl3, realmisl4, realmisl5, realmisl6, realmisl7;
@@ -2234,7 +2235,7 @@ class KCWeaponBase : Weapon
 			if (misl7) Console.Printf("\c[yellow](A_FireProjectile)\c- misl7: %p [%s]", misl7, misl7.GetClassName());
 			if (realmisl7) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl7: %p [%s]", realmisl7, realmisl7.GetClassName());
 		}
-		return misl1, realmisl1, misl2, realmisl2, misl3, realmisl3, misl4, realmisl4, misl5, realmisl5, misl6, realmisl6, misl7, realmisl7;
+		//return misl1, realmisl1, misl2, realmisl2, misl3, realmisl3, misl4, realmisl4, misl5, realmisl5, misl6, realmisl6, misl7, realmisl7;
 	}
 	
 	action void A_CustomPunchEx(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
@@ -2864,6 +2865,161 @@ class KCWeaponBase : Weapon
 				A_Recoil(recoil);
 			}
 		}
+	}
+	
+	protected action void GunShot(bool accurate, Class<Actor> pufftype, double pitch)
+	{
+		int damage = 5 * random[GunShot](1, 3);
+		double ang = angle;
+
+		if (!accurate)
+		{
+			ang += Random2[GunShot]() * ((5.625 * 0.5) / 256);
+
+			if (GetCVar("vertspread") && !sv_novertspread)
+			{
+				pitch += Random2[GunShot]() * ((3.549 * 0.5) / 256);
+			}
+		}
+		
+		LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Hitscan', pufftype);
+	}
+	
+	action void A_FirePistol()
+	{
+		bool accurate;
+
+		if (player != null)
+		{
+			Weapon weap = player.ReadyWeapon;
+			if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+			{
+				if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+					return;
+
+				player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+			}
+			player.mo.PlayAttacking2 ();
+
+			accurate = !player.refire;
+		}
+		else
+		{
+			accurate = true;
+		}
+
+		A_StartSound ("weapons/pistol", CHAN_WEAPON);
+		GunShot(accurate, "BulletPuff", BulletSlope());
+	}
+	
+	action void A_FireShotgun()
+	{
+		if (player == null)
+		{
+			return;
+		}
+
+		A_StartSound ("weapons/shotgf", CHAN_WEAPON);
+		Weapon weap = player.ReadyWeapon;
+		if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+				return;
+			
+			player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+		}
+		player.mo.PlayAttacking2 ();
+		
+		double pitch = BulletSlope ();
+		
+		for (int i = 0; i < 7; i++)
+		{
+			GunShot (false, "BulletPuff", pitch);
+		}
+	}
+	
+	action void A_FireShotgun2()
+	{
+		if (player == null)
+		{
+			return;
+		}
+
+		A_StartSound ("weapons/sshotf", CHAN_WEAPON);
+		Weapon weap = player.ReadyWeapon;
+		if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weap.DepleteAmmo (weap.bAltFire, true, 2))
+				return;
+			
+			player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+		}
+		player.mo.PlayAttacking2 ();
+
+		double pitch = BulletSlope ();
+			
+		for (int i = 0 ; i < 20 ; i++)
+		{
+			int damage = 5 * random[FireSG2](1, 3);
+			double ang = angle + Random2[FireSG2]() * (11.25 / 256);
+			
+			// Doom adjusts the bullet slope by shifting a random number [-255,255]
+			// left 5 places. At 2048 units away, this means the vertical position
+			// of the shot can deviate as much as 255 units from nominal. So using
+			// some simple trigonometry, that means the vertical angle of the shot
+			// can deviate by as many as ~7.097 degrees.
+			
+			LineAttack (ang, PLAYERMISSILERANGE, pitch + Random2[FireSG2]() * (7.097 / 256), damage, 'Hitscan', "BulletPuff");
+		}
+	}
+	
+	action void A_OpenShotgun2() 
+	{ 
+		A_StartSound("weapons/sshoto", CHAN_WEAPON); 
+	}
+	
+	action void A_LoadShotgun2() 
+	{ 
+		A_StartSound("weapons/sshotl", CHAN_WEAPON); 
+	}
+	
+	action void A_CloseShotgun2() 
+	{ 
+		A_StartSound("weapons/sshotc", CHAN_WEAPON);
+		A_Refire();
+	}
+	
+	action void A_FireCGun()
+	{
+		if (player == null)
+		{
+			return;
+		}
+
+		Weapon weap = player.ReadyWeapon;
+		if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+				return;
+
+			A_StartSound ("weapons/chngun", CHAN_WEAPON);
+
+			State flash = weap.FindState('Flash');
+			if (flash != null)
+			{
+				// Removed most of the mess that was here in the C++ code because SetSafeFlash already does some thorough validation.
+				State atk = weap.FindState('Fire');
+				let psp = player.GetPSprite(PSP_WEAPON);
+				if (psp) 
+				{
+					State cur = psp.CurState;
+					int theflash = atk == cur? 0:1;
+					player.SetSafeFlash(weap, flash, theflash);
+				}
+			}
+		}
+		player.mo.PlayAttacking2 ();
+		GunShot (!player.refire, "BulletPuff", BulletSlope ());
 	}
 	
 	States
@@ -4004,10 +4160,10 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 			SAWG CD 4 A_WeaponReady;
 			Loop;
 		Deselect:
-			SAWG C 1 A_Lower;
+			SAWG C 1 A_Lower(12);
 			Loop;
 		Select:
-			SAWG C 1 A_Raise;
+			SAWG C 1 A_Raise(12);
 			Loop;
 		Fire:
 			SAWG AB 4 A_Saw;
@@ -4031,31 +4187,28 @@ class PistolMarine : MarineWeapon replaces Pistol
 		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
 		Tag "$TAG_PISTOL";
 	}
+	
 	States
 	{
+		Spawn:
+			2PIS E -1;
+			Loop;
 		Ready:
-			PISG A 1 A_WeaponReady();
+			2PIS A 1 A_WeaponReady();
 			Loop;
 		Deselect:
-			PISG A 1 A_Lower;
+			2PIS D 1 A_Lower(12);
 			Loop;
 		Select:
-			PISG A 1 A_Raise;
+			2PIS F 1 A_Raise(12);
 			Loop;
 		Fire:
-			PISG A 4;
-			PISG B 6 A_FirePistol;
-			PISG C 4;
-			PISG B 5 A_ReFire;
+			2PIS A 1;
+			2PIS B 4 bright A_FirePistol();
+			2PIS C 4;
+			2PIS F 4;
+			2PIS D 4 A_ReFire();
 			Goto Ready;
-		Flash:
-			PISF A 7 Bright A_Light1;
-			Goto LightDone;
-			PISF A 7 Bright A_Light1;
-			Goto LightDone;
-		Spawn:
-			PIST A -1;
-			Stop;
 	}
 }
 class ShotgunMarine : MarineWeapon replaces Shotgun
@@ -4070,16 +4223,17 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
 	}
+	
 	States
 	{
 		Ready:
 			SHTG A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			SHTG A 1 A_Lower;
+			SHTG A 1 A_Lower(12);
 			Loop;
 		Select:
-			SHTG A 1 A_Raise;
+			SHTG A 1 A_Raise(12);
 			Loop;
 		Fire:
 			SHTG A 3;
@@ -4117,10 +4271,10 @@ class SuperShotgunMarine : MarineWeapon replaces SuperShotgun
 			SHT2 A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			SHT2 A 1 A_Lower;
+			SHT2 A 1 A_Lower(12);
 			Loop;
 		Select:
-			SHT2 A 1 A_Raise;
+			SHT2 A 1 A_Raise(12);
 			Loop;
 		Fire:
 			SHT2 A 3;
@@ -4165,10 +4319,10 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 			CHGG A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			CHGG A 1 A_Lower;
+			CHGG A 1 A_Lower(12);
 			Loop;
 		Select:
-			CHGG A 1 A_Raise;
+			CHGG A 1 A_Raise(12);
 			Loop;
 		Fire:
 			CHGG AB 4 A_FireCGun;
@@ -4202,10 +4356,10 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 			MISG A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			MISG A 1 A_Lower;
+			MISG A 1 A_Lower(12);
 			Loop;
 		Select:
-			MISG A 1 A_Raise;
+			MISG A 1 A_Raise(12);
 			Loop;
 		Fire:
 			MISG B 8 A_GunFlash;
@@ -4239,10 +4393,10 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 			PLSG A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			PLSG A 1 A_Lower;
+			PLSG A 1 A_Lower(12);
 			Loop;
 		Select:
-			PLSG A 1 A_Raise;
+			PLSG A 1 A_Raise(12);
 			Loop;
 		Fire:
 			PLSG A 3 A_FirePlasma;
@@ -4279,10 +4433,10 @@ class BFG9000Marine : MarineWeapon replaces BFG9000
 			BFGG A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			BFGG A 1 A_Lower;
+			BFGG A 1 A_Lower(12);
 			Loop;
 		Select:
-			BFGG A 1 A_Raise;
+			BFGG A 1 A_Raise(12);
 			Loop;
 		Fire:
 			BFGG A 20 A_BFGsound;
@@ -4306,6 +4460,66 @@ class BFG9000Marine : MarineWeapon replaces BFG9000
 	}
 }
 
+// Glock
+class Glock21 : MarineWeapon
+{
+	default
+	{
+		Inventory.PickupSound "misc/w_pkup";
+		Inventory.PickupMessage "You got the Glock 21!";
+		Obituary "%o was capped by %k's Glock.";
+		Weapon.AmmoType "Clip";
+		Weapon.AmmoGive 20;
+		Weapon.AmmoUse 1;
+		Weapon.SlotNumber 2;
+		Weapon.Kickback 75;
+		Weapon.UpSound "weapons/glockup";
+		AttackSound "weapons/glockfire";
+		Scale 0.5;
+	}
+	
+	States
+	{
+		Spawn:
+			LIBG X -1;
+			Stop;
+		Ready:
+			LIBG A 1 A_WeaponReady(WRF_ALLOWRELOAD);
+			Loop;
+		Deselect:
+			LIBG A 1 A_Lower(12);
+			Loop;
+		Select:
+			LIBG A 1 A_Raise(12);
+			Loop;
+		Fire:
+			LIBF A 0 A_GunFlash;
+			LIBF A 0 A_FireBullets(2,3,1,7,"BulletPuff",1);
+			LIBF A 1 BRIGHT;
+			LIBG DCBA 1;
+			LIBG A 4;
+			LIBF A 0 A_CheckforReload(12,"Ready");
+			Goto DryFire;
+		DryFire:
+			LIBG A 12 A_StartSound("weapons/glockdry");
+			Goto Reload+1;
+		Reload:
+			TNT1 A 0 A_CheckforReload(1,"Ready",true);
+			LIBG A 1 A_StartSound("weapons/glockout");
+			LIBM AB 1;
+			LIBR ABC 2;
+			LIBR D 0 A_StartSound("weapons/glockin");
+			LIBR D 2 A_ResetReloadCounter;
+			LIBR EF 1;
+			LIBG A 3;
+			Goto Ready;
+		Flash:
+			TNT1 A 2 A_Light2;
+			TNT1 A 1 A_Light1;
+			TNT1 A 0 A_Light0;
+			Stop;
+	}
+}
 // ***************
 // ** TOMMY GUN **
 // ***************
@@ -5354,5 +5568,217 @@ class DevRockTrail : Actor
 		Spawn:
 			PDBA VWXYZ 1 A_FadeOut(0.1);
 			wait;
+	}
+}
+
+// ***************
+// * SAW THROWER *
+// ***************
+class SawThrower : MarineWeapon
+{
+	default
+	{
+		Weapon.SelectionOrder 120;
+		Inventory.PickupSound "weapons/slot7weapon2";
+		Inventory.PickupMessage "You got the Saw Thrower!";
+		Obituary "%o was gutted by %k's saw.";
+		AttackSound "weapons/throwsawcut";
+		Weapon.AmmoType1 "Saws";
+		Weapon.AmmoType2 "Saws";
+		Weapon.AmmoGive 6;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 1;
+		Scale 0.9;
+	}
+	
+	States
+	{
+		Spawn:
+			THRS A -1;
+			Stop;
+		Ready:
+			TSWG G 0 A_JumpIfInventory("Saws",1,2);
+			TSWG G 1 A_WeaponReady();
+			Goto Ready+1;
+			TSWG A 1 A_WeaponReady();
+			Goto Ready+2;
+		Deselect:
+			TSWG G 0 A_JumpIfInventory("Saws",1,2);
+			TSWG G 1 A_Lower(12);
+			Goto Deselect+1;
+			TSWG A 1 A_Lower(12);
+			Goto Deselect+2;
+		Select:
+			TSWG G 0 A_JumpIfInventory("Saws",1,2);
+			TSWG G 1 A_Raise(12);
+			Goto Select+1;
+			TSWG A 1 A_Raise(12);
+			Goto Select+2;
+		Fire:
+			TSWG D 0 A_StartSound("weapons/throwsawlaunch",CHAN_WEAPON);
+			TSWG D 0 A_Recoil(1.5);
+			TSWG D 4 { A_FireProjectile("SawShot",0.0,true,0.0,0.0,FPF_NOAUTOAIM,0.0); }
+			TSWG D 5 A_Recoil(-1.5);
+			TSWG D 0 A_JumpIfNoAmmo(5);
+			TSWG E 4;
+			TSWG F 3;
+			TSWG A 3;
+			TSWG A 0 A_ReFire;
+			Goto Ready;
+			TSWG G 7;
+			TSWG G 0 A_CheckReload;
+			Goto Ready+2;
+		AltFire:
+			TSWG A 0 A_JumpIfNoAmmo(7);
+			TSWG A 8 A_StartSound("weapons/throwsawup",CHAN_WEAPON);
+			TSWG B 6;
+			TSWG C 3;
+			TSWG BB 1 A_CustomPunch(1,0,0,"BulletPuff",48);
+			TSWG C 0 A_ReFire;
+			Goto AltHold+6;
+			TSWG G 7;
+			TSWG G 0 A_CheckReload;
+			Goto Ready+2;
+		AltHold:
+			TSWG B 0 A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+			TSWG BB 1 A_CustomPunch(2,0,0,"BulletPuff",48);
+			TSWG CC 1 A_CustomPunch(2,0,0,"BulletPuff",48);
+			TSWG C 0 A_ReFire;
+			TSWG B 0 A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+			TSWG CBC 2;
+			TSWG BCB 3;
+			TSWG CB 4;
+			TSWG C 6;
+			TSWG A 9;
+			Goto Ready;
+	}
+}
+
+class SawPuff : BulletPuff
+{
+	default
+	{
+		DamageType "Ripsaw";
+	}
+}
+
+class SawShot : KCProjectile
+{
+	default
+	{
+		Radius 4;
+		Height 2;
+		Speed 32;
+		Scale 0.3;
+		DamageFunction (6 * random(3,6));
+		+NOGRAVITY;
+		+DROPOFF;
+		+MISSILE;
+		+ACTIVATEIMPACT;
+		+ACTIVATEPCROSS;
+		+SEEKERMISSILE;
+		+RIPPER;
+		+EXTREMEDEATH;
+		+NOEXPLODEFLOOR;
+		+THRUGHOST;
+		ExplosionDamage 16;
+		ExplosionRadius 8;
+		DeathSound "weapons/throwsawhit";
+		DamageType "SawShot";
+	}
+	
+	void A_SawRip()
+	{
+		A_SeekerMissile(90,90);
+		A_Explode(16,8,0,true,4,0,0,"","Sawshot");
+	}
+	
+	States
+	{
+		Spawn:
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS A 0 A_Gravity();
+		SpawnFall:
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			Loop;
+		Crash:
+			SAWE A 1 { bRIPPER = false; }
+		Death:
+			SAWE A 1 A_Gravity;
+			SAWE A 128 A_SpawnProjectile("SawSmoke",0,0,180,2);
+			SAWE B 96;
+			SAWE C 64;
+			SAWE DEF 48;
+			SAWE F 32;
+			SAWE G 16;
+			Stop;
+	}
+}
+
+class SawSmoke : KampoulchhrBase
+{
+	default
+	{
+		Height 1;
+		Radius 1;
+		Speed 1;
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+DROPOFF;
+		+MISSILE;
+		+NOTELEPORT;
+		+THRUGHOST;
+		RenderStyle "Translucent";
+		Alpha 0.15;
+		Scale 0.1;
+	}
+	
+	States
+	{
+		Spawn:
+			CSM2 D 2 Bright;
+		Death:
+			CSM2 EEFFGGHHIIJJKK 1 Bright A_FadeOut(0.01);
+			Stop;
+	}
+}
+
+class Saws : Ammo
+{
+	default
+	{
+		Inventory.Amount 3;
+		Inventory.MaxAmount 50;
+		Ammo.BackpackAmount 3;
+		Ammo.BackpackMaxAmount 100;
+		Inventory.PickupMessage "Picked up some saws.";
+		Inventory.PickupSound "weapons/ammo13";
+		Inventory.Icon "SAWAA0";
+	}
+	
+	States
+	{
+		Spawn:
+			SAWA A -1;
+			Stop;
+	}
+}
+
+class SawBox : Saws
+{
+	default
+	{
+		Inventory.Amount 15;
+		Inventory.PickupMessage "Picked up a box of saws.";
+	}
+	
+	States
+	{
+		Spawn:
+			SAWB A -1;
+			Stop;
 	}
 }
