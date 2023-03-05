@@ -14,6 +14,10 @@ class PlayerStatItem : Inventory
 	bool drowndebuginit;
 	int drowndebuffmaxtimer, drownmaxtimermod;
 	
+	int CritChance;
+	int CritRoll;
+	int MortalBlowCritBoostTimer;
+
 	int actualjumpheight;
 	double actualjumpheight2;
 	int TrueJumpHeight;
@@ -467,12 +471,12 @@ class PlayerStatItem : Inventory
 				//**************************
 				//* Crit Rate Calculations *
 				//**************************
-				//CritRateCalc();
+				CritRateCalc();
 				
 				//********
 				//* Mass *
 				//********
-				//MassStuff();
+				MassStuff();
 				
 				//*********
 				//* JumpZ *
@@ -1005,7 +1009,6 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
-	
 	void SurvivalStuff()
 	{
 		int PerkFactor = 0;
@@ -1075,6 +1078,163 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
+	
+	void CritRateCalc()
+	{
+		weapon = owner.player.ReadyWeapon;
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+
+		owner.A_SetInventory("DealCriticalHit",0);
+		CritChance = 128;
+		if (kc_expgains) CritChance = (128 - (ActualLevel * frandompick(0.03125,0.03125,0.03125,0.03125,0.0625,0.0625,0.0625,0.0625,0.09375,0.09375,0.09375,0.09375,0.125,0.125,0.125,0.125,0.15625,0.1875,0.21875,0.25)));
+		if (CritChance <= 64) CritChance = 64;
+		if (owner.CountInv("PowerDouble")) CritChance *= 0.75;
+		if (owner.CountInv("PowerHalve")) CritChance *= 1.3334;
+		if (owner.CountInv("PlayerDashing")) CritChance *= 0.875;
+		if (CritChance <= 4) CritChance = 4;
+
+		double specitemfactor = 1.00;
+		CritChance *= specitemfactor;
+		if (CritChance <= 3) CritChance = 3;
+		
+		if (MortalBlowCritBoostTimer > 0) CritChance *= 0.125;
+		else
+		{
+			if (owner.CountInv("OverFullHealth3")) CritChance *= 1.25;
+			else if (owner.CountInv("OverFullHealth2")) CritChance *= 1.125;
+			else if (owner.CountInv("OverFullHealth1")) CritChance *= 1.0625;
+			else if (owner.CountInv("NormalHealth")) CritChance *= 1.0;
+			else if (owner.CountInv("DecentHealth")) CritChance *= 0.9375;
+			else if (owner.CountInv("LowHealth")) CritChance *= 0.875;
+			else if (owner.CountInv("CriticalHealth")) CritChance *= 0.75;
+		}
+		if (CritChance <= 1) CritChance = 1;
+		if (CritChance >= 128) CritChance = 128;
+		
+		
+		CritRoll = random(1,CritChance);
+		if (CritRoll <= 1) owner.A_SetInventory("DealCriticalHit",1);
+	}
+	
+	void MassStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		if (!owner.CountInv("INTERMAPChecker"))
+		{
+			TotalMass = 100;
+			BaseMass = TotalMass;
+			double massmulfactor = 0.22223;
+			massmulfactor *= kc_pbalfactor;
+			if (kc_expgains) massmulfactor *= (1.0 + (NumOfAfasDrops * 0.015625));
+			let playerset = KCPlayerPawn(owner);
+			if (playerset) TotalMass = playerset.originalmass;
+			BaseMass = TotalMass;
+			if (kcdebug_masscalcs) Console.Printf("Mass [Base]: %d", TotalMass);
+			
+			int MassBonusAdd2 = MassBonusAdd;
+			int MassLevelAdd2 = MassLevelAdd;
+			MassNoRPGAdd2 = 0;
+			if (!kc_expgains)
+			{
+				if (skill <= 0) MassBonusAdd2 *= 2.0;
+				if (skill == 1) MassBonusAdd2 *= 1.75;
+				if (skill == 2) MassBonusAdd2 *= 1.5;
+				if (skill == 3) MassBonusAdd2 *= 1.25;
+				if (skill >= 4) MassBonusAdd2 *= 1.0;
+			}
+			
+			TotalMass += MassLevelAdd;
+			BaseMass = TotalMass;
+			if (kcdebug_masscalcs) Console.Printf("Mass [Level Add]: %d", TotalMass);
+			
+			TotalMass += MassBonusAdd;
+			BaseMass = TotalMass;
+			if (kcdebug_masscalcs) Console.Printf("Mass [Bonus Add]: %d", TotalMass);
+			
+			if (kc_expgains)
+			{
+				TotalMass += (ActualLevel * massmulfactor);
+				BaseMass = TotalMass;
+				if (kcdebug_masscalcs) Console.Printf("Mass [Level]: %d", TotalMass);
+				
+				if (kc_extraatkdefspd)
+				{
+					TotalMass += (TruePlayerDEF * massmulfactor);
+					BaseMass = TotalMass;
+					if (kcdebug_masscalcs) Console.Printf("Mass [DEF]: %d", TotalMass);
+				}
+			}
+			PreBuffMass = BaseMass;
+			
+			// Buffs
+			if ((owner.bINVULNERABLE || owner.player.cheats & CF_GODMODE2 || owner.player.cheats & CF_GODMODE) || 
+					owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) TotalMass *= 128; 
+			if (berserked) 
+			{
+				if (ActualLevel >= 200) TotalMass *= 1.556;
+				else if (ActualLevel >= 150) TotalMass *= 1.445;
+				else if (ActualLevel >= 100) TotalMass *= 1.334;
+				else if (ActualLevel >= 50) TotalMass *= 1.223;
+				else TotalMass *= 1.112;
+			}
+
+			if (Owner.CountInv("PowerGuard")) TotalMass *= 3;
+			if (Owner.CountInv("PowerWeaken")) TotalMass /= 1.5;
+			
+			// Fist Blocks
+			if ((weapon is "FistMarine") && owner.CountInv("FistPlayerBlockItem"))
+			{
+				if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 2;
+				if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 2.667;
+				if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 4;
+				if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 7.5;
+			}
+			/*
+			If (owner.player.ReadyWeapon is "EvilWarriorShield")
+			{
+				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
+				if (Owner.CountInv("EWShieldDefendMode")) TotalMass *= (3.5 + (HellWarriorShieldLevel * 0.175));
+				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (1.75 + (HellWarriorShieldLevel * 0.0875));
+				if (owner.CountInv("PowerStrength") || owner.CountInv("PowerStrengthDD")) TotalMass *= 2.5;
+			}
+			*/
+			// Armor
+			name armorclasstype = "KCArmor";
+			int ArmorAmt = owner.CountInv(armorclasstype);
+			double MassInc = 0;
+			double MassMulti = 1.0;
+			double Base = 0.016;
+			double BaseMulti = 0.00004;
+			if (armoritemdifficulty == 1)
+			{
+				Base *= 2;
+				BaseMulti *= 2;
+			}
+			if (armoritemdifficulty == 2)
+			{
+				Base *= 2.5;
+				BaseMulti *= 2.5;
+			}
+			if (armoritemdifficulty >= 3)
+			{
+				Base *= 2.5;
+				BaseMulti *= 2.5;
+			}
+			// Armor
+			
+			if (MassInc) TotalMass += MassInc;
+			if (MassMulti != 1.0) TotalMass *= MassMulti;
+			if (kcdebug_masscalcs) Console.Printf("Mass [Armor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
+			
+			if (TotalMass < 1) TotalMass = 1;
+			
+			owner.Mass = TotalMass;
+			if (kcdebug_masscalcs) Console.Printf("    Calculated Mass: %d (Base Mass: %d) [Real Mass: %d]", TotalMass, BaseMass, owner.mass);
+		}
+	}
 	
 	void JumpStuff()
 	{

@@ -993,12 +993,9 @@ class KCStatusBarMain : BaseStatusBar
 		{
 			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
-			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch)) 
-			{
-				hudarmortype = 1;
-				fontclr = font.cr_green;
-			}
-			if (icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
+			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+					icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+					icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
 			{
 				hudarmortype = 1;
 				fontclr = font.cr_green;
