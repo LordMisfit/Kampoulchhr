@@ -615,10 +615,6 @@ mixin class MonsterCollider
 		return ResSucceed;
 	}
 	
-	//
-	//
-	//
-	
 	// Collisions
 	override bool CanCollideWith(Actor other, bool passive)
 	{
@@ -676,7 +672,303 @@ mixin class MonsterCollider
 		return true;
 	}
 	
+	// Damage Tracking
+	int initdmg;
+	double, double, double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, bool wasblastedimpact, bool bellefishzap, bool surprisehit, int angvstype)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvl2(1);
+		int predmginr = damage;
+		// (Partial) Defense Ignoring Attacks
+		double prevDamageFactor;
+		double basedmgfactor = DamageFactor;
+		double ActorDefenseIgnoreFactor = 0.00;
+		if (inflictor == null && source == null) 
+		{
+			// BLASTED Impact Damage
+			if (wasblastedimpact) ActorDefenseIgnoreFactor += (frandom(0.45,0.55) * (1.00 - ActorDefenseIgnoreFactor));
+		}
+		else
+		{
+			double WhistleFactor = 0.75;
+			if (inflictor && PlayerWhistle(inflictor) || source && PlayerWhistle(source)) ActorDefenseIgnoreFactor += (WhistleFactor * (1.00 - ActorDefenseIgnoreFactor));
+			
+			double BarrelFactor = 0.50;
+			if (skill <= 0) BarrelFactor = 1.0;
+			if (skill == 1) BarrelFactor = 0.75;
+			if (skill == 2) BarrelFactor = 0.5;
+			if (skill == 3) BarrelFactor = 0.25;
+			if (skill >= 4) BarrelFactor = 0.0;
+			if ((ExplosiveBarrel(inflictor) || 
+					 ExplosiveBarrel(source) || 
+					 ExplosiveBarrel2(inflictor) || 
+					 ExplosiveBarrel2(source) || 
+					 Pod(inflictor) || 
+					 Pod(source)) && 
+					 flags & DMG_EXPLOSION) ActorDefenseIgnoreFactor += (BarrelFactor * (1.00 - ActorDefenseIgnoreFactor));
+			
+			double RailFactor = frandom(0.3,0.334);
+			if (mod == 'Railgun') ActorDefenseIgnoreFactor += (RailFactor * (1.00 - ActorDefenseIgnoreFactor));
+			
+			/*
+			if (inflictor && 
+					(inflictor.GetClassName() == "SoulScepterPuff" ||
+					 inflictor.GetClassName() == "DualSoulScepterPuff" ||
+					 inflictor.GetClassName() == "SoulScepterPuff2" ||
+					 inflictor.GetClassName() == "SoulScepterPowerPuff" ||
+					 inflictor.GetClassName() == "DualSoulScepterPowerPuff"))
+			{
+				ActorDefenseIgnoreFactor += (0.50 * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			*/
+			
+			double HWShieldFactor = 0.125;
+			/*
+			if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
+					HellWarriorBall2(inflictor) || HellWarriorBall2(source)) ActorDefenseIgnoreFactor += (HWShieldFactor * (1.00 - ActorDefenseIgnoreFactor));
+			*/
+			
+			KCPlayerPawn FoundPlayer;
+			FoundPlayer = KCPlayerPawn(source);
+			if (!FoundPlayer) FoundPlayer = KCPlayerPawn(inflictor);
+			if (FoundPlayer)
+			{
+				//
+				//
+				//
+			}
+			else
+			{
+				KCCreature OtherA;
+				OtherA = KCCreature(source);
+				if (!OtherA) OtherA = KCCreature(inflictor);
+				if (OtherA)
+				{
+					//
+					//
+					//
+				}
+			}
+			
+			if (mod == 'Dashing') ActorDefenseIgnoreFactor += (0.2 * (1.00 - ActorDefenseIgnoreFactor));
+			if (mod == 'DashingSD') ActorDefenseIgnoreFactor += (0.375 * (1.00 - ActorDefenseIgnoreFactor));
+			
+			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
+			
+			if (surprisehit) ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
+			
+			//if (CountInv("PWDefenseBuff") > 0) ActorDefenseIgnoreFactor *= 0.25;
+		}
+
+		return prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
+	}
 	
+	const MTYPE_DEMONIC = 1;
+	const MTYPE_UNDEAD = 2;
+	const MTYPE_ZOMBIE = 2;
+	const MTYPE_HUMANDEMONIC = 3;
+	const MTYPE_HADESSCION = 4;
+	const MTYPE_CREATURE = 5;
+	const MTYPE_INANIMATECREATURE = 6;
+	const MTYPE_INANIMATEDEMONIC = 7;
+	const MTYPE_HUMANPURE = 8;
+	const MTYPE_MECHANICALPURE = 9;
+	const MTYPE_HEAVENLY = 10;
+	const MTYPE_ANGELIC = 10;
+	const MTYPE_AVATARIC = 11;
+	const MTYPE_UNDEADDEMONIC = 12;
+	const MTYPE_CYBORG = 13;
+	const MTYPE_EEEUGH = 42; // Eeeugh? V:
+	int A_CheckTargType(actor input)
+	{
+		int type = 0;
+		/*
+		// Doom-type
+		if (Zombieman(input) || ZombiemanNew(input)) type = 2; // Zombie/Undead
+		//if (PlasmaGuy(input)) type = 2; // Zombie/Undead
+		//if (RepeaterZombie(input)) type = 2; // Zombie/Undead
+		//if (KarasawaGuy(input)) type = 2; // Zombie/Undead
+		//if (RocketLauncherGuy(input)) type = 2; // Zombie/Undead
+		if (ShotgunGuy(input) || ShotgunGuyNew(input)) type = 2; // Zombie/Undead
+		//if (SuperShotgunGuy(input)) type = 2; // Zombie/Undead
+		//if (FemaleRailZombie(input)) type = 2; // Zombie/Undead
+		if (ChaingunGuy(input) || ChaingunGuyNew(input)) type = 2; // Zombie/Undead
+		//if (Minigunner(input)) type = 2; // Zombie/Undead
+		//if (BFGGuy(input)) type = 2; // Zombie/Undead
+		//if (SuicideBomber(input)) type = 2; // Zombie/Undead
+		if (DoomImp(input) || DoomImpNew(input)) type = 1; // Demonic
+		//if (DarkImp(input) || STDarkImp(input) || VoidDarkImp(input) || NetherDarkImp(input)) type = 1; // Demonic
+		if (Demon(input) || DemonNew(input)) type = 1; // Demonic
+		//if (BloodDemon(input)) type = 1; // Demonic
+		if (LostSoul(input) || LostSoulNew(input) || LostSoulAnnoying(input) || BetaLostSoul(input)) type = 1; // Demonic
+		if (Cacodemon(input) || CacodemonNew(input)) type = 1; // Demonic
+		//if (Cacolantern(input)) type = 1; // Demonic
+		//if (Abaddon(input)) type = 1; // Demonic
+		//if (PainElemental(input) || PainElementalNew(input)) type = 1; // Demonic
+		if (Arachnotron(input) || ArachnotronNew(input) || RailArachnotron(input) || FusionArachnotron(input) || ArachnotronMK2(input)) type = 1; // Demonic
+		if (Revenant(input) || RevenantNew(input)) type = 2; // Zombie/Undead
+		//if (DeathIncarnate(input)) type = 2; // Zombie/Undead
+		if (Fatso(input) || MancubusNew(input)) type = 1; // Demonic
+		//if (Hectebus(input)) type = 1; // Demonic
+		//if (Daedabus(input)) type = 1; // Demonic
+		if (HellKnight(input) || HellKnightNew(input)) type = 1; // Demonic
+		if (BaronOfHell(input) || BaronOfHellNew(input)) type = 1; // Demonic
+		//if (Belphegor(input)) type = 1; // Demonic
+		//if (HellWarrior(input)) type = 1; // Demonic
+		//if (BruiserDemon(input)) type = 1; // Demonic
+		//if (Cybruiser(input)) type = 1; // Demonic
+		//if (ArchonOfHell(input)) type = 1; // Demonic
+		//if (PyroDemon(input)) type = 1; // Demonic
+		if (Archvile(input) || ArchvileNew(input)) type = 1; // Demonic
+		//if (Diabloist(input)) type = 1; // Demonic
+		if (Cyberdemon(input) || CyberdemonNew(input) || Annihilator(input)) type = 1; // Demonic
+		if (SpiderMastermind(input) || SpiderMastermindNew(input) || Demolisher(input)) type = 1; // Demonic
+		//if (FlyingBalrog(input) || FlyingBalrogDVDS(input)) type = 1; // Demonic
+		//if (HellCleric(input) || HellClericDVDS(input)) type = 3; // Human/Demon
+		//if (HadesSphere(input)) type = 4; // Hades Scion
+		//if (HSOverlord(input)) type = 4; // Hades Scion
+		//if (HadesElemental(input)) type = 4; // Hades Scion
+		//if (HadesOverlord(input)) type = 4; // Hades Scion
+		// Heretic/Hexen [tbc]
+		if (HereticImp(input) || HereticImpNew(input)) type = 5; // Creature
+		if (HereticImpLeader(input) || HereticImpLeaderNew(input)) type = 5; // Creature
+		if (Mummy(input) || MummyNew(input) || MummyGhost(input) || MummyGhostNew(input)) type = 6; // Inanimate/Creature
+		if (MummyLeader(input) || MummyLeaderNew(input) || MummyLeaderGhost(input) || MummyLeaderGhostNew(input)) type = 6; // Inanimate/Creature
+		if (Knight(input) || KnightNew(input) || KnightGhost(input) || KnightGhostNew(input)) type = 2; // Zombie/Undead
+		if (Wizard(input) || WizardNew(input)) type = 1; // Demonic
+		if (Ironlich(input) || IronlichNew(input)) type = 6; // Inanimate/Creature
+		if (Beast(input) || BeastNew(input)) type = 5; // Creature
+		if (Clink(input) || ClinkNew(input)) type = 5; // Creature
+		if (Minotaur(input) || MaulotaurNew(input) || MaulotaurFriendNew(input)) type = 5; // Creature
+		if (Snake(input) || SnakeNew(input)) type = 5; // Creature
+		if (Sorcerer1(input) || DSparilMountedNew(input)) type = 5; // Creature
+		if (Sorcerer2(input) || DSparilUnmountedNew(input)) type = 1; // Demonic
+		if (FireDemon(input) || FireDemonNew(input)) type = 5; // Creature
+		if (Ettin(input) || EttinNew(input)) type = 5; // Creature
+		if (Centaur(input) || CentaurNew(input)) type = 5; // Creature
+		if (Demon1(input) || Demon2(input) || GreenChaosSerpentNew(input) || BrownChaosSerpentNew(input)) type = 5; // Creature
+		if (Serpent(input) || StalkerNew(input)) type = 5; // Creature
+		if (Dragon(input) || DragonNew(input)) type = 2; // Zombie/Undead
+		if (Wraith(input) || WraithNew(input)) type = 2; // Zombie/Undead
+		if (Korax(input) || KoraxNew(input)) type = 1; // Demonic
+		// Strife [tbc]
+		if (Rebel(input) || RebelNew(input)) type = 8; // Human
+		if (Acolyte(input) || AcolyteNew(input)) type = 13; // Mechanical/Human [Cyborg] Hybrid
+		*/
+		return type;
+	}
+	
+	// Reduces Damage Based on Type infighting
+	int A_TargDmgCalc(int damage, int type)
+	{
+		if (type == 1) damage /= frandompick(2.5,2.75,3.0); // Demonic foes
+		if (type == 2) damage /= frandompick(1.75,1.875,2.0); // Zombie/Undead foes
+		if (type == 3) damage /= frandompick(1.375,1.4375,1.5); // Human/Demon hybrid foes
+		if (type == 4) damage /= frandompick(2.125,2.3125,2.5); // Hades Scion foes
+		if (type == 7) damage /= frandompick(1.75,1.875,2.0); // Inanimate/Demonic-hybrid foes
+		if (type == 12) damage /= frandompick(2.125,2.3125,2.5); // Undead/Demonic-Hybrid foes
+		return damage;
+	}
+	
+	// INCREASES Damage Based on Type infighting [for angel/reaper checks]
+	int A_TargDmgCalcAngVs(int damage, int angvstype)
+	{
+		if (angvstype == 1) damage *= frandompick(2.5,2.75,3.0); // Demonic foes
+		if (angvstype == 2) damage *= frandompick(1.75,1.875,2.0); // Zombie/Undead foes
+		if (angvstype == 3) damage *= frandompick(1.375,1.4375,1.5); // Human/Demon hybrid foes
+		if (angvstype == 4) damage *= frandompick(2.125,2.3125,2.5); // Hades Scion foes
+		if (angvstype == 7) damage *= frandompick(1.75,1.875,2.0); // Inanimate/Demonic-hybrid foes
+		if (angvstype == 12) damage *= frandompick(2.125,2.3125,2.5); // Undead/Demonic-Hybrid foes
+		return damage;
+	}
+	
+	void A_TypeInfightRetargetChance(int type, actor target, actor dmgsource)
+	{
+		if (target && dmgsource)
+		{
+			if (PlayerPawn(target))
+			{
+				if (type == 1 && random(1,100) <= 95) target = dmgsource;
+				if (type == 2 && random(1,100) <= 45) target = dmgsource;
+				if (type == 3 && random(1,100) <= 20) target = dmgsource;
+				if (type == 4 && random(1,100) <= 70) target = dmgsource;
+				if (type == 7 && random(1,100) <= 45) target = dmgsource;
+				if (type == 12 && random(1,100) <= 70) target = dmgsource;
+			}
+			else
+			{
+				if (type == 1 && random(1,100) <= 80) target = dmgsource;
+				if (type == 2 && random(1,100) <= 30) target = dmgsource;
+				if (type == 3 && random(1,100) <= 5) target = dmgsource;
+				if (type == 4 && random(1,100) <= 55) target = dmgsource;
+				if (type == 7 && random(1,100) <= 30) target = dmgsource;
+				if (type == 12 && random(1,100) <= 55) target = dmgsource;
+			}
+		}
+	}
+	
+	void A_TypeInfightRetargetPChance(int angvstype, actor target, actor dmgsource)
+	{
+		if (target && dmgsource)
+		{
+			if (angvstype == 1 && random(1,100) <= 95) target = dmgsource;
+			if (angvstype == 2 && random(1,100) <= 45) target = dmgsource;
+			if (angvstype == 3 && random(1,100) <= 20) target = dmgsource;
+			if (angvstype == 4 && random(1,100) <= 70) target = dmgsource;
+			if (angvstype == 7 && random(1,100) <= 45) target = dmgsource;
+			if (angvstype == 12 && random(1,100) <= 70) target = dmgsource;
+		}
+	}
+	
+	void A_TypeInfightRetargetEChance(int angvstype, actor target, actor dmgsource)
+	{
+		if (target && dmgsource)
+		{
+			if (angvstype == 1 && random(1,100) <= 80) target = dmgsource;
+			if (angvstype == 2 && random(1,100) <= 30) target = dmgsource;
+			if (angvstype == 3 && random(1,100) <= 5) target = dmgsource;
+			if (angvstype == 4 && random(1,100) <= 55) target = dmgsource;
+			if (angvstype == 7 && random(1,100) <= 30) target = dmgsource;
+			if (angvstype == 12 && random(1,100) <= 55) target = dmgsource;
+		}
+	}
+
+	Actor, Actor, int, Name, int, double, int CheckMonType(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		KCPlayerPawn playpawn;
+		playpawn = KCPlayerPawn(source);
+		
+		KCCreature selfKC;
+		selfKC = KCCreature(self);
+		
+		int angvstype;
+		
+		// LOLE Joke Item. Partial thanks to Naka Teleeli for the inspiration. V:
+		if (mod == 'LOLEBowling' && !bFRIENDLY) 
+		{
+			damage = 1872; // 18 * 8 * 13;
+			damage *= 128;
+			if (flags & !DMG_NO_PROTECT) flags |= DMG_NO_PROTECT;
+			if (flags & !DMG_NO_FACTOR) flags |= DMG_NO_FACTOR;
+			if (flags & !DMG_NO_ARMOR) flags |= DMG_NO_ARMOR;
+			if (flags & !DMG_FOILINVUL) flags |= DMG_FOILINVUL;
+			if (flags & !DMG_THRUSTLESS) flags |= DMG_THRUSTLESS;
+		}
+
+		if (selfKC && KCUniqueBoss(selfKC)) 
+		{
+			nm = "PennywiseBoss";
+			string vict = GetClassName();
+			if (vict != nm) damage *= 0.5;
+		}
+		
+		return inflictor, source, damage, mod, flags, angle, angvstype;
+	}
+	
+	//
+	//
+	//
 	override void PostBeginPlay()
 	{
 		actor player = players[0].mo;
