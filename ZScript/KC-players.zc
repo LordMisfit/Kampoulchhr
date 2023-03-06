@@ -225,15 +225,225 @@ class KCPlayerPawn : PlayerPawn
 				}
 				deadtimer = 0;
 			}
-			//
-			//
-			//
+			
+			// Heartbeat [low health]
+			if (kc_playerbpm)
+			{
+				double bmpbasevol = 1.00;
+				double MaxHealthTrue = CountInv("PlayerMaxHP");
+				if (MiscItem && MiscItem.IsMorphed == 1) MaxHealthTrue *= 0.3;
+				if (CountInv("IsUnconscious")) bmpbasevol = frandom(0.25,0.334);
+				if (health > 0)
+				{
+					beattimer++;
+					if (health <= (MaxHealthTrue * 0.01))
+					{
+						if (beattimer >= beatpulse)
+						{
+							A_StopSound(134);
+							A_StartSound("heartb2",134,CHANF_DEFAULT,(frandom(1.0,1.2)*bmpbasevol),ATTN_NORM,frandom(0.9,1.1));
+							beatpulse = hudbeatpulse = random(10,11);
+							beattimer = 0;
+						}
+					}
+					else
+					if (health <= (MaxHealthTrue * 0.05))
+					{
+						if (beattimer >= beatpulse)
+						{
+							A_StopSound(134);
+							A_StartSound("heartb2",134,CHANF_DEFAULT,(frandom(1.0,1.2)*bmpbasevol),ATTN_NORM,frandom(0.9,1.1));
+							beatpulse = hudbeatpulse = random(15,17);
+							beattimer = 0;
+						}
+					}
+					else
+					if (health <= (MaxHealthTrue * 0.10))
+					{
+						if (beattimer >= beatpulse)
+						{
+							A_StopSound(134);
+							A_StartSound("heartb2",134,CHANF_DEFAULT,(frandom(0.9,1.1)*bmpbasevol),ATTN_NORM,frandom(0.9,1.1));
+							beatpulse = hudbeatpulse = random(28,42);
+							beattimer = 0;
+						}
+					}
+					else
+					if (health <= (MaxHealthTrue * 0.25))
+					{
+						if (beattimer >= beatpulse)
+						{
+							A_StopSound(134);
+							A_StartSound("heartb2",134,CHANF_DEFAULT,(frandom(0.675,0.825)*bmpbasevol),ATTN_NORM,frandom(0.9,1.1));
+							beatpulse = hudbeatpulse = random(49,55);
+							beattimer = 0;
+						}
+					}
+					else
+					if (health <= (MaxHealthTrue * 0.5))
+					{
+						if (beattimer >= beatpulse)
+						{
+							A_StopSound(134);
+							A_StartSound("heartb2",134,CHANF_DEFAULT,(frandom(0.45,0.55)*bmpbasevol),ATTN_NORM,frandom(0.9,1.1));
+							beatpulse = random(66,74);
+							hudbeatpulse = random(49,55);
+							beattimer = 0;
+						}
+					}
+					else
+					{
+						beatpulse = random(124,128);
+						hudbeatpulse = random(49,55);
+						beattimer = 0;
+					}
+				}
+				else
+				{
+					beatpulse = 5000;
+				}
+			}
+			// Armor
+			armortier = 0;
+			double SavePercent = 0.000000;
+			int MaxAbsorb = 0;
+			int MaxFullAbsorb = 0;
+			
+			name armorclasstype = "KCArmor";
+			let armor = KCArmor(player.mo.FindInventory(armorclasstype));
+			if (armor != null && armor.Amount > 0)
+			{
+				SavePercent = armor.SavePercent;
+				MaxAbsorb = armor.MaxAbsorb;
+				MaxFullAbsorb = armor.MaxFullAbsorb;
+				textureid icon = armor.icon;
+				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
+				{
+					armortier = 1;
+				}
+				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch))
+				{
+					armortier = 2;
+				}
+				
+				if (kcdebug_armordisplays) Console.Printf("\c[sapphire]Armor -\c- SavePercent: %.8f, Tier: %d, MaxAbsorb: %d, MaxFullAbsorb: %d", savepercent, armortier, MaxAbsorb, MaxFullAbsorb);
+			}
+			
+			if (MiscItem) MiscItem.GetSpeedFactor();
 			isvoodoodoll = false;
 		}
 		
-		if (self.isFrozen()) 
+		// Recall All
+		if (recalledall)
 		{
+			if (kcdebug_recalldisplays) Console.Printf("Recall All Attempt");
+			
+			actor recalleetarg;
+			recalleetarg = actor(AimTarget());
+			
+			int numberrecalled = 0;
+			ActorIterator it = Level.CreateActorIterator(1000);
+			Actor recallee;
+			while (recallee = it.Next())
+			{
+				if (recallee.bISMONSTER && recallee.bFRIENDLY)
+				{
+					if (kcdebug_recalldisplays) Console.Printf("\cx(Recall All)\c- Name: %s (TID: %d)", recallee.GetClassName(), recallee.tid);
+					Vector3 savedpos = (pos.x, pos.y, (pos.z + random(6.0,12.0)));
+					recallee.SetOrigin(savedpos,false);
+					recallee.angle += frandom(0.0,360.0);
+					recallee.vel.x += frandom(-4.0,4.0);
+					recallee.vel.y += frandom(-4.0,4.0);
+					recallee.vel.z += frandom(4.0,8.0);
+					numberrecalled++;
+					if (recalleetarg && recalleetarg.bISMONSTER && !recalleetarg.bFRIENDLY) recallee.target = recalleetarg;
+				}
+			}
+			
+			if (numberrecalled > 0)
+			{
+				//A_StartSound("monstersummon", 161, CHANF_DEFAULT);
+				A_SpawnItemEx("PlayerWhistle",0.0,0.0,32.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+				Vector3 savedpos2 = (pos.x, pos.y, pos.z+(height*0.25));
+				Actor fog = Spawn("TeleportFog", savedpos2, ALLOW_REPLACE); 
+				if (fog != null)
+				{
+					fog.scale.x *= frandom(0.375, 0.625);
+					fog.scale.y *= frandom(0.375, 0.625);
+					fog.A_SetRenderStyle(frandom(0.375, 0.625),STYLE_Add);
+				}
+				
+				if (recalleetarg && recalleetarg.bISMONSTER && !recalleetarg.bFRIENDLY)
+				{
+					A_PrintBold(String.Format("\cfRecalled all allies to your location and gave them a new target!"), frandom(0.685,0.8));
+				}
+				else
+				{
+					A_PrintBold(String.Format("\cfRecalled all allies to your location!"), frandom(0.685,0.8));
+				}
+			}
+			else
+			{
+				A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+				A_PrintBold(String.Format("\cgRecall Failed: No creatures available to recall!"), frandom(0.685,0.8));
+			}
+			
+			recalledall = false;
 		}
+		
+		//****************************************************
+		//*Flicker the Player when they survive a mortal hit *
+		//****************************************************
+		if (self.health == 1 && 
+				(player.cheats & CF_BUDDHA || player.cheats & CF_BUDDHA2) 
+				&& lasthealth > 1)
+		{
+			let SurviveItem = GiveTempMortalSurvive(FindInventory("GiveTempMortalSurvive"));
+			if (SurviveItem) 
+			{
+				SurviveItem.times++;
+				//Console.Printf("%d", SurviveItem.times);
+			}
+			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+			if (MiscItem)
+			{
+				MiscItem.MercyInvulnOn = true;
+				MiscItem.MercyInvulnTimer = 1210; // 1.5 Seconds
+				MiscItem.MercyInvulnTimer += int(ActualLevel * 3.65);
+				
+				player.health = player.mo.health = 1;
+			}
+		}
+		
+		int basespeedvelsx;
+		int basespeedvelsy;
+		int basespeedvelsz;
+		double basespeedvelsxd = 16.66666667;
+		double basespeedvelsyd = 16.66666667;
+		double basespeedvelszd = 16.66666667;
+		
+		basespeedvelsxd *= ForwardMove2;
+		basespeedvelsyd *= SideMove2;
+		basespeedvelszd *= 0;
+		if (waterlevel >= 1) basespeedvelszd *= ForwardMove2;
+		basespeedvelsx = (basespeedvelsxd * 65536);
+		basespeedvelsy = (basespeedvelsyd * 65536);
+		if (waterlevel >= 1) basespeedvelsz = (basespeedvelszd * 65536);
+
+		double newspeedvelsxd = basespeedvelsxd * truespeed;
+		double newspeedvelsyd = basespeedvelsyd * truespeed;
+		double newspeedvelszd = 0;
+		if (waterlevel >= 1) newspeedvelszd = basespeedvelszd * truespeed;
+		int newspeedvelsx = newspeedvelsxd * 65536;
+		int newspeedvelsy = newspeedvelsyd * 65536;
+		int newspeedvelsz = 0;
+		if (waterlevel >= 1) newspeedvelszd * 65536;
+		if (dydudebug_playermove) Console.Printf("\cz WaterLevel: %d (WaterDepth: %.4f)\c-, \cz Angle: %.8f, Pitch: %.8f\c-, \czPosX: %d, PosY: %d, PosZ: %d\c-,\nVelX: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelY: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelZ: %.8f/\cx%.8f\c- (%d/\cx%d\c-)\c-", waterlevel, WaterDepth, (angle % 360), pitch, pos.x, pos.y, pos.z, vel.x, newspeedvelsxd, (vel.x * 65536), newspeedvelsx, vel.y, newspeedvelsyd, (vel.y * 65536), newspeedvelsy, vel.z, newspeedvelszd, (vel.z * 65536), newspeedvelsz);
+
+		lasthealth = health;
+		if (GetClassName() == "HeiwaPlayer" && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
 		super.Tick();
 	}
 	
