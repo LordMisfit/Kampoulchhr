@@ -440,7 +440,7 @@ class KCPlayerPawn : PlayerPawn
 		int newspeedvelsy = newspeedvelsyd * 65536;
 		int newspeedvelsz = 0;
 		if (waterlevel >= 1) newspeedvelszd * 65536;
-		if (dydudebug_playermove) Console.Printf("\cz WaterLevel: %d (WaterDepth: %.4f)\c-, \cz Angle: %.8f, Pitch: %.8f\c-, \czPosX: %d, PosY: %d, PosZ: %d\c-,\nVelX: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelY: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelZ: %.8f/\cx%.8f\c- (%d/\cx%d\c-)\c-", waterlevel, WaterDepth, (angle % 360), pitch, pos.x, pos.y, pos.z, vel.x, newspeedvelsxd, (vel.x * 65536), newspeedvelsx, vel.y, newspeedvelsyd, (vel.y * 65536), newspeedvelsy, vel.z, newspeedvelszd, (vel.z * 65536), newspeedvelsz);
+		if (kcdebug_playermove) Console.Printf("\cz WaterLevel: %d (WaterDepth: %.4f)\c-, \cz Angle: %.8f, Pitch: %.8f\c-, \czPosX: %d, PosY: %d, PosZ: %d\c-,\nVelX: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelY: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelZ: %.8f/\cx%.8f\c- (%d/\cx%d\c-)\c-", waterlevel, WaterDepth, (angle % 360), pitch, pos.x, pos.y, pos.z, vel.x, newspeedvelsxd, (vel.x * 65536), newspeedvelsx, vel.y, newspeedvelsyd, (vel.y * 65536), newspeedvelsy, vel.z, newspeedvelszd, (vel.z * 65536), newspeedvelsz);
 
 		lasthealth = health;
 		if (GetClassName() == "HeiwaPlayer" && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
