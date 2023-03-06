@@ -41,7 +41,11 @@ class KC_EventHandler : EventHandler
 		double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
 		int TruePlayerLevel = 0;
 		
-		if (spawnee.bISMONSTER || spawnee.bSHOOTABLE)
+		if (spawnee.bISMONSTER || 
+				spawnee.bSHOOTABLE ||
+				ExplosiveBarrel(spawnee) ||
+				ExplosiveBarrel2(spawnee) ||
+				Pod(spawnee))
 		{
 			if (!KCPlayerPawn(spawnee)) spawnee.A_SetInventory("CompatVulnItem",1);
 		}

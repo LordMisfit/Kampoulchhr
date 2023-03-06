@@ -222,26 +222,6 @@ class PlayerStatItem : Inventory
 				// Initalization Stuff
 				InitStuff();
 				
-				// Check if player can breath/talk underwater
-				CanTalkUnderwater = 0;
-				if (owner.waterlevel < 3) 
-				{
-					CanTalkUnderwater = 1;
-				}
-				else
-				{
-					if (owner.CountInv("PowerIronFeet") || 
-							owner.CountInv("PowerMask"))
-					{
-						CanTalkUnderwater = 2;
-					}
-					else
-					{
-						if (random(1,32) <= random(1,4)) CanTalkUnderwater = 1;
-					}
-				}
-				if (kcdebug_airmeter) Console.Printf("CanTalkUnderwater %d", CanTalkUnderwater);
-
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
 				else berserked = false;
 				
@@ -448,7 +428,37 @@ class PlayerStatItem : Inventory
 				
 				// Misc
 				weapon = owner.player.ReadyWeapon;
+				
+				// Check if player can breath/talk underwater
+				CanTalkUnderwater = 0;
+				if (owner.waterlevel < 3) 
+				{
+					CanTalkUnderwater = 1;
+				}
+				else
+				{
+					if (owner.CountInv("PowerIronFeet") || 
+							owner.CountInv("PowerMask"))
+					{
+						CanTalkUnderwater = 2;
+					}
+					else
+					{
+						if (random(1,32) <= random(1,4)) CanTalkUnderwater = 1;
+					}
+				}
+				if (kcdebug_airmeter) Console.Printf("CanTalkUnderwater %d", CanTalkUnderwater);
 				DashTics = owner.CountInv("DashTics");
+				
+				//********
+				//* Luck *
+				//********
+				LuckChecks();
+				
+				//*************************************
+				//* [Poison/Damage/Bonus]Count Capper *
+				//*************************************
+				CountCapper();
 				
 				//***************
 				//* Leveling Up *
@@ -2071,7 +2081,12 @@ class PlayerStatItem : Inventory
 		
 		if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/levelup",101,CHANF_DEFAULT,frandom(0.6,0.75),ATTN_NORM,frandom(1.25,1.5));
 	}
-
+	
+	void LuckChecks()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+	}
 	
 	void LevelUpExpStuff()
 	{
@@ -2415,6 +2430,29 @@ class PlayerStatItem : Inventory
 				landdmgbonus = 1;
 				if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 1 - 2x Melee Dmg]");
 			}
+		}
+	}
+	
+	void CountCapper()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		if (owner.CountInv("PoisonCount"))
+		{
+			owner.player.poisoncount += owner.CountInv("PoisonCount");
+			owner.A_SetInventory("PoisonCount",0);
+		}
+		if (owner.CountInv("DamageCount"))
+		{
+			owner.player.DamageCount += owner.CountInv("DamageCount");
+			if (owner.player.DamageCount > 100) owner.player.DamageCount = 100;
+			owner.A_SetInventory("DamageCount",0);
+		}
+		if (owner.CountInv("BonusCount"))
+		{
+			owner.player.BonusCount += owner.CountInv("BonusCount");
+			if (owner.player.BonusCount > 100) owner.player.BonusCount = 100;
+			owner.A_SetInventory("BonusCount",0);
 		}
 	}
 	
