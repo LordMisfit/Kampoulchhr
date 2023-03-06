@@ -346,9 +346,359 @@ mixin class MonsterCollider
 	
 	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 	string nm, nn, no, np;
+	
+	int A_GetPlayerLvl2(int type = 0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) 
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl2 - MonsterCollider mixin)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+	
+	void CCCardDeathCheck()
+	{
+		state CCState = FindState("DeathCC");
+		let globalvars = KCGlobalVariables.Get();
+		if (globalvars.PlayingCCards)
+		{
+			//Console.Printf("globalvars.PlayingCCards: %d", globalvars.PlayingCCards);
+			if (CCState) SetState(CCState);
+		}
+	}
+	
+	
+	void A_RecoverHUD(int recovery, int type, bool acculmuatepulse)
+	{
+		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD called");
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+
+		if (MiscItem && kchud_showhpapdmgrec)
+		{
+			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD [MiscItem]");
+			if (type == 0) // HP
+			{
+				// HP Recovery [HUD]
+				if (MiscItem.HPRecHUDTimer <= 0) MiscItem.HPRecHUDTimer = 105;
+				else
+				{
+					MiscItem.HPRecHUDTimer += 35;
+					if (MiscItem.HPRecHUDTimer < 105 && recovery > (MiscItem.MaxHealthTrue * 0.01)) MiscItem.HPRecHUDTimer = 105;
+					if (MiscItem.HPRecHUDTimer > 175) MiscItem.HPRecHUDTimer = 175;
+				}
+				MiscItem.HPRecHUDAmt += recovery;
+				if (acculmuatepulse && recovery > 0)
+				{
+					if (MiscItem.HPRecHUDAmt > 0 && recovery > 0)
+					{
+						int healfactor = MiscItem.HPRecHUDAmt * 100 / MiscItem.MaxHealthTrue;
+						if (healfactor < 10) MiscItem.HPHUDPulseType = 1;
+						if (healfactor >= 10) MiscItem.HPHUDPulseType = 2;
+						if (healfactor >= 50) MiscItem.HPHUDPulseType = 3;
+						if (healfactor >= 100) MiscItem.HPHUDPulseType = 4;
+						MiscItem.HPHUDPulseTimeP = (level.time % randompick(15,25,35));
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("HP Gain: %d [%d] (timer: %d)", MiscItem.HPRecHUDAmt, recovery, MiscItem.HPRecHUDTimer);
+			}
+
+			if (type == 1) // AP
+			{
+				// AP Recovery [HUD]
+				if (MiscItem.APRecHUDTimer <= 0) MiscItem.APRecHUDTimer = 105;
+				else
+				{
+					MiscItem.APRecHUDTimer += 35;
+					if (MiscItem.APRecHUDTimer < 105 && recovery > 1) MiscItem.APRecHUDTimer = 105;
+					if (MiscItem.APRecHUDTimer > 175) MiscItem.APRecHUDTimer = 175;
+				}
+				MiscItem.APRecHUDAmt += recovery;
+				if (acculmuatepulse && recovery > 0)
+				{
+					int armmax;
+					if (MiscItem.armtier == 1) armmax = 100;
+					if (MiscItem.armtier >= 2) armmax = 200;
+					if (armmax > 0)
+					{
+						if (MiscItem.APRecHUDAmt > 0 && recovery > 0)
+						{
+							int healfactor = MiscItem.APRecHUDAmt * 100 / armmax;
+							if (healfactor < 10) MiscItem.APHUDPulseType = 1;
+							if (healfactor >= 10) MiscItem.APHUDPulseType = 2;
+							if (healfactor >= 50) MiscItem.APHUDPulseType = 3;
+							if (healfactor >= 100) MiscItem.APHUDPulseType = 4;
+							MiscItem.APHUDPulseTimeP = (level.time % randompick(15,25,35));
+						}
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("AP Gain: %d [%d] (timer: %d)", MiscItem.APRecHUDAmt, recovery, MiscItem.APRecHUDTimer);
+			}
+		}
+	}
+	
+	// Resurrections
+	override bool CanResurrect(Actor other, bool passive)
+	{
+		//Console.Printf("(CanResurrect)");
+		int maxviletimesrevived = kc_maxresperarchvile;
+		if (maxviletimesrevived <= 0) maxviletimesrevived = 32;
+		int maxtimesrevivedpervile = kc_maxarchrespermonster;
+		if (maxtimesrevivedpervile <= 0) maxtimesrevivedpervile = 32;
+
+		int maxdiabtimesrevived = kc_maxresperdiabloist;
+		if (maxdiabtimesrevived <= 0) maxdiabtimesrevived = 32;
+		int maxtimesrevivedperdiab = kc_maxdiabrespermonster;
+		if (maxtimesrevivedperdiab <= 0) maxtimesrevivedperdiab = 32;
+
+		bool ResSucceed = true;
+		KCPlayerPawn playpawn;
+		KCCreature KCMonster;
+		KCCreature RevivedMonster;
+		KCCreature RevivingMonster;
+		RevivingMonster = KCCreature(self);
+		RevivedMonster = KCCreature(other);
+		if (RevivingMonster && RevivedMonster)
+		{
+			//Console.Printf("\c[fire]RevivingMonster: %p\c-, \c[green]RevivedMonster: %p\c-", RevivingMonster, RevivedMonster);
+			if (!passive) // Monster is the one REVIVING...
+			{
+				if (GetClassName() == "Archvile" || GetClassName() == "ArchvileNew")
+				{
+					if (RevivingMonster.timesrevivedamonster < maxviletimesrevived)
+					{
+						if (RevivedMonster.timesrevivedpervile < maxtimesrevivedpervile)
+						{
+							if (other.GetClassName() == "ArchvileNew") { if (kc_vilesressurectviles) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Diabloist") { if (kc_vilesressurectdiabs) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "CyberdemonNew") { if (kc_vilesressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Annihilator") { if (kc_vilesressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "SpiderMastermindNew") { if (kc_vilesressurectspiders) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Demolisher") { if (kc_vilesressurectspiders) { ResSucceed = true; } else { ResSucceed = false; } }
+							else { ResSucceed = true; }
+							if (ResSucceed > 0)
+							{
+								if (kc_vilesusehealthtores != 0)
+								{
+									if (kc_vilesusehealthtores < 0) health -= kc_vilesusehealthtores;
+									if (kc_vilesusehealthtores > 0) health -= (health * (kc_vilesusehealthtores * 0.01));
+									
+									if (health < 1) health = 1;
+								}
+								RevivingMonster.timesrevivedamonster++;
+								if (RevivedMonster) 
+								{
+									RevivedMonster.timesrevivedpervile++;
+									//Console.Printf("\cxRevivedMonster.timesrevivedpervile: %d, timesrevivedamonster: %d\c-", RevivedMonster.timesrevivedpervile, RevivingMonster.timesrevivedamonster);
+								}
+							}
+						}
+						else
+						{
+							ResSucceed = false;
+						}
+					}
+					else
+					{
+						ResSucceed = false;
+					}
+				}
+				else
+				if (GetClassName() == "Diabloist")
+				{
+					if (RevivingMonster.timesrevivedamonster < maxdiabtimesrevived)
+					{
+						if (RevivedMonster.timesrevivedperdiabloist < maxtimesrevivedperdiab)
+						{
+							if (other.GetClassName() == "ArchvileNew") { if (kc_diabsressurectviles) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Diabloist") { if (kc_diabsressurectdiabs) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "CyberdemonNew") { if (kc_diabsressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Annihilator") { if (kc_diabsressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "SpiderMastermindNew") { if (kc_diabsressurectspiders) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "Demolisher") { if (kc_diabsressurectspiders) { ResSucceed = true; } else { ResSucceed = false; } }
+							else { ResSucceed = true; }
+							if (ResSucceed > 0)
+							{
+								if (kc_diabsusehealthtores != 0)
+								{
+									if (kc_diabsusehealthtores < 0) health -= kc_diabsusehealthtores;
+									if (kc_diabsusehealthtores > 0) health -= (health * (kc_diabsusehealthtores * 0.01));
+
+									if (health < 1) health = 1;
+								}
+								RevivingMonster.timesrevivedamonster++;
+								if (RevivedMonster) 
+								{
+									RevivedMonster.timesrevivedperdiabloist++;
+									//Console.Printf("\cxRevivedMonster.timesrevivedperdiabloist: %d, timesrevivedamonster: %d\c-", RevivedMonster.timesrevivedperdiabloist, RevivingMonster.timesrevivedamonster);
+								}
+							}
+						}
+						else
+						{
+							ResSucceed = false;
+						}
+					}
+					else
+					{
+						ResSucceed = false;
+					}
+				}
+				
+				if (other != self)
+				{
+					if (ResSucceed && kc_combatlog) 
+					{
+						string sndname = "Resurrection/Evil";
+						if (other.bBOSS) sndname = "Resurrection/EvilBig";
+						other.A_StopSound(15);
+						other.A_StartSound(sndname,15,CHANF_DEFAULT,frandom(0.8,1.2),ATTN_NONE,frandom(0.8,1.2));
+						Console.Printf("\c[red]*\c- \c[brick]%s\c- is resurrecting \c[purple]%s\c-! [%d]", GetTag(), other.GetTag(), gametic);
+					}
+				}
+				else
+				{
+					if (ResSucceed && kc_combatlog && !other.CountInv("NoRessurrectMessage")) 
+					{
+						bool notification = true;
+						nm = "ClayDevilNew"; extracheck = nm;
+						if (other.GetClassName() == nm) notification = false;
+						
+						if (notification)
+						{
+							string sndname = "Resurrection/Evil";
+							if (bBOSS) sndname = "Resurrection/EvilBig";
+							A_StopSound(15);
+							A_StartSound(sndname,15,CHANF_DEFAULT,frandom(0.8,1.2),ATTN_NONE,frandom(0.8,1.2));
+							Console.Printf("\c[red]*\c- \c[brick]%s\c- is self resurrecting! [%d]", GetTag(), gametic);
+						}
+					}
+				}
+			}
+			else // Monster is the one BEING REVIVED...
+			{
+				if (RevivedMonster.cannotres) 
+				{
+					ResSucceed = false; 
+				}
+				else
+				{
+					let Vile = Archvile(self);
+					if (Vile) 
+					{
+						if (Vile.health >= (Vile.SpawnHealth() + Vile.Stamina))
+						{
+							ResSucceed = true;
+							if (kcdebug_ressurrectdisplays) Console.Printf("Succeeded: Vile's Health is High Enough to resurrect %s! [%d]", other.GetTag(), gametic);
+						}
+						else
+						{
+							ResSucceed = false;
+							if (kcdebug_ressurrectdisplays) Console.Printf("Succeeded: Vile's Health is NOT High Enough (i.e. Max or Higher) to resurrect %s! [%d]", other.GetTag(), gametic);
+						}
+					}
+				}
+				//if (kc_combatlog) Console.Printf("\c[red]*\c- \c[purple]%s\c- is being resurrected by \c[brick]%s\c-! [%d]", GetTag(), other.GetTag(), gametic);
+			}
+		}
+		else ResSucceed = true;
+		
+		return ResSucceed;
+	}
+	
 	//
 	//
 	//
+	
+	// Collisions
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		ShieldPart shieldpiece;
+		shieldpiece = ShieldPart(other);
+
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			if (kcdebug_generalcollisions) Console.Printf("\c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+			
+			// Pass through certain shield parts, ones that would normally cause a monster to be bumped around by running into them
+			if (shieldpiece)
+			{
+				if (kcdebug_generalcollisions) Console.Printf("\c[sapphire]Collision:  Passive - \c[green]%s\c- [ShieldPiece] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+				if (ShieldPartMeleeNoReflect(shieldpiece) || ShieldPartMeleeNoReflect(shieldpiece) ||
+						KickShieldReflect(shieldpiece) || KickShieldNoReflect(shieldpiece))
+				{
+					if (kcdebug_generalcollisions) Console.Printf("\c[sapphire]Collision: Passive - \c[green]%s\c- [MeleeShieldPart] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+					if (ExplosiveBarrel(self)) return false;
+					if (ExplosiveBarrel2(self)) return false;
+					if (Pod(self)) return false;
+					return true;
+				}
+				return false;
+			}
+
+			// Pass through players, if the calling monster is Friendly
+			if (bFRIENDLY == 1 && other.GetSpecies() == "Players")
+			{
+				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerType] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				return false; 
+			}
+
+			// Pass through other actors, if the calling monster is Friendly
+			if (bFRIENDLY == 1 && other.bFRIENDLY == 1)
+			{
+				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				return false; 
+			}
+		}
+		else
+		{
+			if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- Passive - (\c[green]%s\c-) vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+			
+			if (shieldpiece)
+			{
+				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- Passive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				return false;
+			}
+			return true; 
+		}
+
+		// We don't really care about others making the check.
+		return true;
+	}
+	
+	
+	override void PostBeginPlay()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvl2(1);
+		//
+		//
+		//
+	}
+	
+	void A_KCHealThing(int healvalue = 0, int healtarget = 0, int silentheal = 0)
+	{
+		if (healvalue > 0)
+		{
+			health += healvalue;
+			if (health > healtarget) health = healtarget;
+		}
+		if (silentheal)
+		{
+			//if (CountInv("DamageTracker")) A_SetInventory("SilentHeal",1);
+		}
+	}
 }
 
 mixin class CollisionChecker
@@ -486,20 +836,20 @@ mixin class InvWeaponShare
 	const minzmovepos = 1.907348633;
 	
 	// Spreader Aura Level 1 Angles
-	const spread1angle1 = -15.0;
-	const spread1angle2 = 15.0;
+	const spread1angle1 = -7.5;
+	const spread1angle2 = 7.5;
 	const spread1horz1 = 0.0;
 	const spread1horz2 = 0.0;
 	const spread1height1 = 0.0;
 	const spread1height2 = 0.0;
 
 	// Spreader Aura Level 2 Angles/Pitches
-	const spread2angle1 = -7.5;
-	const spread2angle2 = 7.5;
+	const spread2angle1 = -3.75;
+	const spread2angle2 = 3.75;
 	const spread2horz1 = 0.0;
 	const spread2horz2 = 0.0;
-	const spread2pitch1 = -7.5;
-	const spread2pitch2 = 7.5;
+	const spread2pitch1 = -3.75;
+	const spread2pitch2 = 3.75;
 	const spread2height1 = 0.0;
 	const spread2height2 = 0.0;
 	

@@ -6,6 +6,30 @@ class EmptyPowerup : Powerup
 	}
 }
 
+class TempDefenseBuff : PowerProtection
+{
+	default
+	{
+		Inventory.Icon "";
+		Powerup.Duration 2147483646; // 8
+		Powerup.Color "00 00 00", 0.00;
+	}
+	
+	int A_GetPlayerLvl()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) Level = MiscItem.PlayerLevel;
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl - TempDefenseBuff)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+}
+
 // Keeps Sounds/Music active during time Freeze powerups
 class TimeFreezerKeepSound : PowerTimeFreezer
 {
@@ -2212,5 +2236,43 @@ class MortisScreenHUD : PlaceHolderItem
 	default
 	{
 		Inventory.MaxAmount 1;
+	}
+}
+class AirMeter : PlaceHolderItem 
+{
+	default
+	{
+		Inventory.MaxAmount 0x7FFFFFFD;
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class MaxAirMeter : PlaceHolderItem 
+{
+	default
+	{
+		Inventory.MaxAmount 0x7FFFFFFD;
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class DrownDebuffBase : TempDefenseBuff 
+{
+	string texname;
+	int timer;
+	default
+	{
+		Inventory.MaxAmount 1;
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		timer++;
+		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNA0";
+		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNB0";
+		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNC0";
+		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWND0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 }

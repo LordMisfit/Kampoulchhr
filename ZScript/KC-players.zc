@@ -82,13 +82,13 @@ class KCPlayerPawn : PlayerPawn
 		int Level = 0;
 		if (MiscItem)
 		{
-			if (exex_expenabled) 
+			if (kc_expgains) 
 			{
 				if (type == 0) Level = MiscItem.PlayerLevel;
 				if (type >= 1) Level = MiscItem.TruePlayerLevel;
 			}
 		}
-		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - DDPlayerPawn)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - KCPlayerPawn)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
 		return Level;
 	}
 	
@@ -875,7 +875,7 @@ class KCPlayerPawn : PlayerPawn
 					(mod == 'Slime' || mod == 'Lava' || mod == 'Magma' || mod == 'IceWater' || mod == 'Crush' || mod == 'Drowning' || mod == 'SigilDrain' || mod == 'Falling')) || mod == 'SigilDrain'))
 			{
 				A_StartSound("player/dodge",305,CHANF_OVERLAP|CHANF_LOCAL,frandom(0.75,1.25),ATTN_NORM,frandom(0.75,1.25));
-				if (exex_playerdmglog)
+				if (kc_playerdmglog)
 				{
 					if (mod == 'NONE') mod = 'Typeless';
 					string combatlogmsg = "\c[sapphire]*\c- Dodged";
@@ -1547,13 +1547,13 @@ class KCPlayerPawn : PlayerPawn
 		int armdmg = (armoramt - CountInv(armorclasstype));
 		if (armdmg <= 0) armdmg = 0;
 		if (kcdebug_playerdamagemobj && armdmg) Console.Printf("Armor Damage: %d", armdmg);
-		if (armdmg && exex_armordmgsounds && !isCCardsIllusion)
+		if (armdmg && kc_armordmgsounds && !isCCardsIllusion)
 		{
 			A_StopSound(213);
 			if (CountInv(armorclasstype)) A_StartSound("armordamaged",213,CHANF_DEFAULT,1.0,ATTN_NORM);
 															 else A_StartSound("armorbroken",213,CHANF_DEFAULT,1.0,ATTN_NORM);
 		}
-		if (exex_playerdmglog)
+		if (kc_playerdmglog)
 		{
 			if (!isCCardsIllusion)
 			{

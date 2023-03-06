@@ -63,6 +63,8 @@ server nosave int kcdebug_attackfuncinfo = 0;
 server nosave int kcdebug_armordisplays = 0;
 server nosave int kcdebug_recalldisplays = 0;
 server nosave int kcdebug_playermove = 0;
+server nosave int kcdebug_hudrecdmgdisplays = 0;
+server nosave int kcdebug_ressurrectdisplays = 0;
 //
 server nosave int kcdebug_weaponrecoil = 0;
 server nosave int kcdebug_miscdisplays1 = 0;
@@ -122,6 +124,26 @@ server nosave int kc_berserkweaponswitch = 0;
 server nosave int kc_playerbpm = 0;
 server nosave int kc_playerbpmhud = 0;
 
+// Special vars
+server int kc_vilesressurectviles = 1;
+server int kc_vilesressurectdiabs = 1;
+server int kc_vilesressurectcybers = 1;
+server int kc_vilesressurectspiders = 1;
+server int kc_maxarchrespermonster = 8;
+server int kc_maxresperarchvile = 32;
+server int kc_vilesusehealthtores = 0;
+
+server int kc_diabsressurectviles = 1;
+server int kc_diabsressurectdiabs = 1;
+server int kc_diabsressurectcybers = 1;
+server int kc_diabsressurectspiders = 1;
+server int kc_maxdiabrespermonster = 8;
+server int kc_maxresperdiabloist = 32;
+server int kc_diabsusehealthtores = 0;
+
+server int kc_monsterevolutions = 1;
+server int kc_monsterevolutionchance = 43;
+
 server int kc_gendifficultycurve = 0;
 
 server int kc_punchspdlvlint = 5;
@@ -177,9 +199,18 @@ server float kc_armorencumbrance = 1.0;
 server float kc_weaponencumbrance = 1.0;
 server float kc_expmultiplier = 1.0;
 
-
+// HUD
+server nosave int kchud_showexplevel = 1;
+server nosave int kchud_showexperience = 1;
 server nosave int kchud_showpoweruptimers = 1;
-server nosave int kchud_showhpapdmgrecregen = 0;
+server nosave int kchud_showhpapdmgrec = 1;
+server nosave int kchud_showhpapdmgrecregen = 1;
+server nosave int kchud_showhpapdmghudshake = 1;
+server nosave int kchud_showhpaprechudpulse = 1;
+server nosave int kchud_showextraatkdefspd = 1;
+server nosave int kchud_showluck = 1;
+server nosave int kchud_keylegendspot = 0;
+
 
 server nosave int kcdebug_misc1 = 0;
 server nosave int kcdebug_misc2 = 0;

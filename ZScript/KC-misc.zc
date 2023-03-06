@@ -50,8 +50,21 @@ class PlayerStatItem : Inventory
 	int EWShieldKills;
 	int HellWarriorMaxCharge;
 	int HellWarriorShieldLevel;
-	int KillComboCount;
 
+	int MaxDashIncTimer, MaxDashIncAmt;
+	int MaxHPIncTimer, MaxHPIncAmt;
+	int HPDmgHUDTimer, APDmgHUDTimer, HPRecHUDTimer, APRecHUDTimer;
+	int HPDmgHUDAmt, APDmgHUDAmt, HPRecHUDAmt, APRecHUDAmt;
+	int EXPGainHUDTimer, EXPGainHUDAmt;
+	int KillComboCount;
+	
+	int HPHUDShakeTime, APHUDShakeTime;
+	int HPHUDPulseTime, APHUDPulseTime, IPHUDPulseTime;
+	
+	int HPHUDShakeType, APHUDShakeType;
+	int HPHUDPulseType, APHUDPulseType;
+	int HPHUDPulseTimeP, APHUDPulseTimeP;
+	
 	Double DashDir, DashSpeed, DashVSpeed, DashPitch;
 	Int DashTics, DashCharge, AirTics, DashCost, DashCooldown, MaxDashCooldown;
 	Bool DJump, Waiting;
@@ -475,6 +488,11 @@ class PlayerStatItem : Inventory
 				//****************************
 				MaxHealthStuff();
 				
+				//*******************
+				//* Misc HUD Timers *
+				//*******************
+				HUDStuff();
+				
 				//******************
 				//* HP Regen/Degen *
 				//******************
@@ -621,6 +639,95 @@ class PlayerStatItem : Inventory
 		MaxHealthTrue = (BaseStartMaxHealth + int(HealthNoRPGAdd2) + HealthLevelAdd2 + HealthBonusAdd2);
 		if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
 	}
+	
+	
+	void HUDStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		if (!owner.CountInv("INTERMAPChecker"))
+		{
+			if (OneLinerCooldown > 0) OneLinerCooldown--;
+			
+			if (HPDmgHUDTimer > 0) HPDmgHUDTimer--;
+			else
+			{
+				HPHUDShakeType = 0;
+				HPDmgHUDAmt = 0;
+			}
+			if (APDmgHUDTimer > 0) APDmgHUDTimer--;
+			else
+			{
+				APHUDShakeType = 0;
+				APDmgHUDAmt = 0;
+			}
+			if (HPRecHUDTimer > 0) HPRecHUDTimer--; 
+			else 
+			{
+				HPRecHUDAmt = 0;
+				HPHUDPulseType = 0;
+				HPHUDPulseTimeP = 0;
+			}
+			if (APRecHUDTimer > 0) APRecHUDTimer--; 
+			else
+			{
+				APRecHUDAmt = 0;
+				APHUDPulseType = 0;
+				APHUDPulseTimeP = 0;
+			}
+			if (EXPGainHUDTimer > 0) EXPGainHUDTimer--;
+			else
+			{
+				EXPGainHUDAmt = 0;
+				if (KillComboCount) KillComboCount = 0;
+			}
+			if (MaxHPIncTimer > 0) MaxHPIncTimer--; else MaxHPIncAmt = 0;
+			if (MaxDashIncTimer > 0) MaxDashIncTimer--; else MaxDashIncAmt = 0;
+			if (HPHUDShakeTime > 0) HPHUDShakeTime--;
+			if (APHUDShakeTime > 0) APHUDShakeTime--;
+			
+			if (drowndebufflevel > 0)
+			{
+				owner.A_SetInventory("DrownDebuffBase",1);
+				if (kcdebug_airmeter) Console.Printf("drowndebufflevel: %d, drowndebufftimer: %d", drowndebufflevel ,drowndebufftimer);
+				if (owner.CountInv("AirMeter") > 0)
+				{
+					if (drowndebuginit)
+					{
+						drowndebuffmaxtimer = drowndebufftimer;
+						drownmaxtimermod = (drowndebuffmaxtimer / drowndebufflevel);
+						drowndebuginit = false;
+					}
+					if (drowndebufftimer) 
+					{
+						drowndebufftimer--;
+						if (drowndebufftimer % drownmaxtimermod == 1)
+						{
+							drowndebufflevel--;
+							if (drowndebufflevel <= 0) 
+							{
+								drowndebufflevel = 0;
+								drowndebufftimer = 0;
+								owner.A_SetInventory("DrownDebuffBase",0);
+							}
+						}
+					}
+					else 
+					{
+						drowndebufflevel = 0;
+						owner.A_SetInventory("DrownDebuffBase",0);
+					}
+				}
+			}
+			else
+			{
+				drowndebufftimer = 0;
+				owner.A_SetInventory("DrownDebuffBase",0);
+			}
+		}
+	}
+	
 	//
 	void HPRegenStuff()
 	{

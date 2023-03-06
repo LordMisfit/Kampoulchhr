@@ -84,7 +84,79 @@ class KampoulchhrBase : Actor
 
 class KCCreature : KampoulchhrBase
 {
+	//mixin EvolveMonsters;
 	mixin MonsterCollider;
+
+	// Gargoyle
+	bool extremecrash;
+	// Afrit
+	const FIREDEMON_ATTACK_RANGE = 64*8.;
+	int fdstrafecount;
+	// Bishop
+	int missilecount;
+	int bobstate;
+	
+	//
+	int user_golddrop;
+	int cannotres;
+	int timesrevivedamonster;
+	int timesrevivedpervile;
+	int timesrevivedperdiabloist;
+	//int timesrevivedperbanshee;
+	bool isPEspawned;
+	bool isHEspawned;
+	bool isHOspawned;
+	bool isasummonedclone;
+	int user_deathcounter, user_truekill;
+	int user_charmed;
+	int user_autorestimer;
+	int user_checkmapskill, user_ressurrectstr, user_resurrectedtimes, user_canusecrisisatk;
+	int user_presetleveladd, user_presetlevelrand1, user_presetlevelrand2;
+	int user_barragecounter, user_shotsfired, user_shotsfiredmax;
+	float user_shotaccuracy, user_shotaccuracy1, user_shotaccuracy2; 
+	float user_shotzaccuracy, user_shotzaccuracy1, user_shotzaccuracy2; 
+	float user_randominaccuracy, user_randominaccuracy2;
+	int specialspeed1;
+	int bossdeathactivate;
+	bool IPAttackSummon;
+	double gravitypulsetimer;
+	int user_ammotype, user_gravitytype, user_shotangle, user_chargeinterval, user_pulseinterval;
+	int user_leveltransfer;
+	int user_ranktransfer;
+	int user_levelpreset;
+	int user_rankpreset;
+	
+	bool waspartinvis;
+	double initalpha;
+	int initrenderstyle;
+	int user_fastchasetimer, user_fastchasetimermax;
+	int user_walksound;
+	int user_painreacttimer;
+	int user_attacktype;
+	int user_attacks;
+	int user_attackmax;
+	float user_tempvar1, user_tempvar2, user_tempvar3;
+	int user_hyperlvl1, user_hyperlvl2;
+	int user_fastchasechance, user_fastchaseextra, user_painfastchase;
+	int AggressionLevelThreshold1, AggressionLevelThreshold2, AggressionLevelThreshold3;
+	name MonsterFamily;
+	
+	property AggressionLevelThreshold: AggressionLevelThreshold1, AggressionLevelThreshold2, AggressionLevelThreshold3;
+	property ActorFamily: MonsterFamily;
+
+	default
+	{
+		KCCreature.AggressionLevelThreshold 75, 150, 225;
+	}
+	
+	
+	/*
+	override void Tick()
+	{
+		super.Tick();
+	}
+	*/
+	
 	//
 	//
 	//
