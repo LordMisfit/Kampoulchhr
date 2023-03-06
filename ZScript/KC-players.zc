@@ -642,6 +642,193 @@ class KCPlayerPawn : PlayerPawn
 		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
 	}
 	
+	double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		string infl, sour, vict;
+		vict = GetClassName();
+		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
+		if (source == null) sour = "NONE"; else sour = source.GetClassName();
+
+		// (Partial) Defense Ignoring Attacks
+		PlayerDefenseIgnoreFactor = 0.00;
+		if (damage > 0)
+		{
+			if (mod == 'Dashing') PlayerDefenseIgnoreFactor += (0.2 * (1.00 - PlayerDefenseIgnoreFactor));
+			if (mod == 'DashingBG') PlayerDefenseIgnoreFactor += (0.375 * (1.00 - PlayerDefenseIgnoreFactor));
+			if (mod == 'DashingSD') PlayerDefenseIgnoreFactor += (0.375 * (1.00 - PlayerDefenseIgnoreFactor));
+
+			if (inflictor == null && source == null)
+			{
+			}
+			else
+			{
+				double BarrelFactor = 0.50;
+				if (skill <= 0) BarrelFactor = 0.0;
+				if (skill == 1) BarrelFactor = 0.25;
+				if (skill == 2) BarrelFactor = 0.5;
+				if (skill == 3) BarrelFactor = 0.75;
+				if (skill >= 4) BarrelFactor = 1.0;
+				if ((ExplosiveBarrel(inflictor) || ExplosiveBarrel(source) || Pod(inflictor) || Pod(source)) && (flags & DMG_EXPLOSION || mod == 'Explosive')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				
+				double RailFactor = frandom(0.3,0.334);
+				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				
+				double HWShieldFactor = 0.125;
+				/*
+				if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
+						HellWarriorBall2(inflictor) || HellWarriorBall2(source)) PlayerDefenseIgnoreFactor += (HWShieldFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				*/
+			}
+			
+			double BuffFactor = 0.00;
+			if (CountInv("PowerGuard")) BuffFactor += 0.75; // Guard Sphere
+			if (CountInv("PowerWeaken")) BuffFactor -= 0.375;
+			if (BuffFactor > 0.00) PlayerDefenseIgnoreFactor = (PlayerDefenseIgnoreFactor * (1.00 - BuffFactor));
+		}
+		
+		if (mod == 'PSI') 
+		{
+			//
+		}
+
+		if (PlayerDefenseIgnoreFactor <= 0.0) PlayerDefenseIgnoreFactor = 0.0;
+		if (PlayerDefenseIgnoreFactor > 1.00) PlayerDefenseIgnoreFactor = 1.00;
+		if (kcdebug_playerdamagemobj) Console.Printf("\c[orange]PlayerDefenseIgnoreFactor: %.8f", PlayerDefenseIgnoreFactor);
+
+		return PlayerDefenseIgnoreFactor;
+	}
+	
+	double A_ArmorIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		string infl, sour, vict;
+		vict = GetClassName();
+		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
+		if (source == null) sour = "NONE"; else sour = source.GetClassName();
+
+		// Intended to ignore aspects of armor items
+		PlayerArmorIgnoreFactor = 0.00;
+		
+		if (source && kc_enemyarmorignorefactor >= 0.001)
+		{
+			int ignoretier = 0;
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[orange]Enemy Bypasses armor [attempt]");
+			KCCreature KCSource;
+			KCSource = KCCreature(source);
+			if (KCSource)
+			{
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[sapphire]KCSource found [armor bypass]");
+				int rand1;
+				double randarmign;
+				
+				/*
+				// Tier 3 Enemies [i.e. extremely-high armor bypass, usually very powerful/ancient/eldritch named bosses [ol' Nyarly]
+				if (sour == "Nyarlathotep")
+				{
+					ignoretier = 3;
+					rand1 += 10 + ((source.CountInv("MonsterLevel")) * 1.0);
+					randarmign += (frandompick(0.030,0.035,0.04,0.045,0.05) * kc_enemyarmorignorefactor);
+				}
+				else // Tier 2 Enemies [i.e. very-high armor bypass, usually named bosses [Serpent Riders, Pennywise in HTC2, and the Dinah Doppelgangers] V:]
+				if (sour == "PennywiseBoss" ||
+						sour == "ThamuzNew" ||
+						sour == "TchernobogNew" ||
+						sour == "Tchernobog" ||
+						sour == "TchernoDemon" ||
+						sour == "CyberBog" ||
+						sour == "NyarlathotepLesser" ||
+						sour == "StarSpawn" ||
+						sour == "SpiderGod" ||
+						DSparilUnmountedNew(KCSource) || 
+						KoraxNew(KCSource))
+				{
+					ignoretier = 2;
+					rand1 += 5 + ((source.CountInv("MonsterLevel")) * 0.5);
+					randarmign += (frandompick(0.015,0.0175,0.02,0.0225,0.025) * kc_enemyarmorignorefactor);
+				}
+				else // Tier 1 Enemies [i.e. medium-high armor bypass, usually standard boss/mini-bosses, and BlackBears V:]
+				if (sour == "BlackBearNew" ||
+						sour == "Dhole" ||
+						(sour == "ShadowBeast" && Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1) ||
+						sour == "SpiderGodling" ||
+						RailArachnotron(KCSource) ||
+						ArchvileNew(KCSource) ||
+						Diabloist(KCSource) ||
+						FlyingBalrogDVDS(KCSource) ||
+						BruiserDemon(KCSource) ||
+						CyBruiser(KCSource) ||
+						ArchonOfHell(KCSource) ||
+						PyroDemon(KCSource) ||
+						FighterBossNew(KCSource) ||
+						ClericBossNew(KCSource) ||
+						MageBossNew(KCSource) ||
+						Minotaur(KCSource) ||
+						MinotaurFriend(KCSource) ||
+						CyberdemonNew(KCSource) ||
+						Annihilator(KCSource) ||
+						SpiderMastermindNew(KCSource) ||
+						Demolisher(KCSource) ||
+						DSparilMountedNew(KCSource))
+				{
+					ignoretier = 1;
+					rand1 += randompick(2,3) + ((source.CountInv("MonsterLevel")) * 0.25);
+					randarmign += (frandompick(0.0075,0.00875,0.01,0.01125,0.0125) * kc_enemyarmorignorefactor);
+				}
+				else // Tier -1 Enemies (enemies with WEAKER armor bypass on average versus even Tier 0s :V)
+				if (sour == "")
+				{
+					ignoretier = -1;
+					rand1 += randompick(0,0,0,0,0,1,1,1) + ((source.CountInv("MonsterLevel")) * 0.0625);
+					randarmign += ((frandompick(0.00375,0.004375,0.005,0.0056125,0.00625) * 0.5) * kc_enemyarmorignorefactor);
+				}
+				else // Tier 0 Enemies [i.e. average armor bypass]
+				{
+					ignoretier = 0;
+					rand1 += randompick(1,1,1,2) + ((source.CountInv("MonsterLevel")) * 0.125);
+					randarmign += (frandompick(0.00375,0.004375,0.005,0.0056125,0.00625) * kc_enemyarmorignorefactor);
+				}
+				*/
+				
+				if (source.bBOSS)
+				{
+					rand1 *= int(frandom(1.75,2.25));
+					randarmign *= frandom(1.75,2.25);
+				}
+				
+				double finalsourceignore = (random(0,rand1) * randarmign);
+				if (finalsourceignore > 0.75) finalsourceignore = 0.75;
+				PlayerArmorIgnoreFactor += (finalsourceignore * (1.00 - PlayerArmorIgnoreFactor));
+				if (kcdebug_playerdamagemobj) Console.Printf("Tier %d Armor Ignoring Type: [Level: %d], rand1: %d, randarmign: %.8f, PlayerArmorIgnoreFactor: %.8f", ignoretier, source.CountInv("MonsterLevel"), rand1, randarmign, PlayerArmorIgnoreFactor);
+			}
+		}
+		
+		if (inflictor)
+		{
+			//if (infl == 'HellWarriorBall2') PlayerArmorIgnoreFactor += (frandom(0.1125,0.1375) * (1.00 - PlayerArmorIgnoreFactor));
+		}
+		/*
+		if (mod == 'Deadlight') 
+		{
+			if ((inflictor && infl == "PennywiseBoss") || 
+					(source && sour == "PennywiseBoss")) PlayerArmorIgnoreFactor += (frandom(0.45,0.55) * (1.00 - PlayerArmorIgnoreFactor));
+
+			if ((inflictor && infl == "BeefyNew") || 
+					(source && sour == "BeefyNew")) PlayerArmorIgnoreFactor += (frandom(0.225,0.275) * (1.00 - PlayerArmorIgnoreFactor));
+		}
+		*/
+		if (PlayerArmorIgnoreFactor <= 0.0) PlayerArmorIgnoreFactor = 0.0;
+		if (PlayerArmorIgnoreFactor > 1.0) PlayerArmorIgnoreFactor = 1.0;
+		if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]PlayerArmorIgnoreFactor: %.8f", PlayerArmorIgnoreFactor);
+		
+		if (CountInv("PowerGuard")) PlayerArmorIgnoreFactor *= 0.25;
+		if (CountInv("PowerWeaken")) PlayerArmorIgnoreFactor *= 4;
+		
+		return PlayerArmorIgnoreFactor;
+	}
+	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
 		int origdmg, olddmg, prevdmg;
@@ -928,10 +1115,10 @@ class KCPlayerPawn : PlayerPawn
 		}
 		
 		// (Partial) Defense Ignoring Attacks
-		//PlayerDefenseIgnoreFactor = A_DefenseIgnoreFactor(inflictor, source, damage, mod, flags, angle, bellefishzap, isbarrierbeam);
+		PlayerDefenseIgnoreFactor = A_DefenseIgnoreFactor(inflictor, source, damage, mod, flags, angle);
 
 		// (Partial) Armor Ignoring Attacks
-		//PlayerArmorIgnoreFactor = A_ArmorIgnoreFactor(inflictor, source, damage, mod, flags, angle, bellefishzap, isbarrierbeam);
+		PlayerArmorIgnoreFactor = A_ArmorIgnoreFactor(inflictor, source, damage, mod, flags, angle);
 		
 		// Direct Damage Changes
 		if (flags & DMG_INFLICTOR_IS_PUFF)
@@ -1566,6 +1753,64 @@ class KCPlayerPawn : PlayerPawn
 		PlayerArmorIgnoreFactor = 0.00;
 		PlayerDefenseIgnoreFactor = 0.00;
 		return ret;
+	}
+	
+	override void FireWeapon (State stat)
+	{
+		let player = self.player;
+		
+		let weapn = player.ReadyWeapon;
+		if (weapn == null || !weapn.CheckAmmo (Weapon.PrimaryFire, true))
+		{
+			return;
+		}
+
+		player.WeaponState &= ~WF_WEAPONBOBBING;
+		PlayAttacking ();
+		weapn.bAltFire = false;
+		if (stat == null)
+		{
+			stat = weapn.GetAtkState(!!player.refire);
+		}
+		player.SetPsprite(PSP_WEAPON, stat);
+		if (!weapn.bNoAlert)
+		{
+			if (!(CountInv("KCTimeFreezer1") ||
+						CountInv("KCTimeFreezer2") ||
+						CountInv("KCTimeFreezer3")))
+			{
+				SoundAlert(self, false);
+			}
+		}
+	}
+	
+	override void FireWeaponAlt (State stat)
+	{
+		let weapn = player.ReadyWeapon;
+		if (weapn == null || weapn.FindState('AltFire') == null || !weapn.CheckAmmo (Weapon.AltFire, true))
+		{
+			return;
+		}
+
+		player.WeaponState &= ~WF_WEAPONBOBBING;
+		PlayAttacking ();
+		weapn.bAltFire = true;
+
+		if (stat == null)
+		{
+			stat = weapn.GetAltAtkState(!!player.refire);
+		}
+
+		player.SetPsprite(PSP_WEAPON, stat);
+		if (!weapn.bNoAlert)
+		{
+			if (!(CountInv("KCTimeFreezer1") ||
+						CountInv("KCTimeFreezer2") ||
+						CountInv("KCTimeFreezer3")))
+			{
+				SoundAlert(self, false);
+			}
+		}
 	}
 }
 

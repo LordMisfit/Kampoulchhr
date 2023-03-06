@@ -39,7 +39,6 @@ class PlayerStatItem : Inventory
 	int ArmorTier;
 	int armsav;
 	int armtier;
-	int armoritemdifficulty;
 	
 	int CompatPackMode;
 	double TimeArmorEnergyTics;
@@ -456,6 +455,11 @@ class PlayerStatItem : Inventory
 				//***************
 				LevelUpExpStuff();
 				
+				//********************************
+				//* Armor Tier Give/Max Settings *
+				//********************************
+				ArmorTierStuff();
+				
 				//****************************
 				//* Health/Max Health Checks *
 				//****************************
@@ -501,6 +505,16 @@ class PlayerStatItem : Inventory
 				//************
 				GameStatTracker();
 				
+				//**********************
+				//* Weapon Check Stuff *
+				//**********************
+				WeaponCheck();
+				
+				//*********************
+				//* Flat Defense Calc *
+				//*********************
+				FlatDefenseCalc();
+				
 				//******************************
 				//* Time Seraph Armor Trackers *
 				//******************************
@@ -510,6 +524,19 @@ class PlayerStatItem : Inventory
 				//* Time Freeze Trackers *
 				//************************
 				TimeFreezeStuff();
+				
+				//*************
+				//* Time Slow *
+				//*************
+				if (kcdebug_timeslowinterval)
+				{
+					if (level.time % (kcdebug_timeslowinterval + 1)) owner.A_SetInventory("DebugTimeFreezer",1);
+					else owner.A_SetInventory("DebugTimeFreezer",0);
+				}
+				else
+				{
+					if (owner.CountInv("DebugTimeFreezer")) owner.A_SetInventory("DebugTimeFreezer",0);
+				}
 				
 				//***************
 				//* Land Damage *
@@ -542,6 +569,18 @@ class PlayerStatItem : Inventory
 		}
 		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - PlayerStatItem)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
 		return Level;
+	}
+	
+	void ArmorTierStuff()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		name armorclasstype = "KCArmor";
+		name armorclasstype2 = "ArmorBonusSilent";
+		int currentarmoramt = Owner.CountInv(armorclasstype);
+		
+		armtier = playeractor.armortier;
 	}
 	
 	void MaxHealthStuff()
@@ -1186,21 +1225,6 @@ class PlayerStatItem : Inventory
 			double MassMulti = 1.0;
 			double Base = 0.016;
 			double BaseMulti = 0.00004;
-			if (armoritemdifficulty == 1)
-			{
-				Base *= 2;
-				BaseMulti *= 2;
-			}
-			if (armoritemdifficulty == 2)
-			{
-				Base *= 2.5;
-				BaseMulti *= 2.5;
-			}
-			if (armoritemdifficulty >= 3)
-			{
-				Base *= 2.5;
-				BaseMulti *= 2.5;
-			}
 			// Armor
 			
 			if (MassInc) TotalMass += MassInc;
@@ -1382,9 +1406,6 @@ class PlayerStatItem : Inventory
 			// Armor
 			double ArmorJumpZ = 1.00;
 			double armordiffmod = 1.00;
-			if (armoritemdifficulty == 1) armordiffmod = 2.0;
-			if (armoritemdifficulty == 2) armordiffmod = 2.5;
-			if (armoritemdifficulty >= 3) armordiffmod = 5.0;
 			int ArmorAmt = owner.CountInv(armorclasstype);
 			double ArmorEnc = 0.00;
 			ArmorEnc *= kc_armorencumbrance;
@@ -2395,6 +2416,246 @@ class PlayerStatItem : Inventory
 				if (kcdebug_landdamage) Console.Printf("    \ceLanding Damage [Lvl 1 - 2x Melee Dmg]");
 			}
 		}
+	}
+	
+	void WeaponCheck()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		
+		string nt;
+		// Hand To Hand
+		if (weapon is "FistMarine") 
+		{
+		}
+		//else
+		//if (weapon is "FistHeiwa") 
+		//{
+		//}
+		else
+		{
+			nt = "FistPlayerSpeedFactor"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerSpeedFactor2"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerSpeedFactor3"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerSpeedFactor4"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlock"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlock2"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlock3"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlock4"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlockExtra"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlockExtra2"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlockItem"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "FistPlayerBlockHold"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+		}
+	}
+	
+	void FlatDefenseCalc()
+	{
+		weapon = owner.player.ReadyWeapon;
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		double armoradd;
+		double defbase;
+		
+		double baseflatmul = 0.01;
+		if (skill <= 0) baseflatmul = 0.0125;
+		if (skill == 1) baseflatmul = 0.01125;
+		if (skill == 2) baseflatmul = 0.01;
+		if (skill == 3) baseflatmul = 0.00875;
+		if (skill >= 4) baseflatmul = 0.0075;
+		
+		// Normal
+		defbase = (1.0 / kc_defenselvlint);
+		BaseFlatDefValue = ((ActualLevel * defbase) + (TruePlayerDEF * defbase));
+		BaseFlatDefValue *= 1.0 + (((ActualLevel * baseflatmul) + (TruePlayerDEF * baseflatmul)));
+		// Crushers
+		defbase = (1.0 / (kc_defenselvlint * 2.5));
+		BaseFlatDefValueCrush = ((ActualLevel * defbase) + (TruePlayerDEF * defbase));
+		BaseFlatDefValueCrush *= 1.0 + (((ActualLevel * baseflatmul) + (TruePlayerDEF * baseflatmul)));
+		// DamageFloors
+		defbase = (1.0 / (kc_defenselvlint * 5));
+		BaseFlatDefValueDmgFlr = ((ActualLevel * defbase) + (TruePlayerDEF * defbase));
+		BaseFlatDefValueDmgFlr *= 1.0 + (((ActualLevel * baseflatmul) + (TruePlayerDEF * baseflatmul)));
+		// HUD Visual Displays
+		defbase = (1.0 / kc_defenselvlint);
+		BaseFlatDefValueHUD = ((ActualLevel * defbase) + (TruePlayerDEF * defbase));
+		BaseFlatDefValueHUD *= 1.0 + (((ActualLevel * baseflatmul) + (TruePlayerDEF * baseflatmul)));
+
+		if (owner.CountInv("FistPlayerBlock"))
+		{
+			BaseFlatDefValue *= 1.125;
+			BaseFlatDefValueCrush *= 1.05;
+			BaseFlatDefValueDmgFlr *= 1.025;
+			BaseFlatDefValueHUD *= 1.125;
+		}
+		if (owner.CountInv("FistPlayerBlock2"))
+		{
+			BaseFlatDefValue *= 1.25;
+			BaseFlatDefValueCrush *= 1.10;
+			BaseFlatDefValueDmgFlr *= 1.05;
+			BaseFlatDefValueHUD *= 1.25;
+		}
+		if (owner.CountInv("FistPlayerBlock3"))
+		{
+			BaseFlatDefValue *= 1.5;
+			BaseFlatDefValueCrush *= 1.20;
+			BaseFlatDefValueDmgFlr *= 1.10;
+			BaseFlatDefValueHUD *= 1.5;
+		}
+		if (owner.CountInv("FistPlayerBlock4"))
+		{
+			BaseFlatDefValue *= 2.00;
+			BaseFlatDefValueCrush *= 1.40;
+			BaseFlatDefValueDmgFlr *= 1.20;
+			BaseFlatDefValueHUD *= 2.00;
+		}
+		if (owner.CountInv("FistPlayerBlockExtra"))
+		{
+			BaseFlatDefValue *= 1.25;
+			BaseFlatDefValueCrush *= 1.10;
+			BaseFlatDefValueDmgFlr *= 1.05;
+			BaseFlatDefValueHUD *= 1.25;
+		}
+		if (owner.CountInv("FistPlayerBlockExtra2"))
+		{
+			BaseFlatDefValue *= 1.25;
+			BaseFlatDefValueCrush *= 1.10;
+			BaseFlatDefValueDmgFlr *= 1.05;
+			BaseFlatDefValueHUD *= 1.25;
+		}
+		if (owner.CountInv("PowerGuard"))
+		{
+			BaseFlatDefValue *= 2.00;
+			BaseFlatDefValueCrush *= 1.40;
+			BaseFlatDefValueDmgFlr *= 1.20;
+			BaseFlatDefValueHUD *= 2.00;
+		}
+		if (owner.CountInv("PowerWeaken"))
+		{
+			BaseFlatDefValue *= 0.50;
+			BaseFlatDefValueCrush *= 0.80;
+			BaseFlatDefValueDmgFlr *= 0.90;
+			BaseFlatDefValueHUD *= 0.50;
+		}
+		if (owner.CountInv("EWShieldIdleMode"))
+		{
+			BaseFlatDefValue *= 1.15;
+			BaseFlatDefValueCrush *= 1.06;
+			BaseFlatDefValueDmgFlr *= 1.03;
+			BaseFlatDefValueHUD *= 1.15;
+		}
+		if (owner.CountInv("EWShieldDefendMode"))
+		{
+			BaseFlatDefValue *= 1.45;
+			BaseFlatDefValueCrush *= 1.18;
+			BaseFlatDefValueDmgFlr *= 1.09;
+			BaseFlatDefValueHUD *= 1.45;
+		}
+		if (owner.CountInv("EWShieldDefendModeExtra"))
+		{
+			BaseFlatDefValue *= 1.225;
+			BaseFlatDefValueCrush *= 1.09;
+			BaseFlatDefValueDmgFlr *= 1.045;
+			BaseFlatDefValueHUD *= 1.225;
+		}
+		if (berserked)
+		{
+			BaseFlatDefValue *= 1.2;
+			BaseFlatDefValueCrush *= 1.08;
+			BaseFlatDefValueDmgFlr *= 1.04;
+			BaseFlatDefValueHUD *= 1.2;
+		}
+		BaseFlatDefValue *= kc_natflatdeffactor;
+		BaseFlatDefValueCrush *= kc_natflatdeffactor;
+		BaseFlatDefValueDmgFlr *= kc_natflatdeffactor;
+		BaseFlatDefValueHUD *= kc_natflatdeffactor;
+		BaseFlatDefValue *= kc_flatdefensefactor;
+		BaseFlatDefValueCrush *= kc_flatdefensefactor;
+		BaseFlatDefValueDmgFlr *= kc_flatdefensefactor;
+		BaseFlatDefValueHUD *= kc_flatdefensefactor;
+		
+		//**********************
+		//* Armor Defense Calc *
+		//**********************
+		ArmorDefValue = 0;
+		ArmorDefValueCrush = 0;
+		ArmorDefValueDmgFlr = 0;
+		ArmorDefValueHUD = 0;
+		
+		if (armtier == 1)
+		{
+			armoradd = ((ActualLevel * 0.025) + (TruePlayerDEF * 0.025));
+			
+			ArmorDefValue += (random(1,2) + armoradd);
+			ArmorDefValueCrush += randompick(0,0,0,1,1);
+			ArmorDefValueDmgFlr += randompick(0,0,0,0,0,0,0,0,0,0,0,1,1);
+			ArmorDefValueHUD = 2 + armoradd;
+		}
+		if (armtier >= 2)
+		{
+			armoradd = ((ActualLevel * 0.0625) + (TruePlayerDEF * 0.0625));
+			
+			ArmorDefValue += (random(4,5) + armoradd);
+			ArmorDefValueCrush += randompick(1,1,2,2,3);
+			ArmorDefValueDmgFlr += randompick(0,0,0,0,0,0,0,0,1,1,2,2,3);
+			ArmorDefValueHUD = 5 + armoradd;
+		}
+		double GuardVal = 2;
+		if (owner.CountInv("PowerGuard"))
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		GuardVal = 0.50;
+		if (owner.CountInv("PowerWeaken"))
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		GuardVal = 1.125;
+		if (owner.CountInv("EWShieldIdleMode"))
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		GuardVal = 1.375;
+		if (owner.CountInv("EWShieldDefendMode"))
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		GuardVal = 1.25;
+		if (owner.CountInv("EWShieldDefendModeExtra"))
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		GuardVal = 1.1;
+		if (berserked)
+		{
+			ArmorDefValue *= GuardVal;
+			ArmorDefValueCrush *= GuardVal;
+			ArmorDefValueDmgFlr *= GuardVal;
+			ArmorDefValueHUD *= GuardVal;
+		}
+		ArmorDefValue *= kc_armflatdeffactor;
+		ArmorDefValueCrush *= kc_armflatdeffactor;
+		ArmorDefValueDmgFlr *= kc_armflatdeffactor;
+		ArmorDefValueHUD *= kc_armflatdeffactor;
+		ArmorDefValue *= kc_flatdefensefactor;
+		ArmorDefValueCrush *= kc_flatdefensefactor;
+		ArmorDefValueDmgFlr *= kc_flatdefensefactor;
+		ArmorDefValueHUD *= kc_flatdefensefactor;
 	}
 	
 	void EndStuff()
