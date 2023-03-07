@@ -3068,28 +3068,37 @@ class KCWeaponBase : Weapon
 			bJustAttacked = true;
 	}
 
-	protected action void GunShot(bool accurate, Class<Actor> pufftype, double pitch)
+	protected action void GunShot(int accurate, Class<Actor> pufftype, double pitch)
 	{
 		int damage = 5 * random[GunShot](1, 3);
 		double ang = angle;
-
-		if (!accurate)
+		double randang = 5.625;
+		double randpth = 3.549;
+		if (accurate <= -1)
 		{
+			randang *= 1.5;
+			randpth *= 1.5;
+		}
+
+		if (accurate <= 0)
+		{
+			if (kcdebug_attackstuff) Console.Printf("randang: %.8f, randpth: %.8f", randang, randpth);
 			double rando = frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
-			ang += Random2[GunShot]() * ((5.625 * rando) / 256);
+			ang += Random2[GunShot]() * ((randang * rando) / 256);
 
 			if (GetCVar("vertspread") && !sv_novertspread)
 			{
-				pitch += Random2[GunShot]() * ((3.549 * rando) / 256);
+				pitch += Random2[GunShot]() * ((randpth * rando) / 256);
 			}
 		}
 		
 		LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Hitscan', pufftype);
 	}
 	
-	action void A_FirePistol()
+	action void A_FirePistol(int type = 0)
 	{
-		bool accurate;
+		int accurate;
+		if (type > 0) accurate = -1;
 
 		if (player != null)
 		{
@@ -3104,10 +3113,11 @@ class KCWeaponBase : Weapon
 			player.mo.PlayAttacking2();
 
 			accurate = !player.refire;
+			if (type > 0) accurate = -1;
 		}
 		else
 		{
-			accurate = true;
+			accurate = 1;
 		}
 
 		A_StartSound ("weapons/pistol", CHAN_WEAPON);
@@ -4381,7 +4391,8 @@ class PistolMarine : MarineWeapon replaces Pistol
 	Default
 	{
 		Weapon.SelectionOrder 1900;
-		Weapon.AmmoUse 1;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 1;
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Clip";
 		Obituary "$OB_MPPISTOL";
@@ -4410,6 +4421,29 @@ class PistolMarine : MarineWeapon replaces Pistol
 			2PIS C 4;
 			2PIS F 4;
 			2PIS D 4 A_ReFire();
+			Goto Ready;
+		AltFire:
+			2PIS A 1
+			{
+				A_SetTics(randompick(0,0,0,1,1));
+			}
+			2PIS B 4 bright
+			{
+				A_FirePistol(1);
+				A_SetTics(randompick(1,1,2,2,2));
+			}
+			2PIS C 4
+			{
+				A_SetTics(randompick(1,1,2,2,2));
+			}
+			2PIS F 4
+			{
+				A_SetTics(randompick(1,1,2,2,2));
+			}
+			2PIS D 4 
+			{
+				A_SetTics(randompick(1,1,2,2,2));
+			}
 			Goto Ready;
 	}
 }
