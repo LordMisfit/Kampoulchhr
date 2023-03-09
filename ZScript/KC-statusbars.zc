@@ -459,6 +459,75 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
+	
+	// Draw Damage Borders
+	int, int DrawDmgBorderFullScreen(int CurrHealth, int MaxHealthTrue)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int DigX, DigY, Spacing;
+
+		//*****************
+		//* Damage Border *
+		//*****************
+		if (MiscItem && CPlayerPawn)
+		{
+			double HealthRatio = (CurrHealth * 1.00) / (MaxHealthTrue * 1.00);
+			textureid InjBorderT;
+			double BaseInjAlpha;
+			double InjAlpha = 1.0;
+			double injscale = 1.125;
+			int InjPulseTimerMod = CPlayerPawn.hudbeatpulse;
+		
+			if (HealthRatio <= 0.02)
+			{
+				InjBorderT = TexMan.CheckForTexture("M_INJ2", TexMan.TYPE_MiscPatch);
+				BaseInjAlpha = 0.575; // 0.9975;
+			}
+			else
+			{
+				if (HealthRatio <= 0.05)
+				{
+					InjBorderT = TexMan.CheckForTexture("M_INJ2", TexMan.TYPE_MiscPatch);
+					BaseInjAlpha = 0.475; // 0.9;
+				}
+				else
+				{
+					if (HealthRatio <= 0.10)
+					{
+						InjBorderT = TexMan.CheckForTexture("M_INJ", TexMan.TYPE_MiscPatch);
+						BaseInjAlpha = 0.4; // 0.8;
+					}
+					else
+					{
+						if (HealthRatio <= 0.25)
+						{
+							InjBorderT = TexMan.CheckForTexture("M_INJ", TexMan.TYPE_MiscPatch);
+							BaseInjAlpha = 0.35; // 0.625;
+						}
+					}
+				}
+			}
+			
+			InjAlpha = 0.0;
+			if (InjPulseTimerMod && exex_playerbpmhud)
+			{
+				double BaseInjAlphaframe = BaseInjAlpha / (InjPulseTimerMod * 0.5);
+				int InjPulseTimer = level.time % InjPulseTimerMod;
+				int InjPulseFrame = (InjPulseTimerMod * 0.5);
+				InjPulseFrame = abs(InjPulseFrame - InjPulseTimer);
+				InjAlpha = BaseInjAlpha + (InjPulseFrame * BaseInjAlphaframe);
+				//Console.Printf("\c[brick]HealthRatio: %.3f, InjAlpha: %.3f (timer: %d / %d)", HealthRatio, InjAlpha, InjPulseTimer, InjPulseTimerMod);
+			}
+			
+			DigX = 480;
+			DigY = 270;
+			DrawTexture(InjBorderT, (DigX, DigY), DI_ITEM_CENTER, InjAlpha, (-1,-1), (injscale, injscale));
+		}
+		return CurrHealth, MaxHealthTrue;
+	}
+	
 	override void Draw (int state, double TicFrac)
 	{
 		Super.Draw (state, TicFrac);
@@ -1678,6 +1747,11 @@ class KCStatusBarMain : BaseStatusBar
 		int PlayerMaxHP = 100; // MaxHealthTrue;
 		if (MiscItem && MiscItem.MaxHealthTrue > 0) PlayerMaxHP = MiscItem.MaxHealthTrue;
 		
+		//*****************
+		//* Damage Border *
+		//*****************
+		[CurrHealth, PlayerMaxHP] = DrawDmgBorderFullScreen(CurrHealth,PlayerMaxHP);
+		
 		// Draw health
 		A_DrawFSHealth();
 		
@@ -1716,6 +1790,11 @@ class KCStatusBarMain : BaseStatusBar
 		if (numboxes >= 20) numboxes = 20;
 		DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
 		//Console.Printf("End Of ScreenBlocks Check");
+		
+		SetSize(0, 1920, 1080);
+		if (CPlayerPawn.CountInv("BlackScreenHUD")) DrawTexture(TexMan.CheckForTexture("BLAKSCRN", TexMan.TYPE_MiscPatch), (0, 540), DI_SCREEN_CENTER); // -46, -1
+		if (CPlayerPawn.CountInv("MortisScreenHUD")) DrawTexture(TexMan.CheckForTexture("MORTIS", TexMan.TYPE_MiscPatch), (0, 540), DI_SCREEN_CENTER); // -46, -1
+		SetSize(0, 320, 200);
 	}
 	
 	protected virtual void DrawFullscreenKeys()

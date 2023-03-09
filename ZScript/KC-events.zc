@@ -41,96 +41,101 @@ class KC_EventHandler : EventHandler
 		double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
 		int TruePlayerLevel = 0;
 		
-		if (spawnee.bISMONSTER || 
-				spawnee.bSHOOTABLE ||
-				ExplosiveBarrel(spawnee) ||
-				ExplosiveBarrel2(spawnee) ||
-				Pod(spawnee))
+		if (spawnee)
 		{
-			if (!KCPlayerPawn(spawnee)) spawnee.A_SetInventory("CompatVulnItem",1);
-		}
-		
-		if (DoomImpBall(spawnee) || 
-				FatShot(spawnee)) 
-		{
-			spawnee.DamageType = 'Fire';
-		}
-		if (CacodemonBall(spawnee)) 
-		{
-			spawnee.DamageType = 'Lightning';
-		}
-		if (ArachnotronPlasma(spawnee)) 
-		{
-			spawnee.DamageType = 'Plasma';
-		}
-		
-		//
-		Inventory invspawnee;
-		invspawnee = Inventory(spawnee);
-		if (invspawnee)
-		{
-			string invspawnname = invspawnee.GetClassName();
-			if (invspawnname == "RedCard" ||
-					invspawnname == "BlueCard" ||
-					invspawnname == "YellowCard")
+			string targname;
+			if (spawnee.target) targname = spawnee.target.GetClassName();
+			if (spawnee.bISMONSTER || 
+					spawnee.bSHOOTABLE)
 			{
-				invspawnee.Pickupsound = "getkeycard";
+				if (!(KCPlayerPawn(spawnee) ||
+						 ExplosiveBarrel(spawnee) ||
+						 ExplosiveBarrel2(spawnee) ||
+						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
 			}
-			if (invspawnname == "RedSkull" ||
-					invspawnname == "BlueSkull" ||
-					invspawnname == "YellowSkull")
+			
+			if (DoomImpBall(spawnee) || 
+					FatShot(spawnee)) 
 			{
-				invspawnee.Pickupsound = "getskullkey";
+				spawnee.DamageType = 'Fire';
 			}
-			if (invspawnname == "Clip")
+			if (CacodemonBall(spawnee)) 
 			{
-				invspawnee.Pickupsound = "getbulletclip";
+				spawnee.DamageType = 'Lightning';
 			}
-			if (invspawnname == "ClipBox")
+			if (ArachnotronPlasma(spawnee)) 
 			{
-				invspawnee.Pickupsound = "getbulletbox";
+				spawnee.DamageType = 'Plasma';
 			}
-			if (invspawnname == "Shell")
+			
+			//
+			Inventory invspawnee;
+			invspawnee = Inventory(spawnee);
+			if (invspawnee)
 			{
-				invspawnee.Pickupsound = "getfourshells";
-			}
-			if (invspawnname == "ShellBox")
-			{
-				invspawnee.Pickupsound = "getshellbox";
-			}
-			if (invspawnname == "RocketAmmo")
-			{
-				invspawnee.Pickupsound = "getsinglerocket";
-			}
-			if (invspawnname == "RocketBox")
-			{
-				invspawnee.Pickupsound = "getrocketbox";
-			}
-			if (invspawnname == "Cell")
-			{
-				invspawnee.Pickupsound = "getsmallcells";
-			}
-			if (invspawnname == "CellPack")
-			{
-				invspawnee.Pickupsound = "getcellpack";
-			}
-			if (invspawnname == "GreenArmor" ||
-					invspawnname == "BlueArmor")
-			{
-				invspawnee.Pickupsound = "GetArmorFull";
-			}
-			if (invspawnname == "Stimpack" ||
-					invspawnname == "Medikit")
-			{
-				invspawnee.Pickupsound = "gethealthkit";
-			}
-			if (invspawnname == "HealthBonus")
-			{
-				invspawnee.Pickupsound = "gethealthbonus";
-			}
-			if (invspawnname == "ArmorBonus")
-			{
-				invspawnee.Pickupsound = "getarmorbonus";
+				string invspawnname = invspawnee.GetClassName();
+				if (invspawnname == "RedCard" ||
+						invspawnname == "BlueCard" ||
+						invspawnname == "YellowCard")
+				{
+					invspawnee.Pickupsound = "getkeycard";
+				}
+				if (invspawnname == "RedSkull" ||
+						invspawnname == "BlueSkull" ||
+						invspawnname == "YellowSkull")
+				{
+					invspawnee.Pickupsound = "getskullkey";
+				}
+				if (invspawnname == "Clip")
+				{
+					invspawnee.Pickupsound = "getbulletclip";
+				}
+				if (invspawnname == "ClipBox")
+				{
+					invspawnee.Pickupsound = "getbulletbox";
+				}
+				if (invspawnname == "Shell")
+				{
+					invspawnee.Pickupsound = "getfourshells";
+				}
+				if (invspawnname == "ShellBox")
+				{
+					invspawnee.Pickupsound = "getshellbox";
+				}
+				if (invspawnname == "RocketAmmo")
+				{
+					invspawnee.Pickupsound = "getsinglerocket";
+				}
+				if (invspawnname == "RocketBox")
+				{
+					invspawnee.Pickupsound = "getrocketbox";
+				}
+				if (invspawnname == "Cell")
+				{
+					invspawnee.Pickupsound = "getsmallcells";
+				}
+				if (invspawnname == "CellPack")
+				{
+					invspawnee.Pickupsound = "getcellpack";
+				}
+				if (invspawnname == "GreenArmor" ||
+						invspawnname == "BlueArmor")
+				{
+					invspawnee.Pickupsound = "GetArmorFull";
+				}
+				if (invspawnname == "Stimpack" ||
+						invspawnname == "Medikit")
+				{
+					invspawnee.Pickupsound = "gethealthkit";
+				}
+				if (invspawnname == "HealthBonus")
+				{
+					invspawnee.Pickupsound = "gethealthbonus";
+				}
+				if (invspawnname == "ArmorBonus")
+				{
+					invspawnee.Pickupsound = "getarmorbonus";
+				}
 			}
 		}
 		
@@ -302,7 +307,6 @@ class KC_EventHandler : EventHandler
 									victim.thrust(force, (ang + frandompick(-3,-1.5,-1.5,0,0,0,0,0,1.5,1.5,3)));
 								}
 							}
-							/*
 							if (infl == "UppercutPuff")
 							{
 								double ang;
@@ -322,7 +326,7 @@ class KC_EventHandler : EventHandler
 									victim.thrust(force, (ang + frandompick(-6,-3,-3,0,0,0,0,0,3,3,6)));
 								}
 							}
-							if (KickPuff(inflicter) || KickPuffNoThrust(inflicter) || BadKickPuff(inflicter))
+							if (KickPuff(inflicter) || KickPuffNoThrust(inflicter))
 							{
 								double ang;
 								if (source) ang = source.angle;
@@ -342,7 +346,6 @@ class KC_EventHandler : EventHandler
 									victim.Thrust(force, (ang + (frandompick(-6,-3,-3,0,0,0,0,0,3,3,6) * 0.25)));
 								}
 							}
-							*/
 						}
 						
 						if (!victim.bINVULNERABLE || !practicetarget || !isCCardsIllusion)

@@ -2898,13 +2898,60 @@ class PlayerStatItem : Inventory
 			if (Skill == SKILL_VERY_EASY) SkillFactor *= 1.25;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Skill): %.8f", SkillFactor);
 			
+			// Landing Bonus
+			double LandingFactor = 1.0;
+			if (damageType == 'Melee' || damageType == 'Trample' || damageType == 'Stomp' || damageType == 'Fist' || damageType == 'Kick' || damageType == 'Chainsaw' ||
+					damageType == 'Bonk' || damageType == 'Bap' || damageType == 'Chop')
+			{
+				if (landdmgbonus == 1) 
+				{
+					owner.A_StopSound(601);
+					owner.A_StartSound("crit/critical",601,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					LandingFactor = 1.5;
+				}
+				if (landdmgbonus == 2) 
+				{
+					owner.A_StopSound(601);
+					owner.A_StopSound(602);
+					owner.A_StartSound("crit/critical",601,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",602,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					LandingFactor = 2.25;
+				}
+				if (landdmgbonus == 3) 
+				{
+					owner.A_StopSound(601);
+					owner.A_StopSound(602);
+					owner.A_StopSound(603);
+					owner.A_StartSound("crit/critical",601,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",602,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",603,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					LandingFactor = 3.78125;
+				}
+				if (landdmgbonus == 4) 
+				{
+					owner.A_StopSound(601);
+					owner.A_StopSound(602);
+					owner.A_StopSound(603);
+					owner.A_StopSound(604);
+					owner.A_StartSound("crit/critical",601,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",602,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",603,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					owner.A_StartSound("crit/critical",604,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+					LandingFactor = 7.47265625;
+				}
+			}
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Landing): %.8f", LandingFactor);
+			
 			double TSAFactor = 1.0;
 			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - TSA): %.8f", TSAFactor);
 			
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - atkfct): %.8f", atkfct);
 			double TOTALFactor = 1.0
 												 * LVLFactor
 												 * ATKFactor
 												 * SkillFactor
+												 * LandingFactor
 												 * TSAFactor
 												 * atkfct;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("\c[gold]Damage (!passive - Total): %.8f", TOTALFactor);
@@ -2957,6 +3004,8 @@ class PlayerStatItem : Inventory
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Skill): %.8f", SkillFactor);
 
 			double TSAFactor = 1.0;
+			
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - deffct): %.8f", deffct);
 			
 			double TOTALFactor = 1.0
 												 * LVLFactor
