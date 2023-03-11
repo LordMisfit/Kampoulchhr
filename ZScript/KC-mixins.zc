@@ -4,8 +4,8 @@ mixin class StunItems
 	
 	action int A_GetPlayerLvl(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		int Level = 0;
 		if (MiscItem)
@@ -22,8 +22,8 @@ mixin class StunItems
 	
 	void A_StunInduce(int basestun = 5, double lvlfactor = 0.0667, bool checkberserk = true, double bersmult = 1.5, bool destroyitem = false, bool martialarts = false)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		bool surprised;
 		if (!dideffect)
@@ -60,7 +60,7 @@ mixin class StunItems
 				}
 				
 				basestun += (TruePlayerLevel * lvlfactor);
-				if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) basestun *= bersmult;
+				if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basestun *= bersmult;
 				if (skill <= 0) basestun *= frandom(1.25,1.375);
 				if (skill == 1) basestun *= frandom(1.125,1.25);
 				if (skill == 2) basestun *= frandom(0.975,1.025);
@@ -128,8 +128,8 @@ mixin class DmgCalc
 {
 	action int A_GetPlayerLvl(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		
 		int Level = 0;
 		if (MiscItem)
@@ -150,8 +150,8 @@ mixin class DmgCalc
 		if (istarget && target) weapon = target.player.ReadyWeapon;
 		else weapon = player.ReadyWeapon;
 
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PlayerATK;
 		int PlayerLevel;
 		int TruePlayerLevel = A_GetPlayerLvl(1);
@@ -175,7 +175,7 @@ mixin class DmgCalc
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
 
 		// [STRIFE] Stamina Upgrades
-		int stamdamagefactor = player.Stamina;
+		int stamdamagefactor = playera.Stamina;
 		previousdamage = damage;
 		damage = floor(damage * (1.00 + (stamdamagefactor * 0.5)));
 		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
@@ -207,7 +207,7 @@ mixin class DmgCalc
 
 		// Berserk Check
 		previousdamage = damage;
-		if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) damage = floor(damage * 10);
+		if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) damage = floor(damage * 10);
 		if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f) [%s, %s]", damage, previousdamage, weaponname, actorname);
 
 		double PerkFactor;
@@ -244,8 +244,8 @@ mixin class DmgCalc
 		if (istarget && target) weapon = target.player.ReadyWeapon;
 		else weapon = player.ReadyWeapon;
 
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PlayerATK;
 		int PlayerLevel;
 		int TruePlayerLevel = A_GetPlayerLvl(1);
@@ -265,7 +265,7 @@ mixin class DmgCalc
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f", damage);
 
 		// [STRIFE] Stamina Upgrades
-		int stamdamagefactor = player.Stamina;
+		int stamdamagefactor = playera.Stamina;
 		previousdamage = damage;
 		damage = floor(damage * (1.00 + (stamdamagefactor * 0.5625)));
 		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
@@ -302,7 +302,7 @@ mixin class DmgCalc
 
 		// Berserk Check
 		previousdamage = damage;
-		if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) damage = floor(damage * 10);
+		if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) damage = floor(damage * 10);
 		if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f)", damage, previousdamage);
 
 		double PerkFactor;
@@ -349,8 +349,8 @@ mixin class MonsterCollider
 	
 	int A_GetPlayerLvl2(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		int Level = 0;
 		if (MiscItem)
@@ -380,8 +380,8 @@ mixin class MonsterCollider
 	void A_RecoverHUD(int recovery, int type, bool acculmuatepulse)
 	{
 		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD called");
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 
 		if (MiscItem && kchud_showhpapdmgrec)
 		{
@@ -676,8 +676,8 @@ mixin class MonsterCollider
 	int initdmg;
 	double, double, double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, bool wasblastedimpact, bool surprisehit, int angvstype)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
 		int predmginr = damage;
 		// (Partial) Defense Ignoring Attacks
@@ -1015,8 +1015,8 @@ mixin class MonsterCollider
 	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double firstdmgfactor = DamageFactor;
 		if (kcdebug_actordmgdisplays) Console.Printf("firstdmgfactor: %.8f, DamageFactor: %.8f", firstdmgfactor, DamageFactor);
 		/*
@@ -1409,12 +1409,12 @@ mixin class MonsterCollider
 		{
 			if (kcdebug_actordmgdisplays) Console.Printf("    (\czActor Defensive Input [STEP 3da - Player-Deflection Checking]\c-: \caUniqueProjectile = %p\c-, \caREFLECTEDMONSTERPROJ = %d\c-)", UniqueProjectile, UniqueProjectile.REFLECTEDMONSTERPROJ);
 			predirdmg = damage;
-			if (player && player.CountInv("PowerDouble"))
+			if (playera && playera.CountInv("PowerDouble"))
 			{
 				damage = floor(damage * 2);
 				if (kcdebug_actordmgdisplays && damage > 0) Console.Printf("    (\czActor Defensive Input [STEP 3dba - Player-Deflection Pre-Check [Double]\c-: \cypredmg = %d\c- / \cydmg = %d\c-)", predirdmg, damage);
 			}
-			if (player && player.CountInv("PowerHalve"))
+			if (playera && playera.CountInv("PowerHalve"))
 			{
 				damage = ceil(damage * 0.5);
 				if (kcdebug_actordmgdisplays && damage > 0) Console.Printf("    (\czActor Defensive Input [STEP 3dba - Player-Deflection Pre-Check [Halve]\c-: \cypredmg = %d\c- / \cydmg = %d\c-)", predirdmg, damage);
@@ -1686,8 +1686,8 @@ mixin class MonsterCollider
 	
 	override void PostBeginPlay()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
 		//
 		//
@@ -1842,23 +1842,9 @@ mixin class InvWeaponShare
 	const minzmoveneg = -1.907348633;
 	const minzmovepos = 1.907348633;
 	
-	// Spreader Aura Level 1 Angles
-	const spread1angle1 = -7.5;
-	const spread1angle2 = 7.5;
-	const spread1horz1 = 0.0;
-	const spread1horz2 = 0.0;
-	const spread1height1 = 0.0;
-	const spread1height2 = 0.0;
-
-	// Spreader Aura Level 2 Angles/Pitches
-	const spread2angle1 = -3.75;
-	const spread2angle2 = 3.75;
-	const spread2horz1 = 0.0;
-	const spread2horz2 = 0.0;
-	const spread2pitch1 = -3.75;
-	const spread2pitch2 = 3.75;
-	const spread2height1 = 0.0;
-	const spread2height2 = 0.0;
+	const spread1angle = 7.5;
+	const spread2angle = 3.75;
+	const spread2pitch = 3.75;
 	
 	//===========================================================================
 	//
@@ -1950,5 +1936,90 @@ mixin class InvWeaponShare
 		{
 			return false, null;
 		}
+	}
+}
+
+mixin class ActorStateReplace
+{
+	void A_KCAlertMonsters(double maxdist = 0, int flags = 0)
+	{
+		Actor target = null;
+		Actor emitter = self;
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (!(playera.CountInv("KCTimeFreezer1") ||
+					playera.CountInv("KCTimeFreezer2") ||
+					playera.CountInv("KCTimeFreezer3")))
+		{
+			if (player != null || (Flags & AMF_TARGETEMITTER))
+			{
+				target = self;
+			}
+			else if (self.target != null && (self.target.player != null || (Flags & AMF_TARGETNONPLAYER)))
+			{
+				target = self.target;
+			}
+
+			if (Flags & AMF_EMITFROMTARGET) emitter = target;
+
+			if (target != null && emitter != null)
+			{
+				emitter.SoundAlert(target, false, maxdist);
+			}
+		}
+	}
+	
+	int A_KCExplode(int damage = -1, int distance = -1, int flags = XF_HURTSOURCE, bool alert = false, int fulldamagedistance = 0, int nails = 0, int naildamage = 10, class<Actor> pufftype = "BulletPuff", name damagetype = "none")
+	{
+		if (damage < 0)	// get parameters from metadata
+		{
+			damage = ExplosionDamage;
+			distance = ExplosionRadius;
+			flags = !DontHurtShooter;
+			alert = false;
+		}
+		if (distance <= 0) distance = damage;
+
+		// NailBomb effect, from SMMU but not from its source code: instead it was implemented and
+		// generalized from the documentation at http://www.doomworld.com/eternity/engine/codeptrs.html
+
+		if (nails)
+		{
+			double ang;
+			for (int i = 0; i < nails; i++)
+			{
+				ang = i*360./nails;
+				// Comparing the results of a test wad with Eternity, it seems A_NailBomb does not aim
+				LineAttack(ang, MISSILERANGE, 0.,
+					//P_AimLineAttack (self, ang, MISSILERANGE), 
+					naildamage, 'Hitscan', pufftype, bMissile ? LAF_TARGETISSOURCE : 0);
+			}
+		}
+
+		if (!(flags & XF_EXPLICITDAMAGETYPE) && damagetype == 'None')
+		{
+			damagetype = self.DamageType;
+		}
+
+		int pflags = 0;
+		if (flags & XF_HURTSOURCE)	pflags |= RADF_HURTSOURCE;
+		if (flags & XF_NOTMISSILE)	pflags |= RADF_SOURCEISSPOT;
+		if (flags & XF_THRUSTZ)	pflags |= RADF_THRUSTZ;
+
+		int count = RadiusAttack (target, damage, distance, damagetype, pflags, fulldamagedistance);
+		if (!(flags & XF_NOSPLASH)) CheckSplash(distance);
+		if (alert && target != NULL && target.player != NULL)
+		{
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+			if (!(playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3")))
+			{
+				SoundAlert(target);
+			}
+		}
+		return count;
 	}
 }

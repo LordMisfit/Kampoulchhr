@@ -25,8 +25,8 @@ class KC_EventHandler : EventHandler
 	override void WorldThingSpawned(WorldEvent e)
 	{
 		let globalvars = KCGlobalVariables.Get();
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np;
@@ -147,8 +147,8 @@ class KC_EventHandler : EventHandler
 		if (Level.MapName != "TITLEMAP")
 		{
 			let globalvars = KCGlobalVariables.Get();
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		}
 		Super.WorldThingRevived(e);
 	}
@@ -158,8 +158,8 @@ class KC_EventHandler : EventHandler
 		if (Level.MapName != "TITLEMAP")
 		{
 			if (kcdebug_hitsounds) Console.Printf("hitsounds (WorldThingDamaged check)");
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			let globalvars = KCGlobalVariables.Get();
 			actor victim = e.Thing;
 			actor source = e.DamageSource;
@@ -236,8 +236,8 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
 				if (kcdebug_worlddamaged) Console.Printf("[%s] SpecialType [WorldDamaged]: %d", vict, specialtype);
 				
-				/*
 				// Ally Check
+				/*
 				actor IsRebel;
 				if (!KCPlayerPawn(victim) && KCPlayerPawn(source))
 				{
@@ -247,7 +247,7 @@ class KC_EventHandler : EventHandler
 						{
 							if (e.damage)
 							{
-								e.damage = 0;
+								//e.damage = 0;
 								if (kcdebug_worlddamaged) Console.Printf("Victim is Player's ally! No Damage inflicted!");
 								Super.WorldThingDamaged(e);
 								return;
@@ -257,7 +257,7 @@ class KC_EventHandler : EventHandler
 						{
 							if (IsRebel = Rebel(victim) && e.damage)
 							{
-								e.damage = 0;
+								//e.damage = 0;
 								if (kcdebug_worlddamaged) Console.Printf("Victim is Strife Rebel! No Damage inflicted!");
 								Super.WorldThingDamaged(e);
 								return;
@@ -266,7 +266,6 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				*/
-				
 				if (victim.bCOUNTKILL || specialtype) showdmglog = true;
 				if (PracticeTarget(victim) || PracticeTarget2(victim)) 
 				{
@@ -286,7 +285,6 @@ class KC_EventHandler : EventHandler
 					{
 						if (source && KCPlayerPawn(source)) //
 						{
-							let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 							if (MiscItem) landdamagebonus = MiscItem.landdmgbonus;
 							if (kcdebug_worlddamaged) Console.Printf("landdamagebonus: %d", landdamagebonus);
 						}
@@ -705,8 +703,8 @@ class KC_EventHandler : EventHandler
 	
 	int, int, actor, actor, actor, actor, int, int, bool, bool A_KillDropTables(int PLuck, int TrueLuck, actor victim, actor inflicter, actor source, actor mastor, int specialtype, int monsterrating, bool playerkill, bool allykill)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (inflicter && inflicter.target) source = inflicter.target;
 		if (inflicter && inflicter.master) mastor = inflicter.master;
 		string mod = "NONE";
@@ -751,7 +749,7 @@ class KC_EventHandler : EventHandler
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np;
 		
-		int Kills = Player.CountInv("KillsCount");
+		int Kills = playera.CountInv("KillsCount");
 		// Drop Tables
 		string dropname;
 		int basedropdiv;
@@ -817,13 +815,11 @@ class KC_EventHandler : EventHandler
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			else
 			if (inflicter && KCPlayerPawn(inflicter))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			if (victim.bBOSS) droptimes *= bossdropmulti;
@@ -877,13 +873,11 @@ class KC_EventHandler : EventHandler
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			else
 			if (inflicter && KCPlayerPawn(inflicter))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			if (victim.bBOSS) droptimes *= bossdropmulti;
@@ -898,7 +892,6 @@ class KC_EventHandler : EventHandler
 				if (random(1,maxchance) <= 1) // Main Drop Chance
 				{
 					int temp = 1;
-					let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 					if (MiscItem) 
 					{
 						temp = (1 + (TrueLuck * 0.08334));
@@ -913,7 +906,7 @@ class KC_EventHandler : EventHandler
 						{
 							droptype = "Pistol";
 							if (random(1,4) <= 1) droptype = "Glock21";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -925,7 +918,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 2) 
 						{
 							droptype = "Chaingun";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -937,7 +930,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 3) 
 						{
 							droptype = "Shotgun";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -949,7 +942,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 4) 
 						{
 							droptype = "TommyGun";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -961,7 +954,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 5) 
 						{
 							droptype = "SuperShotgun";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -973,7 +966,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 6) 
 						{
 							droptype = "RocketLauncher";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -985,7 +978,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 7) 
 						{
 							droptype = "BFG9000";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -997,7 +990,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 8)
 						{
 							droptype = "PlasmaRifle";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -1009,7 +1002,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 9)
 						{
 							droptype = "DevastatorGenerator";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -1021,7 +1014,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 10)
 						{
 							droptype = "SawThrower";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -1033,7 +1026,7 @@ class KC_EventHandler : EventHandler
 						if (user_type == 11)
 						{
 							droptype = "ImpalerXBow";
-							if (player.CountInv(droptype)) 
+							if (playera.CountInv(droptype)) 
 							{
 								droptype = "Backpack";
 								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -1048,7 +1041,6 @@ class KC_EventHandler : EventHandler
 					{
 						double rand = 3.0;
 						int temp = 48;
-						let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 						if (MiscItem) temp = (48 + (TrueLuck * 0.25));
 						if (random(1,256) <= temp) 
 						{
@@ -1103,13 +1095,11 @@ class KC_EventHandler : EventHandler
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			else
 			if (inflicter && KCPlayerPawn(inflicter))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			if (victim.bBOSS) droptimes *= (bossdropmulti * 2);
@@ -1147,13 +1137,11 @@ class KC_EventHandler : EventHandler
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			else
 			if (inflicter && KCPlayerPawn(inflicter))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			if (victim.bBOSS) droptimes *= bossdropmulti;
@@ -1233,13 +1221,11 @@ class KC_EventHandler : EventHandler
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			else
 			if (inflicter && KCPlayerPawn(inflicter))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 			}
 			if (victim.bBOSS) droptimes *= bossdropmulti;
@@ -1389,8 +1375,8 @@ class KC_EventHandler : EventHandler
 	{
 		if (Level.MapName != "TITLEMAP")
 		{
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			actor victim = e.Thing;
 			actor inflicter = e.inflictor;
 			string mod = "NONE";
@@ -1550,7 +1536,7 @@ class KC_EventHandler : EventHandler
 						
 						If (PLuck)
 						{
-							int PLevel = Player.CountInv("PlayerLevel");
+							int PLevel = playera.CountInv("PlayerLevel");
 									 if (PLevel <= 11) ExpGain *= (1.00 + (TrueLuck * frandompick(0,0.00125,0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.02)));
 							else if (PLevel <= 26) ExpGain *= (1.00 + (TrueLuck * frandompick(0.00125,0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.01,0.02,0.02)));
 							else if (PLevel <= 66) ExpGain *= (1.00 + (TrueLuck * frandompick(0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.02,0.02,0.02,0.04)));
@@ -1605,24 +1591,20 @@ class KC_EventHandler : EventHandler
 						if (giveexp && kc_expgains && Level.MapName != "TITLEMAP")
 						{
 							if (ExpGain < 1) ExpGain = 1;
-
-							let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 							
-
-							Actor player = players[0].mo;
-							if (player.health > 0 || !player.CountInv("PlayerIsDead"))
+							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
 							{
 								int EXPPrevReq = 0;
 								if (MiscItem.PlayerLevel > 0) EXPPrevReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel-1)];
 								int EXPCurrReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel)];
 								int EXPFullReq = (EXPCurrReq-EXPPrevReq);
 								//Console.Printf("%d / %d (%d)", EXPPrevReq, EXPCurrReq, EXPFullReq);
-								Player.A_GiveInventory("KillsCount",1);
-								Player.A_GiveInventory("ExpPts",ExpGain);
-								int Kills = Player.CountInv("KillsCount");
-								int ExpNew = Player.CountInv("ExpPts");
-								int ExpNeeded = Player.CountInv("ExpPtsNeeded");
-								int PlayerLevel = Player.CountInv("PlayerLevel");
+								playera.A_GiveInventory("KillsCount",1);
+								playera.A_GiveInventory("ExpPts",ExpGain);
+								int Kills = playera.CountInv("KillsCount");
+								int ExpNew = playera.CountInv("ExpPts");
+								int ExpNeeded = playera.CountInv("ExpPtsNeeded");
+								int PlayerLevel = playera.CountInv("PlayerLevel");
 								if (kc_showexpgains) Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
 								if (kc_showexpgains)
 								{
@@ -1644,19 +1626,18 @@ class KC_EventHandler : EventHandler
 						}
 						else
 						{
-							Actor player = players[0].mo;
-							if (player.health > 0 || !player.CountInv("PlayerIsDead"))
+							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
 							{
-								Player.A_GiveInventory("KillsCount",1);
-								int Kills = Player.CountInv("KillsCount");
+								playera.A_GiveInventory("KillsCount",1);
+								int Kills = playera.CountInv("KillsCount");
 							}
 						}
 						
 						// BUILD-style oneliner for kills [optional]
 						bool playoneliner = false;
-						if (inflicter == player || source == player || mastor == player) playoneliner = true;
+						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
 						
-						if (playoneliner && player.GetClassName() == "HeiwaPlayer" && MiscItem)
+						if (playoneliner && playera.GetClassName() == "HeiwaPlayer" && MiscItem)
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							if (kc_heiwaextravoices && kc_heiwaoneliners && !MiscItem.OneLinerCooldown)
@@ -1665,20 +1646,20 @@ class KC_EventHandler : EventHandler
 								if (basechance < 0) basechance = 0;
 								if (basechance > 0)
 								{
-									if (player.CountInv("DecentHealth")) basechance *= 1.25;
-									if (player.CountInv("LowHealth")) basechance *= 1.5;
-									if (player.CountInv("CriticalHealth")) basechance *= 1.875;
+									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
+									if (playera.CountInv("LowHealth")) basechance *= 1.5;
+									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
 									
 									if (victim.bBOSS) basechance *= 8;
-									if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
+									if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
 									if (kcdebug_worlddied) Console.Printf("%d / 256", basechance);
 									if (random(1,256) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 									{
 										double maskpitch = 1.00;
-										if (player.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+										if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 										string voicenm;
 										double voicevol = frandom(1.25,1.75);
-										if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+										if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 										int randvoice = 0;
 										if (randvoice == 1) 
 										{
@@ -1690,8 +1671,8 @@ class KC_EventHandler : EventHandler
 										//
 										if (randvoice > 0)
 										{
-											player.A_StopSound(CHAN_VOICE);
-											player.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+											playera.A_StopSound(CHAN_VOICE);
+											playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 											MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
 										}
 									}
@@ -1719,8 +1700,8 @@ class KC_EventHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (kcdebug_checksumprintout) Console.Printf("\cyMapCheckSum:\cx %s", level.GetChecksum());
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let globalvars = KCGlobalVariables.Get();
 		
 		int levelnums = level.levelnum;
@@ -1740,7 +1721,7 @@ class KC_EventHandler : EventHandler
 			// Check for certain MAPs that are more of intermission maps [PSX Doom TC's "D[#]END". KDIZD'S "INTERMAP", etc]
 			if (addmapcounttrue)
 			{
-				let IsPSXDoom = PlayingPSXDoom(player.FindInventory("PlayingPSXDoom"));
+				let IsPSXDoom = PlayingPSXDoom(playera.FindInventory("PlayingPSXDoom"));
 				if (IsPSXDoom)
 				{
 					if (kcdebug_mapfinishcheck) Console.Printf("\c[orange]Playing PSX Doom");
@@ -1848,7 +1829,7 @@ class KC_EventHandler : EventHandler
 					level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711' || // doom.wad e4m8
 					level.GetChecksum() == '78556d238ffec8058cacc48b847e1fab') // doom.wad e4m9
 			{
-				if (!player.FindInventory(giveitem)) player.A_SetInventory(giveitem,1);
+				if (!playera.FindInventory(giveitem)) playera.A_SetInventory(giveitem,1);
 			}
 			giveitem = "PlayingDoom2";
 			if (level.GetChecksum() == '3c9902e376cca1e9c3be8763bdc21df5' || // doom2.wad map01
@@ -1884,45 +1865,45 @@ class KC_EventHandler : EventHandler
 					level.GetChecksum() == '3ff94e27423f91c1585b3396f0c03459' || // doom2.wad map31
 					level.GetChecksum() == 'aa4ca3fc891d13821accabd836e29eb5') // doom2.wad map32
 			{
-				if (!player.FindInventory(giveitem)) player.A_SetInventory(giveitem,1);
+				if (!playera.FindInventory(giveitem)) playera.A_SetInventory(giveitem,1);
 			}
 		}
 		
 		giveitem = "PlayingRAMP";
-		if (level.GetChecksum() == '8e1d1b012a817bb8828d7096dd1ecc28' && !player.FindInventory(giveitem)) // ramp.pk3 map01
+		if (level.GetChecksum() == '8e1d1b012a817bb8828d7096dd1ecc28' && !playera.FindInventory(giveitem)) // ramp.pk3 map01
 		{
-			player.A_SetInventory(giveitem,1);
+			playera.A_SetInventory(giveitem,1);
 			Console.Printf("LOLE Welcome to R.A.M.P., Kiddo! :V");
 		}
 		giveitem = "PlayingGoingDown";
-		if (level.GetChecksum() == '1dfcba1353e9bbf720f17639f294490d' && !player.FindInventory(giveitem)) // gd.wad [Going Down] map01
+		if (level.GetChecksum() == '1dfcba1353e9bbf720f17639f294490d' && !playera.FindInventory(giveitem)) // gd.wad [Going Down] map01
 		{
-			player.A_SetInventory(giveitem,1);
+			playera.A_SetInventory(giveitem,1);
 			Console.Printf("LOLE Welcome to Going Down, Kiddo! :V");
 		}
 		giveitem = "PlayingPSXDoom";
-		if (level.GetChecksum() == '1dfcba1353e9bbf720f17639f294490d' && !player.FindInventory(giveitem)) // gd.wad [Going Down] map01
+		if (level.GetChecksum() == '1dfcba1353e9bbf720f17639f294490d' && !playera.FindInventory(giveitem)) // gd.wad [Going Down] map01
 		{
-			player.A_SetInventory(giveitem,1);
+			playera.A_SetInventory(giveitem,1);
 			Console.Printf("LOLE Welcome to PSX Doom TC, Kiddo! V:<");
 		}
 		giveitem = "PlayingAugerZenith";
-		if (level.GetChecksum() == 'a130224617d892e5023ab43392f4000d' && !player.FindInventory(giveitem)) // DBP37_AUGZEN.wad [AUGER ZENITH] map01
+		if (level.GetChecksum() == 'a130224617d892e5023ab43392f4000d' && !playera.FindInventory(giveitem)) // DBP37_AUGZEN.wad [AUGER ZENITH] map01
 		{
-			player.A_SetInventory(giveitem,1);
+			playera.A_SetInventory(giveitem,1);
 			Console.Printf("LOLE Welcome to AUGER ZENITH, Kiddo! V:<");
 		}
 		
-		if (!Player.CountInv("EWShieldDefendMode") && Player.bREFLECTIVE) Player.bREFLECTIVE = false;
-		if (!Player.CountInv("EWShieldDefendMode") && Player.bSHIELDREFLECT) Player.bSHIELDREFLECT = false;
+		if (!playera.CountInv("EWShieldDefendMode") && playera.bREFLECTIVE) playera.bREFLECTIVE = false;
+		if (!playera.CountInv("EWShieldDefendMode") && playera.bSHIELDREFLECT) playera.bSHIELDREFLECT = false;
 		
 		Super.WorldLoaded(e);
 	}
 	
 	override void PlayerDied(PlayerEvent e) 
 	{
-		actor Player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		Super.PlayerDied(e);
 	}
@@ -1942,8 +1923,9 @@ class KC_EventHandler : EventHandler
 	
 	override void NetworkProcess(ConsoleEvent e)
 	{
-		Actor player = players[consoleplayer].mo;
-		int buttons = player.GetPlayerInput(INPUT_BUTTONS);
+		Actor playera = players[consoleplayer].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int buttons = playera.GetPlayerInput(INPUT_BUTTONS);
 		if (e.Name == "AAAX")   
 		{
 			int key1, key2;
@@ -1951,28 +1933,26 @@ class KC_EventHandler : EventHandler
 			[key1, key2] = Bindings.GetKeysForCommand("KC_CheatClear");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (KCPlayerPawn(player) && MiscItem)
+				if (KCPlayerPawn(playera) && MiscItem)
 				{
 					if (MiscItem.timestopstate <= 0 && MiscItem.timestopcooldowntics > 0)
 					{
 						MiscItem.timestopcooldowntics = 0;
-						player.A_SetInventory("KCTimeCooldown",0);
-						player.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
-						player.A_SetBlend("252540",0.667,random(random(22,23),27));
+						playera.A_SetInventory("KCTimeCooldown",0);
+						playera.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+						playera.A_SetBlend("252540",0.667,random(random(22,23),27));
 					}
 				}
 			}
 			[key1, key2] = Bindings.GetKeysForCommand("Whistl");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (player.health > 0 && MiscItem.whistlecooldown == 0)
+					if (playera.health > 0 && MiscItem.whistlecooldown == 0)
 					{
-						player.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
-						if (player.CountInv("PowerStrength") || player.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
+						playera.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
 																																									 else MiscItem.whistlecooldown = random(42,49);
 					}
 				}
@@ -1980,8 +1960,7 @@ class KC_EventHandler : EventHandler
 			[key1, key2] = Bindings.GetKeysForCommand("KC_TimeStop");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (KCPlayerPawn(player) && player.health > 0 && MiscItem)
+				if (KCPlayerPawn(playera) && playera.health > 0 && MiscItem)
 				{
 					if (MiscItem.timestopstate <= 0)
 					{
@@ -1991,15 +1970,15 @@ class KC_EventHandler : EventHandler
 							MiscItem.timestopstate = 1;
 							MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
 							MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
-							player.A_SetBlend("4F644F",0.667,random(random(22,23),27));
+							playera.A_SetBlend("4F644F",0.667,random(random(22,23),27));
 
-							player.A_StopSound(216);
-							player.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+							playera.A_StopSound(216);
+							playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
 							Console.Printf("Time Freeze Activated");
 						}
 						else
 						{
-							player.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+							playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
 							Console.Printf("\c[brick]Time Freeze Must Cool Down First!");
 						}
 					}
@@ -2007,11 +1986,11 @@ class KC_EventHandler : EventHandler
 					{
 						MiscItem.timestopactivetics = 0;
 						MiscItem.timestopstate = 0;
-						player.A_SetInventory("KCTimeFreezer1",0);
+						playera.A_SetInventory("KCTimeFreezer1",0);
 						
 						MiscItem.timestopcooldowntics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
 						MiscItem.timestopcooldownmaxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
-						player.A_SetInventory("KCTimeCooldown",1);
+						playera.A_SetInventory("KCTimeCooldown",1);
 						MiscItem.timefreeze1cooldownratio2 = 0.0;
 
 						MiscItem.timefreeze1timesused += 5;
@@ -2040,7 +2019,7 @@ class KC_StaticEventHandler : StaticEventHandler
 	//If any world has loaded, then we're done handling new games case
 	override void WorldLoaded(WorldEvent e) 
 	{
-		actor player = players[0].mo;
+		actor playera = players[0].mo;
 		array<int> fs_textures;
 		array<string> fs_sndinfo;
 		string defaultSndinfo;
@@ -2139,7 +2118,7 @@ class KC_StaticEventHandler : StaticEventHandler
 		}
 		if (nofsttxts > 0)
 		{
-			if (kcdebug_footsteps1 || kcdebug_footsteps2) player.A_StartSound("step/squeaky1",1002);
+			if (kcdebug_footsteps1 || kcdebug_footsteps2) playera.A_StartSound("step/squeaky1",1002);
 			Console.Printf("# of textures found with no footstep definitions [\cy%s\c-]: \c[red]%d\c-", level.mapname, nofsttxts);
 		}
 	}
@@ -2151,8 +2130,8 @@ class KC_WaterHandler : StaticEventHandler
 	{
 		// set the player's timer up correctly (more-than-1-tick precision)
 		PlayerInfo p = players[consoleplayer];
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		PPShader.SetUniform1f("KCwatershader", "timer", gametic + e.FracTic);
 		int playbloom = Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true);
 		

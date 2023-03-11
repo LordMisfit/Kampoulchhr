@@ -2,7 +2,8 @@ class KampoulchhrBase : Actor
 {
 	mixin DmgCalc;
 	mixin CollisionChecker;
-	//mixin InvWeaponShare;
+	mixin InvWeaponShare;
+	mixin ActorStateReplace;
 	
 	int projprevdmg;
 	int monsprevdmg;
@@ -102,7 +103,7 @@ class KCCreature : KampoulchhrBase
 	int timesrevivedamonster;
 	int timesrevivedpervile;
 	int timesrevivedperdiabloist;
-	//int timesrevivedperbanshee;
+	int timesrevivedperbanshee;
 	bool isPEspawned;
 	bool isHEspawned;
 	bool isHOspawned;
@@ -226,6 +227,7 @@ class PlayerWhistle : KampoulchhrBase
 	default
 	{
 		-SOLID
+		+NOTIMEFREEZE
 		+NOBLOCKMAP
 		+NOINTERACTION
 		+NOGRAVITY
@@ -239,8 +241,8 @@ class PlayerWhistle : KampoulchhrBase
 	
 	int A_GetPlayerLvlProj(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		
 		int Level = 0;
 		if (MiscItem)
@@ -328,11 +330,18 @@ class PlayerWhistle : KampoulchhrBase
 				}
 				
 				A_StartSound("player/whistle5",CHAN_VOICE,CHANF_DEFAULT,vol,ATTN_NONE,frandom(0.76,1.24));
-				A_Explode((dmg),range,XF_NOSPLASH,true,(range * 0.5),0,0,"","Beats");
+				A_KCExplode((dmg),range,XF_NOSPLASH,true,(range * 0.5),0,0,"","Beats");
 			}
 			TNT1 A 1 
 			{
-				A_AlertMonsters();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (!(playera.CountInv("KCTimeFreezer1") ||
+							playera.CountInv("KCTimeFreezer2") ||
+							playera.CountInv("KCTimeFreezer3")))
+				{
+					invoker.A_KCAlertMonsters(); 
+				}
 			}
 			stop;
 	}
@@ -384,7 +393,7 @@ class PracticeTarget : KCCreature //21333
 				if (targetdummyhitcooldown == 0) 
 				{
 					int oldhealth = health;
-					//A_EEHealThing(10000000, SpawnHealth(), 1);
+					A_KCHealThing(10000000, SpawnHealth(), 1);
 					string dps = "";
 					dps.AppendFormat("\c[brick]DPS:\c- \c[gold]%d\c- / sec", abs(oldhealth-health));
 					A_PrintBold(dps);
@@ -444,7 +453,7 @@ class PracticeTarget2 : KCCreature
 				if (targetdummyhitcooldown == 0) 
 				{
 					int oldhealth = health;
-					//A_EEHealThing(10000000, SpawnHealth(), 1);
+					A_KCHealThing(10000000, SpawnHealth(), 1);
 					string dps = "";
 					dps.AppendFormat("\c[brick]DPS:\c- \c[gold]%d\c- / sec", abs(oldhealth-health));
 					A_PrintBold(dps);
@@ -726,13 +735,11 @@ class ShieldPartBase : KampoulchhrBase
 							if (kcdebug_shieldcollision) Console.Printf("JustUppercutted (%s) [passive side]", other.GetClassName());
 							return false;
 						}
-						/*
 						if (KickShieldReflect(self) || KickShieldNoReflect(self))
 						{
 							if (kcdebug_shieldcollision) Console.Printf("KickShield[No]Reflect (%s) [passive side]", other.GetClassName());
 							return false;
 						}
-						*/
 						if (ShieldPartMeleeReflect(self) || ShieldPartMeleeNoReflect(self))
 						{
 							if (kcdebug_shieldcollision) Console.Printf("ShieldPartMelee (%s) [passive side]", other.GetClassName());
@@ -783,8 +790,8 @@ class ShieldPart : ShieldPartBase // The Main segment of the sceptre-shield whic
 	
 	override void PostBeginPlay()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		super.PostBeginPlay();
 	}
 	

@@ -30,8 +30,8 @@ class CompatVulnItem : PlaceholderItem
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
 		let globalvars = KCGlobalVariables.Get();
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 
 		bool surprisehit;
 		if (owner)

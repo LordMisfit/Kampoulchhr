@@ -76,8 +76,8 @@ class KCPlayerPawn : PlayerPawn
 	
 	int A_CheckActualLevel(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 
 		int Level = 0;
 		if (MiscItem)
@@ -133,7 +133,9 @@ class KCPlayerPawn : PlayerPawn
 						
 						double volmult = 1.00;
 						if (foundstpsnd) volmult *= frandom(0.4,0.6);
-						A_StartSound("*land", 811, CHANF_DEFAULT, volmult);
+						string landsnd = "*land";
+						if (GetClassName() == "KCPlayer") landsnd = "land/bootland";
+						A_StartSound(landsnd, 811, CHANF_DEFAULT, volmult);
 					}
 				}
 			}
@@ -2590,8 +2592,8 @@ class EVP_Footsteps : Actor
 
 	void Init(PlayerPawn toAttach)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 
 		plr = toAttach;
 		tickCounter = 2;
@@ -2626,8 +2628,8 @@ class EVP_Footsteps : Actor
 	
 	int A_CheckActualLevel(int type = 0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 
 		int Level = 0;
 		if (MiscItem)

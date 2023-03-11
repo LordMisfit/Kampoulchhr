@@ -51,8 +51,8 @@ class CustomInventoryExt : CustomInventory
 		}
 		//Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
 
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double maskpitch = 1.00;
 		if (PickupUseVoice) 
 		{
@@ -80,8 +80,8 @@ class CustomInventoryExt : CustomInventory
 			}
 			//Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
 			
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			double maskpitch = 1.00;
 			if (PickupUseVoice2) 
 			{
@@ -116,9 +116,9 @@ class CustomInventoryExt : CustomInventory
 	
 	action bool A_CheckHealthLevels(double maxhealthratio = 1.0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-		int CurrentHealth = player.health;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int CurrentHealth = playera.health;
 		int HealthValue;
 		int MaxHealthTrue;
 		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -133,9 +133,9 @@ class CustomInventoryExt : CustomInventory
 	// Stimpacks/Medikits/Berserk Packs (All games)
 	action void A_PickupMedicalItem(double healfactor, double maxhealthratio = 1.0)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-		int CurrentHealth = player.health;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int CurrentHealth = playera.health;
 		int HealAmount;
 		int HealthValue;
 		int MaxHealthTrue;
@@ -147,28 +147,28 @@ class CustomInventoryExt : CustomInventory
 		{
 			CurrentHealth += HealAmount;
 			if (CurrentHealth >= MaxHealthLimit) CurrentHealth = MaxHealthLimit;
-			player.health = CurrentHealth;
+			playera.health = CurrentHealth;
 		}
 	}
 	
 	action void A_GiveBerserk(int basetime, bool bswitch = false, string type = "KCPowerStrength")
 	{
-		actor player = players[0].mo;
-		if (!player.CountInv(type))
+		actor playera = players[0].mo;
+		if (!playera.CountInv(type))
 		{
-			player.SetInventory(type,1);
-			let BerkserkItem = PowerStrength(player.FindInventory(type));
+			playera.SetInventory(type,1);
+			let BerkserkItem = PowerStrength(playera.FindInventory(type));
 			if (BerkserkItem) BerkserkItem.EffectTics = basetime;
 		}
 		else
 		{
-			let BerkserkItem = PowerStrength(player.FindInventory(type));
+			let BerkserkItem = PowerStrength(playera.FindInventory(type));
 			if (BerkserkItem) BerkserkItem.EffectTics += basetime;
 		}
 
 		if (kc_berserkweaponswitch && bswitch)
 		{
-			if (player.CountInv("FistMarine")) { player.A_SelectWeapon("FistMarine"); } 
+			if (playera.CountInv("FistMarine")) { playera.A_SelectWeapon("FistMarine"); } 
 		}
 	}
 }
@@ -188,22 +188,22 @@ class TSArtifactSpawner : CustomInventoryExt
 		Spawn:
 			TNT1 A 0 BRIGHT NoDelay
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				
 				int bits;
-				if (player.CountInv("TimeSeraphCharm")) bits += 1;
-				if (player.CountInv("TimeSeraphPocketWatch")) bits += 2;
-				if (player.CountInv("TimeSeraphBangle")) bits += 4;
+				if (playera.CountInv("TimeSeraphCharm")) bits += 1;
+				if (playera.CountInv("TimeSeraphPocketWatch")) bits += 2;
+				if (playera.CountInv("TimeSeraphBangle")) bits += 4;
 				
 				string spawntype;
 				int randsel;
 				if (kcdebug_timeserapharmor) Console.Printf("bits: %d", bits);
 				
-				if (!player.CountInv("TimeSeraphCharm"))
+				if (!playera.CountInv("TimeSeraphCharm"))
 				{
 					if (kcdebug_timeserapharmor) Console.Printf("!bit [1] check: %d", bits);
-					if (player.CountInv("TimeSeraphPocketWatch") && player.CountInv("TimeSeraphBangle"))
+					if (playera.CountInv("TimeSeraphPocketWatch") && playera.CountInv("TimeSeraphBangle"))
 					{
 						if (kcdebug_timeserapharmor) Console.Printf("bit [!1-6] check: %d", bits);
 						spawntype = "TimeSeraphCharm";
@@ -215,7 +215,7 @@ class TSArtifactSpawner : CustomInventoryExt
 						if (randsel <= 224) spawntype = "TimeSeraphCharm";
 						if (randsel >= 225 && randsel <= 256)
 						{
-							if (!player.CountInv("TimeSeraphBangle"))
+							if (!playera.CountInv("TimeSeraphBangle"))
 							{
 								randsel = random(1,256);
 								if (randsel <= 192) spawntype = "TimeSeraphBangle";
@@ -229,10 +229,10 @@ class TSArtifactSpawner : CustomInventoryExt
 					}
 				}
 				else
-				if (!player.CountInv("TimeSeraphPocketWatch"))
+				if (!playera.CountInv("TimeSeraphPocketWatch"))
 				{
 					if (kcdebug_timeserapharmor) Console.Printf("!bit [2] check: %d", bits);
-					if (player.CountInv("TimeSeraphCharm") && player.CountInv("TimeSeraphBangle"))
+					if (playera.CountInv("TimeSeraphCharm") && playera.CountInv("TimeSeraphBangle"))
 					{
 						if (kcdebug_timeserapharmor) Console.Printf("bit [!2-5] check: %d", bits);
 						spawntype = "TimeSeraphPocketWatch";
@@ -244,7 +244,7 @@ class TSArtifactSpawner : CustomInventoryExt
 						if (randsel <= 224) spawntype = "TimeSeraphPocketWatch";
 						if (randsel >= 225 && randsel <= 256)
 						{
-							if (!player.CountInv("TimeSeraphBangle"))
+							if (!playera.CountInv("TimeSeraphBangle"))
 							{
 								randsel = random(1,256);
 								if (randsel <= 192) spawntype = "TimeSeraphBangle";
@@ -258,10 +258,10 @@ class TSArtifactSpawner : CustomInventoryExt
 					}
 				}
 				else
-				if (!player.CountInv("TimeSeraphBangle"))
+				if (!playera.CountInv("TimeSeraphBangle"))
 				{
 					if (kcdebug_timeserapharmor) Console.Printf("!bit [4] check: %d", bits);
-					if (player.CountInv("TimeSeraphCharm") && player.CountInv("TimeSeraphPocketWatch"))
+					if (playera.CountInv("TimeSeraphCharm") && playera.CountInv("TimeSeraphPocketWatch"))
 					{
 						if (kcdebug_timeserapharmor) Console.Printf("bit [!4-3] check: %d", bits);
 						spawntype = "TimeSeraphBangle";
@@ -273,7 +273,7 @@ class TSArtifactSpawner : CustomInventoryExt
 						if (randsel <= 224) spawntype = "TimeSeraphBangle";
 						if (randsel >= 225 && randsel <= 256)
 						{
-							if (!player.CountInv("TimeSeraphCharm"))
+							if (!playera.CountInv("TimeSeraphCharm"))
 							{
 								randsel = random(1,256);
 								if (randsel <= 128) spawntype = "TimeSeraphCharm";
@@ -307,17 +307,17 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 	
 	int CheckNumArtifacts()
 	{
-		actor player = players[0].mo;
+		actor playera = players[0].mo;
 		int numartifacts;
-		if (player.CountInv("TimeSeraphCharm")) numartifacts++;
-		if (player.CountInv("TimeSeraphPocketWatch")) numartifacts++;
-		if (player.CountInv("TimeSeraphBangle")) numartifacts++;
+		if (playera.CountInv("TimeSeraphCharm")) numartifacts++;
+		if (playera.CountInv("TimeSeraphPocketWatch")) numartifacts++;
+		if (playera.CountInv("TimeSeraphBangle")) numartifacts++;
 		return numartifacts;
 	}
 	
 	int DecideColorPhase(int numartifacts)
 	{
-		actor player = players[0].mo;
+		actor playera = players[0].mo;
 		string type = GetClassName();
 		int colorphase = 0;
 		// 0 = Platinum [neutral]
@@ -335,7 +335,7 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 			ThinkerIterator CharmFinder = ThinkerIterator.Create("TimeSeraphCharm");
 			while (mo = Actor(CharmFinder.Next()))
 			{
-				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphCharm") > 0)
+				if (Distance3D(playera) <= checkdist && playera.CountInv("TimeSeraphCharm") > 0)
 				{
 					charmsfound++;
 					artifactsnearby++;
@@ -370,7 +370,7 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 			ThinkerIterator WatchFinder = ThinkerIterator.Create("TimeSeraphPocketWatch");
 			while (mo = Actor(WatchFinder.Next()))
 			{
-				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphPocketWatch") > 0)
+				if (Distance3D(playera) <= checkdist && playera.CountInv("TimeSeraphPocketWatch") > 0)
 				{
 					watchesfound++;
 					artifactsnearby++;
@@ -405,7 +405,7 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 			ThinkerIterator BangleFinder = ThinkerIterator.Create("TimeSeraphBangle");
 			while (mo = Actor(BangleFinder.Next()))
 			{
-				if (Distance3D(player) <= checkdist && player.CountInv("TimeSeraphBangle") > 0)
+				if (Distance3D(playera) <= checkdist && playera.CountInv("TimeSeraphBangle") > 0)
 				{
 					banglesfound++;
 					artifactsnearby++;
@@ -444,9 +444,9 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 	
 	void CheckExistance()
 	{
-		actor player = players[0].mo;
+		actor playera = players[0].mo;
 		string type = GetClassName();
-		if (player.CountInv(type)) Destroy();
+		if (playera.CountInv(type)) Destroy();
 	}
 }
 
@@ -474,8 +474,8 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		string itemname = GetClassName();
 
 		texname = "TSCHA0";
@@ -488,7 +488,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		string tagg = "???? ??????'? ?????";
-		if (player.CountInv(itemname) > 0)
+		if (playera.CountInv(itemname) > 0)
 		{
 			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
 			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
@@ -505,7 +505,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		Spawn:
 			TSCH A 0 BRIGHT
 			{
-				actor player = players[0].mo;
+				actor playera = players[0].mo;
 				invoker.CheckExistance();
 				
 				int numartifacts = invoker.CheckNumArtifacts();
@@ -532,33 +532,33 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				player.A_SetInventory("CharmEnergyGive",1);
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				playera.A_SetInventory("CharmEnergyGive",1);
 			}
 			stop;
 		Use:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem && player.CountInv("TimeSeraphCharm"))
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && playera.CountInv("TimeSeraphCharm"))
 				{
-					if (player.CountInv("TSArmorTier2"))
+					if (playera.CountInv("TSArmorTier2"))
 					{
-						player.A_SetInventory("TSArmorTier2",0);
-						player.A_SetInventory("TSArmorTier1",1);
+						playera.A_SetInventory("TSArmorTier2",0);
+						playera.A_SetInventory("TSArmorTier1",1);
 					}
 					else
-					if (player.CountInv("TSArmorTier1"))
+					if (playera.CountInv("TSArmorTier1"))
 					{
-						player.A_SetInventory("TSArmorTier2",0);
-						player.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier2",0);
+						playera.A_SetInventory("TSArmorTier1",0);
 					}
 					else
 					{
-						player.A_SetInventory("TSArmorTier1",0);
-						player.A_SetInventory("TSArmorTier1",1);
+						playera.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier1",1);
 					}
 				}
 			}
@@ -590,8 +590,8 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		string itemname = GetClassName();
 
 		texname = "TSPWA0";
@@ -604,7 +604,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		string tagg = "???? ??????'? ?????? ?????";
-		if (player.CountInv(itemname) > 0)
+		if (playera.CountInv(itemname) > 0)
 		{
 			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
 			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
@@ -622,7 +622,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			TSPW A 0 BRIGHT
 			{
 				invoker.CheckExistance();
-				actor player = players[0].mo;
+				actor playera = players[0].mo;
 
 				int numartifacts = invoker.CheckNumArtifacts();
 				int colorphase = invoker.DecideColorPhase(numartifacts);
@@ -648,33 +648,33 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				player.A_SetInventory("PWatchEnergyGive",1);
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				playera.A_SetInventory("PWatchEnergyGive",1);
 			}
 			stop;
 		Use:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				if (MiscItem && player.CountInv("TimeSeraphCharm"))
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && playera.CountInv("TimeSeraphCharm"))
 				{
-					if (Player.CountInv("TSArmorTier2"))
+					if (playera.CountInv("TSArmorTier2"))
 					{
-						player.A_SetInventory("TSArmorTier2",0);
-						player.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier2",0);
+						playera.A_SetInventory("TSArmorTier1",0);
 					}
 					else
-					if (Player.CountInv("TSArmorTier1"))
+					if (playera.CountInv("TSArmorTier1"))
 					{
-						player.A_SetInventory("TSArmorTier2",1);
-						player.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier2",1);
+						playera.A_SetInventory("TSArmorTier1",0);
 					}
 					else
 					{
-						player.A_SetInventory("TSArmorTier2",1);
-						player.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier2",1);
+						playera.A_SetInventory("TSArmorTier1",0);
 					}
 				}
 			}
@@ -706,8 +706,8 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		string itemname = GetClassName();
 
 		texname = "TSBGA0";
@@ -720,7 +720,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		string tagg = "???? ??????'? ??????";
-		if (player.CountInv(itemname) > 0)
+		if (playera.CountInv(itemname) > 0)
 		{
 			if (MiscItem.TimeArmorRelicsOwned == 1) tagg = "\c[lightblue]";
 			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
@@ -738,7 +738,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			TSBG A 1 BRIGHT
 			{
 				invoker.CheckExistance();
-				actor player = players[0].mo;
+				actor playera = players[0].mo;
 
 				int numartifacts = invoker.CheckNumArtifacts();
 				int colorphase = invoker.DecideColorPhase(numartifacts);
@@ -764,25 +764,25 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				player.A_SetInventory("BangleEnergyGive",1);
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				playera.A_SetInventory("BangleEnergyGive",1);
 			}
 			stop;
 		Use:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (Player.CountInv("TimeSeraphVisor"))
+					if (playera.CountInv("TimeSeraphVisor"))
 					{
-						player.A_SetInventory("TimeSeraphVisor",0);
+						playera.A_SetInventory("TimeSeraphVisor",0);
 					}
 					else
 					{
-						player.A_SetInventory("TimeSeraphVisor",1);
+						playera.A_SetInventory("TimeSeraphVisor",1);
 					}
 				}
 			}
@@ -943,9 +943,9 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 			TNT1 A 0
 			{
 				//A_EmulateGiveHealthBonusACI(1,8,100,1);
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				int CurrentHealth = player.health;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				int CurrentHealth = playera.health;
 				int HealthValue;
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -961,7 +961,7 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 					//Console.Printf("HealthValue: %d", HealthValue);
 		
-					player.health = CurrentHealth;
+					playera.health = CurrentHealth;
 				}
 			}
 			Stop;
@@ -994,9 +994,9 @@ class HealthBonusBig : CustomInventoryExt
 			NULL A 0
 			{
 				//A_EmulateGiveHealthBonusACI(10,8,100,1); 
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				int CurrentHealth = player.health;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				int CurrentHealth = playera.health;
 				int HealthValue;
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -1012,7 +1012,7 @@ class HealthBonusBig : CustomInventoryExt
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 					//Console.Printf("HealthValue: %d", HealthValue);
 		
-					player.health = CurrentHealth;
+					playera.health = CurrentHealth;
 				}
 			}
 			Stop;
@@ -1040,9 +1040,9 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 		Pickup:
 			TNT1 A 0 
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				int CurrentHealth = player.health;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				int CurrentHealth = playera.health;
 				int HealthValue;
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -1055,7 +1055,7 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 					CurrentHealth += HealthValue;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 		
-					player.health = CurrentHealth;
+					playera.health = CurrentHealth;
 				}
 			}
 			Stop;
@@ -1089,9 +1089,9 @@ class MiniSoulsphere : CustomInventoryExt
 		Pickup:
 			TNT1 A 0 
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				int CurrentHealth = player.health;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				int CurrentHealth = playera.health;
 				int HealthValue;
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -1104,7 +1104,7 @@ class MiniSoulsphere : CustomInventoryExt
 					CurrentHealth += HealthValue;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 		
-					player.health = CurrentHealth;
+					playera.health = CurrentHealth;
 				}
 			}
 			Stop;
@@ -1131,9 +1131,9 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 		Pickup:
 			TNT1 A 0 
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
-				int CurrentHealth = player.health;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				int CurrentHealth = playera.health;
 				int HealthValue;
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
@@ -1148,9 +1148,9 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 					CurrentHealth += HealAmount;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 				
-					player.health = CurrentHealth;
+					playera.health = CurrentHealth;
 				}
-				player.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
+				playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 			}
 			Stop;
 	}
@@ -1203,8 +1203,8 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 		Pickup:
 			TNT1 A 0 
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem && MiscItem.CanTalkUnderwater)
 				{
 					double maskpitch = 1.00;
@@ -1242,8 +1242,8 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 		Pickup:
 			TNT1 A 0
 			{
-				actor player = players[0].mo;
-				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem && MiscItem.CanTalkUnderwater)
 				{
 					double maskpitch = 1.00;
@@ -1364,8 +1364,8 @@ class KCArmor : BasicArmor
 	
 	override void AbsorbDamage (int damage, Name damageType, out int newdamage, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 
 		string infl, sour, vict;
 		if (owner == null) vict = "NONE"; else vict = owner.GetClassName();
@@ -1676,8 +1676,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.01);
@@ -1696,8 +1696,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	{
 		name armorclasstype = "KCArmor";
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d", PrevArmorType, PrevArmorAmt);
@@ -1838,8 +1838,8 @@ class ArmorBonusSilent : ArmorBonus2
 	{
 		name armorclasstype = "KCArmor";
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d", PrevArmorType, PrevArmorAmt);
@@ -1987,8 +1987,8 @@ class ArmorBonusBig : ArmorBonus2
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.10);
@@ -2028,8 +2028,8 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue);
@@ -2045,8 +2045,8 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 	{
 		name armorclasstype = "KCArmor";
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);
@@ -2117,8 +2117,8 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 	
 	override void BeginPlay()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
@@ -2132,8 +2132,8 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
@@ -2162,8 +2162,8 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
@@ -2179,8 +2179,8 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 	{
 		name armorclasstype = "KCArmor";
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);

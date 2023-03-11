@@ -17,8 +17,8 @@ class TempDefenseBuff : PowerProtection
 	
 	int A_GetPlayerLvl()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		int Level = 0;
 		if (MiscItem)
@@ -146,8 +146,8 @@ class KCTimeFreezer : TimeFreezerKeepSound
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (passive && damage > 0)
 		{
 			double TOTALFactor = 0.0;
@@ -688,8 +688,8 @@ class PowerNoDrown : PowerProtection
 
 		int ticpiecemax;
 		int ticwhiletimes = 3;
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -835,8 +835,8 @@ class KCPowerIronFeet : PowerIronFeet
 		if (EffectTics > fadeouttic && owner) owner.A_StopSound(203);
 		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/bioshieldfading",203,CHANF_DEFAULT,2.25,ATTN_NORM);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -884,9 +884,9 @@ class KCPowerInvisibility : PowerInvisibility
 		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/invisfading",202,CHANF_DEFAULT,2.25,ATTN_NORM);
 		if (EffectTics > fadeouttic && owner) owner.A_StopSound(202);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let TimeItem = KCTimeFreezer(Player.FindInventory("KCTimeFreezer"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -935,9 +935,9 @@ class KCPowerInvuln : PowerInvulnerable
 		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/invulnfading",201,CHANF_DEFAULT,2.25,ATTN_NORM);
 		if (EffectTics > fadeouttic && owner) owner.A_StopSound(201);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let TimeItem = KCTimeFreezer(Player.FindInventory("KCTimeFreezer"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -1040,9 +1040,9 @@ class KCPowerStrength : PowerStrength
 		if (EffectTics > fadeouttic && owner) owner.A_StopSound(204);
 		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/berserkfading",204,CHANF_DEFAULT,2.25,ATTN_NORM);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let TimeItem = KCTimeFreezer(Player.FindInventory("KCTimeFreezer"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -1362,8 +1362,8 @@ class TSArtifactsInUse : EmptyPowerup
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		texname = "TSACA0";
 		
 		if (MiscItem)
@@ -1394,8 +1394,8 @@ class BangleEnergyGive : PlaceHolderItem
 		super.Tick();
 		if (ownedtime == 1)
 		{
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			if (MiscItem)
 			{
 				MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
@@ -1419,8 +1419,8 @@ class CharmEnergyGive : PlaceHolderItem
 		super.Tick();
 		if (ownedtime == 1)
 		{
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			if (MiscItem)
 			{
 				MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
@@ -1444,8 +1444,8 @@ class PWatchEnergyGive : PlaceHolderItem
 		super.Tick();
 		if (ownedtime == 1)
 		{
-			actor player = players[0].mo;
-			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			actor playera = players[0].mo;
+			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			if (MiscItem)
 			{
 				MiscItem.TimeArmorEnergyTics += (3600 * TICRATE);
@@ -1802,9 +1802,9 @@ class KCPowerSpread1 : Powerup
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "SRSHD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let TimeItem = KCTimeFreezer(Player.FindInventory("KCTimeFreezer"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -1844,9 +1844,9 @@ class KCPowerSpread2 : Powerup
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "SRSHH0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let TimeItem = KCTimeFreezer(Player.FindInventory("KCTimeFreezer"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -1987,8 +1987,8 @@ class PowerDouble : PowerDamage
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (!passive && damage > 0)
 		{
 			double TOTALFactor = 2;
@@ -2005,8 +2005,8 @@ class PowerDouble : PowerDamage
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DDMGB0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2040,8 +2040,8 @@ class PowerHalve : PowerDamage
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (!passive && damage > 0)
 		{
 			double TOTALFactor = 0.5;
@@ -2058,8 +2058,8 @@ class PowerHalve : PowerDamage
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "ATKDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2094,8 +2094,8 @@ class PowerGuard : PowerProtection
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (passive && damage > 0)
 		{
 			double TOTALFactor = 0.5;
@@ -2118,8 +2118,8 @@ class PowerGuard : PowerProtection
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "GUADD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2153,8 +2153,8 @@ class PowerWeaken : PowerProtection
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (passive && damage > 0)
 		{
 			double TOTALFactor = 2.0;
@@ -2177,8 +2177,8 @@ class PowerWeaken : PowerProtection
 		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DEFDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2219,8 +2219,8 @@ class PowerHaste : PowerSpeed
 		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDUP";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2261,8 +2261,8 @@ class PowerSlow : PowerSpeed
 		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
 			if (!owner.CountInv("INTERMAPChecker"))
@@ -2291,11 +2291,11 @@ class GiveTempMortalSurvive : PlaceHolderItem
 	
 	override void Tick()
 	{
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		super.Tick();
 
-		if (owner && owner == player && MiscItem)
+		if (owner && owner == playera && MiscItem)
 		{
 			int maxtimes = 4;
 			if (skill <= 1) maxtimes = 5;
