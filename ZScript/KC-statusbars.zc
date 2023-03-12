@@ -511,7 +511,7 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			InjAlpha = 0.0;
-			if (InjPulseTimerMod && exex_playerbpmhud)
+			if (InjPulseTimerMod && kc_playerbpmhud)
 			{
 				double BaseInjAlphaframe = BaseInjAlpha / (InjPulseTimerMod * 0.5);
 				int InjPulseTimer = level.time % InjPulseTimerMod;
@@ -1196,6 +1196,27 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
+	void A_DrawFSLevel()
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int PlayerLevel;
+		if (MiscItem) 
+		{
+			PlayerLevel = MiscItem.TruePlayerLevel;
+			// Show Current Level
+			if (kc_expgains)
+			{
+				string LVLGraphic = "LVL";
+				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "LVLG";
+				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "LVLP";
+				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
+			}
+		}
+	}
+	
 	void A_DrawFSHealth()
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -1731,6 +1752,311 @@ class KCStatusBarMain : BaseStatusBar
 		return x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname;
 	}
 	
+	int DrawFSHUDLevelStats(int DigY, int scaleygap = 8, double textscale = 1.0)
+	{
+		bool showlevelstats = true;
+		if (textscale <= 0.0000) showlevelstats = false;
+		if (textscale >= 0.0001 && textscale <= 0.25) textscale = 0.25;
+		if (textscale >= 4.00) textscale = 4.00;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		scaleygap *= textscale;
+		
+		if (CPlayerPawn && showlevelstats && !automapactive)
+		{
+			DigY = 0;
+			string mapnam = "";
+			int mapnametimerbase = 38;
+			int mapnametimer = level.time % mapnametimerbase;
+			if (mapnametimer == 0)
+			{
+				mapnametimerbase = randompick(23,28,28,32,32,32,35,35,35,35,35,38,38,38,42,42,47);
+				mapnametimer = level.time % mapnametimerbase;
+			}
+			bool mapnameflickermode = 0;
+			int stattalLYtimerbase = 140;
+			int stattalLYtimer = level.time % stattalLYtimerbase;
+			int stattalLYshowall = (stattalLYtimerbase * 0.75);
+			double tallypercent = 100.0;
+			bool showtotaltallies = false;
+			if (kchud_leveltallies >= 2)
+			{
+				if (kchud_leveltallies == 4) showtotaltallies = true;
+				if (kchud_leveltallies == 3)
+				{
+					if (stattalLYtimer > stattalLYshowall && MiscItem) showtotaltallies = false;
+																												else showtotaltallies = true;
+				}
+				if (kchud_leveltallies == 2)
+				{
+					if (stattalLYtimer > stattalLYshowall && MiscItem) showtotaltallies = true;
+																												else showtotaltallies = false;
+				}
+			}
+			
+			if (level.AllMap)
+			{
+				if (mapnametimer > (mapnametimerbase * 0.5)) mapnameflickermode = 1;
+			}
+
+			if (mapnameflickermode)
+			{
+				if (gameinfo.gametype != GAME_Hexen)
+				{
+					if (gameinfo.gametype == GAME_Doom) mapnam.AppendFormat("\c[sapphire]%s: ", level.mapname);
+					if (gameinfo.gametype == GAME_Heretic || gameinfo.gametype == GAME_Strife) mapnam.AppendFormat("\c[sapphire]%s: ", level.mapname);
+				}
+				mapnam.AppendFormat("\c[fire]%s", level.levelname);
+			}
+			else
+			{
+				if (gameinfo.gametype != GAME_Hexen) 
+				{
+					if (gameinfo.gametype == GAME_Doom) mapnam.AppendFormat("\c[red]%s: ", level.mapname);
+					if (gameinfo.gametype == GAME_Heretic || gameinfo.gametype == GAME_Strife) mapnam.AppendFormat("\c[gold]%s: ", level.mapname);
+				}
+				mapnam.AppendFormat("\c[white]%s", level.levelname);
+			}
+			if (kcdebug_mapbar)
+			{
+				if (kcdebug_mapbar & 1) mapnam.AppendFormat(" \c[gold](lvlnum: %d)", level.levelnum);
+				if (kcdebug_mapbar & 2 && MiscItem) mapnam.AppendFormat(" \c[purple]{nummaps: %d}", (MiscItem.nummaps+1));
+			}
+
+			DigY = -40 + scaleygap;
+			if (kchud_showlevelnames)
+			{
+				DigY -= scaleygap;
+				DrawString(mConFont, mapnam, (0, DigY), DI_TEXT_ALIGN_CENTER|DI_SCREEN_CENTER_BOTTOM, font.cr_darkgray, 1.0, -1, 4, (textscale, textscale));
+			}
+			
+			string tallytemp = "";
+			if (kchud_showleveltimes)
+			{
+				DigY -= scaleygap;
+				
+				int timeTicks =
+						hud_showtime < 4
+							? Level.maptime
+							: (hud_showtime < 6
+								? Level.time
+								: Level.totaltime);
+								// Time Stats
+				int leveltime = level.totaltime;
+				int leveltimepar = level.partime * ticrate;
+				int rawseconds = Thinker.Tics2Seconds(leveltime);
+				int leveltimedays = ((rawseconds / 86400));
+				int dayaddx = 0;
+				if (leveltimedays > 0 && leveltimedays <= 9) dayaddx = 12;
+				if (leveltimedays >= 10 && leveltimedays <= 99) dayaddx = 24;
+
+				tallytemp = "TIME: ";
+				leveltime = level.time;
+				rawseconds = Thinker.Tics2Seconds(leveltime);
+				int leveltimesec = (rawseconds % 60);
+				int leveltimemin = ((rawseconds % 3600) / 60);
+				int leveltimehrs = ((rawseconds % 86400) / 3600);
+				leveltimedays = ((rawseconds / 86400));
+
+				if (leveltimedays) tallytemp.AppendFormat("%dd ", leveltimedays);
+				if (leveltimehrs >= 0 && leveltimehrs <= 9) tallytemp.AppendFormat("0%d:", leveltimehrs);
+																							 else tallytemp.AppendFormat("%d:", leveltimehrs);
+				if (leveltimemin >= 0 && leveltimemin <= 9) tallytemp.AppendFormat("0%d:", leveltimemin);
+																							 else tallytemp.AppendFormat("%d:", leveltimemin);
+				if (leveltimesec >= 0 && leveltimesec <= 9) tallytemp.AppendFormat("0%d", leveltimesec);
+																							 else tallytemp.AppendFormat("%d", leveltimesec);
+				
+				int fontclr = font.cr_darkgray;
+				if (leveltime <= (leveltimepar * 0.5))
+				{
+					if (leveltime % 34 > 17) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+				}
+				else
+				{
+					if (leveltime <= (leveltimepar * 0.875))
+					{
+						if (leveltime % 36 >= 0 && leveltime % 36 <= 5) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+						if (leveltime % 36 >= 12 && leveltime % 36 <= 17) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+						if (leveltime % 36 >= 24 && leveltime % 36 <= 29) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+					}
+					else
+					{
+						if (leveltime <= (leveltimepar * 1))
+						{
+							if (leveltime % 36 >= 0 && leveltime % 36 <= 2) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+							if (leveltime % 36 >= 6 && leveltime % 36 <= 8) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+							if (leveltime % 36 >= 12 && leveltime % 36 <= 14) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+							if (leveltime % 36 >= 18 && leveltime % 36 <= 20) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+							if (leveltime % 36 >= 24 && leveltime % 36 <= 26) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+							if (leveltime % 36 >= 30 && leveltime % 36 <= 32) fontclr = font.cr_green; // Flickers green if you're still within the level's par time V:
+						}
+					}
+				}
+				
+				DrawString(mConFont, tallytemp, (((-120-dayaddx)*textscale), DigY), DI_TEXT_ALIGN_LEFT|DI_SCREEN_CENTER_BOTTOM, fontclr, 1.0, -1, 4, (textscale, textscale));
+				// Total Time
+				tallytemp = "TOTAL: ";
+				leveltime = level.totaltime;
+				rawseconds = Thinker.Tics2Seconds(leveltime);
+				leveltimesec = (rawseconds % 60);
+				leveltimemin = ((rawseconds % 3600) / 60);
+				leveltimehrs = ((rawseconds % 86400) / 3600);
+				leveltimedays = ((rawseconds / 86400));
+
+				if (leveltimedays) tallytemp.AppendFormat("%dd ", leveltimedays);
+				if (leveltimehrs >= 0 && leveltimehrs <= 9) tallytemp.AppendFormat("0%d:", leveltimehrs);
+																							 else tallytemp.AppendFormat("%d:", leveltimehrs);
+				if (leveltimemin >= 0 && leveltimemin <= 9) tallytemp.AppendFormat("0%d:", leveltimemin);
+																							 else tallytemp.AppendFormat("%d:", leveltimemin);
+				if (leveltimesec >= 0 && leveltimesec <= 9) tallytemp.AppendFormat("0%d", leveltimesec);
+																							 else tallytemp.AppendFormat("%d", leveltimesec);
+				DrawString(mConFont, tallytemp, (((120+dayaddx)*textscale), DigY), DI_TEXT_ALIGN_RIGHT|DI_SCREEN_CENTER_BOTTOM, font.cr_gray, 1.0, -1, 4, (textscale, textscale));
+			}
+			
+			if (kchud_leveltallies)
+			{
+				// Level Stats
+				
+				//Console.Printf("DigY: %d", DigY);
+				int tallyfontclr;
+				int flashinterval = 24;
+				if (showtotaltallies) flashinterval = 12;
+				int scrtcnt = level.found_secrets;
+				int maxscrtcnt = level.total_secrets;
+				if (showtotaltallies)
+				{
+					scrtcnt = MiscItem.totalsecretsgame;
+					maxscrtcnt = MiscItem.totalmaxsecrets;
+				}
+				if (maxscrtcnt == 0) tallypercent = 100.0;
+				else tallypercent = scrtcnt * 100.0 / maxscrtcnt;
+				if (maxscrtcnt)
+				{
+					DigY -= scaleygap;
+					tallyfontclr = font.cr_gold;
+					if (scrtcnt >= maxscrtcnt && level.time % flashinterval >= (flashinterval*0.5)) tallyfontclr = font.cr_darkgreen;
+					tallytemp = "Secrets: ";
+					if (showtotaltallies)
+					{
+						tallytemp = "Secrets [ALL"; 
+						if (MiscItem) tallytemp.AppendFormat(" (%d)", (MiscItem.nummaps+1));
+						tallytemp.AppendFormat("]: ");
+					}
+					if (kchud_leveltallypercents != 2)
+					{
+						tallytemp.AppendFormat("%d", scrtcnt);
+						tallytemp.AppendFormat("/");
+						tallytemp.AppendFormat("%d", maxscrtcnt);
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat(" ");
+						tallytemp.AppendFormat("[");
+					}
+					if (kchud_leveltallypercents)
+					{
+						tallytemp.AppendFormat("%.2f", tallypercent);
+						tallytemp.AppendFormat("%%");
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat("]");
+					}
+					DrawString(mConFont, tallytemp, (0, DigY), DI_TEXT_ALIGN_CENTER|DI_SCREEN_CENTER_BOTTOM, tallyfontclr, 1.0, -1, 4, (textscale, textscale));
+				}
+				int itemcnt = level.found_items;
+				int maxitemcnt = level.total_items;
+				if (showtotaltallies)
+				{
+					itemcnt = MiscItem.totalitemsgame;
+					maxitemcnt = MiscItem.totalmaxitems;
+				}
+				if (maxitemcnt == 0) tallypercent = 100.0;
+				else tallypercent = itemcnt * 100.0 / maxitemcnt;
+				if (maxitemcnt)
+				{
+					DigY -= scaleygap;
+					tallyfontclr = font.cr_lightblue;
+					if (itemcnt >= maxitemcnt && level.time % flashinterval >= (flashinterval*0.5)) tallyfontclr = font.cr_brick;
+					tallytemp = "Items: ";
+					if (showtotaltallies)
+					{
+						tallytemp = "Items [ALL";
+						if (MiscItem) tallytemp.AppendFormat(" (%d)", (MiscItem.nummaps+1));
+						tallytemp.AppendFormat("]: ");
+					}
+					if (kchud_leveltallypercents != 2)
+					{
+						tallytemp.AppendFormat("%d", itemcnt);
+						tallytemp.AppendFormat("/");
+						tallytemp.AppendFormat("%d", maxitemcnt);
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat(" ");
+						tallytemp.AppendFormat("[");
+					}
+					if (kchud_leveltallypercents)
+					{
+						tallytemp.AppendFormat("%.2f", tallypercent);
+						tallytemp.AppendFormat("%%");
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat("]");
+					}
+					DrawString(mConFont, tallytemp, (0, DigY), DI_TEXT_ALIGN_CENTER|DI_SCREEN_CENTER_BOTTOM, tallyfontclr, 1.0, -1, 4, (textscale, textscale));
+				}
+				int killcnt = level.killed_monsters;
+				int maxkillcnt = level.total_monsters;
+				if (showtotaltallies)
+				{
+					killcnt = MiscItem.totalkillsgame;
+					maxkillcnt = MiscItem.totalmaxkills;
+				}
+				if (maxkillcnt == 0) tallypercent = 100.0;
+				else tallypercent = killcnt * 100.0 / maxkillcnt;
+				if (maxkillcnt)
+				{
+					DigY -= scaleygap;
+					tallyfontclr = font.cr_brick;
+					if (killcnt >= maxkillcnt && level.time % flashinterval >= (flashinterval*0.5)) tallyfontclr = font.cr_lightblue;
+					tallytemp = "Kills: ";
+					if (showtotaltallies) 
+					{
+						tallytemp = "Kills [ALL";
+						if (MiscItem) tallytemp.AppendFormat(" (%d)", (MiscItem.nummaps+1));
+						tallytemp.AppendFormat("]: ");
+					}
+					if (kchud_leveltallypercents != 2)
+					{
+						tallytemp.AppendFormat("%d", killcnt);
+						tallytemp.AppendFormat("/");
+						tallytemp.AppendFormat("%d", maxkillcnt);
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat(" ");
+						tallytemp.AppendFormat("[");
+					}
+					if (kchud_leveltallypercents)
+					{
+						tallytemp.AppendFormat("%.2f", tallypercent);
+						tallytemp.AppendFormat("%%");
+					}
+					if (kchud_leveltallypercents == 1)
+					{
+						tallytemp.AppendFormat("]");
+					}
+					DrawString(mConFont, tallytemp, (0, DigY), DI_TEXT_ALIGN_CENTER|DI_SCREEN_CENTER_BOTTOM, tallyfontclr, 1.0, -1, 4, (textscale, textscale));
+				}
+				
+			}
+		}
+		return DigY;
+	}
+
 	protected void DrawFullScreenStuff()
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -1758,6 +2084,9 @@ class KCStatusBarMain : BaseStatusBar
 		// Draw Armor [and Time Seraph Armor info]
 		A_DrawFSArmor();
 		
+		// Draw Level
+		A_DrawFSLevel();
+		
 		// Draw Weapon Slots
 		int x;
 		int y;
@@ -1784,6 +2113,10 @@ class KCStatusBarMain : BaseStatusBar
 		{
 			//DrawFullscreenKeys();
 		}
+		
+		// Level Stats
+		int DigY;
+		DigY = DrawFSHUDLevelStats(DigY, 8, kchud_stattextscale);
 		
 		int numboxes = kc_inventorybarboxes;
 		if (numboxes <= 1) numboxes = 1;

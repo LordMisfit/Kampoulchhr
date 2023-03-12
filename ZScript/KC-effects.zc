@@ -2351,3 +2351,57 @@ class DrownDebuffBase : TempDefenseBuff
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 }
+
+class IsPunching : PlaceHolderItem
+{
+	int timer;
+	default
+	{
+		Inventory.MaxAmount 1; 
+		-INVENTORY.KEEPDEPLETED 
+	} 
+	
+	override void Tick()
+	{
+		super.Tick();
+		timer++;
+		if (timer >= 5) Destroy();
+		else if (Owner == NULL) Destroy();
+	}
+}
+
+class IsKicking : PlaceHolderItem
+{
+	int timer;
+	default
+	{
+		Inventory.MaxAmount 1; 
+		-INVENTORY.KEEPDEPLETED 
+	} 
+	
+	override void Tick()
+	{
+		super.Tick();
+		timer++;
+		if (timer >= 5) Destroy();
+		else if (Owner == NULL) Destroy();
+	}
+}
+
+class IsUppercutting : PlaceHolderItem
+{
+	int timer;
+	default
+	{
+		Inventory.MaxAmount 1; 
+		-INVENTORY.KEEPDEPLETED 
+	} 
+	
+	override void Tick()
+	{
+		super.Tick();
+		timer++;
+		if (timer >= 5) Destroy();
+		else if (Owner == NULL) Destroy();
+	}
+}
