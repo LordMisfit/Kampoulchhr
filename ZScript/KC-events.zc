@@ -804,6 +804,17 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.25 + (monsterrating * 0.0625);
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				
+				double rand = 2.0;
+				if (vict == "Arachnotron")
+				{
+					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+					{
+						string droptype = "Cell";
+						if (random(1,5) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+				}
+
 				
 				// Heretic Monsters
 				basedropdiv = 512;

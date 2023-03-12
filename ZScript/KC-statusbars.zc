@@ -1217,6 +1217,42 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
+	void A_DrawFSDash()
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		let MiscItem2 = PlayerDashJump(CPlayerPawn.FindInventory("PlayerDashJump"));
+		int PlayerLevel;
+		
+		int candash = CPlayerPawn.CountInv("DashReady");
+		if (candash && CPlayerPawn.CountInv("NoDashing")) candash = 0;
+		int dash = CPlayerPawn.CountInv("DashGauge");
+		int dashcooldown = CPlayerPawn.CountInv("DashCooldown");
+		int dashcharge = CPlayerPawn.CountInv("DashCharge");
+		int dashtics = CPlayerPawn.CountInv("DashTics");
+		int dashmaxcharge = CPlayerPawn.CountInv("DashMaxCharge");
+		int dashcost = CPlayerPawn.CountInv("DashCost");
+		
+		if (MiscItem2) 
+		{
+			// Show Current Dashes
+			if (candash)
+			{
+				int numdashes;
+				if (dashcharge >= dashcost)
+				{
+					numdashes = dashcharge / dashcost;
+					string LVLGraphic = "HDASHGRY";
+					if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "HDASHGRN";
+					if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "HDASHDLG";
+					DrawImage(LVLGraphic, (168, -22), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+					DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
+				}
+			}
+		}
+	}
+	
 	void A_DrawFSHealth()
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -2056,7 +2092,160 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		return DigY;
 	}
+	
 
+	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
+	{
+		string LegendStr = "";
+		string UserKeyString;
+		Array<String> UserKeys;
+		
+		UserKeyString = UIKeybinds.getKeyboard(keybindget);
+		if (UserKeyString != "")
+		{
+			UserKeyString.Split(UserKeys,", ");
+			if (UserKeys[0] == "Space") UserKeys[0] = "SBar";
+			if (UserKeys[0] == "CapsLock") UserKeys[0] = "CapsL";
+			if (colored) LegendStr.AppendFormat("%s", UserKeys[0]);
+							else LegendStr.AppendFormat("\c[gold]%s\c-", UserKeys[0]);
+		}
+		else 
+		{
+			if (showunbound) LegendStr.AppendFormat("\c[red][unb]\c-");
+		}
+		return LegendStr;
+	}
+
+	int, int, int, int DrawFSHUDKeyLegend(int VisiblePlayerLevel, int candash, int dashcost, int dashmaxcharge)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		let PlayerWeapon = MiscItem.weapon;
+		
+		//**************
+		//* Key Legend *
+		//**************
+		if (kchud_keylegendspot >= 0)
+		{
+			int legendtimer;
+			int LX;
+			int LY;
+			int LYInc = 4; // 5
+			double LegendAlpha = 0.9;
+			vector2 LegendScale = (0.625, 0.625); // (0.75, 0.75);
+			int LegendFontCLR = font.cr_gray;
+			int LegendFlags = DI_TEXT_ALIGN_LEFT;
+			int FlashTimer = level.time;
+			int FlashTimerMod = 32;
+			// Quick Kick Bind
+			string LegendStr = "";
+			LX = -296;
+			LY = -35;
+			if (kchud_keylegendspot >= 1)
+			{
+				LX = 2;
+				LY = 30;
+				LYInc = 6;
+				LegendScale = (0.875, 0.875);
+			}
+			
+			// Time Freeze
+			LegendStr = "";
+			if (MiscItem)
+			{
+				LegendStr.AppendFormat(ReturnKeyBind1("KC_TimeStop", true, false));
+				
+				FlashTimerMod = 32;
+				FlashTimer = level.time % FlashTimerMod;
+				if (MiscItem.timestopcooldowntics > 0)
+				{
+					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[Red]");
+																					 else LegendStr.AppendFormat(" = \c[Brick]");
+				}
+				else
+				{
+					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[HeiwaDeluge]");
+																					 else LegendStr.AppendFormat(" = \c[Purple]");
+				}
+				LY += LYInc;
+				if (MiscItem.timestopcooldowntics)
+				{
+					LegendStr.AppendFormat("[ON COOLDOWN]\c-");
+				}
+				else
+				{
+					if (MiscItem.timestopstate) LegendStr.AppendFormat("TIME UNFREEZE\c-");
+																 else LegendStr.AppendFormat("TIME FREEZE\c-");
+				}
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			
+			LegendStr = "";
+			bool cankick = true;
+			if (MiscItem) cankick = MiscItem.cankick;
+			if ((PlayerWeapon is 'MarineWeapon' || PlayerWeapon is 'HeiwaWeapon') && cankick)
+			{
+				LY += LYInc;
+				string UserKeyString;
+				Array<String> UserKeys;
+				LegendStr.AppendFormat(ReturnKeyBind1("+user1", true, false));
+				LegendStr.AppendFormat(" = \c[blue]KICK\c-");
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			
+			// Dash
+			LegendStr = "";
+			if (DashMaxCharge >= dashcost && candash)
+			{
+				LY += LYInc;
+				if (kc_doubledash) LegendStr.AppendFormat("\c[yellow]2x Tap Same Direction\c-");
+				else LegendStr.AppendFormat(ReturnKeyBind1("+user3", true, false));
+				LegendStr.AppendFormat(" = \c[blue]DASH\c-");
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			
+			// Weapon Specific Binds
+			LegendStr = "";
+			string UserKeyString5;
+			Array<String> UserKeys5;
+			string temp1, temp2;
+			if (PlayerWeapon is "FistMarine")
+			{
+				LY += LYInc;
+				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
+				LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			if (PlayerWeapon is "PistolMarine" ||
+					PlayerWeapon is "RocketLauncherMarine" ||
+					PlayerWeapon is "PlasmaRifleMarine" ||
+					PlayerWeapon is "BFG9000Marine")
+			{
+				LY += LYInc;
+				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
+				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]FIRE GRENADE\c-");
+				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST\c-");
+				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704\c-");
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
+			
+			LegendStr = "";
+			string UserKeyString6;
+			Array<String> UserKeys6;
+			string UserKeyString7;
+			Array<String> UserKeys7;
+			string UserKeyString8;
+			Array<String> UserKeys8;
+			string UserKeyString9;
+			Array<String> UserKeys9;
+		}
+		
+		return VisiblePlayerLevel, candash, dashcost, dashmaxcharge;
+	}
+	
+	
 	protected void DrawFullScreenStuff()
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -2067,6 +2256,13 @@ class KCStatusBarMain : BaseStatusBar
 		int VisiblePlayerATK = 0;
 		int VisiblePlayerDEF = 0;
 		int VisiblePlayerSPD = 0;
+		if (MiscItem)
+		{
+			VisiblePlayerLevel = MiscItem.TruePlayerLevel;
+			VisiblePlayerATK =  MiscItem.TruePlayerATK;
+			VisiblePlayerDEF =  MiscItem.TruePlayerDEF;
+			VisiblePlayerSPD =  MiscItem.TruePlayerSPD;
+		}
 		Vector2 iconbox = (40, 20);
 		int CurrHealth;
 		if (CPlayer) CurrHealth = CPlayer.health;
@@ -2078,6 +2274,18 @@ class KCStatusBarMain : BaseStatusBar
 		//*****************
 		[CurrHealth, PlayerMaxHP] = DrawDmgBorderFullScreen(CurrHealth,PlayerMaxHP);
 		
+		//********
+		//* Dash *
+		//********
+		int candash = CPlayerPawn.CountInv("DashReady");
+		if (candash && CPlayerPawn.CountInv("NoDashing")) candash = 0;
+		int dash = CPlayerPawn.CountInv("DashGauge");
+		int dashcooldown = CPlayerPawn.CountInv("DashCooldown");
+		int dashcharge = CPlayerPawn.CountInv("DashCharge");
+		int dashtics = CPlayerPawn.CountInv("DashTics");
+		int dashmaxcharge = CPlayerPawn.CountInv("DashMaxCharge");
+		int dashcost = CPlayerPawn.CountInv("DashCost");
+		
 		// Draw health
 		A_DrawFSHealth();
 		
@@ -2086,6 +2294,12 @@ class KCStatusBarMain : BaseStatusBar
 		
 		// Draw Level
 		A_DrawFSLevel();
+		
+		// Draw Dash
+		A_DrawFSDash();
+		
+		//Key Legend
+		[VisiblePlayerLevel, candash, dashcost, dashmaxcharge] = DrawFSHUDKeyLegend(VisiblePlayerLevel, candash, dashcost, dashmaxcharge);
 		
 		// Draw Weapon Slots
 		int x;

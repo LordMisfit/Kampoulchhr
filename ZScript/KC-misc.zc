@@ -1275,7 +1275,6 @@ class PlayerStatItem : Inventory
 		if (CritChance <= 1) CritChance = 1;
 		if (CritChance >= 128) CritChance = 128;
 		
-		
 		CritRoll = random(1,CritChance);
 		if (CritRoll <= 1) owner.A_SetInventory("DealCriticalHit",1);
 	}
