@@ -236,36 +236,6 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
 				if (kcdebug_worlddamaged) Console.Printf("[%s] SpecialType [WorldDamaged]: %d", vict, specialtype);
 				
-				// Ally Check
-				/*
-				actor IsRebel;
-				if (!KCPlayerPawn(victim) && KCPlayerPawn(source))
-				{
-					if (victim.bFRIENDLY)
-					{
-						if (victim.master && KCPlayerPawn(victim.master))
-						{
-							if (e.damage)
-							{
-								//e.damage = 0;
-								if (kcdebug_worlddamaged) Console.Printf("Victim is Player's ally! No Damage inflicted!");
-								Super.WorldThingDamaged(e);
-								return;
-							}
-						}
-						else
-						{
-							if (IsRebel = Rebel(victim) && e.damage)
-							{
-								//e.damage = 0;
-								if (kcdebug_worlddamaged) Console.Printf("Victim is Strife Rebel! No Damage inflicted!");
-								Super.WorldThingDamaged(e);
-								return;
-							}
-						}
-					}
-				}
-				*/
 				if (victim.bCOUNTKILL || specialtype) showdmglog = true;
 				if (PracticeTarget(victim) || PracticeTarget2(victim)) 
 				{
@@ -897,8 +867,9 @@ class KC_EventHandler : EventHandler
 						temp = (1 + (TrueLuck * 0.08334));
 						temp *= 2.5;
 					}
-					if (random(1,16) <= temp) // Weapons
+					if (random(1,128) <= temp) // Weapons
 					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon Drop");
 						double rand = 1.0;
 						user_type = random(1,11);
 						droptype = "Backpack";
@@ -1039,6 +1010,7 @@ class KC_EventHandler : EventHandler
 					}
 					else // Ammo
 					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop");
 						double rand = 3.0;
 						int temp = 48;
 						if (MiscItem) temp = (48 + (TrueLuck * 0.25));
@@ -1274,7 +1246,7 @@ class KC_EventHandler : EventHandler
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: %d (%d)", maxchance, basechance);
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [tritaryinv]: %d (%d)", maxchance, basechance);
 				if (random(1,maxchance) <= 1)
 				{
 					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);

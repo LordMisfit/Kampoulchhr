@@ -3086,7 +3086,20 @@ class KCWeaponBase : Weapon
 
 	protected action void GunShot(int accurate, Class<Actor> pufftype, double pitch)
 	{
-		int damage = 5 * random[GunShot](1, 3);
+		int damage = 5;
+		int randpick = randompick[GunShot](1,2,3);
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			if (MiscItem.PlayerLuck >= 50) randpick = randompick[GunShot](1,2,2,2,3);
+			if (MiscItem.PlayerLuck >= 100) randpick = randompick[GunShot](1,2,3,3,3);
+			if (MiscItem.PlayerLuck >= 150) randpick = randompick[GunShot](2,3,3,3,3);
+			if (MiscItem.PlayerLuck >= 200) randpick = randompick[GunShot](3,3,3,3,3,3,3,3,3,4);
+		}
+		
+		damage *= randpick;
+		
 		double ang = angle;
 		double randang = 5.625;
 		double randpth = 3.549;
