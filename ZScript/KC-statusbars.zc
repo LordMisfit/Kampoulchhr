@@ -2210,13 +2210,17 @@ class KCStatusBarMain : BaseStatusBar
 			string UserKeyString5;
 			Array<String> UserKeys5;
 			string temp1, temp2;
-			if (PlayerWeapon is "FistMarine")
+			if (PlayerWeapon is "FistMarine" ||
+					PlayerWeapon is "RocketLauncherMarine")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
-				LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
+				if (PlayerWeapon is "FistMarine") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
+				ELSE if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]CHANGE ATTACK\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
+
+			LegendStr = "";
 			if (PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "RocketLauncherMarine" ||

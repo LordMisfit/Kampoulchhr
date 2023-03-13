@@ -803,18 +803,166 @@ class KC_EventHandler : EventHandler
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom]: %d", basedropdiv);
 				
 				double rand = 2.0;
-				if (vict == "Arachnotron")
+				string droptype;
+				if (Zombieman(victim) || 
+						ChaingunGuy(victim) || 
+						SpiderMastermind(victim))
+				{
+					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+					{
+						droptype = "Clip";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+					{
+						droptype = "Clip";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+					{
+						droptype = "Clip";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (SpiderMastermind(victim))
+					{
+						droptype = "Chaingun";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						droptype = "Clip";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "Chaingun";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+				}
+				if (ShotgunGuy(victim))
+				{
+					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+					{
+						droptype = "Shell";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+					{
+						droptype = "Shell";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+					{
+						droptype = "Shell";
+						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+				}
+				if (Arachnotron(victim))
 				{
 					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 					{
-						string droptype = "Cell";
+						droptype = "Cell";
+						if (random(1,5) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+					{
+						droptype = "Cell";
+						if (random(1,5) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+					{
+						droptype = "Cell";
 						if (random(1,5) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 				}
-
+				if (HellKnight(victim) ||
+						BaronOfHell(victim))
+				{
+					if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
+					{
+						droptype = "BackPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+					{
+						droptype = "BackPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+					{
+						droptype = "BackPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
+					{
+						droptype = "BackPack";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+				}
+				if (Cyberdemon(victim))
+				{
+					droptype = "RocketLauncher";
+					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					droptype = "Rocket";
+					if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+					{
+						droptype = "RocketLauncher";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
+					{
+						droptype = "Rocket";
+						if (random(1,3) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+				}
 				
 				// Heretic Monsters
 				basedropdiv = 512;

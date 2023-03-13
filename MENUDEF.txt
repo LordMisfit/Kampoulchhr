@@ -39,6 +39,56 @@ OptionValue "OnOff_DefaultOn"
 
 // MENUS
 
+OptionMenu "KC-DebugMenu1"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Debugging Options - Part 1"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Ghosts of 'Shields'",		"? can block/destroy/reflect projectiles. These are actually done with invisible 'shield' actors spawned when doing these actions. This options makes those shields visible when attacking [so you can see the 'magic' in action :V].",		"kcdebug_showvisibleshieldparts",			"OnOff_DefaultOff"
+	KCOption "Dash Meter",		"Shows dash-related info for the meter on the HUD.",		"kcdebug_dashmeter",			"OnOff_DefaultOff"
+	KCOption "Dashing [General]",		"Shows dash-related general info.",		"kcdebug_showdashinformation",			"OnOff_DefaultOff"
+	KCOption "HP Regen/Degen",		"Shows HP Regen/Degen Debug Info.",		"kcdebug_hpregen",			"OnOff_DefaultOff"
+	KCOption "Player DamageMobj Info",		"Shows debug info related to player damage taken.",		"kcdebug_playerdamagemobj",			"OnOff_DefaultOff"
+	KCOption "Player Poison Damage Info",		"Shows debug info related to player POISON damage taken.",		"kcdebug_playerpoisondisplays",			"OnOff_DefaultOff"
+	KCOption "Player Attack Calculation",		"Shows Attack Multiplier information",		"kcdebug_attackcalcs",			"OnOff_DefaultOff"
+	KCOption "Player Defense Calculation",		"Shows Defensive Multiplier information",		"kcdebug_defensecalcs",			"OnOff_DefaultOff"
+	KCOption "Player Speed Calculation",		"Shows Speed Multiplier information",		"kcdebug_speedcalcs",			"OnOff_DefaultOff"
+	KCOption "Player Evade Calculation",		"Shows Evade Chance information",		"kcdebug_showevadestuff",			"OnOff_DefaultOff"
+	KCOption "Player Survival Calculation",		"i.e. 'Last Chance Hit Point' or 'Guts', or the chance of surviving with 1 HP left. This shows the debug info behind calculations.",		"kcdebug_survivalrate",			"OnOff_DefaultOff"
+	KCOption "Player Jump Calculations",		"Shows background information in calculating Player Jump strength/height",		"kcdebug_jumpingcalcs",			"OnOff_DefaultOff"
+	KCOption "Player Mass/Balance Calculations",		"Shows the calculation of mass/balance for the player.",		"kcdebug_masscalcs",				"OnOff_DefaultOff"
+	KCOption "Player Walk Anim Displays",		"Shows Tic Information for Player Walking State.",		"kcdebug_playerwalkdisplays",			"OnOff_DefaultOff"
+	KCOption "Player Movement Displays",		"Shows player movement information.",		"kcdebug_playermove",				"OnOff_DefaultOff"
+	KCOption "Player Position Displays",		"Shows player position information.",		"kcdebug_playerpos",				"OnOff_DefaultOff"
+	KCOption "Attack Information",		"Shows various attack information behind the scenes.",		"kcdebug_attackstuff",			"OnOff_DefaultOff"
+	KCOption "Melee Attack Damage Info",		"Shows damage calculated for player melee attacks",		"kcdebug_meleedmg",			"OnOff_DefaultOff"
+	KCOption "Ranged Attack Damage Info",		"Shows damage calculated for player ranged attacks",		"kcdebug_rangedmg",			"OnOff_DefaultOff"
+	KCOption "MiscItem Displays",		"Shows 'PlayerStatItem' information.",		"kcdebug_miscitemdebug",				"OnOff_DefaultOff"
+	KCOption "A_Raise/A_Lower Displays",		"Shows printouts of info related to raising/lowering weapons.",		"kcdebug_weaponstatdisplays",				"OnOff_DefaultOff"
+	KCOption "Weapon Layer Displays",		"Shows printouts of info related to weapon layers.",		"kcdebug_weaponstatdisplays2",				"OnOff_DefaultOff"
+	KCOption "Voodoo Doll Displays",		"Shows debugging for voodoo dolls.",		"kcdebug_showvoodoodoll",				"OnOff_DefaultOff"
+}
+OptionMenu "KC-DebugMenu2"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Debugging Options - Part 2"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+}
+OptionMenu "KC-DebugMenu3"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Debugging Options - Part 3"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+}
 OptionMenu "KC-DebugMenuMain"
 {
 	Class "KCMenu"
@@ -47,12 +97,12 @@ OptionMenu "KC-DebugMenuMain"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
-	KCOption "Ghosts of 'Shields'",		"? can block/destroy/reflect projectiles. These are actually done with invisible 'shield' actors spawned when doing these actions. This options makes those shields visible when attacking [so you can see the 'magic' in action :V].",		"kcdebug_showvisibleshieldparts",			"OnOff_DefaultOff"
-	KCOption "Dash Meter",		"Shows dash-related info for the meter on the HUD.",		"kcdebug_dashmeter",			"OnOff_DefaultOff"
-	KCOption "Dashing [General]",		"Shows dash-related general info.",		"kcdebug_showdashinformation",			"OnOff_DefaultOff"
+	KCSubMenu "Debugging Options - Part 1",	"Enter At Your Own Risk? :V",		"KC-DebugMenu1"
+	KCSubMenu "Debugging Options - Part 2",	"Enter At Your Own Risk? :V",		"KC-DebugMenu2"
+	KCSubMenu "Debugging Options - Part 3",	"Enter At Your Own Risk? :V",		"KC-DebugMenu3"
+	StaticText " "
 	KCOption "Defense Buff Item Displays",		"Shows debugging for various defense buff items.",		"kcdebug_defensebuffs",				"OnOff_DefaultOff"
 	KCOption "Armor Stat/Property Displays",		"Shows the player's armor information [saveamount/maxabsorb/etc].",		"kcdebug_armordisplays",				"OnOff_DefaultOff"
-	KCOption "HP Regen/Degen",		"Shows HP Regen/Degen Debug Info.",		"kcdebug_hpregen",			"OnOff_DefaultOff"
 	KCOption "Max Health Calc Displays",		"Shows debugging for calculation of player's max health.",		"kcdebug_maxhealthcalc",				"OnOff_DefaultOff"
 	KCOption "Item Pitfall Displays",		"Shows debug information when items fall into bottomless pits.",		"kcdebug_itempitfalls",				"OnOff_DefaultOff"
 	KCOption "Footstep Displays",		"Shows debugging for calculation of footsteps and related calculations.",		"kcdebug_footsteps1",				"OnOff_DefaultOff"
@@ -66,20 +116,13 @@ OptionMenu "KC-DebugMenuMain"
 	KCOption "General Collision Info",		"Shows collision information behind the scenes",		"kcdebug_generalcollisions",			"OnOff_DefaultOff"
 	KCOption "Projectile Collision Info",		"Shows collision information behind the scenes for projectiles",		"kcdebug_projectilecollisions",			"OnOff_DefaultOff"
 	KCOption "ShieldPart Collision Info",		"Shows collision information behind the scenes for ShieldPart objects.",		"kcdebug_shieldcollision",			"OnOff_DefaultOff"
-	KCOption "Attack Information",		"Shows various attack information behind the scenes.",		"kcdebug_attackstuff",			"OnOff_DefaultOff"
 	KCOption "Misc Melee Displays",		"Shows various melee weapon information.",		"kcdebug_meleeinformation",				"OnOff_DefaultOff"
-	KCOption "Melee Attack Damage Info",		"Shows damage calculated for player melee attacks",		"kcdebug_meleedmg",			"OnOff_DefaultOff"
-	KCOption "Player Evade Calculation",		"Shows Evade Chance information",		"kcdebug_showevadestuff",			"OnOff_DefaultOff"
-	KCOption "Player Survival Calculation",		"i.e. 'Last Chance Hit Point' or 'Guts', or the chance of surviving with 1 HP left. This shows the debug info behind calculations.",		"kcdebug_survivalrate",			"OnOff_DefaultOff"
-	KCOption "Player Jump Calculations",		"Shows background information in calculating Player Jump strength/height",		"kcdebug_jumpingcalcs",			"OnOff_DefaultOff"
-	KCOption "Player Mass/Balance Calculations",		"Shows the calculation of mass/balance for the player.",		"kcdebug_masscalcs",				"OnOff_DefaultOff"
 	KCOption "Damage Difference Displays",		"Shows the difference in damage taken versus base damage input.",		"kcdebug_dmgdiffdebug",				"dmgdiffdebug"
 	KCOption "MapInfo Displays",		"Shows a printout of various map-related information.",		"kcdebug_mapinfo",				"OnOff_DefaultOff"
 	KCOption "[Bonus/Damage]Count Displays",		"Shows debugging for bonus/damage count.",		"kcdebug_countdisplays",				"OnOff_DefaultOff"
 	KCOption "Attack Function Displays",		"Shows various attack function information.",		"kcdebug_attackfuncinfo",				"OnOff_DefaultOff"
 	KCOption "Armor Stat/Property Displays",		"Shows the player's armor information [saveamount/maxabsorb/etc].",		"kcdebug_armordisplays",				"OnOff_DefaultOff"
 	KCOption "Monster Recall Cmd Displays",		"Shows the information for recalling monsters.",		"kcdebug_recalldisplays",				"OnOff_DefaultOff"
-	KCOption "Player Movement Displays",		"Shows player movement information.",		"kcdebug_playermove",				"OnOff_DefaultOff"
 	KCOption "Resurrection Displays",		"Shows debugging for attempted monster resurrections.",		"kcdebug_ressurrectdisplays",				"OnOff_DefaultOff"
 	KCOption "Crouching Displays",		"Shows debugging for Crouch-related actions.",		"kcdebug_crouchdisplays",				"OnOff_DefaultOff"
 	KCOption "Player 'Breathing' Displays",		"Shows information based on the LTG-style 'breathing' visuals for the player's chasecam.",		"kcdebug_playerbreathedisplays",				"OnOff_DefaultOff"
