@@ -1,0 +1,2802 @@
+class KCProjectile : KampoulchhrBase
+{
+	bool isillusionaryproj;
+	int user_projtimer;
+	float user_ignoreaoeimmunity;
+	int saveddmg; // Save damage from things like A_CustomPunch for puffs
+	int user_canafflict;
+	int user_ailmentmaxchance;
+	
+	int user_hitsparkrand;
+	int user_sparksizelevel;
+	double user_sparkscalemulti;
+	int user_noseektimer, user_seektimer;
+	int projtouchedshieldactor;
+	
+	actor OriginalActor;
+	string OriginalActorType;
+	bool REFLECTEDMONSTERPROJ;
+	
+	double bonusmultiplier;
+	
+	int xyspreadtime;
+	int zspreadtime;
+	int ipprojid;
+	double basespreadspeed;
+
+	bool hitawall;
+	bool hitaceiling;
+	bool hitafloor;
+
+	int timesrippedoverall;
+	int maxtimesrippedoverall;
+	
+	int BaseSigilMaxHealth;
+	int MaxHealthTrue;
+	int stamdamagefactor;
+	int accudamagefactor;
+	
+	int PlayerLevel;
+	
+	PlayerPawn playpawn;
+	KCCreature kcactor;
+	
+	private class<Inventory> iDTech1Check, iDTech1Check2, iDTech1Check3, iDTech1Check4, iDTech1Check5, iDTech1Check6, iDTech1Check7, iDTech1Check8;
+
+	default
+	{
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
+	action bool A_CheckBerserk()
+	{
+		bool check = false;
+		if (target)
+		{
+			if (target.CountInv("PowerStrength") || target.CountInv("KCPowerStrength")) check = true;
+		}
+		return check;
+	}
+	
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		if (bonusmultiplier <= 0.0) bonusmultiplier = 1.0;
+
+		if (target) 
+		{
+			playpawn = PlayerPawn(target);
+			if (playpawn)
+			{
+				let MiscItem = PlayerStatItem(playpawn.FindInventory("PlayerStatItem"));
+				if (MiscItem) PlayerLevel = MiscItem.TruePlayerLevel;
+			}
+			
+			if (target.bNOBLOOD == true && 
+					target.bNOPAIN == true &&
+					target.bNOTARGETSWITCH == true &&
+					target.bNOINFIGHTING == true &&
+					target.bFULLVOLACTIVE == false && 
+					target.bFULLVOLDEATH == false &&
+					target.bBOSS == false) isillusionaryproj = true;
+					
+			let IsPlayer = PlayerPawn(target);
+			let IsAMonster = KCCreature(target);
+			if (IsAMonster)
+			{
+				OriginalActor = IsAMonster;
+				OriginalActorType = IsAMonster.GetClassName();
+			}
+		}
+	}
+	
+	int A_GetPlayerLvlProj(int type = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) 
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvlProj - KCProjectile)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+	
+	void A_KCPostPain()
+	{
+		string nm;
+		nm = "JustKicked"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustPunched"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustUppercutted"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		nm = "JustShieldDashed"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+	}
+	
+	int A_MeleeImpactRadius(int attacktype)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int TruePlayerLevel = A_GetPlayerLvlProj(1);
+		if (MiscItem) PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+		double radius;
+		double radiuserror;
+		int debugmelee = kcdebug_meleeinformation;
+
+		if (attacktype == 0) // Cricket Bat Swing
+		{
+			radius = 12;
+			radius += (PlayerATK * 0.0833333333333333);
+			radiuserror = frandom(0.9334,1.0666);
+		}
+		else
+		if (attacktype == 1) // Applejack Swing
+		{
+			radius = 12;
+			radius += (PlayerATK * 0.0833333333333333);
+			radiuserror = frandom(0.9334,1.0666);
+		}
+		else
+		if (attacktype == 2) // Scrambler Bash
+		{
+			radius = 20;
+			radius += (PlayerATK * 0.1333333333333333);
+			radiuserror = frandom(0.9334,1.0666);
+		}
+		else
+		if (attacktype == 3) // Punch [unarmed] (normal)
+		{
+			radius = 16;
+			radius += (PlayerATK * 0.125);
+			radiuserror = frandom(0.84375,1.15625);
+		}
+		else
+		if (attacktype == 4) // Punch [unarmed] (alt-fire)
+		{
+			radius = 24;
+			radius += (PlayerATK * 0.166667);
+			radiuserror = frandom(0.84375,1.15625);
+		}
+		else
+		if (attacktype == 5) // ?
+		{
+		}
+		else
+		if (attacktype == 6) // ?
+		{
+		}
+		else
+		if (attacktype == 7) // Thrust Kick
+		{
+			radius = 24;
+			radius += (PlayerATK * 0.25);
+			radiuserror = frandom(0.84375,1.15625);
+		}
+		else
+		if (attacktype == 8) // Spinning/Roundhouse Kick
+		{
+			radius = 36;
+			radius += (PlayerATK * 0.3334);
+			radiuserror = frandom(0.84375,1.15625);
+		}
+		radius *= radiuserror;
+		int baseradius = radius;
+		//****************
+		if (debugmelee) Console.Printf("EXPLRadius [Base]: %d [RadError: %.8f]", radius, radiuserror);
+
+		if (stamdamagefactor > 0) radius = (radius * (16 + (stamdamagefactor * 3.2)) / 16);
+		if (debugmelee) Console.Printf("EXPLRadius [StaminaUpgrades]: %d", radius);
+
+		radius = radius * (random(16,17) / 16);
+		if (debugmelee) Console.Printf("EXPLRadius [Class-Check]: %d", radius);
+
+		if (A_CheckBerserk()) 
+		{
+			radius = radius * 11 / 8; // 1.375x Radius [Berserk]
+			if (debugmelee) Console.Printf("EXPLRadius [Berserk]: %d", radius);
+		}
+		
+		if (playera.CountInv("PlayingDoom64"))
+		{
+			radius = radius * 6 / 5; // 1.2x in Doom64 due to scaling up of general maps, etc :V
+			if (debugmelee) Console.Printf("EXPLRadius [Final]: %d [Base: %d]", radius, baseradius);
+		}
+		
+		return radius;
+	}
+	
+
+	// Quake tremor effects
+	int A_QuakeMeleeIntensity(int attacktype = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int TruePlayerLevel = A_GetPlayerLvlProj(1);
+		if (MiscItem) PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+		int intensity;
+		int debugmelee = kcdebug_meleeinformation;
+
+		if (attacktype == 0) // Cricket Bat Swing
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.0227272727272727);
+		}
+		else
+		if (attacktype == 1) // Applejack Swing
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.0227272727272727);
+		}
+		else
+		if (attacktype == 2) // Scrambler Bash
+		{
+			intensity = randompick(0,0,0,0,1);
+			intensity += (PlayerATK * 0.033334);
+		}
+		else
+		if (attacktype == 3) // Punch [unarmed] (normal)
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.03125);
+		}
+		else
+		if (attacktype == 4) // Punch [unarmed] (alt-fire/uppercut)
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.0416666666666667);
+		}
+		else
+		if (attacktype == 5) // ?
+		{
+		}
+		else
+		if (attacktype == 6) // ?
+		{
+		}
+		else
+		if (attacktype == 7) // Thrust Kick
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.0625);
+		}
+		else
+		if (attacktype == 8) // Spinning/Roundhouse Kick
+		{
+			intensity = 0;
+			intensity += (PlayerATK * 0.0833333333333333);
+		}
+
+		int baseintensity = intensity;
+		if (debugmelee) Console.Printf("Intensity [Base]: %d", intensity);
+
+		if (stamdamagefactor > 0) intensity += (stamdamagefactor / 4);
+		if (debugmelee) Console.Printf("Intensity [StaminaUpgrades]: %d", intensity);
+
+		intensity = intensity * random(8,9) / 8;
+		if (debugmelee) Console.Printf("Intensity [CharacterCheck]: %d", intensity);
+		
+		if (A_CheckBerserk()) 
+		{
+			if (intensity <= 0) intensity += 1; else intensity = (intensity * 3) / 2;
+			if (debugmelee) Console.Printf("Intensity [Berserk]: %d", intensity);
+		}
+		
+		if (debugmelee) Console.Printf("Intensity [Final]: %d, [Base: %d]", intensity, baseintensity);
+
+		return intensity;
+	}
+	
+	int A_QuakeMeleeDuration(int attacktype = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int TruePlayerLevel = A_GetPlayerLvlProj(1);
+		if (MiscItem) PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+		int duration;
+		int debugmelee = kcdebug_meleeinformation;
+
+		if (attacktype == 0) // Cricket Bat Swing
+		{
+			duration = randompick(1,1,1,2);
+			duration += (PlayerATK * 0.0178571428571429);
+		}
+		else
+		if (attacktype == 1) // Applejack Swing
+		{
+			duration = randompick(1,1,1,2);
+			duration += (PlayerATK * 0.0178571428571429);
+		}
+		else
+		if (attacktype == 2) // Scrambler Bash
+		{
+			duration = random(4,5);
+			duration += (PlayerATK * 0.0625);
+		}
+		else
+		if (attacktype == 3) // Punch [unarmed] (normal)
+		{
+			duration = 2;
+			duration += (PlayerATK * 0.025);
+		}
+		else
+		if (attacktype == 4) // Punch [unarmed] (alt-fire)
+		{
+			duration = 3;
+			duration += (PlayerATK * 0.0357142857142857);
+		}
+		else
+		if (attacktype == 5) // ?
+		{
+			duration = 6;
+			duration += (PlayerATK * 0.0714285714285714);
+		}
+		else
+		if (attacktype == 6) // ?
+		{
+		}
+		else
+		if (attacktype == 7) // Thrust Kick
+		{
+			duration = 4;
+			duration += (PlayerATK * 0.05);
+		}
+		else
+		if (attacktype == 8) // Spinning/Roundhouse Kick
+		{
+			duration = 6;
+			duration += (PlayerATK * 0.0714285714285714);
+		}
+		int baseduration = duration;
+		
+		if (stamdamagefactor > 0) duration = (duration * (16 + (stamdamagefactor * 3.2)) / 16);
+		int stamduration = duration;
+
+		duration = duration * random(8,9) / 8;
+		int charduration = duration;
+		
+		if (A_CheckBerserk()) duration *= 4;
+		int bersduration = duration;
+		
+		if (debugmelee) 
+		{
+			Console.Printf("Duration [Base]: %d, Duration [StaminaUpgrades]: %d, Duration [CharacterCheck]: %d, Duration [Berserk]: %d, \cxDuration [Final]: %d\c-", baseduration, stamduration, charduration, bersduration, duration);
+		}
+		return duration;
+	}
+	
+	int A_QuakeMeleeTremrad(int attacktype = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PlayerATK;
+		int TruePlayerLevel = A_GetPlayerLvlProj(1);
+		if (MiscItem) PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+		int tremrad;
+		int debugmelee = kcdebug_meleeinformation;
+
+		if (attacktype == 0) // Cricket Bat Swing
+		{
+			tremrad = 224;
+			tremrad += (PlayerATK * 0.875);
+		}
+		else
+		if (attacktype == 1) // Applejack Swing
+		{
+			tremrad = 224;
+			tremrad += (PlayerATK * 0.875);
+		}
+		else
+		if (attacktype == 2) // Scrambler Bash
+		{
+			tremrad = 288;
+			tremrad += (PlayerATK * 1.125);
+		}
+		else
+		if (attacktype == 3) // Punch [unarmed] (normal)
+		{
+			tremrad = 256;
+			tremrad += (PlayerATK);
+		}
+		else
+		if (attacktype == 4) // Punch [unarmed] (alt-fire)
+		{
+			tremrad = 320;
+			tremrad += (PlayerATK * 1.25);
+		}
+		else
+		if (attacktype == 5) // ?
+		{
+		}
+		else
+		if (attacktype == 6) // ?
+		{
+		}
+		else
+		if (attacktype == 7) // Thrust Kick
+		{
+			tremrad = 384;
+			tremrad += (PlayerATK * 1.75);
+		}
+		else
+		if (attacktype == 8) // Spinning/Roundhouse Kick
+		{
+			tremrad = 480;
+			tremrad += (PlayerATK * 3.5);
+		}
+		int basetremrad = tremrad;
+		
+		if (stamdamagefactor > 0) tremrad = (tremrad * (16 + (stamdamagefactor * 3.2)) / 16);
+		int stamtremrad = tremrad;
+		
+		tremrad = tremrad * random(8,9) / 8;
+		int chartremrad = tremrad;
+		
+		if (A_CheckBerserk()) tremrad *= 8;
+		int berstremrad = tremrad;
+		
+		if (debugmelee)
+		{
+			Console.Printf("TremRad [Base]: %d, TremRad [StaminaUpgrades]: %d, TremRad [CharacterCheck]: %d, TremRad [Berserk]: %d, \cxTremRad [Final]: %d\c-", basetremrad, stamtremrad, chartremrad, berstremrad, tremrad);
+		}
+		return tremrad;
+	}
+	
+	void A_HitSparkGetSize()
+	{
+		A_SetScale(0.3125); A_FadeTo(0.6875);
+		if (kcdebug_miscdisplays1) Console.Printf("ScaleX: %.4f, ScaleY: %.4f, ALPHAZ: %.4f", self.scale.x, self.scale.y, self.alpha);
+	}
+	void A_HitSparkGetSize2()
+	{
+		user_sparkscalemulti += 1.00;
+		scale.x *= user_sparkscalemulti;
+		scale.y *= user_sparkscalemulti;
+		if (kcdebug_miscdisplays1) Console.Printf("ScaleX: %.4f, ScaleY: %.4f, MULTI: %.4f", self.scale.x, self.scale.y, user_sparkscalemulti);
+	}
+
+	void A_HitSparkResize()
+	{
+		double base;
+		if (user_sparksizelevel <= 0) base = 0.25;
+		if (user_sparksizelevel == 1) base = 0.275;
+		if (user_sparksizelevel == 2) base = 0.30;
+		if (user_sparksizelevel == 3) base = 0.325;
+		if (user_sparksizelevel == 4) base = 0.35;
+		if (user_sparksizelevel >= 5) base = 0.375;
+		if (target)
+		{
+			if (target.GetClassName() == "UppercutPuff") base *= frandom(1.5,1.75);
+			if (target.GetClassName() == "KickPuff" || GetClassName() == "KickPuffNoThrust") base *= frandom(2.0,2.25);
+			if (target.target && target.target.CountInv("PowerStrength") || target.target.CountInv("KCPowerStrength")) base *= frandom(1.5,2.25);
+		}
+
+		user_sparkscalemulti = frandom(base,(base*1.5));
+		scale.x *= user_sparkscalemulti;
+		scale.y *= user_sparkscalemulti;
+		if (kcdebug_miscdisplays1) Console.Printf("ScaleX: %.4f, ScaleY: %.4f", self.scale.x, self.scale.y);
+	}
+
+	void A_CheckHitCeiling()
+	{
+		if (pos.Z + height >= ceilingz) hitaceiling = true;
+		//Console.Printf("pos.z: %d, height: %d, ceilingz: %d, hitceiling: %d", pos.z, height, ceilingz, hitaceiling);
+	}
+	
+	override void Tick()
+	{
+		if (target)
+		{
+			if (PlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("KCTimeFreezer") ||
+						target.CountInv("KCTimeFreezer1") ||
+						target.CountInv("KCTimeFreezer2") ||
+						target.CountInv("KCTimeFreezer3") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+						if (kcdebug_timefreezedebugaffectproj) bNOTIMEFREEZE = false;
+					}
+					else
+					{
+						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+		
+		if (OriginalActor != null) 
+		{ 
+			if (target != OriginalActor && target == KCPlayerPawn(target)) REFLECTEDMONSTERPROJ = true;
+		}
+		
+		if (REFLECTEDMONSTERPROJ && bDONTREFLECT == false) 
+		{
+			//Console.Printf("REFLECTEDMONSTERPROJ (%d)", level.time);
+			bDONTREFLECT = true;
+		}
+		
+		Super.Tick();
+	}
+	
+	//
+	//
+	// A_SeekerMissile that will clear its tracer pointer if the tracer is friendly.
+	void A_NFSeekerMissile(int threshold, int maxturnangle, int flags = 0, int chance = 50, int distance = 10)
+	{
+		if ((flags & SMF_LOOK) && !tracer)
+		{
+			// Searches for a monster to seek, but only if it's not friendly.
+			tracer = RoughMonsterSearch(distance, onlyseekable: true);
+			if (tracer && target && !target.isHostile(tracer)) tracer = null;
+		}
+		A_SeekerMissile(threshold,maxturnangle,flags & ~SMF_LOOK,chance,distance);
+	}	
+	
+	// A_SeekerMissile that will clear its tracer pointer if the tracer is hostile and only try to seek friendlies [for healing projectiles, etc].
+	void A_FOSeekerMissile(int threshold, int maxturnangle, int flags = 0, int chance = 50, int distance = 10)
+	{
+		if ((flags & SMF_LOOK) && !tracer)
+		{
+			// Searches for a monster to seek, but only if it's friendly.
+			tracer = RoughMonsterSearch(distance, onlyseekable: true);
+			if (tracer && target && !target.isFriend(tracer)) tracer = null;
+		}
+		A_SeekerMissile(threshold,maxturnangle,flags & ~SMF_LOOK,chance,distance);
+	}	
+	
+	void A_HealSeek(int maxtime = 2)
+	{
+		user_seektimer += 1;
+		if (user_seektimer >= maxtime) 
+		{
+			A_FOSeekerMissile(90,90,SMF_LOOK|SMF_PRECISE|SMF_CURSPEED,256,64); 
+			user_seektimer = 0;
+		}
+		//A_LogInt(user_seektimer);
+	}
+	
+	/**
+	 * Sets the calling actor's Angle and Pitch to match its velocity vector, so that it is looking in exactly the same direction as it is traveling. Used by A_SelectSeekTarget.
+	 */
+	action void A_FaceVel()
+	{
+		// Math from https://forum.zdoom.org/viewtopic.php?f=15&t=59726&hilit=PitchTo#p1044007
+		let dir = Vel.Unit();
+		Angle = atan2(dir.Y, dir.X);
+		Pitch = -asin(dir.Z);
+	}
+	
+	/**
+	 * Selects a target for A_SeekerMissile or A_SuperSeekerMissile, based on where the source of this projectile (that is, the target pointer) is currently aiming.
+	 *
+	 * This should be called when a projectile is first fired. If this is used, then in subsequent calls to A_SuperSeekerMissile, the “retarget” parameter should be the opposite of the value returned by this method. Example:
+	 *
+	 *	private bool specificTarget;
+	 *	states {
+	 *		Spawn:
+	 *			TNT1 A 0 nodelay { invoker.specificTarget = A_SelectSeekTargetByShooterAim(); }
+	 *			MISL A 1 A_SuperSeekerMissile(1, 1, retarget: !specificTarget);
+	 *			wait;
+	 *	}
+	 *
+	 * @param seekEnemies Whether to seek actors hostile to the source of this projectile. Defaults to true.
+	 * @param seekFriends Whether to seek actors friendly to the source of this projectile. Defaults to false.
+	 * @param range How far out to look. Defaults to PLAYERMISSILERANGE, the maximum range of player hitscans.
+	 * @return true if a valid target was selected; false otherwise.
+	 */
+	action bool A_SelectSeekTargetByShooterAim(bool seekEnemies = true, bool seekFriends = false, double range = PLAYERMISSILERANGE)
+	{
+		if (!target)
+		{
+			Console.Printf("\cg%s.A_SelectSeekTargetByShooterAim called, but this actor's target field is null!", GetClassName());
+			return false;
+		}
+		
+		FLineTraceData result;
+		if (LineTrace(target.Angle, range, target.Pitch, data: result) && result.HitActor)
+		{
+			let a = result.HitActor;
+			if 
+			(
+				a != target &&
+				a.bShootable && !a.bDormant && !a.bNeverTarget &&
+				(
+					(!seekEnemies && !seekFriends) ||
+					(seekEnemies && target.isHostile(a)) ||
+					(seekFriends && target.isFriend(a))
+				)
+			)
+			{
+				tracer = a;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Selects a target for A_SeekerMissile or A_SuperSeekerMissile.
+	 *
+	 * @param seekEnemies Whether to seek actors hostile to the source of this projectile. Defaults to true.
+	 * @param seekFriends Whether to seek actors friendly to the source of this projectile. Defaults to false.
+	 * @param lookDistance How far to look all around for a target.
+	 */
+	action void A_SelectSeekTarget(bool seekEnemies = true, bool seekFriends = false, double lookDistance = MISSILERANGE)
+	{
+		invoker.SuperSeekerMissileLastTargetingAttempt = gametic;
+		
+		A_FaceVel();
+		
+		Vector2 bestAimCorrection = (180, 180);
+		Actor bestTarget = null;
+		
+		// Searches for a monster to seek.
+		for (let i = BlockThingsIterator.Create(invoker, lookDistance); i.Next();)
+		if 
+		(
+			i.thing != target &&
+			i.thing.bShootable && !i.thing.bDormant && !i.thing.bNeverTarget &&
+			(
+				(!seekEnemies && !seekFriends) || !target ||
+				(seekEnemies && target.isHostile(i.thing)) ||
+				(seekFriends && target.isFriend(i.thing))
+			)
+		)
+		{
+			let dirTo = Vec3To(i.thing).Unit();
+			let aimCorrection = (
+				abs(atan2(dirTo.y, dirTo.x) - Angle),
+				abs(asin(dirTo.z) - Pitch)
+			);
+			
+			// Save the visibility check for last. It's quite expensive.
+			if (aimCorrection.Length() < bestAimCorrection.Length() && IsVisible(i.thing, true))
+			{
+				bestAimCorrection = aimCorrection;
+				bestTarget = i.thing;
+			}
+		}
+		
+		if (bestTarget)
+			tracer = bestTarget;
+	}
+	
+	/**
+	 * The most recent tic when A_SelectSeekTarget was executed.
+	 *
+	 * This is used to limit how often A_SuperSeekerMissile searches for a seek target when it doesn't already have one. Searching for a seek target is an expensive operation, so it shouldn't be done on every tic.
+	 *
+	 * The longer ago the last attempt was made, the more probable it is that another attempt will be made on this tic, reaching 100% probability after 32 tics. In other words, seeker missile targeting will happen every 16 tics on average, but it's randomized so that not all seeker missiles in flight will try targeting on the same tic.
+	 */
+	private int SuperSeekerMissileLastTargetingAttempt;
+	
+	/**
+	 * Custom replacement for A_SeekerMissile that actually works correctly, and without the quirks. Always behaves as though SMF_PRECISE and SMF_CURSPEED were given.
+	 *
+	 * @param maxYaw How far the missile is allowed to yaw in one tic.
+	 * @param maxPitch How far the missile is allowed to pitch in one tic.
+	 * @param retarget If true, the missile will occasionally look for new, better targets even if it already has one.
+	 * @param seekEnemies Whether to seek actors hostile to the source of this projectile. Defaults to true.
+	 * @param seekFriends Whether to seek actors friendly to the source of this projectile. Defaults to false.
+	 * @param lookDistance How far the missile will look for targets. If ≤ 0, missile will not look for targets at all, and will simply seek the current tracer (if any).
+	 */
+	action void A_SuperSeekerMissile(double maxYaw, double maxPitch, bool retarget = true, bool seekEnemies = true, bool seekFriends = false, double lookDistance = MISSILERANGE, int faceFlags = 0)
+	{
+		if 
+		(
+			tracer && (
+				!invoker.CanSeek(tracer) ||
+				!tracer.bShootable ||
+				(!(random() & 31) && !IsVisible(tracer, true))
+			)
+		)
+			tracer = null; // Forget about targets that are no longer valid.
+		
+		if 
+		(
+			(!tracer && (
+				// If A_SelectSeekTarget has never run before, then definitely run it.
+				(invoker.SuperSeekerMissileLastTargetingAttempt == 0) ||
+				// Otherwise, avoid running it on every tic; it's an expensive operation.
+				(gametic - invoker.SuperSeekerMissileLastTargetingAttempt) > (random() & 31)
+			)) ||
+			(retarget && !(random() & 127))
+		)
+			A_SelectSeekTarget(seekEnemies: seekEnemies, seekFriends: seekFriends, lookDistance: lookDistance);
+		
+		if (tracer)
+		{
+			let curSpeed = Vel.Length();
+			let curAngles = (Angle, Pitch);
+			A_FaceTracer(maxYaw, maxPitch, flags: faceFlags);
+			Vel3DFromAngle(curSpeed, Angle, Pitch);
+		}
+	}
+	
+	action void A_DrunkMissile(double maxYaw, double maxPitch)
+	{
+		let curSpeed = Vel.Length();
+		Angle = Normalize180(Angle + random(-maxYaw, maxYaw));
+		Pitch = clamp(Pitch + random(-maxPitch, maxPitch), -90., 90.);
+		Vel3DFromAngle(curSpeed, Angle, Pitch);
+	}
+	//
+	//
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+		
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			if (kcdebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("\c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
+			
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					if (A_CheckFriendCollisionProjTypeFriendlyDoom()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHeretic()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHexen()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyStrife()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyOthers()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendly1()) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		
+		// We don't really care about others making the check.
+		return true;
+	}
+	
+	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
+	{
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCProjectile, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		damage = super.DoSpecialDamage(target, damage, damagetype);
+		// New Code goes here
+		return damage;
+	}
+	//
+	//
+	//
+}
+
+class KCEffectProjectile : KCProjectile
+{
+	default
+	{
+		+HITMASTER;
+	}
+	
+	void A_InflictHalve(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("PowerHalve"))
+		{
+			playera.SetInventory("PowerHalve",1);
+			let BluntItem = PowerHalve(playera.FindInventory("PowerHalve"));
+			if (BluntItem) BluntItem.EffectTics = basetime;
+		}
+		else
+		{
+			let BluntItem = PowerHalve(playera.FindInventory("PowerHalve"));
+			if (BluntItem) BluntItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("debuff/atkdown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictHalve)");
+	}
+	
+	void A_InflictWeaken(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("PowerWeaken"))
+		{
+			playera.SetInventory("PowerWeaken",1);
+			let SapItem = PowerWeaken(playera.FindInventory("PowerWeaken"));
+			if (SapItem) SapItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SapItem = PowerWeaken(playera.FindInventory("PowerWeaken"));
+			if (SapItem) SapItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("debuff/defdown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictWeaken)");
+	}
+	
+	void A_InflictSlow(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("PowerSlow"))
+		{
+			playera.SetInventory("PowerSlow",1);
+			let SlowItem = PowerSlow(playera.FindInventory("PowerSlow"));
+			if (SlowItem) SlowItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SlowItem = PowerSlow(playera.FindInventory("PowerSlow"));
+			if (SlowItem) SlowItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("debuff/spddown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSlow)");
+	}
+	
+	int A_StatusEffectChecker(int basechance)
+	{
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile [\c[green]%s\c[orange])", GetClassName());
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+
+		user_ailmentmaxchance = basechance;
+		if (master && master == playera)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- master == player");
+			if (playera.CountInv("EWShieldIdleMode") > 0) 
+			{
+				if (playera.CountInv("EWShieldDefendMode") > 0)
+				{
+					if (playera.CountInv("EWShieldDefendModeExtra") > 0) 
+					{
+						user_ailmentmaxchance *= 20;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
+					}
+					else 
+					{
+						user_ailmentmaxchance *= 12;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
+					}
+				}
+				else
+				{
+					user_ailmentmaxchance *= 4;
+					if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
+				}
+			}
+		}
+
+		user_canafflict = 1;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Health Check");
+			if (master.health <= 0) 
+			{
+				user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
+			}
+
+			if (master.CountInv("EvadeAnAttack") > 0 || 
+					master.CountInv("PlayerDashing") > 0) 
+					{
+						user_canafflict = 0;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
+					}
+		}
+
+		KCPlayerPawn playpawn;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check");
+			playpawn = KCPlayerPawn(master);
+			if (playpawn)
+			{
+				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
+			}
+			else
+			{
+				if (master.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
+			}
+		}
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
+		return user_ailmentmaxchance;
+	}
+}
+
+// Base FastProjectile Class
+class KCFastProjectile : KCProjectile abstract
+{
+	Default
+	{
+		Projectile;
+		MissileHeight 0;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
+	virtual void Effect()
+	{
+		class<Actor> trail = MissileName;
+		if (trail != null)
+		{
+			double hitz = pos.z - 8;
+
+			if (hitz < floorz)
+			{
+				hitz = floorz;
+			}
+			// Do not clip this offset to the floor.
+			hitz += MissileHeight;
+			
+			Actor act = Spawn (trail, (pos.xy, hitz), ALLOW_REPLACE);
+			if (act != null)
+			{
+				if (bGetOwner && target != null)
+					act.target = target;
+				else
+					act.target = self;
+				
+				act.angle = angle;
+				act.pitch = pitch;
+			}
+		}
+	}
+	
+	//----------------------------------------------------------------------------
+	//
+	// AFastProjectile :: Tick
+	//
+	// Thinker for the ultra-fast projectiles used by Heretic and Hexen
+	//
+	//----------------------------------------------------------------------------
+
+	override void Tick ()
+	{
+		if (target)
+		{
+			if (KCPlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("KCTimeFreezer") ||
+						target.CountInv("KCTimeFreezer1") ||
+						target.CountInv("KCTimeFreezer2") ||
+						target.CountInv("KCTimeFreezer3") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+					else
+					{
+						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+		
+		ClearInterpolation();
+		double oldz = pos.Z;
+
+		if (isFrozen())
+			return;
+
+		// [RH] Ripping is a little different than it was in Hexen
+		FCheckPosition tm;
+		tm.DoRipping = bRipper;
+
+		int count = 8;
+		if (radius > 0)
+		{
+			while (abs(Vel.X) >= radius * count || abs(Vel.Y) >= radius * count)
+			{
+				// we need to take smaller steps.
+				count += count;
+			}
+		}
+
+		if (height > 0)
+		{
+			while (abs(Vel.Z) >= height * count)
+			{
+				count += count;
+			}
+		}
+
+		// Handle movement
+		bool ismoved = Vel != (0, 0, 0)
+			// Check Z position set during previous tick.
+			// It should be strictly equal to the argument of SetZ() function.
+			|| (   (pos.Z != floorz           ) /* Did it hit the floor?   */
+				&& (pos.Z != ceilingz - Height) /* Did it hit the ceiling? */ );
+
+		if (ismoved)
+		{
+			// force some lateral movement so that collision detection works as intended.
+			if (bMissile && Vel.X == 0 && Vel.Y == 0 && !IsZeroDamage())
+			{
+				VelFromAngle(MinVel);
+			}
+
+			Vector3 frac = Vel / count;
+			int changexy = frac.X != 0 || frac.Y != 0;
+			int ripcount = count / 8;
+			for (int i = 0; i < count; i++)
+			{
+				if (changexy)
+				{
+					if (--ripcount <= 0)
+					{
+						tm.ClearLastRipped();	// [RH] Do rip damage each step, like Hexen
+					}
+					
+					if (!TryMove (Pos.XY + frac.XY, true, false, tm))
+					{ // Blocked move
+						if (!bSkyExplode)
+						{
+							let l = tm.ceilingline;
+							if (l &&
+								l.backsector &&
+								l.backsector.GetTexture(sector.ceiling) == skyflatnum)
+							{
+								let posr = PosRelative(l.backsector);
+								if (pos.Z >= l.backsector.ceilingplane.ZatPoint(posr.XY))
+								{
+									// Hack to prevent missiles exploding against the sky.
+									// Does not handle sky floors.
+									Destroy ();
+									return;
+								}
+							}
+							// [RH] Don't explode on horizon lines.
+							if (BlockingLine != NULL && BlockingLine.special == Line_Horizon)
+							{
+								Destroy ();
+								return;
+							}
+						}
+
+						ExplodeMissile (BlockingLine, BlockingMobj);
+						return;
+					}
+				}
+				AddZ(frac.Z);
+				UpdateWaterLevel();
+				oldz = pos.Z;
+				if (oldz <= floorz)
+				{ // Hit the floor
+
+					if (floorpic == skyflatnum && !bSkyExplode)
+					{
+						// [RH] Just remove the missile without exploding it
+						//		if this is a sky floor.
+						Destroy ();
+						return;
+					}
+
+					SetZ(floorz);
+					HitFloor ();
+                    Destructible.ProjectileHitPlane(self, SECPART_Floor);
+					ExplodeMissile (NULL, NULL);
+					return;
+				}
+				if (pos.Z + height > ceilingz)
+				{ // Hit the ceiling
+
+					if (ceilingpic == skyflatnum && !bSkyExplode)
+					{
+						Destroy ();
+						return;
+					}
+
+					SetZ(ceilingz - Height);
+                    Destructible.ProjectileHitPlane(self, SECPART_Ceiling);
+					ExplodeMissile (NULL, NULL);
+					return;
+				}
+				CheckPortalTransition();
+				if (changexy && ripcount <= 0) 
+				{
+					ripcount = count >> 3;
+
+					// call the 'Effect' method.
+					Effect();
+				}
+			}
+		}
+		if (!CheckNoDelay())
+			return;		// freed itself
+		// Advance the state
+		if (tics != -1)
+		{
+			if (tics > 0) tics--;
+			while (!tics)
+			{
+				if (!SetState (CurState.NextState))
+				{ // mobj was removed
+					return;
+				}
+			}
+		}
+	}
+}
+
+class KCEffectFastProjectile : KCFastProjectile
+{
+	default
+	{
+		+HITMASTER;
+	}
+	
+	int A_StatusEffectChecker(int basechance)
+	{
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile [\c[green]%s\c[orange])", GetClassName());
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+
+		user_ailmentmaxchance = basechance;
+		if (master && master == playera)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
+			if (playera.CountInv("EWShieldIdleMode") > 0) 
+			{
+				if (playera.CountInv("EWShieldDefendMode") > 0)
+				{
+					if (playera.CountInv("EWShieldDefendModeExtra") > 0) 
+					{
+						user_ailmentmaxchance *= 20;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
+					}
+					else 
+					{
+						user_ailmentmaxchance *= 12;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Guarding]");
+					}
+				}
+				else
+				{
+					user_ailmentmaxchance *= 4;
+					if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Equipped but Idle]");
+				}
+			}
+		}
+
+		user_canafflict = 1;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Check");
+			if (master.health <= 0) 
+			{
+				user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Health Is < 0");
+			}
+
+			if (master.CountInv("EvadeAnAttack") > 0 || 
+					master.CountInv("PlayerDashing") > 0) 
+					{
+						user_canafflict = 0;
+						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Evaded/Dashing");
+					}
+		}
+
+		KCPlayerPawn playpawn;
+		if (master)
+		{
+			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check");
+			playpawn = KCPlayerPawn(master);
+			if (playpawn)
+			{
+				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
+			}
+			else
+			{
+				if (master.bINVULNERABLE) user_canafflict = 0;
+				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found non-player]: %d", user_canafflict);
+			}
+		}
+		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- user_ailmentmaxchance: %d (basechance: %d), user_canafflict: %d", user_ailmentmaxchance, basechance, user_canafflict);
+		return user_ailmentmaxchance;
+	}
+}
+
+// Base Bullet Tracer Class
+class KCBulletTracer : KCFastProjectile
+{
+	int damagebase;
+	default
+	{
+		Tag "Shot";
+		Damagetype "Hitscan";
+		DamageFunction (finaldamagedealt);
+		Radius 2;
+		Height 2;
+		Mass 5;
+		Speed 160; // 80
+		PROJECTILE;
+		+DONTREFLECT;
+		+NODAMAGETHRUST;
+		Renderstyle "Add";
+		Alpha 1.0;
+		Scale 1.0;
+		decal "BulletChip";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCFastProjectile.PostBeginPlay();
+		A_ScaleVelocity(kc_tracervelmulti);
+		
+		if (finaldamagedealt <= 0) finaldamagedealt = (5 * random(1,3));
+	}
+	
+	action void A_SpawnTracerTrail(string name = "KCBulletTracerTrail", int extranum = 6, double spread = -2.5)
+	{
+		double posx = 0.0;
+		A_SpawnItemEx(name,posx,0,0,0,0,0,0,128,0);
+		for (int trailnum = 0; trailnum < extranum; trailnum++)
+		{
+			posx += spread;
+			A_SpawnItemEx(name,posx,0,0,0,0,0,0,128,0);
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay bright;
+		Idle:
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",6,-2.5);
+			loop;
+		XDeath:
+			TNT1 A 1; //A_SpawnItem("BulletPuff")
+			stop;
+		Death:
+		Crash:
+			TNT1 A 1 A_SpawnItem("BulletPuff");
+			stop;
+	}
+}
+
+class KCBulletTracerTrail : KampoulchhrBase
+{
+	default
+	{
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Damage 0;
+		Projectile;
+		+CLIENTSIDEONLY;
+		+NOINTERACTION;
+		+NOCLIP;
+		+DONTSPLASH;
+		Scale 0.5;
+		Renderstyle "Add";
+	}
+	
+	States
+	{
+		Spawn:
+			CTAC A 2 bright;
+			stop;
+	}
+}
+
+// Projectiles derived from this class should rip through actors,
+// but not actually hit them more than once.
+class SingleDamageRipper : KCProjectile abstract
+{
+	default
+	{
+		Projectile;
+		+RIPPER;
+	}
+	
+	Array<Actor> ActorsAlreadyHit;
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					//if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					//if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					//if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		// We don't really care about others making the check.
+
+		for (let i = 0, size = ActorsAlreadyHit.Size(); i < size; i++)
+				if (other == ActorsAlreadyHit[i])
+						return false;
+		
+		return true;
+	}
+}
+
+class SingleDamageFastRipper : KCFastProjectile abstract
+{
+	default
+	{
+		Projectile;
+		+RIPPER;
+	}
+	
+	Array<Actor> ActorsAlreadyHit;
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					//if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					//if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					//if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		// We don't really care about others making the check.
+
+		for (let i = 0, size = ActorsAlreadyHit.Size(); i < size; i++)
+				if (other == ActorsAlreadyHit[i])
+						return false;
+		
+		return true;
+	}
+}
+
+// Base Puff Class
+class KCPuff : KCProjectile abstract
+{
+	default
+	{
+		+PUFFGETSOWNER
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
+	override void Tick()
+	{
+		if (target)
+		{
+			if (KCPlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+					else
+					{
+						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+		Super.Tick();
+	}
+	
+	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
+	{
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCPuff, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		damage = super.DoSpecialDamage(target, damage, damagetype);
+		// New Code goes here
+		return damage;
+	}
+}
+
+//
+class FistPuff : KCPuff
+{
+	default
+	{
+		Tag "Fist";
+		Species "Players";
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		+FORCERADIUSDMG +PUFFGETSOWNER +PUFFONACTORS 
+		+THRUSPECIES +MTHRUSPECIES
+		RenderStyle "Translucent";
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+		damagetype "Fist";
+		SeeSound "null"; // "FistHit"
+		AttackSound "null";
+	}
+	
+	void A_SetPainForcedPain(int basechance = 44, double playerlvlfactor = 0.44)
+	{
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		user_randompain = basechance;
+		if (target)
+		{
+			let MiscItem = PlayerStatItem(target.FindInventory("PlayerStatItem"));
+			if (MiscItem) user_randompain += (TruePlayerLevel * playerlvlfactor);
+		}
+		if (kcdebug_attackstuff) Console.Printf("ForcePain chance: %d / 100", user_randompain);
+		if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_SetPainForcedPain(44,0.44);
+				A_Explode(A_GetPunchDamage(0,1,true), A_MeleeImpactRadius(3), 0, false, (A_MeleeImpactRadius(3)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(3)),(A_QuakeMeleeDuration(3)),0,(A_QuakeMeleeTremrad(3)),"nosound/silent");
+				
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56); 
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				//Console.Printf("Spawn");
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		SpawnSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Melee:
+			TNT1 A 0
+			{
+				A_SetPainForcedPain(44,0.44);
+				A_Explode(A_GetPunchDamage(0,1,true), A_MeleeImpactRadius(3), 0, false, (A_MeleeImpactRadius(3)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(3)),(A_QuakeMeleeDuration(3)),0,(A_QuakeMeleeTremrad(3)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserk", 56); 
+					} else { A_StartSound("FistHit", 56); }
+				}
+				//Console.Printf("Melee");
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		MeleeSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Crash:
+			PUFF C 0
+			{
+				A_SetPainForcedPain(44,0.44);
+				A_Explode(A_GetPunchDamage(0,1,true), A_MeleeImpactRadius(3), 0, false, (A_MeleeImpactRadius(3)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(3)),(A_QuakeMeleeDuration(3)),0,(A_QuakeMeleeTremrad(3)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56); 
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				//Console.Printf("Crash");
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		CrashSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+	}
+}
+
+class UppercutPuff : FistPuff
+{
+	default
+	{
+		Tag "Uppercut";
+		ProjectileKickback 0;
+		+NODAMAGETHRUST
+		RenderStyle "Translucent";
+		Alpha 0.875;
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_SetPainForcedPain(32,0.32);
+				A_Explode(A_GetPunchDamage(1,1,true), A_MeleeImpactRadius(4), 0, false, (A_MeleeImpactRadius(4)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(4)),(A_QuakeMeleeDuration(4)),0,(A_QuakeMeleeTremrad(4)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		SpawnSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Melee:
+			TNT1 A 0
+			{
+				A_SetPainForcedPain(32,0.32);
+				A_Explode(A_GetPunchDamage(1,1,true), A_MeleeImpactRadius(4), 0, false, (A_MeleeImpactRadius(4)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(4)),(A_QuakeMeleeDuration(4)),0,(A_QuakeMeleeTremrad(4)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserk", 56); 
+					} else { A_StartSound("FistHit", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		MeleeSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Crash:
+			PUFF C 0
+			{
+				A_SetPainForcedPain(32,0.32);
+				A_Explode(A_GetPunchDamage(1,1,true), A_MeleeImpactRadius(4), 0, false, (A_MeleeImpactRadius(4)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(4)),(A_QuakeMeleeDuration(4)),0,(A_QuakeMeleeTremrad(4)),"nosound/silent");
+				
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		CrashSparks:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+	}
+}
+
+class KickPuff : KCPuff
+{
+	default
+	{
+		Tag "Kick";
+		Species "Players";
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		+FORCERADIUSDMG +PUFFGETSOWNER +PUFFONACTORS 
+		+THRUSPECIES +MTHRUSPECIES
+		RenderStyle "Translucent";
+		ProjectileKickback 375; // 1500
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+		damagetype "Kick";
+		SeeSound "null"; // "FistHit"
+		AttackSound "null";
+	}
+	
+	void A_SetPainForcedPain(int basechance = 16, double playerlvlfactor = 0.16)
+	{
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		user_randompain = basechance;
+		if (target)
+		{
+			let MiscItem = PlayerStatItem(target.FindInventory("PlayerStatItem"));
+			if (MiscItem) user_randompain += (TruePlayerLevel * playerlvlfactor);
+		}
+		if (kcdebug_attackstuff) Console.Printf("ForcePain chance: %d / 100", user_randompain);
+		if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_SetPainForcedPain(16,0.16);
+				A_Explode(A_GetKickDamage(0,1,true), A_MeleeImpactRadius(7), 0, false, (A_MeleeImpactRadius(7)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(7)),(A_QuakeMeleeDuration(7)),0,(A_QuakeMeleeTremrad(7)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Spawn2:
+			TNT1 A 2 
+			{
+				int dist = randompick(3,3,4);
+				A_RadiusThrust(375,dist,0,dist);
+			}
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Melee:
+			TNT1 A 0
+			{
+				A_SetPainForcedPain(16,0.16);
+				A_Explode(A_GetKickDamage(0,1,true), A_MeleeImpactRadius(7), 0, false, (A_MeleeImpactRadius(7)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(7)),(A_QuakeMeleeDuration(7)),0,(A_QuakeMeleeTremrad(7)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserk", 56); 
+					} else { A_StartSound("FistHit", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Melee2:
+			TNT1 A 2 
+			{
+				int dist = randompick(3,3,4);
+				A_RadiusThrust(375,dist,0,dist);
+			}
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Crash:
+			PUFF C 0
+			{
+				A_SetPainForcedPain(16,0.16);
+				A_Explode(A_GetKickDamage(0,1,true), A_MeleeImpactRadius(7), 0, false, (A_MeleeImpactRadius(7)*0.25));
+				A_Quake((A_QuakeMeleeIntensity(7)),(A_QuakeMeleeDuration(7)),0,(A_QuakeMeleeTremrad(7)),"nosound/silent");
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Crash2:
+			TNT1 A 2 
+			{
+				int dist = randompick(3,3,4);
+				A_RadiusThrust(375,dist,0,dist);
+			}
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+	}
+}
+
+class KickPuffNoThrust : KickPuff
+{
+	default
+	{
+		ProjectileKickback 0;
+		+NODAMAGETHRUST
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_SetPainForcedPain(16,0.16);
+
+				int KPower = 0;
+				if (target) KPower = (target.player.mo.Stamina / 10);
+				if (KPower > 10) KPower = 10;
+				double recoil = frandom(-0.125,-0.075);
+				double dmg = random(28,52) + (KPower * 3.275);
+				if (KPower) dmg *= frandom(1.00,(1.00 + (KPower * frandompick(0.667,0.75,0.834))));
+				int radi = 24 * frandom(0.84375,1.15625);
+
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						radi *= 2.5;
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+
+				A_Explode((dmg * frandom(0.05,0.15)), radi, 0, false, (radi*0.25));
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Spawn2:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Melee:
+			TNT1 A 0
+			{
+				A_SetPainForcedPain(16,0.16);
+				
+				int KPower = 0;
+				if (target) KPower = (target.player.mo.Stamina / 10);
+				if (KPower > 10) KPower = 10;
+				double recoil = frandom(-0.125,-0.075);
+				double dmg = random(28,52) + (KPower * 3.275);
+				if (KPower) dmg *= frandom(1.00,(1.00 + (KPower * frandompick(0.667,0.75,0.834))));
+				int radi = 24 * frandom(0.84375,1.15625);
+				
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						radi *= 2.5;
+						A_StartSound("fisthitberserk", 56); 
+					} else { A_StartSound("FistHit", 56); }
+				}
+				
+				A_Explode((dmg * frandom(0.05,0.15)), radi, 0, false, (radi*0.25));
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Melee2:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+		Crash:
+			PUFF C 0
+			{
+				A_SetPainForcedPain(16,0.16);
+				
+				int KPower = 0;
+				if (target) KPower = (target.player.mo.Stamina / 10);
+				if (KPower > 10) KPower = 10;
+				double recoil = frandom(-0.125,-0.075);
+				double dmg = random(28,52) + (KPower * 3.275);
+				if (KPower) dmg *= frandom(1.00,(1.00 + (KPower * frandompick(0.667,0.75,0.834))));
+				int radi = 24 * frandom(0.84375,1.15625);
+				
+				if (target)
+				{
+					if (A_CheckBerserk()) 
+					{
+						radi *= 2.5;
+						A_StartSound("fisthitberserkwall", 56);
+					} else { A_StartSound("FistHitWall", 56); }
+				}
+				
+				A_Explode((dmg * frandom(0.05,0.15)), radi, 0, false, (radi*0.25));
+				
+				user_hitsparkrand = random(1,12);
+				if (user_hitsparkrand >= 1 && user_hitsparkrand <= 4) { A_SpawnItemEx("MeleeHitSpark1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 5 && user_hitsparkrand <= 7) { A_SpawnItemEx("MeleeHitSpark2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 8 && user_hitsparkrand <= 10) { A_SpawnItemEx("MeleeHitSpark3",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+				if (user_hitsparkrand >= 11 && user_hitsparkrand <= 12) { A_SpawnItemEx("MeleeHitSpark4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERSCALE|SXF_TRANSFERALPHA|SXF_TRANSFERRENDERSTYLE); }
+			}
+		Crash2:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			Stop;
+	}
+}
+
+class ChainsawPuff : KCPuff
+{
+	default
+	{
+		Tag "Chainsaw";
+		DamageType "Chainsaw";
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+ALLOWPARTICLES;
+		+RANDOMIZE;
+		RenderStyle "Translucent";
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				user_randompain = 32;
+				if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+			}
+			PUFF A 4 Bright;
+			PUFF B 4;
+			// Intentional fall-through
+		Melee:
+			TNT1 A 0
+			{
+				user_randompain = 32;
+				if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+			}
+			PUFF CD 4;
+			Stop;
+	}
+}
+
+class Chainsaw2Puff : ChainsawPuff
+{
+	default
+	{
+		Tag "Double-Bladed Chainsaw";
+		DamageType "Chainsaw";
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+ALLOWPARTICLES;
+		+RANDOMIZE;
+		RenderStyle "Translucent";
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				user_randompain = 16;
+				if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+			}
+			PUFF A 4 Bright;
+			PUFF B 4;
+			// Intentional fall-through
+		Melee:
+			TNT1 A 0
+			{
+				user_randompain = 16;
+				if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+			}
+			PUFF CD 4;
+			Stop;
+	}
+}
+
+
+class STGrenade : KCProjectile
+{
+	default
+	{
+		Tag "Grenade";
+		Radius 8;
+		Height 8;
+		Speed 25;
+		DamageType "Explosive";
+		DamageFunction (20 * random(1,8));
+		Scale 1.125;
+		Gravity 0.50;
+		Projectile;
+		BounceCount 0;
+		BounceFactor 0.8;
+		WallBounceFactor 0.8;
+		-NOGRAVITY;
+		+DEHEXPLOSION;
+		+GRENADETRAIL;
+		+BOUNCEONWALLS;
+		+BOUNCEONFLOORS;
+		+BOUNCEONCEILINGS;
+		+EXPLODEONWATER;
+		//+DONTREFLECT;
+		SeeSound "Weapons/GrBnce";
+		BounceSound "Weapons/GrBnce";
+		WallBounceSound "Weapons/GrBnce";
+	}
+	
+	States
+	{
+		Spawn:
+			SGRN A 0 Bright NoDelay
+			{
+				user_fusemax = random(95,115);
+				A_StartSound("Weapons/GrenLF");
+			}
+		Idle:
+			SGRN A 1 Bright 
+			{
+				user_fuse += 1;
+				if (user_fuse >= user_fusemax) { return resolvestate("Death"); }
+				return resolvestate(null);
+			}
+			loop;
+
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("Weapons/GrenLX",CHAN_7);
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			MISL B 0 Bright 
+			{
+				bNOGRAVITY = true;
+				A_ScaleVelocity(0);
+				A_SetScale(1.0);
+			}
+			MISL B 8 Bright A_Explode(128,128,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			stop;
+	}
+}
+
+class STGrenadeNoAOE : STGrenade
+{
+	default
+	{
+		DamageType "Explosive";
+	}
+
+	States
+	{
+		Spawn:
+			SGRN A 0 Bright NoDelay
+			{
+				user_fusemax = random(95,115);
+				A_StartSound("Weapons/GrenLF");
+			}
+		Idle:
+			SGRN A 1 Bright 
+			{
+				user_fuse += 1;
+				if (user_fuse >= user_fusemax) { return resolvestate("Death"); }
+				return resolvestate(null);
+			}
+			loop;
+
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("Weapons/GrenLX",CHAN_7);
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			MISL B 0 Bright 
+			{
+				bNOGRAVITY = true;
+				A_ScaleVelocity(0);
+				A_SetScale(1.0);
+			}
+			MISL B 8 Bright A_Explode(128,128,0,false,0,0,10,"BulletPuff","Explosive");
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			stop;
+	}
+}
+
+class STGrenadeMonster : STGrenade
+{
+	default
+	{
+		Tag "Grenade";
+		Radius 8;
+		Height 8;
+		Speed 25;
+		DamageType "Explosive";
+		DamageFunction (20 * random(1,8));
+		Scale 1.0;
+		Gravity 0.50;
+		Projectile;
+		BounceCount 0;
+		BounceFactor 0.8;
+		WallBounceFactor 0.8;
+		-NOGRAVITY
+		+DEHEXPLOSION
+		+GRENADETRAIL;
+		+BOUNCEONWALLS;
+		+BOUNCEONFLOORS;
+		+BOUNCEONCEILINGS;
+		+EXPLODEONWATER;
+		//+DONTREFLECT
+		SeeSound "Weapons/GrBnce";
+		BounceSound "Weapons/GrBnce";
+		WallBounceSound "Weapons/GrBnce";
+	}
+	
+	States
+	{
+		Spawn:
+			SGRN A 0 Bright NoDelay
+			{
+				user_fusemax = random(95,115);
+				A_StartSound("Weapons/GrenLF");
+			}
+		Idle:
+			SGRN A 1 Bright 
+			{
+				user_fuse += 1;
+				if (user_fuse >= user_fusemax) { return resolvestate("Death"); }
+				return resolvestate(null);
+			}
+			loop;
+
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("Weapons/GrenLX",CHAN_7);
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			MISL B 0 Bright 
+			{
+				bNOGRAVITY = true;
+				A_ScaleVelocity(0);
+				A_SetScale(1.0);
+			}
+			MISL B 8 Bright A_Explode(128,128,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			Stop;
+	}
+}
+
+class HowitzerBase : KCPuff
+{
+	default
+	{
+		Tag "Howitzer Shell";
+		Radius 11;
+		Height 8;
+		DamageType "Explosive";
+		VSpeed 0;
+		RenderStyle "Translucent";
+		+PUFFGETSOWNER;
+		+PUFFONACTORS;
+		+NOGRAVITY
+		Scale 1.5;
+	}
+	
+	States
+	{
+		Spawn:
+		Melee:
+		Crash:
+			TNT1 A 0 NoDelay
+			{
+				bFORCERADIUSDMG = false;
+				if (frandom(0.01,100.00) <= user_ignoreaoeimmunity) { bFORCERADIUSDMG = true; }
+
+				A_StartSound("weapons/rocklx",CHAN_7);
+				A_Quake(1, 4, 0, 512, "");
+				A_Quake(4, 4, 0, 256, "");
+				A_Explode(256,192,XF_HURTSOURCE,false,64,0,10,"BulletPuff","Explosive");
+			}
+			MISL B 8 Bright;
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			Stop;
+	}
+}
+
+class HowitzerNoAOE : HowitzerBase
+{
+	default
+	{
+		+PUFFGETSOWNER;
+		+PUFFONACTORS;
+		+NOGRAVITY
+	}
+	
+	States
+	{
+		Spawn:
+		Melee:
+		Crash:
+			TNT1 A 0 NoDelay
+			{
+				bFORCERADIUSDMG = false;
+				if (frandom(0.01,100.00) <= user_ignoreaoeimmunity) { bFORCERADIUSDMG = true; }
+				
+				A_StartSound("weapons/rocklx",CHAN_7);
+				A_Quake(1, 4, 0, 512, "");
+				A_Quake(4, 4, 0, 256, "");
+				A_Explode(256,192,XF_HURTSOURCE,false,64,0,10,"BulletPuff","Explosive");
+			}
+			MISL B 8 Bright; 
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			Stop;
+	}
+}
+class DevastatorShot : KCProjectile
+{
+	int explrand;
+	int expdmg, exprad, expfullrad;
+	default
+	{
+		Radius 4;
+		Height 4;
+		Speed 24;
+		Scale 0.125;
+		DamageFunction (38);
+		DamageType "Explosive";
+		PROJECTILE;
+		ExplosionDamage 10; // 20
+		ExplosionRadius 48; // 48
+		SeeSound "weapons/devlnch";
+		DeathSound "weapons/devexpl";
+	}
+	
+	States
+	{
+		Spawn:
+			MNSS A 1 Bright;
+			MNSS A 1 Bright A_SpawnItem("DevRockTrail");
+			Loop;
+		Death:
+			GRNE A 0 
+			{
+				explrand = randompick(1,4);
+				if (explrand <= 3)
+				{
+					expdmg = 10;
+					exprad = 48;
+					expfullrad = 24;
+				}
+				if (explrand >= 4)
+				{
+					expdmg = 20;
+					exprad = 60;
+					expfullrad = 30;
+				}
+				A_SetScale(0.20,0.20);
+			}
+			GRNE A 3 Bright 
+			{
+				A_Explode(expdmg,exprad,XF_HURTSOURCE,true,expfullrad,0,0,"","Explosive");
+				if (random(1,64) <= 1) 
+				{
+					A_Explode(expdmg,exprad,XF_HURTSOURCE,true,expfullrad,0,0,"","Explosive");
+				}
+			}
+			GRNE BCDEFGHIJKLMN 3 Bright;
+			Stop;
+	}
+}
+
+class DevastatorShot2 : DevastatorShot
+{
+	default
+	{
+		Speed 42;
+		Scale 0.1;
+		DamageFunction (randompick(26,32,32,32,38,38,38,38,38,38,38,38,34,44,44,50));
+	}
+	
+	States
+	{
+		Spawn:
+			MNSS AA 1 Bright;
+			MNSS A 1 Bright A_SpawnItem("DevRockTrail");
+			Loop;
+	}
+}
+
+class DevRockTrail : Actor
+{
+	default
+	{
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Damage 0;
+		Scale 0.125;
+		RenderStyle "Add";
+		Alpha 0.5;
+		+NOGRAVITY;
+	}
+	
+	States
+	{
+		Spawn:
+			PDBA VWXYZ 1 A_FadeOut(0.1);
+			wait;
+	}
+}
+
+class SawPuff : BulletPuff
+{
+	default
+	{
+		DamageType "Ripsaw";
+	}
+}
+
+class SawShot : KCProjectile
+{
+	default
+	{
+		Radius 4;
+		Height 2;
+		Speed 32;
+		Scale 0.3;
+		DamageFunction (6 * random(3,6));
+		+NOGRAVITY;
+		+DROPOFF;
+		+MISSILE;
+		+ACTIVATEIMPACT;
+		+ACTIVATEPCROSS;
+		+SEEKERMISSILE;
+		+RIPPER;
+		+EXTREMEDEATH;
+		+NOEXPLODEFLOOR;
+		+THRUGHOST;
+		ExplosionDamage 16;
+		ExplosionRadius 8;
+		DeathSound "weapons/throwsawhit";
+		DamageType "SawShot";
+	}
+	
+	void A_SawRip()
+	{
+		A_SeekerMissile(90,90);
+		A_Explode(16,8,0,true,4,0,0,"","Sawshot");
+	}
+	
+	States
+	{
+		Spawn:
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			SAWS A 0 A_Gravity();
+		SpawnFall:
+			SAWS AABBCCDDEEFFGGHH 1 A_SawRip();
+			Loop;
+		Crash:
+			SAWE A 1 { bRIPPER = false; }
+		Death:
+			SAWE A 1 A_Gravity;
+			SAWE A 128 A_SpawnProjectile("SawSmoke",0,0,180,2);
+			SAWE B 96;
+			SAWE C 64;
+			SAWE DEF 48;
+			SAWE F 32;
+			SAWE G 16;
+			Stop;
+	}
+}
+
+class SSawShot : Sawshot
+{
+	default
+	{
+		Radius 4;
+		Height 2;
+		Speed 48;
+		Scale 0.3;
+		DamageFunction (9 * random(4,6));
+		+NOGRAVITY;
+		+DROPOFF;
+		+MISSILE;
+		+ACTIVATEIMPACT;
+		+ACTIVATEPCROSS;
+		+SEEKERMISSILE;
+		+RIPPER;
+		+EXTREMEDEATH;
+		+NOEXPLODEFLOOR;
+		+THRUGHOST;
+		ExplosionDamage 24;
+		ExplosionRadius 8;
+		DeathSound "weapons/throwsawhit";
+		DamageType "SawShot";
+	}
+	
+	void A_SawRip()
+	{
+		A_SeekerMissile(90,90);
+		A_Explode(24,8,0,true,4,0,0,"","Sawshot");
+	}
+	
+	States
+	{
+		Spawn:
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS ABCDEFGH 1 A_SawRip();
+			SAWS A 0 A_Gravity();
+		SpawnFall:
+			SAWS ABCDEFGH 1 A_SawRip();
+			Loop;
+		Crash:
+			SAWE A 1 { bRIPPER = false; }
+		Death:
+			SAWE A 1 A_Gravity;
+			SAWE A 128 A_SpawnProjectile("SawSmoke",0,0,180,2);
+			SAWE B 96;
+			SAWE C 64;
+			SAWE DEF 48;
+			SAWE F 32;
+			SAWE G 16;
+			Stop;
+	}
+}
+
+class SawSmoke : KampoulchhrBase
+{
+	default
+	{
+		Height 1;
+		Radius 1;
+		Speed 1;
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+DROPOFF;
+		+MISSILE;
+		+NOTELEPORT;
+		+THRUGHOST;
+		RenderStyle "Translucent";
+		Alpha 0.15;
+		Scale 0.1;
+	}
+	
+	States
+	{
+		Spawn:
+			CSM2 D 2 Bright;
+		Death:
+			CSM2 EEFFGGHHIIJJKK 1 Bright A_FadeOut(0.01);
+			Stop;
+	}
+}
+
+class ImpalerMissile : SingleDamageFastRipper
+{
+	default
+	{
+		PROJECTILE;
+		+STRIFEDAMAGE;
+		+BLOODSPLATTER;
+		+NOEXTREMEDEATH;
+		+RIPPER;
+		Radius 4;
+		Height 8;
+		DamageFunction (75 + (random(-25,25)));
+		Speed 160;
+		SeeSound "Weapon/XBowFire";
+	}
+	
+	States
+	{
+		Spawn:
+			ARRW A 1;
+			Loop;
+		Death:
+		Crash:
+			NLPJ B 3 A_StartSound("Weapon/XBowHit");
+			NLPJ CDEFG 3;
+			Stop;
+		XDeath:
+			TNT1 A 10 A_StartSound("Weapon/XBowSplatter");
+			Stop;
+	}
+}
+
+class RocketBase : KCProjectile
+{
+	default
+	{
+		Tag "Rocket";
+		Radius 11;
+		Height 8;
+		Speed 20;
+		Damage 20;
+		Projectile;
+		+RANDOMIZE;
+		+DEHEXPLOSION;
+		+ROCKETTRAIL;
+		SeeSound "weapons/rocklf";
+		DeathSound "weapons/rocklx";
+		Obituary "$OB_MPROCKET"; // "%o rode %k's rocket."
+	}
+	
+	States
+	{
+		Spawn:
+			MISL A 1 Bright;
+			Loop;
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("weapons/rocklx",CHAN_7);
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			MISL B 8 Bright A_Explode();
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			Stop;
+	}
+}
+
+class RocketPlayer : RocketBase
+{
+	default
+	{
+		Tag "Rocket";
+		DamageType "Explosive";
+	}
+	
+	States
+	{
+		Spawn:
+			MISL A 0 NoDelay 
+			{ 
+				bFORCERADIUSDMG = false;
+				if (frandom(0.01,100.00) <= user_ignoreaoeimmunity) { bFORCERADIUSDMG = true; }
+			}
+		Idle:
+			MISL A 1 Bright;
+			Loop;
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("weapons/rocklx",CHAN_7);
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			MISL B 8 Bright A_Explode(128,128,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			MISL C 6 Bright;
+			MISL D 4 Bright;
+			Stop;
+	}
+}
+
+class RocketPlayerSeeking : RocketPlayer
+{
+	double user_seekstrength;
+	int user_specificTarget;
+	default
+	{
+		Tag "Homing Rocket";
+		DamageType "Explosive";
+		Radius 11;
+		Height 8;
+		Speed 30;
+		DamageFunction (10 * random(1,8));
+		SeeSound "weapons/hrlfir";
+		DeathSound "weapons/hrlexp";
+	}
+	
+	States
+	{
+		Spawn:
+			HMIS A 0 NoDelay 
+			{
+				bFORCERADIUSDMG = false;
+				if (frandom(0.01,100.00) <= user_ignoreaoeimmunity) { bFORCERADIUSDMG = true; }
+				
+				user_seekstrength = frandom(12.5,17.5);
+				user_seekstrength *= 1.00;
+				if (user_seekstrength > 0)
+				{
+					bSEEKERMISSILE = true;
+					
+					// When the rocket is first fired, check if it's being aimed at a specific target. If so, lock on to that target.
+					user_specificTarget = A_SelectSeekTargetByShooterAim();
+				}
+				// This is needed so that subclasses can override the Idle state.
+				return resolvestate("Idle");
+			}
+		Idle:
+			HMIS A 1 Bright 
+			{
+				if (user_seekstrength > 0)
+				{
+					A_SuperSeekerMissile(user_seekstrength, user_seekstrength, !user_specificTarget);
+				}
+			}
+			Loop;
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("weapons/hrlexp",CHAN_7);
+				A_Quake(1, 4, 0, 256, "nosound/silent");
+				A_Quake(3, 4, 0, 128, "nosound/silent");
+			}
+			BAL3 C 0 Bright A_SetTranslucent (0.67,1);
+			BAL3 C 8 Bright A_Explode(64,96,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			BAL3 DE 5 Bright;
+			stop;
+	}
+}
+
+class RocketPlayerDrunk : RocketPlayerSeeking
+{
+	double user_drunkbasefactor;
+	double user_drunkenness;
+	default
+	{
+		Tag "Drunk Rocket";
+		DamageType "Explosive";
+		Radius 11;
+		Height 8;
+		Speed 30;
+		DamageFunction (10 * random(1,8));
+		SeeSound "weapons/hrlfir";
+		DeathSound "weapons/hrlexp";
+	}
+	
+	States
+	{
+		Idle:
+			#### "#" 0 
+			{
+				if (random(1,8) == 1) { user_drunkbasefactor = 1.0; }
+				else
+				{
+					if (random(1,8) == 1) { user_drunkbasefactor = 0.4; }
+					else { user_drunkbasefactor = 0.7; }
+				}
+				user_drunkbasefactor *= (random(36,44) * 0.025);
+				user_drunkenness = max(0.0, 10.0 - ((user_seekstrength * (1.0 * user_drunkbasefactor)) * (user_seekstrength * (0.4 * user_drunkbasefactor))));
+				//A_LogFloat(user_drunkenness);
+			}
+			HMIS A 1 Bright 
+			{
+				if (user_seekstrength > 0)
+				{
+					A_SuperSeekerMissile(user_seekstrength, user_seekstrength, !user_specificTarget);
+					if (user_drunkenness > 0)
+					{
+						A_DrunkMissile(user_drunkenness, user_drunkenness);
+					}
+				}
+			}
+			Wait;
+		Death:
+			TNT1 A 0 
+			{
+				A_StartSound("weapons/hrlexp",CHAN_7);
+				A_Quake(1, 4, 0, 256, "nosound/silent");
+				A_Quake(3, 4, 0, 128, "nosound/silent");
+			}
+			BAL3 C 0 Bright A_SetTranslucent (0.67,1);
+			BAL3 C 8 Bright A_Explode(64,96,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			BAL3 DE 5 Bright;
+			stop;
+	}
+}

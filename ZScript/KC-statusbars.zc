@@ -2218,6 +2218,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			if (PlayerWeapon is "PistolMarine" ||
+					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					PlayerWeapon is "PlasmaRifleMarine" ||
 					PlayerWeapon is "BFG9000Marine")
@@ -2225,7 +2226,8 @@ class KCStatusBarMain : BaseStatusBar
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
-				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]FIRE GRENADE\c-");
+				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
+				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST\c-");
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
