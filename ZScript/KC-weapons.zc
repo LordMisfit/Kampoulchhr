@@ -3103,10 +3103,15 @@ class KCWeaponBase : Weapon
 		double ang = angle;
 		double randang = 5.625;
 		double randpth = 3.549;
-		if (accurate <= -1)
+		if (accurate == -1) // Pistol Alt-Fire
 		{
 			randang *= 1.5;
 			randpth *= 1.5;
+		}
+		if (accurate == -2) // Chaingun Alt-Fire
+		{
+			randang *= frandompick(1.25,1.75);
+			randpth *= frandompick(1.25,1.75);
 		}
 
 		if (accurate <= 0)
@@ -3230,8 +3235,11 @@ class KCWeaponBase : Weapon
 		A_Refire();
 	}
 	
-	action void A_FireCGun()
+	action void A_FireCGun(int type)
 	{
+		int accurate;
+		if (type > 0) accurate = -2;
+		
 		if (player == null)
 		{
 			return;
@@ -3258,9 +3266,12 @@ class KCWeaponBase : Weapon
 					player.SetSafeFlash(weap, flash, theflash);
 				}
 			}
+			accurate = !player.refire;
+			if (type > 0) accurate = -2;
 		}
+		
 		player.mo.PlayAttacking2 ();
-		GunShot (!player.refire, "BulletPuff", BulletSlope ());
+		GunShot (accurate, "BulletPuff", BulletSlope ());
 	}
 	
 	action void A_FireMissile()
@@ -4646,7 +4657,7 @@ class PistolMarine : MarineWeapon replaces Pistol
 			Loop;
 		Fire:
 			2PIS A 1;
-			2PIS B 4 bright A_FirePistol();
+			2PIS B 4 bright A_FirePistol(0);
 			2PIS C 4;
 			2PIS F 4;
 			2PIS D 4 A_ReFire();
@@ -4772,8 +4783,12 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 	{
 		Weapon.SelectionOrder 700;
 		Weapon.AmmoUse 1;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 1;
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Clip";
+		Weapon.AmmoType1 "Clip";
+		Weapon.AmmoType2 "Clip";
 		Inventory.PickupMessage "$GOTCHAINGUN";
 		Obituary "$OB_MPCHAINGUN";
 		Tag "$TAG_CHAINGUN";
@@ -4810,14 +4825,32 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 			CHGG A 1 A_Raise(12);
 			Loop;
 		Fire:
-			CHGF A 1 bright A_FireCGun();
+			CHGF A 1 bright A_FireCGun(0);
 			CHGG EFG 1;
-			CHGF B 1 bright A_FireCGun();
+			CHGF B 1 bright A_FireCGun(0);
 			CHGG EFG 1;
 			TNT1 A 0 A_ReFire();
 			CHGG HIBBCCDD 1 A_WeaponReady();
 			CHGG AAABBBCCCDDD 1 A_WeaponReady();
 			CHGG AAAABBBBCCCCDDDD 1 A_WeaponReady();
+			Goto Ready;
+		AltFire:
+			CHGF A 1 bright 
+			{
+				A_FireCGun(1);
+				A_FireCGun(1);
+			}
+			CHGG F 1;
+			CHGF B 1 bright 
+			{
+				A_FireCGun(1);
+				A_FireCGun(1);
+			}
+			CHGG G 1;
+			TNT1 A 0 A_ReFire();
+			CHGG HBCD 1 A_WeaponReady();
+			CHGG AABBCCDD 1 A_WeaponReady();
+			CHGG AABBCCDD 1 A_WeaponReady();
 			Goto Ready;
 		Spawn:
 			MGUN A -1;
