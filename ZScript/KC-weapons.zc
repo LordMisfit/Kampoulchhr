@@ -628,7 +628,7 @@ class KCWeaponBase : Weapon
 		return MeleeDestroyProjectiles;
 	}
 	
-	action void A_MeleeSetUpAttach(actor mo, double xpos, double ypos, double zpos)
+	action void A_MeleeSetUpAttach(actor mo, double xpos = 0.0, double ypos = 0.0, double zpos = 0.0, double ang = 0.0, double ptc = 0.0)
 	{
 		if (mo)
 		{
@@ -642,6 +642,8 @@ class KCWeaponBase : Weapon
 				SHmo.attachx = xpos;
 				SHmo.attachy = ypos;
 				SHmo.attachz = zpos;
+				SHmo.attachang = ang;
+				SHmo.attachptc = ptc;
 				SHmo.shieldee = playera;
 				SHmo.target = playera;
 				if (kcdebug_showvisibleshieldparts) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
@@ -650,7 +652,7 @@ class KCWeaponBase : Weapon
 	}
 	
 	// Used to Create Multiple "Shields" for Punches/Melee
-	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0)
+	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0, double angoffset = 0.0, double ptcoffset = 0.0)
 	{
 		bool spawned;
 		actor mo;
@@ -664,46 +666,66 @@ class KCWeaponBase : Weapon
 		{
 			A_SetAngle(angle+spread2angle);
 			A_SetPitch(pitch+spread2pitch);
+			angoffset += spread2angle;
+			ptcoffset += spread2pitch;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle-spread2angle);
 			A_SetPitch(pitch-spread2pitch);
+			angoffset -= spread2angle;
+			ptcoffset -= spread2pitch;
 			
 			A_SetAngle(angle+spread2angle);
 			A_SetPitch(pitch-spread2pitch);
+			angoffset += spread2angle;
+			ptcoffset -= spread2pitch;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle-spread2angle);
 			A_SetPitch(pitch+spread2pitch);
+			angoffset -= spread2angle;
+			ptcoffset += spread2pitch;
 			
 			A_SetAngle(angle-spread2angle);
 			A_SetPitch(pitch+spread2pitch);
+			angoffset -= spread2angle;
+			ptcoffset += spread2pitch;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle+spread2angle);
 			A_SetPitch(pitch-spread2pitch);
+			angoffset += spread2angle;
+			ptcoffset -= spread2pitch;
 			
 			A_SetAngle(angle-spread2angle);
 			A_SetPitch(pitch-spread2pitch);
+			angoffset -= spread2angle;
+			ptcoffset -= spread2pitch;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle+spread2angle);
 			A_SetPitch(pitch+spread2pitch);
+			angoffset += spread2angle;
+			ptcoffset += spread2pitch;
 		}
 		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
 		{
 			A_SetAngle(angle+spread1angle);
+			angoffset += spread1angle;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle-spread1angle);
+			angoffset -= spread1angle;
 			
 			A_SetAngle(angle-spread1angle);
+			angoffset -= spread1angle;
 			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 			A_SetAngle(angle+spread1angle);
+			angoffset += spread1angle;
 		}
 		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 	}
 	
 	action void A_Destroy()

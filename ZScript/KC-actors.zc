@@ -209,11 +209,38 @@ class KCCreature : KampoulchhrBase
 
 		return MeleeDestroyProjectiles;
 	}
-
-	// Used to Create Multiple "Shields" for Punches/Melee
-	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0)
+	
+	action void A_MeleeSetUpAttach(actor mo, double xpos = 0.0, double ypos = 0.0, double zpos = 0.0, double ang = 0.0, double ptc = 0.0)
 	{
-		A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+		if (mo)
+		{
+			if (kcdebug_showvisibleshieldparts) Console.Printf("[mo]: %s", mo.GetClassName());
+			ShieldPartBase SHmo;
+			SHmo = ShieldPartBase(mo);
+			if (SHmo)
+			{
+				actor playera = players[0].mo;
+				if (kcdebug_showvisibleshieldparts) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
+				SHmo.attachx = xpos;
+				SHmo.attachy = ypos;
+				SHmo.attachz = zpos;
+				SHmo.attachang = ang;
+				SHmo.attachptc = ptc;
+				SHmo.shieldee = playera;
+				SHmo.target = playera;
+				if (kcdebug_showvisibleshieldparts) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+			}
+		}
+	}
+	
+	// Used to Create Multiple "Shields" for Punches/Melee
+	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0, double angoffset = 0.0, double ptcoffset = 0.0)
+	{
+		bool spawned;
+		actor mo;
+		
+		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 	}
 	
 }
@@ -602,7 +629,7 @@ class ShieldPartBase : KampoulchhrBase
 {
 	Actor oldtarget;
 	
-	double attachx, attachy, attachz;
+	double attachx, attachy, attachz, attachang, attachptc;
 	actor shieldee;
 	default
 	{
@@ -653,7 +680,7 @@ class ShieldPartBase : KampoulchhrBase
 			if (kcdebug_showvisibleshieldparts) Console.Printf("[ShieldPartBase (Tick)]: %p [%p]", shieldee, target);
 			if (target) 
 			{
-				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,0,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,attachang,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE,null,0,0,attachptc);
 				if (kcdebug_showvisibleshieldparts) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d", GetAge());
 			}
 		}
