@@ -627,7 +627,28 @@ class KCWeaponBase : Weapon
 
 		return MeleeDestroyProjectiles;
 	}
-
+	
+	action void A_MeleeSetUpAttach(actor mo, double xpos, double ypos, double zpos)
+	{
+		if (mo)
+		{
+			if (kcdebug_showvisibleshieldparts) Console.Printf("[mo]: %s", mo.GetClassName());
+			ShieldPartBase SHmo;
+			SHmo = ShieldPartBase(mo);
+			if (SHmo)
+			{
+				actor playera = players[0].mo;
+				if (kcdebug_showvisibleshieldparts) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
+				SHmo.attachx = xpos;
+				SHmo.attachy = ypos;
+				SHmo.attachz = zpos;
+				SHmo.shieldee = playera;
+				SHmo.target = playera;
+				if (kcdebug_showvisibleshieldparts) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+			}
+		}
+	}
+	
 	// Used to Create Multiple "Shields" for Punches/Melee
 	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0)
 	{
@@ -641,28 +662,48 @@ class KCWeaponBase : Weapon
 		double pptc = playera.pitch;
 		if (playera.CountInv("KCPowerSpread2"))
 		{
+			A_SetAngle(angle+spread2angle);
+			A_SetPitch(pitch+spread2pitch);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle-spread2angle);
+			A_SetPitch(pitch-spread2pitch);
+			
+			A_SetAngle(angle+spread2angle);
+			A_SetPitch(pitch-spread2pitch);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle-spread2angle);
+			A_SetPitch(pitch+spread2pitch);
+			
+			A_SetAngle(angle-spread2angle);
+			A_SetPitch(pitch+spread2pitch);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle+spread2angle);
+			A_SetPitch(pitch-spread2pitch);
+			
+			A_SetAngle(angle-spread2angle);
+			A_SetPitch(pitch-spread2pitch);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle+spread2angle);
+			A_SetPitch(pitch+spread2pitch);
 		}
 		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
 		{
+			A_SetAngle(angle+spread1angle);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle-spread1angle);
+			
+			A_SetAngle(angle-spread1angle);
+			[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
+			A_SetAngle(angle+spread1angle);
 		}
 		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (mo)
-		{
-			if (kcdebug_showvisibleshieldparts) Console.Printf("[mo]: %s", mo.GetClassName());
-			ShieldPartBase SHmo;
-			SHmo = ShieldPartBase(mo);
-			if (SHmo)
-			{
-				actor playera = players[0].mo;
-				if (kcdebug_showvisibleshieldparts) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
-				SHmo.attachx = (cos(-pitch) * spawndistance);
-				SHmo.attachy = 0;
-				SHmo.attachz = (spawnheight + (sin(-pitch) * spawndistance));
-				SHmo.shieldee = playera;
-				SHmo.target = playera;
-				if (kcdebug_showvisibleshieldparts) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
-			}
-		}
+		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance));
 	}
 	
 	action void A_Destroy()
