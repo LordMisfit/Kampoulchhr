@@ -601,7 +601,9 @@ class MeleeHitSpark4 : MeleeHitSpark1
 class ShieldPartBase : KampoulchhrBase
 {
 	Actor oldtarget;
-
+	
+	double attachx, attachy, attachz;
+	actor shieldee;
 	default
 	{
 		Species "Players";
@@ -645,6 +647,16 @@ class ShieldPartBase : KampoulchhrBase
 	override void Tick()
 	{
 		if (kcdebug_showvisibleshieldparts) A_FadeTo(0.25,0.25);
+		if (shieldee && target)
+		{
+			target = shieldee;
+			if (kcdebug_showvisibleshieldparts) Console.Printf("[ShieldPartBase (Tick)]: %p [%p]", shieldee, target);
+			if (target) 
+			{
+				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,0,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+				if (kcdebug_showvisibleshieldparts) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d", GetAge());
+			}
+		}
 		Super.Tick();
 	}
 
