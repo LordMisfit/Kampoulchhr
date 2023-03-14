@@ -633,8 +633,20 @@ class KCWeaponBase : Weapon
 	{
 		bool spawned;
 		actor mo;
+		
+		let globalvars = KCGlobalVariables.Get();
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		double pang = playera.angle;
+		double pptc = playera.pitch;
+		if (playera.CountInv("KCPowerSpread2"))
+		{
+		}
+		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
+		{
+		}
 		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (spawned && mo)
+		if (mo)
 		{
 			if (kcdebug_showvisibleshieldparts) Console.Printf("[mo]: %s", mo.GetClassName());
 			ShieldPartBase SHmo;
