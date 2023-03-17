@@ -1693,7 +1693,14 @@ class KCPlayerPawn : PlayerPawn
 				mod != 'SigilDrain' || 
 				mod != 'SpectralLow')
 		{
-			if (SigilDrain || flags & DMG_FIXEDDMG) { } else damage = ceil(damage * 1.125);
+			if (SigilDrain || flags & DMG_FIXEDDMG) 
+			{
+			}
+			else 
+			{
+				if (GetClassName() == "KCPlayer") damage = ceil(damage * frandompick(0.9375,0.96875,0.96875,0.96875));
+				if (GetClassName() == "HeiwaPlayer") damage = ceil(damage * frandompick(1.03125,1.03125,1.03125,1.0625));
+			}
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Step 1ba]: %d", damage);
 		}
 		else
@@ -2093,8 +2100,11 @@ class KCPlayerPawn : PlayerPawn
 		int TimeSeraphArmor = 0;
 		int TSArmorDmgDivisor = 1;
 		bool tsafullnulldmg = false;
-		[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
-		if (TimeSeraphArmor && tsafullnulldmg) damage = 0;
+		if (!isinvuln)
+		{
+			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
+			if (TimeSeraphArmor && tsafullnulldmg) damage = 0;
+		}
 		
 		//****************
 		//* Time Freezes *

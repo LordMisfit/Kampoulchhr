@@ -1,0 +1,256 @@
+/* Copyright Alexander 'm8f' Kromm (mmaulwurff@gmail.com) 2019
+ *
+ * This file is a part of Tips.pk3.
+ *
+ * Tips.pk3 is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Tips.pk3 is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Tips.pk3.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This class draws a note at the bottom of the screen.
+ *
+ * It respects kc_show_notes CVar.
+ */
+class kc_ListMenuNote : ListMenuItem
+{
+	
+// public: /////////////////////////////////////////////////////////////////////
+	
+	int, string TipPreface(int tipno, string quote)
+	{
+		tipno++;
+		quote = "\c[gold]Tip \c-";
+		quote.AppendFormat("\c[gold]%d:\c-\n",tipno);
+		quote.AppendFormat("\c[green]",tipno);
+		
+		return tipno, quote;
+	}
+	
+	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
+	{
+		string LegendStr = "";
+		string UserKeyString;
+		Array<String> UserKeys;
+		
+		UserKeyString = UIKeybinds.getKeyboard(keybindget);
+		if (UserKeyString != "")
+		{
+			UserKeyString.Split(UserKeys,", ");
+			if (UserKeys[0] == "Space") UserKeys[0] = "SBar";
+			if (UserKeys[0] == "CapsLock") UserKeys[0] = "CapsL";
+			if (colored) LegendStr.AppendFormat("%s", UserKeys[0]);
+							else LegendStr.AppendFormat("\c[gold]%s\c-", UserKeys[0]);
+		}
+		else 
+		{
+			if (showunbound) LegendStr.AppendFormat("\c[red][unb]\c-");
+		}
+		return LegendStr;
+	}
+	
+	kc_ListMenuNote init()
+	{
+		int tipno;
+		string quote;
+		string keyname1;
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat(ReturnKeyBind1("+user4", true, false));
+		quote.AppendFormat("\c- = \c[sapphire]Guards with Fist\c-");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat(ReturnKeyBind1("KC_TimeStop", true, false));
+		quote.AppendFormat("\c- = \c[sapphire]Activates/Cancels \c[HeiwaDeluge]Time Freeze Ability\c[sapphire]\c-");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat(ReturnKeyBind1("+user1", true, false));
+		quote.AppendFormat("\c- = \c[sapphire]Quick-Kick \c[orange](usable with any weapon equipped)\c-");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat(ReturnKeyBind1("+user3", true, false));
+		quote.AppendFormat(" \c[white]OR\c- \c[gold]");
+		quote.AppendFormat("2x tap same direction");
+		quote.AppendFormat("\c- = \c[sapphire]Dash \c[orange](can also be paired with \c[green]Cricket-Bat/Hell-Warrior-Shield guarding\c[orange] for a \c[red]powerful dash attack\c[orange])\c[sapphire]\c-");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Punches, Uppercuts and Kicks will \c[red]briefly slow you down a lot\c[green] while performing them, though as your level increases, this is less prominent up to around \c[white]Level 40\c[green] or so, where the slowdown vanishes entirely.");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Punches, Uppercuts and Kicks \c[orange]have an increased chance to stun foes\c[green], and for an \c[gold]extended period compared with most attacks\c[green].");
+		add(quote);
+		
+		/*
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Some of your weapons melee attacks are -silent- vs classic Doom's fist. Not ALWAYS, but it's likely due to this you can end up not triggering monster closet ambushes. If you want/need to try to wake these closets up, hit ");
+		quote.AppendFormat(ReturnKeyBind1("Whistl", true, false));
+		quote.AppendFormat("\c[green] to whistle to try to wake them up at various locations in the current level. \c[green]Whistling also automatically occurs if you press ");
+		quote.AppendFormat(ReturnKeyBind1("RecallAll", true, false));
+		quote.AppendFormat("\c[green] to recall any summoned ally to your position too \c[orange](though if you have no allies to recall, it doesn't go off)\c[green].");
+		add(quote);
+		*/
+		//[tipno, quote] = TipPreface(tipno, quote);
+		//quote.AppendFormat("");
+		//add(quote);
+
+		//[tipno, quote] = TipPreface(tipno, quote);
+		//quote.AppendFormat("");
+		//add(quote);
+		/*
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Ohai thar! :V V: :U U:");
+		add(quote);
+
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Ohai thar! V: :V U: :U");
+		add(quote);
+
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Ohai thar! :U U: :V V:");
+		add(quote);
+
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Ohai thar! U: :U V: :V");
+		add(quote);
+		*/
+		/*
+		add("\"The situation is so much better for programmers today - a cheap used PC, "
+				"a linux CD, and an internet account, and you have all the tools necessary "
+				"to work your way to any level of programming skill you want to shoot for.\"\n"
+				" - John Carmack");
+	
+		add("\"Explicit is better than implicit.\"\n"
+				" - Tim Peters, The Zen of Python");
+	
+		add("doomwiki.org is the Doom Wiki.");
+	
+		add("\"For every complex problem there is an answer that is clear, simple, and wrong.\"\n"
+				" - H. L. Mencken");
+	
+		add("#include <stdio.h>\n"
+				"int main() { printf(\"Hello, World!\"); return 0; }");
+	
+		add("#include <iostream>\n"
+				"int main() { std::cout << \"Hello, World!\" << std::endl; return 0; }");
+	
+		add("#!/bin/sh\n"
+				"echo \"Hello, World!\"");
+	
+		add("#!python3\n"
+				"if __name__ == \"__main__\":\n"
+				"    print(\"Hello, World!\")");
+	
+		add("\"Never send a human to do a machine’s job.\"\n"
+				" - Agent Smith, The Matrix");
+		*/
+		Super.Init();
+		return self;
+	}
+	
+	override
+	bool, String GetString(int i)
+	{
+		// unused: i
+		return true, "ListMenuNote";
+	}
+	
+// public: // ListMenuItem /////////////////////////////////////////////////////
+	
+	override
+	void OnMenuCreated()
+	{
+		_iString = random(0, _strings.size() - 1);
+	}
+	
+	override
+	void Drawer(bool selected)
+	{
+		// unused: selected
+	
+		if (!kc_show_notes)
+		{
+			return;
+		}
+	
+		int    width  = (Screen.GetWidth() / CleanXFac_1) * 7 / 8;
+		let    lines  = NewSmallFont.BreakLines(_strings[_iString], width);
+		int    nLines = lines.Count();
+		double height = NewSmallFont.GetHeight();
+		double y      = Screen.GetHeight() - MARGIN - height * nLines * CleanYFac_1;
+	
+		for (int i = 0; i < nLines; ++i)
+		{
+			double x = Screen.GetWidth() - MARGIN - lines.StringWidth(i) * CleanXFac_1;
+			Screen.DrawText( NewSmallFont, Font.CR_WHITE, x, y, lines.StringAt(i)
+										, DTA_CleanNoMove_1, true
+										);
+			y += height * CleanYFac_1;
+		}
+	}
+	
+// private: ////////////////////////////////////////////////////////////////////
+	
+	private ui
+	void add(String s)
+	{
+		_strings.push(s);
+	}
+	
+// private: ////////////////////////////////////////////////////////////////////
+	
+	const MARGIN = 10;
+	
+// private: ////////////////////////////////////////////////////////////////////
+	
+	/// Must contain at least 1 string.
+	private ui Array<String> _strings;
+	private ui uint          _iString;
+	
+} // class kc_ListMenuNote
+
+class OptionMenuItemkc_MenuInjector : OptionMenuItem
+{
+	
+// public: /////////////////////////////////////////////////////////////////////
+	
+	void Init()
+	{
+		injectNote("MainMenu");
+		injectNote("MainMenuTextOnly");
+	}
+	
+// private /////////////////////////////////////////////////////////////////////
+	
+	/**
+	* This function assumes that menu with name @a menuName exists and is a ListMenu.
+	*/
+	void injectNote(String menuName)
+	{
+		let descriptor = ListMenuDescriptor(MenuDescriptor.GetDescriptor(menuName));
+	
+		bool   hasString;
+		String string;
+		[hasString, string] = descriptor.mItems[descriptor.mItems.size() - 1].GetString(0);
+	
+		if (hasString && string == "ListMenuNote")
+		{
+			return;
+		}
+	
+		descriptor.mItems.Push(new("kc_ListMenuNote").init());
+	}
+
+} // class OptionMenuItemkc_MenuInjector
