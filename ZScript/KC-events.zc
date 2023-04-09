@@ -395,7 +395,7 @@ class KC_EventHandler : EventHandler
 				double outputdmgfactor = 1.0;
 				outputdmgfactor *= moddedDMG;
 				outputdmgfactor /= tempdmgval;
-				bool playwsounds = false;
+				bool playwsounds = true;
 				if (mod == 'SilentMassacre') playwsounds = false;
 				if (isCCardsIllusion) playwsounds = false;
 				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d", playwsounds);
@@ -2024,6 +2024,7 @@ class KC_EventHandler : EventHandler
 			playera.A_SetInventory(giveitem,1);
 			Console.Printf("LOLE Welcome to AUGER ZENITH, Kiddo! V:<");
 		}
+		//if (level.GetChecksum() == 'c4f05c26410edfe5085b6f8504be47a8') // ???????.pk3
 		
 		if (!playera.CountInv("EWShieldDefendMode") && playera.bREFLECTIVE) playera.bREFLECTIVE = false;
 		if (!playera.CountInv("EWShieldDefendMode") && playera.bSHIELDREFLECT) playera.bSHIELDREFLECT = false;
