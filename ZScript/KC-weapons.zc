@@ -4449,6 +4449,7 @@ class DevastatorGenerator : CustomInventory
 class SawThrower : MarineWeapon
 {
 	int revtimes;
+	int sawrange;
 	default
 	{
 		Weapon.SelectionOrder 120;
@@ -4502,27 +4503,63 @@ class SawThrower : MarineWeapon
 			TSWG G 0 A_CheckReload;
 			Goto Ready+2;
 		AltFire:
-			TSWG A 0 A_JumpIfNoAmmo(7);
+			TSWG A 0 
+			{
+				A_JumpIfNoAmmo(7);
+				invoker.sawrange = 56;
+			}
 			TSWG A 8 A_StartSound("weapons/throwsawup",CHAN_WEAPON);
 			TSWG B 6;
 			TSWG C 3;
-			TSWG BB 1 A_CustomPunch((2*random(2,4)),0,0,"SawPuff",48);
+			TSWG BB 1 A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
 			TSWG C 0 A_ReFire;
 			Goto AltHold+6;
 			TSWG G 7;
 			TSWG G 0 A_CheckReload;
 			Goto Ready+2;
 		AltHold:
-			TSWG B 0 A_StartSound("weapons/throwsawready",CHAN_WEAPON);
-			TSWG BB 1 A_CustomPunch((4*random(2,4)),0,0,"SawPuff",48);
-			TSWG CC 1 A_CustomPunch((4*random(2,4)),0,0,"SawPuff",48);
+			TSWG B 0 
+			{
+				if (invoker.revtimes >= 20)
+				{
+					if (invoker.revtimes % 2) 
+					{
+						A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+						A_StartSound("weapons/throwsawready",11,CHANF_DEFAULT,0.5);
+					}
+				}
+				else
+				{
+					A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+				}
+			}
+			TSWG B 1 
+			{
+				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,0,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+			}
+			TSWG B 1 
+			{
+				if (invoker.revtimes >= 20) A_SetTics(0);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+			}
+			TSWG C 1 
+			{
+				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,0,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+			}
+			TSWG C 1 
+			{
+				if (invoker.revtimes >= 20) A_SetTics(0);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+			}
 			TSWG C 0 
 			{
 				invoker.revtimes++;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				if (buttons & BT_ATTACK)
 				{
-					if (invoker.revtimes >= 12)
+					if (invoker.revtimes >= 20)
 					{
 						return resolvestate("RevFire");
 					}
@@ -4539,10 +4576,36 @@ class SawThrower : MarineWeapon
 				}
 				return resolvestate(null);
 			}
-			TSWG B 0 A_StartSound("weapons/throwsawready",CHAN_WEAPON);
-			TSWG CBC 2 { invoker.revtimes = 0; }
-			TSWG BCB 3 { invoker.revtimes = 0; }
-			TSWG CB 4 { invoker.revtimes = 0; }
+			TSWG B 0
+			{
+				if (invoker.revtimes >= 20)
+				{
+					if (invoker.revtimes % 2) 
+					{
+						A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+						A_StartSound("weapons/throwsawready",11,CHANF_DEFAULT,0.5);
+					}
+				}
+				else
+				{
+					A_StartSound("weapons/throwsawready",CHAN_WEAPON);
+				}
+			}
+			TSWG CCBBCC 1 
+			{
+				A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+				invoker.revtimes = 0; 
+			}
+			TSWG BBBCCCBBB 1 
+			{
+				A_CustomPunch((random(1,2)*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+				invoker.revtimes = 0; 
+			}
+			TSWG CCCCBBBB 1 
+			{
+				A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+				invoker.revtimes = 0; 
+			}
 			TSWG C 6 { invoker.revtimes = 0; }
 			TSWG A 9 { invoker.revtimes = 0; }
 			Goto Ready;
@@ -4615,6 +4678,7 @@ class ImpalerXBow : MarineWeapon
 		Weapon.AmmoUse 1;
 		Weapon.UpSound "Weapon/XBowLoad";
 		Weapon.KickBack 20;
+		+WEAPON.NOALERT;
 	}
 	
 	States

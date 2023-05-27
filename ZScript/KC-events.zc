@@ -1026,7 +1026,7 @@ class KC_EventHandler : EventHandler
 						temp = (1 + (TrueLuck * 0.08334));
 						temp *= 2.5;
 					}
-					if (random(1,64) <= temp) // Weapons
+					if (random(1,32) <= temp) // Weapons
 					{
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon Drop");
 						double rand = 1.0;
@@ -1303,7 +1303,7 @@ class KC_EventHandler : EventHandler
 				{
 					armorbonusrolls = 1;
 					
-					// Scrap Drops
+					// Armor Bonus Drops
 					if (armorbonusrolls > 0)
 					{
 						double rand = 2.0;
@@ -1323,7 +1323,7 @@ class KC_EventHandler : EventHandler
 				}
 				
 				healthbonusrolls = (randompick(0,0,0,1,1,1,1,2) + (TruePlayerLevel * 0.03125));
-				// Tea Drops
+				// Health Bonuses
 				if (healthbonusrolls > 0)
 				{
 					double rand = 3.0;

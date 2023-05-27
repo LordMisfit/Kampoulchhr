@@ -92,12 +92,26 @@ class CompatVulnItem : PlaceholderItem
 					{
 						owner.A_SetInventory("JustSurprised",1);
 						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-						newdamage *= frandompick(1.3334,1.50);
+						nm = "SonicNail";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == "ImpalerMissile"))
+						{
+							damage *= frandompick(2.0000,2.50);
+						}
+						else damage *= frandompick(1.3334,1.50);
 					}
 					else
 					{
 						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-						newdamage *= frandompick(1.1667,1.25);
+						nm = "SonicNail";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == "ImpalerMissile"))
+						{
+							damage *= frandompick(2.0000,2.50);
+						}
+						else damage *= frandompick(1.1667,1.25);
 					}
 					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), newdamage, initdmg);
 				}

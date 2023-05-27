@@ -756,7 +756,21 @@ mixin class MonsterCollider
 			
 			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			
-			if (surprisehit) ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
+			if (surprisehit) 
+			{
+				nm = "SonicNail";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						 inflictor.GetClassName() == "ImpalerMissile"))
+				{
+					ActorDefenseIgnoreFactor += ((random(30,32) * 0.03125) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				else
+				{
+					ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
+			}
 			
 			//if (CountInv("PWDefenseBuff") > 0) ActorDefenseIgnoreFactor *= 0.25;
 		}
@@ -1118,12 +1132,26 @@ mixin class MonsterCollider
 			{
 				A_SetInventory("JustSurprised",1);
 				if (kc_hitweaksounds) A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-				damage *= frandompick(1.3334,1.50);
+				nm = "SonicNail";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						 inflictor.GetClassName() == "ImpalerMissile"))
+				{
+					damage *= frandompick(2.0000,2.50);
+				}
+				else damage *= frandompick(1.3334,1.50);
 			}
 			else
 			{
 				if (kc_hitweaksounds) A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-				damage *= frandompick(1.1667,1.25);
+				nm = "SonicNail";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						 inflictor.GetClassName() == "ImpalerMissile"))
+				{
+					damage *= frandompick(2.0000,2.50);
+				}
+				else damage *= frandompick(1.1667,1.25);
 			}
 			if (kcdebug_actordmgdisplays) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), damage, initdmg);
 		}
