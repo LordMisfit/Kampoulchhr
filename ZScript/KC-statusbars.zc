@@ -1209,8 +1209,19 @@ class KCStatusBarMain : BaseStatusBar
 			if (kc_expgains)
 			{
 				string LVLGraphic = "LVL";
-				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "LVLG";
-				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "LVLP";
+				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
+				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
+				int EXPPrevReq = 0;
+				if (MiscItem.PlayerLevel > 0) EXPPrevReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel-1)];
+				int EXPCurrReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel)];
+				int EXPFullReq = (EXPCurrReq-EXPPrevReq);
+				int CurrentEXP = MiscItem.Experience;
+				int LeftCurr = (EXPCurrReq-CurrentEXP);
+				Console.Printf("%d / %d (EXPFullReq: %d, Current: %d, LeftCurr: %d)", EXPPrevReq, EXPCurrReq, EXPFullReq, CurrentEXP, LeftCurr);
+				int lgpiece = (((EXPFullReq-LeftCurr) * 16) / EXPFullReq);
+				if (lgpiece >= 10) LVLGraphic.AppendFormat("%d", lgpiece);
+											else LVLGraphic.AppendFormat("0%d", lgpiece);
+				Console.Printf("LVLGraphic: %s, lgpiece: %d", LVLGraphic, lgpiece);
 				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
 			}

@@ -4508,9 +4508,14 @@ class SawThrower : MarineWeapon
 				A_JumpIfNoAmmo(7);
 				invoker.sawrange = 56;
 			}
-			TSWG A 8 A_StartSound("weapons/throwsawup",CHAN_WEAPON);
-			TSWG B 6;
-			TSWG C 3;
+			TSWG A 8;
+		AltRevUp:
+			TSWG A 0 A_StartSound("weapons/throwsawup",CHAN_WEAPON);
+			TSWG BBC 3
+			{
+				A_CustomPunch((1*random(1,4)),0,0,"SawPuff",invoker.sawrange);
+			}
+		AltRevUp2:
 			TSWG BB 1 A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
 			TSWG C 0 A_ReFire;
 			Goto AltHold+6;
@@ -4591,23 +4596,35 @@ class SawThrower : MarineWeapon
 					A_StartSound("weapons/throwsawready",CHAN_WEAPON);
 				}
 			}
+		AltEnd:
 			TSWG CCBBCC 1 
 			{
 				A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
-				invoker.revtimes = 0; 
+				invoker.revtimes *= 0.9;
+				A_Refire("AltRevUp2");
 			}
 			TSWG BBBCCCBBB 1 
 			{
 				A_CustomPunch((random(1,2)*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
-				invoker.revtimes = 0; 
+				invoker.revtimes *= 0.8;
+				A_Refire("AltRevUp2");
 			}
 			TSWG CCCCBBBB 1 
 			{
 				A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
-				invoker.revtimes = 0; 
+				invoker.revtimes *= 0.6; 
+				A_Refire("AltRevUp");
 			}
-			TSWG C 6 { invoker.revtimes = 0; }
-			TSWG A 9 { invoker.revtimes = 0; }
+			TSWG C 6 
+			{
+				invoker.revtimes *= 0.4; 
+				A_Refire("AltRevUp");
+			}
+			TSWG A 9 
+			{
+				invoker.revtimes *= 0.2; 
+				A_Refire("AltRevUp");
+			}
 			Goto Ready;
 
 		RevFire:

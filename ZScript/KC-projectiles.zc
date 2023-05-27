@@ -2495,7 +2495,7 @@ class SSawShot : Sawshot
 		Height 2;
 		Speed 48;
 		Scale 0.3;
-		DamageFunction (9 * random(4,6));
+		DamageFunction (8 * random(4,6));
 		+NOGRAVITY;
 		+DROPOFF;
 		+MISSILE;
@@ -2506,6 +2506,12 @@ class SSawShot : Sawshot
 		+EXTREMEDEATH;
 		+NOEXPLODEFLOOR;
 		+THRUGHOST;
+		+BOUNCEONWALLS;
+		+BOUNCEONFLOORS;
+		+BOUNCEONCEILINGS;
+		BounceCount 4;
+		BounceFactor 1.0;
+		WallBounceFactor 1.0;
 		ExplosionDamage 24;
 		ExplosionRadius 8;
 		DeathSound "weapons/throwsawhit";

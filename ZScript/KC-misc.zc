@@ -2317,6 +2317,8 @@ class PlayerStatItem : Inventory
 		Experience = owner.CountInv("ExpPts");
 		owner.A_SetInventory("ExpPtsLeft",(LevelExpRequirement[(PlayerLevel)]-Experience));
 		owner.A_SetInventory("ExpPtsNeeded",LevelExpRequirement[(PlayerLevel)]);
+		if (PlayerLevel >= 1) owner.A_SetInventory("ExpPtsLDiff",(LevelExpRequirement[(PlayerLevel)] - LevelExpRequirement[(PlayerLevel-1)]));
+										 else owner.A_SetInventory("ExpPtsLDiff",(LevelExpRequirement[(PlayerLevel)]));
 		PlayerLevel = owner.CountInv("PlayerLevel");
 		PlayerATK = owner.CountInv("PlayerATK");
 		PlayerDEF = owner.CountInv("PlayerDEF");
