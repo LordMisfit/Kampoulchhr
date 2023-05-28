@@ -1572,7 +1572,7 @@ class KCWeaponBase : Weapon
 				return;
 		}
 
-		SpawnPlayerMissile("BFGBall", angle, nofreeaim:sv_nobfgaim);
+		SpawnPlayerMissile("BFGBallNew", angle, nofreeaim:sv_nobfgaim);
 	}
 	
 	action void A_FireOldBFG()
@@ -1603,7 +1603,7 @@ class KCWeaponBase : Weapon
 		{
 			angle += random[OldBFG](-64, 63) * (90./768);
 			pitch += random[OldBFG](-64, 63) * (90./640);
-			SpawnPlayerMissile (i == 0? (class<Actor>)("PlasmaBall1") : (class<Actor>)("PlasmaBall2"));
+			SpawnPlayerMissile (i == 0? (class<Actor>)("PlasmaBall1New") : (class<Actor>)("PlasmaBall2New"));
 			// Restore saved values
 			angle = SavedPlayerAngle;
 			pitch = SavedPlayerPitch;
@@ -3347,7 +3347,7 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 		Fire:
 			PLSG B 1 BRIGHT 
 			{
-				A_FireProjectile("PlasmaBall",0.0,true,0,0,FPF_NOAUTOAIM,0.0);
+				A_FireProjectile("PlasmaBallNew",0.0,true,0,0,FPF_NOAUTOAIM,0.0);
 				if (random(1,256) <= 240) invoker.cooldownmeter++;
 			}
 			PLSG CA 1;
