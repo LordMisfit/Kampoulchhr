@@ -2806,3 +2806,14 @@ class RocketPlayerDrunk : RocketPlayerSeeking
 			stop;
 	}
 }
+
+class AltPlasmaBall : PlasmaBall
+{
+	default
+	{
+		Scale 0.667;
+		Alpha 0.667;
+		RenderStyle "Add";
+		DamageFunction ((5 * random(1,8)) * 0.667);
+	}
+}

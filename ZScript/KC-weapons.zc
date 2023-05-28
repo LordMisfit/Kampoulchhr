@@ -2824,8 +2824,100 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 		
 		Spawn:
 		Idle:
-			CSAW A -1;
-			Stop;
+			CSAW A 1
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (!bDROPPED && 
+						playera.GetClassName() == "KCPlayer" && 
+						playera.CountInv("ChainsawMarine"))
+				{
+					int user_type = random(1,11);
+					string droptype = "Backpack";
+					if (user_type == 1) 
+					{
+						droptype = "Pistol";
+						if (playera.GetClassName() == "KCPlayer") droptype = "PistolMarine";
+						if (random(1,4) <= 1 && playera.CountInv(droptype)) droptype = "Glock21";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 2) 
+					{
+						droptype = "Chaingun";
+						if (playera.GetClassName() == "KCPlayer") droptype = "ChaingunMarine";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 3) 
+					{
+						droptype = "Shotgun";
+						if (playera.GetClassName() == "KCPlayer") droptype = "ShotgunMarine";
+						if (playera.CountInv(droptype)) 
+						{
+							if (random(1,32) <= 1) droptype = "SuperShotgunMarine";
+							if (playera.CountInv(droptype)) droptype = "Backpack";
+						}
+					}
+					if (user_type == 4) 
+					{
+						droptype = "TommyGun";
+						if (playera.CountInv(droptype)) 
+						{
+							droptype = "DualTommyGuns";
+							if (playera.CountInv(droptype)) droptype = "Backpack";
+																				 else droptype = "TommyGun";
+						}
+						else droptype = "TommyGun";
+					}
+					if (user_type == 5) 
+					{
+						droptype = "SuperShotgun";
+						if (playera.GetClassName() == "KCPlayer") droptype = "SuperShotgunMarine";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 6) 
+					{
+						droptype = "RocketLauncher";
+						if (playera.GetClassName() == "KCPlayer") droptype = "RocketLauncherMarine";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 7) 
+					{
+						droptype = "BFG9000";
+						if (playera.GetClassName() == "KCPlayer") droptype = "BFG9000Marine";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 8)
+					{
+						droptype = "PlasmaRifle";
+						if (playera.GetClassName() == "KCPlayer") droptype = "PlasmaRifleMarine";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 9)
+					{
+						droptype = "Devastator";
+						if (playera.CountInv(droptype)) 
+						{
+							droptype = "DualDevastators";
+							if (playera.CountInv(droptype)) droptype = "Backpack";
+																				 else droptype = "DevastatorGenerator";
+						}
+						else droptype = "DevastatorGenerator";
+					}
+					if (user_type == 10)
+					{
+						droptype = "SawThrower";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					if (user_type == 11)
+					{
+						droptype = "ImpalerXBow";
+						if (playera.CountInv(droptype)) droptype = "Backpack";
+					}
+					A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
+					Destroy();
+				}
+			}
+			Loop;
 	}
 }
 class PistolMarine : MarineWeapon replaces Pistol
@@ -3215,6 +3307,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 {
 	int cooldownmeter;
+	int burstamt;
 	Default
 	{
 		Weapon.SelectionOrder 100;
@@ -3260,84 +3353,118 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 			PLSG CA 1;
 			PLSG A 1 
 			{
-				A_ReFire();
+				if (invoker.cooldownmeter >= 50) return resolvestate("Cooldown");
+																		 else A_ReFire();
+				return resolvestate(null);
 			}
 			goto CoolDown;
 		AltFire:
+			PLSG B 0
+			{
+				if (CountInv("Cell") >= 2 || 
+						A_CheckInfiniteAmmo())
+				{
+					invoker.burstamt = 3 * randompick(1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,5);
+					int shotcost = (invoker.burstamt * 2 / 3);
+					if (!A_CheckInfiniteAmmo())
+					{
+						if (CountInv("Cell") < shotcost) return resolvestate("Ready");
+																				else A_TakeInventory("Cell",shotcost);
+						return resolvestate(null);
+					}
+					return resolvestate(null);
+				}
+				return resolvestate(null);
+			}
 			PLSG B 1 BRIGHT 
 			{
-				int burstamt = random(3,5);
-				for (int i; i < burstamt; i++)
+				double spread = (1.5 * (invoker.burstamt / 3));
+				for (int i; i < invoker.burstamt; i++)
 				{
-					A_FireProjectile("PlasmaBall",frandom(-7.5,7.5),true,0,0,FPF_NOAUTOAIM,frandom(-7.5,7.5));
+					A_FireProjectile("AltPlasmaBall",frandom(-spread,spread),false,0,0,FPF_NOAUTOAIM,frandom(-spread,spread));
 				}
 				//A_FirePlasma(); 
-				if (random(1,256) <= 240) invoker.cooldownmeter += burstamt;
+				if (random(1,256) <= 240) invoker.cooldownmeter += invoker.burstamt;
 			}
 			PLSG CA 1;
 			PLSG A 1 
 			{
-				A_ReFire();
+				if (invoker.cooldownmeter >= 50) return resolvestate("Cooldown");
+																		else A_ReFire();
+				return resolvestate(null);
 			}
 			goto CoolDown;
 		Cooldown:
 			PLSG D 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
 			}
 			PLSG E 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
 			}
 			PLSG F 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
 			}
 			PLSG G 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= 50) A_SetTics(3);
 			}
 			PLSG H 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
 			}
 			PLSG I 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= 50) A_SetTics(3);
 			}
 			PLSG IIII 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,15,8);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(3);
+				if (invoker.cooldownmeter >= randompick(43,44,44,44)) A_SetTics(4);
+				if (invoker.cooldownmeter >= 50) A_SetTics(5);
 			}
 			PLSG I 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= 50) A_SetTics(3);
 			}
 			PLSG H 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
 			}
 			PLSG G 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= 50) A_SetTics(3);
 			}
 			PLSG F 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
 			}
 			PLSG E 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
+				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= 50) A_SetTics(3);
 			}
 			PLSG D 1
 			{
-				//A_FireCustomMissile("GunSmokeSpawner",0,0,10,4);
 				A_SetTics(0);
+				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				invoker.cooldownmeter = 0;
 			}
 			Goto Ready;
 		Spawn:

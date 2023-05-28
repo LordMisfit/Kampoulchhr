@@ -291,3 +291,58 @@ HardwareShader PostProcess scene
 	Shader "shaders/WaterZoom.dat" 330
 	Uniform float zoomFactor
 }
+
+pointlight ALTPLASMABALL
+{
+	color 0.5 0.5 1.0
+	size 56 // 84
+	attenuate 1
+}
+
+flickerlight ALTPLASMA_X1
+{
+	color 0.5 0.5 1.0
+	size 64 // 96
+	secondarySize 72 // 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight ALTPLASMA_X2
+{
+	color 0.4 0.4 0.8
+	size 80 // 120
+	secondarySize 88 // 132
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight ALTPLASMA_X3
+{
+	color 0.25 0.25 0.5
+	size 64 // 96
+	secondarySize 72 // 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight ALTPLASMA_X4
+{
+	color 0.1 0.1 0.2
+	size 8 // 12
+	secondarySize 16 // 24
+	chance 0.4
+	attenuate 1
+}
+
+object AltPlasmaBall
+{
+	frame PLSSA { light ALTPLASMABALL }
+	frame PLSSB { light ALTPLASMABALL }
+	
+	frame PLSEA { light ALTPLASMA_X1 }
+	frame PLSEB { light ALTPLASMA_X2 }
+	frame PLSEC { light ALTPLASMA_X2 }
+	frame PLSED { light ALTPLASMA_X3 }
+	frame PLSEE { light ALTPLASMA_X4 }
+}

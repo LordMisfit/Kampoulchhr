@@ -2455,6 +2455,11 @@ class KCPlayerPawn : PlayerPawn
 				A_StartSound(painsnd,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM);
 			}
 		}
+		else
+		if (GetClassName() == "KCPlayer")
+		{
+			A_Pain();
+		}
 	}
 	
 	int HasBuddha()
