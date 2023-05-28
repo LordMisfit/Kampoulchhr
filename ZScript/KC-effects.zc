@@ -6,6 +6,14 @@ class EmptyPowerup : Powerup
 	}
 }
 
+class PowerScannerKC : PowerScanner
+{
+	default
+	{
+		Powerup.Duration 0x7FFFFFFD;
+	}
+}
+
 class TempDefenseBuff : PowerProtection
 {
 	default
@@ -1449,8 +1457,53 @@ class PWatchEnergyGive : PlaceHolderItem
 	}
 }
 
+class KCPowerLightAmp : PowerLightAmp
+{
+	string texname;
+	int timer;
+	double ticpiece;
+	
+	default
+	{
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void Tick()
+	{
+		timer++;
+		if (timer % 12 >= 0 && timer % 12 <= 5) texname = "PVISA0";
+		if (timer % 12 >= 6 && timer % 12 <= 11) texname = "PVISB0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		int fadeouttic = 107;
+		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/liteampfading",205,CHANF_DEFAULT,2.25,ATTN_NORM);
+		if (EffectTics > fadeouttic && owner) owner.A_StopSound(205);
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		if (owner)
+		{
+			if (!owner.CountInv("INTERMAPChecker"))
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
 class KCPowerTorch : PowerLightAmp
 {
+	string texname;
+	int timer;
+	double ticpiece;
 	int NewTorch, NewTorchDelta;
 	
 	default

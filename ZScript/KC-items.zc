@@ -1257,6 +1257,55 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 	}
 }
 
+class Infrared2 : PowerupGiver replaces Infrared
+{
+	Default
+	{
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Powerup.Type "KCPowerLightAmp";
+		Inventory.PickupMessage "\c[white]Light Amplification Visor!";
+		Inventory.PickupSound "powerups/light";
+	}
+	States
+	{
+		Spawn:
+			PVIS A 6 Bright;
+			PVIS B 6;
+			Loop;
+	}
+}
+
+class AllmapNew : MapRevealer replaces AllMap
+{
+	Default
+	{
+		+COUNTITEM
+		+INVENTORY.FANCYPICKUPSOUND
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Inventory.PickupSound "misc/p_pkup";
+		Inventory.PickupMessage "\c[green]Computer Area Map";
+	}
+	
+	override bool TryPickup (in out Actor toucher)
+	{
+		level.allmap = true;
+		GoAwayAndDie();
+		if (toucher) toucher.A_SetInventory("PowerScannerKC",1);
+		return true;
+	}
+
+	States
+	{
+		Spawn:
+			PMAP ABCDCB 6 Bright;
+			Loop;
+	}
+}
+
 class SpreadSphere1 : CustomInventoryExt
 {
 	default

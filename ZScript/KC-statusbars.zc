@@ -1208,22 +1208,45 @@ class KCStatusBarMain : BaseStatusBar
 			// Show Current Level
 			if (kc_expgains)
 			{
-				string LVLGraphic = "LVL";
-				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
-				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
+				string LVLGraphic = "LVLM";
 				int EXPPrevReq = 0;
 				if (MiscItem.PlayerLevel > 0) EXPPrevReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel-1)];
 				int EXPCurrReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel)];
 				int EXPFullReq = (EXPCurrReq-EXPPrevReq);
 				int CurrentEXP = MiscItem.Experience;
 				int LeftCurr = (EXPCurrReq-CurrentEXP);
-				Console.Printf("%d / %d (EXPFullReq: %d, Current: %d, LeftCurr: %d)", EXPPrevReq, EXPCurrReq, EXPFullReq, CurrentEXP, LeftCurr);
-				int lgpiece = (((EXPFullReq-LeftCurr) * 16) / EXPFullReq);
+				//Console.Printf("%d / %d (EXPFullReq: %d, Current: %d, LeftCurr: %d)", EXPPrevReq, EXPCurrReq, EXPFullReq, CurrentEXP, LeftCurr);
+				int lgpiece = (((EXPFullReq-LeftCurr) * 32) / EXPFullReq);
 				if (lgpiece >= 10) LVLGraphic.AppendFormat("%d", lgpiece);
 											else LVLGraphic.AppendFormat("0%d", lgpiece);
-				Console.Printf("LVLGraphic: %s, lgpiece: %d", LVLGraphic, lgpiece);
+				//Console.Printf("LVLGraphic: %s, lgpiece: %d", LVLGraphic, lgpiece);
+				/*
+				double LVLAlpha;
+				double LVLAlphaInc;
+				int LevelAlphaTicBase;
+				double LevelAlphaAmtBase = 1.000;
+				if (!LevelAlphaTicBase) LevelAlphaTicBase = 70;
+				if (!LVLAlphaInc) LVLAlphaInc = 0.500;
+				double LevelAlphaAmt = (LVLAlphaInc / (LevelAlphaTicBase * 1.0));
+				int LevelAlphaTime = (level.time % LevelAlphaTicBase);
+				int LevelAlphaTime2;
+				if (LevelAlphaTime >= (LevelAlphaTicBase*0.5) && LevelAlphaTime <= (LevelAlphaTicBase-1)) LevelAlphaTime2 = (LevelAlphaTicBase - LevelAlphaTime);
+																																														 else LevelAlphaTime2 = LevelAlphaTime;
+				LVLAlpha = 0.5 + (LevelAlphaTime2 * (LevelAlphaAmt * LevelAlphaAmtBase)); // 4
+				Console.Printf("LVLAlpha: %.8f, LevelAlphaTime2: %d (%d), LevelAlphaAmt: %.8f (%d)", LVLAlpha, LevelAlphaTime2, LevelAlphaTime, LevelAlphaAmt, LevelAlphaTicBase);
+				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, LVLAlpha, (-1, -1), (1.0, 1.0));
+				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, LVLAlpha, (-1, -1), (1.0, 1.0));
+				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, LVLAlpha, (-1, -1), (1.0, 1.0));
+				*/
+				
+				DrawBar("EXPNOTCH", "nullimage", lgpiece, 32, (168, -1), 1, 1);
+
+				LVLGraphic = "LVL";
+				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
+				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
 				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
+
 			}
 		}
 	}
