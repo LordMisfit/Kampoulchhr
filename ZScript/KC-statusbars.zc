@@ -1068,8 +1068,9 @@ class KCStatusBarMain : BaseStatusBar
 			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			double malpha = 0.875;
 			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
-			DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+			
 			if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+											else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 
 			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
@@ -1339,12 +1340,12 @@ class KCStatusBarMain : BaseStatusBar
 		vector2 mpos = (94, -1);
 		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
-		DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
 		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
+										else DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
 
 		// Show Current Health
 		let berserk = CPlayer.mo.FindInventory("PowerStrength");
-		DrawImage(berserk? "PSTRA0" : "MEDIA0", (20, -2));
+		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20, -2));
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Show Max Health

@@ -1,0 +1,148 @@
+// Corpses
+class KCDeadMarine : DeadMarine replaces DeadMarine
+{
+	default
+	{
+	}
+	
+	States
+	{
+		DropPistol:
+			PLAY N 0 A_SpawnItemEx("Pistol");
+			goto ItemDrop6+3;
+		DropGlock:
+			PLAY N 0 A_SpawnItemEx("Glock21");
+			goto ItemDrop6+3;
+		DropShotgun:
+			PLAY N 0 A_SpawnItemEx("Shotgun");
+			goto ItemDrop6+3;
+		DropSShotgun:
+			PLAY N 0 A_SpawnItemEx("SuperShotgun");
+			goto ItemDrop6+3;
+		DropChaingun:
+			PLAY N 0 A_SpawnItemEx("Chaingun");
+			goto ItemDrop6+3;
+		DropTommyGun:
+			PLAY N 0 A_SpawnItemEx("TommyGun");
+			goto ItemDrop6+3;
+		DropRocket:
+			PLAY N 0 A_SpawnItemEx("RocketLauncher");
+			goto ItemDrop6+3;
+		DropPlasma:
+			PLAY N 0 A_SpawnItemEx("PlasmaRifle");
+			goto ItemDrop6+3;
+		DropDevastator:
+			PLAY N 0 A_SpawnItemEx("DevastatorGenerator");
+			goto ItemDrop6+3;
+		DropImpalerBow:
+			PLAY N 0 A_SpawnItemEx("ImpalerXBow");
+			goto ItemDrop6+3;
+		DropSawThrower:
+			PLAY N 0 A_SpawnItemEx("SawThrower");
+			goto ItemDrop6+3;
+		DropBFG:
+			PLAY N 0 A_SpawnItemEx("BFG9000");
+			goto ItemDrop6+3;
+		ItemDrop1:
+			PLAY N 0 A_SpawnItemEx("GreenArmor");
+			goto Spawn+3;
+		ItemDrop2:
+			PLAY N 0 A_SpawnItemEx("GreenArmor");
+			goto Spawn+3;
+		ItemDrop3:
+			PLAY N 0 A_SpawnItemEx("BlueArmor");
+			goto Spawn+3;
+		ItemDrop4:
+			PLAY N 0 A_SpawnItemEx((random(1,4) <= 1) ? "BlueArmor" : "GreenArmor");
+			goto Spawn+3;
+		ItemDrop5:
+			PLAY N 0 A_SpawnItemEx("BackPack");
+			goto Spawn+3;
+		ItemDrop6:
+			PLAY N 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY N 0 A_Jump(128, "DropPlasma", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
+			PLAY N 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
+			PLAY N 0;
+			goto Spawn+3;
+		Spawn:
+			PLAY N 0;
+			PLAY N 0;
+			PLAY N 0 A_Jump(32, "ItemDrop1", "ItemDrop2", "ItemDrop3", "ItemDrop4", "ItemDrop5", "ItemDrop6");
+			PLAY N -1;
+			Stop;
+	}
+}
+
+class KCGibbedMarine : GibbedMarine replaces GibbedMarine
+{
+	default
+	{
+	}
+	
+	States
+	{
+		DropPistol:
+			PLAY W 0 A_SpawnItemEx("Pistol");
+			goto ItemDrop6+3;
+		DropGlock:
+			PLAY W 0 A_SpawnItemEx("Glock21");
+			goto ItemDrop6+3;
+		DropShotgun:
+			PLAY W 0 A_SpawnItemEx("Shotgun");
+			goto ItemDrop6+3;
+		DropSShotgun:
+			PLAY W 0 A_SpawnItemEx("SuperShotgun");
+			goto ItemDrop6+3;
+		DropChaingun:
+			PLAY W 0 A_SpawnItemEx("Chaingun");
+			goto ItemDrop6+3;
+		DropTommyGun:
+			PLAY W 0 A_SpawnItemEx("TommyGun");
+			goto ItemDrop6+3;
+		DropRocket:
+			PLAY W 0 A_SpawnItemEx("RocketLauncher");
+			goto ItemDrop6+3;
+		DropPlasma:
+			PLAY W 0 A_SpawnItemEx("PlasmaRifle");
+			goto ItemDrop6+3;
+		DropDevastator:
+			PLAY W 0 A_SpawnItemEx("DevastatorGenerator");
+			goto ItemDrop6+3;
+		DropImpalerBow:
+			PLAY W 0 A_SpawnItemEx("ImpalerXBow");
+			goto ItemDrop6+3;
+		DropSawThrower:
+			PLAY W 0 A_SpawnItemEx("SawThrower");
+			goto ItemDrop6+3;
+		DropBFG:
+			PLAY W 0 A_SpawnItemEx("BFG9000");
+			goto ItemDrop6+3;
+		ItemDrop1:
+			PLAY W 0 A_SpawnItemEx("GreenArmor");
+			goto Spawn+3;
+		ItemDrop2:
+			PLAY W 0 A_SpawnItemEx("GreenArmor");
+			goto Spawn+3;
+		ItemDrop3:
+			PLAY W 0 A_SpawnItemEx("BlueArmor");
+			goto Spawn+3;
+		ItemDrop4:
+			PLAY W 0 A_SpawnItemEx((random(1,4) <= 1) ? "BlueArmor" : "GreenArmor");
+			goto Spawn+3;
+		ItemDrop5:
+			PLAY W 0 A_SpawnItemEx("BackPack");
+			goto Spawn+3;
+		ItemDrop6:
+			PLAY W 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY W 0 A_Jump(128, "DropPlasma", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
+			PLAY W 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
+			PLAY W 0;
+			goto Spawn+3;
+		Spawn:
+			PLAY W 0;
+			PLAY W 0;
+			PLAY W 0 A_Jump(8, "ItemDrop1", "ItemDrop2", "ItemDrop3", "ItemDrop4", "ItemDrop5", "ItemDrop6");
+			PLAY W -1;
+			Stop;
+	}
+}
