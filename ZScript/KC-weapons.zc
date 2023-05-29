@@ -4601,21 +4601,45 @@ class SawThrower : MarineWeapon
 			Stop;
 		Ready:
 			TSWG G 0 A_JumpIfInventory("Saws",1,2);
-			TSWG G 1 A_WeaponReady();
+			TSWG G 1 
+			{
+				A_WeaponReady();
+				invoker.revtimes = 0;
+			}
 			Goto Ready+1;
-			TSWG A 1 A_WeaponReady();
+			TSWG A 1
+			{
+				A_WeaponReady();
+				invoker.revtimes = 0;
+			}
 			Goto Ready+2;
 		Deselect:
 			TSWG G 0 A_JumpIfInventory("Saws",1,2);
-			TSWG G 1 A_Lower(12);
+			TSWG G 1
+			{
+				A_Lower(12);
+				invoker.revtimes = 0;
+			}
 			Goto Deselect+1;
-			TSWG A 1 A_Lower(12);
+			TSWG A 1
+			{
+				A_Lower(12);
+				invoker.revtimes = 0;
+			}
 			Goto Deselect+2;
 		Select:
 			TSWG G 0 A_JumpIfInventory("Saws",1,2);
-			TSWG G 1 A_Raise(12);
+			TSWG G 1
+			{
+				A_Raise(12);
+				invoker.revtimes = 0;
+			}
 			Goto Select+1;
-			TSWG A 1 A_Raise(12);
+			TSWG A 1
+			{
+				A_Raise(12);
+				invoker.revtimes = 0;
+			}
 			Goto Select+2;
 		Fire:
 			TSWG D 0 A_StartSound("weapons/throwsawlaunch",CHAN_WEAPON);

@@ -803,7 +803,6 @@ class KC_EventHandler : EventHandler
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom]: %d", basedropdiv);
 				
 				double rand = 2.0;
 				string droptype;
@@ -912,7 +911,7 @@ class KC_EventHandler : EventHandler
 				{
 					droptype = "RocketLauncher";
 					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					droptype = "Rocket";
+					droptype = "RocketAmmo";
 					if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
@@ -922,47 +921,48 @@ class KC_EventHandler : EventHandler
 					}
 					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
 					{
-						droptype = "Rocket";
+						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 				}
+				if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom] (\c[brick]%s\c-): %d", vict, basedropdiv);
 				
 				// Heretic Monsters
 				basedropdiv = 512;

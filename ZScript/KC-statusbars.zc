@@ -1051,7 +1051,8 @@ class KCStatusBarMain : BaseStatusBar
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
-		
+		int MaxHealthTrue;
+		if (MiscItem) MaxHealthTrue = MiscItem.MaxHealthTrue;
 		int ivx = 20; // 20;
 		int ivy = -2; // -22;
 		int svx = 44; // 44;
@@ -1060,6 +1061,16 @@ class KCStatusBarMain : BaseStatusBar
 		let armor = CPlayer.mo.FindInventory("KCArmor");
 		if (armor != null && armor.Amount > 0)
 		{
+		
+			// Meters
+			vector2 mpos = (94, -21);
+			int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
+			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
+			double malpha = 0.875;
+			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
+			DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+			if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+
 			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
 			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
@@ -1109,6 +1120,7 @@ class KCStatusBarMain : BaseStatusBar
 		
 		if (MiscItem)
 		{
+			int metercolor = 0;
 			if (MiscItem.TimeArmorRelicsOwned > 0 && MiscItem.TimeArmorRelicsOwnedBits > 0)
 			{
 				fontclr = font.CR_Gray;
@@ -1116,36 +1128,43 @@ class KCStatusBarMain : BaseStatusBar
 				if (MiscItem.TimeArmorRelicsUsedBits == 1) 
 				{
 					fontclr = font.CR_LightBlue;
+					metercolor = 1;
 					fontalpha = 0.667;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 2)
 				{
 					fontclr = font.CR_LightBlue;
+					metercolor = 1;
 					fontalpha = 0.667;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 3)
 				{
 					fontclr = font.CR_Green;
+					metercolor = 2;
 					fontalpha = 0.834;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 4)
 				{
 					fontclr = font.CR_LightBlue;
+					metercolor = 1;
 					fontalpha = 0.667;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 5)
 				{
 					fontclr = font.CR_Green;
+					metercolor = 2;
 					fontalpha = 0.834;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 6)
 				{
 					fontclr = font.CR_Green;
+					metercolor = 2;
 					fontalpha = 0.834;
 				}
 				if (MiscItem.TimeArmorRelicsUsedBits == 7)
 				{
 					fontclr = font.CR_Purple;
+					metercolor = 3;
 					fontalpha = 1.000;
 				}
 				
@@ -1187,6 +1206,17 @@ class KCStatusBarMain : BaseStatusBar
 					}
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
+					// Meters
+					vector2 mpos = (94, -41);
+					int lgpiece = percent;
+					string TSAN = "TSA0NOTC";
+					if (metercolor == 1) TSAN = "TSA1NOTC";
+					if (metercolor == 2) TSAN = "TSA2NOTC";
+					if (metercolor == 3) TSAN = "TSA3NOTC";
+					double malpha = 0.875;
+					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
+					DrawBar(TSAN, "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+					
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
@@ -1239,7 +1269,7 @@ class KCStatusBarMain : BaseStatusBar
 				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, LVLAlpha, (-1, -1), (1.0, 1.0));
 				*/
 				
-				DrawBar("EXPNOTCH", "nullimage", lgpiece, 32, (168, -1), 1, 1);
+				DrawBar("EXPNOTCH", "EXPNOTCE", lgpiece, 32, (168, -1), 1, 1, 0, 0.875);
 
 				LVLGraphic = "LVL";
 				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
@@ -1304,6 +1334,13 @@ class KCStatusBarMain : BaseStatusBar
 				 CPlayerPawn.CountInv("PowerInvulnerable") || CPlayerPawn.CountInv("KCPowerInvuln") || 
 				 CPlayer.cheats & CF_GODMODE2 || CPlayer.cheats & CF_GODMODE) IsInvuln = true;
 		if (IsInvuln) HealthColor = font.CR_Gold;
+		
+		// Meters
+		vector2 mpos = (94, -1);
+		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
+		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
+		DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
+		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
 
 		// Show Current Health
 		let berserk = CPlayer.mo.FindInventory("PowerStrength");
