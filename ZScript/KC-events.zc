@@ -1065,18 +1065,29 @@ class KC_EventHandler : EventHandler
 		string usertype = "";
 		double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
 		int TruePlayerLevel = 0;
-		
+		if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+
 		if (spawnee)
 		{
 			string targname;
 			if (spawnee.target) targname = spawnee.target.GetClassName();
-			if (spawnee.bISMONSTER || 
-					spawnee.bSHOOTABLE)
+
+			bool exception = CheckExceptions(spawnee);
+			if (!KampoulchhrBase(spawnee) && 
+					(spawnee.bISMONSTER || 
+					spawnee.bSHOOTABLE) && 
+					!exception) 
 			{
 				if (!(KCPlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
 						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
+			}
+		
+			if (KCCreature(spawnee))
+			{
+				KCC = KCCreature(spawnee);
+				if (KCC && KCC.bISMONSTER) KCC.ActorRandomBits = random();
 			}
 			
 			if (DoomImpBall(spawnee) || 
@@ -1088,7 +1099,7 @@ class KC_EventHandler : EventHandler
 			{
 				spawnee.DamageType = 'Lightning';
 			}
-			if (ArachnotronPlasma(spawnee)) 
+			if (ArachnotronPlasma(spawnee))
 			{
 				spawnee.DamageType = 'Plasma';
 			}
@@ -1098,7 +1109,27 @@ class KC_EventHandler : EventHandler
 			invspawnee = Inventory(spawnee);
 			if (invspawnee)
 			{
+				if (Wads.CheckNumForName("EE-BLOOM", Wads.ns_global, -1, true) != -1)
+				{
+					if (YellowCard(invspawnee) || BlueCard(invspawnee) || RedCard(invspawnee)) invspawnee.PickupSound = "getkeycard";
+					if (YellowSkull(invspawnee) || BlueSkull(invspawnee) || RedSkull(invspawnee)) invspawnee.PickupSound = "getskullkey";
+				}
 				string invspawnname = invspawnee.GetClassName();
+				string nm, nn, no, np, nq, nr;
+
+				nm = "KDIZDGreenKey";
+				nn = "KDIZDSilverKey";
+				no = "KDIZDOrangeKey";
+				np = "KDIZDRedKey";
+				nq = "KDIZDBlueKey";
+				nr = "KDIZDYellowKey";
+				if (invspawnname == nm ||
+						invspawnname == nn || 
+						invspawnname == no || 
+						invspawnname == np || 
+						invspawnname == nq || 
+						invspawnname == nr) invspawnee.PickupSound = "getkeycard";
+				
 				if (invspawnname == "RedCard" ||
 						invspawnname == "BlueCard" ||
 						invspawnname == "YellowCard")
@@ -1162,9 +1193,228 @@ class KC_EventHandler : EventHandler
 					invspawnee.Pickupsound = "getarmorbonus";
 				}
 			}
+			
+			if (true)
+			{
+				int basemonsterrating = spawnee.CountInv("MonsterRating");
+				bool practicetarget;
+				if (PracticeTarget(spawnee) || PracticeTarget2(spawnee)) practicetarget = true;
+
+				// Tags
+				double spdfactor;
+				
+				// Hell Ground
+				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && spawnname == "TechPillar") spawnee.SetTag("Netherhell Imp");
+
+				// SiGiL
+				if (level.GetChecksum() == '61b546375618d619ab39eafd28f03c87' ||
+						level.GetChecksum() == '0742076f6c57ed4d1174ebf8f0933b76' ||
+						level.GetChecksum() == '3417a4859c8fece797c9daa715d14d63' ||
+						level.GetChecksum() == 'aebf219bf02aaec549ba3ef8cb3f715b' ||
+						level.GetChecksum() == '4e5d482364f6f787cb8efc17bde5d64d' ||
+						level.GetChecksum() == '8e3fe80ae1440b38747853dab05dd62d' ||
+						level.GetChecksum() == '8c35efba700537035c84f5e1ad35c064' ||
+						level.GetChecksum() == '6ead80da1f30b4b3546fa294eef9f87c' ||
+						level.GetChecksum() == '2a6b4d277f526bfb3adb122609feead7')
+				{
+					if (EvilEye(spawnee)) spawnee.bSOLID = false;
+				}
+				
+				A_SetMonsterProjNameTags(spawnee);
+				
+				//
+				
+				if (KCProjectile(spawnee)) ProjSetSpeed(spawnee);
+				else if (spawnee.bMISSILE) ProjSetSpeed(spawnee);
+				
+				// Changes
+				int basehealth = spawnee.SpawnHealth();
+				double healthmulfactor = 0.01;
+				
+				nm = "Balloon_Red"; extracheck = nm;
+				nn = "Balloon_Red2"; extracheck2 = nn;
+				if (spawnname == extracheck || spawnname == extracheck2)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,3);
+						if (user_base == 1) usertype = "Balloon_Blue";
+						if (user_base == 2) usertype = "Balloon_Green";
+						if (user_base == 3) usertype = "Balloon_Yellow";
+					}
+				}
+				nm = "Balloon"; extracheck = nm;
+				nn = "BallTarg"; extracheck2 = nn;
+				if (spawnname == extracheck || spawnname == extracheck2)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,2);
+						if (user_base == 1) usertype = "BallGreen";
+						if (user_base == 2) usertype = "BallYel";
+					}
+				}
+
+				nm = "Balloon_Yellow"; extracheck = nm; 
+				if (spawnname == extracheck)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,3);
+						if (user_base == 1) usertype = "Balloon_Blue";
+						if (user_base == 2) usertype = "Balloon_Green";
+						if (user_base == 3) usertype = "Balloon_Red";
+					}
+				}
+				nm = "BallYel"; extracheck = nm; 
+				if (spawnname == extracheck)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,2);
+						if (user_base == 1) usertype = "BallGreen";
+						if (user_base == 2) usertype = "Balloon";
+					}
+				}
+
+				nm = "Balloon_Green"; extracheck = nm; 
+				if (spawnname == extracheck)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,3);
+						if (user_base == 1) usertype = "Balloon_Blue";
+						if (user_base == 2) usertype = "Balloon_Yellow";
+						if (user_base == 3) usertype = "Balloon_Red";
+					}
+				}
+				nm = "BallGreen"; extracheck = nm; 
+				if (spawnname == extracheck)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,2);
+						if (user_base == 1) usertype = "BallYel";
+						if (user_base == 2) usertype = "Balloon";
+					}
+				}
+
+				nm = "Balloon_Blue"; extracheck = nm; 
+				if (spawnname == extracheck)
+				{
+					if (random(1,16) <= 1)
+					{
+						user_base = random(1,3);
+						if (user_base == 1) usertype = "Balloon_Green";
+						if (user_base == 2) usertype = "Balloon_Yellow";
+						if (user_base == 3) usertype = "Balloon_Red";
+					}
+				}
+				if (user_base)
+				{
+					//Console.Printf("%s [2]", spawnname);
+					spawnee.A_SpawnItemEx(usertype,0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,spawnee.tid);
+					spawnee.Destroy();
+				}
+				
+				//
+				bool specialenemy = false;
+				bool ispeasant = false;
+				// Strife Peasants
+				if (Peasant(spawnee)) ispeasant = true;
+				
+				// Eviternity's Archangelus Boss
+				nm = "ArchangelusA"; extracheck = nm;
+				if (spawnname == extracheck) 
+				{
+					if (Skill <= 0) healthmulfactor = 0.0075;
+					if (Skill == 1) healthmulfactor = 0.00875;
+					if (Skill == 2) healthmulfactor = 0.01;
+					if (Skill == 3) healthmulfactor = 0.01125;
+					if (Skill >= 4) healthmulfactor = 0.0125;
+					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					if (Skill <= 0) basehealth *= 12;
+					if (Skill == 1) basehealth *= 14;
+					if (Skill == 2) basehealth *= 16;
+					if (Skill == 3) basehealth *= 18;
+					if (Skill >= 4) basehealth *= 20;
+					spawnee.health *= basehealth;
+				}
+				nn = "ArchangelusB"; extracheck = nm;
+				if (spawnname == extracheck) 
+				{
+					if (Skill <= 0) healthmulfactor = 0.01125;
+					if (Skill == 1) healthmulfactor = 0.013125;
+					if (Skill == 2) healthmulfactor = 0.015;
+					if (Skill == 3) healthmulfactor = 0.016875;
+					if (Skill >= 4) healthmulfactor = 0.01875;
+					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					if (Skill <= 0) basehealth *= 12;
+					if (Skill == 1) basehealth *= 14;
+					if (Skill == 2) basehealth *= 16;
+					if (Skill == 3) basehealth *= 18;
+					if (Skill >= 4) basehealth *= 20;
+					spawnee.health = basehealth;
+				}
+				// TUTNT's Source Boss
+				nm = "TheSource"; extracheck = nm;
+				if (spawnname == extracheck) 
+				{
+					if (Skill <= 0) healthmulfactor = 0.005625;
+					if (Skill == 1) healthmulfactor = 0.0065625;
+					if (Skill == 2) healthmulfactor = 0.0075;
+					if (Skill == 3) healthmulfactor = 0.0084375;
+					if (Skill >= 4) healthmulfactor = 0.009375;
+					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					if (Skill <= 0) basehealth *= 6;
+					if (Skill == 1) basehealth *= 7;
+					if (Skill == 2) basehealth *= 8;
+					if (Skill == 3) basehealth *= 9;
+					if (Skill >= 4) basehealth *= 10;
+					spawnee.health = basehealth;
+					specialenemy = true;
+				}
+			
+				// Keeps the Romero Heads in AUGER ZENITH, which can't be attacked directly by the player, from being able to gain extra HP/Stats so they can be killed properly on MAP21
+				if (playera.CountInv("PlayingAugerZenith") && (BossBrain(spawnee))) specialenemy = true;
+				// Keeps the Romero Heads in Hell Ground MAP07 from being too strong. :P
+				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && (BossBrain(spawnee))) specialenemy = true;
+
+				if (Revenant(spawnee)) spawnee.ProjectilePassHeight = 84;
+				//if (RevenantNew(spawnee)) spawnee.ProjectilePassHeight = 84;
+				
+				if (Demon1(spawnee) || Demon2(spawnee)) spawnee.ProjectilePassHeight = 104;
+				
+				if (ArchvileFire(spawnee))
+				{
+					spawnee.A_SetRenderStyle(frandom(0.625,0.875),STYLE_Add);
+				}
+				
+				// Monster "Scaling"
+				MonsterStatsSet(spawnee, basemonsterrating, practicetarget, specialenemy, ispeasant);
+			}
 		}
 		
 		Super.WorldThingSpawned(e);
+		
+		if (A_CheckUOHYM())
+		{
+			if (level.mapname == "MAP01" ||
+					level.mapname == "20PAM" ||
+					level.mapname == "MAP02")
+			{
+				// Billboarder
+				// Written by Nash Muhandes
+				bool isProjectile = e.Thing.bMissile;
+				bool isPuff = (e.Thing is "BulletPuff" || e.Thing is "StrifePuff");
+				bool isBlood = (e.Thing is "Blood");
+				bool isSmokeTrail = (e.Thing is "RocketSmokeTrail" || e.Thing is "GrenadeSmokeTrail" || e.Thing is "RocketTrail");
+				if (isProjectile || isPuff || isBlood || isSmokeTrail)
+				{
+					e.Thing.bForceXYBillboard = true;
+				}
+			}
+		}
 	}
 	
 	override void WorldThingRevived(WorldEvent e)
