@@ -1293,6 +1293,13 @@ class KCPlayerPawn : PlayerPawn
 				if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
 						HellWarriorBall2(inflictor) || HellWarriorBall2(source)) PlayerDefenseIgnoreFactor += (HWShieldFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				*/
+				
+				if ((inflictor && inflictor.CountInv("LDLegendaryMonsterTransformed")) || 
+						(source && source.CountInv("LDLegendaryMonsterTransformed"))) 
+				{
+					double LegendaryIgnoreDefenseFactor = 0.50;
+					PlayerDefenseIgnoreFactor += (LegendaryIgnoreDefenseFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				}
 			}
 			
 			double BuffFactor = 0.00;

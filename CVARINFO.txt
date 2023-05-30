@@ -29,6 +29,7 @@ server nosave int kc_masknoise = 1;
 server nosave int kc_armorpkupnoise = 1;
 server nosave int kc_divinghelmvisuals = 1;
 
+
 server nosave int kcdebug_meleerangeghost = 0;
 server nosave int kcdebug_showvisibleshieldparts = 0;
 server nosave int kcdebug_dashmeter = 0;
@@ -81,7 +82,9 @@ server nosave int kcdebug_rangedmg = 0;
 server nosave int kcdebug_weaponrecoil = 0;
 server nosave int kcdebug_miscdisplays1 = 0;
 server nosave int kcdebug_shieldpiecedmg = 0;
+server nosave int kcdebug_worldtick = 0;
 server nosave int kcdebug_worlddamaged = 0;
+server nosave int kcdebug_projectilespawns = 0;
 
 server nosave int kcdebug_invbardisplays = 0;
 server nosave int kcdebug_timefreezechecks = 0;
@@ -112,6 +115,8 @@ server nosave int kcdebug_worlddiedmonsterdrops = 0;
 server nosave int kcdebug_showrecoilinformation = 0;
 server nosave int kcdebug_showmeleeinformation = 0;
 
+server nosave int kcdebug_monsterscaling = 0;
+
 //
 server nosave int kcdebug_timeserapharmor = 0;
 server nosave int kcdebug_dashcheat = 0;
@@ -121,6 +126,15 @@ server nosave int kcdebug_timefreezedebugaffectproj = 0;
 
 
 server int kc_expgains = 1;
+server int kc_leveldifficultyinflation = 0;
+server int kc_leveldifficultyinflation2 = 0;
+server int kc_mapdifficultyinflation = 0;
+server int kc_mapdifficultyinflation2 = 0;
+server float kc_expmultiplier = 1.0;
+server float kc_enemyscalelevelmultiplier = 1.0;
+server float kc_enemyscalemapmultiplier = 1.0;
+server int kc_enemyscalingplevel = 1;
+server int kc_enemyscalingmaps = 1;
 server int kc_extraatkdefspd = 1;
 server int kc_hpwillregen = 1;
 server int kc_hpwilldegen = 1;
@@ -216,7 +230,6 @@ server float kc_pluckfactor = 1.0;
 
 server float kc_armorencumbrance = 1.0;
 server float kc_weaponencumbrance = 1.0;
-server float kc_expmultiplier = 1.0;
 
 // HUD
 server nosave int kchud_showexplevel = 1;

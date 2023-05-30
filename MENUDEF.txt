@@ -139,6 +139,7 @@ OptionMenu "KCOptions"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
+	KCSubMenu "LegenDoomLite Options",		"LegenDoomLite Options.",		"LegenDoomLite"
 	KCSubMenu "Tilt++ v1.65 Options",		"Tilt++ v1.65 Options.",		"TiltPlusPlusMenu"
 	StaticText " "
 	KCOption "$HUDMNU_NAMETAGS",		"For best use, please set this to 'BOTH'.",		"displaynametags", "DisplayTagsTypes"
@@ -172,6 +173,94 @@ LISTMENU "MainMenu"
 	TextItem "Save Game",		"s",	"SaveGameMenu"
 	TextItem "Quit Game",		"q",	"QuitMenu"
 	Size Clean
+}
+
+
+// LDL
+OptionValue "LDLChanceType"
+{
+	0, "~LDL 3.0 [DEFAULT]"
+	1, "~LDL 4.1"
+}
+
+OptionValue "LegendaryChanceType"
+{
+	0, "No Extra Chance [0]"
+	1, "Maybe One or Two [1]"
+	2, "Some Guys I Guess [2]"
+	3, "A Few More [3]"
+	4, "Moderate Amounts [4]"
+	5, "Danger Increasing [5]"
+	6, "Getting Swarmy [6]"
+	7, "Deadly Swarm [7]"
+	8, "Wat R U Doin' [8]"
+	9, "Please Stop [9]"
+	10, "Seriously, Stop [10]"
+	11, "Oh God No [11]"
+	12, "Plz No [12]"
+	13, "WHY [13]"
+	14, "WHY WHY WHY WHY [14]"
+	15, "THIS IS YOUR FAULT [15/MAX]"
+}
+
+OptionValue "DieModeType"
+{
+	0, "...404 Mode not found"
+	1, "...has finished installing"
+}
+
+OptionValue "NoMonstersType"
+{
+	0, "Enabled"
+	1, "All Fun Disabled"
+}
+
+OptionValue "MonsterCheckType"
+{
+	0, "Any monster at all"
+	1, "Sensible enemies only"
+}
+
+OptionValue "NoBossesType"
+{
+	0, "totally gotta have em"
+	1, "wow wat r u casul"
+	2, "wait what does this do"
+}
+
+OptionMenu "LegenDoomLite"
+{
+	Class "KCMenu"
+	Title "LEGENDOOMLITE OPTIONS"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	StaticText 	""
+	KCOption "LDL Chances", "Allows setting of 4.1 or 3.0 chances for Legendaries", "kcLDL_newldlchances", "LDLChanceType"
+	StaticText 	""
+	KCOption "Legendary Monsters", "Determines if Legendary Monsters are enabled/disabled", "LD_nomonsters", "NoMonstersType"
+	KCOption "Legendary Bosses", "Determines if BOSS flagged monsters can become Legendary", "LD_nobosses", "NoBossesType"
+	KCOption "DIE.exe", "ALL monsters/bosses will go Legendary, No Exceptions [if 'installed']", "LD_diemode", "DieModeType"
+	//Option "Legendary Constraints", "", "LD_monstercheck", "MonsterCheckType"
+	StaticText 	""
+	KCOption "Legendary Map Markers", "Marks the initial spot of where a to-become-legendary monster is located [on the automap]", "LD_legendarymarkers", "OnOff"
+	KCOption "Legendary Debug Mode", "Debugging Option for Legendary Stuff :P", "LD_legendarydebug", "OnOff"
+	StaticText 	""
+	StaticText 	"     Legendary Enemy Options", 1
+	KCSlider "Legendary Health %", "A Legendary Monster's Max HP/Health becomes Higher to this %", "LD_legendaryhealth", 100, 10000, 25, 0
+	KCSlider "Legendary Damage x", "A Legendary Monster's Attack/Damage becomes this many times more/less [higher is stronger]", "LD_legendarydamage", 1, 20, 0.25, 2
+	KCSlider "Legendary Defense x", "A Legendary Monster's Damage Taken becomes this many times more/less [lower is stronger]", "LD_legendarydefense", 0.05, 1, 0.05, 2
+	KCSlider "Legendary Speed x", "A Legendary Monster's Move Speed becomes this many times more/less [higher is stronger]", "LD_legendaryspeed", 1, 20, 0.05, 2
+	KCSlider "Legendary Mass %", "A Legendary Monster's Mass/Balance becomes this % versus previously", "LD_legendarymass", 100, 10000, 25, 0
+	KCSlider "Legendary Boss Health %", "A Legendary Boss's Max HP/Health becomes Higher to this %", "LD_legendaryhealthboss", 100, 10000, 25, 0
+	KCSlider "Legendary Boss Damage x", "A Legendary Boss's Attack/Damage becomes this many times more/less [higher is stronger]", "LD_legendarydamageboss", 1, 20, 0.25, 2
+	KCSlider "Legendary Boss Defense x", "A Legendary Boss's Damage Taken becomes this many times more/less [lower is stronger]", "LD_legendarydefenseboss", 0.05, 1, 0.05, 2
+	KCSlider "Legendary Boss Speed x", "A Legendary Boss's Move Speed becomes this many times more/less [higher is stronger]", "LD_legendaryspeedboss", 1, 20, 0.05, 2
+	KCSlider "Legendary Boss Mass %", "A Legendary Boss's Mass/Balance becomes this % versus previously", "LD_legendarymassboss", 100, 10000, 25, 0
+	KCOption "Legendary Extra Chance", "Modifier for the occurance rate of Legendaries [0 to 15]", "LD_legendarychance", "LegendaryChanceType"
+	StaticText 	""
+	Command "Restore Default Settings", 			"LD_defaults"
 }
 
 OptionMenu kc_MenuInjector

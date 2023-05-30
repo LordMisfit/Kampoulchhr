@@ -10,8 +10,75 @@ class KC_EventHandler : EventHandler
 	const SKILL_IMPOSSIBLE = 7;
 	const SKILL_OMEGA = 8;
 	
+	bool A_CheckUOHYM()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("EE-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+	
+	int A_GetPlayerLevel(int type = 0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains)
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLevel - EventHandler)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+	
 	override void WorldTick()
 	{
+		// LDL
+		ThinkerIterator ldlit = ThinkerIterator.Create("Actor");
+		Actor ldlmo;
+		while (ldlmo = Actor(ldlit.Next()))
+		{
+			if (ldlmo.bISMONSTER && ldlmo.health > 0)
+			{
+				if (ldlmo.CountInv("LDLegendaryMonsterTracker"))
+				{
+					if (ldlmo.CountInv("LDLegendaryMonsterTransformed"))
+					{
+						ldlmo.A_GiveInventory("LDLegendaryMonsterVisualEffectMaker",1);
+					}
+					if (kcdebug_worldtick) Console.Printf("LDL Check [%p, %s]", ldlmo, ldlmo.GetClassName());
+				}
+			}
+		}
+		
+		// CCards
+		if ((level.time >= 3 && level.time <= 35) ||
+				(((level.time - 35) % 350) == 0))
+		{
+			int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+			if (kcdebug_worldtick) Console.Printf("d: %d [time: %d]", d, level.time);
+			if (d != -1)
+			{
+				let globalvars = KCGlobalVariables.Get();
+				globalvars.PlayingCCards = true;
+				actor player = players[0].mo;
+				player.A_SetInventory("PlayingCCards",1);
+				Actor mo;
+				
+				string nm = "CCards_Actor_MonsterDisguise";
+				ThinkerIterator it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
+					if (!mo.bISMONSTER) mo.bISMONSTER = true; // hehehehe >:V
+					if (kcdebug_worldtick) Console.Printf("LOLE [%p, %s]", mo, mo.GetClassName());
+				}
+			}
+		}
 	}
 	
 	override void NewGame()
@@ -21,12 +88,982 @@ class KC_EventHandler : EventHandler
 		if (kcdebug_mapfinishcheck) Console.Printf("\c[gold]NewGame() (KC_EventHandler) [%d]", globalvars.MapsFinished);
 		Super.NewGame();
 	}
+	
+	void ProjSetSpeed(actor spawnee)
+	{
+		double spdfactor, oldspdfactor;
+		
+		if (Level.MapName != "TITLEMAP")
+		{
+			if (!spawnee.accuracy)
+			{
+				if (spawnee)
+				{
+					if (spawnee.target)
+					{
+						if (spawnee.target.bISMONSTER && !PlayerPawn(spawnee.target) && spawnee.target.default.speed != 0)
+						{
+							spdfactor = spawnee.target.speed / spawnee.target.default.speed;
+							oldspdfactor = spdfactor;
+							if (spdfactor >= 1.00) 
+							{
+								spdfactor -= 1.00;
+								if (skill <= 0) spdfactor *= 0.25;
+								if (skill == 1) spdfactor *= 0.375;
+								if (skill == 2) spdfactor *= 0.5;
+								if (skill == 3) spdfactor *= 0.625;
+								if (skill >= 4) spdfactor *= 0.75;
+								spdfactor *= frandom(0.875,1.125);
+								spdfactor *= kc_mprojectilevelmulti;
+								if (spdfactor < 0.00) spdfactor = 0.00;
+								spdfactor += 1.00;
+								spawnee.A_ScaleVelocity(spdfactor);
+							}
+							if (kcdebug_projectilespawns) Console.Printf("(%s) spdfactor: %.8f (%.8f), spawnee.target.speed: %.8f, spawnee.target.default.speed: %.8f", spawnee.GetClassName(), spdfactor, oldspdfactor, spawnee.target.speed, spawnee.target.default.speed);
+						}
+					}
+					spawnee.accuracy++;
+				}
+			}
+		}
+	}
+	
+	actor, string, int CheckLevelTweaks(actor spawnee, string spawnname, int LevelCheck)
+	{
+		// Level Tweaks
+		// Micro-Boss
+		
+		// Mini-Boss
+		if (spawnname == "SpiderMastermindNew") LevelCheck += random(random(1,2),3);
+		if (spawnname == "Demolisher") LevelCheck += random(random(1,2),3);
+		if (spawnname == "CyberdemonNew") LevelCheck += random(random(1,2),3);
+		
+		// Tier 1 Boss
+		
+		// Tier 2 Boss
 
+		if (Peasant(spawnee)) LevelCheck /= 4;
+		else
+		{
+			if (random(1,32) <= 1)
+			{
+				if (random(1,32) <= 1)
+				{
+					if (random(1,32) <= 1)
+					{
+						if (spawnname == "ClayDevilNew") LevelCheck += random(4,6);
+						else if (spawnname == "Skeleton") LevelCheck += random(8,12);
+						else LevelCheck += random(16,24);
+					}
+					else
+					{
+						if (spawnname == "ClayDevilNew") LevelCheck += random(1,2);
+						else if (spawnname == "Skeleton") LevelCheck += random(2,3);
+						else LevelCheck += random(8,12);
+					}
+				}
+				else
+				{
+					if (spawnname == "ClayDevilNew") LevelCheck += randompick(0,0,0,0,0,0,0,0,0,1);
+					else if (spawnname == "Skeleton") LevelCheck += random(0,1);
+					else LevelCheck += random(2,3);
+				}
+			}
+			
+			// Rare Chance for a Level Quadruplication [i.e. Aetherius]
+			int basechance = 128;
+			if (random(1,basechance) <= (1 + (skill * 0.25)))
+			{
+				if (spawnname == "ClayDevilNew") LevelCheck *= 1.25;
+				else if (spawnname == "Skeleton") LevelCheck *= 1.5;
+				else LevelCheck *= 2;
+				
+				basechance = 128;
+				if (random(1,basechance) <= (1 + (skill * 0.25))) 
+				{
+					if (spawnname == "ClayDevilNew") LevelCheck *= 1.25;
+					else if (spawnname == "Skeleton") LevelCheck *= 1.5;
+					else LevelCheck *= 2;
+				}
+			}
+		}
+		
+		return spawnee, spawnname, LevelCheck;
+	}
+	
+	bool CheckExceptions(actor checkee)
+	{
+		string nm, nn, no, np;
+		bool exception = false;
+		if (checkee)
+		{
+			string spawnname = checkee.GetClassName();
+		}
+		return exception;
+	}
+	
+	void MonsterStatsSet(actor spawnee, int basemonsterrating, bool practicetarget, bool specialenemy, bool ispeasant)
+	{
+		if (Level.MapName != "TITLEMAP")
+		{
+			let globalvars = KCGlobalVariables.Get();
+			actor player = players[0].mo;
+			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			int TruePlayerLevel = 0;
+			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+			string spawnname = spawnee.GetClassName();
+			string nm, nn, no, np;
+			
+			double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
+			double hpmulti2, atkmulti2, defmulti2, spdmulti2, massmulti2;
+			
+			// Monster "Scaling"
+			bool exception = CheckExceptions(spawnee);
+			if (spawnee.bISMONSTER && !practicetarget && !exception)
+			{
+				double baselinelevel = 0;
+				if (A_CheckUOHYM() && level.mapname == "MAP01") 
+				{
+					baselinelevel += randompick(0,1,1,1,2,2,2,2,2,2,2,2,3,3,3,4);
+					nm = "Blot"; if (spawnname == nm) baselinelevel *= random(1,2);
+					nm = "Shadow"; if (spawnname == nm) baselinelevel *= random(1,2);
+					nm = "Mite"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "Vampyr"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "Striga"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "Putrefier"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "Hemodemon"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "Wight1"; if (spawnname == nm) baselinelevel *= random(2,3);
+					nm = "KDiZDNightmare"; if (spawnname == nm) baselinelevel *= random(8,12);
+					nm = "MirrorArchvile"; if (spawnname == nm) baselinelevel *= random(8,12);
+					nm = "KevCerberus"; if (spawnname == nm) baselinelevel *= random(8,12);
+					nm = "ChildhoodNightmare"; if (spawnname == nm) baselinelevel *= random(8,12);
+					nm = "Hellfish"; if (spawnname == nm) baselinelevel *= random(8,12);
+					nm = "SkinStealer"; if (spawnname == nm) baselinelevel *= random(16,24);
+					if (random(1,16) <= 1) baselinelevel *= 2.5;
+					else
+					{
+						if (random(1,8) <= 1) baselinelevel *= 1.75;
+						else
+						{
+							if (random(1,4) <= 1) baselinelevel *= 1.375;
+							else
+							{
+								if (random(1,2) <= 1) baselinelevel *= 1.1875;
+							}
+						}
+					}
+				}
+				
+				
+				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
+				int LevelErrorRange;
+				int LevelCheck;
+				int LevelChecker = 1;
+				int MapDifficultyInflation = clamp(kc_mapdifficultyinflation, -2000, 2000);
+				int MapDifficultyInflationPercent = clamp(kc_mapdifficultyinflation2,  1, 5000);
+				int MapErrorRange;
+				int LevelDifficultyInflation = clamp(kc_leveldifficultyinflation, -2000, 2000);
+				int LevelDifficultyInflationPercent = clamp(kc_leveldifficultyinflation2, -100, 2000);
+				int MapCheck;
+				double monsterrating = 0;
+				double monsterlevel = 0;
+				double leveltemp = 0;
+				double luckmult = 0;
+				double origSpd = spawnee.Speed;
+				double origDmgMul = spawnee.DamageMultiply;
+				double origDmgFct = spawnee.DamageFactor;
+				double origHealth = spawnee.health;
+				double origMass = spawnee.Mass;
+				KCCreature KCC;
+				KCC = KCCreature(spawnee);
+				
+				hpmulti = 0.00;
+				atkmulti = 0.00;
+				defmulti = 0.00;
+				spdmulti = 0.00;
+				massmulti = 0.00;
+				if (!specialenemy || !ispeasant)
+				{
+					double mult;
+					double mult2;
+					double multbase = 1;
+					int basedivfactor = 16;
+					if (skill <= 0) basedivfactor = 22;
+					if (skill == 1) basedivfactor = 19;
+					if (skill == 2) basedivfactor = 16;
+					if (skill == 3) basedivfactor = 11;
+					if (skill >= 4) basedivfactor = 6;
+
+					if (random(1,basedivfactor) <= 8)
+					{
+						if (random(1,basedivfactor) <= 4)
+						{
+							if (random(1,basedivfactor) <= 2)
+							{
+								if (random(1,basedivfactor) <= 1)
+								{
+									if (random(1,(basedivfactor*1.25)) <= 1)
+									{
+										if (random(1,(basedivfactor*1.5)) <= 1)
+										{
+											if (random(1,(basedivfactor*2)) <= 1)
+											{
+												if (random(1,(basedivfactor*3)) <= 1) monsterrating = 8; // <SSS>
+												else monsterrating = 7; // <SS>
+											}
+											else monsterrating = 6; // [S]
+										}
+										else monsterrating = 5; // [A]
+									}
+									else monsterrating = 4; // [B]
+								}
+								else monsterrating = 3; // [C]
+							}
+							else monsterrating = 2; // [D]
+						}
+						else monsterrating = 1; // [E]
+					}
+					
+					if (monsterrating < basemonsterrating) monsterrating = basemonsterrating;
+					multbase = 1.0;
+					double baseadd = 0.0;
+					if (monsterrating == 1) baseadd = 0.5; // [E]
+					if (monsterrating == 2) baseadd = 1.125; // [D]
+					if (monsterrating == 3) baseadd = 2.2; // [C]
+					if (monsterrating == 4) baseadd = 3.25; // [B]
+					if (monsterrating == 5) baseadd = 4.334; // [A]
+					if (monsterrating == 6) baseadd = 5.4; // [S]
+					if (monsterrating == 7) baseadd = 6.5; // <SS>
+					if (monsterrating >= 8) baseadd = 7.75; // <SSS>
+					baseadd *= frandompick(0.4375,0.5,0.5,0.5,0.5,0.5,0.5,0.5625);
+					multbase += baseadd;
+					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
+					
+					if (random(1,128) <= (monsterrating * 0.25))
+					{
+						multbase *= 2;
+						if (kcdebug_monsterscaling) Console.Printf("Boosted [1] - multbase: %.8f, monsterrating: %d", multbase, monsterrating);
+						if (random(1,128) <= (monsterrating * 0.125))
+						{
+							multbase *= 2;
+							if (kcdebug_monsterscaling) Console.Printf("Boosted [2] - multbase: %.8f, monsterrating: %d", multbase, monsterrating);
+						}
+					}
+					
+					bool levelee = false;
+					KCCreature spawnee2;
+					spawnee2 = KCCreature(spawnee);
+					if (spawnee2)
+					{
+						int presetlevel = spawnee2.user_presetleveladd + random(spawnee2.user_presetlevelrand1,spawnee2.user_presetlevelrand2);
+						if (presetlevel > 0) 
+						{
+							LevelCheck += presetlevel;
+							if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [presetlevel]: %d, monsterrating: %d", presetlevel, monsterrating);
+						}
+					}
+					//***********************
+					//* PlayerLevel Scaling *
+					//***********************
+					if (kc_enemyscalingplevel && globalvars && MiscItem)
+					{
+						int TruePlayerLevel = A_GetPlayerLevel(1);
+						TruePlayerLevel += baselinelevel;
+						LevelCheck += TruePlayerLevel;
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [PlayerLevel Check]: %d (PlayLvl: +%d), monsterrating: %d", LevelCheck, TruePlayerLevel, monsterrating);
+
+						if (KCC)
+						{
+							LevelCheck += KCC.user_ressurrectstr; // Checks the "Resurrect" strength of a monster [Clay Devils in TCOTD:A get stronger each time they resurrect]
+							if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [ResurrectStr Check]: %d (ResStr: +%d), monsterrating: %d", LevelCheck, KCC.user_ressurrectstr, monsterrating);
+						}
+						
+						LevelCheck += LevelDifficultyInflation;
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [inflation-exact]: %d (Difficulty Inflation: +%d), monsterrating: %d", LevelCheck, LevelDifficultyInflation, monsterrating);
+			
+						LevelCheck = LevelCheck * (100 + LevelDifficultyInflationPercent) / 100;
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [inflation-percent]: %d (Percent: %d%), monsterrating: %d", LevelCheck, (100 + LevelDifficultyInflationPercent), monsterrating);
+						
+						LevelErrorRange = LevelCheck * 0.1667;
+						if (LevelErrorRange < 1) LevelErrorRange = random(0,3);
+						LevelCheck += random(-LevelErrorRange,LevelErrorRange);
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [error-range]: %d (Error Range: +-%d), monsterrating: %d", LevelCheck, LevelErrorRange, monsterrating);
+
+						int PreviousLevelCheck = LevelCheck;
+						
+						/*
+						// Specific Monsters
+						if (SpiderMastermind(spawnee) || SpiderMastermindNew(spawnee)) LevelCheck += random(3,6);
+						if (Cyberdemon(spawnee) || CyberdemonNew(spawnee)) LevelCheck += random(3,6);
+						if (Annihilator(spawnee) || Demolisher(spawnee)) LevelCheck += random(3,6);
+						if (Minotaur(spawnee) || MinotaurFriend(spawnee)) LevelCheck += random(3,6);
+
+						// Specific Bosses
+						// Tier 1 Boss
+						if (Sorcerer1(spawnee) || DSparilMountedNew(spawnee)) LevelCheck += random(9,18);
+						if (FighterBoss(spawnee)) LevelCheck += random(9,18);
+						if (ClericBoss(spawnee)) LevelCheck += random(9,18);
+						if (MageBoss(spawnee)) LevelCheck += random(9,18);
+						// Tier 2 Boss
+						if (Sorcerer2(spawnee) || DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
+						if (Korax(spawnee) || KoraxNew(spawnee)) LevelCheck += random(15,30);
+						if (spawnname == "ThamuzNew" || spawnname == "TchernobogNew") LevelCheck += random(15,30);
+						// Tier 3 Boss
+						if (spawnname == "PennywiseBoss" || spawnname == "TchernobogNew") LevelCheck += random(23,45);
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [actor-check: %s]: %d (Previous: %d), monsterrating: %d", spawnname, LevelCheck, PreviousLevelCheck, monsterrating);
+						*/
+						
+						if (gameinfo.GameType == GAME_Doom)
+						{
+							if (Wads.CheckNumForName("EE-UNFAM", Wads.ns_global, -1, true) != -1 && level.GetChecksum() == "c50823f3e0b0504a403e0574af3f68e3")
+							{
+								if (spawnee.TID == 251)
+								{
+									PreviousLevelCheck = LevelCheck;
+									LevelCheck *= 2;
+									if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
+								}
+							}
+						}
+						PreviousLevelCheck = LevelCheck;
+						LevelCheck = clamp(LevelCheck, 0, 2000);
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [final calc]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
+						levelee = true;
+					}
+					
+					//
+					
+					//[spawnee, spawnname, LevelCheck] = CheckLevelTweaks(spawnee,spawnname,LevelCheck);
+					
+					if (levelee)
+					{
+						spawnee.A_SetInventory("MonsterLevel",LevelCheck);
+						KCCreature spawnee2;
+						spawnee2 = KCCreature(spawnee);
+						//
+						double truemultbase = multbase *= kc_enemyscalelevelmultiplier;
+						if (kcdebug_monsterscaling) Console.Printf("truemultbase: %.8f, kc_enemyscalelevelmultiplier: %.8f, monsterrating: %d", truemultbase, kc_enemyscalelevelmultiplier, monsterrating);
+						if (spawnee.bFRIENDLY)
+						{
+							if (skill <= 0) mult = 0.00275;
+							if (skill == 1) mult = 0.002625;
+							if (skill == 2) mult = 0.0025;
+							if (skill == 3) mult = 0.002375;
+							if (skill >= 4) mult = 0.00225;
+						}
+						else
+						{
+							if (skill <= 0) mult = 0.00225;
+							if (skill == 1) mult = 0.002375;
+							if (skill == 2) mult = 0.0025;
+							if (skill == 3) mult = 0.002625;
+							if (skill >= 4) mult = 0.00275;
+						}
+						mult *= 0.9;
+						mult *= (1.0 + (0.125 * monsterrating));
+						mult *= truemultbase;
+						if (kcdebug_monsterscaling) Console.Printf("\c[red]mult [pre-attack]: %.8f\c-, FRIENDLY?: %d, monsterrating: %d", mult, spawnee.bFRIENDLY, monsterrating);
+
+						// Attack
+						double baseatkmulti = (LevelCheck * mult);
+						if (LevelCheck >= 1 && LevelCheck <= 20) baseatkmulti *= frandom(1.0025,1.005);
+						if (LevelCheck >= 21 && LevelCheck <= 40) baseatkmulti *= frandom(1.0075,1.015);
+						if (LevelCheck >= 41 && LevelCheck <= 60) baseatkmulti *= frandom(1.015,1.03);
+						if (LevelCheck >= 61 && LevelCheck <= 80) baseatkmulti *= frandom(1.025,1.05);
+						if (LevelCheck >= 81 && LevelCheck <= 100) baseatkmulti *= frandom(1.0375,1.075);
+						if (LevelCheck >= 101 && LevelCheck <= 120) baseatkmulti *= frandom(1.0525,1.105);
+						if (LevelCheck >= 121 && LevelCheck <= 140) baseatkmulti *= frandom(1.07,1.14);
+						if (LevelCheck >= 141 && LevelCheck <= 160) baseatkmulti *= frandom(1.09,1.18);
+						if (LevelCheck >= 161 && LevelCheck <= 180) baseatkmulti *= frandom(1.1125,1.225);
+						if (LevelCheck >= 181 && LevelCheck <= 199) baseatkmulti *= frandom(1.1375,1.275);
+						if (LevelCheck >= 200) baseatkmulti *= frandom(1.165,1.33);
+						atkmulti = baseatkmulti;
+						//
+						if (kcdebug_monsterscaling) Console.Printf("atkmulti: %.8f", atkmulti);
+						
+						// Defense
+						defmulti = 1.0 / (baseatkmulti + 1.0);
+						//
+						defmulti -= 1.0;
+						if (kcdebug_monsterscaling) Console.Printf("defmulti: %.8f", defmulti);
+						
+						// Speed
+						spdmulti = (baseatkmulti * 0.25);
+						//
+						if (kcdebug_monsterscaling) Console.Printf("spdmulti: %.8f", spdmulti);
+							
+						// Mass
+						massmulti = (baseatkmulti / 1.25);
+						//
+						if (kcdebug_monsterscaling) Console.Printf("massmulti: %.8f", massmulti);
+						
+						// Health
+						hpmulti = (baseatkmulti / 1.25);
+						//
+						if (kcdebug_monsterscaling) Console.Printf("hpmulti: %.8f", hpmulti);
+					}
+					
+					//*********************
+					//* Map-Based Scaling *
+					//*********************
+					if (kc_enemyscalingmaps && globalvars && MiscItem)
+					{
+						double truemultbase = multbase *= kc_enemyscalemapmultiplier;
+						if (spawnee.bFRIENDLY)
+						{
+							if (skill <= 0) mult2 = 0.00275;
+							if (skill == 1) mult2 = 0.002625;
+							if (skill == 2) mult2 = 0.0025;
+							if (skill == 3) mult2 = 0.002375;
+							if (skill >= 4) mult2 = 0.00225;
+						}
+						else
+						{
+							if (skill <= 0) mult2 = 0.00225;
+							if (skill == 1) mult2 = 0.002375;
+							if (skill == 2) mult2 = 0.0025;
+							if (skill == 3) mult2 = 0.002625;
+							if (skill >= 4) mult2 = 0.00275;
+						}
+						mult2 *= (random(2,4) * 0.9);
+						mult2 *= (1.0 + ((random(5,10) * 0.0125) * monsterrating));
+						mult2 *= truemultbase;
+						
+						MapCheck = globalvars.MapsFinished;
+						
+						MapCheck += MapDifficultyInflation;
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [inflation-exact]: %d (Difficulty Inflation: +%d), monsterrating: %d", MapCheck, MapDifficultyInflation, monsterrating);
+			
+						MapCheck = MapCheck * (100 + MapDifficultyInflationPercent) / 100;
+						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [inflation-percent]: %d (Percent: %d%), monsterrating: %d", MapCheck, (100 + MapDifficultyInflationPercent), monsterrating);
+
+						// Attack
+						double baseatkmulti2 = (MapCheck * mult2);
+						if (MapCheck >= 1 && MapCheck <= 6) baseatkmulti2 *= 1.0125;
+						if (MapCheck >= 7 && MapCheck <= 11) baseatkmulti2 *= 1.025;
+						if (MapCheck >= 12 && MapCheck <= 20) baseatkmulti2 *= 1.0375;
+						if (MapCheck >= 21 && MapCheck <= 30) baseatkmulti2 *= 1.05;
+						if (MapCheck >= 31 && MapCheck <= 40) baseatkmulti2 *= 1.0625;
+						if (MapCheck >= 41 && MapCheck <= 50) baseatkmulti2 *= 1.075;
+						if (MapCheck >= 51 && MapCheck <= 60) baseatkmulti2 *= 1.0875;
+						if (MapCheck >= 61 && MapCheck <= 70) baseatkmulti2 *= 1.10;
+						if (MapCheck >= 71 && MapCheck <= 80) baseatkmulti2 *= 1.125;
+						if (MapCheck >= 81 && MapCheck <= 90) baseatkmulti2 *= 1.25;
+						if (MapCheck >= 91 && MapCheck <= 100) baseatkmulti2 *= 1.375;
+						if (MapCheck >= 101 && MapCheck <= 125) baseatkmulti2 *= 1.5;
+						if (MapCheck >= 126 && MapCheck <= 150) baseatkmulti2 *= 1.625;
+						if (MapCheck >= 151 && MapCheck <= 175) baseatkmulti2 *= 1.75;
+						if (MapCheck >= 176 && MapCheck <= 200) baseatkmulti2 *= 1.875;
+						if (MapCheck >= 201) baseatkmulti2 *= 2.0;
+						atkmulti2 = baseatkmulti2;
+						//
+						if (kcdebug_monsterscaling) Console.Printf("atkmulti2: %.8f", atkmulti2);
+						
+						// Defense
+						defmulti2 = 1.0 / (atkmulti2 + 1.0);
+						//
+						defmulti2 -= 1.0;
+						if (kcdebug_monsterscaling) Console.Printf("defmulti2: %.8f", defmulti2);
+						
+						// Speed
+						spdmulti2 = (atkmulti2 * 0.3125);
+						//
+						if (kcdebug_monsterscaling) Console.Printf("spdmulti2: %.8f", spdmulti2);
+							
+						// Mass
+						massmulti2 = atkmulti2 * 0.667;
+						//
+						if (kcdebug_monsterscaling) Console.Printf("massmulti2: %.8f", massmulti2);
+						
+						// Health
+						hpmulti2 = atkmulti2 * 0.667;
+						//
+						if (kcdebug_monsterscaling) Console.Printf("hpmulti2: %.8f", hpmulti2);
+					}
+			
+					// Final Calcs
+					double tempfinmulti = 1.0;
+					if (spdmulti || spdmulti2) 
+					{
+						tempfinmulti = 1.0;
+						double SpeedErrorRange = (spdmulti * 0.125);
+						spdmulti += frandom(-SpeedErrorRange,SpeedErrorRange);
+						tempfinmulti *= (1.0 + spdmulti);
+
+						SpeedErrorRange = (spdmulti2 * 0.0625);
+						spdmulti2 += frandom(-SpeedErrorRange,SpeedErrorRange);
+						tempfinmulti *= (1.0 + spdmulti2);
+
+						double maxtempfin = 5.00 + (monsterrating * (1.25 * 0.500));
+						if (tempfinmulti > maxtempfin) tempfinmulti = maxtempfin;
+						spawnee.Speed *= tempfinmulti;
+						
+						if (kcdebug_monsterscaling) Console.Printf("\c[lightblue]Speed: %.8f [old: %.8f, multi: %.8f, multi2: %.8f]\c-", spawnee.Speed, origSpd, spdmulti, spdmulti2);
+					}
+					if (atkmulti || atkmulti2) 
+					{
+						tempfinmulti = 1.0;
+						double AttackErrorRange = (atkmulti * 0.125);
+						atkmulti += frandom(-AttackErrorRange,AttackErrorRange);
+						tempfinmulti *= (1.0 + atkmulti);
+
+						AttackErrorRange = (atkmulti2 * 0.0625);
+						atkmulti2 += frandom(-AttackErrorRange,AttackErrorRange);
+						tempfinmulti *= (1.0 + atkmulti2);
+						
+						double maxtempfin = 15.0 + (monsterrating * 1.875);
+						if (tempfinmulti > maxtempfin) tempfinmulti = maxtempfin;
+
+						spawnee.DamageMultiply = tempfinmulti;
+						if (kcdebug_monsterscaling) Console.Printf("\c[red]DamageMultiply: %.8f [old: %.8f, multi: %.8f, multi2: %.8f]\c-", spawnee.DamageMultiply, origDmgMul, atkmulti, atkmulti2);
+					}
+					if (defmulti || defmulti2) 
+					{
+						tempfinmulti = 1.0;
+						double DefenseErrorRange = (defmulti * 0.125);
+						defmulti += frandom(-DefenseErrorRange,DefenseErrorRange);
+						tempfinmulti *= (1.0 + defmulti);
+
+						DefenseErrorRange = (defmulti2 * 0.0625);
+						defmulti2 += frandom(-DefenseErrorRange,DefenseErrorRange);
+						tempfinmulti *= (1.0 + defmulti2);
+						double maxtempfin = (0.0667 - (monsterrating * 0.00334));
+						if (tempfinmulti < maxtempfin) maxtempfin = maxtempfin;
+
+						spawnee.DamageFactor = tempfinmulti;
+						if (kcdebug_monsterscaling) Console.Printf("\c[olive]DamageFactor: %.8f [old: %.8f, multi: %.8f, multi2: %.8f]\c-", spawnee.DamageFactor, origDmgFct, defmulti, defmulti2);
+					}
+					if (hpmulti || hpmulti2) 
+					{
+						tempfinmulti = 0;
+						double MaxHPErrorRange = (hpmulti * 0.125);
+						hpmulti += frandom(-MaxHPErrorRange,MaxHPErrorRange);
+						tempfinmulti += hpmulti;
+
+						MaxHPErrorRange = (hpmulti2 * 0.0625);
+						hpmulti2 += frandom(-MaxHPErrorRange,MaxHPErrorRange);
+						tempfinmulti += hpmulti2;
+
+						double maxtempfin = 3.75 + (monsterrating * 0.375);
+						if (tempfinmulti > maxtempfin) tempfinmulti = maxtempfin;
+						if (tempfinmulti > (spawnee.SpawnHealth() * maxtempfin)) tempfinmulti = (spawnee.SpawnHealth() * maxtempfin);
+
+						spawnee.health *= (1.0 + tempfinmulti);
+						spawnee.Stamina = (spawnee.health - spawnee.SpawnHealth());
+						if (kcdebug_monsterscaling) Console.Printf("\c[brick]Health: %d (stam: %d) [old: %d, diff: %d, diff2: %d]\c-", spawnee.health, spawnee.Stamina, origHealth, hpmulti, hpmulti2);
+					}
+					if (massmulti || massmulti2) 
+					{
+						tempfinmulti = 0;
+						double MassErrorRange = (massmulti * 0.125);
+						massmulti += frandom(-MassErrorRange,MassErrorRange);
+						tempfinmulti += massmulti;
+
+						MassErrorRange = (massmulti2 * 0.0625);
+						massmulti2 += frandom(-MassErrorRange,MassErrorRange);
+						tempfinmulti += massmulti2;
+
+						double maxtempfin = 3.75 + (monsterrating * 0.375);
+						if (tempfinmulti > maxtempfin) tempfinmulti = maxtempfin;
+						if (tempfinmulti > (spawnee.default.mass * maxtempfin)) tempfinmulti = (spawnee.default.mass * maxtempfin);
+
+						spawnee.mass *= (1.0 + tempfinmulti);
+						spawnee.Accuracy = (spawnee.mass - spawnee.default.mass);
+						if (kcdebug_monsterscaling) Console.Printf("\c[brown]Mass: %d (Acc: %d) [old: %d, diff: %d, diff2: %d]\c-", spawnee.Mass, spawnee.Accuracy, origMass, massmulti, massmulti2);
+					}
+				}
+				if (kcdebug_monsterscaling) Console.Printf("\c[orange]monsterlevel: %d, monsterrating: %d", monsterlevel, monsterrating);
+				
+				if (LevelCheck)
+				{
+					if (random(1,100) <= random(11,13))
+					{
+						if (skill <= 0) LevelCheck *= frandompick(1.00,1.0078125,1.0078125,1.0078125,1.0078125,1.0078125,1.015625);
+						if (skill == 1) LevelCheck *= frandompick(1.00,1.015625,1.015625,1.015625,1.015625,1.015625,1.03125);
+						if (skill == 2) LevelCheck *= frandompick(1.00,1.03125,1.03125,1.03125,1.03125,1.03125,1.0625);
+						if (skill == 3) LevelCheck *= frandompick(1.00,1.0625,1.0625,1.0625,1.0625,1.0625,1.125);
+						if (skill >= 4) LevelCheck *= frandompick(1.00,1.125,1.125,1.125,1.125,1.125,1.25);
+					}
+
+					spawnee.A_SetInventory("MonsterLevel",LevelCheck);
+					spawnee.A_SetInventory("MonsterRating",monsterrating);
+					monsterlevel = spawnee.CountInv("MonsterLevel");
+					monsterrating = spawnee.CountInv("MonsterRating");
+					if (kcdebug_monsterscaling) Console.Printf("Actor's Level: %d [%d], Actor's Rating: %d [%d]", LevelCheck, spawnee.CountInv("MonsterLevel"), monsterrating, spawnee.CountInv("MonsterRating"));
+				}
+				string montag = spawnee.GetTag();
+				montag.AppendFormat(" \c[gold](L%d)\c-", monsterlevel);
+				spawnee.SetTag(montag);
+				
+				KCCreature spawnee2;
+				spawnee2 = KCCreature(spawnee);
+				if (spawnee2 && spawnee2.user_rankpreset) 
+				{
+					spawnee2.A_SetInventory("MonsterRating",spawnee2.user_rankpreset);
+					monsterrating = spawnee2.CountInv("MonsterRating");
+					monsterrating = spawnee2.user_rankpreset;
+				}
+				if (monsterrating)
+				{
+					spawnee.A_SetInventory("MonsterRating",monsterrating);
+					string montag = spawnee.GetTag();
+					if (monsterrating == 8) montag.AppendFormat(" \c[purple]<SSS>\c-");
+					else if (monsterrating == 7) montag.AppendFormat(" \c[fire]<SS>\c-");
+					else if (monsterrating == 6) montag.AppendFormat(" \c[red][S]\c-");
+					else if (monsterrating == 5) montag.AppendFormat(" \c[brick][A]\c-");
+					else if (monsterrating == 4) montag.AppendFormat(" \c[orange][B]\c-");
+					else if (monsterrating == 3) montag.AppendFormat(" \c[yellow][C]\c-");
+					else if (monsterrating == 2) montag.AppendFormat(" \c[green][D]\c-");
+					else if (monsterrating == 1) montag.AppendFormat(" \c[sapphire][E]\c-");
+					spawnee.SetTag(montag);
+				}
+				
+				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials(spawnee,monsterlevel,monsterrating);
+				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials2(spawnee,monsterlevel,monsterrating);
+				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials3(spawnee,monsterlevel,monsterrating);
+				if (!LD_nomonsters) A_LegendaryCheck(spawnee);
+				//if (!A_CheckUOHYM()) [spawnee, monsterlevel, monsterrating] = SetUpMiracles(spawnee,monsterlevel,monsterrating);
+			}
+		}
+		KCCreature spawnee2;
+		spawnee2 = KCCreature(spawnee);
+		if (spawnee2) 
+		{
+			spawnee2.A_SetInventory("ActorMaxHP",spawnee2.user_MaxHP);
+			if (spawnee2.isasummonedclone)
+			{
+				spawnee2.user_MaxHP *= 0.25;
+				spawnee2.health *= 0.25;
+			}
+			
+			spawnee2.user_MaxHP = spawnee2.SpawnHealth() + spawnee2.Stamina;
+			double RangeVar;
+			int Temp;
+
+			if (skill <= 0) RangeVar = 0.250; // 25.0%
+			if (skill == 1) RangeVar = 0.313; // 31.3%
+			if (skill == 2) RangeVar = 0.375; // 37.5%
+			if (skill == 3) RangeVar = 0.437; // 43.7%
+			if (skill >= 4) RangeVar = 0.500; // 50.0%
+			Temp = (spawnee2.user_MaxHP * RangeVar) + 1;
+			if (Temp < 2) Temp = 2;
+			spawnee2.user_HPBuffRange = Temp;
+
+			if (skill <= 0) RangeVar = 0.250; // 25.0%
+			if (skill == 1) RangeVar = 0.313; // 31.3%
+			if (skill == 2) RangeVar = 0.375; // 37.5%
+			if (skill == 3) RangeVar = 0.437; // 43.7%
+			if (skill >= 4) RangeVar = 0.500; // 50.0%
+			RangeVar /= 3;
+			Temp = (spawnee2.user_MaxHP * RangeVar) + 1;
+			if (Temp < 2) Temp = 2;
+			spawnee2.user_HPLowBuffRange = Temp;
+
+			spawnee2.user_HPXDeathRange = (spawnee2.user_MaxHP * -1.0);
+			if (spawnee2.GetClassName() == "BloodZombieNew") spawnee2.user_HPXDeathRange2 = (spawnee2.user_MaxHP * -0.5);
+			
+			if (skill <= 0) RangeVar = 0.080; // 8.0%
+			if (skill == 1) RangeVar = 0.120; // 12.0%
+			if (skill == 2) RangeVar = 0.160; // 16.0%
+			if (skill == 3) RangeVar = 0.200; // 20.0%
+			if (skill >= 4) RangeVar = 0.240; // 24.0%
+			spawnee2.user_HPLowRange = (spawnee2.user_MaxHP * RangeVar);
+			
+			if (skill <= 0) RangeVar = 0.010; // 1.0%
+			if (skill == 1) RangeVar = 0.015; // 1.5%
+			if (skill == 2) RangeVar = 0.020; // 2.0%
+			if (skill == 3) RangeVar = 0.025; // 2.5%
+			if (skill >= 4) RangeVar = 0.030; // 3.0%
+			spawnee2.user_HPCritRange = (spawnee2.user_MaxHP * RangeVar);
+		}
+	}
+	
+	int CountPlayers()
+	{
+		int count = 0, i;
+	
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (PlayerInGame[i]) count++;
+		}
+		return count;
+	}
+	
+	void A_LegendaryCheck(actor spawnee)
+	{
+		class<Inventory> LDLPreload, LDLToken, LDLCheck, MiscCheck, MiscCheck2, MiscCheck3, MiscCheck4;
+		string spawnname = spawnee.GetClassName();
+		KCCreature spawnee2;
+		spawnee2 = KCCreature(spawnee);
+		
+		bool NoLegendary;
+		bool boo;
+		bool LEGENDARIFY;
+		bool LEGENDARIFYSuccess;
+		bool BOSSTIEM;
+		bool BOSSACTIVAAAATE;
+		
+		if (spawnee)
+		{
+			String nm = "LDLegendaryMonsterTracker";
+			LDLPreload = nm;
+			
+			if (!(spawnname == "PeasantNew" ||
+						spawnname == "Peasant1New" ||
+						spawnname == "Peasant2New" ||
+						spawnname == "Peasant3New" ||
+						spawnname == "Peasant4New" ||
+						spawnname == "Peasant5New" ||
+						spawnname == "Peasant6New" ||
+						spawnname == "Peasant7New" ||
+						spawnname == "Peasant8New" ||
+						spawnname == "Peasant9New" ||
+						spawnname == "Peasant10New" ||
+						spawnname == "Peasant11New" ||
+						spawnname == "Peasant12New" ||
+						spawnname == "Peasant13New" ||
+						spawnname == "Peasant14New" ||
+						spawnname == "Peasant15New" ||
+						spawnname == "Peasant16New" ||
+						spawnname == "Peasant17New" ||
+						spawnname == "Peasant18New" ||
+						spawnname == "Peasant19New" ||
+						spawnname == "Peasant20New" ||
+						spawnname == "Peasant21New" ||
+						spawnname == "Peasant22New" ||
+						spawnname == "BeggarNew" ||
+						spawnname == "Beggar1New" ||
+						spawnname == "Beggar2New" ||
+						spawnname == "Beggar3New" ||
+						spawnname == "Beggar4New" ||
+						spawnname == "Beggar5New" ||
+						spawnname == "MerchantNew" ||
+						spawnname == "WeaponSmithNew" ||
+						spawnname == "BarKeepNew" ||
+						spawnname == "ArmorerNew" ||
+						spawnname == "MedicNew"))
+			{
+				String nn;
+				if (A_CheckUOHYM())
+				{
+					nn = "MirrorArchvile"; if (spawnname == nn) BOSSACTIVAAAATE = true;
+					nn = "ChildhoodNightmare"; if (spawnname == nn) BOSSACTIVAAAATE = true;
+					nn = "KevCerberus"; if (spawnname == nn) BOSSACTIVAAAATE = true;
+					nn = "Hellfish"; if (spawnname == nn) BOSSACTIVAAAATE = true;
+					nn = "SkinStealer"; if (spawnname == nn) BOSSACTIVAAAATE = true;
+					nn = "BabyFish"; if (spawnname == nn) 
+					
+					{
+						if (random(1,2) == 1) NoLegendary = true;
+														 else LEGENDARIFYSuccess = true;
+					}
+					nn = "BestBuddy"; if (spawnname == nn) NoLegendary = true;
+					nn = "BestBuddyLayingDown"; if (spawnname == nn) NoLegendary = true;
+				}
+				
+				if (!NoLegendary && !BOSSACTIVAAAATE && !LEGENDARIFYSuccess)
+				{
+					KCCreature KCC;
+					KCC = KCCreature(spawnee);
+					if (KCC && KCC.user_ldlautolegendary)
+					{
+						if (KCC.bBOSS) BOSSACTIVAAAATE = true;
+						else LEGENDARIFYSuccess = true;
+					}
+				}
+				
+				int ldlchance = ((CountPlayers() * 4) + (LD_legendarychance * 5));
+				if (kcLDL_newldlchances) // uses the chances from LDL 4.1
+				{
+					if (skill <= 0) ldlchance = (random(0,4) + (CountPlayers() * 4) + (LD_legendarychance * 5)); // Very Easy
+					if (skill == 1) ldlchance = (random(0,6) + (CountPlayers() * 6) + (LD_legendarychance * 5)); // Easy
+					if (skill == 2) ldlchance = (random(0,8) + (CountPlayers() * 8) + (LD_legendarychance * 5)); // Normal
+					if (skill == 3) ldlchance = (random(0,10) + (CountPlayers() * 10) + (LD_legendarychance * 5)); // Hard
+					if (skill == 4) ldlchance = (random(0,20) + (CountPlayers() * 20) + (LD_legendarychance * 5)); // Very Hard
+					if (skill == 5) ldlchance = (random(0,25) + (CountPlayers() * 25) + (LD_legendarychance * random(4,6))); // Extreme
+					if (skill == 6) ldlchance = (random(0,30) + (CountPlayers() * 30) + (LD_legendarychance * random(4,6))); // Horrible
+					if (skill == 7) ldlchance = (random(0,35) + (CountPlayers() * 35) + (LD_legendarychance * random(3,7))); // Impossible
+					if (skill >= 8) ldlchance = (random(0,40) + (CountPlayers() * 40) + (LD_legendarychance * random(2,8))); // Omega
+				}
+				else // uses the older-skool chances of EE/Aetherius [which is based on LDL 3.0]
+				{
+					if (skill <= 0) ldlchance = (random(2,4) + (CountPlayers() * 4) + (LD_legendarychance * 3)); // Very Easy
+					if (skill == 1) ldlchance = (random(3,6) + (CountPlayers() * 6) + (LD_legendarychance * 4)); // Easy
+					if (skill == 2) ldlchance = (random(4,8) + (CountPlayers() * 8) + (LD_legendarychance * 5)); // Normal
+					if (skill == 3) ldlchance = (random(5,10) + (CountPlayers() * 10) + (LD_legendarychance * 6)); // Hard
+					if (skill == 4) ldlchance = (random(7,14) + (CountPlayers() * 14) + (LD_legendarychance * 7)); // Very Hard
+					if (skill == 5) ldlchance = (random(8,18) + (CountPlayers() * 18) + (LD_legendarychance * 8)); // Extreme
+					if (skill == 6) ldlchance = (random(11,22) + (CountPlayers() * 22) + (LD_legendarychance * 9)); // Horrible
+					if (skill == 7) ldlchance = (random(13,27) + (CountPlayers() * 27) + (LD_legendarychance * 10)); // Impossible
+					if (skill >= 8) ldlchance = (random(16,32) + (CountPlayers() * 32) + (LD_legendarychance * 11)); // Omega
+				}
+				if (LD_legendarydebug) Console.Printf("[%s @ %p] chance: %d / 256", spawnname, spawnee, ldlchance);
+				
+				if (NoLegendary || LEGENDARIFYSuccess || BOSSACTIVAAAATE) { }
+				else
+				{
+					if (LD_nomonsters == 1) 
+					{
+						if (LD_legendarydebug) Console.Printf("\c[green][%s @ %p] LD_nomonsters == 1", spawnname, spawnee);
+						NoLegendary = true; // NoLegendary
+					}
+					else
+					{
+						if (LD_nobosses == 2) // BOSSCheckeroonie
+						{
+							if (LD_legendarydebug) Console.Printf("\c[green][%s @ %p] LD_nobosses == 2", spawnname, spawnee);
+							if (spawnee.bBOSS) BOSSACTIVAAAATE = true; // BOSSACTIVAAAATE
+														else LEGENDARIFY = true; // DifficultyChance
+						}
+						else
+						{
+							if (LD_legendarydebug) Console.Printf("\c[darkgreen][%s @ %p] LD_nobosses != 2", spawnname, spawnee);
+							if (LD_diemode == 1) LEGENDARIFYSuccess = true; // LEGENDARIFYSuccess
+															else LEGENDARIFY = true; // DifficultyChance
+						}
+					}
+					
+					// bool checks
+					if (LEGENDARIFY)
+					{
+						if (LD_legendarydebug) Console.Printf("\c[orange][%s @ %p] LEGENDARIFY", spawnname, spawnee);
+						if (random(1,256) <= ldlchance) // LEGENDARIFY
+						{
+							if (spawnee.bSPECIAL) NoLegendary = true;
+							else
+							{
+								if (LD_monstercheck == 0) // Makes it ignore the next check if disabled
+								{
+									int chance2 = 160;
+									if (kcLDL_newldlchances) chance2 = 240;
+									if (random(1,256) <= chance2) NoLegendary = true; // NoLegendary
+																					else LEGENDARIFYSuccess = true; // LEGENDARIFYSuccess
+								}
+								else boo = true; // Added to stop stuff like legendary trees
+							}
+						}
+					}
+					if (BOSSTIEM)
+					{
+						if (LD_legendarydebug) Console.Printf("\c[orange][%s @ %p] BOSSTIEM", spawnee.GetClassName(), spawnee);
+						if (LD_nobosses == 1) NoLegendary = true; // NoLegendary
+						else
+						{
+							int chance2 = 120;
+							if (kcLDL_newldlchances) chance2 = 180;
+							if (random(1,256) <= chance2) NoLegendary = true; // NoLegendary
+																			else LEGENDARIFYSuccess = true; // LEGENDARIFYSuccess
+						}
+					}
+					
+					if (boo)
+					{
+						if (LD_legendarydebug) Console.Printf("\c[orange][%s @ %p] boo", spawnee.GetClassName(), spawnee);
+						if (spawnee.bCOUNTKILL || A_CheckUOHYM()) // Boo
+						{
+							if (spawnee.bBOSS) BOSSTIEM = true; // BOSSTIEM
+							else
+							{
+								int chance2 = 160;
+								if (kcLDL_newldlchances) chance2 = 240;
+								if (random(1,256) <= chance2) NoLegendary = true; // NoLegendary
+																				else LEGENDARIFYSuccess = true; // LEGENDARIFYSuccess
+							}
+						}
+					}
+				}
+				
+				// bool checks
+				if (BOSSACTIVAAAATE)
+				{
+					if (LD_legendarydebug) Console.Printf("\c[sapphire][%s @ %p] BOSSACTIVAAAATE", spawnee.GetClassName(), spawnee);
+					actor mo;
+					bool success;
+					[success, mo] = spawnee.A_SpawnItemEx("LDLegendaryMonsterBossMarker", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION); 
+					if (success && mo) mo.target = spawnee;
+					spawnee.A_GiveInventory(LDLPreload,1); // BRING THE PAIN
+					return;
+				}
+				else
+				if (LEGENDARIFYSuccess)
+				{
+					if (LD_legendarydebug) Console.Printf("\c[gold][%s @ %p] LEGENDARIFYSuccess", spawnee.GetClassName(), spawnee);
+					actor mo;
+					bool success;
+					[success, mo] = spawnee.A_SpawnItemEx("LDLegendaryMonsterMarker", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION); 
+					if (success && mo) mo.target = spawnee;
+					spawnee.A_GiveInventory(LDLPreload,1); // POWER UP TIME
+					return;
+				}
+				else
+				if (NoLegendary)
+				{
+					if (LD_legendarydebug) Console.Printf("\c[red][%s @ %p] NoLegendary", spawnee.GetClassName(), spawnee);
+					return;
+				}
+			}
+		}
+	}
+	
+	void A_SetMonsterProjNameTags(actor spawnee)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		string spawnname = spawnee.GetClassName();
+		
+		//A_BloomMonsterNames(spawnee);
+		
+		if (spawnname == "DoomImpBall") 
+		{
+			spawnee.SetTag("Imp Fireball");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "CacodemonBall") 
+		{
+			spawnee.SetTag("Lightning Ball");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "RevenantTracer") 
+		{
+			spawnee.SetTag("Tracer Missile");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "ArachnotronPlasma")
+		{
+			spawnee.SetTag("Plasma Ball");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "ArchvileFire")
+		{
+			spawnee.SetTag("Vile FireHex");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "BaronBall")
+		{
+			spawnee.SetTag("HellNoble Plasma");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "FatShot")
+		{
+			spawnee.SetTag("Flamer Shot");
+			ProjSetSpeed(spawnee);
+		}
+		if (spawnname == "Rocket")
+		{
+			spawnee.SetTag("Rocket");
+			ProjSetSpeed(spawnee);
+		}
+	}
+	
 	override void WorldThingSpawned(WorldEvent e)
 	{
 		let globalvars = KCGlobalVariables.Get();
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PLuck;
+		if (MiscItem) PLuck = MiscItem.PlayerLUCK;
+		KCCreature KCC;
 		
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np;
