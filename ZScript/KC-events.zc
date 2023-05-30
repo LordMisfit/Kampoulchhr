@@ -413,18 +413,6 @@ class KC_EventHandler : EventHandler
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [actor-check: %s]: %d (Previous: %d), monsterrating: %d", spawnname, LevelCheck, PreviousLevelCheck, monsterrating);
 						*/
 						
-						if (gameinfo.GameType == GAME_Doom)
-						{
-							if (Wads.CheckNumForName("EE-UNFAM", Wads.ns_global, -1, true) != -1 && level.GetChecksum() == "c50823f3e0b0504a403e0574af3f68e3")
-							{
-								if (spawnee.TID == 251)
-								{
-									PreviousLevelCheck = LevelCheck;
-									LevelCheck *= 2;
-									if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
-								}
-							}
-						}
 						PreviousLevelCheck = LevelCheck;
 						LevelCheck = clamp(LevelCheck, 0, 2000);
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [final calc]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
@@ -433,7 +421,7 @@ class KC_EventHandler : EventHandler
 					
 					//
 					
-					//[spawnee, spawnname, LevelCheck] = CheckLevelTweaks(spawnee,spawnname,LevelCheck);
+					[spawnee, spawnname, LevelCheck] = CheckLevelTweaks(spawnee,spawnname,LevelCheck);
 					
 					if (levelee)
 					{
@@ -1186,6 +1174,41 @@ class KC_EventHandler : EventHandler
 			let globalvars = KCGlobalVariables.Get();
 			actor playera = players[0].mo;
 			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+			
+			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+			string nm, nn, no, np;
+			actor spawnee = e.thing;
+			string spawnname = spawnee.GetClassName();
+			int TruePlayerLevel = 0;
+			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+			
+			
+			if (spawnee)
+			{
+				spawnee.A_SetInventory("LDLegendaryWasLegendary",0);
+
+				DedMonsterFlag dedcheckitem;
+				dedcheckitem = DedMonsterFlag(spawnee.FindInventory("DedMonsterFlag"));
+				if (dedcheckitem)
+				{
+					spawnee.A_SetRenderStyle(dedcheckitem.ownerorigalpha,dedcheckitem.ownerorigrender);
+					dedcheckitem.Destroy();
+				}
+				
+				nm = "ClayDevilNew"; extracheck = nm;
+				if (spawnname == extracheck)
+				{
+					spawnee.speed = spawnee.default.speed;
+					spawnee.DamageMultiply = spawnee.default.DamageMultiply;
+					spawnee.DamageFactor = spawnee.default.DamageFactor;
+					spawnee.health = spawnee.SpawnHealth();
+					spawnee.Mass = spawnee.default.mass;
+					spawnee.SetTag(spawnee.default.GetTag());
+					MonsterStatsSet(spawnee, 0, false, false, false);
+				}
+				
+				if (dydudebug_ressurrectdisplays) Console.Printf("Res: Max Health - %d (%d + %d)", (spawnee.SpawnHealth() + spawnee.Stamina), spawnee.SpawnHealth(), spawnee.Stamina); 
+			}
 		}
 		Super.WorldThingRevived(e);
 	}
@@ -1750,6 +1773,19 @@ class KC_EventHandler : EventHandler
 		int user_type;
 		KCCreature KCCVict;
 		if (victim) KCCVict = KCCreature(victim);
+		bool waslegendary = false;
+		if (victim) 
+		{
+			let LDLItem = LDLegendaryMonsterTracker(victim.FindInventory("LDLegendaryMonsterTracker"));
+			if (LDLItem)
+			{
+				waslegendary = true;
+				LDLItem.condemned = true;
+				victim.A_SetInventory("LDLegendaryWasLegendary",1);
+			}
+			KCCVict = KCCreature(victim);
+		}
+
 		int armorbonusrolls;
 		int healthbonusrolls;
 		
@@ -2565,10 +2601,23 @@ class KC_EventHandler : EventHandler
 			bool giveexp;
 			bool playerkill;
 			bool allykill;
+			bool waslegendary = false;
+			KCCreature KCC;
+			KCC = KCCreature(victim);
+			bool exception = CheckExceptions(victim);
 			
 			bool isCCardsIllusion = false;
 			if (victim)
 			{
+				victim.SetInventory("LDLegendaryMonsterTransformed", 0);
+				victim.SetInventory("LDLegendaryMonsterVisualEffectMaker", 0);
+				victim.SetInventory("LDLegendaryMonsterVisualEffectAlternator", 0);
+				if (victim.CountInv("LDLegendaryMonsterTracker") > 0)
+				{
+					waslegendary = true;
+					victim.A_SetInventory("LDLegendaryMonsterTracker",0);
+				}
+
 				if (victim.bNOBLOOD == true && 
 						victim.bNOPAIN == true &&
 						victim.bNOTARGETSWITCH == true &&
@@ -2599,7 +2648,8 @@ class KC_EventHandler : EventHandler
 			
 			
 			if (victim && 
-					!isCCardsIllusion)
+					!isCCardsIllusion &&
+					!exception)
 			{
 				int specialtype;
 				nm = "CCardGhostMarker";
@@ -2654,6 +2704,32 @@ class KC_EventHandler : EventHandler
 						}
 
 						int ExpGain = (victim.SpawnHealth() + victim.Stamina);
+						if (waslegendary) ExpGain *= 1.25;
+						if (monsterrating)
+						{
+							if (waslegendary)
+							{
+								if (monsterrating == 1) ExpGain *= 1.05;
+								if (monsterrating == 2) ExpGain *= 1.1;
+								if (monsterrating == 3) ExpGain *= 1.2;
+								if (monsterrating == 4) ExpGain *= 1.4;
+								if (monsterrating == 5) ExpGain *= 1.8;
+								if (monsterrating == 6) ExpGain *= 2.6;
+								if (monsterrating == 7) ExpGain *= 4.2;
+								if (monsterrating >= 8) ExpGain *= 7.4;
+							}
+							else
+							{
+								if (monsterrating == 1) ExpGain *= 1.0125;
+								if (monsterrating == 2) ExpGain *= 1.025;
+								if (monsterrating == 3) ExpGain *= 1.05;
+								if (monsterrating == 4) ExpGain *= 1.1;
+								if (monsterrating == 5) ExpGain *= 1.2;
+								if (monsterrating == 6) ExpGain *= 1.4;
+								if (monsterrating == 7) ExpGain *= 1.8;
+								if (monsterrating >= 8) ExpGain *= 2.6;
+							}
+						}
 						if (specialtype & 1) ExpGain *= 0.5;
 						if (specialtype & 2) ExpGain *= frandompick(1.8,2.2);
 						if (specialtype & 4) ExpGain *= frandompick(0.625,0.875);
@@ -2671,6 +2747,10 @@ class KC_EventHandler : EventHandler
 						}
 						else
 						if (inflicter)
+						{
+						}
+						else
+						if (mastor)
 						{
 						}
 						ExpGain *= alterchance;
@@ -2694,7 +2774,6 @@ class KC_EventHandler : EventHandler
 							tallyextra = (MiscItem.totalallkills * 0.005) + (MiscItem.totalallitems * 0.0025) + (MiscItem.totalallsecrets * 0.0025) + (MiscItem.totalcompleted * 0.01);
 							ExpGain *= (1.00 + tallyextra);
 							if (kcdebug_worlddied) Console.Printf("[tallyextra] x%.4f, ExpGain: %d [%d]", 1.00+tallyextra, ExpGain, OExpGain);
-							/*
 							if (MiscItem.KillComboCount > 0)
 							{
 								double combomultiplieramt;
@@ -2715,7 +2794,6 @@ class KC_EventHandler : EventHandler
 								ExpGain = (ExpGain * combomultiplieramt);
 								if (kcdebug_worlddied) Console.Printf("[combomultiplieramt] x%.4f, ExpGain: %d [%d]", combomultiplieramt, ExpGain, OExpGain);
 							}
-							*/
 						}
 						EXPGain *= kc_expmultiplier;
 						
@@ -2733,6 +2811,7 @@ class KC_EventHandler : EventHandler
 						{
 							if (ExpGain < 1) ExpGain = 1;
 							
+							Actor playera = players[0].mo;
 							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
 							{
 								int EXPPrevReq = 0;
@@ -2749,7 +2828,6 @@ class KC_EventHandler : EventHandler
 								if (kc_showexpgains) Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
 								if (kc_showexpgains)
 								{
-									/*
 									MiscItem.KillComboCount += 1;
 									MiscItem.EXPGainHUDAmt += ExpGain;
 									if (MiscItem.EXPGainHUDTimer <= 0) MiscItem.EXPGainHUDTimer = 105;
@@ -2761,12 +2839,12 @@ class KC_EventHandler : EventHandler
 										if (MiscItem.EXPGainHUDTimer < 245 && ExpGain > (EXPFullReq * 0.25)) MiscItem.EXPGainHUDTimer = 245;
 										if (MiscItem.EXPGainHUDTimer > 280) MiscItem.EXPGainHUDTimer = 280;
 									}
-									*/
 								}
 							}
 						}
 						else
 						{
+							Actor playera = players[0].mo;
 							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
 							{
 								playera.A_GiveInventory("KillsCount",1);
@@ -2781,7 +2859,12 @@ class KC_EventHandler : EventHandler
 						if (playoneliner && playera.GetClassName() == "HeiwaPlayer" && MiscItem)
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
+							bool voicecheck = false;
 							if (kc_heiwaextravoices && kc_heiwaoneliners && !MiscItem.OneLinerCooldown)
+							{
+								if (MiscItem.OneLinerCooldown <= 0 || waslegendary) voicecheck = true;
+							}
+							if (voicecheck)
 							{
 								int basechance = kc_heiwaonelinerbasechance; // 8
 								if (basechance < 0) basechance = 0;
@@ -2790,11 +2873,14 @@ class KC_EventHandler : EventHandler
 									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
 									if (playera.CountInv("LowHealth")) basechance *= 1.5;
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
+									if (waslegendary) basechance *= 5;
 									
 									if (victim.bBOSS) basechance *= 8;
 									if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
-									if (kcdebug_worlddied) Console.Printf("%d / 256", basechance);
-									if (random(1,256) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
+									int maxchance = 256;
+									if (waslegendary) maxchance *= 0.25;
+									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
+									if (maxchance <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 									{
 										double maskpitch = 1.00;
 										if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
@@ -2823,14 +2909,31 @@ class KC_EventHandler : EventHandler
 					}
 					
 					// Item Drop Action
-					[PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill] = A_KillDropTables(PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill);
+					if (KCC && KCC.user_dontdroprandomstuff) { }
+					else
+					{
+						if (mod != 'Crush' || mod != 'Falling' || !exception) 
+						{
+							[PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill] = A_KillDropTables(PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill);
+						}
+					}
 					
 					//*******************************
 					//* Killed With Certain Weapons *
 					//*******************************
-					if (source && (KCPlayerPawn(source) || source.GetClassName() == "HeiwaPlayer") && (victim.bCOUNTKILL || specialtype))
+					if (source && 
+							(KCPlayerPawn(source) || source.GetClassName() == "HeiwaPlayer") && 
+							(victim.bCOUNTKILL || specialtype))
 					{
 						//
+					}
+					
+					KCCreature BossVict;
+					BossVict = KCCreature(victim);
+					if (BossVict)
+					{
+						if (kcdebug_scriptdisplays) Console.Printf("BossVict");
+						BossVict.bossdeathactivate++;
 					}
 				}
 			}
