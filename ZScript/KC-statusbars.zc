@@ -1068,9 +1068,6 @@ class KCStatusBarMain : BaseStatusBar
 			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			double malpha = 0.875;
 			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
-			
-			if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
-											else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 
 			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
@@ -1091,6 +1088,19 @@ class KCStatusBarMain : BaseStatusBar
 				fontalpha = 0.25;
 				fontclr = font.cr_darkgray;
 			}
+			
+			if (hudarmortype <= 1)
+			{
+				if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+												else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+			}
+			else
+			{
+				if (lgpiece2 >= 101) DrawBar("APNOTCH4", "APNOTCH3", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+												else DrawBar("APNOTCH3", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+			}
+			
+			
 			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			

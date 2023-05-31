@@ -128,6 +128,339 @@ class KC_EventHandler : EventHandler
 		}
 	}
 	
+	actor, int, int AddLevelSpecials(actor spawnee, int monsterlevel, int monsterrating)
+	{
+		double levelmulfact = 1.5;
+		if (exex_monsterlevelenabledflags)
+		{
+			if (monsterlevel >= (10 * levelmulfact))
+			{
+			}
+			
+			if (monsterlevel >= (15 * levelmulfact))
+			{
+				if (Cyberdemon(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (CyberdemonNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (SpiderMasterMind(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (SpiderMastermindNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (UltraMastermind(spawnee)) spawnee.bAVOIDMELEE = true;
+		
+				if (Minotaur(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (MinotaurFriend(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Sorcerer1(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Sorcerer2(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (IceGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Heresiarch(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Korax(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (Inquisitor(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Programmer(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (StrifeBishop(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Macil1(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Macil2(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Macil1(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (AlienSpectre1(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (AlienSpectre2(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (AlienSpectre3(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (AlienSpectre4(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (AlienSpectre5(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (EntityBoss(spawnee)) spawnee.bAVOIDMELEE = true;
+			}
+			
+			if (monsterlevel >= (20 * levelmulfact))
+			{
+				if (Zombieman(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (ZombiemanNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (PlasmaGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (RepeaterZombie(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (KarasawaGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (RocketLauncherGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (ShotgunGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (ShotgunGuyNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (SuperShotgunGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (FemaleRailZombie(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (ChaingunGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (ChaingunGuyNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (Minigunner(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (BFGGuy(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (WolfensteinSS(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (WolfensteinSSNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (FlyingBalrog(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (IronLich(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Snake(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (Bishop(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (SerpentLeader(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (ClericBoss(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (FighterBoss(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (MageBoss(spawnee)) spawnee.bAVOIDMELEE = true;
+		
+				if (Acolyte(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Rebel(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Reaver(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Templar(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (EntitySecond(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				// AVOIDHAZARDS
+			}
+			
+			if (monsterlevel >= (25 * levelmulfact))
+			{
+				// AVOIDHAZARDS
+				//if (NetherDarkImp(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				// AVOIDMELEE
+				//if (NetherDarkImp(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Fatso(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (MancubusNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (Daedabus(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Arachnotron(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (ArachnotronNew(spawnee) || RailArachnotron(spawnee) || FusionArachnotron(spawnee) || ArachnotronMK2(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Archvile(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (ArchvileNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (BaronOfHell(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (BaronOfHellNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (HellCleric(spawnee) || HellClericDVDS(spawnee) || HellClericSpectral(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (Wizard(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Beast(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (FireDemon(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (CentaurLeader(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Demon1(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Demon2(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Wraith(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (Sentinel(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Crusader(spawnee)) spawnee.bAVOIDMELEE = true;
+			}
+			
+			if (monsterlevel >= (30 * levelmulfact))
+			{
+				//if (Abaddon(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (Hectebus(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				// AVOIDHAZARDS
+				//if (Abaddon(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (Cyberdemon(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (CyberdemonNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (SpiderMasterMind(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (SpiderMastermindNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (UltraMastermind(spawnee)) spawnee.bAVOIDHAZARDS = true;
+		
+				if (Minotaur(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (MinotaurFriend(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Sorcerer1(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Sorcerer2(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (IceGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Heresiarch(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Korax(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (Inquisitor(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Programmer(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (StrifeBishop(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Macil1(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Macil2(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Macil1(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (AlienSpectre1(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (AlienSpectre2(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (AlienSpectre3(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (AlienSpectre4(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (AlienSpectre5(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (EntityBoss(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+			
+			if (monsterlevel >= (35 * levelmulfact))
+			{
+				if (DoomImp(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (DoomImpNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (DarkImp(spawnee) || STDarkImp(spawnee) || VoidDarkImp(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Cacodemon(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (CacodemonNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (PainElemental(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (PainElementalNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Revenant(spawnee) && random(1,2) <= 1) spawnee.bAVOIDMELEE = true;
+				//if (RevenantNew(spawnee) && random(1,2) <= 1) spawnee.bAVOIDMELEE = true;
+				if (HellKnight(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (HellKnightNew(spawnee)) spawnee.bAVOIDMELEE = true;
+				
+				if (HereticImpLeader(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (MummyLeader(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (MummyLeaderGhost(spawnee)) spawnee.bAVOIDMELEE = true;
+				if (Knight(spawnee)) spawnee.bAVOIDMELEE = true;
+			}
+		}
+		return spawnee, monsterlevel, monsterrating;
+	}
+	
+	actor, int, int AddLevelSpecials2(actor spawnee, int monsterlevel, int monsterrating)
+	{
+		double levelmulfact = 1.5;
+		if (exex_monsterlevelenabledflags)
+		{
+			if (monsterlevel >= (40 * levelmulfact))
+			{
+				// AVOIDHAZARDS
+				if (Zombieman(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (ZombiemanNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (PlasmaGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (RepeaterZombie(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (KarasawaGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (RocketLauncherGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (ShotgunGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (ShotgunGuyNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (SuperShotgunGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (FemaleRailZombie(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (ChaingunGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (ChaingunGuyNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (Minigunner(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (BFGGuy(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (WolfensteinSS(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (WolfensteinSSNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (FlyingBalrog(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (IronLich(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Snake(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (Bishop(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (SerpentLeader(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (ClericBoss(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (FighterBoss(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (MageBoss(spawnee)) spawnee.bAVOIDHAZARDS = true;
+		
+				if (Acolyte(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Rebel(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Reaver(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Templar(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (EntitySecond(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+		
+			if (monsterlevel >= (45 * levelmulfact))
+			{
+				//if (HadesElemental(spawnee)) spawnee.bAVOIDMELEE = true;
+				//if (HadesOverlord(spawnee)) spawnee.bAVOIDMELEE = true;
+			}
+		
+			if (monsterlevel >= (50 * levelmulfact))
+			{
+				// AVOIDMELEE
+				//if (Cacolantern(spawnee)) spawnee.bAVOIDMELEE = true;
+				// AVOIDHAZARDS
+				//if (Cacolantern(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Fatso(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (MancubusNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (Daedabus(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Arachnotron(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (ArachnotronNew(spawnee) || RailArachnotron(spawnee) || FusionArachnotron(spawnee) || ArachnotronMK2(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Archvile(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (ArchvileNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (BaronOfHell(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (BaronOfHellNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (HellCleric(spawnee) || HellClericDVDS(spawnee) || HellClericSpectral(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (Wizard(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Beast(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (FireDemon(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (CentaurLeader(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Demon1(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Demon2(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Wraith(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (Sentinel(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Crusader(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+			
+			if (monsterlevel >= (60 * levelmulfact))
+			{
+				// AVOIDHAZARDS
+				//if (Hectebus(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+			
+			if (monsterlevel >= (70 * levelmulfact))
+			{
+				// AVOIDHAZARDS
+				if (DoomImp(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (DoomImpNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (DarkImp(spawnee) || STDarkImp(spawnee) || VoidDarkImp(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Cacodemon(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (CacodemonNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (PainElemental(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (PainElementalNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Revenant(spawnee) && spawnee.bAVOIDMELEE && random(1,2) <= 1) spawnee.bAVOIDHAZARDS = true;
+				//if (RevenantNew(spawnee) && spawnee.bAVOIDMELEE && random(1,2) <= 1) spawnee.bAVOIDHAZARDS = true;
+				if (HellKnight(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (HellKnightNew(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				
+				if (HereticImpLeader(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (MummyLeader(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (MummyLeaderGhost(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				if (Knight(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+			
+			if (monsterlevel >= (80 * levelmulfact))
+			{
+				// AVOIDHAZARDS
+			}
+			
+			if (monsterlevel >= (90 * levelmulfact))
+			{
+				//if (HadesElemental(spawnee)) spawnee.bAVOIDHAZARDS = true;
+				//if (HadesOverlord(spawnee)) spawnee.bAVOIDHAZARDS = true;
+			}
+		}
+		return spawnee, monsterlevel, monsterrating;
+	}
+	
+	actor, int, int AddLevelSpecials3(actor spawnee, int monsterlevel, int monsterrating)
+	{
+		double levelmulfact = 1.5;
+		if (exex_monsterlevelenabledflags)
+		{
+			int fastchance = 0;
+			if (monsterlevel >= (25 * levelmulfact))
+			{
+				// ALWAYSFAST
+				fastchance = 25;
+				if (monsterlevel >= (50 * levelmulfact)) fastchance = randompick(62,63);
+				if (monsterlevel >= (75 * levelmulfact)) fastchance = randompick(87,88);
+				if (monsterlevel >= (100 * levelmulfact)) fastchance = 200;
+				if (random(1,100) <= fastchance)
+				{
+					//if (HellCleric(spawnee) || HellClericDVDS(spawnee) || HellClericSpectral(spawnee)) spawnee.bALWAYSFAST = true;
+					if (Demon(spawnee)) spawnee.bALWAYSFAST = true;
+					//if (DemonNew(spawnee)) spawnee.bALWAYSFAST = true;
+					if (LostSoul(spawnee)) spawnee.bALWAYSFAST = true;
+					//if (LostSoulNew(spawnee) || LostSoulAnnoying(spawnee) BetaLostSoul(spawnee)) spawnee.bALWAYSFAST = true;
+					if (HereticImp(spawnee)) spawnee.bALWAYSFAST = true;
+					if (Mummy(spawnee)) spawnee.bALWAYSFAST = true;
+					if (Clink(spawnee)) spawnee.bALWAYSFAST = true;
+					
+					if (Ettin(spawnee)) spawnee.bALWAYSFAST = true;
+					if (Centaur(spawnee)) spawnee.bALWAYSFAST = true;
+					if (Serpent(spawnee)) spawnee.bALWAYSFAST = true;
+					
+					if (Stalker(spawnee)) spawnee.bALWAYSFAST = true;
+				}
+			}
+			if (monsterlevel >= (50 * levelmulfact))
+			{
+				// ALWAYSFAST
+				fastchance = 25;
+				if (monsterlevel >= (100 * levelmulfact)) fastchance = randompick(62,63);
+				if (monsterlevel >= (150 * levelmulfact)) fastchance = randompick(87,88);
+				if (monsterlevel >= (200 * levelmulfact)) fastchance = 200;
+				if (random(1,100) <= fastchance)
+				{
+				}
+			}
+		}
+		return spawnee, monsterlevel, monsterrating;
+	}
+	
 	actor, string, int CheckLevelTweaks(actor spawnee, string spawnname, int LevelCheck)
 	{
 		// Level Tweaks
@@ -706,9 +1039,9 @@ class KC_EventHandler : EventHandler
 					spawnee.SetTag(montag);
 				}
 				
-				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials(spawnee,monsterlevel,monsterrating);
-				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials2(spawnee,monsterlevel,monsterrating);
-				//[spawnee, monsterlevel, monsterrating] = AddLevelSpecials3(spawnee,monsterlevel,monsterrating);
+				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials(spawnee,monsterlevel,monsterrating);
+				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials2(spawnee,monsterlevel,monsterrating);
+				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials3(spawnee,monsterlevel,monsterrating);
 				if (!LD_nomonsters) A_LegendaryCheck(spawnee);
 				//if (!A_CheckUOHYM()) [spawnee, monsterlevel, monsterrating] = SetUpMiracles(spawnee,monsterlevel,monsterrating);
 			}
@@ -1541,13 +1874,11 @@ class KC_EventHandler : EventHandler
 				bool practicetarget;
 				
 				int specialtype;
-				nm = "CCardGhostMarker";
-				if (victim.CountInv(nm)) specialtype += 1;
-				nm = "CCardAssassinMarker";
-				if (victim.CountInv(nm)) specialtype += 2;
-				nm = "CCardRespawnedMarker";
-				if (victim.CountInv(nm)) specialtype += 4;
+				nm = "CCardGhostMarker"; if (victim.CountInv(nm)) specialtype += 1;
+				nm = "CCardAssassinMarker"; if (victim.CountInv(nm)) specialtype += 2;
+				nm = "CCardRespawnedMarker"; if (victim.CountInv(nm)) specialtype += 4;
 				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
+				nm = "CCards_Actor_Spider"; if (victim.GetClassName() == nm) specialtype += 128;
 				if (kcdebug_worlddamaged) Console.Printf("[%s] SpecialType [WorldDamaged]: %d", vict, specialtype);
 				
 				if (victim.bCOUNTKILL || specialtype) showdmglog = true;
@@ -2908,14 +3239,11 @@ class KC_EventHandler : EventHandler
 					!exception)
 			{
 				int specialtype;
-				nm = "CCardGhostMarker";
-				if (victim.CountInv(nm)) specialtype += 1;
-				nm = "CCardAssassinMarker";
-				if (victim.CountInv(nm)) specialtype += 2;
-				nm = "CCardRespawnedMarker";
-				if (victim.CountInv(nm)) specialtype += 4;
-				nm = "CCards_Actor_TheAncientOne";
-				if (victim.GetClassName() == nm) specialtype += 8;
+				nm = "CCardGhostMarker"; if (victim.CountInv(nm)) specialtype += 1;
+				nm = "CCardAssassinMarker"; if (victim.CountInv(nm)) specialtype += 2;
+				nm = "CCardRespawnedMarker"; if (victim.CountInv(nm)) specialtype += 4;
+				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
+				nm = "CCards_Actor_Spider"; if (victim.GetClassName() == nm) specialtype += 128;
 				if (kcdebug_worlddied) Console.Printf("[%s] SpecialType [WorldDied]: %d", vict, specialtype);
 
 				if (!(KCPlayerPawn(victim)) || (victim.bCOUNTKILL || specialtype))
@@ -2990,6 +3318,7 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 2) ExpGain *= frandompick(1.8,2.2);
 						if (specialtype & 4) ExpGain *= frandompick(0.625,0.875);
 						if (specialtype & 8) ExpGain *= frandompick(1.75,2.5);
+						if (specialtype & 128) ExpGain *= 0.5;
 						nm = "CCards_Actor_BorrowedTimeBuff";
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						ExpGain *= frandom(0.05,0.125);

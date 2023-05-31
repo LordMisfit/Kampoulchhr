@@ -103,7 +103,7 @@ class KCProjectile : KCBaseZSC
 
 	default
 	{
-		KCProjectile.TimeFreezeTicLimit 11;
+		KCProjectile.TimeFreezeTicLimit 1024;
 		KCProjectile.TimeFreezeDistLimit 256;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
@@ -2898,7 +2898,7 @@ class RocketPlayerSeeking : RocketPlayer
 				A_Quake(3, 4, 0, 128, "nosound/silent");
 			}
 			BAL3 C 0 Bright A_SetTranslucent (0.67,1);
-			BAL3 C 8 Bright A_Explode(64,96,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			BAL3 C 8 Bright A_Explode(96,128,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
 			BAL3 DE 5 Bright;
 			stop;
 	}
@@ -2955,7 +2955,7 @@ class RocketPlayerDrunk : RocketPlayerSeeking
 				A_Quake(3, 4, 0, 128, "nosound/silent");
 			}
 			BAL3 C 0 Bright A_SetTranslucent (0.67,1);
-			BAL3 C 8 Bright A_Explode(64,96,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
+			BAL3 C 8 Bright A_Explode(96,128,XF_HURTSOURCE,false,0,0,10,"BulletPuff","Explosive");
 			BAL3 DE 5 Bright;
 			stop;
 	}
