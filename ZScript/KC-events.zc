@@ -1083,7 +1083,11 @@ class KC_EventHandler : EventHandler
 						 ExplosiveBarrel2(spawnee) ||
 						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
 			}
-		
+			
+			if (ExplosiveBarrel(spawnee) ||
+					ExplosiveBarrel2(spawnee) ||
+					Pod(spawnee)) spawnee.bPUSHABLE = true;
+			
 			if (KCCreature(spawnee))
 			{
 				KCC = KCCreature(spawnee);
@@ -2063,6 +2067,7 @@ class KC_EventHandler : EventHandler
 			bossdropmulti *= 4;
 			skillmult *= 0.25;
 		}
+		if (waslegendary) skillmult *= frandom(0.334,0.4585);
 		bool candropitems = false;
 		if (specialtype) candropitems = true;
 		if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
@@ -2157,6 +2162,7 @@ class KC_EventHandler : EventHandler
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						droptype = "Clip";
 						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+
 						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 						{
 							droptype = "Chaingun";
@@ -2351,7 +2357,7 @@ class KC_EventHandler : EventHandler
 						temp = (1 + (TrueLuck * 0.08334));
 						temp *= 2.5;
 					}
-					int randroll = random(1,16);
+					int randroll = random(1,32);
 					if (randroll <= temp) // Weapons
 					{
 						double rand = 1.0;
