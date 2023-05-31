@@ -1,4 +1,4 @@
-class KampoulchhrBase : Actor
+class KCBaseZSC : Actor
 {
 	mixin DmgCalc;
 	mixin CollisionChecker;
@@ -66,7 +66,7 @@ class KampoulchhrBase : Actor
 	
 	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
 	{
-		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KampoulchhrBase, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCBaseZSC, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
 		
 		damage = super.DoSpecialDamage(target, damage, damagetype);
 		
@@ -85,7 +85,7 @@ class KampoulchhrBase : Actor
 	}
 }
 
-class KCCreature : KampoulchhrBase
+class KCCreature : KCBaseZSC
 {
 	//mixin EvolveMonsters;
 	mixin MonsterCollider;
@@ -325,7 +325,7 @@ class KCUniqueBoss : KCCreature
 {
 }
 
-class PlayerWhistle : KampoulchhrBase
+class PlayerWhistle : KCBaseZSC
 {
 	default
 	{
@@ -701,7 +701,7 @@ class MeleeHitSpark4 : MeleeHitSpark1
 	}
 }
 
-class ShieldPartBase : KampoulchhrBase
+class ShieldPartBase : KCBaseZSC
 {
 	Actor oldtarget;
 	
@@ -1213,7 +1213,7 @@ class KickShieldReflect : KickShieldNoReflect
 	}
 }
 
-class NoItemSpawn : KampoulchhrBase // A special 'drop' that is meant to be an empty "drop" for use in droptables
+class NoItemSpawn : KCBaseZSC // A special 'drop' that is meant to be an empty "drop" for use in droptables
 {
 	states
 	{

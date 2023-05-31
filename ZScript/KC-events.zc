@@ -1073,7 +1073,7 @@ class KC_EventHandler : EventHandler
 			if (spawnee.target) targname = spawnee.target.GetClassName();
 
 			bool exception = CheckExceptions(spawnee);
-			if (!KampoulchhrBase(spawnee) && 
+			if (!KCBaseZSC(spawnee) && 
 					(spawnee.bISMONSTER || 
 					spawnee.bSHOOTABLE) && 
 					!exception) 
@@ -3495,6 +3495,7 @@ class KC_EventHandler : EventHandler
 						MiscItem.timefreeze1cooldownratio2 = 0.0;
 
 						MiscItem.timefreeze1timesused += 5;
+						playera.A_StartSound("TimeFreezeOut4a",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
 						Console.Printf("Time Freeze Cut Short");
 					}
 				}
