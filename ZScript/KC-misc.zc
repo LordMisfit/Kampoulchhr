@@ -186,11 +186,15 @@ class PlayerStatItem : Inventory
 	int timefreeze3timesused;
 	
 	int timestopstate;
-	int timestoptype;
+	int timestoptype; // 1 = Defensive, 2 = Offensive, 3 = Neutral 
 	int timestopactivetics;
 	int timestopactivemaxtics;
-	int timestopcooldowntics;
-	int timestopcooldownmaxtics;
+	int timestopcooldown1tics;
+	int timestopcooldown1maxtics;
+	int timestopcooldown2tics;
+	int timestopcooldown2maxtics;
+	int timestopcooldown3tics;
+	int timestopcooldown3maxtics;
 	
 	default 
 	{
@@ -878,7 +882,9 @@ class PlayerStatItem : Inventory
 								if (owner.CountInv("FistPlayerBlock4")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.5); 
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
-							if (timestoptype) inc *= 25;
+							if (timestoptype == 1) inc *= 25; // Defensive
+							if (timestoptype == 2) inc *= 4; // Offensive
+							if (timestoptype == 3) inc *= 10; // Neutral
 
 							if (berserked) inc = floor(inc * frandom[statitem](1.5,2.0));
 
@@ -969,7 +975,9 @@ class PlayerStatItem : Inventory
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
 							
-							if (timestoptype) inc *= 0.04;
+							if (timestoptype == 1) inc *= 0.04; // Defensive
+							if (timestoptype == 2) inc *= 0.25; // Offensive
+							if (timestoptype == 3) inc *= 0.10; // Neutral
 							
 							if (berserked) inc = ceil(inc * frandom[statitem](0.5,0.667));
 							
@@ -2562,11 +2570,11 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer1",0);
 				owner.A_SetInventory("KCTimeFreezer2",0);
 				owner.A_SetInventory("KCTimeFreezer3",0);
-				if (timestopcooldowntics <= 0)
+				if (timestopcooldown1tics <= 0)
 				{
-					timestopcooldowntics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					timestopcooldownmaxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
+					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					owner.A_SetInventory("KCTimeCooldown",1);
 					timefreeze1cooldownratio2 = 0.0;
 				}
@@ -2580,11 +2588,11 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer1",0);
 				owner.A_SetInventory("KCTimeFreezer2",0);
 				owner.A_SetInventory("KCTimeFreezer3",0);
-				if (timestopcooldowntics <= 0)
+				if (timestopcooldown1tics <= 0)
 				{
-					timestopcooldowntics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					timestopcooldownmaxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					if (timestopcooldowntics == 0) timefreeze1timesused += 5;
+					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
+					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					owner.A_SetInventory("KCTimeCooldown",1);
 					timefreeze1cooldownratio2 = 0.0;
 				}
@@ -2596,29 +2604,68 @@ class PlayerStatItem : Inventory
 			owner.A_SetInventory("KCTimeFreezer1",0);
 			owner.A_SetInventory("KCTimeFreezer2",0);
 			owner.A_SetInventory("KCTimeFreezer3",0);
-			if (timestopcooldowntics > 0) 
+			// Defensive [Cooldown]
+			if (timestopcooldown1tics > 0) 
 			{
 				owner.A_SetInventory("KCTimeCooldown",1);
-				timestopcooldowntics--;
-				if (timestopcooldowntics == 0) 
+				timestopcooldown1tics--;
+				if (timestopcooldown1tics == 0) 
 				{
 					owner.A_SetInventory("KCTimeCooldown",0);
 					owner.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+					owner.A_SetBlend("264026",0.667,random[statitem](random[statitem](22,23),27));
+				}
+			}
+			else 
+			if (timestopcooldown1tics <= 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown",0);
+				timestopcooldown1tics = 0;
+			}
+
+			// Offensive [Cooldown]
+			if (timestopcooldown2tics > 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown2",1);
+				timestopcooldown2tics--;
+				if (timestopcooldown2tics == 0) 
+				{
+					owner.A_SetInventory("KCTimeCooldown2",0);
+					owner.A_StartSound("TimeFreezeCooldown",220,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+					owner.A_SetBlend("402626",0.667,random[statitem](random[statitem](22,23),27));
+				}
+			}
+			else 
+			if (timestopcooldown2tics <= 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown2",0);
+				timestopcooldown2tics = 0;
+			}
+
+			// Neutral [Cooldown]
+			if (timestopcooldown3tics > 0) 
+			{
+				owner.A_SetInventory("KCTimeCooldown3",1);
+				timestopcooldown3tics--;
+				if (timestopcooldown3tics == 0) 
+				{
+					owner.A_SetInventory("KCTimeCooldown3",0);
+					owner.A_StartSound("TimeFreezeCooldown",221,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
 					owner.A_SetBlend("252540",0.667,random[statitem](random[statitem](22,23),27));
 				}
 			}
 			else 
-			if (timestopcooldowntics <= 0) 
+			if (timestopcooldown3tics <= 0) 
 			{
-				owner.A_SetInventory("KCTimeCooldown",0);
-				timestopcooldowntics = 0;
+				owner.A_SetInventory("KCTimeCooldown3",0);
+				timestopcooldown3tics = 0;
 			}
 		}
 		timestoptype = 0;
 		if (owner.CountInv("KCTimeFreezer1")) timestoptype = 1;
 		if (owner.CountInv("KCTimeFreezer2")) timestoptype = 2;
 		if (owner.CountInv("KCTimeFreezer3")) timestoptype = 3;
-		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldowntics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldowntics, timestopcooldownmaxtics, timefreeze1duration, timefreeze1cooldown);
+		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldown1tics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldown1tics, timestopcooldown1maxtics, timefreeze1duration, timefreeze1cooldown);
 	}
 	
 	void LandDamageStuff()

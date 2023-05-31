@@ -3765,12 +3765,29 @@ class KC_EventHandler : EventHandler
 			{
 				if (KCPlayerPawn(playera) && MiscItem)
 				{
-					if (MiscItem.timestopstate <= 0 && MiscItem.timestopcooldowntics > 0)
+					if (MiscItem.timestopstate <= 0)
 					{
-						MiscItem.timestopcooldowntics = 0;
-						playera.A_SetInventory("KCTimeCooldown",0);
-						playera.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
-						playera.A_SetBlend("252540",0.667,random(random(22,23),27));
+						if (MiscItem.timestopcooldown1tics > 0)
+						{
+							MiscItem.timestopcooldown1tics = 0;
+							playera.A_SetInventory("KCTimeCooldown",0);
+							playera.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+							playera.A_SetBlend("264026",0.667,random(random(22,23),27));
+						}
+						if (MiscItem.timestopcooldown2tics > 0)
+						{
+							MiscItem.timestopcooldown2tics = 0;
+							playera.A_SetInventory("KCTimeCooldown2",0);
+							playera.A_StartSound("TimeFreezeCooldown",220,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+							playera.A_SetBlend("402626",0.667,random(random(22,23),27));
+						}
+						if (MiscItem.timestopcooldown3tics > 0)
+						{
+							MiscItem.timestopcooldown3tics = 0;
+							playera.A_SetInventory("KCTimeCooldown3",0);
+							playera.A_StartSound("TimeFreezeCooldown",221,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+							playera.A_SetBlend("252540",0.667,random(random(22,23),27));
+						}
 					}
 				}
 			}
@@ -3794,9 +3811,9 @@ class KC_EventHandler : EventHandler
 				{
 					if (MiscItem.timestopstate <= 0)
 					{
-						if (MiscItem.timestopcooldowntics <= 0)
+						if (MiscItem.timestopcooldown1tics <= 0)
 						{
-							MiscItem.timestopcooldowntics = 0;
+							MiscItem.timestopcooldown1tics = 0;
 							MiscItem.timestopstate = 1;
 							MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
 							MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
@@ -3818,9 +3835,11 @@ class KC_EventHandler : EventHandler
 						MiscItem.timestopstate = 0;
 						playera.A_SetInventory("KCTimeFreezer1",0);
 						
-						MiscItem.timestopcooldowntics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
-						MiscItem.timestopcooldownmaxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
+						MiscItem.timestopcooldown1tics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
+						MiscItem.timestopcooldown1maxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
 						playera.A_SetInventory("KCTimeCooldown",1);
+						//playera.A_SetInventory("KCTimeCooldown2",1);
+						//playera.A_SetInventory("KCTimeCooldown3",1);
 						MiscItem.timefreeze1cooldownratio2 = 0.0;
 
 						MiscItem.timefreeze1timesused += 5;

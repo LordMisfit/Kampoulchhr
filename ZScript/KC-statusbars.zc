@@ -714,8 +714,8 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					if (MiscItem && MiscItem.timestopstate <= 0) 
 					{
-						ItemEffectTics = MiscItem.timestopcooldowntics;
-						ItemEffectSecs = (MiscItem.timestopcooldowntics / thinker.TICRATE);
+						ItemEffectTics = MiscItem.timestopcooldown1tics;
+						ItemEffectSecs = (MiscItem.timestopcooldown1tics / thinker.TICRATE);
 						ItemFontCLR = font.CR_Gray;
 					}
 				}
@@ -2240,7 +2240,7 @@ class KCStatusBarMain : BaseStatusBar
 				
 				FlashTimerMod = 32;
 				FlashTimer = level.time % FlashTimerMod;
-				if (MiscItem.timestopcooldowntics > 0)
+				if (MiscItem.timestopcooldown1tics > 0)
 				{
 					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[Red]");
 																					 else LegendStr.AppendFormat(" = \c[Brick]");
@@ -2251,7 +2251,7 @@ class KCStatusBarMain : BaseStatusBar
 																					 else LegendStr.AppendFormat(" = \c[Purple]");
 				}
 				LY += LYInc;
-				if (MiscItem.timestopcooldowntics)
+				if (MiscItem.timestopcooldown1tics)
 				{
 					LegendStr.AppendFormat("[ON COOLDOWN]\c-");
 				}
