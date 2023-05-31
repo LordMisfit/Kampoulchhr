@@ -793,6 +793,11 @@ class KCPowerIronFeet : PowerIronFeet
 		if (skill == 2) dmgfactor = 0.5;
 		if (skill == 3) dmgfactor = 0.625;
 		if (skill >= 4) dmgfactor = 0.75;
+		if (damageType == 'Boiling')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.0,0.125,0.125,0.25,0.25,0.25,0.375,0.375,0.50) * dmgfactor);
+		}
 		if (damagetype == 'Ice')
 		{
 			newdamage = damage *= (frandompick(0.25,0.3125,0.3125,0.375,0.375,0.375,0.4375,0.4375,0.5) * dmgfactor);
@@ -802,13 +807,31 @@ class KCPowerIronFeet : PowerIronFeet
 			if (gameinfo.gametype & 8) newdamage = 0;
 			else newdamage = damage *= (frandompick(0.5,0.625,0.625,0.75,0.75,0.75,0.875,0.875,1.0) * dmgfactor);
 		}
-		if (damagetype == 'Poison')
+		if (damagetype == 'Explosive')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'Poison' ||
+				damagetype == 'CCardsPoison')
 		{
 			newdamage = damage *= (frandompick(0.25,0.3125,0.3125,0.375,0.375,0.375,0.4375,0.4375,0.5) * dmgfactor);
 		}
 		if (damagetype == 'BFGSplash')
 		{
 			newdamage = damage *= (frandompick(0.875,0.90625,0.90625,0.9375,0.9375,0.9375,0.96875,0.96875,1.0) * 0.25);
+		}
+		if (damageType == 'Melee' ||
+				damageType == 'Trample' ||
+				damageType == 'Stomp' ||
+				damageType == 'Fist' ||
+				damageType == 'Kick' ||
+				damageType == 'Chainsaw' ||
+				damageType == 'Bonk' ||
+				damageType == 'Bap' ||
+				damageType == 'Chop')
+		{
+			newdamage = damage *= frandompick(0.9375,0.953125,0.953125,0.96875,0.96875,0.96875,0.984375,0.984375,1.0);
 		}
 	}
 	

@@ -4591,6 +4591,7 @@ class SawThrower : MarineWeapon
 		Weapon.AmmoGive 6;
 		Weapon.AmmoUse1 1;
 		Weapon.AmmoUse2 1;
+		Weapon.KickBack 20;
 		Scale 0.9;
 	}
 	
@@ -4666,10 +4667,10 @@ class SawThrower : MarineWeapon
 			TSWG A 0 A_StartSound("weapons/throwsawup",CHAN_WEAPON);
 			TSWG BBC 3
 			{
-				A_CustomPunch((1*random(1,4)),0,0,"SawPuff",invoker.sawrange);
+				A_CustomPunch((1*random(1,4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			}
 		AltRevUp2:
-			TSWG BB 1 A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+			TSWG BB 1 A_CustomPunch((1*random(random(1,2),4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			TSWG C 0 A_ReFire;
 			Goto AltHold+6;
 			TSWG G 7;
@@ -4693,23 +4694,23 @@ class SawThrower : MarineWeapon
 			}
 			TSWG B 1 
 			{
-				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,0,"SawPuff",invoker.sawrange);
-															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			}
 			TSWG B 1 
 			{
 				if (invoker.revtimes >= 20) A_SetTics(0);
-															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			}
 			TSWG C 1 
 			{
-				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,0,"SawPuff",invoker.sawrange);
-															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			}
 			TSWG C 1 
 			{
 				if (invoker.revtimes >= 20) A_SetTics(0);
-															 else A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPuff",invoker.sawrange);
+															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPuff",invoker.sawrange);
 			}
 			TSWG C 0 
 			{

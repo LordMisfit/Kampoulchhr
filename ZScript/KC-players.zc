@@ -2039,13 +2039,13 @@ class KCPlayerPawn : PlayerPawn
 			double dmg1base = 0.00;
 			if (armortier == 1) 
 			{
-				damage *= frandom(0.875,1.000);
-				dmg1base = 6.25;
+				damage *= frandom(0.625,1.000);
+				dmg1base = 12.5;
 			}
 			if (armortier == 2) 
 			{
-				damage *= frandom(0.625,0.875);
-				dmg1base = 12.5;
+				damage *= frandom(0,0.625);
+				dmg1base = 87.5;
 			}
 			if (frandom(0.1,100.0) > dmg1base && damage < 1) damage = 1;
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [CCards Acid w/ Armor]: %d (%d)", damage, olddmg);
