@@ -39,6 +39,17 @@ OptionValue "OnOff_DefaultOn"
 
 // MENUS
 
+OptionMenu "KC-GeneralMenu1"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - General Options - Part 1"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCTextfield "Time Freeze Projectile Disperse Range",		"This determines [in map units] the range projectiles will disperse from their origin point before coming to a stop while you have time frozen. This option is not cheaty to alter-mid game, as it is best to change it for better planning of time freeze projectile barrages with certain variants of time freeze. Default: 256 [map units]",		"kc_tfprojdisrange"
+}
+
 OptionMenu "KC-DebugMenu1"
 {
 	Class "KCMenu"
@@ -140,6 +151,8 @@ OptionMenu "KCOptions"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
+	KCSubMenu "General Options [1]",		"General Options [page 1].",		"KC-GeneralMenu1"
+	StaticText " "
 	KCSubMenu "LegenDoomLite Options",		"LegenDoomLite Options.",		"LegenDoomLite"
 	KCSubMenu "Tilt++ v1.65 Options",		"Tilt++ v1.65 Options.",		"TiltPlusPlusMenu"
 	StaticText " "

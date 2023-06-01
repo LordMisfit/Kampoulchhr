@@ -5,7 +5,7 @@ class KCTimeFreezeProjTracker : KCBaseZSC
 	{
 		+NOTIMEFREEZE;
 		+NOGRAVITY;
-		Scale 0.5;
+		Scale 0.25;
 		Speed 0;
 		Radius 0;
 		Height 0;
@@ -37,9 +37,9 @@ class KCTimeFreezeProjTracker : KCBaseZSC
 	states
 	{
 		Spawn:
-			HEXA A 1;
-			HEXA B 1;
-			HEXA C 1;
+			HEXA A 35;
+			HEXA B 35;
+			HEXA C 35;
 			loop;
 		Death:
 			TNT1 A 0;
@@ -521,6 +521,8 @@ class KCProjectile : KCBaseZSC
 	override void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
+		maxunfreezedist *= double((kc_tfprojdisrange * 1.0) / (maxunfreezedist * 1.0));
+		if (kcdebug_timefreezedebug1) Console.Printf("maxunfreezedist: %d / kc_tfprojdisrange: %d", maxunfreezedist, kc_tfprojdisrange);
 		WasNoTimeFreeze = bNOTIMEFREEZE;
 		if (bonusmultiplier <= 0.0) bonusmultiplier = 1.0;
 

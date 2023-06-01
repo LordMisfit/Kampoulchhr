@@ -160,6 +160,8 @@ class PlayerStatItem : Inventory
 	int HPDegenTimerMax;
 	bool berserked;
 
+	double timefreezegenduration;
+
 	double timefreeze1duration;
 	double timefreeze1cooldown;
 	double timefreeze2duration;
@@ -177,6 +179,8 @@ class PlayerStatItem : Inventory
 	double timefreeze3cooldownratio;
 
 	double timefreeze1cooldownratio2;
+	double timefreeze2cooldownratio2;
+	double timefreeze3cooldownratio2;
 
 	double timefreezedurationinc1;
 	double timefreezedurationinc2;
@@ -882,9 +886,23 @@ class PlayerStatItem : Inventory
 								if (owner.CountInv("FistPlayerBlock4")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.5); 
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
-							if (timestoptype == 1) inc *= 25; // Defensive
-							if (timestoptype == 2) inc *= 4; // Offensive
-							if (timestoptype == 3) inc *= 10; // Neutral
+							if (timestoptype > 0)
+							{
+								double boostf = 1.125;
+								double boostphase = 0.25;
+								double boostphase2 = 1.00;
+								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
+								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
+								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+								if (timestoptype == 1) inc *= 25; // Defensive
+								if (timestoptype == 2) inc *= 4; // Offensive
+								if (timestoptype == 3) inc *= 10; // Neutral
+								for (int ti; ti < boostphase2; ti++)
+								{
+									if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
+									if (kcdebug_hpregen) Console.Printf("boost: %.4f, tic: %d", ((ti+1) * boostphase), gametic);
+								}
+							}
 
 							if (berserked) inc = floor(inc * frandom[statitem](1.5,2.0));
 
@@ -975,9 +993,23 @@ class PlayerStatItem : Inventory
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
 							
-							if (timestoptype == 1) inc *= 0.04; // Defensive
-							if (timestoptype == 2) inc *= 0.25; // Offensive
-							if (timestoptype == 3) inc *= 0.10; // Neutral
+							if (timestoptype > 0)
+							{
+								double boostf = double(1.0 / 1.125);
+								double boostphase = 0.25;
+								double boostphase2 = 1.00;
+								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
+								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
+								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+								if (timestoptype == 1) inc *= 0.04; // Defensive
+								if (timestoptype == 2) inc *= 0.25; // Offensive
+								if (timestoptype == 3) inc *= 0.10; // Neutral
+								for (int ti; ti < boostphase2; ti++)
+								{
+									if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
+									if (kcdebug_hpregen) Console.Printf("boost: %.4f, tic: %d", ((ti+1) * boostphase), gametic);
+								}
+							}
 							
 							if (berserked) inc = ceil(inc * frandom[statitem](0.5,0.667));
 							
@@ -2536,7 +2568,8 @@ class PlayerStatItem : Inventory
 			{
 				timefreeze1cooldownratio = 1.0 / (timefreeze1durationratio * 1.0);
 			}
-			if (kcdebug_timefreezechecks) Console.Printf("timefreeze1durationratio: %.8f, timefreeze1cooldownratio: %.8f", timefreeze1durationratio, timefreeze1cooldownratio);
+			if (kcdebug_timefreezechecks) Console.Printf("\c[green]timefreeze1durationratio: %.8f, timefreeze1cooldownratio: %.8f\c-, \c[btick]timefreeze2durationratio: %.8f, timefreeze2cooldownratio: %.8f\c-, \c[gray]timefreeze3durationratio: %.8f, timefreeze3cooldownratio: %.8f\c-",
+																									timefreeze1durationratio, timefreeze1cooldownratio, timefreeze2durationratio, timefreeze2cooldownratio, timefreeze3durationratio, timefreeze3cooldownratio);
 		}
 		
 		if (timestopstate)
@@ -2559,13 +2592,19 @@ class PlayerStatItem : Inventory
 					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
 				}
 				timestopactivetics--;
+				timefreezegenduration++;
 				timefreeze1cooldownratio2 = 1.0 - ((timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
-				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f, timefreeze1cooldownratio2: %.8f", tickvol, timefreeze1cooldownratio2);
+				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f, \c[green]timefreeze1cooldownratio2: %.8f, \c[brick]timefreeze2cooldownratio2: %.8f, \c[gray]timefreeze3cooldownratio2: %.8f", 
+																											tickvol, 
+																											timefreeze1cooldownratio2, 
+																											timefreeze2cooldownratio2, 
+																											timefreeze3cooldownratio2);
 			}
 			else
 			if (timestopactivetics == 0) 
 			{
 				timestopstate = 0;
+				timefreezegenduration = 0;
 				owner.A_SetInventory("KCTimeFreezer",0);
 				owner.A_SetInventory("KCTimeFreezer1",0);
 				owner.A_SetInventory("KCTimeFreezer2",0);
@@ -2582,6 +2621,7 @@ class PlayerStatItem : Inventory
 			else
 			if (timestopactivetics < 0)
 			{
+				timefreezegenduration = 0;
 				timestopactivetics = 0;
 				timestopstate = 0;
 				owner.A_SetInventory("KCTimeFreezer",0);
@@ -2604,6 +2644,7 @@ class PlayerStatItem : Inventory
 			owner.A_SetInventory("KCTimeFreezer1",0);
 			owner.A_SetInventory("KCTimeFreezer2",0);
 			owner.A_SetInventory("KCTimeFreezer3",0);
+			timefreezegenduration = 0;
 			// Defensive [Cooldown]
 			if (timestopcooldown1tics > 0) 
 			{
@@ -2661,11 +2702,24 @@ class PlayerStatItem : Inventory
 				timestopcooldown3tics = 0;
 			}
 		}
+		
 		timestoptype = 0;
 		if (owner.CountInv("KCTimeFreezer1")) timestoptype = 1;
 		if (owner.CountInv("KCTimeFreezer2")) timestoptype = 2;
 		if (owner.CountInv("KCTimeFreezer3")) timestoptype = 3;
-		if (kcdebug_timefreezechecks) Console.Printf("timefreeze1timesused: %d, \c[green]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[orange]timestopcooldown1tics: %d / %d, \c[gold]timefreeze1duration: %.2f, \c[gold]timefreeze1cooldown: %.2f", timefreeze1timesused, timestopstate, timestopactivetics, timestopactivemaxtics, timestopcooldown1tics, timestopcooldown1maxtics, timefreeze1duration, timefreeze1cooldown);
+		if (kcdebug_timefreezechecks) Console.Printf("\c[HeiwaDeluge]timefreezegenduration: %d\c-, \c[green]timefreeze1timesused: %d\c-, \c[brick]timefreeze2timesused: %d\c-, \c[gray]timefreeze3timesused: %d\c-, \c[HeiwaDeluge]timestopstate: %d, \c[lightblue]timestopactivetics: %d / %d, \c[green]timestopcooldown1tics: %d / %d, \c[brick]timestopcooldown2tics: %d / %d, \c[gray]timestopcooldown3tics: %d / %d, \c[green]timefreeze1duration: %.2f, timefreeze1cooldown: %.2f, \c[brick]timefreeze2duration: %.2f, timefreeze2cooldown: %.2f, \c[gray]timefreeze3duration: %.2f, timefreeze3cooldown: %.2f", 
+																								timefreezegenduration, 
+																								timefreeze1timesused, 
+																								timefreeze2timesused, 
+																								timefreeze3timesused, 
+																								timestopstate, 
+																								timestopactivetics, timestopactivemaxtics, 
+																								timestopcooldown1tics, timestopcooldown1maxtics, 
+																								timestopcooldown2tics, timestopcooldown2maxtics, 
+																								timestopcooldown3tics, timestopcooldown3maxtics, 
+																								timefreeze1duration, timefreeze1cooldown, 
+																								timefreeze2duration, timefreeze2cooldown, 
+																								timefreeze3duration, timefreeze3cooldown);
 	}
 	
 	void LandDamageStuff()
