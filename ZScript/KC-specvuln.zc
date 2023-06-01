@@ -49,16 +49,19 @@ class CompatVulnItem : PlaceholderItem
 	int initdmg;
 	double, double, double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, bool wasblastedimpact, bool surprisehit, int angvstype)
 	{
-		string nm, nn, no, np;
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		string nm, nn, no, np, nq, nr, ns;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
 		int predmginr = damage;
 		// (Partial) Defense Ignoring Attacks
 		double prevDamageFactor;
 		double basedmgfactor = owner.DamageFactor;
 		double ActorDefenseIgnoreFactor = 0.00;
-		if (inflictor == null && source == null) 
+		string infl, sour;
+		if (inflictor) infl = inflictor.GetClassName();
+		if (source) sour = source.GetClassName();
+		if (inflictor == null && source == null)
 		{
 			// BLASTED Impact Damage
 			if (wasblastedimpact) ActorDefenseIgnoreFactor += (frandom(0.45,0.55) * (1.00 - ActorDefenseIgnoreFactor));
@@ -72,6 +75,34 @@ class CompatVulnItem : PlaceholderItem
 				FoundPlayer = KCPlayerPawn(inflictor);
 			}
 			
+			double ExplosivesFactor = frandompick(0.625,0.6667,0.75);
+			// Suicide Bombers/Kamikaze Enemy Attacks/RockBomb Shards
+			nm = "SuicideBomber";
+			nn = "SuicideBomb";
+			no = "SuicideBombStrong";
+			np = "SuicideBombUltra";
+			nq = "HSBoom";
+			nr = "HadesSphere";
+			ns = "HSOverlord";
+			if (infl == nm || 
+					infl == nm || 
+					infl == no || 
+					infl == np || 
+					infl == nq || 
+					infl == nr || 
+					infl == ns || 
+					mod == 'Explosive' || 
+					flags & DMG_EXPLOSION) 
+			{
+				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			double RSawFactor = frandom(0.225,0.275);
+			if (mod == 'Ripsaw' || mod == 'SawShot')
+			{
+				if (mod == 'Ripsaw') RSawFactor *= 1.5;
+				ActorDefenseIgnoreFactor += (RSawFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+
 			double BFGFactor = frandom(0.45,0.55);
 			// BFG Ignores roughly half of "normal" damagefactor
 			if (mod == 'BFG' || mod == 'BFGSpray' || mod == 'BFGSplash') 
@@ -161,6 +192,18 @@ class CompatVulnItem : PlaceholderItem
 			}
 			
 			//if (CountInv("PWDefenseBuff") > 0) ActorDefenseIgnoreFactor *= 0.25;
+		}
+		
+		double temp1;
+		if (playera.CountInv("KCTimeFreezer1"))
+		{
+			temp1 = (ActorDefenseIgnoreFactor * 0.75);
+			ActorDefenseIgnoreFactor -= temp1;
+		}
+		if (playera.CountInv("KCTimeFreezer2"))
+		{
+			temp1 = ((1.0 - ActorDefenseIgnoreFactor) * 0.75);
+			ActorDefenseIgnoreFactor += temp1;
 		}
 
 		return prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
@@ -408,7 +451,16 @@ class CompatVulnItem : PlaceholderItem
 				prevDamageFactor = owner.DamageFactor;
 				if (owner.DamageFactor < 1.00) 
 				{
-					if (criticalhit) ActorDefenseIgnoreFactor = 1.00;
+					if (criticalhit) 
+					{
+						ActorDefenseIgnoreFactor = 1.00;
+						double temp1;
+						if (playera.CountInv("KCTimeFreezer1"))
+						{
+							temp1 = (ActorDefenseIgnoreFactor * 0.75);
+							ActorDefenseIgnoreFactor -= temp1;
+						}
+					}
 					if (ActorDefenseIgnoreFactor > 0.00)
 					{
 						int predmg = newdamage;
