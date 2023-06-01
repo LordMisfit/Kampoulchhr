@@ -1678,6 +1678,36 @@ class KCBulletPuff : KCPuff replaces BulletPuff
 	}
 }
 
+class KCBulletPuff2 : KCPuff
+{
+	default
+	{
+		+PUFFGETSOWNER
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Translucent";
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+		DamageType "Bullet";
+	}
+
+	States
+	{
+		Spawn:
+			PUFF A 4 Bright;
+			PUFF B 4;
+		Melee:
+			PUFF CD 4;
+			Stop;
+	}
+}
+
 //
 class FistPuff : KCPuff
 {
@@ -2977,6 +3007,7 @@ class PlasmaBallNew : KCProjectile
 		SeeSound "weapons/plasmaf";
 		DeathSound "weapons/plasmax";
 		Obituary "$OB_MPPLASMARIFLE";
+		DamageType "Plasma";
 	}
 	States
 	{
@@ -3006,6 +3037,7 @@ class AltPlasmaBall : KCProjectile
 		SeeSound "weapons/plasmaf";
 		DeathSound "weapons/plasmax";
 		Obituary "$OB_MPPLASMARIFLE";
+		DamageType "Plasma";
 	}
 	States
 	{
@@ -3026,6 +3058,7 @@ class PlasmaBall1New : PlasmaBallNew
 		BounceType "Classic";
 		BounceFactor 1.0;
 		Obituary "$OB_MPBFG_MBF";
+		DamageType "BFG";
 	}
 	States
 	{
@@ -3066,6 +3099,7 @@ class BFGBallNew : KCProjectile
 		Alpha 0.75;
 		DeathSound "weapons/bfgx";
 		Obituary "$OB_MPBFG_BOOM";
+		DamageType "BFG";
 	}
 	States
 	{
