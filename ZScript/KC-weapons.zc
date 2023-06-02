@@ -4024,7 +4024,45 @@ class TommyGun : MarineWeapon
 		
 		double currang = angle;
 		A_SetAngle(angle+barrageangoffset);
-		A_FireBullets(accuracyx,accuracyy,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
+		
+		int randdmg = temp1;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			
+			int shotamt = 1;
+			if (A_DualTMGCheck()) shotamt = 2;
+			A_TakeInventory("TommAmmo",shotamt);
+			A_StartSound ("DSTOMFR", CHAN_WEAPON);
+			for (int i = 0; i < shotamt; i++)
+			{
+				actor BombShotsB, BombShots;
+				KCPlayerPawn KCP;
+				KCP = KCPlayerPawn(playera);
+				double origang = playera.angle;
+				double randpitch = accuracyy;
+				double randangle = accuracyx;
+				double shotheight = 36;
+				if (KCP) shotheight = ((KCP.height / 2) + KCP.AttackZOffSet);
+				[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,0,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				if (BombShots)
+				{
+					KCBulletTracer BS1;
+					BS1 = KCBulletTracer(BombShots);
+					if (BS1)
+					{
+						BS1.DamageType = 'Bullet';
+						BS1.finaldamagedealt = (randdmg);
+					}
+				}
+			}
+		}
+		else
+		{
+			A_FireBullets(accuracyx,accuracyy,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
+		}
 		A_SetAngle(currang);
 	}
 	
