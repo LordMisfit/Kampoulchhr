@@ -50,7 +50,7 @@ class KCTimeFreezeHitscanTracker : KCBaseZSC
 	states
 	{
 		Spawn:
-			PUFF A 4;
+			CTAC A 2 bright;
 			loop;
 		Death:
 			TNT1 A 0;
@@ -613,7 +613,7 @@ class KCProjectile : KCBaseZSC
 		}
 	}
 	
-	override void Tick()
+	void TimeFreezeProjectileCheck()
 	{
 		if (target)
 		{
@@ -712,6 +712,11 @@ class KCProjectile : KCBaseZSC
 				}
 			}
 		}
+	}
+	
+	override void Tick()
+	{
+		TimeFreezeProjectileCheck();
 		
 		if (OriginalActor != null) 
 		{ 
@@ -1174,48 +1179,9 @@ class KCFastProjectile : KCProjectile abstract
 	//
 	//----------------------------------------------------------------------------
 
-	override void Tick ()
+	override void Tick()
 	{
-		if (target)
-		{
-			if (KCPlayerPawn(target))
-			{
-				if (target.CountInv("PowerTimeFreezer") ||
-						target.CountInv("KCMiscTimeFreezer") ||
-						target.CountInv("DebugTimeFreezer") ||
-						target.CountInv("KCTimeFreezer") ||
-						target.CountInv("KCTimeFreezer1") ||
-						target.CountInv("KCTimeFreezer2") ||
-						target.CountInv("KCTimeFreezer3") ||
-						target.CountInv("DashTimeFreezer") ||
-						!target.player.timefreezer)
-				{
-					if (target.CountInv("DebugTimeFreezer"))
-					{
-						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-					}
-					else
-					{
-						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-					}
-				}
-				else
-				{
-					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-			else
-			{
-				if (!bNOTIMEFREEZE)
-				{
-					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-				}
-				else
-				{
-					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-		}
+		TimeFreezeProjectileCheck();
 		
 		ClearInterpolation();
 		double oldz = pos.Z;
@@ -1446,6 +1412,9 @@ class KCEffectFastProjectile : KCFastProjectile
 class KCBulletTracer : KCFastProjectile
 {
 	int damagebase;
+	double speedmul, speedmul2;
+	property TimeUnFreezeSpeedUpFactor: speedmul;
+	property TimeFreezeSlowDownFactor: speedmul2;
 	default
 	{
 		Tag "Shot";
@@ -1454,7 +1423,7 @@ class KCBulletTracer : KCFastProjectile
 		Radius 2;
 		Height 2;
 		Mass 5;
-		Speed 160; // 80
+		Speed 320; //160; // 80
 		PROJECTILE;
 		+DONTREFLECT;
 		+NODAMAGETHRUST;
@@ -1462,14 +1431,68 @@ class KCBulletTracer : KCFastProjectile
 		Alpha 1.0;
 		Scale 1.0;
 		decal "BulletChip";
+		KCBulletTracer.TimeUnFreezeSpeedUpFactor 4.0;
+		KCBulletTracer.TimeFreezeSlowDownFactor 0.25;
 	}
 	
+	bool scale1, scale2;
 	override void PostBeginPlay()
 	{
 		KCFastProjectile.PostBeginPlay();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
 		A_ScaleVelocity(kc_tracervelmulti);
 		
 		if (finaldamagedealt <= 0) finaldamagedealt = (5 * random(1,3));
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
 	}
 	
 	action void A_SpawnTracerTrail(string name = "KCBulletTracerTrail", int extranum = 6, double spread = -2.5)
@@ -1663,42 +1686,7 @@ class KCPuff : KCProjectile abstract
 	
 	override void Tick()
 	{
-		if (target)
-		{
-			if (KCPlayerPawn(target))
-			{
-				if (target.CountInv("PowerTimeFreezer") ||
-						target.CountInv("KCMiscTimeFreezer") ||
-						target.CountInv("DebugTimeFreezer") ||
-						target.CountInv("DashTimeFreezer") ||
-						!target.player.timefreezer)
-				{
-					if (target.CountInv("DebugTimeFreezer"))
-					{
-						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-					}
-					else
-					{
-						if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-					}
-				}
-				else
-				{
-					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-			else
-			{
-				if (!bNOTIMEFREEZE)
-				{
-					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-				}
-				else
-				{
-					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-		}
+		TimeFreezeProjectileCheck();
 		Super.Tick();
 	}
 	
