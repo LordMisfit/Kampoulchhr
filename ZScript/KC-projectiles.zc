@@ -1,3 +1,63 @@
+class KCTimeFreezeHitscanTracker : KCBaseZSC
+{
+	int lifetime;
+	name dmgtype;
+	Class<Actor> pufftype;
+	int dmg;
+	double ang;
+	double slope;
+	double range;
+	default
+	{
+		+NOTIMEFREEZE;
+		+NOGRAVITY;
+		-SHOOTABLE;
+		Scale 0.25;
+		Speed 0;
+		Radius 1;
+		Height 1;
+		Alpha 0.5;
+		RenderStyle "Add";
+	}
+	
+	override void Tick()
+	{
+		//if (kcdebug_timefreezedebug1) A_SetRenderStyle(frandom(0.625,0.875),STYLE_Add);
+		//												 else A_SetRenderStyle(frandom(0.00,0.25),STYLE_None);
+		
+		if (!master)
+		{
+			if (GetAge() > 2) Destroy();
+		}
+		else
+		{
+			if (kcdebug_timefreezedebug1) Console.Printf("\c[yellow]master: %p [%s]", master, master.GetClassName());
+			actor playera = players[0].mo;
+			if (!(playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3")))
+			{
+				lifetime++;
+				if (lifetime == 1) LineAttack(ang, PLAYERMISSILERANGE, pitch, dmg, dmgtype, pufftype);
+				if (lifetime >= 5) Destroy();
+				if (kcdebug_timefreezedebug1) Console.Printf("lifetime: %d", lifetime);
+			}
+		}
+		super.Tick();
+	}
+	
+	states
+	{
+		Spawn:
+			PUFF A 4;
+			loop;
+		Death:
+			TNT1 A 0;
+			stop;
+	}
+}
+
 class KCTimeFreezeProjTracker : KCBaseZSC
 {
 	actor ConnProj;
@@ -1697,6 +1757,9 @@ class KCBulletPuff2 : KCPuff
 		VSpeed 1;
 		Mass 5;
 		DamageType "Bullet";
+		//Species "Player";
+		//+MTHRUSPECIES;
+		//+THRUSPECIES;
 	}
 
 	States

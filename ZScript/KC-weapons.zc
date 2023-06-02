@@ -1300,6 +1300,49 @@ class KCWeaponBase : Weapon
 		if (!(flags & SF_NOPULLIN))
 			bJustAttacked = true;
 	}
+	
+	action void A_TFMisc(name mod = 'HitScan', Class<Actor> pufftype = "BulletPuff")
+	{
+		double ang = angle;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (!(playera.CountInv("KCTimeFreezer") ||
+					playera.CountInv("KCTimeFreezer1") ||
+					playera.CountInv("KCTimeFreezer2") ||
+					playera.CountInv("KCTimeFreezer3")))
+		{
+			LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, mod, pufftype);
+		}
+		else
+		{
+			bool spawned;
+			actor lmo;
+			PlayerPawn pmo;
+			pmo = PlayerPawn(playera);
+			if (pmo)
+			{
+				double maxunfreezedist = (256 * (double((kc_tfprojdisrange * 1.0) / (256 * 1.0))));
+				[spawned, lmo] = A_SpawnItemEx("KCTimeFreezeHitscanTracker", (cos(-pitch) * maxunfreezedist), 0.0, (((pmo.height/2)+pmo.AttackZOffset) + (sin(-pitch) * maxunfreezedist)), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_TRANSFERPITCH|SXF_NOCHECKPOSITION); // A_SpawnItemEx("KCTimeFreezeHitscanTracker",0.0,0.0,((pmo.height/2)+pmo.AttackZOffset), 0.0, 0.0, 0.0, flags:SXF_NOCHECKPOSITION);
+				if (lmo)
+				{
+					KCTimeFreezeHitscanTracker lmo1;
+					lmo1 = KCTimeFreezeHitscanTracker(lmo);
+					if (lmo1)
+					{
+						lmo1.master = pmo;
+						lmo1.angle = ang;
+						lmo1.ang = ang;
+						lmo1.pitch = pitch;
+						lmo1.range = PLAYERMISSILERANGE;
+						lmo1.dmg = damage;
+						lmo1.dmgtype = mod;
+						lmo1.pufftype = pufftype;
+						lmo1.damageMultiply = playera.damageMultiply;
+					}
+				}
+			}
+		}
+	}
 
 	protected action void GunShot(int accurate, Class<Actor> pufftype, double pitch)
 	{
@@ -1330,6 +1373,13 @@ class KCWeaponBase : Weapon
 			randang *= frandompick(1.25,1.75);
 			randpth *= frandompick(1.875,2.5);
 		}
+		if (accurate == -3) // Minigun Alt-Fire
+		{
+			randang = 7.1;
+			randpth = 3.55;
+			randang *= frandompick(1.25,1.75);
+			randpth *= frandompick(1.875,2.5);
+		}
 
 		if (accurate <= 0)
 		{
@@ -1344,6 +1394,7 @@ class KCWeaponBase : Weapon
 		}
 		
 		LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Hitscan', pufftype);
+		// A_TFMisc('Hitscan',pufftype);
 	}
 	
 	action void A_FirePistol(int type = 0)
@@ -1370,9 +1421,11 @@ class KCWeaponBase : Weapon
 		{
 			accurate = 1;
 		}
-
+		
+		double pitch = BulletSlope();
+		
 		A_StartSound ("weapons/pistol", CHAN_WEAPON);
-		GunShot(accurate, "KCBulletPuff2", BulletSlope());
+		GunShot(accurate, "KCBulletPuff2", pitch);
 	}
 	
 	action void A_FireShotgun()
@@ -1393,11 +1446,11 @@ class KCWeaponBase : Weapon
 		}
 		player.mo.PlayAttacking2 ();
 		
-		double pitch = BulletSlope ();
+		double pitch = BulletSlope();
 		
 		for (int i = 0; i < 7; i++)
 		{
-			GunShot (false, "KCBulletPuff2", pitch);
+			GunShot(false, "KCBulletPuff2", pitch);
 		}
 	}
 	
@@ -1408,6 +1461,8 @@ class KCWeaponBase : Weapon
 			return;
 		}
 
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		A_StartSound ("weapons/sshotf", CHAN_WEAPON);
 		Weapon weap = player.ReadyWeapon;
 		if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
@@ -1419,20 +1474,21 @@ class KCWeaponBase : Weapon
 		}
 		player.mo.PlayAttacking2 ();
 
-		double pitch = BulletSlope ();
 			
 		for (int i = 0 ; i < 20 ; i++)
 		{
 			int damage = 5 * random[FireSG2](1, 3);
 			double ang = angle + Random2[FireSG2]() * (11.25 / 256);
+			double pitch = (BulletSlope() + Random2[FireSG2]() * (7.097 / 256));
 			
 			// Doom adjusts the bullet slope by shifting a random number [-255,255]
 			// left 5 places. At 2048 units away, this means the vertical position
 			// of the shot can deviate as much as 255 units from nominal. So using
 			// some simple trigonometry, that means the vertical angle of the shot
 			// can deviate by as many as ~7.097 degrees.
-			
-			LineAttack (ang, PLAYERMISSILERANGE, pitch + Random2[FireSG2]() * (7.097 / 256), damage, 'Hitscan', "BulletPuff");
+				
+			LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Hitscan', "BulletPuff");
+			// A_TFMisc('Hitscan',pufftype);
 		}
 	}
 	
@@ -1487,8 +1543,51 @@ class KCWeaponBase : Weapon
 			if (type > 0) accurate = -2;
 		}
 		
+		double pitch = BulletSlope();
+		
+		player.mo.PlayAttacking2();
+		GunShot(accurate, "KCBulletPuff2", pitch);
+	}
+	
+	action void A_FireMiniGun(int type)
+	{
+		int accurate;
+		if (type > 0) accurate = -3;
+		
+		if (player == null)
+		{
+			return;
+		}
+
+		Weapon weap = player.ReadyWeapon;
+		if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+				return;
+
+			A_StartSound("weapons/minigunfire", CHAN_WEAPON);
+
+			State flash = weap.FindState('Flash');
+			if (flash != null)
+			{
+				// Removed most of the mess that was here in the C++ code because SetSafeFlash already does some thorough validation.
+				State atk = weap.FindState('Fire');
+				let psp = player.GetPSprite(PSP_WEAPON);
+				if (psp) 
+				{
+					State cur = psp.CurState;
+					int theflash = atk == cur? 0:1;
+					player.SetSafeFlash(weap, flash, theflash);
+				}
+			}
+			accurate = !player.refire;
+			if (type > 0) accurate = -3;
+		}
+		
+		double pitch = BulletSlope();
+		
 		player.mo.PlayAttacking2 ();
-		GunShot (accurate, "KCBulletPuff2", BulletSlope ());
+		GunShot(accurate, "KCBulletPuff2", pitch);
 	}
 	
 	action void A_FireMissile()
@@ -3100,14 +3199,6 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 		Tag "$TAG_CHAINGUN";
 	}
 	
-	action void A_ShootMinigun()
-	{
-		A_StartSound("weapons/minigunfire", CHAN_WEAPON);
-		A_StartSound("weapons/minigunfire", CHAN_WEAPON);
-		A_FireBullets(frandom(-7.1,7.1), frandom(-3.55,3.55), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
-		A_FireBullets(frandom(-7.1,7.1), frandom(-3.55,3.55), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
-	}
-	
 	States
 	{
 		Ready:
@@ -3130,9 +3221,17 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 			CHGG AAAABBBBCCCCDDDD 1 A_WeaponReady();
 			Goto Ready;
 		AltFire:
-			CHGF A 1 bright A_ShootMinigun();
+			CHGF A 1 bright 
+			{
+				A_FireMiniGun(0);
+				A_FireMiniGun(0);
+			}
 			CHGG F 1;
-			CHGF B 1 bright A_ShootMinigun();
+			CHGF B 1 bright 
+			{
+				A_FireMiniGun(0);
+				A_FireMiniGun(0);
+			}
 			CHGG G 1;
 			TNT1 A 0 A_ReFire();
 			CHGG HBCD 1 A_WeaponReady();
