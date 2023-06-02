@@ -3387,7 +3387,41 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					A_Quake((2.0 - (CountInv("PlayerATK") / 24)), 8, 0, 1024, "nosound/silent");
 					A_Quake((4.0 - (CountInv("PlayerATK") / 36)), 8, 0, 512, "nosound/silent");
 					A_Quake((6.0 - (CountInv("PlayerATK") / 48)), 8, 0, 256, "nosound/silent");
-					A_FireBullets(angoffset, ptcoffset, 1, (40*random(1,8)), "HowitzerBase", FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ,32768);
+					
+					actor playera = players[0].mo;
+					if (playera.CountInv("KCTimeFreezer") ||
+							playera.CountInv("KCTimeFreezer1") ||
+							playera.CountInv("KCTimeFreezer2") ||
+							playera.CountInv("KCTimeFreezer3"))
+					{
+						A_TakeInventory("RocketAmmo",1);
+						for (int i = 0; i < 1; i++)
+						{
+							actor BombShotsB, BombShots;
+							KCPlayerPawn KCP;
+							KCP = KCPlayerPawn(playera);
+							double origang = playera.angle;
+							double randpitch = ptcoffset;
+							double randangle = angoffset;
+							double shotheight = 36;
+							if (KCP) shotheight = ((KCP.height / 2) + KCP.AttackZOffSet);
+							[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,0,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+							if (BombShots)
+							{
+								KCBulletTracer BS1;
+								BS1 = KCBulletTracer(BombShots);
+								if (BS1)
+								{
+									BS1.DamageType = 'Explosive';
+									BS1.finaldamagedealt = (40 * random(1,8));
+								}
+							}
+						}
+					}
+					else
+					{
+						A_FireBullets(angoffset, ptcoffset, 1, (40*random(1,8)), "HowitzerBase", FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ,32768);
+					}
 				}
 				else
 				{
