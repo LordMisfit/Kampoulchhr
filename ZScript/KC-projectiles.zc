@@ -1562,7 +1562,7 @@ class KCHowitzerTracer : KCBulletTracer
 		PROJECTILE;
 		+DONTREFLECT;
 		+NODAMAGETHRUST;
-		Renderstyle "Add";
+		Renderstyle "Normal";
 		Alpha 1.0;
 		Scale 1.0;
 		decal "BulletChip";
@@ -1645,7 +1645,7 @@ class KCHowitzerTracer : KCBulletTracer
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			QROK A 1 bright; //A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
 			loop;
 		XDeath:
 		Death:
