@@ -1120,6 +1120,7 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			
+			//DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
 			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			
@@ -1139,6 +1140,7 @@ class KCStatusBarMain : BaseStatusBar
 					if (hudarmortype == 2) MaxAPS.AppendFormat("200");
 				}
 				//MaxAPS.AppendFormat("%d", armor.maxamount);
+				//DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, font.cr_black, fontalpha, -1, 4, (1.25, 1.25));
 				DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
 			
@@ -1250,6 +1252,7 @@ class KCStatusBarMain : BaseStatusBar
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
+					//DrawString(mKCLFont, perstr, (svx+60, svy-20), DI_TEXT_ALIGN_RIGHT, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
 					DrawString(mKCLFont, perstr, (svx+60, svy-20), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
@@ -1385,8 +1388,8 @@ class KCStatusBarMain : BaseStatusBar
 				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
 				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
 				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+				//DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
-
 			}
 		}
 	}
@@ -1421,6 +1424,7 @@ class KCStatusBarMain : BaseStatusBar
 					if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "HDASHGRN";
 					if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "HDASHDLG";
 					DrawImage(LVLGraphic, (168, -22), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+					//DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 					DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
 				}
 			}
@@ -1453,13 +1457,16 @@ class KCStatusBarMain : BaseStatusBar
 										else DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
 
 		// Show Current Health
-		let berserk = CPlayer.mo.FindInventory("PowerStrength");
+		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
+		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
 		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20, -2));
+		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Show Max Health
 		string MaxHPS = "\c[brick] / ";
 		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
+		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
 		DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 	}
 	
@@ -2392,29 +2399,53 @@ class KCStatusBarMain : BaseStatusBar
 			Array<String> UserKeys5;
 			string temp1, temp2;
 			if (PlayerWeapon is "FistMarine" ||
-					PlayerWeapon is "RocketLauncherMarine")
+					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
+					PlayerWeapon is "RocketLauncherMarine" ||
+					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
+					PlayerWeapon is "ImpalerXBow")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
 				if (PlayerWeapon is "FistMarine") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
-				ELSE if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]CHANGE ATTACK\c-");
+				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
+				{
+					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
+																												else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
+				}
+				else if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]CHANGE ATTACK\c-");
+				else if (PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators"))
+				{
+					if (CPlayerPawn.CountInv("DualDevastatorsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
+																													else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
+				}
+				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 
 			LegendStr = "";
 			if (PlayerWeapon is "PistolMarine" ||
+					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "ChaingunMarine" ||
+					PlayerWeapon is "TommyGun" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
+					PlayerWeapon is "Devastator" ||
 					PlayerWeapon is "PlasmaRifleMarine" ||
-					PlayerWeapon is "BFG9000Marine")
+					PlayerWeapon is "BFG9000Marine" ||
+					PlayerWeapon is "ImpalerXBow" ||
+					PlayerWeapon is "SawThrower")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
+				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
+				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST\c-");
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704\c-");
+				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT\c-");
+				if (PlayerWeapon is "SawThrower") LegendStr.AppendFormat(" = \c[blue]MELEE CHOPPER ATTACK\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
