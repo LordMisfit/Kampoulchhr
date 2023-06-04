@@ -5258,16 +5258,18 @@ class ImpalerBowZoom : PlaceholderItem
 		Inventory.MaxAmount 2147483647;
 	}
 }
-class ImpalerBowFakeReady : PlaceholderItem { } // Checks to see if your current selected weapon is "Hellcore Class" [for HUD displays]
-class ImpalerBowRealReady : PlaceholderItem { } // Checks to see if your current selected weapon is "Hellcore Class" [for HUD displays]
+class ImpalerBowFakeReady : PlaceholderItem { }
+class ImpalerBowRealReady : PlaceholderItem { }
 class ImpalerXBow : MarineWeapon
 {
 	default
 	{
 		Inventory.PickupMessage "Impaler Crossbow";
 		Weapon.AmmoGive 15;
-		Weapon.AmmoType "ImpalerBolts";
-		Weapon.AmmoUse 1;
+		Weapon.AmmoType1 "ImpalerBolts";
+		Weapon.AmmoType2 "ImpalerBolts";
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 3;
 		Weapon.UpSound "Weapon/XBowLoad";
 		Weapon.KickBack 20;
 		+WEAPON.NOALERT;
@@ -5281,38 +5283,48 @@ class ImpalerXBow : MarineWeapon
 	
 	action double A_GetXBowSpd()
 	{
-		double output = 3;
+		double output = 10;
 		double oldoutput = output;
 		if (output <= 1.0) output = 1.0;
 		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
 		return output;
 	}
 	
-	action void A_SetSonicNailStats(actor BombShots)
+	action void A_SetSonicNailStats(actor BombShots, int type)
 	{
 		int TruePlayerLevel = invoker.ActualLevel;
 		double dmgfactor = 1.0;
 		double dmgfactor2 = 1.0;
 		int basedmg = (75 + (random(-25,25)));
+		if (type == 1) basedmg = (50 + (random(randompick(-16,-17,-17),randompick(16,17,17))));
+		if (type >= 2) basedmg = (25 + (random(randompick(-8,-8,-9),randompick(8,8,9))));
 		//Console.Printf("basedmg: %d", basedmg);
 		if (BombShots)
 		{
 			if (CountInv("ImpalerBowZoom") <= 0)
 			{
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
-				if (dmgfactor >= 4.0) dmgfactor = 4.0;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.015625));
+				if (dmgfactor >= 2.0) dmgfactor = 2.0;
 				dmgfactor2 = 1.0;
 			}
 			else
 			if (CountInv("ImpalerBowZoom") == 1)
 			{
-				BombShots.speed *= 1.5;
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.046875));
-				if (dmgfactor >= 6.0) dmgfactor = 6.0;
-				dmgfactor2 = 1.25;
+				BombShots.speed *= 1.25;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.0234375));
+				if (dmgfactor >= 3.0) dmgfactor = 3.0;
+				dmgfactor2 = 1.125;
 			}
 			else
 			if (CountInv("ImpalerBowZoom") == 2) 
+			{
+				BombShots.speed *= 1.5;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
+				if (dmgfactor >= 4.0) dmgfactor = 4.0;
+				dmgfactor2 = 1.25;
+			}
+			else
+			if (CountInv("ImpalerBowZoom") == 3)
 			{
 				BombShots.speed *= 2.0;
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.0625));
@@ -5320,20 +5332,12 @@ class ImpalerXBow : MarineWeapon
 				dmgfactor2 = 1.5;
 			}
 			else
-			if (CountInv("ImpalerBowZoom") == 3)
+			if (CountInv("ImpalerBowZoom") >= 4)
 			{
 				BombShots.speed *= 4.0;
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.125));
 				if (dmgfactor >= 16.0) dmgfactor = 16.0;
 				dmgfactor2 = 2.0;
-			}
-			else
-			if (CountInv("ImpalerBowZoom") >= 4)
-			{
-				BombShots.speed *= 8.0;
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.25));
-				if (dmgfactor >= 32.0) dmgfactor = 32.0;
-				dmgfactor2 = 4.0;
 			}
 			
 			basedmg *= dmgfactor;
@@ -5356,25 +5360,31 @@ class ImpalerXBow : MarineWeapon
 	action void A_BowSetZoom()
 	{
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
+		A_StartSound("Weapon/XBowLoad", 21, CHANF_DEFAULT, 0.75, ATTN_NORM, 1.25);
+		A_StartSound("Weapon/XBowLoad", 22, CHANF_DEFAULT, 0.875, ATTN_NORM, 1.125);
+
 		if (buttons & BT_USER3)
 		{
-			if (CountInv("ImpalerBowZoom") == 0) { A_ZoomFactor(8.0); A_SetInventory("ImpalerBowZoom",4); A_Print("8x Zoom"); }
+			if (CountInv("ImpalerBowZoom") == 0) 
+			{
+				A_ZoomFactor(4.0); A_SetInventory("ImpalerBowZoom",4); A_Print("4x Zoom"); 
+			}
 			else
 			{
 				A_TakeInventory("ImpalerBowZoom",1);
-				if (CountInv("ImpalerBowZoom") == 3) { A_ZoomFactor(4.0); A_Print("4x Zoom"); }
-				else if (CountInv("ImpalerBowZoom") == 2) { A_ZoomFactor(2.0); A_Print("2x Zoom"); }
-				else if (CountInv("ImpalerBowZoom") == 1) { A_ZoomFactor(1.5); A_Print("1.5x Zoom"); }
+				if (CountInv("ImpalerBowZoom") == 3) { A_ZoomFactor(2.0); A_Print("2x Zoom"); }
+				else if (CountInv("ImpalerBowZoom") == 2) { A_ZoomFactor(1.5); A_Print("1.5x Zoom"); }
+				else if (CountInv("ImpalerBowZoom") == 1) { A_ZoomFactor(1.25); A_Print("1.25x Zoom"); }
 				else if (CountInv("ImpalerBowZoom") == 0) { A_ZoomFactor(1.0); A_Print("No Zoom"); }
 			}
 		}
 		else
 		{
 			A_GiveInventory("ImpalerBowZoom",1);
-			if (CountInv("ImpalerBowZoom") == 1) { A_ZoomFactor(1.5); A_Print("1.5x Zoom"); }
-			else if (CountInv("ImpalerBowZoom") == 2) { A_ZoomFactor(2.0); A_Print("2x Zoom"); }
-			else if (CountInv("ImpalerBowZoom") == 3) { A_ZoomFactor(4.0); A_Print("4x Zoom"); }
-			else if (CountInv("ImpalerBowZoom") == 4) { A_ZoomFactor(8.0); A_Print("8x Zoom"); }
+			if (CountInv("ImpalerBowZoom") == 1) { A_ZoomFactor(1.25); A_Print("1.25x Zoom"); }
+			else if (CountInv("ImpalerBowZoom") == 2) { A_ZoomFactor(1.5); A_Print("1.5x Zoom"); }
+			else if (CountInv("ImpalerBowZoom") == 3) { A_ZoomFactor(2.0); A_Print("2x Zoom"); }
+			else if (CountInv("ImpalerBowZoom") == 4) { A_ZoomFactor(4.0); A_Print("4x Zoom"); }
 			else if (CountInv("ImpalerBowZoom") == 5) { A_ZoomFactor(1.0); A_SetInventory("ImpalerBowZoom",0); A_Print("No Zoom"); }
 		}
 	}
@@ -5394,10 +5404,20 @@ class ImpalerXBow : MarineWeapon
 			CBOW E 0 A_JumpIfNoAmmo("FakeReady");
 			CBOW EF 5;
 		RealReady:
-			CBOW A 1 A_WeaponReady(WRF_ALLOWUSER4);
+			CBOW A 1 
+			{
+				A_SetInventory("ImpalerBowRealReady",1);
+				A_SetInventory("ImpalerBowFakeReady",0);
+				A_WeaponReady(WRF_ALLOWUSER4);
+			}
 			Loop;
 		FakeReady:
-			CBOW E 1 A_WeaponReady(WRF_ALLOWUSER4);
+			CBOW E 1 
+			{
+				A_SetInventory("ImpalerBowFakeReady",1);
+				A_SetInventory("ImpalerBowRealReady",0);
+				A_WeaponReady(WRF_ALLOWUSER4);
+			}
 			Loop;
 		Fire:
 			CBOW B 6 
@@ -5408,7 +5428,7 @@ class ImpalerXBow : MarineWeapon
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
 				BombShots = A_FireProjectileEx("ImpalerMissile",0,1);
-				A_SetSonicNailStats(BombShots);
+				A_SetSonicNailStats(BombShots,0);
 				
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 6;
@@ -5489,6 +5509,127 @@ class ImpalerXBow : MarineWeapon
 				A_SetTics(tic);
 			}
 			Goto RealReady;
+		
+		AltFire:
+			CBOW B 6
+			{
+				actor player = players[0].mo;
+				int buttons = GetPlayerInput(INPUT_BUTTONS);
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				double xspread = frandompick(1.25,2.5,2.5,2.5,3.75);
+				actor BombShots;
+				BombShots = A_FireProjectileEx("ImpalerMissile",0,1);
+				A_SetSonicNailStats(BombShots,0);
+				BombShots = A_FireProjectileEx("ImpalerMissile2",xspread,0);
+				A_SetSonicNailStats(BombShots,1);
+				BombShots = A_FireProjectileEx("ImpalerMissile2",-xspread,0);
+				A_SetSonicNailStats(BombShots,1);
+				BombShots = A_FireProjectileEx("ImpalerMissile3",(xspread*2),0);
+				A_SetSonicNailStats(BombShots,2);
+				BombShots = A_FireProjectileEx("ImpalerMissile3",(-xspread*2),0);
+				A_SetSonicNailStats(BombShots,2);
+				
+				A_XBowRecoil(2.1875);
+				
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 9;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.0)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.0)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 3.0)) tic -= 1;
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			CBOW C 8 
+			{
+				A_StartSound("Weapon/XBowLoad", CHAN_WEAPON);
+				
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 12;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.9375)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.875)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.8125)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 3.75)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 4.6875)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 5.625)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 6.5625)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 7.5)) tic -= 1;
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			CBOW D 5
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = random(7,8);
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.25)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 3.334)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 4.667)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 6)) tic -= 1;
+				if (random(1,2) <= 1 && TruePlayerLevel >= (A_GetXBowSpd() * 7.334)) tic -= 1;
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			CBOW E 5 
+			{
+				A_CheckReload();
+				
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = random(7,8);
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.667)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.25)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 3.334)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 4.667)) tic -= 1;
+				if (random(1,2) <= 1 && TruePlayerLevel >= (A_GetXBowSpd() * 6)) tic -= 1;
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			CBOW F 5
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = random(7,8);
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.334)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.667)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 4)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 5.334)) tic -= 1;
+				if (random(1,2) <= 1 && TruePlayerLevel >= (A_GetXBowSpd() * 6.667)) tic -= 1;
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			CBOW A 12
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 18;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.25)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 0.75)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.0)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.25)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 1.75)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.2)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.25)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.5)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 2.75)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd() * 3.0)) tic -= 1;
+				if (random(1,2) <= 1)
+				{
+					if (TruePlayerLevel >= (A_GetXBowSpd() * 3.25)) tic -= 1;
+					if (random(1,2) <= 1 && TruePlayerLevel >= (A_GetXBowSpd() * 3.5)) tic -= 1;
+				}
+				tic = A_BowBerserkCheck(tic);
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			Goto RealReady;
+		
 		// Zoom :V
 		User4:
 			CBOW A 0
@@ -5498,8 +5639,9 @@ class ImpalerXBow : MarineWeapon
 				return resolvestate("Ready");
 			}
 		User4Fake:
-			CBOW E 5
+			CBOW E 17
 			{
+				A_SetTics(random(17,18));
 				A_BowSetZoom();
 				
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -5512,8 +5654,9 @@ class ImpalerXBow : MarineWeapon
 			}
 			goto FakeReady;
 		User4Real:
-			CBOW A 5
+			CBOW A 17
 			{
+				A_SetTics(random(17,18));
 				A_BowSetZoom();
 				
 				int TruePlayerLevel = invoker.ActualLevel;

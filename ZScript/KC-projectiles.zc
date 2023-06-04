@@ -2953,17 +2953,16 @@ class ImpalerMissile : SingleDamageFastRipper
 	default
 	{
 		PROJECTILE;
-		+STRIFEDAMAGE;
 		+BLOODSPLATTER;
 		+NOEXTREMEDEATH;
 		+RIPPER;
 		Radius 4;
 		Height 8;
-		DamageFunction (75 + (random(-25,25)));
-		Speed 160;
+		DamageFunction (finaldamagedealt);
+		Speed 320;
 		SeeSound "Weapon/XBowFire";
-		KCFastProjectile.TimeUnFreezeSpeedUpFactor 4.0;
-		KCFastProjectile.TimeFreezeSlowDownFactor 0.25;
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 8.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.125;
 	}
 	
 	override void PostBeginPlay()
@@ -2992,6 +2991,192 @@ class ImpalerMissile : SingleDamageFastRipper
 				}
 			}
 		}
+		
+		if (finaldamagedealt <= 0) finaldamagedealt = (75 + (random(-25,25)));
+	}
+
+	override void Tick()
+	{
+		SingleDamageFastRipper.Tick();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			ARRW A 1;
+			Loop;
+		Death:
+		Crash:
+			NLPJ B 3 A_StartSound("Weapon/XBowHit");
+			NLPJ CDEFG 3;
+			Stop;
+		XDeath:
+			TNT1 A 10 A_StartSound("Weapon/XBowSplatter");
+			Stop;
+	}
+}
+
+class ImpalerMissile2 : SingleDamageFastRipper
+{
+	default
+	{
+		PROJECTILE;
+		+BLOODSPLATTER;
+		+NOEXTREMEDEATH;
+		+RIPPER;
+		Radius 3;
+		Height 6;
+		Scale 0.75;
+		DamageFunction (finaldamagedealt);
+		Speed 280;
+		SeeSound "Weapon/XBowFire";
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 7.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.1428572;
+	}
+	
+	override void PostBeginPlay()
+	{
+		SingleDamageFastRipper.PostBeginPlay();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
+		
+		if (finaldamagedealt <= 0) finaldamagedealt = (50 + (random(randompick(-16,-17,-17),randompick(16,17,17))));
+	}
+
+	override void Tick()
+	{
+		SingleDamageFastRipper.Tick();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			ARRW A 1;
+			Loop;
+		Death:
+		Crash:
+			NLPJ B 3 A_StartSound("Weapon/XBowHit");
+			NLPJ CDEFG 3;
+			Stop;
+		XDeath:
+			TNT1 A 10 A_StartSound("Weapon/XBowSplatter");
+			Stop;
+	}
+}
+
+class ImpalerMissile3 : SingleDamageFastRipper
+{
+	default
+	{
+		PROJECTILE;
+		+BLOODSPLATTER;
+		+NOEXTREMEDEATH;
+		+RIPPER;
+		Radius 2;
+		Height 4;
+		DamageFunction (finaldamagedealt);
+		Scale 0.5;
+		Speed 240;
+		SeeSound "Weapon/XBowFire";
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 6.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.166667;
+	}
+	
+	override void PostBeginPlay()
+	{
+		SingleDamageFastRipper.PostBeginPlay();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
+		
+		if (finaldamagedealt <= 0) finaldamagedealt = (25 + (random(randompick(-8,-8,-9),randompick(8,8,9))));
 	}
 
 	override void Tick()
