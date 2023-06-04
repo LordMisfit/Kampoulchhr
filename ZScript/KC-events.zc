@@ -724,27 +724,30 @@ class KC_EventHandler : EventHandler
 
 						int PreviousLevelCheck = LevelCheck;
 						
-						/*
 						// Specific Monsters
-						if (SpiderMastermind(spawnee) || SpiderMastermindNew(spawnee)) LevelCheck += random(3,6);
-						if (Cyberdemon(spawnee) || CyberdemonNew(spawnee)) LevelCheck += random(3,6);
-						if (Annihilator(spawnee) || Demolisher(spawnee)) LevelCheck += random(3,6);
+						if (SpiderMastermind(spawnee)) LevelCheck += random(3,6);
+						//if (SpiderMastermindNew(spawnee)) LevelCheck += random(3,6);
+						if (Cyberdemon(spawnee)) LevelCheck += random(3,6);
+						//if (CyberdemonNew(spawnee)) LevelCheck += random(3,6);
+						//if (Annihilator(spawnee) || Demolisher(spawnee)) LevelCheck += random(3,6);
 						if (Minotaur(spawnee) || MinotaurFriend(spawnee)) LevelCheck += random(3,6);
 
 						// Specific Bosses
 						// Tier 1 Boss
-						if (Sorcerer1(spawnee) || DSparilMountedNew(spawnee)) LevelCheck += random(9,18);
+						if (Sorcerer1(spawnee)) LevelCheck += random(9,18);
+						//if (DSparilMountedNew(spawnee)) LevelCheck += random(9,18);
 						if (FighterBoss(spawnee)) LevelCheck += random(9,18);
 						if (ClericBoss(spawnee)) LevelCheck += random(9,18);
 						if (MageBoss(spawnee)) LevelCheck += random(9,18);
 						// Tier 2 Boss
-						if (Sorcerer2(spawnee) || DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
-						if (Korax(spawnee) || KoraxNew(spawnee)) LevelCheck += random(15,30);
+						if (Sorcerer2(spawnee)) LevelCheck += random(15,30);
+						//if (DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
+						if (Korax(spawnee)) LevelCheck += random(15,30);
+						//if (KoraxNew(spawnee)) LevelCheck += random(15,30);
 						if (spawnname == "ThamuzNew" || spawnname == "TchernobogNew") LevelCheck += random(15,30);
 						// Tier 3 Boss
 						if (spawnname == "PennywiseBoss" || spawnname == "TchernobogNew") LevelCheck += random(23,45);
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [actor-check: %s]: %d (Previous: %d), monsterrating: %d", spawnname, LevelCheck, PreviousLevelCheck, monsterrating);
-						*/
 						
 						PreviousLevelCheck = LevelCheck;
 						LevelCheck = clamp(LevelCheck, 0, 2000);
@@ -1043,7 +1046,6 @@ class KC_EventHandler : EventHandler
 				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials2(spawnee,monsterlevel,monsterrating);
 				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials3(spawnee,monsterlevel,monsterrating);
 				if (!LD_nomonsters) A_LegendaryCheck(spawnee);
-				//if (!A_CheckUOHYM()) [spawnee, monsterlevel, monsterrating] = SetUpMiracles(spawnee,monsterlevel,monsterrating);
 			}
 		}
 		KCCreature spawnee2;
@@ -1460,7 +1462,7 @@ class KC_EventHandler : EventHandler
 				}
 				string invspawnname = invspawnee.GetClassName();
 				string nm, nn, no, np, nq, nr;
-
+				
 				nm = "KDIZDGreenKey";
 				nn = "KDIZDSilverKey";
 				no = "KDIZDOrangeKey";

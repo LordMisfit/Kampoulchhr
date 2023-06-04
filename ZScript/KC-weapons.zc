@@ -1870,15 +1870,17 @@ class MarineWeapon : KCWeaponBase
 				A_QMWKickInit();
 			}
 			goto KickStart;
-		KickStart: // 19/13 (Deg/Illu) Tics, 13/7 (-6) [MAMlv3], 12/6 (-1) [MAMlv5]
+		KickStart: // 19
 			LEG2 A 2 
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 B 2
 			{
 				A_SetInventory("IsKicking",1);
 				A_StartSound("fistswingmedium0",1);
+				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 C 1
 			{
@@ -1891,10 +1893,13 @@ class MarineWeapon : KCWeaponBase
 			LEG2 D 1
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 E 2 
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(1);
+				
 				A_GetKickSwingRecoil(0);
 				A_CustomPunch(A_GetKickDamage(0,0,false),1,CPF_NOTURN,"KickPuff",104,0,0,"","","");
 	
@@ -1918,10 +1923,12 @@ class MarineWeapon : KCWeaponBase
 			LEG2 F 5 
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(random(2,3));
 			}
 			LEG2 E 2 
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 D 1 
 			{ 
@@ -1930,6 +1937,7 @@ class MarineWeapon : KCWeaponBase
 			LEG2 C 1 
 			{ 
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 B 1
 			{
@@ -1938,6 +1946,7 @@ class MarineWeapon : KCWeaponBase
 			LEG2 A 1 
 			{
 				A_SetInventory("IsKicking",1);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 A 0 { return resolvestate("KickEnd"); }
 		KickEnd:
@@ -2636,7 +2645,7 @@ class FistMarine : MarineWeapon replaces Fist
 				A_SetInventory("IsUppercutting",0);
 			}
 			loop;
-		Fire: // 22 Tics, 17 (-5) [MAMLv2], 12 (-5) [MAMLv4]
+		Fire: // 22 Tics
 			TNT1 A 0 
 			{
 				A_SetInventory("IsUppercutting",0);
@@ -2653,10 +2662,13 @@ class FistMarine : MarineWeapon replaces Fist
 			PUNG B 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
 			}
 			PUNG C 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
+				
 				double frange = 64;
 				if (random(1,256) <= 4) 
 				{
@@ -2690,14 +2702,17 @@ class FistMarine : MarineWeapon replaces Fist
 			PUNG D 5
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(random(2,3));
 			}
 			PUNG C 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
 			}
 			PUNG B 5
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(random(2,3));
 				A_Refire();
 			}
 			PUNG B 0 
@@ -2711,10 +2726,13 @@ class FistMarine : MarineWeapon replaces Fist
 			PUNG F 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
 			}
 			PUNG G 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
+
 				double frange = 64;
 				if (random(1,256) <= 4) 
 				{
@@ -2748,14 +2766,17 @@ class FistMarine : MarineWeapon replaces Fist
 			PUNG H 5
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(random(2,3));
 			}
 			PUNG G 4
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(2);
 			}
 			PUNG F 5
 			{
 				A_SetInventory("IsPunching",1);
+				if (A_CheckBerserk()) A_SetTics(random(2,3));
 				A_Refire();
 			}
 			PUNG F 0 
@@ -2771,16 +2792,32 @@ class FistMarine : MarineWeapon replaces Fist
 				A_GiveInventory("UsingMeleeAttack",1);
 			}
 			goto UppercutStart;
-		// 23 Tics [18 (MAMlv1), 14 (MAMlv2), 11 (MAMlv3), 8 (MAMlv4), 6 (MAMlv5)]
+		// 23 Tics
 		UppercutStart:
-			MPU0 A 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 B 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 C 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 D 1 { A_SetInventory("IsUppercutting",0); }
+			MPU0 A 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+			}
+			MPU0 B 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU0 C 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+			}
+			MPU0 D 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
 			MPU0 E 1 { A_SetInventory("IsUppercutting",0); }
 			MPU1 A 1
 			{
 				A_SetInventory("IsUppercutting",1);
+				if (A_CheckBerserk()) A_SetTics(0);
+				
 				if (random(1,256) >= 253)
 				{
 					if (CountInv("PlayingStrife")) { } // Strife mode makes the punch work like the Punch Dagger where it NEVER makes sound
@@ -2799,10 +2836,24 @@ class FistMarine : MarineWeapon replaces Fist
 				if (random(1,256) <= 75) { A_StartSound("*grunt",CHAN_VOICE); }
 				A_StartSound("fistswingheavy",1); // D [Left] or B [Right] 
 			}
-			MPU1 B 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 C 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 D 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 E 1 { A_SetInventory("IsUppercutting",1); }
+			MPU1 B 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+			}
+			MPU1 C 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU1 D 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+			}
+			MPU1 E 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
 			MPU1 F 1
 			{
 				A_SetInventory("IsUppercutting",1);
@@ -2828,13 +2879,38 @@ class FistMarine : MarineWeapon replaces Fist
 					}
 				}
 			}
-			MPU1 G 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 F 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 E 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 D 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 C 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 B 1 { A_SetInventory("IsUppercutting",1); }
-			MPU1 A 1 { A_SetInventory("IsUppercutting",1); }
+			MPU1 G 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU1 F 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+			}
+			MPU1 E 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU1 D 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+			}
+			MPU1 C 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU1 B 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+			}
+			MPU1 A 1 
+			{
+				A_SetInventory("IsUppercutting",1); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
 			MPU1 A 0 
 			{
 				A_SetInventory("IsUppercutting",0);
@@ -2846,11 +2922,28 @@ class FistMarine : MarineWeapon replaces Fist
 				A_SetInventory("IsUppercutting",0);
 				A_SetInventory("UsingMeleeAttack",0); 
 			}
-			MPU0 E 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 D 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 C 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 B 1 { A_SetInventory("IsUppercutting",0); }
-			MPU0 A 1 { A_SetInventory("IsUppercutting",0); }
+			MPU0 E 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+			}
+			MPU0 D 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU0 C 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+			}
+			MPU0 B 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+				if (A_CheckBerserk()) A_SetTics(0);
+			}
+			MPU0 A 1 
+			{
+				A_SetInventory("IsUppercutting",0); 
+			}
 			TNT1 A 0
 			{
 				A_Refire();
@@ -2863,6 +2956,7 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF A 1
 			{
 				A_PFistBlockOn();
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF B 1
 			{
@@ -2872,6 +2966,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_GiveInventory("FistPlayerBlockItem",1);
 				A_PFistBlockOn();
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF D 1
 			{
@@ -2880,6 +2975,7 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF E 1
 			{
 				A_PFistBlockOn();
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF F 1
 			{
@@ -2888,6 +2984,7 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF G 1
 			{
 				A_PFistBlockOn();
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF H 1
 			{
@@ -2896,6 +2993,7 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF I 1
 			{
 				A_PFistBlockOn();
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 		User4Hold:
 			DPDF J 1 // BRIGHT
@@ -2911,6 +3009,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_PFistBlockOn(); 
 				A_SetInventory("FistPlayerBlockHold",0);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF H 1
 			{
@@ -2921,6 +3020,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_PFistBlockOn(); 
 				A_SetInventory("FistPlayerBlockHold",0);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF F 1
 			{
@@ -2931,6 +3031,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_PFistBlockOn(); 
 				A_SetInventory("FistPlayerBlockHold",0);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF D 1
 			{
@@ -2941,6 +3042,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_PFistBlockOn(); 
 				A_SetInventory("FistPlayerBlockHold",0);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF B 1
 			{
@@ -2951,6 +3053,7 @@ class FistMarine : MarineWeapon replaces Fist
 			{
 				A_PFistBlockOn(); 
 				A_SetInventory("FistPlayerBlockHold",0);
+				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			DPDF A 0
 			{
@@ -4356,7 +4459,7 @@ class TommAmmo : Ammo
 		Inventory.MaxAmount 500;
 		Ammo.BackpackAmount 50;
 		Ammo.BackpackMaxAmount 1000;
-		Inventory.PickupMessage "Picked up some ammo for the tommygun.";
+		Inventory.PickupMessage "Picked up some \c[blue]ammo for the tommygun\c-.";
 		Inventory.Icon "TOMAA0";
 	}
 	
@@ -4373,7 +4476,7 @@ class TommAmmoBig : TommAmmo
 	default
 	{
 		Inventory.Amount 250;
-		Inventory.PickupMessage "Picked up a ton of ammo for the tommygun.";
+		Inventory.PickupMessage "Picked up a ton of \c[blue]ammo for the tommygun\c-.";
 	}
 	
 	States
@@ -4892,7 +4995,7 @@ class MiniRockets : Ammo
 		Inventory.MaxAmount 200;
 		Ammo.BackpackAmount 10;
 		Ammo.BackpackMaxAmount 400;
-		Inventory.PickupMessage "Picked up some mini rockets.";
+		Inventory.PickupMessage "Picked up some \c[blue]mini rockets\c-.";
 		Inventory.Icon "MNRAA0";
 	}
 	
@@ -4910,7 +5013,7 @@ class MiniRocketBox : MiniRockets
 	{
 		+INVENTORY.ALWAYSPICKUP
 		Inventory.Amount 50;
-		Inventory.PickupMessage "Picked up a box of mini rockets.";
+		Inventory.PickupMessage "Picked up a box of \c[blue]mini rockets\c-.";
 	}
 	
 	States
@@ -5221,7 +5324,7 @@ class Saws : Ammo
 		Inventory.MaxAmount 50;
 		Ammo.BackpackAmount 3;
 		Ammo.BackpackMaxAmount 100;
-		Inventory.PickupMessage "Picked up some saws.";
+		Inventory.PickupMessage "Picked up some \c[blue]saws\c-.";
 		Inventory.PickupSound "weapons/ammo13";
 		Inventory.Icon "SAWAA0";
 	}
@@ -5239,7 +5342,7 @@ class SawBox : Saws
 	default
 	{
 		Inventory.Amount 15;
-		Inventory.PickupMessage "Picked up a box of saws.";
+		Inventory.PickupMessage "Picked up a box of \c[blue]saws\c-.";
 	}
 	
 	States
@@ -5675,7 +5778,7 @@ class ImpalerBolts : Ammo
 {
 	default
 	{
-		Inventory.PickupMessage "Steel bolts";
+		Inventory.PickupMessage "Grabbed a pack of \c[blue]Steel bolts\c-";
 		Inventory.Amount 10;
 		Inventory.MaxAmount 40;
 		Inventory.Icon "CBWAA0";

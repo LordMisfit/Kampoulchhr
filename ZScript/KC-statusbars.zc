@@ -976,6 +976,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		return invY;
 	}
+	
 	int A_DrawFSAmmo(int invY = 0)
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -1063,7 +1064,8 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		return invY;
 	}
-	void A_DrawFSArmor()
+	
+	void A_DrawFSArmor(double masterscale = 1.0)
 	{
 		int fontclr = font.CR_UNTRANSLATED;
 		double fontalpha = 1.0;
@@ -1339,7 +1341,7 @@ class KCStatusBarMain : BaseStatusBar
 			}
 		}
 	}
-	void A_DrawFSLevel()
+	void A_DrawFSLevel(double masterscale = 1.0)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -1394,7 +1396,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
-	void A_DrawFSDash()
+	void A_DrawFSDash(double masterscale = 1.0)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -1431,7 +1433,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
-	void A_DrawFSHealth()
+	void A_DrawFSHealth(double masterscale = 1.0)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -2281,7 +2283,6 @@ class KCStatusBarMain : BaseStatusBar
 		return DigY;
 	}
 	
-
 	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
 	{
 		string LegendStr = "";
@@ -2511,13 +2512,13 @@ class KCStatusBarMain : BaseStatusBar
 		A_DrawFSHealth();
 		
 		// Draw Armor [and Time Seraph Armor info]
-		A_DrawFSArmor();
+		A_DrawFSArmor(1.0);
 		
 		// Draw Level
-		A_DrawFSLevel();
+		A_DrawFSLevel(1.0);
 		
 		// Draw Dash
-		A_DrawFSDash();
+		A_DrawFSDash(1.0);
 		
 		//Key Legend
 		[VisiblePlayerLevel, candash, dashcost, dashmaxcharge] = DrawFSHUDKeyLegend(VisiblePlayerLevel, candash, dashcost, dashmaxcharge);
