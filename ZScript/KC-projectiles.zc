@@ -1135,6 +1135,10 @@ class KCEffectProjectile : KCProjectile
 // Base FastProjectile Class
 class KCFastProjectile : KCProjectile abstract
 {
+	double speedmul, speedmul2;
+	bool scale1, scale2;
+	property TimeUnFreezeSpeedUpFactor: speedmul;
+	property TimeFreezeSlowDownFactor: speedmul2;
 	Default
 	{
 		Projectile;
@@ -1412,16 +1416,13 @@ class KCEffectFastProjectile : KCFastProjectile
 class KCBulletTracer : KCFastProjectile
 {
 	int damagebase;
-	double speedmul, speedmul2;
-	property TimeUnFreezeSpeedUpFactor: speedmul;
-	property TimeFreezeSlowDownFactor: speedmul2;
 	default
 	{
 		Tag "Shot";
 		Damagetype "Hitscan";
 		DamageFunction (finaldamagedealt);
-		Radius 2;
-		Height 2;
+		Radius 1;
+		Height 1;
 		Mass 5;
 		Speed 320; //160; // 80
 		PROJECTILE;
@@ -1431,11 +1432,10 @@ class KCBulletTracer : KCFastProjectile
 		Alpha 1.0;
 		Scale 1.0;
 		decal "BulletChip";
-		KCBulletTracer.TimeUnFreezeSpeedUpFactor 4.0;
-		KCBulletTracer.TimeFreezeSlowDownFactor 0.25;
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 8.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.125;
 	}
 	
-	bool scale1, scale2;
 	override void PostBeginPlay()
 	{
 		KCFastProjectile.PostBeginPlay();
@@ -1555,8 +1555,8 @@ class KCHowitzerTracer : KCBulletTracer
 		Tag "Howitzer Shell";
 		Damagetype "Explosive";
 		DamageFunction (finaldamagedealt);
-		Radius 2;
-		Height 2;
+		Radius 1;
+		Height 1;
 		Mass 5;
 		Speed 640; //160; // 80
 		PROJECTILE;
@@ -1566,8 +1566,8 @@ class KCHowitzerTracer : KCBulletTracer
 		Alpha 1.0;
 		Scale 1.0;
 		decal "BulletChip";
-		KCBulletTracer.TimeUnFreezeSpeedUpFactor 8.0;
-		KCBulletTracer.TimeFreezeSlowDownFactor 0.125;
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 16.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.0625;
 	}
 	
 	override void PostBeginPlay()
@@ -2962,6 +2962,64 @@ class ImpalerMissile : SingleDamageFastRipper
 		DamageFunction (75 + (random(-25,25)));
 		Speed 160;
 		SeeSound "Weapon/XBowFire";
+		KCFastProjectile.TimeUnFreezeSpeedUpFactor 4.0;
+		KCFastProjectile.TimeFreezeSlowDownFactor 0.25;
+	}
+	
+	override void PostBeginPlay()
+	{
+		SingleDamageFastRipper.PostBeginPlay();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
+	}
+
+	override void Tick()
+	{
+		SingleDamageFastRipper.Tick();
+		actor playera = players[0].mo;
+		if (playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3"))
+		{
+			if (!scale1)
+			{
+				A_ScaleVelocity(speedmul2);
+				scale1 = true;
+			}
+		}
+		else
+		{
+			if (scale1)
+			{
+				if (!scale2)
+				{
+					A_ScaleVelocity(speedmul);
+					scale2 = true;
+				}
+			}
+		}
 	}
 	
 	States

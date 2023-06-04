@@ -1404,6 +1404,13 @@ class KC_EventHandler : EventHandler
 		{
 			string targname;
 			if (spawnee.target) targname = spawnee.target.GetClassName();
+			
+			if (spawnee.bCOUNTITEM ||
+					Ammo(spawnee) || 
+					Weapon(spawnee) ||
+					Medikit(spawnee) ||
+					Stimpack(spawnee) ||
+					Berserk(spawnee)) spawnee.bDONTGIB = true;
 
 			bool exception = CheckExceptions(spawnee);
 			if (!KCBaseZSC(spawnee) && 
@@ -2672,7 +2679,7 @@ class KC_EventHandler : EventHandler
 			if (victim.bBOSS) droptimes *= bossdropmulti;
 			for (int i; i < droptimes; i++)
 			{
-				// Weapons/Satchels [Type 6]
+				// Weapons/Backpacks [Type 6]
 				basechance = kc_inventorydroprate6;
 				basechance *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
@@ -2773,11 +2780,14 @@ class KC_EventHandler : EventHandler
 							droptype = "ImpalerXBow";
 							if (playera.CountInv(droptype)) droptype = "Backpack";
 						}
-						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						double raredropsndvol = frandom(1.75,2.25);
-						int raredropsndchannel = randompick(191,192,222,223,264,265);
-						victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (droptype != "Backpack")
+						{
+							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(191,192,222,223,264,265);
+							victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[green]Weapon Drop\c- - user_type: %d [%s]", user_type, droptype);
 					}
 					else // Ammo

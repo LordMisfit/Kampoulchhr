@@ -147,6 +147,163 @@ class KCPlayerPawn : PlayerPawn
 		}
 	}
 	
+	override void MovePlayer()
+	{
+		if (!player || !player.mo || player.mo != self)
+		{
+		}
+		else
+		{
+			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+			int PlayerSPD;
+			if (MiscItem) PlayerSPD = MiscItem.TruePlayerSPD;
+			double AirControlBase = frandom(0.2432,0.2436);
+			if (GetClassName() == "KCPlayer") AirControlBase = frandom(0.1824,0.1827);
+			if (GetClassName() == "HeiwaPlayer") AirControlBase = frandom(0.3648,0.3654);
+
+			// Stats Based AirControl
+			double StatAirControl = 1.00;
+			if (kc_expgains) StatAirControl = 1.00 + ((ActualLevel + PlayerSPD) * 0.01);
+									else StatAirControl = 1.00 + ((PlayerSPD) * 0.01);
+			
+			// Time Freeze Air Control
+			double TMFreezeAirControl = 1.0;
+			if ((CountInv("KCTimeFreezer1") ||
+					 CountInv("KCTimeFreezer2") ||
+					 CountInv("KCTimeFreezer3"))) TMFreezeAirControl *= 8.0;
+
+			// Armor items
+			double ArmorAirControl = 1.00;
+
+			// Buffs
+			double BuffAirControl = 1.00;
+			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) BuffAirControl *= 1.334;
+			
+			// ?
+			double ssa = 1.00;
+
+			level.aircontrol = AirControlBase
+											* TMFreezeAirControl
+											* StatAirControl
+											* ArmorAirControl
+											* BuffAirControl
+											* ssa;
+			if (level.aircontrol > 1.00) level.aircontrol = 1.00;
+			level.airfriction = level.aircontrol * -0.0941 + 1.0004;
+
+			if (kcdebug_playermove)
+			{
+				Console.Printf("\czSV_AirControl:\c- \cz%.8f\c-  \cwTotalAirControl:\c- \cw%.8f\c-, \cyAirControlBase:\c- \cy%.8f\c-, StatAirControl: %.8f, TMFreezeAirControl: %.8f, ArmorAirControl: %.8f, BuffAirControl: %.8f, ssa: %.8f", sv_aircontrol, level.aircontrol, AirControlBase, StatAirControl, TMFreezeAirControl, ArmorAirControl, BuffAirControl, ssa);
+				Console.Printf("\cwTotalFriction:\c- \cw%.8f\c-, \cyLevelAirFriction:\c- \cy%.8f\c-", friction, level.airfriction);
+				Console.Printf("\c[blue]Player.ForwardMove: (%.2f, %.2f), Player.SideMove: (%.2f, %.2f), Player.ViewBob: %.2f", ForwardMove1, ForwardMove2, SideMove1, SideMove2, ViewBob);
+			}
+			if (kcdebug_playerpos)
+			{
+				Console.Printf("\c[fire]cursector: %d, damagetype: %s, floorz: %.4f, floorpic: %s, ceilingz: %.4f, ceilingpic: %s, dropoffz: %.4f [tic: %d]", cursector.Index(), cursector.damagetype, floorz, texman.GetName(floorpic), ceilingz, texman.GetName(ceilingpic), dropoffz, gametic);
+				if (cursector.Index() != ceilingsector.Index()) Console.Printf("  \c[sapphire]ceilingsector: %d, damagetype: %s, floorpic: %s, ceilingpic: %s [tic: %d]", ceilingsector.Index(), ceilingsector.damagetype, texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
+				if (cursector.Index() != floorsector.Index()) Console.Printf("  \c[sapphire]floorsector: %d, damagetype: %s, floorpic: %s, ceilingpic: %s [tic: %d]", floorsector.Index(), floorsector.damagetype, texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
+			}
+			/*
+			double posf;
+			posf = cursector.NextLowestFloorAt(pos.x, pos.y, pos.z, 0, maxstepheight);
+			Console.Printf("posf: %.4f", posf);
+
+      FCheckPosition CurPos;
+			Double Dbl;
+			Sector Sec;
+			F3DFloor Fl;
+
+			CheckPosition(Pos.XY,False,CurPos);
+
+			//[Dbl,Sec,Fl] = CurPos.CurSector.NextHighestCeilingAt(Pos.X,Pos.Y,Pos.Z,CurPos.CurSector.HighestCeilingAt(Pos.XY));
+			//[Dbl,Sec,Fl] = CurPos.CurSector.NextLowestFloorAt(Pos.X,Pos.Y,Pos.Z,0,24);
+			[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
+
+			A_LogFloat(Dbl,False);
+			*/
+		}
+		
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+
+		// [RH] 180-degree turn overrides all other yaws
+		if (player.turnticks)
+		{
+			player.turnticks--;
+			Angle += (180. / TURN180_TICKS);
+		}
+		else
+		{
+			Angle += cmd.yaw * (360./65536.);
+		}
+
+		player.onground = (pos.z <= floorz) || bOnMobj || bMBFBouncer || (player.cheats & CF_NOCLIP2);
+
+		// killough 10/98:
+		//
+		// We must apply thrust to the player and bobbing separately, to avoid
+		// anomalies. The thrust applied to bobbing is always the same strength on
+		// ice, because the player still "works just as hard" to move, while the
+		// thrust applied to the movement varies with 'movefactor'.
+
+		if (cmd.forwardmove | cmd.sidemove)
+		{
+			double forwardmove, sidemove;
+			double bobfactor;
+			double friction, movefactor;
+			double fm, sm;
+
+			[friction, movefactor] = GetFriction();
+			bobfactor = friction < ORIG_FRICTION ? movefactor : ORIG_FRICTION_FACTOR;
+			if (!player.onground && !bNoGravity && !waterlevel)
+			{
+				// [RH] allow very limited movement if not on ground.
+				movefactor *= level.aircontrol;
+				bobfactor*= level.aircontrol;
+			}
+
+			fm = cmd.forwardmove;
+			sm = cmd.sidemove;
+			[fm, sm] = TweakSpeeds (fm, sm);
+			fm *= Speed / 256;
+			sm *= Speed / 256;
+
+			// When crouching, speed and bobbing have to be reduced
+			if (CanCrouch() && player.crouchfactor != 1)
+			{
+				fm *= player.crouchfactor;
+				sm *= player.crouchfactor;
+				bobfactor *= player.crouchfactor;
+			}
+
+			forwardmove = fm * movefactor * (35 / TICRATE);
+			sidemove = sm * movefactor * (35 / TICRATE);
+
+			if (forwardmove)
+			{
+				Bob(Angle, cmd.forwardmove * bobfactor / 256., true);
+				ForwardThrust(forwardmove, Angle);
+			}
+			if (sidemove)
+			{
+				let a = Angle - 90;
+				Bob(a, cmd.sidemove * bobfactor / 256., false);
+				Thrust(sidemove, a);
+			}
+
+			if (!(player.cheats & CF_PREDICTING) && (forwardmove != 0 || sidemove != 0))
+			{
+				PlayRunning ();
+			}
+
+			if (player.cheats & CF_REVERTPLEASE)
+			{
+				player.cheats &= ~CF_REVERTPLEASE;
+				player.camera = player.mo;
+			}
+		}
+	}
+	
 	override void BeginPlay()
 	{
 		basexscale = scale.x;

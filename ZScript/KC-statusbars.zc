@@ -987,8 +987,11 @@ class KCStatusBarMain : BaseStatusBar
 		int wsfontclr = font.cr_gray;
 		double wsalpha = 1.0;
 		
-		Inventory ammotype1, ammotype2;
+		Ammo ammotype1, ammotype2;
 		[ammotype1, ammotype2] = GetCurrentAmmo();
+		int x = -30;
+		int y = -24;
+
 		if (ammotype1 != null)
 		{
 			if (ammotype1.maxamount > 0)
@@ -1010,11 +1013,27 @@ class KCStatusBarMain : BaseStatusBar
 				else if (AmmoAmount >= AmmoMaxAmount) wsfontclr = font.cr_sapphire;
 				else wsfontclr = font.cr_gray;
 			}
+			
+			int DigitPush = 0;
+			if (ammotype1.MaxAmount > 99) DigitPush = 8;
+			if (ammotype1.MaxAmount > 999) DigitPush = 14;
+			if (ammotype1.MaxAmount > 9999) DigitPush = 20;
 
+			if (CPlayerPawn.CountInv("Backpack")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+			
+			if (CPlayerPawn.CountInv("Backpack")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			DrawString(mKCMFont, "/", ((x-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+			
 			DrawInventoryIcon(ammotype1, (-14, -4));
-			DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 4), (-30, -20), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			//DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 4), (-30, -20), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
+		else
+		{
+		}
+
 		if (ammotype2 != null && ammotype2 != ammotype1)
 		{
 			wsfontclr = font.cr_gray;
@@ -1237,6 +1256,86 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
+	void BlindnessEffectHUD()
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		let PlayerWeapon = MiscItem.weapon;
+		
+		bool chasecam = false;
+		if (CPlayer.cheats & CF_CHASECAM) chasecam = true;
+		if (CPlayerPawn && !automapactive)
+		{
+			
+			string temp = "ImpalerBowZoom";
+			string temp2 = "ImpalerXBow";
+			string temp3 = "DualImpalerXBow";
+			int zoomlvl = CPlayerPawn.CountInv(temp);
+			if ((PlayerWeapon is temp2 || PlayerWeapon is temp3) && zoomlvl > 0 && !chasecam)
+			{
+				textureid ScopeImg = TexMan.CheckForTexture("ZOOMSCO3", TexMan.TYPE_MiscPatch);
+				double scopealpha = 1.00;
+				vector2 scopescale = (6.0, 6.0);
+				vector2 scopepos = (480, 270);
+				if (zoomlvl == 1) scopescale = (4.125, 4.125); //4
+				if (zoomlvl == 2) scopescale = (3.1875, 3.1875); //3
+				if (zoomlvl == 3) scopescale = (1.78125, 1.78125); //1.5
+				if (zoomlvl >= 4) scopescale = (1.078125, 1.078125); //0.75
+				DrawTexture(ScopeImg, scopepos, DI_ITEM_CENTER|DI_ITEM_VCENTER, scopealpha, (-1, -1), scopescale);
+
+				int levelt = level.time % 35;
+				double levelf = 0.0147058823529413;
+				double scopealphabase = 1.00;
+				
+				scopealpha = 1.00;
+				if (levelt == 0) scopealpha = scopealphabase - (levelf * 17);
+				if (levelt == 1 || levelt == 34) scopealpha = scopealphabase - (levelf * 16); 
+				if (levelt == 2 || levelt == 33) scopealpha = scopealphabase - (levelf * 15); 
+				if (levelt == 3 || levelt == 32) scopealpha = scopealphabase - (levelf * 14); 
+				if (levelt == 4 || levelt == 31) scopealpha = scopealphabase - (levelf * 13); 
+				if (levelt == 5 || levelt == 30) scopealpha = scopealphabase - (levelf * 12); 
+				if (levelt == 6 || levelt == 29) scopealpha = scopealphabase - (levelf * 11); 
+				if (levelt == 7 || levelt == 28) scopealpha = scopealphabase - (levelf * 10); 
+				if (levelt == 8 || levelt == 27) scopealpha = scopealphabase - (levelf * 9); 
+				if (levelt == 9 || levelt == 26) scopealpha = scopealphabase - (levelf * 8);
+				if (levelt == 10 || levelt == 25) scopealpha = scopealphabase - (levelf * 7);
+				if (levelt == 11 || levelt == 24) scopealpha = scopealphabase - (levelf * 6);
+				if (levelt == 12 || levelt == 23) scopealpha = scopealphabase - (levelf * 5);
+				if (levelt == 13 || levelt == 22) scopealpha = scopealphabase - (levelf * 4);
+				if (levelt == 14 || levelt == 21) scopealpha = scopealphabase - (levelf * 3);
+				if (levelt == 15 || levelt == 20) scopealpha = scopealphabase - (levelf * 2);
+				if (levelt == 16 || levelt == 19) scopealpha = scopealphabase - (levelf * 1);
+				if (levelt == 17 || levelt == 18) scopealpha = scopealphabase;
+				ScopeImg = TexMan.CheckForTexture("ZOOMSCO2", TexMan.TYPE_MiscPatch);
+				DrawTexture(ScopeImg, scopepos, DI_ITEM_CENTER|DI_ITEM_VCENTER, scopealpha, (-1, -1), scopescale);
+
+				scopealpha = 1.00;
+				if (levelt == 0) scopealpha = scopealphabase - (levelf * 17);
+				if (levelt == 1 || levelt == 34) scopealpha = scopealphabase - (levelf * 16); 
+				if (levelt == 2 || levelt == 33) scopealpha = scopealphabase - (levelf * 15); 
+				if (levelt == 3 || levelt == 32) scopealpha = scopealphabase - (levelf * 14); 
+				if (levelt == 4 || levelt == 31) scopealpha = scopealphabase - (levelf * 13); 
+				if (levelt == 5 || levelt == 30) scopealpha = scopealphabase - (levelf * 12); 
+				if (levelt == 6 || levelt == 29) scopealpha = scopealphabase - (levelf * 11); 
+				if (levelt == 7 || levelt == 28) scopealpha = scopealphabase - (levelf * 10); 
+				if (levelt == 8 || levelt == 27) scopealpha = scopealphabase - (levelf * 9); 
+				if (levelt == 9 || levelt == 26) scopealpha = scopealphabase - (levelf * 8);
+				if (levelt == 10 || levelt == 25) scopealpha = scopealphabase - (levelf * 7);
+				if (levelt == 11 || levelt == 24) scopealpha = scopealphabase - (levelf * 6);
+				if (levelt == 12 || levelt == 23) scopealpha = scopealphabase - (levelf * 5);
+				if (levelt == 13 || levelt == 22) scopealpha = scopealphabase - (levelf * 4);
+				if (levelt == 14 || levelt == 21) scopealpha = scopealphabase - (levelf * 3);
+				if (levelt == 15 || levelt == 20) scopealpha = scopealphabase - (levelf * 2);
+				if (levelt == 16 || levelt == 19) scopealpha = scopealphabase - (levelf * 1);
+				if (levelt == 17 || levelt == 18) scopealpha = scopealphabase;
+				
+				ScopeImg = TexMan.CheckForTexture("ZOOMSCOP", TexMan.TYPE_MiscPatch);
+				DrawTexture(ScopeImg, scopepos, DI_ITEM_CENTER|DI_ITEM_VCENTER, scopealpha, (-1, -1), scopescale);
+				SetSize(0, 320, 200);
+			}
+		}
+	}
 	void A_DrawFSLevel()
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -2361,6 +2460,9 @@ class KCStatusBarMain : BaseStatusBar
 		//* Damage Border *
 		//*****************
 		[CurrHealth, PlayerMaxHP] = DrawDmgBorderFullScreen(CurrHealth,PlayerMaxHP);
+
+		// Blindness/Drowning [HUD]
+		BlindnessEffectHUD();
 		
 		//********
 		//* Dash *
