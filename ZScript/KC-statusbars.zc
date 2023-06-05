@@ -1021,16 +1021,16 @@ class KCStatusBarMain : BaseStatusBar
 			if (ammotype1.MaxAmount > 9999) DigitPush = 20;
 
 			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("Backpack")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
 			DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
 			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("Backpack")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
 			DrawString(mKCMFont, "/", ((x-27-DigitPush), y+7), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
 			DrawInventoryIcon(ammotype1, (-14, -4));
 			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("Backpack")) DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}

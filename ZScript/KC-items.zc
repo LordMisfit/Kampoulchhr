@@ -2306,11 +2306,49 @@ class BackPackTier2 : PlaceHolderItem
 	}
 }
 
+class Backpack2 : CustomInventoryExt replaces Backpack
+{
+	default
+	{
+		+DONTGIB;
+		+INVENTORY.ALWAYSPICKUP;
+		Height 26;
+		Inventory.PickupMessage "Picked up a \cebackpack full of ammo\c-! \cyAmmo and Inventory Limits increased\c-!";
+	}
+	
+	States
+	{
+		Spawn:
+			BPAK A -1;
+			Stop;
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("BackPackTier1", 1);
+				A_StartSound("GetBullets", 5);
+				A_StartSound("GetShells", 6);
+				A_StartSound("GetRockets", 7);
+				A_StartSound("GetCells", 8);
+
+				A_GiveInventory("Shell", 4);
+				A_GiveInventory("Clip", 10);
+				A_GiveInventory("RocketAmmo", 1);
+				A_GiveInventory("Cell", 20);
+				A_GiveInventory("Saws", 3);
+				A_GiveInventory("MiniRockets", 10);
+				A_GiveInventory("ImpalerBolts", 5);
+				A_GiveInventory("TommAmmo", 50);
+			}
+			Stop;
+	}
+}
+
 class CombatPack : CustomInventoryExt
 {
 	default
 	{
-		+COUNTITEM;
+		Height 26;
+		+DONTGIB;
 		+INVENTORY.ALWAYSPICKUP;
 		Inventory.PickupMessage "You got a combat pack";
 		Inventory.PickupSound "misc/i_pkup";
@@ -2324,13 +2362,18 @@ class CombatPack : CustomInventoryExt
 		Pickup:
 			TNT1 A 0 
 			{
+				A_StartSound("getbulletbox", 5);
+				A_StartSound("getshellbox", 6);
+				A_StartSound("getrocketbox", 7);
+				A_StartSound("getcellpack", 8);
+				
 				A_GiveInventory("Backpack", 1);
 				A_GiveInventory("BackPackTier1", 1);
 				A_GiveInventory("BackPackTier2", 1);
 				A_GiveInventory("Shell", 16);
 				A_GiveInventory("Clip", 40);
 				A_GiveInventory("RocketAmmo", 4);
-				A_GiveInventory("Cell", 60);
+				A_GiveInventory("Cell", 80);
 				A_GiveInventory("Saws", 12);
 				A_GiveInventory("MiniRockets", 40);
 				A_GiveInventory("ImpalerBolts", 20);
