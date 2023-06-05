@@ -56,7 +56,11 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 			PLAY N 0 A_SpawnItemEx((random(1,4) <= 1) ? "BlueArmor" : "GreenArmor");
 			goto Spawn+3;
 		ItemDrop5:
-			PLAY N 0 A_SpawnItemEx("BackPack");
+			PLAY N 0 
+			{
+				if (random(1,64) <= 1) A_SpawnItemEx("CombatPack");
+													else A_SpawnItemEx("BackPack");
+			}
 			goto Spawn+3;
 		ItemDrop6:
 			PLAY N 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
@@ -130,7 +134,11 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 			PLAY W 0 A_SpawnItemEx((random(1,4) <= 1) ? "BlueArmor" : "GreenArmor");
 			goto Spawn+3;
 		ItemDrop5:
-			PLAY W 0 A_SpawnItemEx("BackPack");
+			PLAY W 0 
+			{
+				if (random(1,64) <= 1) A_SpawnItemEx("CombatPack");
+													else A_SpawnItemEx("BackPack");
+			}
 			goto Spawn+3;
 		ItemDrop6:
 			PLAY W 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");

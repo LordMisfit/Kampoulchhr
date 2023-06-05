@@ -2558,21 +2558,25 @@ class KC_EventHandler : EventHandler
 					if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
 					{
 						droptype = "BackPack";
+						if (random(1,64) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 					{
 						droptype = "BackPack";
+						if (random(1,64) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 					{
 						droptype = "BackPack";
+						if (random(1,64) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
 					{
 						droptype = "BackPack";
+						if (random(1,64) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 				}
@@ -2789,6 +2793,10 @@ class KC_EventHandler : EventHandler
 							int raredropsndchannel = randompick(191,192,222,223,264,265);
 							victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							if (random(1,16) <= 1) droptype = "CombatPack";
 						}
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[green]Weapon Drop\c- - user_type: %d [%s]", user_type, droptype);
 					}

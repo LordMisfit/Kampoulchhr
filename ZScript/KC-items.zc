@@ -2289,3 +2289,57 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 			Loop;
 	}
 }
+
+class BackPackTier1 : PlaceHolderItem 
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class BackPackTier2 : PlaceHolderItem 
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class CombatPack : CustomInventoryExt
+{
+	default
+	{
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.PickupMessage "You got a combat pack";
+		Inventory.PickupSound "misc/i_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			CBPK A -1;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("Backpack", 1);
+				A_GiveInventory("BackPackTier1", 1);
+				A_GiveInventory("BackPackTier2", 1);
+				A_GiveInventory("Shell", 16);
+				A_GiveInventory("Clip", 40);
+				A_GiveInventory("RocketAmmo", 4);
+				A_GiveInventory("Cell", 60);
+				A_GiveInventory("Saws", 12);
+				A_GiveInventory("MiniRockets", 40);
+				A_GiveInventory("ImpalerBolts", 20);
+				A_GiveInventory("TommAmmo", 200);
+			}
+			//Please edit this with the custom ammo types of your mod.
+			//Make it give a large pickup worth of ammo
+			//but subtract that given from the backpack (so it gives exactly one large pickup worth)
+			Stop;
+	}
+}
+

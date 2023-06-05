@@ -2027,7 +2027,14 @@ class PlayerStatItem : Inventory
 					double PerkFactor2 = 0.0;
 				}
 				
-				if (owner.CountInv("Backpack")) baseholdamount *= baseholdmultibp1;
+				
+				if (owner.CountInv("Backpack") || 
+						owner.CountInv("BackpackTier1") || 
+						owner.CountInv("BackpackTier2"))
+				{
+					if (owner.CountInv("BackpackTier2")) baseholdamount *= baseholdmultibp2;
+																					else baseholdamount *= baseholdmultibp1;
+				}
 				if (baseholdamount < 1) baseholdamount = 1;
 				if (kcdebug_inventorylimits) Console.Printf("baseholdamount  [\c[green]%s\c-]: %.2f (baselvlfactor: %.4f)", itemname, int(baseholdamount), baselvlfactor);
 				if (kc_expgains)
