@@ -68,8 +68,12 @@ class KC_EventHandler : EventHandler
 				actor player = players[0].mo;
 				player.A_SetInventory("PlayingCCards",1);
 				Actor mo;
+				string nm;
 				
-				string nm = "CCards_Actor_MonsterDisguise";
+				nm = "CCards_Actor_BigStomach";
+				nm = "CCards_Actor_SwapCurse";
+				//
+				nm = "CCards_Actor_MonsterDisguise";
 				ThinkerIterator it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{

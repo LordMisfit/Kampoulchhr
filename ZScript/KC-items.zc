@@ -22,6 +22,7 @@ class CustomInventoryExt : CustomInventory
 	
 	override String PickupMessage()
 	{
+		string msg = PickupMsg;
 		return PickupMsg;
 	}
 	
@@ -465,7 +466,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 	default
 	{
 		//$Category KC Artifacts
-		Inventory.PickupMessage "";
+		Inventory.PickupMessage "\c[HeiwaDeluge]'With great protection comes great responsibility....'\c-";
 		Inventory.Icon "TSCHA0";
 		Tag "";
 		+FLOATBOB
@@ -482,6 +483,12 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 		scale 0.1667;
 	}
 	
+	override String PickupMessage()
+	{
+		string msg = PickupMsg;
+		return PickupMsg;
+	}
+
 	override void Tick()
 	{
 		actor playera = players[0].mo;

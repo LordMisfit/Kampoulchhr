@@ -154,6 +154,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		else
 		{
+			UserCmd cmd = player.cmd;
 			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 			int PlayerSPD;
 			if (MiscItem) PlayerSPD = MiscItem.TruePlayerSPD;
@@ -174,6 +175,15 @@ class KCPlayerPawn : PlayerPawn
 
 			// Armor items
 			double ArmorAirControl = 1.00;
+			if (CountInv("TSArmorTier2")) 
+			{
+				if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+				{
+					if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) ArmorAirControl *= 8.0;
+																													 else ArmorAirControl *= 4.0;
+				}
+				else ArmorAirControl *= 2.0;
+			}
 
 			// Buffs
 			double BuffAirControl = 1.00;
@@ -585,7 +595,6 @@ class KCPlayerPawn : PlayerPawn
 		UserCmd cmd = player.cmd;
 		bool berserked;
 		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) berserked = true;
-		double SuperVacAmmoFactor;
 		
 		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() Start)\c- Vel.Z: %.4f [oldfloorz: %.8f, grav: %.8f] [tic: %d]", Vel.Z, oldfloorz, grav, gametic);
 		if (Pos.Z > floorz && !bNOGRAVITY)
@@ -604,6 +613,19 @@ class KCPlayerPawn : PlayerPawn
 				else
 				{
 					Vel.Z -= grav;
+				}
+				
+				if (vel.z <= 0)
+				{
+					// Time Seraph Armor Tier 2 allows slowfall due to capelets by holding either one or both of JUMP or CROUCH keys [both to slow down extra]
+					if (CountInv("TSArmorTier2"))
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH)
+						{
+							if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) Vel.Z *= frandom(0.12,0.125);
+																															 else Vel.Z *= frandom(0.2,0.25);
+						}
+					}
 				}
 			}
 			
