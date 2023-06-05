@@ -5446,7 +5446,10 @@ class ImpalerXBow : MarineWeapon
 			basedmg *= dmgfactor;
 			basedmg *= dmgfactor2;
 			//Console.Printf("basedmg: %d [dmgfactor: %.8f, dmgfactor2: %.8f]", basedmg, dmgfactor, dmgfactor2);
-			BombShots.SetDamage(basedmg);
+			
+			KCBaseZSC BShot;
+			BShot = KCBaseZSC(BombShots);
+			if (BShot) BShot.finaldamagedealt = basedmg;
 		}
 	}
 	

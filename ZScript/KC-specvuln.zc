@@ -282,7 +282,9 @@ class CompatVulnItem : PlaceholderItem
 						nm = "SonicNail";
 						if (inflictor && 
 								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == "ImpalerMissile"))
+								inflictor.GetClassName() == "ImpalerMissile" ||
+								inflictor.GetClassName() == "ImpalerMissile2" ||
+								inflictor.GetClassName() == "ImpalerMissile3"))
 						{
 							damage *= frandompick(2.0000,2.50);
 						}
@@ -294,9 +296,11 @@ class CompatVulnItem : PlaceholderItem
 						nm = "SonicNail";
 						if (inflictor && 
 								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == "ImpalerMissile"))
+								inflictor.GetClassName() == "ImpalerMissile" ||
+								inflictor.GetClassName() == "ImpalerMissile2" ||
+								inflictor.GetClassName() == "ImpalerMissile3"))
 						{
-							damage *= frandompick(2.0000,2.50);
+							damage *= frandompick(1.5000,1.75);
 						}
 						else damage *= frandompick(1.1667,1.25);
 					}

@@ -761,7 +761,9 @@ mixin class MonsterCollider
 				nm = "SonicNail";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||
-						 inflictor.GetClassName() == "ImpalerMissile"))
+						 inflictor.GetClassName() == "ImpalerMissile" ||
+						 inflictor.GetClassName() == "ImpalerMissile2" ||
+						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
 					ActorDefenseIgnoreFactor += ((random(30,32) * 0.03125) * (1.00 - ActorDefenseIgnoreFactor));
 				}
@@ -1135,7 +1137,9 @@ mixin class MonsterCollider
 				nm = "SonicNail";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||
-						 inflictor.GetClassName() == "ImpalerMissile"))
+						 inflictor.GetClassName() == "ImpalerMissile" ||
+						 inflictor.GetClassName() == "ImpalerMissile2" ||
+						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
 					damage *= frandompick(2.0000,2.50);
 				}
@@ -1147,9 +1151,11 @@ mixin class MonsterCollider
 				nm = "SonicNail";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||
-						 inflictor.GetClassName() == "ImpalerMissile"))
+						 inflictor.GetClassName() == "ImpalerMissile" ||
+						 inflictor.GetClassName() == "ImpalerMissile2" ||
+						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
-					damage *= frandompick(2.0000,2.50);
+					damage *= frandompick(1.5000,1.75);
 				}
 				else damage *= frandompick(1.1667,1.25);
 			}
