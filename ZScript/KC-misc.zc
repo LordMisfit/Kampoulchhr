@@ -42,11 +42,6 @@ class PlayerStatItem : Inventory
 	int armtier;
 	
 	int CompatPackMode;
-	double TimeArmorEnergyTics;
-	double TimeArmorEnergyMaxTics;
-	int TimeArmorRelicsOwned;
-	int TimeArmorRelicsUsedBits;
-	int TimeArmorRelicsOwnedBits;
 
 	int EWShieldKills;
 	int HellWarriorMaxCharge;
@@ -178,17 +173,18 @@ class PlayerStatItem : Inventory
 	double timefreeze1cooldownratio;
 	double timefreeze2cooldownratio;
 	double timefreeze3cooldownratio;
-
 	double timefreeze1cooldownratio2;
 	double timefreeze2cooldownratio2;
 	double timefreeze3cooldownratio2;
-
 	double timefreezedurationinc1;
 	double timefreezedurationinc2;
 
 	int timefreeze1timesused;
 	int timefreeze2timesused;
 	int timefreeze3timesused;
+
+	int timefreeze2levellearned;
+	int timefreeze3levellearned;
 	
 	int timestopstate;
 	int timestoptype; // 1 = Defensive, 2 = Offensive, 3 = Neutral 
@@ -200,6 +196,12 @@ class PlayerStatItem : Inventory
 	int timestopcooldown2maxtics;
 	int timestopcooldown3tics;
 	int timestopcooldown3maxtics;
+	
+	double TimeArmorEnergyTics;
+	double TimeArmorEnergyMaxTics;
+	int TimeArmorRelicsOwned;
+	int TimeArmorRelicsUsedBits;
+	int TimeArmorRelicsOwnedBits;
 	
 	default 
 	{
@@ -265,6 +267,13 @@ class PlayerStatItem : Inventory
 				
 				if (itemtimer <= 2)
 				{
+					if (itemtimer <= 1)
+					{
+						timefreeze2levellearned = random(36,50);
+						timefreeze3levellearned = random(42,62);
+						if (timefreeze3levellearned < timefreeze2levellearned) timefreeze3levellearned = timefreeze2levellearned;
+					}
+					
 					if (itemtimer >= 1)
 					{
 						owner.A_SetInventory("TimeSeraphBangle",1);

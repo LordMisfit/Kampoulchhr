@@ -3096,21 +3096,44 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate5;
 				basechance *= skillmult;
 				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				rollrand = random(1,maxchance);
-				if (rollrand <= 1)
+				if (MiscItem)
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
-					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					double raredropsndvol = frandom(1.75,2.25);
-					int raredropsndchannel = randompick(193,194,224,225,266,267);
-					string raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 6.0 + (monsterrating * 1.5);
+					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 12.0 + (monsterrating * 3.0);
 					
-					victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					if (MiscItem.TimeArmorRelicsOwned <= 2)
+					{
+						int TSATrueLuck;
+						int PLevel = TruePlayerLevel;
+						if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
+						if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
+						if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
+						if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
+						if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
+						TSATrueLuck *= kc_pluckfactor;
+						if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+						maxchance = basechance;
+						rollrand = random(1,maxchance);
+						if (rollrand <= 1)
+						{
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
+							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(193,194,224,225,266,267);
+							string raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+
+							raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							raredropsndvol = frandom(1.75,2.25);
+							raredropsndchannel = randompick(293,294,324,325,366,367);
+							raredropsndname = "tsarmor/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							
+							victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						}
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
+					}
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
 				
 				/*
 				// ?? [Type 10]
