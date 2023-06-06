@@ -73,6 +73,27 @@ class CompatVulnItem : PlaceholderItem
 			if (FoundPlayer)
 			{
 				FoundPlayer = KCPlayerPawn(inflictor);
+				if (FoundPlayer)
+				{
+					double TimeSeraphBangleFactor = 1.0;
+					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
+					{
+						TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
+						ActorDefenseIgnoreFactor += (TimeSeraphBangleFactor * (1.00 - ActorDefenseIgnoreFactor));
+					}
+				}
+				else
+				{
+					KCCreature OtherA;
+					OtherA = KCCreature(source);
+					if (!OtherA) OtherA = KCCreature(inflictor);
+					if (OtherA)
+					{
+						//
+						//
+						//
+					}
+				}
 			}
 			
 			double ExplosivesFactor = frandompick(0.625,0.6667,0.75);

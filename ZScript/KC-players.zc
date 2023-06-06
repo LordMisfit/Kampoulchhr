@@ -622,7 +622,7 @@ class KCPlayerPawn : PlayerPawn
 					{
 						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH)
 						{
-							if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) Vel.Z *= frandom(0.12,0.125);
+							if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) Vel.Z *= frandom(0.1,0.125);
 																															 else Vel.Z *= frandom(0.2,0.25);
 						}
 					}
@@ -1417,13 +1417,23 @@ class KCPlayerPawn : PlayerPawn
 						}
 						if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
 						{
-							if (CountInv(nm)) A_SetInventory(nm,0);
-							if (CountInv(nn)) A_SetInventory(nn,0);
-							if (CountInv(no)) A_SetInventory(no,0);
 							MiscItem.TimeArmorEnergyTics = 0;
 							
 							A_StopSound(551);
 							A_StartSound("tsarmor/depleted",551,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+							if (CountInv(nm)) 
+							{
+								A_SetInventory(nm,0);
+								A_StopSound(555);
+								A_StartSound("tsarmor1/end",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+							}
+							if (CountInv(nn)) 
+							{
+								A_SetInventory(nn,0);
+								A_StopSound(556);
+								A_StartSound("tsarmor2/end",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+							}
+							if (CountInv(no)) A_SetInventory(no,0);
 						}
 						if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg: %.8f", TSTicDmg);
 					}

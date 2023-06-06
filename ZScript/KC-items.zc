@@ -564,6 +564,8 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 					if (playera.CountInv("TSArmorTier2"))
 					{
 						playera.A_SetInventory("TSArmorTier2",0);
+						playera.A_StopSound(556);
+						playera.A_StartSound("tsarmor2/end",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 						playera.A_SetInventory("TSArmorTier1",1);
 					}
 					else
@@ -571,11 +573,15 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 					{
 						playera.A_SetInventory("TSArmorTier2",0);
 						playera.A_SetInventory("TSArmorTier1",0);
+						playera.A_StopSound(555);
+						playera.A_StartSound("tsarmor1/end",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 					else
 					{
-						playera.A_SetInventory("TSArmorTier1",0);
+						playera.A_SetInventory("TSArmorTier2",0);
 						playera.A_SetInventory("TSArmorTier1",1);
+						playera.A_StopSound(555);
+						playera.A_StartSound("tsarmor1/start",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 				}
 			}
@@ -680,18 +686,28 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 					if (playera.CountInv("TSArmorTier2"))
 					{
 						playera.A_SetInventory("TSArmorTier2",0);
+						playera.A_StopSound(556);
+						playera.A_StartSound("tsarmor2/end",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 						playera.A_SetInventory("TSArmorTier1",0);
+						playera.A_StopSound(555);
+						playera.A_StartSound("tsarmor1/end",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 					else
 					if (playera.CountInv("TSArmorTier1"))
 					{
 						playera.A_SetInventory("TSArmorTier2",1);
+						playera.A_StopSound(556);
+						playera.A_StartSound("tsarmor2/start",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 						playera.A_SetInventory("TSArmorTier1",0);
 					}
 					else
 					{
 						playera.A_SetInventory("TSArmorTier2",1);
+						playera.A_StopSound(556);
+						playera.A_StartSound("tsarmor2/start",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 						playera.A_SetInventory("TSArmorTier1",0);
+						playera.A_StopSound(555);
+						playera.A_StartSound("tsarmor1/start",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 				}
 			}

@@ -1439,21 +1439,21 @@ class PlayerStatItem : Inventory
 					{
 						darmortype = 2;
 					}
+					
+					if (darmortype == 2)
+					{
+						Base *= 2.0;
+						BaseMulti *= 2.0;
+					}
+		
+					MassInc = floor(ArmorAmt * Base);
+					MassMulti = (ArmorAmt * BaseMulti);
+					MassMulti += 1.0;
+					
+					if (MassInc) TotalMass += MassInc;
+					if (MassMulti != 1.0) TotalMass *= MassMulti;
+					if (kcdebug_masscalcs) Console.Printf("Mass [Armor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
 				}
-				
-				if (darmortype == 2)
-				{
-					Base *= 2.0;
-					BaseMulti *= 2.0;
-				}
-	
-				MassInc = floor(ArmorAmt * Base);
-				MassMulti = (ArmorAmt * BaseMulti);
-				MassMulti += 1.0;
-				
-				if (MassInc) TotalMass += MassInc;
-				if (MassMulti != 1.0) TotalMass *= MassMulti;
-				if (kcdebug_masscalcs) Console.Printf("Mass [Armor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
 			}
 
 			// TSArmor
