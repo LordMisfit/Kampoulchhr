@@ -1440,7 +1440,20 @@ class KCPlayerPawn : PlayerPawn
 				}
 				else
 				{
-					MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+					A_StopSound(554);
+					A_StartSound("tsarmor/elemabsb",554,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+					if (CountInv(nn)) 
+					{
+						A_StopSound(553);
+						A_StartSound("tsarmor/elemabsb",553,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.3334,1.667));
+						A_StopSound(552);
+						A_StartSound("tsarmor/elemabsb",552,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
+						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+					}
+					else
+					{
+						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+					}
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
 				}
