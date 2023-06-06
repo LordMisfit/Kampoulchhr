@@ -1713,6 +1713,55 @@ class KCPowerTorch : PowerLightAmp
 	}
 }
 
+class KCPowerTorchBangle : KCPowerTorch
+{
+	default
+	{
+		Powerup.Duration 2147483645;
+	}
+	
+	override void DoEffect ()
+	{
+		if (Owner == NULL || Owner.player == NULL)
+		{
+			return;
+		}
+
+		let player = Owner.player;
+		if (EffectTics <= BLINKTHRESHOLD || player.fixedcolormap >= PlayerInfo.NUMCOLORMAPS)
+		{
+			Super.DoEffect ();
+		}
+		else 
+		{
+			Powerup.DoEffect ();
+
+			if (!(Level.maptime & 16) && Owner.player != NULL)
+			{
+				if (NewTorch != 0)
+				{
+					if (player.fixedlightlevel + NewTorchDelta > 7
+						|| player.fixedlightlevel + NewTorchDelta < 0
+						|| NewTorch == player.fixedlightlevel)
+					{
+						NewTorch = 0;
+					}
+					else
+					{
+						player.fixedlightlevel += NewTorchDelta;
+					}
+				}
+				else
+				{
+					NewTorch = random[torch](1, 8);
+					NewTorchDelta = (NewTorch == Owner.player.fixedlightlevel) ?
+						0 : ((NewTorch > player.fixedlightlevel) ? 1 : -1);
+				}
+			}
+		}
+	}
+}
+
 class DedMonsterFlag : PlaceHolderItem 
 {
 	int fuse;

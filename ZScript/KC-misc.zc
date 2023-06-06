@@ -2541,23 +2541,38 @@ class PlayerStatItem : Inventory
 				{
 					TimeArmorRelicsUsedBits += 4;
 					drainamt += 2;
-					//if (!owner.CountInv("KCPowerTorch")) owner.A_SetInventory("KCPowerTorch",1);
+					if (!owner.CountInv("KCPowerTorchBangle")) owner.A_SetInventory("KCPowerTorchBangle",1);
 				}
 				else
 				{
-					//if (owner.CountInv("KCPowerTorch")) owner.A_SetInventory("KCPowerTorch",0);
+					if (owner.CountInv("KCPowerTorchBangle")) owner.A_SetInventory("KCPowerTorchBangle",0);
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				TimeArmorEnergyTics -= drainamt;
 				if (TimeArmorEnergyTics <= 0.0000) 
 				{
-					if (owner.CountInv(nm)) owner.A_SetInventory(nm,0);
-					if (owner.CountInv(nn)) owner.A_SetInventory(nn,0);
-					if (owner.CountInv(no)) owner.A_SetInventory(no,0);
 					TimeArmorEnergyTics = 0;
 					
 					owner.A_StopSound(551);
 					owner.A_StartSound("tsarmor/depleted",551,CHANF_DEFAULT,1.0,ATTN_NONE,frandom[statitem](1.00,1.334));
+					if (owner.CountInv(nm)) 
+					{
+						owner.A_StopSound(555);
+						owner.A_StartSound("tsarmor1/end",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+						owner.A_SetInventory(nm,0);
+					}
+					if (owner.CountInv(nn)) 
+					{
+						owner.A_StopSound(556);
+						owner.A_StartSound("tsarmor2/end",556,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+						owner.A_SetInventory(nn,0);
+					}
+					if (owner.CountInv(no)) 
+					{
+						owner.A_StopSound(558);
+						owner.A_StartSound("tsbangle/end",558,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+						owner.A_SetInventory(no,0);
+					}
 				}
 			}
 

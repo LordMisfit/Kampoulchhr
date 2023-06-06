@@ -737,7 +737,19 @@ mixin class MonsterCollider
 				double TimeSeraphBangleFactor = 1.0;
 				if (FoundPlayer.CountInv("TimeSeraphVisor")) 
 				{
-					TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
+					if (FoundPlayer.CountInv("TSArmorTier2"))
+					{
+						TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
+					}
+					else
+					if (FoundPlayer.CountInv("TSArmorTier1"))
+					{
+						TimeSeraphBangleFactor = frandompick(0.334,0.375,0.375,0.4167,0.4167,0.4167,0.4167,0.4167,0.4167,0.4445,0.4445,0.5);
+					}
+					else
+					{
+						TimeSeraphBangleFactor = frandompick(0.4167,0.4445,0.4445,0.5,0.5,0.5,0.5,0.5,0.5,0.5556,0.5556,0.625);
+					}
 					ActorDefenseIgnoreFactor += (TimeSeraphBangleFactor * (1.00 - ActorDefenseIgnoreFactor));
 				}
 			}

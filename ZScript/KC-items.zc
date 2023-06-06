@@ -594,7 +594,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 	default
 	{
 		//$Category KC Artifacts
-		Inventory.PickupMessage "";
+		Inventory.PickupMessage "\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-";
 		Inventory.Icon "TSPWA0";
 		Tag "";
 		+FLOATBOB
@@ -720,9 +720,9 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	default
 	{
 		//$Category KC Artifacts
-		Inventory.PickupMessage "";
+		Inventory.PickupMessage "\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-";
 		Inventory.Icon "TSBGA0";
-		Tag "Time Seraph's Bangle: Creates a scanning visor over the eyes for various vision related perks when used. Toggleable.";
+		Tag "Time Seraph's Bangle: Creates a scanning visor over the eyes for various vision related perks when used, etc. Toggleable.";
 		+FLOATBOB
 		+DONTGIB
 		-COUNTITEM;
@@ -759,7 +759,12 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
 			if (MiscItem.TimeArmorRelicsOwned == 3) tagg = "\c[HeiwaDeluge]";
 			tagg.AppendFormat("Time Seraph's Bangle\c-");
-			tagg.AppendFormat(": Creates a scanning visor over the eyes for various vision related perks when used. Toggleable. [boosts damage dealt by 12.5%]");
+			tagg.AppendFormat(": Creates a scanning visor over the eyes for various vision related perks when used. Toggleable. [boosts damage dealt by 12.5%");
+			tagg.AppendFormat(" and ignores up to ");
+			if (playera.CountInv("TSArmorTier2") > 0) tagg.AppendFormat("62.5");
+			else if (playera.CountInv("TSArmorTier1") > 0) tagg.AppendFormat("50");
+			else tagg.AppendFormat("41.67");
+			tagg.AppendFormat("%% of enemy defenses]");
 		}
 		SetTag(tagg);
 		super.Tick();
@@ -812,10 +817,16 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 					if (playera.CountInv("TimeSeraphVisor"))
 					{
 						playera.A_SetInventory("TimeSeraphVisor",0);
+						playera.A_SetInventory("KCPowerTorchBangle",0);
+						playera.A_StopSound(558);
+						playera.A_StartSound("tsbangle/start",558,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 					else
 					{
 						playera.A_SetInventory("TimeSeraphVisor",1);
+						playera.A_SetInventory("KCPowerTorchBangle",1);
+						playera.A_StopSound(558);
+						playera.A_StartSound("tsbangle/end",558,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
 				}
 			}
