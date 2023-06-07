@@ -265,31 +265,41 @@ class CompatVulnItem : PlaceholderItem
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c-: pre-damage: %d, damagetype: %s", damage, damageType);
 				double TOTALFactor = 1.00;
 				// Time Stop
-				if (FoundPlayer && MiscItem && MiscItem.timestopactivetics > 0) 
+				if (FoundPlayer) 
 				{
-					double factor1 = frandompick(0.2,0.25);
-					double factor2 = frandompick(0.6,0.75);
-					if (MiscItem.timestoptype == 1) // Defensive
+					if (MiscItem && MiscItem.timestopactivetics > 0)
 					{
-						TOTALFactor *= factor1;
-						if (damageType == 'Bullet' || 
-								damageType == 'Pellet' ||
-								damageType == 'Ripsaw' ||
-								damageType == 'SawShot' ||
-								damageType == 'Chainsaw') TOTALFactor *= factor2;
-						owner.A_StopSound(14);
-						owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+						double factor1 = frandompick(0.2,0.25);
+						double factor2 = frandompick(0.6,0.75);
+						if (MiscItem.timestoptype == 1) // Defensive
+						{
+							TOTALFactor *= factor1;
+							if (damageType == 'Bullet' || 
+									damageType == 'Pellet' ||
+									damageType == 'Ripsaw' ||
+									damageType == 'SawShot' ||
+									damageType == 'Chainsaw') TOTALFactor *= factor2;
+							owner.A_StopSound(14);
+							owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+						}
+						if (MiscItem.timestoptype == 2) // Offensive
+						{
+							TOTALFactor /= factor1;
+							if (damageType == 'Bullet' || 
+									damageType == 'Pellet' ||
+									damageType == 'Ripsaw' ||
+									damageType == 'SawShot' ||
+									damageType == 'Chainsaw') TOTALFactor /= factor2;
+							owner.A_StopSound(14);
+							owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+						}
 					}
-					if (MiscItem.timestoptype == 2) // Offensive
+					
+					if (FoundPlayer.CountInv("TimeSeraphVisor"))
 					{
-						TOTALFactor /= factor1;
-						if (damageType == 'Bullet' || 
-								damageType == 'Pellet' ||
-								damageType == 'Ripsaw' ||
-								damageType == 'SawShot' ||
-								damageType == 'Chainsaw') TOTALFactor /= factor2;
-						owner.A_StopSound(14);
-						owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+						if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
+						else if (FoundPlayer.CountInv("TSArmorTier1")) TOTALFactor *= 1.2625;
+						else TOTALFactor *= 1.125;
 					}
 				}
 				newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
@@ -343,16 +353,16 @@ class CompatVulnItem : PlaceholderItem
 				bool criticalhit = false;
 				int CritRoll;
 				int TruePlayerLevel;
-				if (MiscItem)
-				{
-					if (kc_expgains) TruePlayerLevel = MiscItem.PlayerLevel;
-				}
+				if (MiscItem && kc_expgains) TruePlayerLevel = MiscItem.PlayerLevel;
 				if (FoundPlayer) 
 				{
-					if (FoundPlayer.CountInv("DealCriticalHit")) 
+					int bosscritres = 75;
+					if (FoundPlayer.CountInv("TimeSeraphVisor")) bosscritres *= 0.25;
+					
+					if (FoundPlayer.CountInv("DealCriticalHit"))
 					{
 						criticalhit = true;
-						if (owner.bBOSS && random(1,4) >= 2) 
+						if (owner.bBOSS && random(1,100) <= bosscritres) 
 						{
 							criticalhit = false;
 							if (source == FoundPlayer || inflictor == FoundPlayer)
@@ -372,7 +382,7 @@ class CompatVulnItem : PlaceholderItem
 							if (MiscItem.CritRoll <= 1) 
 							{
 								criticalhit = true;
-								if (owner.bBOSS && random(1,4) >= 2) 
+								if (owner.bBOSS && random(1,100) <= bosscritres) 
 								{
 									criticalhit = false;
 									if (source == FoundPlayer || inflictor == FoundPlayer)

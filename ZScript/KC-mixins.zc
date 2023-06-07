@@ -105,9 +105,12 @@ mixin class StunItems
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Eldritch")) ||
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Fire")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Ice")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Chill")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Frost")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Plasma")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Thunder")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Electric")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Electricity")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Lightning")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Shock")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Sceptre")) || 
@@ -1185,10 +1188,13 @@ mixin class MonsterCollider
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
 		if (FoundPlayer) 
 		{
+			int bosscritres = 75;
+			if (FoundPlayer.CountInv("TimeSeraphVisor")) bosscritres *= 0.25;
+			
 			if (FoundPlayer.CountInv("DealCriticalHit")) 
 			{
 				criticalhit = true;
-				if (bBOSS && random(1,4) >= 2) 
+				if (bBOSS && random(1,100) <= bosscritres) 
 				{
 					criticalhit = false;
 					if (source == FoundPlayer || inflictor == FoundPlayer)
@@ -1208,7 +1214,7 @@ mixin class MonsterCollider
 					if (MiscItem.CritRoll <= 1) 
 					{
 						criticalhit = true;
-						if (bBOSS && random(1,4) >= 2) 
+						if (bBOSS && random(1,100) <= bosscritres) 
 						{
 							criticalhit = false;
 							if (source == FoundPlayer || inflictor == FoundPlayer)

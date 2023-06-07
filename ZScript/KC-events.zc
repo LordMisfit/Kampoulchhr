@@ -1453,6 +1453,14 @@ class KC_EventHandler : EventHandler
 			{
 				spawnee.DamageType = 'Plasma';
 			}
+			if (ExplosiveBarrel(spawnee))
+			{
+				spawnee.DamageType = 'Explosive';
+			}
+			if (Rocket(spawnee))
+			{
+				spawnee.DamageType = 'Explosive';
+			}
 			
 			//
 			Inventory invspawnee;
