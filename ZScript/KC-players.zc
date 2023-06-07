@@ -1274,8 +1274,15 @@ class KCPlayerPawn : PlayerPawn
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int prevdmg = damage;
+		
+		// Any attack based on temperates, as well as lightning and wind, 
+		// are COMPLETELY blocked by the Time Seraph's armor, without 
+		// the armor's energy supply taking damage [and it will in fact 
+		// absorb some of the "damage" into extra energy, though not 
+		// usually at a 1:1 ratio (except when Tier 2 TSArmor is active) :V]
 		bool temperateshield = false;
 		
+		// Time Seraph Armor Checks
 		if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
@@ -1288,9 +1295,13 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
+			// Fire/Heat-based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Fire' || 
+					mod == 'Burn' || 
+					mod == 'Inferno' || 
 					mod == 'Magma' || 
 					mod == 'Flare' || 
+					mod == 'Solar' || 
 					mod == 'SpecialFire')
 			{
 				flags |= DMG_THRUSTLESS;
@@ -1299,6 +1310,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			// Ice-Based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Ice' || 
 					mod == 'Frost' || 
 					mod == 'Chill')
@@ -1309,6 +1321,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			// Thunder based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Thunder' || 
 					mod == 'Electric' || 
 					mod == 'Electricity' || 
@@ -1321,7 +1334,14 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			
+			// Plasma Based [some elements of heat are involved in 
+			// plasma, but it's not pure heat, so it only halves 
+			// the initial incoming damage and the armor still takes
+			// a bit of 'energy damage'] :P
 			if (mod == 'Plasma' ||
+					mod == 'Disintegrate' ||
+					mod == 'BFG' ||
 					mod == 'BFGSplash')
 			{
 				if (random(1,2) <= 1) flags |= DMG_THRUSTLESS;
@@ -1331,7 +1351,7 @@ class KCPlayerPawn : PlayerPawn
 			TSArmor1DmgChance = double((damage * 1.0) / (TSArmorDmgDivisor * 1.0));
 			damage /= TSArmorDmgDivisor; 
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TimeSeraphArmor: %d, TSArmorDmgDivisor: %d, TSArmor1DmgChance: %.8f", TimeSeraphArmor, TSArmorDmgDivisor, TSArmor1DmgChance);
-			flags |= DMG_NO_ARMOR; // TimeSeraphArmor's presence overrides other armors, thus they don't take damage
+			flags |= DMG_NO_ARMOR; // Time Seraph Armor's presence overrides other armors, thus they don't take damage while it's in use V:
 			
 			if (damage <= 0)
 			{
@@ -1388,10 +1408,10 @@ class KCPlayerPawn : PlayerPawn
 						MiscItem.TimeArmorEnergyTics -= TSTicDmg;
 						if (MiscItem)
 						{
-							double basedmul = 0.2;
+							double basedmul = 0.25;
 
-							double basevol = 0.5;
-							double extravol = (0.5 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+							double basevol = 0.667;
+							double extravol = (0.334 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
 							basevol += extravol;
 							if (basevol > 1.0) basevol = 1.0;
 
@@ -1401,10 +1421,10 @@ class KCPlayerPawn : PlayerPawn
 							blendtics += exblendtics;
 							if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
 
-							double alphablend = 0.0625;
-							double extrablend = 0.6875 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
+							double alphablend = 0.125;
+							double extrablend = 0.75 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
 							alphablend += extrablend;
-							if (alphablend >= 0.75) alphablend = 0.75;
+							if (alphablend >= 0.875) alphablend = 0.875;
 							string flashclr = "efefef";
 							if (MiscItem.TimeArmorRelicsUsedBits == 1) flashclr = "53fffb";
 							if (MiscItem.TimeArmorRelicsUsedBits == 2) flashclr = "53fffb";
@@ -1414,7 +1434,19 @@ class KCPlayerPawn : PlayerPawn
 							if (MiscItem.TimeArmorRelicsUsedBits == 6) flashclr = "57f700";
 							if (MiscItem.TimeArmorRelicsUsedBits == 7) flashclr = "e8afff";
 							A_SetBlend(flashclr,alphablend,blendtics);
-							A_StartSound("tsarmor/hit",random(501,525),CHANF_DEFAULT,basevol,ATTN_NONE,frandom(1.00,1.334));
+							int TSAHitSndChannel = random(701,716);
+							A_StopSound(TSAHitSndChannel);
+							A_StartSound("tsarmor/hit",TSAHitSndChannel,CHANF_DEFAULT,basevol,ATTN_NONE,frandom(1.00,1.334));
+							if (random(1,4) <= 3)
+							{
+								A_StopSound(TSAHitSndChannel+1);
+								A_StartSound("tsarmor/hit",TSAHitSndChannel+1,CHANF_DEFAULT,basevol,ATTN_NONE,frandom(0.8334,1.1667));
+								if (random(1,3) <= 1)
+								{
+									A_StopSound(TSAHitSndChannel+2);
+									A_StartSound("tsarmor/hit",TSAHitSndChannel+2,CHANF_DEFAULT,basevol,ATTN_NONE,frandom(0.6667,1.000));
+								}
+							}
 							if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- basevol: %.8f, blendtics: %d, alphablend: %.8f, flashclr: '%s', TSTicDmg: %.8f", basevol, blendtics, alphablend, flashclr, TSTicDmg);
 						}
 						if (MiscItem.TimeArmorEnergyTics <= 0.0000) 
@@ -1451,10 +1483,34 @@ class KCPlayerPawn : PlayerPawn
 						A_StopSound(552);
 						A_StartSound("tsarmor/elemabsb",552,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
 						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+						if (random(1,4) <= 1)
+						{
+							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+							if (random(1,4) <= 1)
+							{
+								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+								if (random(1,4) <= 1)
+								{
+									MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+								}
+							}
+						}
 					}
 					else
 					{
 						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+						if (random(1,4) <= 1)
+						{
+							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+							if (random(1,4) <= 1)
+							{
+								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+								if (random(1,4) <= 1)
+								{
+									MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+								}
+							}
+						}
 					}
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
@@ -1492,7 +1548,13 @@ class KCPlayerPawn : PlayerPawn
 				if (skill == 2) BarrelFactor = 0.5;
 				if (skill == 3) BarrelFactor = 0.75;
 				if (skill >= 4) BarrelFactor = 1.0;
-				if ((ExplosiveBarrel(inflictor) || ExplosiveBarrel(source) || Pod(inflictor) || Pod(source)) && (flags & DMG_EXPLOSION || mod == 'Explosive')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				if ((ExplosiveBarrel(inflictor) || 
+						 ExplosiveBarrel(source) || 
+						 Pod(inflictor) || 
+						 Pod(source)) && 
+						(flags & DMG_EXPLOSION || 
+						 mod == 'Explosive' || 
+						 mod == 'ExplosiveImpact')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
 				double RailFactor = frandom(0.3,0.334);
 				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
@@ -1983,7 +2045,9 @@ class KCPlayerPawn : PlayerPawn
 		}
 		
 		olddmg = damage;
-		if (flags & DMG_EXPLOSION || mod == 'Explosive')
+		if (flags & DMG_EXPLOSION || 
+				mod == 'Explosive' || 
+				mod == 'ExplosiveImpact')
 		{
 			if (AttackingActor == self)
 			{
@@ -2560,7 +2624,15 @@ class KCPlayerPawn : PlayerPawn
 				if (tookflrdmg) regenintfactor *= frandompick(1.375,1.5,1.5,1.5,1.5,1.5,1.625);
 									 else regenintfactor *= frandompick(1.1875,1.25,1.25,1.25,1.25,1.25,1.3125);
 			}
-			if (mod == 'Fire' || mod == 'Boiling' || mod == 'Lava' || mod == 'Magma') 
+			if (mod == 'Fire' || 
+					mod == 'Burn' || 
+					mod == 'Inferno' || 
+					mod == 'Flare' || 
+					mod == 'Solar' || 
+					mod == 'Boiling' || 
+					mod == 'Lava' || 
+					mod == 'Magma' ||
+					mod == 'SpecialFire') 
 			{
 				if (tookflrdmg) regenintfactor *= frandompick(0.6875,0.75,0.75,0.75,0.75,0.75,0.8125);
 									 else regenintfactor *= frandompick(0.375,0.5,0.5,0.5,0.5,0.5,0.625);

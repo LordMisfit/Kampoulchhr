@@ -1393,7 +1393,7 @@ class KC_EventHandler : EventHandler
 		KCCreature KCC;
 		
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-		string nm, nn, no, np;
+		string nm, nn, no, np, nq, nr;
 		actor spawnee = e.thing;
 		actor source;
 		actor mastor;
@@ -1441,26 +1441,15 @@ class KC_EventHandler : EventHandler
 			}
 			
 			if (DoomImpBall(spawnee) || 
-					FatShot(spawnee)) 
-			{
-				spawnee.DamageType = 'Fire';
-			}
-			if (CacodemonBall(spawnee)) 
-			{
-				spawnee.DamageType = 'Lightning';
-			}
-			if (ArachnotronPlasma(spawnee))
-			{
-				spawnee.DamageType = 'Plasma';
-			}
-			if (ExplosiveBarrel(spawnee))
-			{
-				spawnee.DamageType = 'Explosive';
-			}
-			if (Rocket(spawnee))
-			{
-				spawnee.DamageType = 'Explosive';
-			}
+					FatShot(spawnee)) spawnee.DamageType = 'Fire';
+			if (CacodemonBall(spawnee)) spawnee.DamageType = 'Lightning';
+			if (ArachnotronPlasma(spawnee) ||
+					PlasmaBall(spawnee)) spawnee.DamageType = 'Plasma';
+			if (Rocket(spawnee)) spawnee.DamageType = 'Explosive';
+			if (PlasmaBall1(spawnee) ||
+					PlasmaBall2(spawnee)) spawnee.DamageType = 'BFG';
+			if (ExplosiveBarrel(spawnee)) spawnee.DamageType = 'Explosive';
+			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			
 			//
 			Inventory invspawnee;
@@ -3999,7 +3988,10 @@ class KC_StaticEventHandler : StaticEventHandler
 				else nofsttxts++;
 			}
 			
-			if (level.Sectors[i].damagetype == 'Fire' || level.Sectors[i].damagetype == 'Lava') level.Sectors[i].damagetype = 'Magma';
+			if (level.Sectors[i].damagetype == 'Fire' || 
+					level.Sectors[i].damagetype == 'Burn' ||
+					level.Sectors[i].damagetype == 'Inferno' ||
+					level.Sectors[i].damagetype == 'Lava') level.Sectors[i].damagetype = 'Magma';
 			if (level.Sectors[i].damagetype == 'Ice') level.Sectors[i].damagetype = 'IceWater';
 			if (kcdebug_worldloaded) Console.Printf("    \czFireFloorAdjuster\c-: %d / %d", i, l);
 			
