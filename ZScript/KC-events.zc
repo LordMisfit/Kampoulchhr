@@ -3989,6 +3989,9 @@ class KC_StaticEventHandler : StaticEventHandler
 			}
 			
 			if (level.Sectors[i].damagetype == 'Fire' || 
+					level.Sectors[i].damagetype == 'Flames' || 
+					level.Sectors[i].damagetype == 'CCardsEyeFire' ||
+					level.Sectors[i].damagetype == 'SpecialFire' ||
 					level.Sectors[i].damagetype == 'Burn' ||
 					level.Sectors[i].damagetype == 'Inferno' ||
 					level.Sectors[i].damagetype == 'Lava') level.Sectors[i].damagetype = 'Magma';

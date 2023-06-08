@@ -939,7 +939,15 @@ class KCPowerIronFeet : PowerIronFeet
 			newdamage = damage *= (frandompick(0.25,0.3125,0.3125,0.375,0.375,0.375,0.4375,0.4375,0.5) * dmgfactor);
 		}
 		if (damagetype == 'Fire' ||
+				damagetype == 'Flames' ||
+				damagetype == 'CCardsEyeFire' ||
 				damagetype == 'Burn' ||
+				damagetype == 'Flare' ||
+				damagetype == 'Solar' ||
+				damagetype == 'Boiling' ||
+				damagetype == 'Magma' ||
+				damagetype == 'Lava' ||
+				damagetype == 'SpecialFire' ||
 				damagetype == 'Inferno')
 		{
 			if (gameinfo.gametype & 8) newdamage = 0;

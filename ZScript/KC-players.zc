@@ -1297,6 +1297,8 @@ class KCPlayerPawn : PlayerPawn
 		{
 			// Fire/Heat-based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Fire' || 
+					mod == 'Flames' || 
+					mod == 'CCardsEyeFire' || 
 					mod == 'Burn' || 
 					mod == 'Inferno' || 
 					mod == 'Magma' || 
@@ -1312,6 +1314,7 @@ class KCPlayerPawn : PlayerPawn
 			}
 			// Ice-Based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Ice' || 
+					mod == 'IceWater' || 
 					mod == 'Frost' || 
 					mod == 'Chill')
 			{
@@ -2619,12 +2622,15 @@ class KCPlayerPawn : PlayerPawn
 			if (skill == 2) regenintfactor = 1.25;
 			if (skill == 3) regenintfactor = 1.375;
 			if (skill >= 4) regenintfactor = 1.5;
-			if (mod == 'Ice' || mod == 'IceWater') 
+			if (mod == 'Ice' || 
+					mod == 'IceWater') 
 			{
 				if (tookflrdmg) regenintfactor *= frandompick(1.375,1.5,1.5,1.5,1.5,1.5,1.625);
 									 else regenintfactor *= frandompick(1.1875,1.25,1.25,1.25,1.25,1.25,1.3125);
 			}
 			if (mod == 'Fire' || 
+					mod == 'Flames' || 
+					mod == 'CCardsEyeFire' || 
 					mod == 'Burn' || 
 					mod == 'Inferno' || 
 					mod == 'Flare' || 
