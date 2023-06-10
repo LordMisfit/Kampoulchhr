@@ -3988,21 +3988,29 @@ class KC_StaticEventHandler : StaticEventHandler
 				else nofsttxts++;
 			}
 			
-			if (level.Sectors[i].damagetype == 'Fire' || 
-					level.Sectors[i].damagetype == 'Flames' || 
-					level.Sectors[i].damagetype == 'CCardsEyeFire' ||
-					level.Sectors[i].damagetype == 'SpecialFire' ||
-					level.Sectors[i].damagetype == 'Burn' ||
-					level.Sectors[i].damagetype == 'Inferno' ||
-					level.Sectors[i].damagetype == 'Lava') level.Sectors[i].damagetype = 'Magma';
-			if (level.Sectors[i].damagetype == 'Ice') level.Sectors[i].damagetype = 'IceWater';
-			if (kcdebug_worldloaded) Console.Printf("    \czFireFloorAdjuster\c-: %d / %d", i, l);
-			
 			int damageamt = level.Sectors[i].damageamount;
 			int damageint = level.Sectors[i].damageinterval;
 			int leakdam = level.Sectors[i].leakydamage;
 			string damagetyp = level.Sectors[i].damagetype;
+			string initdamagetyp = level.Sectors[i].damagetype;
 			double sectgrav = level.Sectors[i].gravity;
+			if (damagetyp == 'Fire' || 
+					damagetyp == 'Flames' || 
+					damagetyp == 'CCardsEyeFire' ||
+					damagetyp == 'SpecialFire' ||
+					damagetyp == 'Burn' ||
+					damagetyp == 'Inferno' ||
+					damagetyp == 'Lava') damagetyp = 'Magma';
+			if (damagetyp == 'Slime')
+			{
+				if (damageint == 32)
+				{
+				}
+			}
+			if (damagetyp == 'Ice') damagetyp = 'IceWater';
+			if (initdamagetyp != damagetyp) level.Sectors[i].damagetype = damagetyp;
+			if (kcdebug_worldloaded) Console.Printf("    \czFireFloorAdjuster\c-: %d / %d (%s to %s)", i, l, initdamagetyp, damagetyp);
+			
 			
 			if (kcdebug_footsteps1 || kcdebug_footsteps2)
 			{
