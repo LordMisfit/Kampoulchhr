@@ -125,6 +125,7 @@ class KCProjectile : KCBaseZSC
 	double user_sparkscalemulti;
 	int user_noseektimer, user_seektimer;
 	int projtouchedshieldactor;
+	mixin InvWeaponShare;
 	
 	actor OriginalActor;
 	string OriginalActorType;
@@ -195,6 +196,42 @@ class KCProjectile : KCBaseZSC
 		}
 		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvlProj - KCProjectile)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
 		return Level;
+	}
+	
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		maxunfreezedist *= double((kc_tfprojdisrange * 1.0) / (maxunfreezedist * 1.0));
+		if (kcdebug_timefreezedebug1) Console.Printf("maxunfreezedist: %d / kc_tfprojdisrange: %d", maxunfreezedist, kc_tfprojdisrange);
+		WasNoTimeFreeze = bNOTIMEFREEZE;
+		
+		if (bonusmultiplier <= 0.0) bonusmultiplier = 1.0;
+
+		if (target) 
+		{
+			playpawn = PlayerPawn(target);
+			if (playpawn)
+			{
+				let MiscItem = PlayerStatItem(playpawn.FindInventory("PlayerStatItem"));
+				if (MiscItem) PlayerLevel = MiscItem.TruePlayerLevel;
+			}
+			
+			if (target.bNOBLOOD == true && 
+					target.bNOPAIN == true &&
+					target.bNOTARGETSWITCH == true &&
+					target.bNOINFIGHTING == true &&
+					target.bFULLVOLACTIVE == false && 
+					target.bFULLVOLDEATH == false &&
+					target.bBOSS == false) isillusionaryproj = true;
+					
+			let IsPlayer = PlayerPawn(target);
+			let IsAMonster = KCCreature(target);
+			if (IsAMonster)
+			{
+				OriginalActor = IsAMonster;
+				OriginalActorType = IsAMonster.GetClassName();
+			}
+		}
 	}
 	
 	void A_KCPostPain()
@@ -572,45 +609,68 @@ class KCProjectile : KCBaseZSC
 		if (kcdebug_miscdisplays1) Console.Printf("ScaleX: %.4f, ScaleY: %.4f", self.scale.x, self.scale.y);
 	}
 
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+		
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			if (kcdebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("(KCProjectile) \c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
+			
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					if (A_CheckFriendCollisionProjTypeFriendlyDoom()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHeretic()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHexen()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyStrife()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyOthers()) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendly1()) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		
+		// We don't really care about others making the check.
+		return true;
+	}
+	
+	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
+	{
+		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCProjectile, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
+		damage = super.DoSpecialDamage(target, damage, damagetype);
+		// New Code goes here
+		return damage;
+	}
+
 	void A_CheckHitCeiling()
 	{
 		if (pos.Z + height >= ceilingz) hitaceiling = true;
 		//Console.Printf("pos.z: %d, height: %d, ceilingz: %d, hitceiling: %d", pos.z, height, ceilingz, hitaceiling);
-	}
-	
-	override void PostBeginPlay()
-	{
-		Super.PostBeginPlay();
-		maxunfreezedist *= double((kc_tfprojdisrange * 1.0) / (maxunfreezedist * 1.0));
-		if (kcdebug_timefreezedebug1) Console.Printf("maxunfreezedist: %d / kc_tfprojdisrange: %d", maxunfreezedist, kc_tfprojdisrange);
-		WasNoTimeFreeze = bNOTIMEFREEZE;
-		if (bonusmultiplier <= 0.0) bonusmultiplier = 1.0;
-
-		if (target) 
-		{
-			playpawn = PlayerPawn(target);
-			if (playpawn)
-			{
-				let MiscItem = PlayerStatItem(playpawn.FindInventory("PlayerStatItem"));
-				if (MiscItem) PlayerLevel = MiscItem.TruePlayerLevel;
-			}
-			
-			if (target.bNOBLOOD == true && 
-					target.bNOPAIN == true &&
-					target.bNOTARGETSWITCH == true &&
-					target.bNOINFIGHTING == true &&
-					target.bFULLVOLACTIVE == false && 
-					target.bFULLVOLDEATH == false &&
-					target.bBOSS == false) isillusionaryproj = true;
-					
-			let IsPlayer = PlayerPawn(target);
-			let IsAMonster = KCCreature(target);
-			if (IsAMonster)
-			{
-				OriginalActor = IsAMonster;
-				OriginalActorType = IsAMonster.GetClassName();
-			}
-		}
 	}
 	
 	void TimeFreezeProjectileCheck()
@@ -934,65 +994,6 @@ class KCProjectile : KCBaseZSC
 		Angle = Normalize180(Angle + random(-maxYaw, maxYaw));
 		Pitch = clamp(Pitch + random(-maxPitch, maxPitch), -90., 90.);
 		Vel3DFromAngle(curSpeed, Angle, Pitch);
-	}
-	//
-	//
-	
-	override bool CanCollideWith(Actor other, bool passive)
-	{
-		KCPlayerPawn playpawn;
-		KCPlayerPawn playpawn2;
-		Actor KCActor;
-		Actor KCActor2;
-		playpawn = KCPlayerPawn(target);
-		playpawn2 = KCPlayerPawn(other);
-		KCActor = Actor(target);
-		KCActor2 = Actor(other);
-		
-		// Non-passive means the one moving into the other is performing the checks.
-		if (!passive)
-		{
-			if (kcdebug_projectilecollisions && (other.bSHOOTABLE && other != target)) Console.Printf("\c[brick]Collision:\c- %s (%p @ %.2f, %.2f, %.2f) vs %s (%p @ %.2f, %.2f, %.2f) [%d, f: %d]", GetClassName(), self, pos.x, pos.y, pos.z, other.GetClassName(), other, other.pos.x, other.pos.y, other.pos.z, GetAge(), frame);
-			
-			// if fired by a player actor, check for friendliness from the passive actor
-			if (playpawn) 
-			{
-				// Pass through different species of select types.
-				if (other.bFRIENDLY == 1)
-				{
-					if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
-					if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
-				}
-			}
-			else
-			if (KCActor && KCActor.bFRIENDLY)
-			{
-				// Pass through different species of select types or players
-				if (other.bFRIENDLY == 1 || playpawn2)
-				{
-					if (A_CheckFriendCollisionProjTypeFriendlyDoom()) return false;
-					else if (A_CheckFriendCollisionProjTypeFriendlyHeretic()) return false;
-					else if (A_CheckFriendCollisionProjTypeFriendlyHexen()) return false;
-					else if (A_CheckFriendCollisionProjTypeFriendlyStrife()) return false;
-					else if (A_CheckFriendCollisionProjTypeFriendlyOthers()) return false;
-					else if (A_CheckFriendCollisionProjTypeFriendly1()) return false;
-				}
-			}
-			else 
-			{
-			}
-		}
-		
-		// We don't really care about others making the check.
-		return true;
-	}
-	
-	override int DoSpecialDamage(Actor target, int damage, Name damagetype)
-	{
-		if (kcdebug_dospecialdmg) Console.Printf("DoSpecialDamage: KCProjectile, target: %s, damage: %d, damagetype: %s", target.GetClassName(), damage, damagetype);
-		damage = super.DoSpecialDamage(target, damage, damagetype);
-		// New Code goes here
-		return damage;
 	}
 	//
 	//

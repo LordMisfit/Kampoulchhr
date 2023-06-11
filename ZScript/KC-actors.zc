@@ -304,13 +304,13 @@ class KCCreature : KCBaseZSC
 	{
 		if (mo)
 		{
-			if (kcdebug_showvisibleshieldparts) Console.Printf("[mo]: %s", mo.GetClassName());
+			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[mo]: %s", mo.GetClassName());
 			ShieldPartBase SHmo;
 			SHmo = ShieldPartBase(mo);
 			if (SHmo)
 			{
 				actor playera = players[0].mo;
-				if (kcdebug_showvisibleshieldparts) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
 				SHmo.attachx = xpos;
 				SHmo.attachy = ypos;
 				SHmo.attachz = zpos;
@@ -318,7 +318,7 @@ class KCCreature : KCBaseZSC
 				SHmo.attachptc = ptc;
 				SHmo.shieldee = playera;
 				SHmo.target = playera;
-				if (kcdebug_showvisibleshieldparts) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
 			}
 		}
 	}
@@ -763,15 +763,15 @@ class ShieldPartBase : KCBaseZSC
 	
 	override void Tick()
 	{
-		if (kcdebug_showvisibleshieldparts) A_FadeTo(0.25,0.25);
+		if (kcdebug_showvisibleshieldparts >= 2) A_FadeTo(0.25,0.25);
 		if (shieldee && target)
 		{
 			target = shieldee;
-			if (kcdebug_showvisibleshieldparts) Console.Printf("[ShieldPartBase (Tick)]: %p [%p]", shieldee, target);
+			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[ShieldPartBase (Tick)]: %p [%p]", shieldee, target);
 			if (target) 
 			{
 				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,attachang,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE,null,0,0,attachptc);
-				if (kcdebug_showvisibleshieldparts) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d", GetAge());
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d", GetAge());
 			}
 		}
 		Super.Tick();
@@ -782,19 +782,19 @@ class ShieldPartBase : KCBaseZSC
 		if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [ShieldPart]");
 		if (source)
 		{
-			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Source: %s]", Source.GetClassName());
+			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Source: %s (%p)]", source.GetClassName(), source);
 		}
 		if (target)
 		{
-			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Target: %s]", Target.GetClassName());
+			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Target: %s (%p)]", target.GetClassName(), target);
 		}
 		if (inflictor)
 		{
-			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Inflictor: %s]", inflictor.GetClassName());
+			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Inflictor: %s (%p)]", inflictor.GetClassName(), inflictor);
 		}
 		if (master)
 		{
-			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Master: %s]", master.GetClassName());
+			if (kcdebug_shieldpiecedmg) Console.Printf("DamageMobj [Has Master: %s (%p)]", master.GetClassName(), master);
 			if (flags & DMG_EXPLOSION && !(flags & DMG_NO_PAIN)) { flags |= DMG_NO_PAIN; } // turns on DMG_NO_PAIN;
 		}
 		
@@ -816,9 +816,9 @@ class ShieldPartBase : KCBaseZSC
 		if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase [%s] (gametic %d):\c- \c[brick]other: %s\c-", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
+			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[green]passive: %s\c-", gametic, GetClassName());
 			if (A_CheckCollisionProjShieldExemption(other)) return false; //ShieldPartBase
 
-			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
 			//if (EvilWarriorShieldBall(other) || EvilWarriorShieldBall(other)) return false;
 			if (playpawn) return false; // Player Checking
@@ -826,7 +826,7 @@ class ShieldPartBase : KCBaseZSC
 			// Projectile Checking
 			if (UniqueProjectile)
 			{
-				if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- UniqueProjectile: %s", gametic, UniqueProjectile.GetClassName());
+				if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[yellow]UniqueProjectile: %s\c-", gametic, UniqueProjectile.GetClassName());
 				playpawn = PlayerPawn(other.target);
 				playpawn2 = PlayerPawn(master);
 				if (playpawn && playpawn2) return false;
@@ -834,7 +834,7 @@ class ShieldPartBase : KCBaseZSC
 			// Fast Projectile Checking
 			if (UniqueProjectileFast)
 			{
-				if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- UniqueProjectileFast: %s", gametic, UniqueProjectileFast.GetClassName());
+				if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[gold]UniqueProjectileFast: %s\c-", gametic, UniqueProjectileFast.GetClassName());
 				playpawn = PlayerPawn(other.target);
 				playpawn2 = PlayerPawn(master);
 				if (playpawn && playpawn2) return false;
@@ -842,9 +842,17 @@ class ShieldPartBase : KCBaseZSC
 
 			if (other)
 			{
-				if (KCPuff(other) && playpawn) 
+				if ((KCPuff(other) ||
+						 FistPuff(other) ||
+						 KickPuff(other) ||
+						 KCBulletPuff(other) ||
+						 KCBulletPuff2(other) ||
+						 ChainsawPuff(other) ||
+						 Chainsaw2Puff(other) ||
+						 SawPuff(other)) 
+						&& playpawn) 
 				{
-					Console.Printf("@#f@$@!ED");
+					if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[gold]KCPuff: %s\c-", gametic, other.GetClassName());
 					return false;
 				}
 				if (other.bMISSILE)
@@ -904,7 +912,7 @@ class ShieldPartBase : KCBaseZSC
 				//if (HealBall(other) || HealBallEE(other)) return false;
 				//if (EvilWarriorShieldBall(other) || EvilWarriorShieldBall(other)) return false;
 			}
-			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- non-passive: %s", gametic, GetClassName());
+			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[red]non-passive: %s\c-", gametic, GetClassName());
 			playpawn = PlayerPawn(other.target);
 			playpawn2 = PlayerPawn(master);
 			if (playpawn && playpawn2) return false;
@@ -968,9 +976,9 @@ class SwingShieldPart : ShieldPart // For swinging based shields [used as a gene
 		if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPart [%s] (gametic %d):\c- other: %s", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
+			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPart (gametic %d):\c- passive: %s", gametic, GetClassName());
 			if (A_CheckCollisionProjShieldExemption(other)) return false; //SwingShieldPart
 
-			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPart (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
 			if (playpawn) return false; // Player Checking
 			
@@ -1050,9 +1058,9 @@ class SwingShieldPartNoReflect : ShieldPartNoReflect // For swinging based shiel
 		if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPartNoReflect [%s] (gametic %d):\c- other: %s", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
+			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPartNoReflect (gametic %d):\c- passive: %s", gametic, GetClassName());
 			if (A_CheckCollisionProjShieldExemption(other)) return false; //SwingShieldPartNoReflect
 
-			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPartNoReflect (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
 			if (playpawn) return false; // Player Checking
 			
@@ -1149,9 +1157,9 @@ class KickShieldNoReflect : ShieldPartMeleeNoReflect
 		if (kcdebug_shieldcollision) Console.Printf("\cyKickShield [%s] (gametic %d):\c- \c[brick]other: %s\c-", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
+			if (kcdebug_shieldcollision) Console.Printf("\cyKickShield (gametic %d):\c- passive: %s", gametic, GetClassName());
 			if (A_CheckCollisionProjShieldExemption(other)) return false; //KickShield
 
-			if (kcdebug_shieldcollision) Console.Printf("\cyKickShield (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
 			if (playpawn) return false; // Player Checking
 
