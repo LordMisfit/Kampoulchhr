@@ -816,7 +816,7 @@ class ShieldPartBase : KCBaseZSC
 		if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase [%s] (gametic %d):\c- \c[brick]other: %s\c-", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
-			//if (A_CheckCollisionProjShieldExemption(other)) return false;
+			if (A_CheckCollisionProjShieldExemption(other)) return false; //ShieldPartBase
 
 			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
@@ -834,11 +834,19 @@ class ShieldPartBase : KCBaseZSC
 			// Fast Projectile Checking
 			if (UniqueProjectileFast)
 			{
+				if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- UniqueProjectileFast: %s", gametic, UniqueProjectileFast.GetClassName());
+				playpawn = PlayerPawn(other.target);
+				playpawn2 = PlayerPawn(master);
+				if (playpawn && playpawn2) return false;
 			}
 
 			if (other)
 			{
-				//if (HealBall(other) || HealBallEE(other)) return false;
+				if (KCPuff(other) && playpawn) 
+				{
+					Console.Printf("@#f@$@!ED");
+					return false;
+				}
 				if (other.bMISSILE)
 				{
 					//
@@ -871,7 +879,7 @@ class ShieldPartBase : KCBaseZSC
 						}
 						if (ShieldPartMeleeReflect(self) || ShieldPartMeleeNoReflect(self))
 						{
-							if (kcdebug_shieldcollision) Console.Printf("ShieldPartMelee (%s) [passive side]", other.GetClassName());
+							if (kcdebug_shieldcollision) Console.Printf("ShieldPartBase (%s) [passive side]", other.GetClassName());
 							return false;
 						}
 					}
@@ -896,7 +904,7 @@ class ShieldPartBase : KCBaseZSC
 				//if (HealBall(other) || HealBallEE(other)) return false;
 				//if (EvilWarriorShieldBall(other) || EvilWarriorShieldBall(other)) return false;
 			}
-			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartMelee (gametic %d):\c- non-passive: %s", gametic, GetClassName());
+			if (kcdebug_shieldcollision) Console.Printf("\cyShieldPartBase (gametic %d):\c- non-passive: %s", gametic, GetClassName());
 			playpawn = PlayerPawn(other.target);
 			playpawn2 = PlayerPawn(master);
 			if (playpawn && playpawn2) return false;
@@ -960,7 +968,7 @@ class SwingShieldPart : ShieldPart // For swinging based shields [used as a gene
 		if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPart [%s] (gametic %d):\c- other: %s", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
-			//if (A_CheckCollisionProjShieldExemption(other)) return false;
+			if (A_CheckCollisionProjShieldExemption(other)) return false; //SwingShieldPart
 
 			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPart (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
@@ -1042,7 +1050,7 @@ class SwingShieldPartNoReflect : ShieldPartNoReflect // For swinging based shiel
 		if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPartNoReflect [%s] (gametic %d):\c- other: %s", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
-			//if (A_CheckCollisionProjShieldExemption(other)) return false;
+			if (A_CheckCollisionProjShieldExemption(other)) return false; //SwingShieldPartNoReflect
 
 			if (kcdebug_shieldcollision) Console.Printf("\cySwingShieldPartNoReflect (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.
@@ -1141,7 +1149,7 @@ class KickShieldNoReflect : ShieldPartMeleeNoReflect
 		if (kcdebug_shieldcollision) Console.Printf("\cyKickShield [%s] (gametic %d):\c- \c[brick]other: %s\c-", GetClassName(), gametic, other.GetClassName());
 		if (passive)
 		{
-			//if (A_CheckCollisionProjShieldExemption(other)) return false;
+			if (A_CheckCollisionProjShieldExemption(other)) return false; //KickShield
 
 			if (kcdebug_shieldcollision) Console.Printf("\cyKickShield (gametic %d):\c- passive: %s", gametic, GetClassName());
 			// Pass through different species of select types.

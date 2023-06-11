@@ -4003,8 +4003,12 @@ class KC_StaticEventHandler : StaticEventHandler
 					damagetyp == 'Lava') damagetyp = 'Magma';
 			if (damagetyp == 'Slime')
 			{
-				if (damageint == 32)
+				if (damageamt > 0)
 				{
+					if (texname == "LAVA1" ||
+							texname == "LAVA2" ||
+							texname == "LAVA3" ||
+							texname == "LAVA4") damagetyp = 'Magma';
 				}
 			}
 			if (damagetyp == 'Ice') damagetyp = 'IceWater';

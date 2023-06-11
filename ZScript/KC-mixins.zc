@@ -1877,23 +1877,20 @@ mixin class CollisionChecker
 		return type;
 	}
 	
-	// Checks for certain projectiles from players to pass through friendlies instead of colliding
-	int A_CheckCollisionProjShieldExemptionE(Actor actr)
-	{
-		infl = actr.GetClassName();
-
-		int type;
-	
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]A_CheckCollisionProjShieldExemptionE:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
-		return type;
-	}
-	
 	int A_CheckCollisionProjShieldExemption(Actor actr)
 	{
 		infl = actr.GetClassName();
 
 		int type;
-		//if () type = 1;
+		if (BulletPuff(actr) || 
+				KCPuff(actr) || 
+				FistPuff(actr) || 
+				KickPuff(actr) || 
+				HowitzerBase(actr) || 
+				ChainsawPuff(actr) || 
+				KCBulletPuff(actr) || 
+				SawPuff(actr) ||
+				KCBulletPuff2(actr)) type = 1;
 	
 		if (kcdebug_generalcollisions) Console.Printf("\c[brick]A_CheckCollisionProjShieldExemption:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;

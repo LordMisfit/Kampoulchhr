@@ -1241,6 +1241,37 @@ class KCStatusBarMain : BaseStatusBar
 							DrawImage("TSBGA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 						}
 					}
+					int energystat = (MiscItem.TSARegenAmt - MiscItem.TSADrainAmt);
+					string energyimg = "";
+					vector2 iconscale = (1.0, 1.0);
+					iconscale.x *= 0.375;
+					iconscale.y *= 0.375;
+					if (energystat > 0)
+					{
+						if (energystat >= 25) energyimg = "TSACHAR3";
+						if (energystat >= 13 && energystat <= 24) energyimg = "TSACHAR2";
+						else energyimg = "TSACHAR1";
+					}
+					else
+					if (energystat < 0)
+					{
+						if (energystat <= -25) energyimg = "TSADRAI3";
+						if (energystat >= -13 && energystat <= -24) energyimg = "TSADRAI2";
+						else energyimg = "TSADRAI1";
+					}
+					if (kcdebug_timeserapharmor) Console.Printf("energystat: %d, energyimg: %s", energystat, energyimg);
+					bool showarrow = false;
+					if (MiscItem.TimeArmorEnergyTics < MiscItem.TimeArmorEnergyMaxTics)
+					{
+						showarrow = true;
+					}
+					else
+					{
+						if (energystat != 0) showarrow = true;
+														else showarrow = false;
+					}
+					if (showarrow) DrawImage(energyimg, (ivx-3, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
 					// Meters
