@@ -1276,6 +1276,7 @@ class KCPlayerPawn : PlayerPawn
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int prevdmg = damage;
+		double TSADmgFinal;
 		
 		// Any attack based on temperates, as well as lightning and wind, 
 		// are COMPLETELY blocked by the Time Seraph's armor, without 
@@ -1520,6 +1521,7 @@ class KCPlayerPawn : PlayerPawn
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
 				}
+				if (TSADmgFinal) TSADmgFinal = TSTicDmg;
 			}
 		}
 		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
@@ -2386,6 +2388,7 @@ class KCPlayerPawn : PlayerPawn
 		int TimeSeraphArmor = 0;
 		int TSArmorDmgDivisor = 1;
 		bool tsafullnulldmg = false;
+		double TSTicDmg;
 		if (!isinvuln)
 		{
 			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
@@ -2434,14 +2437,14 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- ret [PDM]: %d", ret);
 		ret = PostDamageMobj(inflictor, source, damage, mod, flags, angle, 
 												 ret, armoramt, firstdmg, isinvuln, oldhealth, oldhealthratio, SigilDrain,
-												 infl, sour, vict);
+												 infl, sour, vict, TSTicDmg);
 		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- ret [final]: %d", ret);
 		
 		tookflrdmg = false;
 		return ret;
 	}
 	
-	int PostDamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, int ret, int armoramt, int firstdmg, bool isinvuln, int oldhealth, int oldhealthratio, bool SigilDrain, string infl, string sour, string vict)
+	int PostDamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, int ret, int armoramt, int firstdmg, bool isinvuln, int oldhealth, int oldhealthratio, bool SigilDrain, string infl, string sour, string vict, double TSTicDmg)
 	{
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		let globalvars = KCGlobalVariables.Get();
@@ -2696,7 +2699,6 @@ class KCPlayerPawn : PlayerPawn
 		}
 		
 		// TSA Post-Pro
-		double TSTicDmg;
 		if (TSTicDmg > 0)
 		{
 			int armmax;
@@ -2716,7 +2718,7 @@ class KCPlayerPawn : PlayerPawn
 		
 		A_LossHUD(ret, 0, true);
 		A_LossHUD(armdmg, 1, true);
-		if (TSTicDmg) A_LossHUD(TSTicDmg, 2, true);
+		A_LossHUD(TSTicDmg, 2, true);
 		
 		PlayerArmorIgnoreFactor = 0.00;
 		PlayerDefenseIgnoreFactor = 0.00;
