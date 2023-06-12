@@ -2669,6 +2669,7 @@ class KCPlayerPawn : PlayerPawn
 			if (kcdebug_countdisplays) Console.Printf("player.damagecount: %d, damagetakefactor: %d, dmg: %d / %d", player.damagecount, damagetakefactor, ret, MiscItem.MaxHealthTrue);
 		}
 		
+		// Armor Post-Pro
 		if (armdmg && armortier)
 		{
 			int armmax;
@@ -2691,11 +2692,31 @@ class KCPlayerPawn : PlayerPawn
 						if (damagetakefactor >= 100) MiscItem.APHUDShakeType = 4;
 					}
 				}
-			}			
+			}
+		}
+		
+		// TSA Post-Pro
+		double TSTicDmg;
+		if (TSTicDmg > 0)
+		{
+			int armmax;
+			if (MiscItem)
+			{
+				armmax = MiscItem.TimeArmorEnergyMaxTics;
+				if (armmax > 0)
+				{
+					int damagetakefactor = armdmg * 100 / armmax;
+					MiscItem.TSAHUDShakeType = 1;
+					if (damagetakefactor >= 5) MiscItem.TSAHUDShakeType = 2;
+					if (damagetakefactor >= 25) MiscItem.TSAHUDShakeType = 3;
+					if (damagetakefactor >= 50) MiscItem.TSAHUDShakeType = 4;
+				}
+			}
 		}
 		
 		A_LossHUD(ret, 0, true);
 		A_LossHUD(armdmg, 1, true);
+		if (TSTicDmg) A_LossHUD(TSTicDmg, 2, true);
 		
 		PlayerArmorIgnoreFactor = 0.00;
 		PlayerDefenseIgnoreFactor = 0.00;

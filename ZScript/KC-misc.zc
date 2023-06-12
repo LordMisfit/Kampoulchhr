@@ -50,17 +50,19 @@ class PlayerStatItem : Inventory
 
 	int MaxDashIncTimer, MaxDashIncAmt;
 	int MaxHPIncTimer, MaxHPIncAmt;
-	int HPDmgHUDTimer, APDmgHUDTimer, HPRecHUDTimer, APRecHUDTimer;
-	int HPDmgHUDAmt, APDmgHUDAmt, HPRecHUDAmt, APRecHUDAmt;
+	int HPDmgHUDTimer, APDmgHUDTimer, TSADmgHUDTimer;
+	int HPRecHUDTimer, APRecHUDTimer, TSARecHUDTimer;
+	int HPDmgHUDAmt, APDmgHUDAmt, TSADmgHUDAmt;
+	int HPRecHUDAmt, APRecHUDAmt, TSARecHUDAmt;
 	int EXPGainHUDTimer, EXPGainHUDAmt;
 	int KillComboCount;
 	
-	int HPHUDShakeTime, APHUDShakeTime;
-	int HPHUDPulseTime, APHUDPulseTime, IPHUDPulseTime;
+	int HPHUDShakeTime, APHUDShakeTime, TSAHUDShakeTime;
+	int HPHUDPulseTime, APHUDPulseTime, TSAHUDPulseTime;
 	
-	int HPHUDShakeType, APHUDShakeType;
-	int HPHUDPulseType, APHUDPulseType;
-	int HPHUDPulseTimeP, APHUDPulseTimeP;
+	int HPHUDShakeType, APHUDShakeType, TSAHUDShakeType;
+	int HPHUDPulseType, APHUDPulseType, TSAHUDPulseType;
+	int HPHUDPulseTimeP, APHUDPulseTimeP, TSAHUDPulseTimeP;
 	
 	Double DashDir, DashSpeed, DashVSpeed, DashPitch;
 	Int DashTics, DashCharge, AirTics, DashCost, DashCooldown, MaxDashCooldown;
@@ -698,6 +700,12 @@ class PlayerStatItem : Inventory
 				APHUDShakeType = 0;
 				APDmgHUDAmt = 0;
 			}
+			if (TSADmgHUDTimer > 0) TSADmgHUDTimer--;
+			else
+			{
+				TSAHUDShakeType = 0;
+				TSADmgHUDAmt = 0;
+			}
 			if (HPRecHUDTimer > 0) HPRecHUDTimer--; 
 			else 
 			{
@@ -712,6 +720,13 @@ class PlayerStatItem : Inventory
 				APHUDPulseType = 0;
 				APHUDPulseTimeP = 0;
 			}
+			if (TSARecHUDTimer > 0) TSARecHUDTimer--; 
+			else
+			{
+				TSARecHUDAmt = 0;
+				TSAHUDPulseType = 0;
+				TSAHUDPulseTimeP = 0;
+			}
 			if (EXPGainHUDTimer > 0) EXPGainHUDTimer--;
 			else
 			{
@@ -722,6 +737,7 @@ class PlayerStatItem : Inventory
 			if (MaxDashIncTimer > 0) MaxDashIncTimer--; else MaxDashIncAmt = 0;
 			if (HPHUDShakeTime > 0) HPHUDShakeTime--;
 			if (APHUDShakeTime > 0) APHUDShakeTime--;
+			if (TSAHUDShakeTime > 0) TSAHUDShakeTime--;
 			
 			if (drowndebufflevel > 0)
 			{

@@ -70,7 +70,7 @@ mixin class HUDRecovery
 				}
 				if (kcdebug_hudrecdmgdisplays) Console.Printf("HP Gain: %d [%d] (timer: %d)", MiscItem.HPRecHUDAmt, recovery, MiscItem.HPRecHUDTimer);
 			}
-
+			
 			if (type == 1) // AP
 			{
 				// AP Recovery [HUD]
@@ -109,6 +109,36 @@ mixin class HUDRecovery
 					}
 				}
 				if (kcdebug_hudrecdmgdisplays) Console.Printf("AP Gain: %d [%d] (timer: %d)", MiscItem.APRecHUDAmt, recovery, MiscItem.APRecHUDTimer);
+			}
+			
+			if (type == 2) // TSA
+			{
+				// TSA Recovery [HUD]
+				if (MiscItem.TSARecHUDTimer <= 0) MiscItem.TSARecHUDTimer = 105;
+				else
+				{
+					MiscItem.TSARecHUDTimer += 35;
+					if (MiscItem.TSARecHUDTimer < 105 && recovery > 1) MiscItem.TSARecHUDTimer = 105;
+					if (MiscItem.TSARecHUDTimer > 175) MiscItem.TSARecHUDTimer = 175;
+				}
+				MiscItem.TSARecHUDAmt += recovery;
+				if (acculmuatepulse && recovery > 0)
+				{
+					int armmax = MiscItem.TimeArmorEnergyMaxTics;
+					if (armmax)
+					{
+						if (MiscItem.TSARecHUDAmt > 0 && recovery > 0)
+						{
+							int healfactor = MiscItem.TSARecHUDAmt * 100 / armmax;
+							if (healfactor < 10) MiscItem.TSAHUDPulseType = 1;
+							if (healfactor >= 10) MiscItem.TSAHUDPulseType = 2;
+							if (healfactor >= 50) MiscItem.TSAHUDPulseType = 3;
+							if (healfactor >= 100) MiscItem.TSAHUDPulseType = 4;
+							MiscItem.TSAHUDPulseTimeP = (level.time % randompick(15,25,35));
+						}
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("TSA Gain: %d [%d] (timer: %d)", MiscItem.TSARecHUDAmt, recovery, MiscItem.TSARecHUDTimer);
 			}
 		}
 	}
@@ -203,23 +233,70 @@ mixin class HUDRecovery
 								if (damagetakefactor >= 10)
 								{
 									MiscItem.APHUDShakeType = 2;
-								if (MiscItem.APHUDShakeTime > 88) MiscItem.APHUDShakeTime = 88;
+									if (MiscItem.APHUDShakeTime > 88) MiscItem.APHUDShakeTime = 88;
 								}
 								if (damagetakefactor >= 50)
 								{
 									MiscItem.APHUDShakeType = 3;
-								if (MiscItem.APHUDShakeTime > 140) MiscItem.APHUDShakeTime = 140;
+									if (MiscItem.APHUDShakeTime > 140) MiscItem.APHUDShakeTime = 140;
 								}
 								if (damagetakefactor >= 100)
 								{
 									MiscItem.APHUDShakeType = 4;
-								if (MiscItem.APHUDShakeTime > 175) MiscItem.APHUDShakeTime = 175;
+									if (MiscItem.APHUDShakeTime > 175) MiscItem.APHUDShakeTime = 175;
 								}
 							}
 						}
 					}
 				}
 				if (kcdebug_hudrecdmgdisplays) Console.Printf("AP Loss: %d [%d] (timer: %d)", MiscItem.APDmgHUDAmt, loss, MiscItem.APDmgHUDTimer);
+			}
+
+			if (type == 2) // TSA
+			{
+				// TSA Loss [HUD]
+				if (MiscItem.TSADmgHUDTimer <= 0) MiscItem.TSADmgHUDTimer = 105;
+				else
+				{
+					MiscItem.TSADmgHUDTimer += 35;
+					if (MiscItem.TSADmgHUDTimer < 105 && loss > 1) MiscItem.TSADmgHUDTimer = 105;
+					if (MiscItem.TSADmgHUDTimer > 175) MiscItem.TSADmgHUDTimer = 175;
+				}
+				MiscItem.TSADmgHUDAmt += loss;
+				if (acculmuateshake && loss > 0)
+				{
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("TSA loss: %d", loss);
+					int armmax = MiscItem.TimeArmorEnergyMaxTics;
+					if (armmax)
+					{
+						int damagetakefactor = MiscItem.TSADmgHUDAmt * 100 / armmax;
+						if (MiscItem.TSADmgHUDAmt > 0 && loss > 0)
+						{
+							MiscItem.TSAHUDShakeTime += random(52,53);
+							if (damagetakefactor < 5) 
+							{
+								MiscItem.TSAHUDShakeType = 1;
+								if (MiscItem.TSAHUDShakeTime > 53) MiscItem.TSAHUDShakeTime = 53;
+							}
+							if (damagetakefactor >= 5)
+							{
+								MiscItem.TSAHUDShakeType = 2;
+								if (MiscItem.TSAHUDShakeTime > 88) MiscItem.TSAHUDShakeTime = 88;
+							}
+							if (damagetakefactor >= 25)
+							{
+								MiscItem.TSAHUDShakeType = 3;
+								if (MiscItem.TSAHUDShakeTime > 140) MiscItem.TSAHUDShakeTime = 140;
+							}
+							if (damagetakefactor >= 50)
+							{
+								MiscItem.TSAHUDShakeType = 4;
+								if (MiscItem.TSAHUDShakeTime > 175) MiscItem.TSAHUDShakeTime = 175;
+							}
+						}
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("TSA Loss: %d [%d] (timer: %d)", MiscItem.TSADmgHUDAmt, loss, MiscItem.TSADmgHUDTimer);
 			}
 		}
 	}

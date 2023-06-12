@@ -22,13 +22,11 @@ class KCStatusBarMain : BaseStatusBar
 	private int wiggle;
 	int HPDmgShakeX, HPDmgShakeY;
 	int APDmgShakeX, APDmgShakeY;
-	int TSEDmgShakeX, TSEDmgShakeY;
-	double HPRecPulseSpd;
-	double APRecPulseSpd;
-	double TSERecPulseSpd;
-	int HPShakeInc, APShakeInc, TSEShakeInc;
-	int HPPulseInc, APPulseInc;
-	int HPPulseTimer, APPulseTimer;
+	int TSADmgShakeX, TSADmgShakeY;
+	double HPRecPulseSpd, APRecPulseSpd, TSARecPulseSpd;
+	int HPShakeInc, APShakeInc, TSAShakeInc;
+	int HPPulseInc, APPulseInc, TSAPulseInc;
+	int HPPulseTimer, APPulseTimer, TSAPulseTimer;
 	
 	override void Init()
 	{
@@ -1207,7 +1205,7 @@ class KCStatusBarMain : BaseStatusBar
 				
 				if (MiscItem.TimeArmorEnergyMaxTics > 0)
 				{
-					vector2 tsapos = (ivx+2, ivy-15+ycorrection);
+					vector2 tsapos = (ivx+2+TSADmgShakeX, ivy-15+TSADmgShakeY+ycorrection);
 					let armor2 = CPlayer.mo.FindInventory("TSArtifactsInUse");
 					if (armor2)
 					{
@@ -1271,7 +1269,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (energystat != 0) showarrow = true;
 														else showarrow = false;
 					}
-					if (showarrow) DrawImage(energyimg, (ivx-3, ivy-15+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					if (showarrow) DrawImage(energyimg, (ivx-3+TSADmgShakeX, ivy-15+TSADmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 					
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
@@ -1284,12 +1282,12 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
 					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
-					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50, svy-1+ycorrection), 1, 1, 0, alpha:malpha);
+					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50+TSADmgShakeX, svy-1+TSADmgShakeY+ycorrection), 1, 1, 0, alpha:malpha);
 					
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
-					DrawString(mKCLFont, perstr, (svx+60, svy-20+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+					DrawString(mKCLFont, perstr, (svx+60+TSADmgShakeX, svy-20+TSADmgShakeY+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
@@ -1576,7 +1574,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
-	int, int, int, int, int, int DrawFSHUDHPAPShaking(int HPShakeFormX, int HPShakeFormY, int APShakeFormX, int APShakeFormY)
+	int, int, int, int, int, int DrawFSHUDHPAPShaking(int HPShakeFormX, int HPShakeFormY, int APShakeFormX, int APShakeFormY, int TSAShakeFormX, int TSAShakeFormY)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -1626,7 +1624,29 @@ class KCStatusBarMain : BaseStatusBar
 					APShakeFormX = randompick(-4,-3,-2,-1,0,1,2,3,4);
 					APShakeFormY = randompick(-4,-3,-2,-1,0,1,2,3,4);
 				}
-
+				if (MiscItem.TSAHUDShakeType <= 1)
+				{
+					TSAShakeFormX = randompick(-1,0,1);
+					TSAShakeFormY = randompick(-1,0,1);
+				}
+				if (MiscItem.TSAHUDShakeType == 2)
+				{
+					TSAShakeFormX = randompick(-2,-1,0,1,2);
+					TSAShakeFormY = randompick(-2,-1,0,1,2);
+				}
+				if (MiscItem.TSAHUDShakeType == 3)
+				{
+					TSAShakeFormX = randompick(-3,-2,-1,0,1,2,3);
+					TSAShakeFormY = randompick(-3,-2,-1,0,1,2,3);
+				}
+				if (MiscItem.TSAHUDShakeType >= 4)
+				{
+					TSAShakeFormX = randompick(-4,-3,-2,-1,0,1,2,3,4);
+					TSAShakeFormY = randompick(-4,-3,-2,-1,0,1,2,3,4);
+				}
+				
+				
+				
 				if (MiscItem.HPHUDShakeTime && MiscItem.HPDmgHUDAmt > 0)
 				{
 					HPShakeInc++;
@@ -1662,15 +1682,36 @@ class KCStatusBarMain : BaseStatusBar
 					APDmgShakeX = 0;
 					APDmgShakeY = 0;
 				}
+				
+				if (MiscItem.TSAHUDShakeTime && MiscItem.TSADmgHUDAmt > 0)
+				{
+					TSAShakeInc++;
+					if (TSAShakeInc >= 4)
+					{
+						TSAShakeInc = 0;
+						TSADmgShakeX = TSAShakeFormX;
+						TSADmgShakeY = TSAShakeFormY;
+					}
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("TSAHUDShakeTime: %d, Shake: TSAShakeInc: %d, TSADmgShakeX: %d, TSADmgShakeY: %d", MiscItem.TSAHUDShakeTime, TSAShakeInc, TSADmgShakeX, TSADmgShakeY);
+				}
+				else
+				{
+					TSAShakeInc = 0;
+					TSADmgShakeX = 0;
+					TSADmgShakeY = 0;
+				}
 			}
 			else
 			{
 				HPDmgShakeX = 0;
 				HPDmgShakeY = 0;
 				HPShakeInc = 0;
-				APShakeInc = 0;
 				APDmgShakeX = 0;
 				APDmgShakeY = 0;
+				APShakeInc = 0;
+				TSADmgShakeX = 0;
+				TSADmgShakeY = 0;
+				TSAShakeInc = 0;
 			}
 		}
 		else
@@ -1683,10 +1724,10 @@ class KCStatusBarMain : BaseStatusBar
 			APDmgShakeY = 0;
 		}
 		
-		return HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY;
+		return HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY, TSAShakeFormX, TSAShakeFormY;
 	}
 	
-	double, double DrawFSHUDHPAPPulsing(double HPPulseScale, double APPulseScale)
+	double, double, double DrawFSHUDHPAPPulsing(double HPPulseScale, double APPulseScale, double TSAPulseScale)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
@@ -1705,6 +1746,11 @@ class KCStatusBarMain : BaseStatusBar
 				if (MiscItem.APHUDPulseType == 2) APRecPulseSpd = 0.015;
 				if (MiscItem.APHUDPulseType == 3) APRecPulseSpd = 0.025;
 				if (MiscItem.APHUDPulseType >= 4) APRecPulseSpd = 0.04;
+				
+				if (MiscItem.TSAHUDPulseType <= 1) TSARecPulseSpd = 0.01;
+				if (MiscItem.TSAHUDPulseType == 2) TSARecPulseSpd = 0.015;
+				if (MiscItem.TSAHUDPulseType == 3) TSARecPulseSpd = 0.025;
+				if (MiscItem.TSAHUDPulseType >= 4) TSARecPulseSpd = 0.04;
 				
 				if (MiscItem.HPRecHUDTimer >= 36 && MiscItem.HPRecHUDAmt > 0)
 				{
@@ -1769,10 +1815,42 @@ class KCStatusBarMain : BaseStatusBar
 					APPulseScale = 1.00;
 					APPulseInc = 0;
 				}
+				
+				if (MiscItem.TSARecHUDTimer >= 36 && MiscItem.TSARecHUDAmt > 0)
+				{
+					TSAPulseInc = (level.time + MiscItem.TSAHUDPulseTimeP) % 40;
+					if (TSAPulseInc == 0 || TSAPulseInc == 20) TSAPulseScale = (1.00 + (TSARecPulseSpd * 0));
+					if (TSAPulseInc == 1 || TSAPulseInc == 19) TSAPulseScale = (1.00 + (TSARecPulseSpd * 0.25));
+					if (TSAPulseInc == 2 || TSAPulseInc == 18) TSAPulseScale = (1.00 + (TSARecPulseSpd * 0.5));
+					if (TSAPulseInc == 3 || TSAPulseInc == 17) TSAPulseScale = (1.00 + (TSARecPulseSpd * 0.75));
+					if (TSAPulseInc == 4 || TSAPulseInc == 16) TSAPulseScale = (1.00 + (TSARecPulseSpd * 1));
+					if (TSAPulseInc == 5 || TSAPulseInc == 15) TSAPulseScale = (1.00 + (TSARecPulseSpd * 1.25));
+					if (TSAPulseInc == 6 || TSAPulseInc == 14) TSAPulseScale = (1.00 + (TSARecPulseSpd * 1.5));
+					if (TSAPulseInc == 7 || TSAPulseInc == 13) TSAPulseScale = (1.00 + (TSARecPulseSpd * 1.75));
+					if (TSAPulseInc == 8 || TSAPulseInc == 12) TSAPulseScale = (1.00 + (TSARecPulseSpd * 2));
+					if (TSAPulseInc == 9 || TSAPulseInc == 11) TSAPulseScale = (1.00 + (TSARecPulseSpd * 2.25));
+					if (TSAPulseInc == 10) TSAPulseScale = (1.00 + (TSARecPulseSpd * 2.5));
+
+					if (TSAPulseInc == 21 || TSAPulseInc == 39) TSAPulseScale = (1.00 + (TSARecPulseSpd * -0.25));
+					if (TSAPulseInc == 22 || TSAPulseInc == 38) TSAPulseScale = (1.00 + (TSARecPulseSpd * -0.5));
+					if (TSAPulseInc == 23 || TSAPulseInc == 37) TSAPulseScale = (1.00 + (TSARecPulseSpd * -0.75));
+					if (TSAPulseInc == 24 || TSAPulseInc == 36) TSAPulseScale = (1.00 + (TSARecPulseSpd * -1));
+					if (TSAPulseInc == 25 || TSAPulseInc == 35) TSAPulseScale = (1.00 + (TSARecPulseSpd * -1.25));
+					if (TSAPulseInc == 26 || TSAPulseInc == 34) TSAPulseScale = (1.00 + (TSARecPulseSpd * -1.5));
+					if (TSAPulseInc == 27 || TSAPulseInc == 33) TSAPulseScale = (1.00 + (TSARecPulseSpd * -1.75));
+					if (TSAPulseInc == 28 || TSAPulseInc == 32) TSAPulseScale = (1.00 + (TSARecPulseSpd * -2));
+					if (TSAPulseInc == 29 || TSAPulseInc == 31) TSAPulseScale = (1.00 + (TSARecPulseSpd * -2.25));
+					if (TSAPulseInc == 30) TSAPulseScale = (1.00 + (TSARecPulseSpd * -2.5));
+				}
+				else
+				{
+					TSAPulseScale = 1.00;
+					TSAPulseInc = 0;
+				}
 			}
 		}
 		
-		return HPPulseScale, APPulseScale;
+		return HPPulseScale, APPulseScale, TSAPulseScale;
 	}
 	
 	int, int DrawFSHUDWSlotsAmmoRatio(int AmmoRatio, int AmmoAmount, int AmmoMaxAmount, int typea)
@@ -2738,15 +2816,18 @@ class KCStatusBarMain : BaseStatusBar
 			int HPShakeFormY = 0;
 			int APShakeFormX = 0;
 			int APShakeFormY = 0;
+			int TSAShakeFormX = 0;
+			int TSAShakeFormY = 0;
 			
 			// HP/AP Shaking
-			[HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY] = DrawFSHUDHPAPShaking(HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY);
+			[HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY, TSAShakeFormX, TSAShakeFormY] = DrawFSHUDHPAPShaking(HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY, TSAShakeFormX, TSAShakeFormY);
 			
 			double HPPulseScale = 1.00;
 			double APPulseScale = 1.00;
+			double TSAPulseScale = 1.00;
 
 			// HP/AP Pulse Control
-			[HPPulseScale, APPulseScale] = DrawFSHUDHPAPPulsing(HPPulseScale, APPulseScale);
+			[HPPulseScale, APPulseScale, TSAPulseScale] = DrawFSHUDHPAPPulsing(HPPulseScale, APPulseScale, TSAPulseScale);
 		}
 		
 		//********
