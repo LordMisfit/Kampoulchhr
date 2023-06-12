@@ -1083,11 +1083,11 @@ class KCStatusBarMain : BaseStatusBar
 		int svy = -20; //-40;
 		int hudarmortype;
 		let armor = CPlayer.mo.FindInventory("KCArmor");
+		int ycorrection = -3;
 		if (armor != null && armor.Amount > 0)
 		{
-		
 			// Meters
-			vector2 mpos = (94, -21);
+			vector2 mpos = (94+APDmgShakeX, -21+APDmgShakeY+ycorrection);
 			int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			double malpha = 0.875;
@@ -1126,8 +1126,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			
 			//DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
-			DrawInventoryIcon(armor, (ivx+0, ivy-20), 0, fontalpha, (-1, -1), (1.0, 1.0));
+			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0+APDmgShakeX, svy-20+APDmgShakeY+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+			DrawInventoryIcon(armor, (ivx+0+APDmgShakeX, ivy-20+APDmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			
 			// Show Max Armor
 			if (hudarmortype > 0)
@@ -1146,7 +1146,7 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				//MaxAPS.AppendFormat("%d", armor.maxamount);
 				//DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, font.cr_black, fontalpha, -1, 4, (1.25, 1.25));
-				DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (svx+50+APDmgShakeX, svy-17+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
 			
 			ivx += 0;
@@ -1207,13 +1207,14 @@ class KCStatusBarMain : BaseStatusBar
 				
 				if (MiscItem.TimeArmorEnergyMaxTics > 0)
 				{
+					vector2 tsapos = (ivx+2, ivy-15+ycorrection);
 					let armor2 = CPlayer.mo.FindInventory("TSArtifactsInUse");
 					if (armor2)
 					{
 						vector2 iconscale = (1.0, 1.0);
 						iconscale.x *= 0.20;
 						iconscale.y *= 0.20;
-						DrawInventoryIcon(armor2, (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+						DrawInventoryIcon(armor2, tsapos, 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 					}
 					else
 					{
@@ -1222,7 +1223,7 @@ class KCStatusBarMain : BaseStatusBar
 							vector2 iconscale = (1.0, 1.0);
 							iconscale.x *= 0.375;
 							iconscale.y *= 0.375;
-							DrawImage("TSCHA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+							DrawImage("TSCHA0", tsapos, 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 						}
 						else
 						if (CPlayer.mo.CountInv("TimeSeraphPocketWatch") > 0) 
@@ -1230,7 +1231,7 @@ class KCStatusBarMain : BaseStatusBar
 							vector2 iconscale = (1.0, 1.0);
 							iconscale.x *= 0.375;
 							iconscale.y *= 0.375;
-							DrawImage("TSPWA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+							DrawImage("TSPWA0", tsapos, 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 						}
 						else
 						if (CPlayer.mo.CountInv("TimeSeraphBangle") > 0) 
@@ -1238,7 +1239,7 @@ class KCStatusBarMain : BaseStatusBar
 							vector2 iconscale = (1.0, 1.0);
 							iconscale.x *= 0.375;
 							iconscale.y *= 0.375;
-							DrawImage("TSBGA0", (ivx+2, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+							DrawImage("TSBGA0", tsapos, 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 						}
 					}
 					int energystat = (MiscItem.TSARegenAmt - MiscItem.TSADrainAmt);
@@ -1270,7 +1271,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (energystat != 0) showarrow = true;
 														else showarrow = false;
 					}
-					if (showarrow) DrawImage(energyimg, (ivx-3, ivy-15), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					if (showarrow) DrawImage(energyimg, (ivx-3, ivy-15+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 					
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
@@ -1283,13 +1284,12 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
 					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
-					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50, svy-1), 1, 1, 0, alpha:malpha);
+					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50, svy-1+ycorrection), 1, 1, 0, alpha:malpha);
 					
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
-					//DrawString(mKCLFont, perstr, (svx+60, svy-20), DI_TEXT_ALIGN_RIGHT, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
-					DrawString(mKCLFont, perstr, (svx+60, svy-20), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+					DrawString(mKCLFont, perstr, (svx+60, svy-20+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
@@ -1375,8 +1375,10 @@ class KCStatusBarMain : BaseStatusBar
 			}
 		}
 	}
+	
 	void A_DrawFSLevel(double masterscale = 1.0)
 	{
+		int ycorrection = -3;
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
@@ -1418,20 +1420,21 @@ class KCStatusBarMain : BaseStatusBar
 				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, LVLAlpha, (-1, -1), (1.0, 1.0));
 				*/
 				
-				DrawBar("EXPNOTCH", "EXPNOTCE", lgpiece, 32, (168, -1), 1, 1, 0, 0.875);
+				DrawBar("EXPNOTCH", "EXPNOTCE", lgpiece, 32, (168, -1+ycorrection), 1, 1, 0, 0.875);
 
 				LVLGraphic = "LVL";
 				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
 				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
-				DrawImage(LVLGraphic, (168, -2), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+				DrawImage(LVLGraphic, (168, -2+ycorrection), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 				//DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
-				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
+				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
 			}
 		}
 	}
 	
 	void A_DrawFSDash(double masterscale = 1.0)
 	{
+		int ycorrection = -3;
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
@@ -1459,9 +1462,9 @@ class KCStatusBarMain : BaseStatusBar
 					string LVLGraphic = "HDASHGRY";
 					if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "HDASHGRN";
 					if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "HDASHDLG";
-					DrawImage(LVLGraphic, (168, -22), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
+					DrawImage(LVLGraphic, (168, -22+ycorrection), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 					//DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
-					DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
+					DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
@@ -1469,6 +1472,7 @@ class KCStatusBarMain : BaseStatusBar
 	
 	void A_DrawFSHealth(double masterscale = 1.0)
 	{
+		int ycorrection = -3;
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
@@ -1486,7 +1490,7 @@ class KCStatusBarMain : BaseStatusBar
 		if (IsInvuln) HealthColor = font.CR_Gold;
 		
 		// Meters
-		vector2 mpos = (94, -1);
+		vector2 mpos = (94+HPDmgShakeX, -1+HPDmgShakeY+ycorrection);
 		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
@@ -1495,15 +1499,15 @@ class KCStatusBarMain : BaseStatusBar
 		// Show Current Health
 		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
 		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
-		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20, -2));
+		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, -2+HPDmgShakeY+ycorrection));
 		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
-		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
+		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, -20+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Show Max Health
 		string MaxHPS = "\c[brick] / ";
 		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
 		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
-		DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
+		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, -17+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 	}
 	
 	void DrawFSHUDKeys()
@@ -1572,6 +1576,204 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
+	int, int, int, int, int, int DrawFSHUDHPAPShaking(int HPShakeFormX, int HPShakeFormY, int APShakeFormX, int APShakeFormY)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		if (kchud_showhpapdmghudshake)
+		{
+			if (MiscItem)
+			{
+				if (MiscItem.HPHUDShakeType <= 1)
+				{
+					HPShakeFormX = randompick(-1,0,1);
+					HPShakeFormY = randompick(-1,0,1);
+				}
+				if (MiscItem.HPHUDShakeType == 2)
+				{
+					HPShakeFormX = randompick(-2,-1,0,1,2);
+					HPShakeFormY = randompick(-2,-1,0,1,2);
+				}
+				if (MiscItem.HPHUDShakeType == 3)
+				{
+					HPShakeFormX = randompick(-3,-2,-1,0,1,2,3);
+					HPShakeFormY = randompick(-3,-2,-1,0,1,2,3);
+				}
+				if (MiscItem.HPHUDShakeType >= 4)
+				{
+					HPShakeFormX = randompick(-4,-3,-2,-1,0,1,2,3,4);
+					HPShakeFormY = randompick(-4,-3,-2,-1,0,1,2,3,4);
+				}
+				if (MiscItem.APHUDShakeType <= 1)
+				{
+					APShakeFormX = randompick(-1,0,1);
+					APShakeFormY = randompick(-1,0,1);
+				}
+				if (MiscItem.APHUDShakeType == 2)
+				{
+					APShakeFormX = randompick(-2,-1,0,1,2);
+					APShakeFormY = randompick(-2,-1,0,1,2);
+				}
+				if (MiscItem.APHUDShakeType == 3)
+				{
+					APShakeFormX = randompick(-3,-2,-1,0,1,2,3);
+					APShakeFormY = randompick(-3,-2,-1,0,1,2,3);
+				}
+				if (MiscItem.APHUDShakeType >= 4)
+				{
+					APShakeFormX = randompick(-4,-3,-2,-1,0,1,2,3,4);
+					APShakeFormY = randompick(-4,-3,-2,-1,0,1,2,3,4);
+				}
+
+				if (MiscItem.HPHUDShakeTime && MiscItem.HPDmgHUDAmt > 0)
+				{
+					HPShakeInc++;
+					if (HPShakeInc >= 4)
+					{
+						HPShakeInc = 0;
+						HPDmgShakeX = HPShakeFormX;
+						HPDmgShakeY = HPShakeFormY;
+					}
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("HPHUDShakeTime: %d, Shake: HPShakeInc: %d, HPDmgShakeX: %d, HPDmgShakeY: %d", MiscItem.HPHUDShakeTime, HPShakeInc, HPDmgShakeX, HPDmgShakeY);
+				}
+				else
+				{
+					HPDmgShakeX = 0;
+					HPDmgShakeY = 0;
+					HPShakeInc = 0;
+				}
+				
+				if (MiscItem.APHUDShakeTime && MiscItem.APDmgHUDAmt > 0)
+				{
+					APShakeInc++;
+					if (APShakeInc >= 4)
+					{
+						APShakeInc = 0;
+						APDmgShakeX = APShakeFormX;
+						APDmgShakeY = APShakeFormY;
+					}
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("APHUDShakeTime: %d, Shake: APShakeInc: %d, APDmgShakeX: %d, APDmgShakeY: %d", MiscItem.APHUDShakeTime, APShakeInc, APDmgShakeX, APDmgShakeY);
+				}
+				else
+				{
+					APShakeInc = 0;
+					APDmgShakeX = 0;
+					APDmgShakeY = 0;
+				}
+			}
+			else
+			{
+				HPDmgShakeX = 0;
+				HPDmgShakeY = 0;
+				HPShakeInc = 0;
+				APShakeInc = 0;
+				APDmgShakeX = 0;
+				APDmgShakeY = 0;
+			}
+		}
+		else
+		{
+			HPDmgShakeX = 0;
+			HPDmgShakeY = 0;
+			HPShakeInc = 0;
+			APShakeInc = 0;
+			APDmgShakeX = 0;
+			APDmgShakeY = 0;
+		}
+		
+		return HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY;
+	}
+	
+	double, double DrawFSHUDHPAPPulsing(double HPPulseScale, double APPulseScale)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		if (dyduhud_showhpaprechudpulse)
+		{
+			if (MiscItem)
+			{
+				if (MiscItem.HPHUDPulseType <= 1) HPRecPulseSpd = 0.01;
+				if (MiscItem.HPHUDPulseType == 2) HPRecPulseSpd = 0.015;
+				if (MiscItem.HPHUDPulseType == 3) HPRecPulseSpd = 0.025;
+				if (MiscItem.HPHUDPulseType >= 4) HPRecPulseSpd = 0.04;
+				
+				if (MiscItem.APHUDPulseType <= 1) APRecPulseSpd = 0.01;
+				if (MiscItem.APHUDPulseType == 2) APRecPulseSpd = 0.015;
+				if (MiscItem.APHUDPulseType == 3) APRecPulseSpd = 0.025;
+				if (MiscItem.APHUDPulseType >= 4) APRecPulseSpd = 0.04;
+				
+				if (MiscItem.HPRecHUDTimer >= 36 && MiscItem.HPRecHUDAmt > 0)
+				{
+					HPPulseInc = (level.time + MiscItem.HPHUDPulseTimeP) % 40;
+					if (HPPulseInc == 0 || HPPulseInc == 20) HPPulseScale = (1.00 + (HPRecPulseSpd * 0));
+					if (HPPulseInc == 1 || HPPulseInc == 19) HPPulseScale = (1.00 + (HPRecPulseSpd * 0.25));
+					if (HPPulseInc == 2 || HPPulseInc == 18) HPPulseScale = (1.00 + (HPRecPulseSpd * 0.5));
+					if (HPPulseInc == 3 || HPPulseInc == 17) HPPulseScale = (1.00 + (HPRecPulseSpd * 0.75));
+					if (HPPulseInc == 4 || HPPulseInc == 16) HPPulseScale = (1.00 + (HPRecPulseSpd * 1.0));
+					if (HPPulseInc == 5 || HPPulseInc == 15) HPPulseScale = (1.00 + (HPRecPulseSpd * 1.25));
+					if (HPPulseInc == 6 || HPPulseInc == 14) HPPulseScale = (1.00 + (HPRecPulseSpd * 1.5));
+					if (HPPulseInc == 7 || HPPulseInc == 13) HPPulseScale = (1.00 + (HPRecPulseSpd * 1.75));
+					if (HPPulseInc == 8 || HPPulseInc == 12) HPPulseScale = (1.00 + (HPRecPulseSpd * 2.0));
+					if (HPPulseInc == 9 || HPPulseInc == 11) HPPulseScale = (1.00 + (HPRecPulseSpd * 2.25));
+					if (HPPulseInc == 10) HPPulseScale = (1.00 + (HPRecPulseSpd * 2.5));
+
+					if (HPPulseInc == 21 || HPPulseInc == 39) HPPulseScale = (1.00 + (HPRecPulseSpd * -0.25));
+					if (HPPulseInc == 22 || HPPulseInc == 38) HPPulseScale = (1.00 + (HPRecPulseSpd * -0.5));
+					if (HPPulseInc == 23 || HPPulseInc == 37) HPPulseScale = (1.00 + (HPRecPulseSpd * -0.75));
+					if (HPPulseInc == 24 || HPPulseInc == 36) HPPulseScale = (1.00 + (HPRecPulseSpd * -1.0));
+					if (HPPulseInc == 25 || HPPulseInc == 35) HPPulseScale = (1.00 + (HPRecPulseSpd * -1.25));
+					if (HPPulseInc == 26 || HPPulseInc == 34) HPPulseScale = (1.00 + (HPRecPulseSpd * -1.5));
+					if (HPPulseInc == 27 || HPPulseInc == 33) HPPulseScale = (1.00 + (HPRecPulseSpd * -1.75));
+					if (HPPulseInc == 28 || HPPulseInc == 32) HPPulseScale = (1.00 + (HPRecPulseSpd * -2.0));
+					if (HPPulseInc == 29 || HPPulseInc == 31) HPPulseScale = (1.00 + (HPRecPulseSpd * -2.25));
+					if (HPPulseInc == 30) HPPulseScale = (1.00 + (HPRecPulseSpd * -2.5));
+				}
+				else
+				{
+					HPPulseScale = 1.00;
+					HPPulseInc = 0;
+				}
+				
+				if (MiscItem.APRecHUDTimer >= 36 && MiscItem.APRecHUDAmt > 0)
+				{
+					APPulseInc = (level.time + MiscItem.APHUDPulseTimeP) % 40;
+					if (APPulseInc == 0 || APPulseInc == 20) APPulseScale = (1.00 + (APRecPulseSpd * 0));
+					if (APPulseInc == 1 || APPulseInc == 19) APPulseScale = (1.00 + (APRecPulseSpd * 0.25));
+					if (APPulseInc == 2 || APPulseInc == 18) APPulseScale = (1.00 + (APRecPulseSpd * 0.5));
+					if (APPulseInc == 3 || APPulseInc == 17) APPulseScale = (1.00 + (APRecPulseSpd * 0.75));
+					if (APPulseInc == 4 || APPulseInc == 16) APPulseScale = (1.00 + (APRecPulseSpd * 1));
+					if (APPulseInc == 5 || APPulseInc == 15) APPulseScale = (1.00 + (APRecPulseSpd * 1.25));
+					if (APPulseInc == 6 || APPulseInc == 14) APPulseScale = (1.00 + (APRecPulseSpd * 1.5));
+					if (APPulseInc == 7 || APPulseInc == 13) APPulseScale = (1.00 + (APRecPulseSpd * 1.75));
+					if (APPulseInc == 8 || APPulseInc == 12) APPulseScale = (1.00 + (APRecPulseSpd * 2));
+					if (APPulseInc == 9 || APPulseInc == 11) APPulseScale = (1.00 + (APRecPulseSpd * 2.25));
+					if (APPulseInc == 10) APPulseScale = (1.00 + (APRecPulseSpd * 2.5));
+
+					if (APPulseInc == 21 || APPulseInc == 39) APPulseScale = (1.00 + (APRecPulseSpd * -0.25));
+					if (APPulseInc == 22 || APPulseInc == 38) APPulseScale = (1.00 + (APRecPulseSpd * -0.5));
+					if (APPulseInc == 23 || APPulseInc == 37) APPulseScale = (1.00 + (APRecPulseSpd * -0.75));
+					if (APPulseInc == 24 || APPulseInc == 36) APPulseScale = (1.00 + (APRecPulseSpd * -1));
+					if (APPulseInc == 25 || APPulseInc == 35) APPulseScale = (1.00 + (APRecPulseSpd * -1.25));
+					if (APPulseInc == 26 || APPulseInc == 34) APPulseScale = (1.00 + (APRecPulseSpd * -1.5));
+					if (APPulseInc == 27 || APPulseInc == 33) APPulseScale = (1.00 + (APRecPulseSpd * -1.75));
+					if (APPulseInc == 28 || APPulseInc == 32) APPulseScale = (1.00 + (APRecPulseSpd * -2));
+					if (APPulseInc == 29 || APPulseInc == 31) APPulseScale = (1.00 + (APRecPulseSpd * -2.25));
+					if (APPulseInc == 30) APPulseScale = (1.00 + (APRecPulseSpd * -2.5));
+				}
+				else
+				{
+					APPulseScale = 1.00;
+					APPulseInc = 0;
+				}
+			}
+		}
+		
+		return HPPulseScale, APPulseScale;
+	}
 	
 	int, int DrawFSHUDWSlotsAmmoRatio(int AmmoRatio, int AmmoAmount, int AmmoMaxAmount, int typea)
 	{
@@ -2530,6 +2732,23 @@ class KCStatusBarMain : BaseStatusBar
 		// Blindness/Drowning [HUD]
 		BlindnessEffectHUD();
 		
+		if (screenblocks < 12)
+		{
+			int HPShakeFormX = 0;
+			int HPShakeFormY = 0;
+			int APShakeFormX = 0;
+			int APShakeFormY = 0;
+			
+			// HP/AP Shaking
+			[HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY] = DrawFSHUDHPAPShaking(HPShakeFormX, HPShakeFormY, APShakeFormX, APShakeFormY);
+			
+			double HPPulseScale = 1.00;
+			double APPulseScale = 1.00;
+
+			// HP/AP Pulse Control
+			[HPPulseScale, APPulseScale] = DrawFSHUDHPAPPulsing(HPPulseScale, APPulseScale);
+		}
+		
 		//********
 		//* Dash *
 		//********
@@ -2543,7 +2762,7 @@ class KCStatusBarMain : BaseStatusBar
 		int dashcost = CPlayerPawn.CountInv("DashCost");
 		
 		// Draw health
-		A_DrawFSHealth();
+		A_DrawFSHealth(1.0);
 		
 		// Draw Armor [and Time Seraph Armor info]
 		A_DrawFSArmor(1.0);

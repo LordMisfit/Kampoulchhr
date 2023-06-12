@@ -1,3 +1,230 @@
+mixin class HUDRecovery
+{
+	void A_StatIncHud(int recovery, int type)
+	{
+		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_MaxHPHud called");
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+
+		if (MiscItem && dyduhud_showhpapdmgrec)
+		{
+			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_MaxHPHud [MiscItem]");
+			if (type == 0) // Max HP
+			{
+				if (MiscItem.MaxHPIncTimer <= 0) MiscItem.MaxHPIncTimer = 105;
+				else
+				{
+					MiscItem.MaxHPIncTimer += 35;
+					if (MiscItem.MaxHPIncTimer < 105 && recovery > (MiscItem.MaxHealthTrue * 0.01)) MiscItem.HPRecHUDTimer = 105;
+					if (MiscItem.MaxHPIncTimer > 175) MiscItem.MaxHPIncTimer = 175;
+				}
+				MiscItem.MaxHPIncAmt += recovery;
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("Max HP Gain: %d [%d] (timer: %d)", MiscItem.MaxHPIncAmt, recovery, MiscItem.MaxHPIncTimer);
+			}
+			
+			if (type == 1) // Dash Length
+			{
+				if (MiscItem.MaxDashIncTimer <= 0) MiscItem.MaxDashIncTimer = 105;
+				else
+				{
+					MiscItem.MaxDashIncTimer += 35;
+					if (MiscItem.MaxDashIncTimer > 175) MiscItem.MaxDashIncTimer = 175;
+				}
+				MiscItem.MaxDashIncAmt += recovery;
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("Max Dash Gain: %d [%d] (timer: %d)", MiscItem.MaxDashIncAmt, recovery, MiscItem.MaxDashIncTimer);
+			}
+		}
+	}
+	
+	void A_RecoverHUD(int recovery, int type, bool acculmuatepulse)
+	{
+		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD called");
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+
+		if (MiscItem && dyduhud_showhpapdmgrec)
+		{
+			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD [MiscItem]");
+			if (type == 0) // HP
+			{
+				// HP Recovery [HUD]
+				if (MiscItem.HPRecHUDTimer <= 0) MiscItem.HPRecHUDTimer = 105;
+				else
+				{
+					MiscItem.HPRecHUDTimer += 35;
+					if (MiscItem.HPRecHUDTimer < 105 && recovery > (MiscItem.MaxHealthTrue * 0.01)) MiscItem.HPRecHUDTimer = 105;
+					if (MiscItem.HPRecHUDTimer > 175) MiscItem.HPRecHUDTimer = 175;
+				}
+				MiscItem.HPRecHUDAmt += recovery;
+				if (acculmuatepulse && recovery > 0)
+				{
+					if (MiscItem.HPRecHUDAmt > 0 && recovery > 0)
+					{
+						int healfactor = MiscItem.HPRecHUDAmt * 100 / MiscItem.MaxHealthTrue;
+						if (healfactor < 10) MiscItem.HPHUDPulseType = 1;
+						if (healfactor >= 10) MiscItem.HPHUDPulseType = 2;
+						if (healfactor >= 50) MiscItem.HPHUDPulseType = 3;
+						if (healfactor >= 100) MiscItem.HPHUDPulseType = 4;
+						MiscItem.HPHUDPulseTimeP = (level.time % randompick(15,25,35));
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("HP Gain: %d [%d] (timer: %d)", MiscItem.HPRecHUDAmt, recovery, MiscItem.HPRecHUDTimer);
+			}
+
+			if (type == 1) // AP
+			{
+				// AP Recovery [HUD]
+				if (MiscItem.APRecHUDTimer <= 0) MiscItem.APRecHUDTimer = 105;
+				else
+				{
+					MiscItem.APRecHUDTimer += 35;
+					if (MiscItem.APRecHUDTimer < 105 && recovery > 1) MiscItem.APRecHUDTimer = 105;
+					if (MiscItem.APRecHUDTimer > 175) MiscItem.APRecHUDTimer = 175;
+				}
+				MiscItem.APRecHUDAmt += recovery;
+				if (acculmuatepulse && recovery > 0)
+				{
+					int armmax;
+					let armor = player.FindInventory("KCArmor");
+					if (armor != null && armor.Amount > 0)
+					{
+						textureid icon = armor.icon;
+						if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+								icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+								icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+						if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+						
+						if (armmax)
+						{
+							if (MiscItem.APRecHUDAmt > 0 && recovery > 0)
+							{
+								int healfactor = MiscItem.APRecHUDAmt * 100 / armmax;
+								if (healfactor < 10) MiscItem.APHUDPulseType = 1;
+								if (healfactor >= 10) MiscItem.APHUDPulseType = 2;
+								if (healfactor >= 50) MiscItem.APHUDPulseType = 3;
+								if (healfactor >= 100) MiscItem.APHUDPulseType = 4;
+								MiscItem.APHUDPulseTimeP = (level.time % randompick(15,25,35));
+							}
+						}
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("AP Gain: %d [%d] (timer: %d)", MiscItem.APRecHUDAmt, recovery, MiscItem.APRecHUDTimer);
+			}
+		}
+	}
+
+	void A_LossHUD(int loss, int type, bool acculmuateshake)
+	{
+		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_LossHUD called");
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+
+		if (MiscItem && dyduhud_showhpapdmgrec)
+		{
+			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_LossHUD [MiscItem]");
+			if (type == 0) // HP
+			{
+				// HP Loss [HUD]
+				if (MiscItem.HPDmgHUDTimer <= 0) MiscItem.HPDmgHUDTimer = 105;
+				else
+				{
+					MiscItem.HPDmgHUDTimer += 35;
+					if (MiscItem.HPDmgHUDTimer < 105 && loss > (MiscItem.MaxHealthTrue * 0.01)) MiscItem.HPDmgHUDTimer = 105;
+					if (MiscItem.HPDmgHUDTimer > 175) MiscItem.HPDmgHUDTimer = 175;
+				}
+				MiscItem.HPDmgHUDAmt += loss;
+				if (acculmuateshake && loss > 0)
+				{
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("HP loss: %d", loss);
+					if (MiscItem.HPDmgHUDAmt > 0 && loss > 0)
+					{
+						MiscItem.HPHUDShakeTime += random(52,53);
+						int damagetakefactor = MiscItem.HPDmgHUDAmt * 100 / MiscItem.MaxHealthTrue;
+						if (damagetakefactor < 10)
+						{
+							MiscItem.HPHUDShakeType = 1;
+							if (MiscItem.HPHUDShakeTime > 53) MiscItem.HPHUDShakeTime = 53;
+						}
+						if (damagetakefactor >= 10) 
+						{
+							MiscItem.HPHUDShakeType = 2;
+							if (MiscItem.HPHUDShakeTime > 88) MiscItem.HPHUDShakeTime = 88;
+						}
+						if (damagetakefactor >= 50) 
+						{
+							MiscItem.HPHUDShakeType = 3;
+							if (MiscItem.HPHUDShakeTime > 140) MiscItem.HPHUDShakeTime = 140;
+						}
+						if (damagetakefactor >= 100) 
+						{
+							MiscItem.HPHUDShakeType = 4;
+							if (MiscItem.HPHUDShakeTime > 175) MiscItem.HPHUDShakeTime = 175;
+						}
+					}
+				}
+				
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("HP Loss: %d [%d] (timer: %d)", MiscItem.HPDmgHUDAmt, loss, MiscItem.HPDmgHUDTimer);
+			}
+
+			if (type == 1) // AP
+			{
+				// AP Loss [HUD]
+				if (MiscItem.APDmgHUDTimer <= 0) MiscItem.APDmgHUDTimer = 105;
+				else
+				{
+					MiscItem.APDmgHUDTimer += 35;
+					if (MiscItem.APDmgHUDTimer < 105 && loss > 1) MiscItem.APDmgHUDTimer = 105;
+					if (MiscItem.APDmgHUDTimer > 175) MiscItem.APDmgHUDTimer = 175;
+				}
+				MiscItem.APDmgHUDAmt += loss;
+				if (acculmuateshake && loss > 0)
+				{
+					if (kcdebug_hudrecdmgdisplays) Console.Printf("AP loss: %d", loss);
+					int armmax;
+					let armor = player.FindInventory("KCArmor");
+					if (armor != null && armor.Amount > 0)
+					{
+						textureid icon = armor.icon;
+						if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+								icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+								icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+						if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+						if (armmax)
+						{
+							int damagetakefactor = MiscItem.APDmgHUDAmt * 100 / armmax;
+							if (MiscItem.APDmgHUDAmt > 0 && loss > 0)
+							{
+								MiscItem.APHUDShakeTime += random(52,53);
+								if (damagetakefactor < 10) 
+								{
+									MiscItem.APHUDShakeType = 1;
+									if (MiscItem.APHUDShakeTime > 53) MiscItem.APHUDShakeTime = 53;
+								}
+								if (damagetakefactor >= 10)
+								{
+									MiscItem.APHUDShakeType = 2;
+								if (MiscItem.APHUDShakeTime > 88) MiscItem.APHUDShakeTime = 88;
+								}
+								if (damagetakefactor >= 50)
+								{
+									MiscItem.APHUDShakeType = 3;
+								if (MiscItem.APHUDShakeTime > 140) MiscItem.APHUDShakeTime = 140;
+								}
+								if (damagetakefactor >= 100)
+								{
+									MiscItem.APHUDShakeType = 4;
+								if (MiscItem.APHUDShakeTime > 175) MiscItem.APHUDShakeTime = 175;
+								}
+							}
+						}
+					}
+				}
+				if (kcdebug_hudrecdmgdisplays) Console.Printf("AP Loss: %d [%d] (timer: %d)", MiscItem.APDmgHUDAmt, loss, MiscItem.APDmgHUDTimer);
+			}
+		}
+	}
+}
+
 mixin class StunItems
 {
 	bool dideffect;
@@ -673,11 +900,11 @@ mixin class MonsterCollider
 		}
 		else
 		{
-			if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- Passive - (\c[green]%s\c-) vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+			if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- NotPassive - (\c[green]%s\c-) vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 			
 			if (shieldpiece)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- Passive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return false;
 			}
 			return true; 
@@ -1453,7 +1680,7 @@ mixin class MonsterCollider
 		{
 			if (targetdummyhitcooldown <= 0) targetdummyhitcooldown = 35;
 			if (flags & !DMG_THRUSTLESS) flags |= DMG_THRUSTLESS;
-			if (!dydudebug_practicetargetsdebuff)
+			if (!kcdebug_practicetargetsdebuff)
 			{
 				if (flags & !DMG_NO_PROTECT) flags |= DMG_NO_PROTECT;
 				if (flags & !DMG_NO_ARMOR) flags |= DMG_NO_ARMOR;
@@ -1551,7 +1778,7 @@ mixin class MonsterCollider
 					if (mod == 'Kick') multfactorHP *= frandompick(1.0834,1.1667);
 					randbonusincreaseHP *= multfactorHP;
 					if (criticalhit) randbonusincreaseHP *= critdmgmulti;
-					//if (dydudebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
+					//if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
 					if (MiscItem) MiscItem.HPRegenBoostTimer += randbonusincreaseHP;
 					
 					if (playpawn)
@@ -1657,7 +1884,7 @@ mixin class MonsterCollider
 			double outputdmgfactor = 1.0;
 			outputdmgfactor *= moddedDMG;
 			outputdmgfactor /= tempdmgval;
-			if (kcdebug_actordmgdisplays || dydudebug_hitsounds) Console.Printf("(\c[green]%s\c-) moddedDMG: %d (%.8f) (%s), damagefactor: %.8f", GetClassName(), moddedDMG, outputdmgfactor, mod, damagefactor);
+			if (kcdebug_actordmgdisplays || kcdebug_hitsounds) Console.Printf("(\c[green]%s\c-) moddedDMG: %d (%.8f) (%s), damagefactor: %.8f", GetClassName(), moddedDMG, outputdmgfactor, mod, damagefactor);
 
 			if (kc_monsternodmgvol > 0.0)
 			{
@@ -1710,7 +1937,7 @@ mixin class MonsterCollider
 				if (inflictor && source && (inflictor != source)) comblog.AppendFormat(" \c[purple]%s's", attkernam);
 				if (inflictor) comblog.AppendFormat(" \c[red]%s\c-!", atkrname);
 				comblog.AppendFormat(" [\c[lightblue]%s\c-]", mod);
-				if (dydudebug_showgametic) comblog.AppendFormat(" [%d]", gametic);
+				if (kcdebug_showgametic) comblog.AppendFormat(" [%d]", gametic);
 				
 				Console.Printf(comblog);
 			}

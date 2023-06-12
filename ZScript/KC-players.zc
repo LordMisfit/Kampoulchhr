@@ -10,6 +10,8 @@ class KCPlayerPawn : PlayerPawn
 	const SKILL_IMPOSSIBLE = 7;
 	const SKILL_OMEGA = 8;
 	
+	mixin HUDRecovery;
+
 	double airreplen, airreplentimer;
 	double ArmorEnc, TempArmorEnc;
 	int damagecntfrag;
@@ -2655,10 +2657,10 @@ class KCPlayerPawn : PlayerPawn
 			if (damagetakefactor < 1) damagetakefactor = 1;
 			if (MiscItem)
 			{
-				//MiscItem.HPHUDShakeType = 1;
-				//if (damagetakefactor >= 10) MiscItem.HPHUDShakeType = 2;
-				//if (damagetakefactor >= 50) MiscItem.HPHUDShakeType = 3;
-				//if (damagetakefactor >= 100) MiscItem.HPHUDShakeType = 4;
+				MiscItem.HPHUDShakeType = 1;
+				if (damagetakefactor >= 10) MiscItem.HPHUDShakeType = 2;
+				if (damagetakefactor >= 50) MiscItem.HPHUDShakeType = 3;
+				if (damagetakefactor >= 100) MiscItem.HPHUDShakeType = 4;
 			}
 			player.damagecount -= ret;
 			if (player.damagecount < 0) player.damagecount = 0;
@@ -2670,21 +2672,30 @@ class KCPlayerPawn : PlayerPawn
 		if (armdmg && armortier)
 		{
 			int armmax;
-			if (armmax > 0)
+			let armor = FindInventory("KCArmor");
+			if (armor != null && armor.Amount > 0)
 			{
-				int damagetakefactor = armdmg * 100 / armmax;
-				if (MiscItem)
+				textureid icon = armor.icon;
+				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+				if (armmax > 0)
 				{
-					//MiscItem.APHUDShakeType = 1;
-					//if (damagetakefactor >= 10) MiscItem.APHUDShakeType = 2;
-					//if (damagetakefactor >= 50) MiscItem.APHUDShakeType = 3;
-					//if (damagetakefactor >= 100) MiscItem.APHUDShakeType = 4;
+					int damagetakefactor = armdmg * 100 / armmax;
+					if (MiscItem)
+					{
+						MiscItem.APHUDShakeType = 1;
+						if (damagetakefactor >= 10) MiscItem.APHUDShakeType = 2;
+						if (damagetakefactor >= 50) MiscItem.APHUDShakeType = 3;
+						if (damagetakefactor >= 100) MiscItem.APHUDShakeType = 4;
+					}
 				}
-			}
+			}			
 		}
 		
-		//A_LossHUD(ret, 0, true);
-		//A_LossHUD(armdmg, 1, true);
+		A_LossHUD(ret, 0, true);
+		A_LossHUD(armdmg, 1, true);
 		
 		PlayerArmorIgnoreFactor = 0.00;
 		PlayerDefenseIgnoreFactor = 0.00;
@@ -2698,12 +2709,12 @@ class KCPlayerPawn : PlayerPawn
 		{
 			if (!passive)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[brick]Collision:\c- NotPassive - %s vs (%s) [PPawnVoodoo] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PPawnVoodoo] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return true;
 			}
 			else
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- Passive - (%s) [PPawnVoodoo] vs %s {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
+				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PPawnVoodoo] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
 				return true;
 			}
 		}
@@ -2712,17 +2723,17 @@ class KCPlayerPawn : PlayerPawn
 			// Non-passive means the one moving into the other is performing the checks.
 			if (!passive)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[brick]Collision:\c- NotPassive - %s vs (%s) [PlayerPawn] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PlayerPawn] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				// Pass through different species of select types.
 				if (other.bFRIENDLY == 1)
 				{
-					if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - %s [Friendly] vs (%s) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+					if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
 					return false;
 				}
 			}
 			else
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- Passive - (%s) [PlayerPawn] vs %s {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
+				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PlayerPawn] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
 				return true;
 			}
 		}

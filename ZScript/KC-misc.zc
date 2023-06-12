@@ -1,5 +1,6 @@
 class PlayerStatItem : Inventory
 {
+	mixin HUDRecovery;
 	const SKILL_VERY_EASY = 0;
 	const SKILL_EASY = 1;
 	const SKILL_NORMAL = 2;
@@ -960,7 +961,7 @@ class PlayerStatItem : Inventory
 									if (berserked) rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.8) / 100;
 									if (rec < 1) rec = 1;
 
-									//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
+									if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
 									CurrentHealth += rec;
 									if (CurrentHealth >= MaxHealthTrue) CurrentHealth = MaxHealthTrue;
 									owner.player.health = owner.player.mo.health = CurrentHealth;
