@@ -1276,7 +1276,6 @@ class KCPlayerPawn : PlayerPawn
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		int prevdmg = damage;
-		double TSADmgFinal;
 		
 		// Any attack based on temperates, as well as lightning and wind, 
 		// are COMPLETELY blocked by the Time Seraph's armor, without 
@@ -1520,8 +1519,29 @@ class KCPlayerPawn : PlayerPawn
 					}
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
+					TSTicDmg *= -1;
 				}
-				if (TSADmgFinal) TSADmgFinal = TSTicDmg;
+				double TSADmgFinal = TSTicDmg;
+				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f");
+				
+				// TSA Post-Pro
+				if (TSADmgFinal > 0)
+				{
+					int armmax;
+					if (MiscItem)
+					{
+						armmax = MiscItem.TimeArmorEnergyMaxTics;
+						if (armmax > 0)
+						{
+							int damagetakefactor = TSADmgFinal * 100 / armmax;
+							MiscItem.TSAHUDShakeType = 1;
+							if (damagetakefactor >= 5) MiscItem.TSAHUDShakeType = 2;
+							if (damagetakefactor >= 25) MiscItem.TSAHUDShakeType = 3;
+							if (damagetakefactor >= 50) MiscItem.TSAHUDShakeType = 4;
+						}
+					}
+					A_LossHUD(TSADmgFinal, 2, true);
+				}
 			}
 		}
 		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
@@ -2388,7 +2408,6 @@ class KCPlayerPawn : PlayerPawn
 		int TimeSeraphArmor = 0;
 		int TSArmorDmgDivisor = 1;
 		bool tsafullnulldmg = false;
-		double TSTicDmg;
 		if (!isinvuln)
 		{
 			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
@@ -2437,14 +2456,14 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- ret [PDM]: %d", ret);
 		ret = PostDamageMobj(inflictor, source, damage, mod, flags, angle, 
 												 ret, armoramt, firstdmg, isinvuln, oldhealth, oldhealthratio, SigilDrain,
-												 infl, sour, vict, TSTicDmg);
+												 infl, sour, vict);
 		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- ret [final]: %d", ret);
 		
 		tookflrdmg = false;
 		return ret;
 	}
 	
-	int PostDamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, int ret, int armoramt, int firstdmg, bool isinvuln, int oldhealth, int oldhealthratio, bool SigilDrain, string infl, string sour, string vict, double TSTicDmg)
+	int PostDamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, int ret, int armoramt, int firstdmg, bool isinvuln, int oldhealth, int oldhealthratio, bool SigilDrain, string infl, string sour, string vict)
 	{
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		let globalvars = KCGlobalVariables.Get();
@@ -2698,27 +2717,8 @@ class KCPlayerPawn : PlayerPawn
 			}
 		}
 		
-		// TSA Post-Pro
-		if (TSTicDmg > 0)
-		{
-			int armmax;
-			if (MiscItem)
-			{
-				armmax = MiscItem.TimeArmorEnergyMaxTics;
-				if (armmax > 0)
-				{
-					int damagetakefactor = armdmg * 100 / armmax;
-					MiscItem.TSAHUDShakeType = 1;
-					if (damagetakefactor >= 5) MiscItem.TSAHUDShakeType = 2;
-					if (damagetakefactor >= 25) MiscItem.TSAHUDShakeType = 3;
-					if (damagetakefactor >= 50) MiscItem.TSAHUDShakeType = 4;
-				}
-			}
-		}
-		
 		A_LossHUD(ret, 0, true);
 		A_LossHUD(armdmg, 1, true);
-		A_LossHUD(TSTicDmg, 2, true);
 		
 		PlayerArmorIgnoreFactor = 0.00;
 		PlayerDefenseIgnoreFactor = 0.00;
