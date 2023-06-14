@@ -1581,7 +1581,8 @@ class KCPlayerPawn : PlayerPawn
 						 Pod(source)) && 
 						(flags & DMG_EXPLOSION || 
 						 mod == 'Explosive' || 
-						 mod == 'ExplosiveImpact')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
+						 mod == 'ExplosiveImpact' ||
+						 mod == 'CC_Firecracker')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
 				double RailFactor = frandom(0.3,0.334);
 				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
@@ -2074,7 +2075,8 @@ class KCPlayerPawn : PlayerPawn
 		olddmg = damage;
 		if (flags & DMG_EXPLOSION || 
 				mod == 'Explosive' || 
-				mod == 'ExplosiveImpact')
+				mod == 'ExplosiveImpact' ||
+				mod == 'CC_Firecracker')
 		{
 			if (AttackingActor == self)
 			{

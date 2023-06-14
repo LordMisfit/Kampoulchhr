@@ -30,7 +30,7 @@ class kc_ListMenuNote : ListMenuItem
 		tipno++;
 		quote = "\c[gold]Tip \c-";
 		quote.AppendFormat("\c[gold]%d:\c-\n",tipno);
-		quote.AppendFormat("\c[green]",tipno);
+		quote.AppendFormat("\c[green]");
 		
 		return tipno, quote;
 	}
@@ -74,6 +74,18 @@ class kc_ListMenuNote : ListMenuItem
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Your Time Freeze will greatly \c[sapphire]accelerate your health regeneration\c[green] as well as \c[gold]render you invulnerable\c[green] until it wears off. You also \c[blue]won't take damage from hazardous floors, etc\c[green]. However the variant you use will affect other factors...");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Your 'default' time freeze is considered DEFENSIVE, meaning any direct damage you deal is cut by 75+% [or more if the attacks aren't impactive/blunt attributed]. To compensate, projectiles and even hitscans of yours will become able to be \c[yellow]lined up to anticipate enemies\c[green] and hit them once the freeze ends. When firing a non melee attack, keep a short distance from your target, and you'll note your projectile \c[blue][or tracers for what are normally hitscans]\c[green] will stop movement a short distance away from you \c[gold]ZA WARUDO\c[green] style. :V");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("For \c[darkgreen]defensive time freezes\c[green], \c[yellow]punches, kicks and uppercuts\c[green] are the most effective attacks for dealing the most direct damage, due to them being blunt/impactive attacks. The Saw Thrower's melee is ~usually~ fast enough at full throttle to compensate too, despite it not being impactive, but the Chainsaw is almost ineffective by comparison during this.");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("+user1", true, false));
 		quote.AppendFormat("\c- = \c[sapphire]Quick-Kick \c[orange](usable with any weapon equipped)\c-");
 		add(quote);
@@ -86,11 +98,7 @@ class kc_ListMenuNote : ListMenuItem
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
-		quote.AppendFormat("Punches, Uppercuts and Kicks will \c[red]briefly slow you down a lot\c[green] while performing them, though as your level increases, this is less prominent up to around \c[white]Level 40\c[green] or so, where the slowdown vanishes entirely.");
-		add(quote);
-		
-		[tipno, quote] = TipPreface(tipno, quote);
-		quote.AppendFormat("Punches, Uppercuts and Kicks \c[orange]have an increased chance to stun foes\c[green], and for an \c[gold]extended period compared with most attacks\c[green].");
+		quote.AppendFormat("Punches, Uppercuts and Kicks will \c[brick]briefly slow you down a lot\c[green] while performing them, though as your level increases, this is less prominent up to around \c[white]Level 40\c[green] or so, where the slowdown vanishes entirely.");
 		add(quote);
 		
 		/*
