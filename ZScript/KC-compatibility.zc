@@ -1,0 +1,356 @@
+Class KCLevelCompatibility : LevelPostProcessor
+{
+	static const int DOOM_MONSTER_EDNUMS[] =
+	{
+		7,    // Spider demon
+		9,    // Shotgun guy
+		16,   // Cyberdemon
+		58,   // Spectre
+		64,   // Archvile
+		65,   // Chaingun guy
+		66,   // Revenant
+		67,   // Mancubus
+		68,   // Arachnotron
+		69,   // Hell knight
+		71,   // Pain elemental
+		72,   // Commander Keen
+		84,   // Wolfenstein SS
+		3001, // Imp
+		3002, // Demon
+		3003, // Baron of hell
+		3004, // Zombieman
+		3005, // Cacodemon
+		3006 // Lost soul
+	};
+	static const int HERETIC_MONSTER_EDNUMS[] =
+	{
+		5, // Gargoyle Leader
+		6, // Iron Lich
+		7, // D'Sparil w/ Chaos Serpent
+		9, // Maulotaur
+		15, // Disciple of D'Sparil
+		45, // NitroGolem
+		46, // NitroGolem Ghost
+		64, // Undead Warrior
+		65, // Undead Warrior Ghost
+		66, // Gargoyle
+		68, // Golem
+		69, // Golem Ghost
+		70, // Were-Dragon
+		90, // Sabreclaw
+		92 // Ophidian
+	};
+	static const int HEXEN_MONSTER_EDNUMS[] =
+	{
+		31, // Green Chaos Serpent
+		34, // Reiver
+		107, // Centaur
+		114, // Dark Bishop
+		115, // Slaughtaur
+		120, // Alpha Stalker
+		121, // Stalker
+		254, // Death Wyvern
+		8020, // Wendigo
+		8080, // Brown Chaos Serpent
+		10011, // Reiver
+		10030, // Ettin
+		10060, // Afrit
+		10080, // Heresiarch
+		10100, // Zedek [fighter boss]
+		10101, // Traductus [cleric boss]
+		10102, // Menelkir [mage boss]
+		10200 // Korax [final boss]
+	};
+	static const int STRIFE_MONSTER_EDNUMS[] =
+	{
+		9, // Front Rebel [1]
+		12, // Loremaster [boss]
+		16, // Inquisitor
+		27, // Ceiling Turret
+		58, // Acolyte [Shadow]
+		64, // Macil [1]
+		65, // Peasant [4]
+		66, // Peasant [7]
+		67, // Peasant [10]
+		71, // Programmer [boss]
+		75, // Alien Spectre [2/Bishop]
+		76, // Alien Spectre [3/Oracle]
+		128, // The Entity [final boss]
+		129, // Alien Spectre [1/Programmer(?)]
+		130, // Peasant [2]
+		131, // Peasant [3]
+		132, // Peasant [5]
+		133, // Peasant [6]
+		134, // Peasant [8]
+		135, // Peasant [9]
+		136, // Peasant [11]
+		137, // Peasant [12]
+		141, // Beggar [1]
+		142, // Acolyte [Red]
+		143, // Acolyte [Rust]
+		144, // Front Rebel [2]
+		145, // Front Rebel [3]
+		146, // Acolyte [Gray]
+		147, // Acolyte [Dark-Green]
+		148, // Acolyte [Gold]
+		149, // Front Rebel [4]
+		150, // Front Rebel [5]
+		151, // Front Rebel [6]
+		155, // Beggar [2]
+		156, // Beggar [3]
+		157, // Beggar [4]
+		158, // Beggar [5]
+		167, // Alien Spectre [4/Macil]
+		168, // Alien Spectre [5/Loremaster]
+		172, // Peasant [13]
+		173, // Peasant [14]
+		174, // Peasant [15]
+		175, // Peasant [16]
+		176, // Peasant [17]
+		177, // Peasant [18]
+		178, // Peasant [19]
+		179, // Peasant [20]
+		180, // Peasant [21]
+		181, // Peasant [22]
+		186, // Order Stalker
+		187, // Bishop [boss]
+		199, // Oracle ["boss"]
+		200, // Macil [2/boss]
+		3001, // Reaver
+		3002, // Acolyte [Tan]
+		3003, // Templar
+		3004, // Peasant [1]
+		3005, // Crusader
+		3006 // Sentinel
+	};
+	
+	protected void Apply( Name checksum, String mapname )
+	{
+		/*
+		if (gameinfo.gametype & GAME_Doom)
+		{
+			switch(checksum)
+			{
+				case 'F1CC189AC134E21D6A663A9C48A582EE': // circus2(-fixed).wad map01
+				case '190FC2E501B21733E4B6A823E114D02C': // circus2-fixed-1.1.pk3 map01
+				case '4743D0AE68F6EB99FA10AC1A1BEE7CBB': // circus2-fixed-1.2.pk3 map01
+				{
+					// Replaces Circus2's usual CrazyBall pickup with the mod's
+					for (uint i = 0; i < GetThingCount(); i++)
+					{
+						if (GetThingEdNum(i) != 30205 ) continue;
+						SetThingEdNum(i,31205);
+					}
+					break;
+				}
+				case '57112717E2E1C7E3067C5C1E9E3D76BC': // circus2(-fixed).wad map33
+				{
+					// Replaces Circus2's usual CrazyBall pickup with the mod's
+					for (uint i = 0; i < GetThingCount(); i++)
+					{
+						if (GetThingEdNum(i) != 30205 ) continue;
+						SetThingEdNum(i,31205);
+					}
+					break;
+				}
+
+				case '24d49c309a3c6ede7745d7675e5bf19c': // EPIC2.WAD Map14
+				{
+					// Adds a Roman CandleWhip at your start position because it's the only hitscan 
+					// weapon normally in Dinah's arsenal and you need a hitscan weapon to escape 
+					// the first part [or use "MDK" in the console while aiming at the switch in 
+					// question] :V
+					AddThing(10729,(2463,-735,672),0,SKILLS_ALL,MODES_ALL); 
+					if (dydudebug_showcompatibility) Console.Printf("LOLE IPEC TOW AMP14");
+					break;
+				}
+
+				case '9025ce6a5f0baeb29eb0782c5c7c0acf': // gd.wad [Going Down] map29
+				{
+					// Replaces the DEHACKED boss with a more ZScript Friendly one :V
+					for (uint i = 0; i < GetThingCount(); i++)
+					{
+						if (GetThingEdNum(i) != 84) continue;
+						SetThingEdNum(i,30001);
+					}
+					break;
+				}
+				
+				case '8e1d1b012a817bb8828d7096dd1ecc28':
+				// RAMP's HUB Map
+				{
+					AddThing(21334,(0,64,-64),0,SKILLS_ALL,MODES_ALL); // Practice Target [type 2]
+					break;
+				}
+				
+				// Kinsie's Test Map
+				case '0EADB2F82732A968B8513E4DC6138439':
+				case 'D70250F93C6B6072DA39D9672B37F236':
+				case '959A613006CC3AA912C4A22908B7566A':
+				case '9cb9f64a6ffc552ae312b66a58cd5351':
+				case 'e43c1797dfd9443d1b4c035327743588':
+				{
+					AddThing(28862,(576,-1152,0),0,SKILLS_ALL,MODES_ALL); // Fosnian CandleVulcan
+
+					AddThing(21333,(3664,1760,0),0,SKILLS_ALL,MODES_ALL); // Practice Target [type 1]
+					
+					AddThing(21334,(2400,608,0),0,SKILLS_ALL,MODES_ALL); // Practice Target [type 2]
+					
+					AddThing(9890,(-3008,160,0),0,SKILLS_ALL,MODES_ALL); // Mega Satchel (guaranteed)
+
+					AddThing(9901,(-2368,960,0),0,SKILLS_ALL,MODES_ALL); // Cup of Max Rage
+
+					AddThing(9903,(-2368,928,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,864,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,800,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,736,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,672,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,608,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,544,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,480,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,416,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					AddThing(9903,(-2368,288,0),0,SKILLS_ALL,MODES_ALL); // Cup of Golden Rage
+					
+					AddThing(31968,(-3584,512,0),0,SKILLS_ALL,MODES_ALL); // Blunderaxe Schematic
+					AddThing(31968,(-3456,512,0),0,SKILLS_ALL,MODES_ALL); // Blunderaxe Schematic
+					AddThing(31968,(-3328,512,0),0,SKILLS_ALL,MODES_ALL); // Blunderaxe Schematic
+					
+					AddThing(31982,(-3584,192,0),0,SKILLS_ALL,MODES_ALL); // Grimophone Microchip
+					AddThing(31982,(-3456,192,0),0,SKILLS_ALL,MODES_ALL); // Grimophone Microchip
+					AddThing(31982,(-3328,192,0),0,SKILLS_ALL,MODES_ALL); // Grimophone Microchip
+					
+					AddThing(9891,(-2944,704,0),0,SKILLS_ALL,MODES_ALL); // Portal Satchel
+					AddThing(9891,(-2912,704,0),0,SKILLS_ALL,MODES_ALL); // Portal Satchel
+					AddThing(9891,(-2880,704,0),0,SKILLS_ALL,MODES_ALL); // Portal Satchel
+					
+					AddThing(1045,(576,0,0),0,SKILLS_ALL,MODES_ALL); // Sigil Piece Pickup
+					AddThing(1045,(640,0,0),0,SKILLS_ALL,MODES_ALL); // Sigil Piece Pickup
+					AddThing(1045,(704,0,0),0,SKILLS_ALL,MODES_ALL); // Sigil Piece Pickup
+					AddThing(1045,(768,0,0),0,SKILLS_ALL,MODES_ALL); // Sigil Piece Pickup
+					AddThing(1045,(832,0,0),0,SKILLS_ALL,MODES_ALL); // Sigil Piece Pickup
+					
+					AddThing(13162,(-2944,640,0),0,SKILLS_ALL,MODES_ALL); // Essence of Time
+					AddThing(13162,(-2912,640,0),0,SKILLS_ALL,MODES_ALL); // Essence of Time
+					AddThing(13162,(-2880,640,0),0,SKILLS_ALL,MODES_ALL); // Essence of Time
+					
+					AddThing(13164,(-2944,608,0),0,SKILLS_ALL,MODES_ALL); // Essence of Fury
+					AddThing(13164,(-2912,608,0),0,SKILLS_ALL,MODES_ALL); // Essence of Fury
+					AddThing(13164,(-2880,608,0),0,SKILLS_ALL,MODES_ALL); // Essence of Fury
+					
+					AddThing(9886,(-2944,576,0),0,SKILLS_ALL,MODES_ALL); // Killetante Effigy
+					AddThing(9886,(-2912,576,0),0,SKILLS_ALL,MODES_ALL); // Killetante Effigy
+					AddThing(9886,(-2880,576,0),0,SKILLS_ALL,MODES_ALL); // Killetante Effigy
+					
+					AddThing(12091,(-2944,544,0),0,SKILLS_ALL,MODES_ALL); // Sugar Snake
+					AddThing(12091,(-2912,544,0),0,SKILLS_ALL,MODES_ALL); // Sugar Snake
+					AddThing(12091,(-2880,544,0),0,SKILLS_ALL,MODES_ALL); // Sugar Snake
+					
+					AddThing(9887,(-2944,512,0),0,SKILLS_ALL,MODES_ALL); // Afas Drop
+					AddThing(9887,(-2912,512,0),0,SKILLS_ALL,MODES_ALL); // Afas Drop
+					AddThing(9887,(-2880,512,0),0,SKILLS_ALL,MODES_ALL); // Afas Drop
+					
+					AddThing(9888,(-2944,480,0),0,SKILLS_ALL,MODES_ALL); // Potentylene
+					AddThing(9888,(-2912,480,0),0,SKILLS_ALL,MODES_ALL); // Potentylene
+					AddThing(9888,(-2880,480,0),0,SKILLS_ALL,MODES_ALL); // Potentylene
+					
+					AddThing(15126,(2640,1360,0),0,SKILLS_ALL,MODES_ALL); // Diving Helm
+					
+					AddThing(13126,(-288,-284,0),0,SKILLS_ALL,MODES_ALL); // Door Bell
+					break;
+				}
+				
+				// PSX Doom MAP01
+				case 'f84369bc15ccbdb400bd4a0e75a8af9c':
+				{
+					break;
+				}
+				
+				// Hell Ground MAP07
+				case 'dc9933f75206c48826563ee6ba6c069a':
+				{
+					AddThing(28862,(2200,-14552,0),0,SKILLS_ALL,MODES_ALL); // Fosnian Candle
+					AddThing(28862,(2200,-14512,0),0,SKILLS_ALL,MODES_ALL); // Fosnian Candle
+					AddThing(28862,(2200,-14472,0),0,SKILLS_ALL,MODES_ALL); // Fosnian Candle
+					break;
+				}
+
+				case 'c9150d20269e806a8bcf45dde11f5341':
+				{
+				}
+			}
+		}
+
+		if (gameinfo.gametype & GAME_Hexen)
+		{
+			// [Hexen] force Mystic Ambit Incants to spawn outside coop [thanks Marisa :V]
+			for (uint i = 0; i < GetThingCount(); i++)
+			{
+				if (GetThingEdNum(i) != 10120 ) continue;
+				uint flg = GetThingFlags(i);
+				SetThingFlags(i,flg|MTF_SINGLE);
+			}
+		}
+		*/
+		
+		// Allows monsters flagged for MP to show up in SP if the option is enabled >.>
+		if (kc_enablempmonstersinsp)
+		{
+			uint n = GetThingCount();
+			
+			for (uint i = 0; i < n; i++)
+			{
+				if (IsThingMonster(GetThingEdNum(i)))
+				{
+					SetThingFlags(i, GetThingFlags(i) | MTF_SINGLE);
+				}
+			}
+		}
+	}
+
+	// Should be static, but doesn't work due to a bug. See here for details: https://forum.zdoom.org/viewtopic.php?f=2&t=62474
+	private /* static */ bool IsThingMonster(int ednum)
+	{
+		if (gameinfo.gametype & GAME_Doom)
+		{
+			for (int i = 0; i < DOOM_MONSTER_EDNUMS.Size(); i++)
+			{
+				if (DOOM_MONSTER_EDNUMS[i] == ednum)
+				{
+					return true;
+				}
+			}
+		}
+		if (gameinfo.gametype & GAME_Heretic)
+		{
+			for (int i = 0; i < HERETIC_MONSTER_EDNUMS.Size(); i++)
+			{
+				if (HERETIC_MONSTER_EDNUMS[i] == ednum)
+				{
+					return true;
+				}
+			}
+		}
+		if (gameinfo.gametype & GAME_Hexen)
+		{
+			for (int i = 0; i < HEXEN_MONSTER_EDNUMS.Size(); i++)
+			{
+				if (HEXEN_MONSTER_EDNUMS[i] == ednum)
+				{
+					return true;
+				}
+			}
+		}
+		if (gameinfo.gametype & GAME_Strife)
+		{
+			for (int i = 0; i < STRIFE_MONSTER_EDNUMS.Size(); i++)
+			{
+				if (STRIFE_MONSTER_EDNUMS[i] == ednum)
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+}
