@@ -3091,7 +3091,31 @@ class KC_EventHandler : EventHandler
 				
 				// Extremely Rare Drops [Type 5]
 				basechance = kc_inventorydroprate5;
+				if (!(playera.CountInv("KCTimeFreezer1") ||
+							playera.CountInv("KCTimeFreezer2") ||
+							playera.CountInv("KCTimeFreezer3")))
+				{
+					if (MiscItem)
+					{
+						if ((MiscItem.timefreeze1timesused +
+								 MiscItem.timefreeze2timesused +
+								 MiscItem.timefreeze3timesused) >= 200)
+						{
+							basechance *= 0.125;
+						}
+						else
+						{
+							basechance *= 0.25;
+						}
+					}
+					else
+					{
+						basechance *= 0.25;
+					}
+
+				}
 				basechance *= skillmult;
+				basechance -= ((MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused) * 0.125);
 				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 				if (MiscItem)
 				{
