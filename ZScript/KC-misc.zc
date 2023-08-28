@@ -1486,9 +1486,17 @@ class PlayerStatItem : Inventory
 			}
 
 			// TSArmor
-			if (owner.CountInv("TSArmorTier2")) TotalMass *= 1000000;
-			else if (owner.CountInv("TSArmorTier1")) TotalMass *= 1000;
-			if (kcdebug_masscalcs) Console.Printf("Mass [TSArmor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
+			if (!(owner.bINVULNERABLE || 
+					 owner.player.cheats & CF_GODMODE2 || 
+					 owner.player.cheats & CF_GODMODE) || 
+					 owner.CountInv("KCPowerInvuln") || 
+					 owner.CountInv("PowerInvulnerable"))
+			{
+				int tsamassmul = 250;
+				if (owner.CountInv("TSArmorTier2")) TotalMass *= (tsamassmul*tsamassmul);
+				else if (owner.CountInv("TSArmorTier1")) TotalMass *= tsamassmul;
+				if (kcdebug_masscalcs) Console.Printf("Mass [TSArmor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
+			}
 
 			if (TotalMass < 1) TotalMass = 1;
 			
@@ -2575,6 +2583,7 @@ class PlayerStatItem : Inventory
 					if (owner.CountInv("KCPowerTorchBangle")) owner.A_SetInventory("KCPowerTorchBangle",0);
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
+				if (TSADrainAmt) TSADrainAmt *= kc_tsadrainspd;
 				TimeArmorEnergyTics -= TSADrainAmt;
 				if (TimeArmorEnergyTics <= 0.0000) 
 				{
@@ -2607,6 +2616,7 @@ class PlayerStatItem : Inventory
 			{
 				TSARegenAmt = (8.0 + (PlayerLevel * 0.000625));
 				TSARegenAmt *= TimeArmorRelicsOwned;
+				if (TSARegenAmt) TSARegenAmt *= kc_tsaregenspd;
 				nm = "KCTimeFreezer1";
 				nn = "KCTimeFreezer2";
 				no = "KCTimeFreezer3";

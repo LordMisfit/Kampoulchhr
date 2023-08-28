@@ -1416,6 +1416,7 @@ class KCPlayerPawn : PlayerPawn
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.334,0.667);
 				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
+				if (TSTicDmg) TSTicDmg *= kc_tsadmgfactor;
 				if (!temperateshield)
 				{
 					if (!level.isFrozen())
@@ -1541,6 +1542,7 @@ class KCPlayerPawn : PlayerPawn
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
 					TSTicDmg *= -1;
+					if (TSTicDmg) TSTicDmg *= kc_tsaeabfactor;
 				}
 				double TSADmgFinal = TSTicDmg;
 				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f");
