@@ -2343,7 +2343,7 @@ class KC_EventHandler : EventHandler
 		Super.WorldThingDamaged(e);
 	}
 	
-	int, int, actor, actor, actor, actor, int, int, int, bool, bool A_KillDropTables(int PLuck, int TrueLuck, actor victim, actor inflicter, actor source, actor mastor, int specialtype, int specialtype2, int monsterrating, bool playerkill, bool allykill)
+	int, int, actor, actor, actor, actor, int, int, bool, bool A_KillDropTables(int PLuck, int TrueLuck, actor victim, actor inflicter, actor source, actor mastor, int specialtype, int monsterrating, bool playerkill, bool allykill)
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
@@ -2434,8 +2434,8 @@ class KC_EventHandler : EventHandler
 		}
 		if (waslegendary) skillmult *= frandom(0.334,0.4585);
 		bool candropitems = false;
-		if (specialtype || specialtype2) candropitems = true;
-		if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype || specialtype2)) candropitems = true;
+		if (specialtype) candropitems = true;
+		if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
 		if (Computer(victim) ||
 				ExplosiveBarrel(victim) ||
 				Pod(victim) ||
@@ -3126,94 +3126,104 @@ class KC_EventHandler : EventHandler
 					{
 						if (timefreezes >= 25)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 50)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 100)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 200)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 400)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 800)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 1600)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 						if (timefreezes >= 3200)
 						{
-							basechance *= 0.75;
-							basechance -= (timefreezes * 0.0625);
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
+						}
+						if (timefreezes >= 6400)
+						{
+							basechance *= 0.5;
+							basechance -= (timefreezes * 0.125);
 						}
 					}
 					else
 					{
 						if (timefreezes >= 25)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 50)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 100)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 200)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 400)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 800)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 1600)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 						if (timefreezes >= 3200)
 						{
-							basechance *= 0.9375;
-							basechance -= (timefreezes * 0.125);
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
+						}
+						if (timefreezes >= 6400)
+						{
+							basechance *= 0.875;
+							basechance -= (timefreezes * 0.25);
 						}
 					}
 				}
 				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 				if (MiscItem)
 				{
-					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 6.0 + (monsterrating * 1.5);
-					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 12.0 + (monsterrating * 3.0);
+					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 3.6 + (monsterrating * 0.9);
+					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 4.8 + (monsterrating * 1.2);
 					
 					if (MiscItem.TimeArmorRelicsOwned <= 2)
 					{
@@ -3226,6 +3236,7 @@ class KC_EventHandler : EventHandler
 						if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
 						TSATrueLuck *= kc_pluckfactor;
 						if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+						if (basechance < 1) basechance = 1;
 						maxchance = basechance;
 						rollrand = random(1,maxchance);
 						if (rollrand <= 1)
@@ -3245,7 +3256,7 @@ class KC_EventHandler : EventHandler
 							
 							victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
 						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 					}
 				}
 				
@@ -3293,7 +3304,7 @@ class KC_EventHandler : EventHandler
 			}
 		}
 		
-		return PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, specialtype2, monsterrating, playerkill, allykill;
+		return PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill;
 	}
 	
 	override void WorldThingDied(WorldEvent e)
@@ -3706,7 +3717,7 @@ class KC_EventHandler : EventHandler
 					{
 						if (mod != 'Crush' || mod != 'Falling' || !exception) 
 						{
-							[PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, specialtype2, monsterrating, playerkill, allykill] = A_KillDropTables(PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, specialtype2, monsterrating, playerkill, allykill);
+							[PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill] = A_KillDropTables(PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill);
 						}
 					}
 					

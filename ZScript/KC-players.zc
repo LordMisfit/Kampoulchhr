@@ -1282,7 +1282,7 @@ class KCPlayerPawn : PlayerPawn
 		// the armor's energy supply taking damage [and it will in fact 
 		// absorb some of the "damage" into extra energy, though not 
 		// usually at a 1:1 ratio (except when Tier 2 TSArmor is active) :V]
-		bool temperateshield = false;
+		int temperateshield = 0;
 		
 		// Time Seraph Armor Checks
 		if (CountInv("TSArmorTier2"))
@@ -1309,7 +1309,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'SpecialFire')
 			{
 				flags |= DMG_THRUSTLESS;
-				temperateshield = true;
+				temperateshield = 1;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
@@ -1321,7 +1321,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Chill')
 			{
 				flags |= DMG_THRUSTLESS;
-				temperateshield = true;
+				temperateshield = 2;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
@@ -1334,11 +1334,21 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Shock')
 			{
 				flags |= DMG_THRUSTLESS;
-				temperateshield = true;
+				temperateshield = 3;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			// Wind based Coverage [blocked entirely by temperates shield :P]
+			if (mod == 'Wind')
+			{
+				flags |= DMG_THRUSTLESS;
+				temperateshield = 4;
+				damage = 0;
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Wind-Type Damage): %d [previous: %d]", damage, prevdmg);
+				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
+			}
+			
 			
 			// Plasma Based [some elements of heat are involved in 
 			// plasma, but it's not pure heat, so it only halves 
@@ -1479,19 +1489,30 @@ class KCPlayerPawn : PlayerPawn
 				}
 				else
 				{
+					string abssound = "";
+					if (temperateshield == 1) abssound = "tsarmor/fireabsb";
+					if (temperateshield == 2) abssound = "tsarmor/iceabsb";
+					if (temperateshield == 3) abssound = "tsarmor/elecabsb";
+					if (temperateshield >= 4) abssound = "tsarmor/windabsb";
 					A_StopSound(554);
+					A_StopSound(544);
 					A_StartSound("tsarmor/elemabsb",554,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+					A_StartSound(abssound,544,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					if (CountInv(nn)) 
 					{
 						A_StopSound(553);
-						A_StartSound("tsarmor/elemabsb",553,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.3334,1.667));
+						A_StopSound(543);
 						A_StopSound(552);
+						A_StopSound(542);
+						A_StartSound("tsarmor/elemabsb",553,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.3334,1.667));
+						A_StartSound(abssound,543,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.3334,1.667));
 						A_StartSound("tsarmor/elemabsb",552,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
+						A_StartSound(abssound,542,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
 						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
-						if (random(1,4) <= 1)
+						if (random(1,2) <= 1)
 						{
 							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
-							if (random(1,4) <= 1)
+							if (random(1,3) <= 1)
 							{
 								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
 								if (random(1,4) <= 1)
@@ -1504,10 +1525,10 @@ class KCPlayerPawn : PlayerPawn
 					else
 					{
 						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
-						if (random(1,4) <= 1)
+						if (random(1,2) <= 1)
 						{
 							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
-							if (random(1,4) <= 1)
+							if (random(1,3) <= 1)
 							{
 								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
 								if (random(1,4) <= 1)
