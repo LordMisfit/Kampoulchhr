@@ -432,6 +432,20 @@ class CompatVulnItem : PlaceholderItem
 								owner.A_StartSound("misc/critsnd2", 217, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.9375,1.0625));
 								crittype = 2;
 							}
+							nm = "CCards_Actor_FirebluTotemDefBuff";
+							if (owner.CountInv(nm))
+							{
+								if (FoundPlayer.CountInv("TimeSeraphVisor"))
+								{
+									if (supercrit) critdmgmulti *= 100;
+														else critdmgmulti *= 25;
+								}
+								else
+								{
+									if (supercrit) critdmgmulti *= 20;
+														else critdmgmulti *= 5;
+								}
+							}
 						}
 						newdamage *= critdmgmulti;
 						if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [Mixin] (\c[green]%s\c-): Critical Hit Dealth: %d vs %d (damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damagefactor);
