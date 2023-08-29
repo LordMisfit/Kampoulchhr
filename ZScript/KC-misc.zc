@@ -1,6 +1,8 @@
 class PlayerStatItem : Inventory
 {
 	mixin HUDRecovery;
+	mixin TimerCheck;
+	
 	const SKILL_VERY_EASY = 0;
 	const SKILL_EASY = 1;
 	const SKILL_NORMAL = 2;
@@ -684,7 +686,7 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			if (OneLinerCooldown > 0) OneLinerCooldown--;
 			
@@ -879,7 +881,7 @@ class PlayerStatItem : Inventory
 				}
 			}
 			
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				if (!owner.CountInv("IsUnconscious"))
 				{
@@ -1136,7 +1138,7 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			//***********
 			//* Evasion *
@@ -1250,7 +1252,7 @@ class PlayerStatItem : Inventory
 		int SurviveRateCap = 7500;
 		weapon = owner.player.ReadyWeapon;
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			SurvivalRate = 100 * suvfct; // out of 10000 [100 = 1%]
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Base]: %d", SurvivalRate);
@@ -1354,7 +1356,7 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			TotalMass = 100;
 			BaseMass = TotalMass;
@@ -1511,7 +1513,7 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			double CharacterJumpZ = 8.25;
 			if (IsMorphed == 1) 
@@ -1765,7 +1767,7 @@ class PlayerStatItem : Inventory
 		double DashAlpha = 1.00;
 
 		int InvisibilityTimer;
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			let MiscItem = PowerGhost(owner.FindInventory("PowerGhost",true));
 			let MiscItem2 = PowerInvisibility(owner.FindInventory("PowerInvisibility",true));
@@ -1835,7 +1837,7 @@ class PlayerStatItem : Inventory
 		let playeractor = KCPlayerPawn(owner);
 		
 		MercyFlickerAlpha = 1.0;
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			if (MercyInvulnOn)
 			{
@@ -1886,7 +1888,7 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		if (!owner.CountInv("INTERMAPChecker"))
+		if (!A_CheckNoTimer())
 		{
 			int dropamt;
 			string itemname;
@@ -2584,7 +2586,7 @@ class PlayerStatItem : Inventory
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				if (TSADrainAmt) TSADrainAmt *= kc_tsadrainspd;
-				TimeArmorEnergyTics -= TSADrainAmt;
+				if (!A_CheckNoTimer()) TimeArmorEnergyTics -= TSADrainAmt;
 				if (TimeArmorEnergyTics <= 0.0000) 
 				{
 					TimeArmorEnergyTics = 0;
@@ -2626,7 +2628,7 @@ class PlayerStatItem : Inventory
 					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
 					if (TimeArmorRelicsOwned >= 3) TSARegenAmt *= 0.325;
 				}
-				TimeArmorEnergyTics += TSARegenAmt;
+				if (!A_CheckNoTimer()) TimeArmorEnergyTics += TSARegenAmt;
 			}
 			
 			if (TimeArmorEnergyTics <= 0)
@@ -2697,8 +2699,11 @@ class PlayerStatItem : Inventory
 					owner.A_StopSound(217); 
 					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
 				}
-				timestopactivetics--;
-				timefreezegenduration++;
+				if (!A_CheckNoTimer()) 
+				{
+					timestopactivetics--;
+					timefreezegenduration++;
+				}
 				timefreeze1cooldownratio2 = 1.0 - ((timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
 				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f, \c[green]timefreeze1cooldownratio2: %.8f, \c[brick]timefreeze2cooldownratio2: %.8f, \c[gray]timefreeze3cooldownratio2: %.8f", 
 																											tickvol, 
@@ -2755,7 +2760,10 @@ class PlayerStatItem : Inventory
 			if (timestopcooldown1tics > 0) 
 			{
 				owner.A_SetInventory("KCTimeCooldown",1);
-				timestopcooldown1tics--;
+				if (!A_CheckNoTimer()) 
+				{
+					timestopcooldown1tics--;
+				}
 				if (timestopcooldown1tics == 0) 
 				{
 					owner.A_SetInventory("KCTimeCooldown",0);
@@ -3641,6 +3649,8 @@ class PlayerStatItem : Inventory
 // This code is heavily modified from the "Hell Crusher" variation of it :V
 class PlayerDashJump : Inventory
 {
+	mixin TimerCheck;
+
 	const SKILL_VERY_EASY = 0;
 	const SKILL_EASY = 1;
 	const SKILL_NORMAL = 2;

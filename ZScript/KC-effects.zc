@@ -318,6 +318,7 @@ class KCTimeCooldown : EmptyPowerup
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 
 	Default
@@ -386,6 +387,7 @@ class KCTimeCooldown2 : EmptyPowerup
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 
 	Default
@@ -454,6 +456,7 @@ class KCTimeCooldown3 : EmptyPowerup
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 
 	Default
@@ -757,6 +760,7 @@ class PlayingCCards : PlayerStatPlaceholder { } // This works as an inventory fl
 class PowerNoDrown : PowerProtection
 {
 	double ticpiece;
+	mixin TimerCheck;
 	default
 	{
 		DamageFactor "Drowning", 0;
@@ -837,7 +841,7 @@ class PowerNoDrown : PowerProtection
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				if (owner.waterlevel >= 3)
 				{
@@ -905,6 +909,7 @@ class PowerNoDrown : PowerProtection
 class KCPowerIronFeet : PowerIronFeet
 {
 	string texname;
+	mixin TimerCheck;
 	int timer;
 	double ticpiece;
 	default
@@ -1020,7 +1025,7 @@ class KCPowerIronFeet : PowerIronFeet
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -1036,6 +1041,7 @@ class KCPowerIronFeet : PowerIronFeet
 class KCPowerInvisibility : PowerInvisibility
 {
 	string texname;
+	mixin TimerCheck;
 	int timer;
 	double ticpiece;
 	Default
@@ -1070,7 +1076,7 @@ class KCPowerInvisibility : PowerInvisibility
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -1085,6 +1091,7 @@ class KCPowerInvisibility : PowerInvisibility
 
 class KCPowerInvuln : PowerInvulnerable
 {
+	mixin TimerCheck;
 	int timer;
 	int fadeouttic;
 	double ticpiece;
@@ -1121,7 +1128,7 @@ class KCPowerInvuln : PowerInvulnerable
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -1169,6 +1176,7 @@ class KCPowerStrength : PowerStrength
 	int EffectTics2;
 	int Dire;
 	double ticpiece;
+	mixin TimerCheck;
 
 	int timer;
 	int fadeouttic;
@@ -1217,7 +1225,7 @@ class KCPowerStrength : PowerStrength
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				if (TimeItem)
 				{
@@ -1630,6 +1638,7 @@ class KCPowerLightAmp : PowerLightAmp
 	string texname;
 	int timer;
 	double ticpiece;
+	mixin TimerCheck;
 	
 	default
 	{
@@ -1654,7 +1663,7 @@ class KCPowerLightAmp : PowerLightAmp
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -1672,6 +1681,7 @@ class KCPowerTorch : PowerLightAmp
 	string texname;
 	int timer;
 	double ticpiece;
+	mixin TimerCheck;
 	int NewTorch, NewTorchDelta;
 	
 	default
@@ -2046,6 +2056,7 @@ class KCPowerSpread1 : Powerup
 	string texname;
 	int timer;
 	double ticpiece;
+	mixin TimerCheck;
 	default
 	{
 		Powerup.Duration -60;
@@ -2069,7 +2080,7 @@ class KCPowerSpread1 : Powerup
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				if (owner.CountInv("KCPowerSpread2")) Destroy();
 				else EffectTics--;
@@ -2088,6 +2099,7 @@ class KCPowerSpread2 : Powerup
 	string texname;
 	int timer;
 	double ticpiece;
+	mixin TimerCheck;
 	default
 	{
 		Powerup.Duration -60;
@@ -2111,7 +2123,7 @@ class KCPowerSpread2 : Powerup
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2236,6 +2248,7 @@ class PowerDouble : PowerDamage
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2271,7 +2284,7 @@ class PowerDouble : PowerDamage
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2289,6 +2302,7 @@ class PowerHalve : PowerDamage
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2324,7 +2338,7 @@ class PowerHalve : PowerDamage
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2343,6 +2357,7 @@ class PowerGuard : PowerProtection
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2384,7 +2399,7 @@ class PowerGuard : PowerProtection
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2402,6 +2417,7 @@ class PowerWeaken : PowerProtection
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2443,7 +2459,7 @@ class PowerWeaken : PowerProtection
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2461,6 +2477,7 @@ class PowerHaste : PowerSpeed
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2485,7 +2502,7 @@ class PowerHaste : PowerSpeed
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
@@ -2503,6 +2520,7 @@ class PowerSlow : PowerSpeed
 	int timer;
 	int fadeouttic;
 	double ticpiece;
+	mixin TimerCheck;
 	string texname;
 	
 	default
@@ -2527,7 +2545,7 @@ class PowerSlow : PowerSpeed
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (owner)
 		{
-			if (!owner.CountInv("INTERMAPChecker"))
+			if (!A_CheckNoTimer())
 			{
 				EffectTics--;
 			}
