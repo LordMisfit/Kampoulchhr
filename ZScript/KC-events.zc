@@ -3121,110 +3121,91 @@ class KC_EventHandler : EventHandler
 				basechance *= skillmult;
 				if (timefreezes)
 				{
+					double basediv = 0.5;
+					double basediv2 = 0.125;
 					if ((playera.CountInv("KCTimeFreezer1") ||
 							 playera.CountInv("KCTimeFreezer2") ||
 							 playera.CountInv("KCTimeFreezer3")))
 					{
-						if (timefreezes >= 25)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 50)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 100)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 200)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 400)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 800)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 1600)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 3200)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
-						if (timefreezes >= 6400)
-						{
-							basechance *= 0.5;
-							basechance -= (timefreezes * 0.125);
-						}
+						basediv = 0.5;
+						basediv2 = 0.125;
 					}
 					else
 					{
-						if (timefreezes >= 25)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 50)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 100)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 200)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 400)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 800)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 1600)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 3200)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
-						if (timefreezes >= 6400)
-						{
-							basechance *= 0.875;
-							basechance -= (timefreezes * 0.25);
-						}
+						basediv = 0.9375;
+						basediv2 = 0.25;
+					}
+					if (MiscItem.TimeArmorRelicsOwned >= 1) 
+					{
+						basediv *= 2;
+						basediv2 *= 0.5;
+					}
+					if (MiscItem.TimeArmorRelicsOwned >= 2) 
+					{
+						basediv *= 2;
+						basediv2 *= 0.5;
+					}
+					if (timefreezes >= 20)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 40)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 80)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 160)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 320)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 640)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 1280)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 2560)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 5120)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 10240)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
+					}
+					if (timefreezes >= 20480)
+					{
+						basechance *= basediv;
+						basechance -= (timefreezes * basediv2);
 					}
 				}
 				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 				if (MiscItem)
 				{
-					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 3.6 + (monsterrating * 0.9);
-					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 4.8 + (monsterrating * 1.2);
+					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
+					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
 					
 					if (MiscItem.TimeArmorRelicsOwned <= 2)
 					{
