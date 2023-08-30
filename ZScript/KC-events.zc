@@ -1449,6 +1449,7 @@ class KC_EventHandler : EventHandler
 			if (PlasmaBall1(spawnee) ||
 					PlasmaBall2(spawnee)) spawnee.DamageType = 'BFG';
 			if (ExplosiveBarrel(spawnee)) spawnee.DamageType = 'Explosive';
+			nm = "CCards_Actor_CardExplosiveBarrel"; if (spawnname == nm) spawnee.DamageType = 'Explosive';
 			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			nm = "CCards_Actor_PilotedMechPlasma"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			
@@ -2475,6 +2476,7 @@ class KC_EventHandler : EventHandler
 			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 			
 			luckbase = 0.0625 + (monsterrating * 0.015625);
+			luckbase *= kc_luckfactor;
 			lvldivider = 35;
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
@@ -2496,6 +2498,7 @@ class KC_EventHandler : EventHandler
 				basedropdiv = 512;
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				
 				double rand = 2.0;
@@ -2667,6 +2670,7 @@ class KC_EventHandler : EventHandler
 				basedropdiv = 512;
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				
 				
@@ -2674,6 +2678,7 @@ class KC_EventHandler : EventHandler
 				basedropdiv = 512;
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				
 				
@@ -2681,6 +2686,7 @@ class KC_EventHandler : EventHandler
 				basedropdiv = 512;
 				basedropdiv *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 			}
 			
@@ -2697,6 +2703,7 @@ class KC_EventHandler : EventHandler
 			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
 			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 			luckbase = 0.0625 + (monsterrating * 0.015625);
+			luckbase *= kc_luckfactor;
 			lvldivider = 50;
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
@@ -2715,6 +2722,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate6;
 				basechance *= skillmult;
 				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				int rollrand = random(1,maxchance);
@@ -2888,6 +2896,7 @@ class KC_EventHandler : EventHandler
 			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
 			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 			luckbase = 0.0625 + (monsterrating * 0.015625);
+			luckbase *= kc_luckfactor;
 			lvldivider = 35;
 			
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
@@ -2908,12 +2917,13 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate7;
 				basechance *= skillmult;
 				luckbase = 0.5 + (monsterrating * 0.125);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				
 				if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				if (random(1,(maxchance*2)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				if (random(1,(maxchance*4)) == 1) 
+				if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				if (random(1,(maxchance*9)) == 1) 
 				{
 					string bname = "Berserk";
 					victim.A_SpawnItemEx(bname,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
@@ -2931,6 +2941,7 @@ class KC_EventHandler : EventHandler
 			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
 			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 			luckbase = 0.0625 + (monsterrating * 0.015625);
+			luckbase *= kc_luckfactor;
 			lvldivider = 70;
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
@@ -2950,6 +2961,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate8;
 				basechance *= skillmult;
 				luckbase = 1.0 + (monsterrating * 0.25);
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				int rollrand = random(1,maxchance);
@@ -3020,6 +3032,7 @@ class KC_EventHandler : EventHandler
 			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
 			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 			luckbase = 0.0625 + (monsterrating * 0.015625);
+			luckbase *= kc_luckfactor;
 			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 			if (inflicter && ((source && KCPlayerPawn(source))))
 			{
@@ -3037,6 +3050,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate1;
 				basechance *= skillmult;
 				luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				int randroll = random(1,maxchance);
@@ -3061,6 +3075,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate2;
 				basechance *= skillmult;
 				luckbase = 0.5 + (monsterrating * 0.125); // (512)
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				int rollrand = random(1,maxchance);
@@ -3077,6 +3092,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate3;
 				basechance *= skillmult;
 				luckbase = 2.0 + (monsterrating * 0.5); // (512) 
+				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
 				rollrand = random(1,maxchance);
@@ -3202,6 +3218,7 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+				luckbase *= kc_tsaluckfactor;
 				if (MiscItem)
 				{
 					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
@@ -3247,6 +3264,7 @@ class KC_EventHandler : EventHandler
 				basechance = kc_inventorydroprate10;
 				basechance *= skillmult;
 				luckbase = 1.25 + (monsterrating * 0.3125);
+				luckbase *= kc_luckfactor
 				// Weapons and IP Attacks do not effect drop rates here V:
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;

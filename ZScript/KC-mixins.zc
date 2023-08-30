@@ -503,8 +503,8 @@ mixin class DmgCalc
 		String nm, nn, no, np;
 
 		// Character Check [base damage]
-		damage = random(18,24);
-		if (altfire == 1) damage = random(126,148);
+		damage = random(12,18); // random(18,24);
+		if (altfire == 1) damage = random(84,117); // random(126,148);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
 
 		// [STRIFE] Stamina Upgrades
@@ -520,13 +520,13 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,192) <= (191 - (TruePlayerLevel * 0.01875)))
 			{
-				if (altfire == 0) adddmg = randompick(2,2,3);
-				if (altfire == 1) adddmg = randompick(8,10,10);
+				if (altfire == 0) adddmg = randompick(1,2,2,2,3); // randompick(2,2,3);
+				if (altfire == 1) adddmg = randompick(7,7,8,8,9); // randompick(8,10,10);
 			}
 			else
 			{
-				if (altfire == 0) adddmg = randompick(4,5,6);
-				if (altfire == 1) adddmg = randompick(14,16,18);
+				if (altfire == 0) adddmg = randompick(3,3,4,4,4,5); // randompick(4,5,6);
+				if (altfire == 1) adddmg = randompick(11,12,12,13,13,14); // randompick(14,16,18);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;
@@ -594,7 +594,7 @@ mixin class DmgCalc
 		double previousdamage;
 		int strengthcounter;
 
-		damage = random(45,60);
+		damage = random(30,45); // random(45,60);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f", damage);
 
 		// [STRIFE] Stamina Upgrades
@@ -603,7 +603,7 @@ mixin class DmgCalc
 		damage = floor(damage * (1.00 + (stamdamagefactor * 0.5625)));
 		if (kcdebug_meleedmg) Console.Printf("StaminaDmg: %.8f, StamUpgrades: %d - (Previous Dmg: %.8f)", damage, stamdamagefactor, previousdamage);
 
-		// Strength Stat Check [7 pts = roughly double the character's base punch damage]
+		// Strength Stat Check
 		previousdamage = damage;
 		for (strengthcounter = 0; strengthcounter < PlayerATK; strengthcounter++)
 		{
@@ -611,11 +611,11 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,128) <= (127 - (TruePlayerLevel * 0.025)))
 			{
-				adddmg = randompick(3,5,8);
+				adddmg = randompick(2,4,4,5,5,6,6,7); // randompick(3,5,8);
 			}
 			else
 			{
-				adddmg = randompick(6,8,10);
+				adddmg = adddmg = randompick(6,7,7,8,8,9,9,10); // randompick(6,8,10);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;

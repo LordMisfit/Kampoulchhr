@@ -2722,9 +2722,9 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldown1tics <= 0)
 				{
+					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					owner.A_SetInventory("KCTimeCooldown",1);
 					timefreeze1cooldownratio2 = 0.0;
 				}
@@ -2741,9 +2741,9 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldown1tics <= 0)
 				{
+					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
-					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
 					owner.A_SetInventory("KCTimeCooldown",1);
 					timefreeze1cooldownratio2 = 0.0;
 				}
