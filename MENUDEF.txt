@@ -145,6 +145,53 @@ OptionMenu "KC-DebugMenuMain"
 	KCOption "Mapnum Displays",		"Shows debug information for Mapnums on the Level Name display on the HUD.",		"kcdebug_mapbar",				"MapNumDisplays"
 }
 
+OptionMenu "KC-CheatyOptions"
+{
+	Class "KCMenu"
+	Title "EXPLOSIVE EXPEDITION - Cheaty Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCTextField "Player Damage Taken (x)",		"Alters the effect of damage taken by the player. Default: 1.0[x]",		"kc_pdmgtakenfactor"
+	StaticText " "
+	KCTextField "Player Attack Stat Factor (x)",		"Alters the effect of player's Attack and Level Stat on Damage dealt. Default: 1.0[x]",		"kc_patkfactor"
+	KCTextField "Player Defense Stat Factor (x)",		"Alters the effect of player's Defense and Level Stat on Damage taken. Default: 1.0[x]",		"kc_pdeffactor"
+	KCTextField "Player Speed Stat Factor (x)",		"Alters the effect of player's Speed and Level Stat on movement speed. Default: 1.0[x]",		"kc_pspdfactor"
+	KCTextField "Player Jump Stat Factor (x)",		"Alters the effect of player's Speed and Level Stat on Jump power. Default: 1.0[x]",		"kc_pjumpfactor"
+	KCTextField "Player Balance Stat Factor (x)",		"Alters the effect of player's Level Stat on Balance. Default: 1.0[x]",		"kc_pbalfactor"
+	KCTextField "Player Luck Stat Factor (x)",		"Alters the effect of player's Luck. Default: 1.0[x]",		"kc_pluckfactor"
+	StaticText " "
+	KCTextField "Player Melee STR Effect (x)",		"Scales the effect (Strength+Level) have on base melee damage values. Default: 1.0[x]",		"kc_strmeleescale"
+	StaticText " "
+	KCTextField "Player Weapon Encumbrance (x)",		"Alters the effect of player's equipped weapon[s] on speed/jumping/mass. Default: 1.0[x]",		"kc_weaponencumbrance"
+	KCTextField "Player Armor Encumbrance (x)",		"Alters the effect of player's armor on speed/jumping/mass. Default: 1.0[x]",		"kc_armorencumbrance"
+	StaticText " "
+	KCTextField "Flat Defense Factor (x)",		"Alters the effect of Defense/Armor on your 'Flat Defense'. Flat defense is subtracted from any incoming damage BEFORE armor can be depleted, so very high Flat Defense can be OPish. Default: 1.0[x]",		"kc_flatdefensefactor"
+	KCTextField "Flat Defense Factor [Natural] (x)",		"Alters the effect of Defense on your 'Flat Defense'. Flat defense is subtracted from any incoming damage BEFORE armor can be depleted, so very high Flat Defense can be OPish. Default: 1.0[x]",		"kc_natflatdeffactor"
+	KCTextField "Flat Defense Factor [Armor] (x)",		"Alters the effect of Armor on your 'Flat Defense'. Flat defense is subtracted from any incoming damage BEFORE armor can be depleted, so very high Flat Defense can be OPish. Default: 1.0[x]",		"kc_armflatdeffactor"
+	
+	StaticText ""
+	Command "Restore Default Settings", 			"kc_defaultscheaty"
+}
+
+OptionMenu "KC-CheatyOptions2"
+{
+	Class "KCMenu"
+	Title "EXPLOSIVE EXPEDITION - Cheaty Options [2]"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCTextField "TSArmor Damage Taken (x)",		"Alters the effect of damage taken by the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsadmgfactor"
+	KCTextField "TSArmor Elem-Damage Absorbed (x)",		"Alters the effect of elemental damage ABSORBED by the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsaeabfactor"
+	StaticText ""
+	KCTextField "TSArmor Drain Speed (x)",		"Alters the effect of drain of artifact energy when using Time Seraph's Armor. Default: 1.0[x]",		"kc_tsadrainspd"
+	KCTextField "TSArmor Regen Speed (x)",		"Alters the effect of regen of artifact energy when NOT using the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsaregenspd"
+	StaticText ""
+	Command "Restore Default Settings", 			"kc_defaultscheaty2"
+}
+
 OptionMenu "KCOptions"
 {
 	Class "KCMenu"
@@ -154,6 +201,9 @@ OptionMenu "KCOptions"
 	IfGame(Strife) { Position -88 }
 	
 	KCSubMenu "General Options [1]",		"General Options [page 1].",		"KC-GeneralMenu1"
+	StaticText " "
+	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
+	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
 	StaticText " "
 	KCSubMenu "LegenDoomLite Options",		"LegenDoomLite Options.",		"LegenDoomLite"
 	KCSubMenu "Tilt++ v1.65 Options",		"Tilt++ v1.65 Options.",		"TiltPlusPlusMenu"
