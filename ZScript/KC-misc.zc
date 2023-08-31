@@ -202,6 +202,7 @@ class PlayerStatItem : Inventory
 	int timestopcooldown3tics;
 	int timestopcooldown3maxtics;
 	
+	double TimeArmorChargeSoundInc;
 	double TimeArmorEnergyTics;
 	double TimeArmorEnergyMaxTics;
 	int TimeArmorRelicsOwned;
@@ -2532,6 +2533,11 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+		double chargevol = 0.5;
+		if (TimeArmorRelicsOwned == 1) chargevol *= 0.667;
+		if (TimeArmorRelicsOwned == 2) chargevol *= 0.834;
+		if (TimeArmorRelicsOwned >= 3) chargevol *= 1.0;
+		
 		TimeArmorEnergyMaxTics = 0;
 		TimeArmorRelicsOwned = 0;
 		owner.A_SetInventory("TSArtifactsInUse",0);
@@ -2586,7 +2592,23 @@ class PlayerStatItem : Inventory
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				if (TSADrainAmt) TSADrainAmt *= kc_tsadrainspd;
-				if (!A_CheckNoTimer()) TimeArmorEnergyTics -= TSADrainAmt;
+				if (!A_CheckNoTimer()) 
+				{
+					int TimeArmorEnergyMod = (TimeArmorEnergyMaxTics / 67);
+
+					TimeArmorEnergyTics -= TSADrainAmt;
+					if (TimeArmorRelicsUsedBits)
+					{
+						TimeArmorChargeSoundInc += TSADrainAmt;
+						if (kcdebug_timeserapharmor) Console.Printf("TimeArmorChargeSoundInc: %d / TimeArmorEnergyMod: %d", TimeArmorChargeSoundInc, TimeArmorEnergyMod);
+						while (TimeArmorChargeSoundInc >= TimeArmorEnergyMod)
+						{
+							TimeArmorChargeSoundInc -= TimeArmorEnergyMod;
+							owner.A_StopSound(551);
+							owner.A_StartSound("tsarmor/drain1",551,CHANF_DEFAULT,chargevol,ATTN_NONE,frandom[statitem](1.00,1.334));
+						}
+					}
+				}
 				if (TimeArmorEnergyTics <= 0.0000) 
 				{
 					TimeArmorEnergyTics = 0;
@@ -2628,7 +2650,23 @@ class PlayerStatItem : Inventory
 					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
 					if (TimeArmorRelicsOwned >= 3) TSARegenAmt *= 0.325;
 				}
-				if (!A_CheckNoTimer()) TimeArmorEnergyTics += TSARegenAmt;
+				if (!A_CheckNoTimer()) 
+				{
+					int TimeArmorEnergyMod = (TimeArmorEnergyMaxTics / 100);
+
+					TimeArmorEnergyTics += TSARegenAmt;
+					if (!TimeArmorRelicsUsedBits)
+					{
+						TimeArmorChargeSoundInc += TSARegenAmt;
+						if (kcdebug_timeserapharmor) Console.Printf("TimeArmorChargeSoundInc: %d / TimeArmorEnergyMod: %d", TimeArmorChargeSoundInc, TimeArmorEnergyMod);
+						while (TimeArmorChargeSoundInc >= TimeArmorEnergyMod)
+						{
+							TimeArmorChargeSoundInc -= TimeArmorEnergyMod;
+							owner.A_StopSound(551);
+							owner.A_StartSound("tsarmor/charge1",551,CHANF_DEFAULT,chargevol,ATTN_NONE,frandom[statitem](1.00,1.334));
+						}
+					}
+				}
 			}
 			
 			if (TimeArmorEnergyTics <= 0)

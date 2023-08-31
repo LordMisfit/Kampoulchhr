@@ -1434,12 +1434,12 @@ class KCPlayerPawn : PlayerPawn
 
 							double blendtics = random(8,12);
 							double baseblendtics = blendtics;
-							double exblendtics = ((baseblendtics * 11.0) * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+							double exblendtics = ((baseblendtics * 11.0) * ((TSTicDmg * 2.5) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
 							blendtics += exblendtics;
 							if (blendtics >= (baseblendtics * 8)) blendtics = (baseblendtics * 8);
 
 							double alphablend = 0.125;
-							double extrablend = 0.75 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
+							double extrablend = 0.75 * ((TSTicDmg * 2.5) / (MiscItem.TimeArmorEnergyMaxTics * basedmul));
 							alphablend += extrablend;
 							if (alphablend >= 0.875) alphablend = 0.875;
 							string flashclr = "efefef";

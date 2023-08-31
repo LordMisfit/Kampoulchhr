@@ -2503,6 +2503,31 @@ class KC_EventHandler : EventHandler
 				
 				double rand = 2.0;
 				string droptype;
+				if (vict == "Zombieman" ||
+						vict == "ShotgunGuy" ||
+						vict == "ChaingunGuy" || 
+						vict == "WolfensteinSS")
+				{
+					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("RadSuit2",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				}
+				if (vict == "Cacodemon")
+				{
+					if (random(1,basedropdiv) <= random(2,3)) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				}
+				if (vict == "Demon")
+				{
+					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				}
+				if (vict == "Archvile")
+				{
+					if (random(1,basedropdiv) <= random(4,5)) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				}
+				if (vict == "HellKnight" ||
+						vict == "BaronOfHell")
+				{
+					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+				}
+				
 				if (Zombieman(victim) || 
 						ChaingunGuy(victim) || 
 						SpiderMastermind(victim))
@@ -2725,6 +2750,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= kc_luckfactor;
 				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				maxchance = basechance;
+				nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
 				int rollrand = random(1,maxchance);
 				if (rollrand <= 1) // Main Drop Chance
 				{
@@ -2736,6 +2762,7 @@ class KC_EventHandler : EventHandler
 						temp *= 2.5;
 					}
 					int randroll = random(1,32);
+					nm = "CCards_Actor_Maestro"; if (vict == nm) randroll = random(1,4);
 					if (randroll <= temp) // Weapons
 					{
 						double rand = 1.0;
@@ -2842,6 +2869,13 @@ class KC_EventHandler : EventHandler
 						int randroll2 = random(1,256);
 						int ammodrops = randompick(1,1,1,1,1,1,1,2,2,3);
 						if (MiscItem) ammodrops += (TrueLuck * frandompick(0,0,0,0,0,0,0,0.0125,0.0125,0.025));
+						nm = "CCards_Actor_Maestro"; 
+						if (vict == nm) 
+						{
+							temp *= random(2,3);
+							ammodrops *= random(2,4);
+							if (random(1,4) <= 1) randroll2 = random(1,128);
+						}
 						for (int i2; i2 < ammodrops; i2++)
 						{
 							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
@@ -3153,13 +3187,13 @@ class KC_EventHandler : EventHandler
 					}
 					if (MiscItem.TimeArmorRelicsOwned >= 1) 
 					{
-						basediv *= 2;
-						basediv2 *= 0.5;
+						basediv *= 1.334;
+						basediv2 *= 0.67;
 					}
 					if (MiscItem.TimeArmorRelicsOwned >= 2) 
 					{
-						basediv *= 2;
-						basediv2 *= 0.5;
+						basediv *= 1.334;
+						basediv2 *= 0.67;
 					}
 					if (timefreezes >= 20)
 					{

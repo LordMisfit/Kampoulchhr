@@ -191,6 +191,7 @@ class TSArtifactSpawner : CustomInventoryExt
 		radius 1;
 		height 2;
 		+NOINTERACTION;
+		+NOTIMEFREEZE;
 		+DONTGIB;
 	}
 	
@@ -314,6 +315,7 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 	default
 	{
 		+DONTGIB;
+		+NOTIMEFREEZE;
 		CustomInventoryExt.PickupSound2 "tsarmor/pickup";
 	}
 	
@@ -2118,6 +2120,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		Inventory.Icon "ARM1A0";
 		Armor.SavePercent 33.335;
 		Armor.SaveAmount 100;
+		+NOTIMEFREEZE;
 	}
 	
 	override void Tick()
@@ -2283,11 +2286,13 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 					int rollrand = random(1,basechance);
 					if (rollrand <= 1)
 					{
+						A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
 						A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
 						A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION,0,tid);
 						Destroy();
 					}
 				}
+				bNOTIMEFREEZE = false;
 			}
 		Idle:
 			ARM1 A 6 
@@ -2522,11 +2527,13 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 					int rollrand = random(1,basechance);
 					if (rollrand <= 1)
 					{
+						A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
 						A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
 						A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION,0,tid);
 						Destroy();
 					}
 				}
+				bNOTIMEFREEZE = false;
 			}
 		Idle:
 			ARM2 A 6;
@@ -2631,3 +2638,89 @@ class CombatPack : CustomInventoryExt
 	}
 }
 
+class DoubleSphere : CustomInventoryExt
+{
+	default
+	{
+		+FLOATBOB
+		+DONTGIB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.PickupMessage "Double Damage!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			DDMG ABCB 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("PowerDouble");
+				A_StartSound("buff/atkup",205);
+			}
+			Stop;
+	}
+}
+
+class GuardSphere : CustomInventoryExt
+{
+	default
+	{
+		+FLOATBOB
+		+DONTGIB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.PickupMessage "Double Defense!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			GUAD ABCD 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				A_GiveInventory("PowerGuard");
+				A_StartSound("buff/defup",205);
+			}
+			Stop;
+	}
+}
+
+class HasteSphere : CustomInventoryExt
+{
+	default
+	{
+		+FLOATBOB
+		+DONTGIB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.PickupMessage "Speed Up!";
+		Inventory.PickupSound "misc/p_pkup";
+	}
+	
+	States
+	{
+		Spawn:
+			HAST ABC 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				A_GiveInventory("PowerHaste");
+				A_StartSound("buff/spdup",205);
+			}
+			Stop;
+	}
+}
