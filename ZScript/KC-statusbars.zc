@@ -2161,7 +2161,10 @@ class KCStatusBarMain : BaseStatusBar
 		x = startposx;
 		y += wsspace;
 		// Slot 6
-		weaponsincurslot = 1;
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
 		wsname = "PlasmaRifleMarine";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -2179,6 +2182,27 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "TeslaCannon";
+		wsammoname = "Bolts";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 6;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
 
 		x += wsspace;
 		// Slot 7
@@ -2745,6 +2769,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "RocketLauncherMarine" ||
 					PlayerWeapon is "Devastator" ||
 					PlayerWeapon is "PlasmaRifleMarine" ||
+					PlayerWeapon is "TeslaCannon" ||
 					PlayerWeapon is "BFG9000Marine" ||
 					PlayerWeapon is "ImpalerXBow" ||
 					PlayerWeapon is "SawThrower")
@@ -2758,6 +2783,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST\c-");
+				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST\c-");
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704\c-");
 				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT\c-");
 				if (PlayerWeapon is "SawThrower") LegendStr.AppendFormat(" = \c[blue]MELEE CHOPPER ATTACK\c-");
