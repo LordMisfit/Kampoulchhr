@@ -4092,6 +4092,7 @@ class Glock21 : MarineWeapon
 				}
 				else
 				{
+					A_StartSound ("weapons/glockfire", CHAN_WEAPON);
 					A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM);
 				}
 			}
@@ -4138,6 +4139,7 @@ class Glock21 : MarineWeapon
 				}
 				else
 				{
+					A_StartSound ("weapons/glockfire", CHAN_WEAPON);
 					A_FireBullets(4.25,6.75,-1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM);
 				}
 			}
@@ -5935,6 +5937,7 @@ class TeslaCannon : MarineWeapon
 		weapon.ammouse1 1;
 		weapon.ammouse2 10;
 		weapon.ammogive 100;
+		Weapon.Kickback 50;
 		//attacksound "Tesla/Fire1";
 	}
 	
@@ -6007,6 +6010,7 @@ class TeslaShot : PlasmaBallNew
 		-EXTREMEDEATH;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
+		ProjectileKickback 50;
 	}
 	
 	States
@@ -6028,7 +6032,7 @@ class TeslaShot2 : PlasmaBallNew
 	default
 	{
 		DamageType "Lightning";
-		Damage 90;
+		Damage 80;
 		SeeSound "";
 		DeathSound "TSLPRJC2";
 		RenderStyle "Add";
@@ -6037,11 +6041,12 @@ class TeslaShot2 : PlasmaBallNew
 		radius 10;
 		Decal "none";
 		ExplosionRadius 192;
-		ExplosionDamage 105;
+		ExplosionDamage 128;
 		-EXTREMEDEATH;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 		+FORCERADIUSDMG;
+		ProjectileKickback 50;
 	}
 	
 	States
