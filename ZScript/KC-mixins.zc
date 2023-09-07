@@ -21,7 +21,7 @@ mixin class HUDRecovery
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 
-		if (MiscItem && dyduhud_showhpapdmgrec)
+		if (MiscItem && kchud_showhpapdmgrec)
 		{
 			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_MaxHPHud [MiscItem]");
 			if (type == 0) // Max HP
@@ -57,7 +57,7 @@ mixin class HUDRecovery
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 
-		if (MiscItem && dyduhud_showhpapdmgrec)
+		if (MiscItem && kchud_showhpapdmgrec)
 		{
 			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD [MiscItem]");
 			if (type == 0) // HP
@@ -164,7 +164,7 @@ mixin class HUDRecovery
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 
-		if (MiscItem && dyduhud_showhpapdmgrec)
+		if (MiscItem && kchud_showhpapdmgrec)
 		{
 			if (kcdebug_hudrecdmgdisplays) Console.Printf("A_LossHUD [MiscItem]");
 			if (type == 0) // HP

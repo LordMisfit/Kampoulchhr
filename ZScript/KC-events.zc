@@ -1806,7 +1806,7 @@ class KC_EventHandler : EventHandler
 					MonsterStatsSet(spawnee, 0, false, false, false);
 				}
 				
-				if (dydudebug_ressurrectdisplays) Console.Printf("Res: Max Health - %d (%d + %d)", (spawnee.SpawnHealth() + spawnee.Stamina), spawnee.SpawnHealth(), spawnee.Stamina); 
+				if (kcdebug_ressurrectdisplays) Console.Printf("Res: Max Health - %d (%d + %d)", (spawnee.SpawnHealth() + spawnee.Stamina), spawnee.SpawnHealth(), spawnee.Stamina); 
 			}
 		}
 		Super.WorldThingRevived(e);
@@ -2514,7 +2514,8 @@ class KC_EventHandler : EventHandler
 				{
 					if (random(1,basedropdiv) <= random(2,3)) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 				}
-				if (vict == "Demon")
+				if (vict == "Demon" || 
+						vict == "Spectre")
 				{
 					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 				}

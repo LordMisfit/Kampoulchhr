@@ -193,9 +193,13 @@ class CompatVulnItem : PlaceholderItem
 			if (!FoundPlayer && inflictor) FoundPlayer = KCPlayerPawn(inflictor);
 			if (FoundPlayer)
 			{
-				if ((mod == 'Fist' || mod == 'Kick'))
+				if (mod == 'Fist' || mod == 'Kick')
 				{
 					ActorDefenseIgnoreFactor += (frandom(0.001,0.100) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'Chainsaw')
+				{
+					ActorDefenseIgnoreFactor += ((random(10,25) * 0.01) * (1.00 - ActorDefenseIgnoreFactor));
 				}
 				if (mod == 'Dashing') 
 				{

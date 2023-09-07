@@ -1435,6 +1435,7 @@ class SMAAAASH : KCBaseZSC
 		RenderStyle "Add";
 		-SOLID;
 		+NOINTERACTION;
+		+NOTIMEFREEZE;
 	}
 	
 	override void Tick()
@@ -2473,91 +2474,6 @@ class PowerWeaken : PowerProtection
 	}
 }
 
-class PowerHaste : PowerSpeed
-{
-	int timer;
-	int fadeouttic;
-	double ticpiece;
-	mixin TimerCheck;
-	string texname;
-	
-	default
-	{
-		inventory.icon "SPDUP";
-		Powerup.Duration -30;
-		Speed 1.0;
-		+INVENTORY.PERSISTENTPOWER;
-		+INVENTORY.HUBPOWER;
-		+INVENTORY.ADDITIVETIME;
-	}
-
-	override void Tick ()
-	{
-		timer++;
-		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDUP";
-		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDUP";
-		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDUP";
-		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
-		
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		if (owner)
-		{
-			if (!A_CheckNoTimer())
-			{
-				EffectTics--;
-			}
-		}
-		
-		// Powerups cannot exist outside an inventory
-		if (Owner == NULL) Destroy ();
-		if (EffectTics <= 0) Destroy();
-		//Console.Printf("EffectTics: %d", EffectTics);
-	}
-}
-
-class PowerSlow : PowerSpeed
-{
-	int timer;
-	int fadeouttic;
-	double ticpiece;
-	mixin TimerCheck;
-	string texname;
-	
-	default
-	{
-		inventory.icon "SPDDOWN";
-		Powerup.Duration -30;
-		Speed 1.0;
-		+INVENTORY.PERSISTENTPOWER;
-		+INVENTORY.HUBPOWER;
-		+INVENTORY.ADDITIVETIME;
-	}
-
-	override void Tick ()
-	{
-		timer++;
-		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDDOWN";
-		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDDOWN";
-		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDDOWN";
-		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
-		
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		if (owner)
-		{
-			if (!A_CheckNoTimer())
-			{
-				EffectTics--;
-			}
-		}
-		
-		// Powerups cannot exist outside an inventory
-		if (Owner == NULL) Destroy ();
-		if (EffectTics <= 0) Destroy();
-		//Console.Printf("EffectTics: %d", EffectTics);
-	}
-}
 
 class UsingMeleeWeapon : PlaceholderItem { } // Checks to see if your current selected weapon is "Melee Class" [for HUD displays]
 class UsingMeleeAttack : PlaceholderItem { }
@@ -2812,3 +2728,158 @@ class Speed75PercentBonus : BasePercentSpeedBonus { default { Speed 1.75; } }
 class CharmMonsterAttack : LevelUpAttack { default { Inventory.MaxAmount 1; -Inventory.UNDROPPABLE; damagefactor "normal", 3.0; } }
 class CharmMonsterDefense : LevelUpDefense { default { Inventory.MaxAmount 1; -Inventory.UNDROPPABLE; damagefactor "normal", 0.3333; radiusdamagefactor 0.3333; } }
 class CharmMonsterSpeed : BasePercentSpeedBonus { default { Inventory.MaxAmount 1; -Inventory.UNDROPPABLE; Speed 1.5; } }
+
+class PowerDamageTimeCheck : PowerDamage
+{
+	mixin TimerCheck;
+	default
+	{
+		Inventory.Icon "";
+		Powerup.Duration 2147483646; // 8
+		Powerup.Color "00 00 00", 0.00;
+	}
+	
+	int A_GetPlayerLvl()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) Level = MiscItem.PlayerLevel;
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl - TempDefenseBuff)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+}
+
+class IsPoisoned : PowerDamageTimeCheck
+{
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	string texname;
+	
+	default
+	{
+		inventory.icon "POISON";
+		Powerup.Duration -510;
+		DamageFactor 1.0;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+
+	override void Tick ()
+	{
+		timer++;
+		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "POISON";
+		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "POISON";
+		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "POISON";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		
+		if (Owner == NULL) Destroy();
+		else
+		{
+			PlayerPawn PlyPwn;
+			PlyPwn = PlayerPawn(owner);
+			if (PlyPwn) EffectTics = PlyPwn.player.poisoncount;
+							else Destroy();
+		}
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
+class PowerSpeedTimeCheck : PowerSpeed
+{
+	mixin TimerCheck;
+}
+
+class PowerHaste : PowerSpeedTimeCheck
+{
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	mixin TimerCheck;
+	string texname;
+	
+	default
+	{
+		inventory.icon "SPDUP";
+		Powerup.Duration -30;
+		Speed 1.0;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+
+	override void Tick ()
+	{
+		timer++;
+		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDUP";
+		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDUP";
+		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDUP";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
+class PowerSlow : PowerSpeedTimeCheck
+{
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	mixin TimerCheck;
+	string texname;
+	
+	default
+	{
+		inventory.icon "SPDDOWN";
+		Powerup.Duration -30;
+		Speed 1.0;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+
+	override void Tick ()
+	{
+		timer++;
+		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDDOWN";
+		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDDOWN";
+		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDDOWN";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
