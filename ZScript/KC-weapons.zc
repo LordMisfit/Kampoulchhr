@@ -5975,8 +5975,24 @@ class TeslaCannon : MarineWeapon
 	states
 	{
 		Spawn:
-			TSLC A -1;
+			TSLC A 0 NoDelay;
+		Idle:
+			TSLC A 4
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("TeslaCannon")) 
+				{
+					if (!playera.CountInv("DualTeslaCannons"))
+					{
+						A_SpawnItemEx("DualTeslaCannonPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						A_Destroy();
+					}
+				}
+			}
 			Loop;
+
 		Ready:
 			TESR ABCDEF 2 A_WeaponReady();
 			loop;
@@ -6135,6 +6151,52 @@ class TeslaCannon : MarineWeapon
 			Goto FlashPickDual;
 			TNT1 A 0 A_TakeInventory("StopFiring", 1);
 			Stop;
+	}
+}
+
+class DualTeslaCannonPickup : CustomInventoryExt
+{
+	default
+	{
+		Inventory.PickupMessage "Picked up an Extra \cvTesla Cannon\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 6]\c-";
+		//Inventory.PickupSound "TOMPKP";
+		+DONTGIB
+		-COUNTITEM;
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		Scale 1;
+	}
+	
+	states
+	{
+		Spawn:
+			TSLC B 0 NoDelay;
+		Idle:
+			TSLC B 4
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("DualTeslaCannons"))
+				{
+					A_SpawnItemEx("TeslaCannon",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+					Destroy();
+				}
+			}
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera) 
+				{
+					playera.A_GiveInventory("DualTeslaCannons",1);
+					playera.A_GiveInventory("Bolts",100);
+				}
+			}
+			stop;
 	}
 }
 
