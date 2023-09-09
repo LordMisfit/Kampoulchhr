@@ -5927,7 +5927,7 @@ class TeslaCannon : MarineWeapon
 	default
 	{
 		Weapon.SlotNumber 6;
-		inventory.pickupmessage "you found the TeslaCannon!!!";
+		inventory.pickupmessage "You found a \cvTesla Cannon\c-! \cx [Slot 6]\c-";
 		radius 20;
 		height 16;
 		weapon.selectionorder 700;
@@ -5996,21 +5996,29 @@ class TeslaCannon : MarineWeapon
 			goto ready;
 	}
 }
-class TeslaShot : PlasmaBallNew
+class TeslaShot : KCFastProjectile
 {
 	default
 	{
+		Radius 13;
+		Height 8;
+		Speed 75;
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		DamageType "Lightning";
-		Damage 10;
+		DamageFunction (10 * random(1,8));
 		SeeSound "";
 		RenderStyle "Add";
 		alpha 0.5;
 		scale 0.3;
 		Decal "none";
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
 		-EXTREMEDEATH;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 		ProjectileKickback 50;
+		DeathSound "weapons/plasmax";
 	}
 	
 	States
@@ -6027,21 +6035,26 @@ class TeslaShot : PlasmaBallNew
 			Stop;
 	}
 }
-class TeslaShot2 : PlasmaBallNew
+class TeslaShot2 : KCFastProjectile
 {
 	default
 	{
-		DamageType "Lightning";
-		Damage 80;
+		height 10;
+		radius 10;
+		Speed 125;
 		SeeSound "";
+		DamageType "Lightning";
+		DamageFunction (80 * random(1,8));
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		DeathSound "TSLPRJC2";
 		RenderStyle "Add";
 		alpha 0.5;
-		height 10;
-		radius 10;
 		Decal "none";
 		ExplosionRadius 192;
 		ExplosionDamage 128;
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
 		-EXTREMEDEATH;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;

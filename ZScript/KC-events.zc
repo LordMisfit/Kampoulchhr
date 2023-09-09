@@ -2551,6 +2551,86 @@ class KC_EventHandler : EventHandler
 						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
+					
+					if (Zombieman(victim))
+					{
+						if (random(1,basedropdiv) <= 1) 
+						{
+							droptype = "Pistol";
+							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "Glock21";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+							{
+								droptype = "Clip";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+							{
+								droptype = "Clip";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+							{
+								droptype = "Clip";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+					}
+					if (ChaingunGuy(victim))
+					{
+						if (random(1,basedropdiv) <= 1) 
+						{
+							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+							{
+								droptype = "TommyGun";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+							}
+							else
+							{
+								droptype = "Chaingun";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+							}
+						}
+					}
 					if (SpiderMastermind(victim))
 					{
 						droptype = "Chaingun";
@@ -2585,6 +2665,123 @@ class KC_EventHandler : EventHandler
 						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
+					if (random(1,basedropdiv) <= 1) 
+					{
+						droptype = "Shotgun";
+						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "SuperShotgun";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+				}
+				if (Revenant(victim))
+				{
+					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "Bolts";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "Bolts";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "Bolts";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Rocket";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Rocket";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
+					{
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						else
+						{
+							droptype = "Rocket";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
 				}
 				if (Arachnotron(victim))
 				{
@@ -2605,6 +2802,55 @@ class KC_EventHandler : EventHandler
 						droptype = "Cell";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (random(1,basedropdiv) <= 1) 
+					{
+						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+						{
+							droptype = "TeslaCannon";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						else
+						{
+							droptype = "PlasmaRifle";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
 					}
 				}
 				if (HellKnight(victim) ||
@@ -2637,57 +2883,115 @@ class KC_EventHandler : EventHandler
 				}
 				if (Cyberdemon(victim))
 				{
-					droptype = "RocketLauncher";
-					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					droptype = "RocketAmmo";
-					if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-					victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+					if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+					{
+						droptype = "Devastator";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						droptype = "MiniRockets";
+						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "Devastator";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
+						{
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+					}
+					else
 					{
 						droptype = "RocketLauncher";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-					{
 						droptype = "RocketAmmo";
 						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
-					{
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "RocketLauncher";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
+						{
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 					}
 				}
 				if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom] (\c[brick]%s\c-): %d", vict, basedropdiv);
