@@ -3193,7 +3193,7 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 		Weapon.SelectionOrder 2200;
 		Weapon.UpSound "weapons/sawup";
 		Weapon.ReadySound "weapons/sawidle";
-		Inventory.PickupMessage "A \caChainsaw\c-! Find some meat! \cx[Slot 1]\c-";
+		Inventory.PickupMessage "Picked up a \caChainsaw\c-! Find some meat! \cx[Slot 1]\c-";
 		Obituary "$OB_MPCHAINSAW";
 		Tag "$TAG_CHAINSAW";
 		+WEAPON.MELEEWEAPON		
@@ -4029,7 +4029,7 @@ class Glock21 : MarineWeapon
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
-		Inventory.PickupMessage "You got the Glock 21!";
+		Inventory.PickupMessage "Picked up a \cuGlock 21\c-! \cx[Slot 2]\c-";
 		Obituary "%o was capped by %k's Glock.";
 		Weapon.AmmoType1 "Clip";
 		Weapon.AmmoType2 "Clip";
@@ -4195,7 +4195,7 @@ class DualTommyGunPickup : CustomInventoryExt
 {
 	default
 	{
-		Inventory.PickupMessage "You picked up an Extra Thompson Machine Gun! \c[gold]Can Now Dual Wield!\c-";
+		Inventory.PickupMessage "Picked up an Extra \cuThompson Machine Gun\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 4]\c-";
 		Inventory.PickupSound "TOMPKP";
 		+DONTGIB
 		-COUNTITEM;
@@ -4242,7 +4242,7 @@ class TommyGun : MarineWeapon
 {
 	default
 	{
-		Inventory.PickupMessage "You picked up a Thompson Machine Gun!";
+		Inventory.PickupMessage "Picked up a \cuThompson Machine Gun\c-! \cx[Slot 4]\c-";
 		Weapon.AmmoType1 "TommAmmo";
 		Weapon.AmmoType2 "TommAmmo";
 		Weapon.AmmoGive 50;
@@ -4584,7 +4584,7 @@ class TommAmmo : Ammo
 		Inventory.MaxAmount 500;
 		Ammo.BackpackAmount 50;
 		Ammo.BackpackMaxAmount 1000;
-		Inventory.PickupMessage "Picked up some \c[blue]ammo for the tommygun\c-.";
+		Inventory.PickupMessage "Picked up some \cuammo for the tommygun\c-.";
 		Inventory.Icon "TOMAA0";
 	}
 	
@@ -4601,7 +4601,7 @@ class TommAmmoBig : TommAmmo
 	default
 	{
 		Inventory.Amount 250;
-		Inventory.PickupMessage "Picked up a ton of \c[blue]ammo for the tommygun\c-.";
+		Inventory.PickupMessage "Picked up a ton of \cuammo for the tommygun\c-.";
 	}
 	
 	States
@@ -4625,7 +4625,7 @@ class Devastator : MarineWeapon
 	{
 		Scale 0.75;
 		Inventory.PickupSound "misc/w_pkup";
-		Inventory.PickupMessage "You got the Devastator Weapon!";
+		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 		Weapon.AmmoType1 "MiniRockets";
 		Weapon.AmmoType2 "MiniRockets";
 		Weapon.AmmoGive 20;
@@ -5120,7 +5120,7 @@ class MiniRockets : Ammo
 		Inventory.MaxAmount 200;
 		Ammo.BackpackAmount 10;
 		Ammo.BackpackMaxAmount 400;
-		Inventory.PickupMessage "Picked up some \c[blue]mini rockets\c-.";
+		Inventory.PickupMessage "Picked up some \caDevastator rockets\c-.";
 		Inventory.Icon "MNRAA0";
 	}
 	
@@ -5138,7 +5138,7 @@ class MiniRocketBox : MiniRockets
 	{
 		+INVENTORY.ALWAYSPICKUP
 		Inventory.Amount 50;
-		Inventory.PickupMessage "Picked up a box of \c[blue]mini rockets\c-.";
+		Inventory.PickupMessage "Picked up a box of \caDevastator rockets\c-.";
 	}
 	
 	States
@@ -5158,7 +5158,7 @@ class DevastatorGenerator : CustomInventory
 		Scale 0.75;
 		Inventory.MaxAmount 2;
 		Inventory.PickupSound "misc/w_pkup";
-		Inventory.PickupMessage "You got a \c[orange]Devastator Weapon!";
+		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 	}
 	
 	States
@@ -5200,7 +5200,7 @@ class SawThrower : MarineWeapon
 	{
 		Weapon.SelectionOrder 120;
 		Inventory.PickupSound "weapons/slot7weapon2";
-		Inventory.PickupMessage "You got the Saw Thrower!";
+		Inventory.PickupMessage "Picked up a \cfSaw Thrower\c-! \cx[Slot 0]\c-";
 		Obituary "%o was gutted by %k's saw.";
 		//AttackSound "weapons/throwsawcut";
 		Weapon.AmmoType1 "Saws";
@@ -5449,7 +5449,7 @@ class Saws : Ammo
 		Inventory.MaxAmount 50;
 		Ammo.BackpackAmount 3;
 		Ammo.BackpackMaxAmount 100;
-		Inventory.PickupMessage "Picked up some \c[blue]saws\c-.";
+		Inventory.PickupMessage "Picked up some \cfRipper Saws\c-.";
 		//Inventory.PickupSound "weapons/ammo13";
 		Inventory.Icon "SAWAA0";
 	}
@@ -5467,7 +5467,7 @@ class SawBox : Saws
 	default
 	{
 		Inventory.Amount 15;
-		Inventory.PickupMessage "Picked up a box of \c[blue]saws\c-.";
+		Inventory.PickupMessage "Picked up a box of \cfRipper Saws\c-.";
 	}
 	
 	States
@@ -5492,7 +5492,7 @@ class ImpalerXBow : MarineWeapon
 {
 	default
 	{
-		Inventory.PickupMessage "Impaler Crossbow";
+		Inventory.PickupMessage "Picked up a \cfImpaler Crossbow\c-! \cx[Slot 0]\c-";
 		Weapon.AmmoGive 15;
 		Weapon.AmmoType1 "ImpalerBolts";
 		Weapon.AmmoType2 "ImpalerBolts";
@@ -5906,7 +5906,7 @@ class ImpalerBolts : Ammo
 {
 	default
 	{
-		Inventory.PickupMessage "Grabbed a pack of \c[blue]Steel bolts\c-";
+		Inventory.PickupMessage "Picked up a pack of \cfSteel bolts\c-";
 		Inventory.Amount 10;
 		Inventory.MaxAmount 40;
 		Inventory.Icon "CBWAA0";
@@ -5927,7 +5927,7 @@ class TeslaCannon : MarineWeapon
 	default
 	{
 		Weapon.SlotNumber 6;
-		inventory.pickupmessage "You found a \cvTesla Cannon\c-! \cx [Slot 6]\c-";
+		inventory.pickupmessage "Picked up a \cvTesla Cannon\c-! \cx[Slot 6]\c-";
 		radius 20;
 		height 16;
 		weapon.selectionorder 700;
@@ -5935,16 +5935,35 @@ class TeslaCannon : MarineWeapon
 		weapon.ammotype1 "Bolts";
 		weapon.ammotype2 "Bolts";
 		weapon.ammouse1 1;
-		weapon.ammouse2 10;
+		weapon.ammouse2 1;
 		weapon.ammogive 100;
 		Weapon.Kickback 50;
 		//attacksound "Tesla/Fire1";
 	}
 	
-	action void A_Tesla1()
+	action void A_Tesla1(int type, string proj = "TeslaProjectile", bool use1 = true)
 	{
-		A_StartSound("Tesla/Fire1",CHAN_WEAPON);
-		A_FireProjectile("TeslaShot",0,1,0,0);
+		if (type >= 1)
+		{
+			A_StartSound("Tesla/Fire1",CHAN_WEAPON);
+			A_StartSound("Tesla/Fire1",CHAN_BODY);
+			A_FireProjectile(proj,0,use1,20);
+			A_FireProjectile(proj,0,use1,-20);
+		}
+		else
+		{
+			A_StartSound("Tesla/Fire1",CHAN_WEAPON);
+			A_FireProjectile(proj,0,use1,5);
+		}
+		//A_StartSound("Tesla/Fire1",CHAN_WEAPON);
+		//A_FireProjectile("TeslaShot",0,1,0,0);
+	}
+	
+	action state A_ButtonCheck()
+	{
+		int buttons = GetPlayerInput(INPUT_BUTTONS);
+		if (buttons & BT_ATTACK) { } else { return resolvestate("Finish"); }
+		return resolvestate(null);
 	}
 	
 	action void A_Tesla2()
@@ -5959,43 +5978,627 @@ class TeslaCannon : MarineWeapon
 			TSLC A -1;
 			Loop;
 		Ready:
-			EGUN AAABBBCCCDDDEEE 1 A_WeaponReady();
+			TESR ABCDEF 2 A_WeaponReady();
 			loop;
 		Select:
-			EGUN A 1 A_Raise(12);
+			//EGUN A 1 A_Raise(12);
+			TESR ABCDEF 1 A_Raise(12);
+			TNT1 AA 0 A_Raise(12);
 			loop;
 		Deselect:
-			EGUN A 1 A_Lower(12);
+			//EGUN A 1 A_Lower(12);
+			TESR FEDCBA 1 A_Lower(12);
+			TNT1 AA 0 A_Lower(12);
 			Loop;
 		Fire:
-			NULL A 0 A_StartSound("Tesla/Start",CHAN_WEAPON);
-			EGUN FGHIJ 1 bright;
-		Hold:
-			EGUN K 1 bright A_GunFlash();
-			EGUN L 1 bright A_Tesla1();
-			EGUN M 1 bright A_GunFlash();
-			EGUN N 1 bright A_Tesla1();
-			EGUN O 1 bright A_GunFlash();
-			EGUN P 1 bright A_Tesla1();
-			EGUN Q 1 bright A_GunFlash();
-			EGUN R 1 bright A_Tesla1();
-			EGUN S 1 bright A_GunFlash();
-			EGUN T 1 bright A_Tesla1();
-			NULL A 0 A_ReFire();
-			NULL A 0 A_StartSound("Tesla/End");
-			EGUN UVWXY 3;
-			goto ready;
+			TEXX AB 2 A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile",true);
+			TESL B 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESL BC 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile",true);
+			TESL C 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESL D 2 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile",true);
+			TESL E 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESL EF 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile",true);
+			TESL F 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TNT1 A 0 BRIGHT A_Refire();
+			TESL G 2 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile",true);
+			TNT1 A 0 A_FireProjectile("TeslaSmoke",frandom(-8,8),0,1,8+frandom(-0.1,0.1),0);
+			TEXX BA 3 A_WeaponReady(14);
+			TNT1 A 0 A_GunFlash();
+		Hold: // The Tesla Coil will Stop if the player is not firing at this point
+			TESL G 2 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0,"TeslaProjectile2",false);
+			TESL B 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESF A 0 BRIGHT A_ButtonCheck();
+			TESL BC 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0);
+			TESL C 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESF A 0 BRIGHT A_ButtonCheck();
+			TESL D 2 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0);
+			TESL E 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESF A 0 BRIGHT A_ButtonCheck();
+			TESL EF 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_Tesla1(0);
+			TESL F 1 BRIGHT A_WeaponReady(14);
+			TNT1 A 0 A_JumpIfNoAmmo("Finish");
+			TESF A 0 BRIGHT A_ButtonCheck();
+			TESF E 0 BRIGHT A_Refire();
+			Goto Finish;
+		Finish:
+			TNT1 A 0 A_GunFlash();
+			TNT1 A 0 A_FireProjectile("TeslaSmoke",frandom(-8,8),0,1,8+frandom(-0.1,0.1),0);
+			TEXX BA 3 A_WeaponReady(14);
+			TESF A 0 A_GunFlash();
+			TESF A 0 A_ClearRefire();
+			Goto Ready;
+		Flash:
+			TSMK ABC 2;
+			Stop;
 		AltFire:
-			NULL A 0 A_StartSound("Tesla/AltCharge2",CHAN_WEAPON);
-			EGUN FGHIJ 2 bright;
-			EGUN LMNOPQRST 2 bright A_StartSound("Tesla/End");
-			EGUN LMNOPQRST 1 bright A_StartSound("Tesla/End");
-			NULL A 0 A_Tesla2();
-			EGU2 ABCDEFG 2 bright;
-			EGUN UVWXY 3;
-			goto ready;
+			TNT1 A 0 A_JumpIfInventory("Bolts", 35, 1); // TeslaCharge
+			Goto Fire;
+			TESL A 0 A_StartSound("Tesla/AltCharge1",CHAN_WEAPON); // 1.2 seconds (38 Tics)
+			TES2 KL 3 A_WeaponReady(14); // 6 Tics
+			TES2 MNABCDEFGHIJ 1 A_WeaponReady(14); // 30 Tics
+			TES2 EFGHIJEFGHIJ 1 BRIGHT A_WeaponReady(14); // 36 Tics
+			TE2F A 0 BRIGHT A_StartSound("Tesla/AltFire1",CHAN_WEAPON);
+			TE2F A 0 BRIGHT A_GunFlash();
+			TNT1 A 0 A_FireProjectile("TeslaBallBig",0,1,5);
+			TNT1 A 0 A_TakeInventory("Bolts", 34); // TeslaCharge
+			TE2F A 2 BRIGHT A_WeaponReady(14);
+			TE2F BC 1 BRIGHT A_WeaponReady(14);
+			TE2F D 1 A_WeaponReady(14);
+			TESR ABCD 3 A_WeaponReady(14);
+			Goto Ready;
+		AltFlash:
+			TNT1 A 2 A_Light(5);
+			TNT1 A 2 A_Light(3);
+			TNT1 A 1 A_Light1();
+			TNT1 A 1 A_Light0();
+			Stop;
+			
+		ReadyDual:
+			TAKR ABCDEF 2 A_WeaponReady();
+			Loop;
+		SelectDual:
+			TAKR ABCDEF 1 A_Raise(12);
+			TNT1 AA 0 A_Raise(12);
+			Loop;
+		DeselectDual:
+			TAKR FEDCBA 1 A_Lower(12);
+			TNT1 AA 0 A_Lower(12);
+			Loop;
+		
+		AltFireDual:
+		AltHoldDual:
+		FireDual:
+		HoldDual:
+			TNT1 A 0 A_GunFlash("FlashDual");
+			TNT1 A 2;
+			TNT1 AA 0 A_StartSound("Tesla/Fire1",CHAN_WEAPON);
+			TNT1 A 0 A_GiveInventory("TeslaCounterX", 1);
+			TNT1 A 0 A_Tesla1(1);
+			TNT1 A 0 A_GunFlash("FlashDual");
+			TNT1 A 2;
+			TNT1 A 0 A_Refire();
+			TNT1 A 0 A_GiveInventory("StopFiring", 1);
+			TNT1 A 0 A_FireProjectile("TeslaSmoke",frandom(-8,8),0,1,8+frandom(-0.1,0.1),0);
+			TAKM CB 2;
+			Goto Ready;
+		AltFlashDual:
+		FlashDual:
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 7, 28);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 6, 24);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 5, 20);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 4, 16);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 3, 12);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 2, 8);
+			TNT1 A 0 A_JumpIfInventory("TeslaCounterX", 1, 4);
+		FlashPickDual:
+			TAKM D 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(24);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 23);
+			TAKM E 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(21);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 20);
+			TAKM F 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(18);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 17);
+			TAKM G 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(15);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 14);
+			TAKM H 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(12);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 11);
+			TAKM D 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(9);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 8);
+			TAKM E 1 BRIGHT;
+			TNT1 A 0 A_JumpIfNoAmmo(6);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 5);
+			TAKM F 1 BRIGHT;
+			TNT1 A 0 A_TakeInventory("TeslaCounterX", 24);
+			TNT1 A 0 A_JumpIfNoAmmo(2);
+			TNT1 A 0 A_JumpIfInventory("StopFiring", 1, 1);
+			Goto FlashPickDual;
+			TNT1 A 0 A_TakeInventory("StopFiring", 1);
+			Stop;
 	}
 }
+
+class TeslaCounterX : CustomInventoryExt
+{
+	default
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 24;
+		+INVENTORY.IGNORESKILL;
+	}
+}
+
+class StopFiring : CustomInventoryExt
+{
+	default
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+	}
+}
+
+class TeslaSmoke : KCBaseZSC
+{
+	default
+	{
+		Height 1;
+		Radius 1;
+		Damage 0;
+		Speed 1;
+		Scale 0.75;
+		Alpha 0.9;
+		RenderStyle "Add";
+		PROJECTILE;
+		+BLOODLESSIMPACT;
+		+RIPPER;
+	}
+	States
+	{
+		Spawn:
+			TSMK AABBCC 3 A_Fadeout(0.15);
+			Stop;
+		Death.Sky:
+			TSMK A 1;
+			Stop;
+	}
+}
+
+class TeslaFX : KCBaseZSC
+{
+	default
+	{
+		Height 1;
+		Radius 1;
+		RenderStyle "Add";
+		+CLIENTSIDEONLY;
+		+NOINTERACTION;
+		+NOTELEPORT;
+		-TELESTOMP;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_Jump(128, "Spawn2");
+		SpawnNormal:
+			TNT1 A 0 A_StartSound("TeslFX", CHAN_BODY);
+			TSFX AABBCCDDEEFF 1 BRIGHT A_FadeOut(0.07);
+			Loop;
+		Spawn2:
+			TNT1 A 0 A_StartSound("TeslFX", CHAN_BODY);
+			TSFX GGHHIIJJKKLL 1 BRIGHT A_FadeOut(0.07);
+			Loop;
+	}
+}
+
+class BaseLensflare : KCBaseZSC
+{
+	default
+	{
+		Health -1;
+		Radius 0;
+		Height 0;
+		RenderStyle "Add";
+		Alpha 1;
+		+CLIENTSIDEONLY;
+		+DONTSPLASH;
+		+ISMONSTER;
+		+NOCLIP;
+		+NOGRAVITY;
+		+NOINTERACTION;
+		-COUNTKILL;
+		-SHOOTABLE;
+		-SOLID;
+	}
+}
+
+class BlueFlare : BaseLensflare
+{
+	default
+	{
+		Scale 0.4;
+	}
+	
+	States
+	{
+		Spawn:
+			LEFL B 0;
+			LEFL BBBB 1 BRIGHT A_FadeOut(.25);
+			Stop;
+	}
+}
+
+class BlueFlareSmall : BlueFlare 
+{
+	default { Scale 0.2; }
+}
+
+class TeslaBallBig : KCFastProjectile
+{
+	default
+	{
+		Health 1000;
+		Radius 14;
+		Height 16;
+		Speed 125; // 38;
+		Mass 200;
+		Scale 0.4;
+		XScale 1.55;
+		DamageFunction (80 * random(1,8)); // DamageFunction (random(84,188));
+		DamageType "Lightning";
+		RenderStyle "Add";
+		Alpha 1;
+		PROJECTILE;
+		+DONTSPLASH;
+		+NOEXTREMEDEATH;
+		+THRUGHOST;
+		+FORCERADIUSDMG;
+		ActiveSound "weap/tsla/see";
+		SeeSound "Shoot/Tesla";
+		DeathSound "";
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
+		ProjectileKickback 50;
+	}
+	
+	States
+	{
+		Spawn:
+			TSLP A 0;
+			TSLP A 0 A_LoopActiveSound;
+			BAL2 A 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
+			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			BAL2 B 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			BAL2 C 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			BAL2 D 1 A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			Goto Spawn+2;
+		Death:
+			NULL BBBBBBBBBBB 0 A_SpawnItemEx("TeslaDebris",frandom(-15,15),frandom(-15,15),frandom(-15,15),frandom(-1,1),frandom(-3,3),frandom(0,1));
+			TNT1 A 0 A_SpawnItemEx("TeslaExplosion", 0, 64);
+			TNT1 A 0 A_SpawnItemEx("TeslaExplosion", 0, -64);
+			//BFIR BBBBBBBB 0 A_Explode(frandom(27,32),192);
+			NULL AAAAAAAA 0 A_Explode(frandom(27,32),256,XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning"); //great painchance
+			Stop;
+		Death.Sky:
+			NULL B 1;
+			Stop;
+	}
+}
+
+class TeslaExplosion : KCProjectile
+{
+	default
+	{
+		Speed 0;
+		Damage 0;
+		DamageType "Lightning";
+		PROJECTILE;
+		+BLOODLESSIMPACT;
+		+RIPPER;
+		ProjectileKickback 50;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 1 A_Explode(frandom(27,36),84,XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning");
+			Stop;
+	}
+}
+
+class TeslaDebris : KCProjectile
+{
+	default
+	{
+		Health 10;
+		Radius 1;
+		Height 1;
+		Scale 0.35;
+		Speed 2;
+		VSpeed 1;
+		FloatSpeed 1;
+		Renderstyle "Translucent";
+		Alpha 0.75;
+		Projectile;
+		+CANNOTPUSH;
+		+CLIENTSIDEONLY;
+		+FLOATBOB;
+		+NOGRAVITY;
+		+NOINTERACTION;
+		+DONTSPLASH;
+		+NOBLOCKMAP;
+		+RANDOMIZE;
+		+WINDTHRUST;
+		-NOGRAVITY;
+		-SOLID;
+		
+		//Health 5;
+		//Speed 10;
+		//Scale 0.2;
+	}
+	
+	States
+	{
+		Spawn:
+			ZAPR A 0;
+			ZAPR A 0 A_Jump(128,"ZapB");
+		Zap:
+			ZAPR A 0 A_Jump(128,1,2,3,4,5,6);
+			TSFX AABBCCCDDEEFFAAABBBCCCCDDDDEEEFFF 1 BRIGHT A_FadeOut(0.025);
+			Loop;
+		ZapB:
+			ZAPR A 0 A_Jump(128,1,2,3,4,5,6);
+			TSFX GGGHHHIIIIJJJKKKKLLLGGHHIIIJJKKLL 1 BRIGHT A_FadeOut(0.025);
+			Loop;
+		Death:
+			FSPK A 1;
+			Stop;
+		Death.Sky:
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class BoltShrink1 : KCBaseZSC
+{
+	default
+	{
+		Scale 0.9;
+		Alpha 0.5;
+		RenderStyle "Add";
+		+NOINTERACTION;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink2");
+			Stop;
+	}
+}
+
+class BoltShrink2 : BoltShrink1
+{
+	default
+	{
+		Scale 0.8;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink3");
+			Stop;
+	}
+}
+
+class BoltShrink3 : BoltShrink1
+{
+	default
+	{
+		Scale 0.7;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink4");
+			Stop;
+	}
+}
+
+class BoltShrink4 : BoltShrink1
+{
+	default
+	{
+		Scale 0.6;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink5");
+			Stop;
+	}
+}
+
+class BoltShrink5 : BoltShrink1
+{
+	default
+	{
+		Scale 0.5;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink6");
+			Stop;
+	}
+}
+
+class BoltShrink6 : BoltShrink1
+{
+	default
+	{
+		Scale 0.4;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink7");
+			Stop;
+	}
+}
+
+class BoltShrink7 : BoltShrink1
+{
+	default
+	{
+		Scale 0.3;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink8");
+			Stop;
+	}
+}
+
+class BoltShrink8 : BoltShrink1
+{
+	default
+	{
+		Scale 0.2;
+	}
+	States
+	{
+		Spawn:
+			TESP A 3;
+			TNT1 A 0 A_SpawnItem("BoltShrink9");
+			Stop;
+	}
+}
+
+class BoltShrink9 : BoltShrink1
+{
+	default
+	{
+		Scale 0.1;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP A 3;
+			Stop;
+	}
+}
+
+class TeslaProjectile : KCFastProjectile
+{
+	default
+	{
+		Speed 75; // 72;
+		Radius 8;
+		Height 8;
+		RenderStyle "Add";
+		DamageFunction (10 * random(1,8)); //DamageFunction (random(24,32));
+		DamageType "Lightning";
+		PROJECTILE;
+		+FORCERADIUSDMG;
+		+BLOODLESSIMPACT; //No more insane blood on wall
+		+FOILINVUL;
+		+THRUGHOST;
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
+		ProjectileKickback 50;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP AAAAAAA 1 BRIGHT A_Fadeout(0.16);
+			TESP A 0 A_StartSound("weap/tsla/see",0);
+			TESP AAAAAAA 1 BRIGHT A_FadeIn(0.16);
+			TESP A 0 A_StartSound("weap/tsla/see",0);
+			Loop;
+		Death:
+			TNT1 A 0 A_Explode(random(3,6), 24, 0, false, 0, 0, 10, "KCBulletPuff", "Lightning");
+			TNT1 A 0 A_SpawnItem("BoltShrink1");
+			TNT1 A 0 A_StartSound("Tesla/Fire1",0);
+			TNT1 AAAAA 0 A_SpawnItemEx("TeslaFX", random(-8,8), random(-8,8), random(0,3), random(-12,12), random(-12,12), random(0,3));
+			Stop;
+	}
+}
+
+class TeslaProjectile2 : TeslaProjectile
+{
+	default
+	{
+		Speed 75; // 72;
+		Radius 8;
+		Height 8;
+		Scale 0.5;
+		RenderStyle "Add";
+		DamageFunction (5 * random(1,8)); //DamageFunction (random(24,32));
+		DamageType "Lightning";
+		PROJECTILE;
+		+FORCERADIUSDMG;
+		+BLOODLESSIMPACT; //No more insane blood on wall
+		+FOILINVUL;
+		+THRUGHOST;
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
+		ProjectileKickback 50;
+	}
+	
+	States
+	{
+		Spawn:
+			TESP AAAAAAA 1 BRIGHT A_Fadeout(0.16);
+			TESP A 0 A_StartSound("weap/tsla/see",0);
+			TESP AAAAAAA 1 BRIGHT A_FadeIn(0.16);
+			TESP A 0 A_StartSound("weap/tsla/see",0);
+			Loop;
+		Death:
+			TNT1 A 0 A_Explode(random(1,2), 12, 0, false, 0, 0, 10, "KCBulletPuff", "Lightning");
+			TNT1 A 0 A_SpawnItem("BoltShrink1");
+			TNT1 A 0 A_StartSound("Tesla/Fire1",0);
+			TNT1 AAAAA 0 A_SpawnItemEx("TeslaFX", random(-4,4), random(-4,4), random(0,random(1,2)), random(-6,6), random(-6,6), random(0,random(1,2)));
+			Stop;
+	}
+}
+
 class TeslaShot : KCFastProjectile
 {
 	default
@@ -6175,13 +6778,13 @@ class Bolts : Ammo
 		RenderStyle "Translucent";
 		Alpha 0.9;
 		Ammo.BackpackMaxAmount 900;
-		Inventory.PickupMessage "Picked up a Bolt Charge.";
-		Inventory.Icon "BOLTA0";
+		Inventory.PickupMessage "Picked up a \cvTesla Charge\c-.";
+		Inventory.Icon "TESCC0";
 	}
 	States
 	{
 		Spawn:
-			BOLT A 1;
+			TESC A 1;
 			Loop;
 	}
 }
@@ -6196,13 +6799,12 @@ class BoltsLarge : Bolts
 		scale 0.75;
 		RenderStyle "Translucent";
 		Alpha 0.9;
-		Inventory.PickupMessage "Picked up a Large Bolt Charge.";
-		Inventory.Icon "BOLTA0";
+		Inventory.PickupMessage "Picked up a \cvBox of Tesla Charges\c-.";
 	}
 	States
 	{
 		Spawn:
-			BOLT A 1;
+			TESC B 1;
 			Loop;
 	}
 }
