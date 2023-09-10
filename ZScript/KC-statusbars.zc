@@ -696,7 +696,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (MiscItem.TimeArmorRelicsUsedBits == 7) ItemFontCLR = font.CR_Purple;
 						ItemEffectTics = MiscItem.TimeArmorEnergyTics;
 						ItemEffectSecs = 100 * ((MiscItem.TimeArmorEnergyTics * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * 1.0));
-						if (kcdebug_timeserapharmor) Console.Printf("MiscItem.TimeArmorRelicsUsedBits: %d, MiscItem.TimeArmorEnergyTics: %d", MiscItem.TimeArmorRelicsUsedBits, MiscItem.TimeArmorEnergyTics);
+						if (kcdebug_timeserapharmorhud) Console.Printf("MiscItem.TimeArmorRelicsUsedBits: %d, MiscItem.TimeArmorEnergyTics: %d", MiscItem.TimeArmorRelicsUsedBits, MiscItem.TimeArmorEnergyTics);
 					}
 				}
 				if (KCTimeFreezer(item))
@@ -1241,24 +1241,36 @@ class KCStatusBarMain : BaseStatusBar
 						}
 					}
 					int energystat = (MiscItem.TSARegenAmt - MiscItem.TSADrainAmt);
+					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics)
+					{
+						if (MiscItem.TimeArmorRelicsUsedBits <= 0) energystat = 0;
+					}
 					string energyimg = "";
 					vector2 iconscale = (1.0, 1.0);
 					iconscale.x *= 0.375;
 					iconscale.y *= 0.375;
 					if (energystat > 0)
 					{
-						if (energystat >= 25) energyimg = "TSACHAR3";
-						if (energystat >= 13 && energystat <= 24) energyimg = "TSACHAR2";
-						else energyimg = "TSACHAR1";
+						if (energystat >= 73) energyimg = "TSACHAR7";
+						else if (energystat >= 61 && energystat <= 72) energyimg = "TSACHAR6";
+						else if (energystat >= 49 && energystat <= 60) energyimg = "TSACHAR5";
+						else if (energystat >= 37 && energystat <= 48) energyimg = "TSACHAR4";
+						else if (energystat >= 25 && energystat <= 36) energyimg = "TSACHAR3";
+						else if (energystat >= 13 && energystat <= 24) energyimg = "TSACHAR2";
+						else if (energystat >= 1 && energystat <= 12) energyimg = "TSACHAR1";
 					}
 					else
 					if (energystat < 0)
 					{
-						if (energystat <= -25) energyimg = "TSADRAI3";
-						if (energystat >= -13 && energystat <= -24) energyimg = "TSADRAI2";
-						else energyimg = "TSADRAI1";
+						if (energystat <= -73) energyimg = "TSADRAI7";
+						else if (energystat >= -72 && energystat <= -61) energyimg = "TSADRAI6";
+						else if (energystat >= -60 && energystat <= -49) energyimg = "TSADRAI5";
+						else if (energystat >= -48 && energystat <= -37) energyimg = "TSADRAI4";
+						else if (energystat >= -36 && energystat <= -25) energyimg = "TSADRAI3";
+						else if (energystat >= -24 && energystat <= -13) energyimg = "TSADRAI2";
+						else if (energystat >= -12 && energystat <= -1) energyimg = "TSADRAI1";
 					}
-					if (kcdebug_timeserapharmor) Console.Printf("energystat: %d, energyimg: %s", energystat, energyimg);
+					if (kcdebug_timeserapharmorhud) Console.Printf("energystat: %d, energyimg: %s", energystat, energyimg);
 					bool showarrow = false;
 					if (MiscItem.TimeArmorEnergyTics < MiscItem.TimeArmorEnergyMaxTics)
 					{
