@@ -6413,27 +6413,6 @@ class TeslaFX : KCBaseZSC
 	}
 }
 
-class BaseLensflare : KCBaseZSC
-{
-	default
-	{
-		Health -1;
-		Radius 0;
-		Height 0;
-		RenderStyle "Add";
-		Alpha 1;
-		+CLIENTSIDEONLY;
-		+DONTSPLASH;
-		+ISMONSTER;
-		+NOCLIP;
-		+NOGRAVITY;
-		+NOINTERACTION;
-		-COUNTKILL;
-		-SHOOTABLE;
-		-SOLID;
-	}
-}
-
 class BlueFlare : BaseLensflare
 {
 	default
@@ -6487,13 +6466,13 @@ class TeslaBallBig : KCFastProjectile
 		Spawn:
 			TSLP A 0;
 			TSLP A 0 A_LoopActiveSound;
-			BAL2 A 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
+			NULL A 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
 			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
-			BAL2 B 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			NULL B 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
-			BAL2 C 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			NULL C 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
-			BAL2 D 1 A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			NULL D 1 A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
 			Goto Spawn+2;
 		Death:
@@ -6541,7 +6520,7 @@ class TeslaBallBigDual : KCFastProjectile
 		Spawn:
 			TSLP A 0;
 			TSLP A 0 A_LoopActiveSound;
-			BAL2 A 1 
+			NULL A 1 
 			{
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
@@ -6552,7 +6531,7 @@ class TeslaBallBigDual : KCFastProjectile
 				A_SpawnItemEx("BlueFlareSmall",8);
 				A_SpawnItemEx("BlueFlareSmall",8);
 			}
-			BAL2 B 1 
+			NULL B 1 
 			{
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
@@ -6563,7 +6542,7 @@ class TeslaBallBigDual : KCFastProjectile
 				A_SpawnItemEx("BlueFlareSmall",8);
 				A_SpawnItemEx("BlueFlareSmall",8);
 			}
-			BAL2 C 1 
+			NULL C 1 
 			{
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 				A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
@@ -6574,7 +6553,7 @@ class TeslaBallBigDual : KCFastProjectile
 				A_SpawnItemEx("BlueFlareSmall",8);
 				A_SpawnItemEx("BlueFlareSmall",8);
 			}
-			BAL2 D 1 
+			NULL D 1 
 			{
 				A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
 				A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
