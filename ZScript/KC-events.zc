@@ -2858,28 +2858,30 @@ class KC_EventHandler : EventHandler
 				if (HellKnight(victim) ||
 						BaronOfHell(victim))
 				{
+					int dropdiv = 64;
+					if (BaronOfHell(victim)) dropdiv = 16;
 					if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
 					{
 						droptype = "BackPack";
-						if (random(1,64) <= 1) droptype = "CombatPack";
+						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 					{
 						droptype = "BackPack";
-						if (random(1,64) <= 1) droptype = "CombatPack";
+						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 					{
 						droptype = "BackPack";
-						if (random(1,64) <= 1) droptype = "CombatPack";
+						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
 					{
 						droptype = "BackPack";
-						if (random(1,64) <= 1) droptype = "CombatPack";
+						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 				}
@@ -3159,7 +3161,9 @@ class KC_EventHandler : EventHandler
 							droptype = "TeslaCannon";
 							if (playera.CountInv(droptype)) droptype = "Backpack";
 						}
-						if (droptype != "Backpack")
+						if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
+						if (droptype != "Backpack" ||
+								droptype != "CombatPack")
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 							double raredropsndvol = frandom(1.75,2.25);
@@ -3169,7 +3173,7 @@ class KC_EventHandler : EventHandler
 						}
 						else
 						{
-							if (random(1,16) <= 1) droptype = "CombatPack";
+							
 						}
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[green]Weapon Drop\c- - user_type: %d [%s]", user_type, droptype);
 					}
