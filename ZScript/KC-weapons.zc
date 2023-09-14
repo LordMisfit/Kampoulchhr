@@ -7168,11 +7168,13 @@ class BHGen : MarineWeapon
 	default
 	{
 		Weapon.SelectionOrder 2900;
-		Weapon.AmmoUse 50;
+		Weapon.AmmoUse1 50;
+		Weapon.AmmoUse2 125;
 		Weapon.AmmoGive 50;
-		Weapon.AmmoType "Cell";
+		Weapon.AmmoType1 "Cell";
+		Weapon.AmmoType2 "Cell";
 		Weapon.SlotNumber 7;
-		Inventory.PickupMessage "You got the Black Hole Generator!";
+		Inventory.PickupMessage "You got the \cvBlack Hole Generator\c-! \cx[Slot 7]\c-";
 		Tag "Black Hole Generator";
 		+WEAPON.NOAUTOAIM;
 	}
@@ -7183,10 +7185,10 @@ class BHGen : MarineWeapon
 			BHGG A -1;
 			Stop;
 		Select:
-			BHGN A 1 A_Raise();
+			BHGN A 1 A_Raise(12);
 			Loop;
 		Deselect:
-			BHGN A 1 A_Lower();
+			BHGN A 1 A_Lower(12);
 			Loop;
 		Ready:
 			BHGN A 1 A_WeaponReady();
@@ -7201,6 +7203,34 @@ class BHGen : MarineWeapon
 			BHGN CB 4;
 			BHGN A 14;
 			BHGN A 2 A_Refire();
+			Goto Ready;
+		AltFire:
+			BHGN A 12 Bright 
+			{
+				A_StartSound("DMC/Charge",CHAN_WEAPON);
+				A_StartSound("DMC/Charge",CHAN_BODY);
+				A_StartSound("DMC/Charge",CHAN_VOICE);
+			}
+			BHGN BCDE 15 Bright;
+			BHGN F 0 
+			{
+				A_StartSound("DMC/Fire",7);
+				A_StartSound("DMC/Fire",8);
+				A_StartSound("DMC/Fire",9);
+			}
+			BHGN F 0 A_GunFlash();
+			BHGN F 3 Bright 
+			{
+				A_FireProjectile("DMBall2",0,1,0,0);
+				A_SetTics(random(4,5));
+			}
+			BHGN FGG 4 Bright
+			{
+				A_SetTics(random(4,5));
+			}
+			BHGN CB 6;
+			BHGN A 21;
+			BHGN A 3 A_Refire();
 			Goto Ready;
 		Flash:
 			BHGF A 3 Bright A_Light2();
@@ -7218,43 +7248,231 @@ class DMBall : KCProjectile
 		Projectile;
 		Radius 13;
 		Height 8;
-		Speed 22;
-		Damage 10;
+		Speed 22; // 22
+		DamageFunction (10 * random(1,8));
 		Renderstyle "Translucent";
 		Alpha 0.75;
 		DeathSound "DMBall/Impact";
 		Decal "BHoleDecal";
 		Obituary "%o got spaghettified by %k's Black Hole Generator.";
+		DamageType "BlackHole";
+		+PAINLESS;
 		+RIPPER;
 		+FORCEXYBILLBOARD;
 		+NODAMAGETHRUST;
 		+FORCERADIUSDMG;
 	}
 	
+	void A_BlackHoleSuck()
+	{
+		int baseforce = -240;
+		int basedist = 200;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				baseforce = -480;
+				basedist = 400;
+			}
+		}
+		A_RadiusThrust(baseforce,basedist,0);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.70),0);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),0);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),0);
+	}
+	
+	void A_BlackHoleAOE()
+	{
+		int basedmg = 10;
+		int basedist = 90;
+		int basefdist = 15;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				basedmg = 20;
+				basedist = 180;
+				basefdist = 30;
+			}
+		}
+		A_Explode(basedmg,basedist,0,false,basefdist);
+	}
+	
 	States
 	{
 		Spawn:
-			VOIP AA 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItemEx("DMBTrail",0,0,0);
-			VOIP BB 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItemEx("DMBTrail",0,0,0);
-			VOIP CC 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItemEx("DMBTrail",0,0,0);
-			VOIP DD 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItemEx("DMBTrail",0,0,0);
-			VOIP EE 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItemEx("DMBTrail",0,0,0);
-			VOIP FF 1 Bright A_RadiusThrust(-240,200,0);
-			TNT1 A 0 A_Explode(10,90,0);
-			TNT1 A 0 A_SpawnItem("DMBTrail",0,0,0);
+			VOIP AA 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP BB 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP CC 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP DD 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP EE 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP FF 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+			}
+			TNT1 A 0 
+			{
+				A_BlackHoleAOE();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
 			Loop;
 		Death:
 			TNT1 A 0 A_SpawnItemEx("BlackHole",0,0,0);
+			TNT1 A 0 A_SetScale(1.2);
+			VORX ABCDEFGH 2 Bright;
+			Stop;
+	}
+}
+
+class DMBall2 : DMBall
+{
+	default
+	{
+		Projectile;
+		Radius 26;
+		Height 16;
+		Speed 22; // 22
+		DamageFunction (20 * random(1,8));
+		Renderstyle "Translucent";
+		Alpha 0.75;
+		DeathSound "DMBall/Impact";
+		Decal "BHoleDecal";
+		Obituary "%o got spaghettified by %k's Black Hole Generator.";
+		DamageType "BlackHole";
+		+PAINLESS;
+		+RIPPER;
+		+FORCEXYBILLBOARD;
+		+NODAMAGETHRUST;
+		+FORCERADIUSDMG;
+	}
+	
+	void A_BlackHoleSuck()
+	{
+		int baseforce = -480;
+		int basedist = 400;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				baseforce = -960;
+				basedist = 800;
+			}
+		}
+		A_RadiusThrust(baseforce,basedist,0);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.70),0);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),0);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),0);
+	}
+	
+	void A_BlackHoleAOE()
+	{
+		int basedmg = 20;
+		int basedist = 180;
+		int basefdist = 30;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				basedmg = 40;
+				basedist = 360;
+				basefdist = 60;
+			}
+		}
+		A_Explode(basedmg,basedist,0,false,basefdist);
+	}
+	
+	States
+	{
+		Spawn:
+			VOIP AA 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail2",0,0,0);
+			}
+			VOIP BB 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail2",0,0,0);
+			}
+			VOIP CC 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP DD 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail2",0,0,0);
+			}
+			VOIP EE 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail",0,0,0);
+			}
+			VOIP FF 1 Bright
+			{
+				A_BlackHoleAOE();
+				A_BlackHoleSuck();
+				A_SpawnItemEx("DMBTrail2",0,0,0);
+			}
+			Loop;
+		Death:
+			TNT1 A 0 A_SpawnItemEx("BlackHole2",0,0,0);
 			TNT1 A 0 A_SetScale(1.2);
 			VORX ABCDEFGH 2 Bright;
 			Stop;
@@ -7280,6 +7498,25 @@ class DMBTrail : KCProjectile
 	}
 }
 
+class DMBTrail2 : DMBTrail
+{
+	default
+	{
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+		RenderStyle "Translucent";
+		Alpha 0.70;
+		Scale 1.05;
+	}
+	
+	States
+	{
+		Spawn:
+			VORX ABCDEFGH 2 Bright A_FadeOut(0.1);
+			Stop;
+	}
+}
+
 class BlackHole : KCProjectile
 {
 	default
@@ -7293,6 +7530,7 @@ class BlackHole : KCProjectile
 		Scale 1.8;
 		ReactionTime 30;
 		Obituary "%o got spaghettified by %k's Black Hole Generator.";
+		DamageType "BlackHole";
 		+NOCLIP;
 		+NODAMAGETHRUST;
 		+FORCEXYBILLBOARD;
@@ -7300,34 +7538,138 @@ class BlackHole : KCProjectile
 		+EXTREMEDEATH;
 	}
 	
+	void A_BHoleAOE()
+	{
+		int basedmg = random(7,9);
+		int basedamrad = 180;
+		int baseforce = -360;
+		int basedist = 340;
+		int basefdist = 10;
+		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE;
+		int flags2 = XF_HURTSOURCE;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				basedmg = random(17,23);
+				basedamrad = 360;
+				baseforce = -720;
+				basedist = 680;
+				basefdist = 20;
+				flags1 = RTF_NOIMPACTDAMAGE;
+				flags2 = 0;
+			}
+		}
+		A_RadiusThrust(baseforce,basedist,flags1);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.70),flags1);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_Explode(basedmg,basedamrad,flags2,false,basefdist);
+	}
+	
 	States
 	{
 		Spawn:
 			TNT1 A 0 A_CountDown();
 			TNT1 A 0 A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP);
-			BHOL A 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL B 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL C 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL D 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL E 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL F 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL G 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL H 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
-			BHOL I 1 Bright Light("BHOLE_1") A_RadiusThrust(-360,340,RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE);
-			TNT1 A 0 A_Explode(8,180,XF_HURTSOURCE,false,10);
+			BHOL A 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL B 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL C 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL D 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL E 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL F 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL G 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL H 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL I 1 Bright Light("BHOLE_1") A_BHoleAOE();
 			Loop;
 		Death:
 			TNT1 A 0 A_StopSound(CHAN_VOICE);
 			TNT1 A 0 A_SpawnItemEx("BHSmoke",0,0,0);
 			TNT1 A 0 A_SpawnItemEx("BHExplosion",0,0,0);
+			TNT1 A 0 A_StartSound("BHole/Explosion");
+			BHOL A 1 Bright Light("BHOLE_2") A_FadeOut(0.08);
+			BHOL B 1 Bright Light("BHOLE_3") A_FadeOut(0.08);
+			BHOL C 1 Bright Light("BHOLE_4") A_FadeOut(0.08);
+			BHOL D 1 Bright Light("BHOLE_5") A_FadeOut(0.08);
+			BHOL E 1 Bright Light("BHOLE_6") A_FadeOut(0.08);
+			BHOL F 1 Bright Light("BHOLE_7") A_FadeOut(0.08);
+			BHOL G 1 Bright Light("BHOLE_8") A_FadeOut(0.08);
+			BHOL H 1 Bright Light("BHOLE_9") A_FadeOut(0.08);
+			BHOL I 1 Bright Light("BHOLE_10") A_FadeOut(0.08);
+			Stop;
+	}
+}
+class BlackHole2 : BlackHole
+{
+	default
+	{
+		Projectile;
+		Radius 12;
+		Height 80;
+		Speed 0;
+		RenderStyle "Translucent";
+		Alpha 0.85;
+		Scale 3.6;
+		ReactionTime 75;
+		Obituary "%o got spaghettified by %k's Black Hole Generator.";
+		DamageType "BlackHole";
+		+NOCLIP;
+		+NODAMAGETHRUST;
+		+FORCEXYBILLBOARD;
+		+FORCERADIUSDMG;
+		+EXTREMEDEATH;
+	}
+	
+	void A_BHoleAOE()
+	{
+		int basedmg = random(15,17);
+		int basedamrad = 360;
+		int baseforce = -720;
+		int basedist = 680;
+		int basefdist = 20;
+		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE;
+		int flags2 = XF_HURTSOURCE;
+		if (target)
+		{
+			//Console.Printf("%s", target.GetClassName());
+			if (HeiwaPlayer(target))
+			{
+				basedmg = random(35,45);
+				basedamrad = 720;
+				baseforce = -1440;
+				basedist = 1360;
+				basefdist = 40;
+				flags1 = RTF_NOIMPACTDAMAGE;
+				flags2 = 0;
+			}
+		}
+		A_RadiusThrust(baseforce,basedist,flags1);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.70),flags1);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_Explode(basedmg,basedamrad,flags2,false,basefdist);
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_CountDown();
+			TNT1 A 0 A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP);
+			BHOL A 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL B 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL C 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL D 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL E 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL F 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL G 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL H 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			BHOL I 1 Bright Light("BHOLE_1") A_BHoleAOE();
+			Loop;
+		Death:
+			TNT1 A 0 A_StopSound(CHAN_VOICE);
+			TNT1 A 0 A_SpawnItemEx("BHSmoke2",0,0,0);
+			TNT1 A 0 A_SpawnItemEx("BHExplosion2",0,0,0);
 			TNT1 A 0 A_StartSound("BHole/Explosion");
 			BHOL A 1 Bright Light("BHOLE_2") A_FadeOut(0.08);
 			BHOL B 1 Bright Light("BHOLE_3") A_FadeOut(0.08);
@@ -7361,7 +7703,67 @@ class BHSmoke : KCBaseZSC
 	}
 }
 
+class BHSmoke2 : BHSmoke
+{
+	default
+	{
+		+NOINTERACTION
+		+FORCEXYBILLBOARD
+		RenderStyle "Translucent";
+		Alpha 0.70;
+		Scale 3.3;
+	}
+	
+	States
+	{
+		Spawn:
+			BHXP ABCDEFGHIJKLMNO 2 A_FadeOut(0.03);
+			Stop;
+	}
+}
+
 class BHExplosion : KCProjectile
+{
+	default
+	{
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+	}
+	
+	States
+	{
+		Spawn:
+			DBX3 A 1 Light("BHEXP_1") Bright A_SetScale(1.25);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_2") Bright A_SetScale(1.50);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_3") Bright A_SetScale(1.75);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_4") Bright A_SetScale(2.0);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_5") Bright A_SetScale(2.25);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_6") Bright A_SetScale(2.50);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Light("BHEXP_7") Bright A_SetScale(2.75);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(3.0);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(3.25);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(3.50);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(3.75);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(4.0);
+			TNT1 A 0 A_FadeOut(0.09);
+			DBX3 A 1 Bright A_SetScale(4.25);
+			TNT1 A 0 A_FadeOut(0.09);
+			Stop;
+	}
+}
+
+class BHExplosion2 : BHExplosion
 {
 	default
 	{

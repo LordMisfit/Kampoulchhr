@@ -1609,6 +1609,12 @@ class KCPlayerPawn : PlayerPawn
 						 mod == 'ExplosiveImpact' ||
 						 mod == 'CC_Firecracker')) PlayerDefenseIgnoreFactor += (BarrelFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
+				if (!HeiwaPlayer(self))
+				{
+					double BHoleFactor = frandom(0.667,0.8334);
+					if (mod == 'BlackHole') PlayerDefenseIgnoreFactor += (BHoleFactor * (1.00 - PlayerDefenseIgnoreFactor));
+				}
+				
 				double RailFactor = frandom(0.3,0.334);
 				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
