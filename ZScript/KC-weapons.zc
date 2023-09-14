@@ -7267,6 +7267,7 @@ class DMBall : KCProjectile
 	{
 		int baseforce = -240;
 		int basedist = 200;
+		int flags1 = 0;
 		if (target)
 		{
 			//Console.Printf("%s", target.GetClassName());
@@ -7276,10 +7277,14 @@ class DMBall : KCProjectile
 				basedist = 400;
 			}
 		}
-		A_RadiusThrust(baseforce,basedist,0);
-		A_RadiusThrust((baseforce*0.875),(basedist*0.70),0);
-		A_RadiusThrust((baseforce*0.75),(basedist*0.5),0);
-		A_RadiusThrust((baseforce*0.625),(basedist*0.25),0);
+		A_RadiusThrust(baseforce,basedist,flags1);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.75),flags1);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_RadiusThrust((baseforce*0.5),(basedist*0.125),flags1);
+		A_RadiusThrust((baseforce*0.375),(basedist*0.0625),flags1);
+		A_RadiusThrust((baseforce*0.25),(basedist*0.03125),flags1);
+		A_RadiusThrust((baseforce*0.125),(basedist*0.0156125),flags1);
 	}
 	
 	void A_BlackHoleAOE()
@@ -7398,6 +7403,7 @@ class DMBall2 : DMBall
 	{
 		int baseforce = -480;
 		int basedist = 400;
+		int flags1 = 0;
 		if (target)
 		{
 			//Console.Printf("%s", target.GetClassName());
@@ -7408,9 +7414,13 @@ class DMBall2 : DMBall
 			}
 		}
 		A_RadiusThrust(baseforce,basedist,0);
-		A_RadiusThrust((baseforce*0.875),(basedist*0.70),0);
-		A_RadiusThrust((baseforce*0.75),(basedist*0.5),0);
-		A_RadiusThrust((baseforce*0.625),(basedist*0.25),0);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.75),flags1);
+		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
+		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_RadiusThrust((baseforce*0.5),(basedist*0.125),flags1);
+		A_RadiusThrust((baseforce*0.375),(basedist*0.0625),flags1);
+		A_RadiusThrust((baseforce*0.25),(basedist*0.03125),flags1);
+		A_RadiusThrust((baseforce*0.125),(basedist*0.0156125),flags1);
 	}
 	
 	void A_BlackHoleAOE()
@@ -7562,9 +7572,13 @@ class BlackHole : KCProjectile
 			}
 		}
 		A_RadiusThrust(baseforce,basedist,flags1);
-		A_RadiusThrust((baseforce*0.875),(basedist*0.70),flags1);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.75),flags1);
 		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
 		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_RadiusThrust((baseforce*0.5),(basedist*0.125),flags1);
+		A_RadiusThrust((baseforce*0.375),(basedist*0.0625),flags1);
+		A_RadiusThrust((baseforce*0.25),(basedist*0.03125),flags1);
+		A_RadiusThrust((baseforce*0.125),(basedist*0.0156125),flags1);
 		A_Explode(basedmg,basedamrad,flags2,false,basefdist);
 	}
 	
@@ -7645,9 +7659,13 @@ class BlackHole2 : BlackHole
 			}
 		}
 		A_RadiusThrust(baseforce,basedist,flags1);
-		A_RadiusThrust((baseforce*0.875),(basedist*0.70),flags1);
+		A_RadiusThrust((baseforce*0.875),(basedist*0.75),flags1);
 		A_RadiusThrust((baseforce*0.75),(basedist*0.5),flags1);
 		A_RadiusThrust((baseforce*0.625),(basedist*0.25),flags1);
+		A_RadiusThrust((baseforce*0.5),(basedist*0.125),flags1);
+		A_RadiusThrust((baseforce*0.375),(basedist*0.0625),flags1);
+		A_RadiusThrust((baseforce*0.25),(basedist*0.03125),flags1);
+		A_RadiusThrust((baseforce*0.125),(basedist*0.0156125),flags1);
 		A_Explode(basedmg,basedamrad,flags2,false,basefdist);
 	}
 	
