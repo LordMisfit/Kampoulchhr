@@ -1809,6 +1809,10 @@ class KC_EventHandler : EventHandler
 				}
 				
 				if (kcdebug_ressurrectdisplays) Console.Printf("Res: Max Health - %d (%d + %d)", (spawnee.SpawnHealth() + spawnee.Stamina), spawnee.SpawnHealth(), spawnee.Stamina); 
+				if (spawnee.bISMONSTER && spawnee.Stamina > 0)
+				{
+					spawnee.A_SetInventory("JustRevived",1);
+				}
 			}
 		}
 		Super.WorldThingRevived(e);
@@ -3159,11 +3163,14 @@ class KC_EventHandler : EventHandler
 						if (user_type == 12) 
 						{
 							droptype = "TeslaCannon";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
+							if (playera.CountInv(droptype)) 
+							{
+								if (playera.CountInv("DualTeslaCannons")) droptype = "Backpack";
+							}
 						}
 						if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
-						if (droptype != "Backpack" ||
-								droptype != "CombatPack")
+						if (!(droptype == "Backpack" ||
+								droptype == "CombatPack"))
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 							double raredropsndvol = frandom(1.75,2.25);

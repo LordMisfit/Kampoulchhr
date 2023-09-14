@@ -3584,6 +3584,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 		Weapon.AmmoType1 "RocketAmmo";
 		Weapon.AmmoType2 "RocketAmmo";
 		+WEAPON.NOAUTOFIRE
+		+WEAPON.NOALERT;
 		Inventory.PickupMessage "Picked up a \carocket launcher\c-! \cx[Slot 5]\c-";
 		Tag "$TAG_ROCKETLAUNCHER";
 	}
@@ -3617,6 +3618,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					double ptcoffset = 0;
 					double baserecoil = frandom(7.5,8.5);
 					A_StartSound("howitzer/shot",CHAN_7);
+					A_AlertMonsters();
 					A_Recoil(baserecoil);
 					A_Quake((2.0 - (CountInv("PlayerATK") / 24)), 8, 0, 1024, "nosound/silent");
 					A_Quake((4.0 - (CountInv("PlayerATK") / 36)), 8, 0, 512, "nosound/silent");
@@ -3664,7 +3666,11 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					double ofsxyset = 0.0;
 					double heightoffset = 0.0;
 					string firetype = "RocketPlayer";
-					if (CountInv("RLMode") == 1) firetype = "STGrenade";
+					if (CountInv("RLMode") == 1) 
+					{
+						firetype = "STGrenade";
+						if (random(1,4) <= 3) A_AlertMonsters();
+					}
 					if (CountInv("RLMode") == 2) firetype = "RocketPlayerSeeking";
 					A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
 				}
@@ -3694,6 +3700,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					double ptcoffset = frandom(-15,15);
 					double baserecoil = frandom(7.5,8.5);
 					A_StartSound("howitzer/shot",CHAN_7);
+					A_AlertMonsters();
 					A_Recoil(baserecoil);
 					A_Quake((2.0 - (CountInv("PlayerATK") / 24)), 8, 0, 1024, "nosound/silent");
 					A_Quake((4.0 - (CountInv("PlayerATK") / 36)), 8, 0, 512, "nosound/silent");
@@ -3741,7 +3748,11 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					double ofsxyset = 0.0;
 					double heightoffset = 0.0;
 					string firetype = "RocketPlayer";
-					if (CountInv("RLMode") == 1) firetype = "STGrenade";
+					if (CountInv("RLMode") == 1) 
+					{
+						firetype = "STGrenade";
+						if (random(1,4) <= 3) A_AlertMonsters();
+					}
 					if (CountInv("RLMode") == 2) firetype = "RocketPlayerDrunk";
 					A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
 				}
@@ -4586,6 +4597,7 @@ class TommAmmo : Ammo
 		Ammo.BackpackMaxAmount 1000;
 		Inventory.PickupMessage "Picked up some \cuammo for the tommygun\c-.";
 		Inventory.Icon "TOMAA0";
+		Inventory.PickupSound "gettgunclip";
 	}
 	
 	States
@@ -4602,6 +4614,7 @@ class TommAmmoBig : TommAmmo
 	{
 		Inventory.Amount 250;
 		Inventory.PickupMessage "Picked up a ton of \cuammo for the tommygun\c-.";
+		Inventory.PickupSound "gettgunset";
 	}
 	
 	States
@@ -5122,6 +5135,7 @@ class MiniRockets : Ammo
 		Ammo.BackpackMaxAmount 400;
 		Inventory.PickupMessage "Picked up some \caDevastator rockets\c-.";
 		Inventory.Icon "MNRAA0";
+		Inventory.PickupSound "getdevsmall";
 	}
 	
 	States
@@ -5139,6 +5153,7 @@ class MiniRocketBox : MiniRockets
 		+INVENTORY.ALWAYSPICKUP
 		Inventory.Amount 50;
 		Inventory.PickupMessage "Picked up a box of \caDevastator rockets\c-.";
+		Inventory.PickupSound "getdevbox";
 	}
 	
 	States
@@ -5452,6 +5467,7 @@ class Saws : Ammo
 		Inventory.PickupMessage "Picked up some \cfRipper Saws\c-.";
 		//Inventory.PickupSound "weapons/ammo13";
 		Inventory.Icon "SAWAA0";
+		Inventory.PickupSound "getsawsmall";
 	}
 	
 	States
@@ -5468,6 +5484,7 @@ class SawBox : Saws
 	{
 		Inventory.Amount 15;
 		Inventory.PickupMessage "Picked up a box of \cfRipper Saws\c-.";
+		Inventory.PickupSound "getsawbox";
 	}
 	
 	States
@@ -5912,6 +5929,7 @@ class ImpalerBolts : Ammo
 		Inventory.Icon "CBWAA0";
 		Ammo.BackpackAmount 5;
 		Ammo.BackpackMaxAmount 80;
+		Inventory.PickupSound "getxbowpouch";
 	}
 	
 	States
@@ -6488,31 +6506,11 @@ class TeslaBallBig : KCFastProjectile
 	}
 }
 
-class TeslaBallBigDual : KCFastProjectile
+class TeslaBallBigDual : TeslaBallBig
 {
 	default
 	{
-		Health 1000;
-		Radius 14;
-		Height 16;
-		Speed 125; // 38;
-		Mass 200;
-		Scale 0.4;
-		XScale 1.55;
 		DamageFunction (180 * random(1,8)); // DamageFunction (random(84,188));
-		DamageType "Lightning";
-		RenderStyle "Add";
-		Alpha 1;
-		PROJECTILE;
-		+DONTSPLASH;
-		+NOEXTREMEDEATH;
-		+THRUGHOST;
-		+FORCERADIUSDMG;
-		ActiveSound "weap/tsla/see";
-		SeeSound "Shoot/Tesla";
-		DeathSound "";
-		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
-		ProjectileKickback 50;
 	}
 	
 	States
@@ -6529,7 +6527,7 @@ class TeslaBallBigDual : KCFastProjectile
 			TSLP A 0 
 			{
 				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",8);
+				A_SpawnItemEx("BlueFlareSmall",16);
 			}
 			NULL B 1 
 			{
@@ -6540,7 +6538,7 @@ class TeslaBallBigDual : KCFastProjectile
 			TSLP A 0 
 			{
 				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",8);
+				A_SpawnItemEx("BlueFlareSmall",16);
 			}
 			NULL C 1 
 			{
@@ -6551,7 +6549,7 @@ class TeslaBallBigDual : KCFastProjectile
 			TSLP A 0 
 			{
 				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",8);
+				A_SpawnItemEx("BlueFlareSmall",16);
 			}
 			NULL D 1 
 			{
@@ -6562,7 +6560,7 @@ class TeslaBallBigDual : KCFastProjectile
 			TSLP A 0 
 			{
 				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",8);
+				A_SpawnItemEx("BlueFlareSmall",16);
 			}
 			Goto Spawn+2;
 		Death:
@@ -6686,7 +6684,7 @@ class BoltShrink1 : KCBaseZSC
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink2");
 			Stop;
 	}
@@ -6702,7 +6700,7 @@ class BoltShrink2 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink3");
 			Stop;
 	}
@@ -6718,7 +6716,7 @@ class BoltShrink3 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink4");
 			Stop;
 	}
@@ -6734,7 +6732,7 @@ class BoltShrink4 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink5");
 			Stop;
 	}
@@ -6750,7 +6748,7 @@ class BoltShrink5 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink6");
 			Stop;
 	}
@@ -6766,7 +6764,7 @@ class BoltShrink6 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink7");
 			Stop;
 	}
@@ -6782,7 +6780,7 @@ class BoltShrink7 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink8");
 			Stop;
 	}
@@ -6797,7 +6795,7 @@ class BoltShrink8 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			TNT1 A 0 A_SpawnItem("BoltShrink9");
 			Stop;
 	}
@@ -6813,7 +6811,7 @@ class BoltShrink9 : BoltShrink1
 	States
 	{
 		Spawn:
-			TESP A 3;
+			TESP B 3;
 			Stop;
 	}
 }
@@ -6936,7 +6934,7 @@ class TeslaShot2 : KCFastProjectile
 	{
 		height 10;
 		radius 10;
-		Speed 125;
+		Speed 75;
 		SeeSound "";
 		DamageType "Lightning";
 		DamageFunction (80 * random(1,8));
@@ -6983,7 +6981,7 @@ class TeslaShot2Dual : KCFastProjectile
 	{
 		height 10;
 		radius 10;
-		Speed 125;
+		Speed 75;
 		SeeSound "";
 		DamageType "Lightning";
 		DamageFunction (180 * random(1,8));
@@ -7133,6 +7131,7 @@ class Bolts : Ammo
 		Alpha 0.9;
 		Ammo.BackpackMaxAmount 900;
 		Inventory.PickupMessage "Picked up a \cvTesla Charge\c-.";
+		Inventory.PickupSound "getteslasmall";
 		Inventory.Icon "TESCC0";
 	}
 	States
@@ -7154,6 +7153,7 @@ class BoltsLarge : Bolts
 		RenderStyle "Translucent";
 		Alpha 0.9;
 		Inventory.PickupMessage "Picked up a \cvBox of Tesla Charges\c-.";
+		Inventory.PickupSound "getteslabox";
 	}
 	States
 	{
