@@ -43,35 +43,52 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 		DropBFG:
 			PLAY N 0 A_SpawnItemEx("BFG9000");
 			goto ItemDrop6+3;
+		DropTesla:
+			PLAY N 0 A_SpawnItemEx("TeslaCannon");
+			goto ItemDrop6+3;
+		DropBHGen:
+			PLAY N 0 A_SpawnItemEx("BHGen");
+			goto ItemDrop6+3;
 		ItemDrop1:
 			PLAY N 0 A_SpawnItemEx("GreenArmor");
-			goto Spawn+3;
+			goto Idle;
 		ItemDrop2:
 			PLAY N 0 A_SpawnItemEx("GreenArmor");
-			goto Spawn+3;
+			goto Idle;
 		ItemDrop3:
 			PLAY N 0 A_SpawnItemEx("BlueArmor");
-			goto Spawn+3;
+			goto Idle;
 		ItemDrop4:
 			PLAY N 0 A_SpawnItemEx((random(1,4) <= 1) ? "BlueArmor" : "GreenArmor");
-			goto Spawn+3;
+			goto Idle;
 		ItemDrop5:
 			PLAY N 0 
 			{
 				if (random(1,64) <= 1) A_SpawnItemEx("CombatPack");
 													else A_SpawnItemEx("BackPack");
 			}
-			goto Spawn+3;
+			goto Idle;
 		ItemDrop6:
-			PLAY N 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
-			PLAY N 0 A_Jump(128, "DropPlasma", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
+			PLAY N 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY N 0 A_Jump(128, "DropPlasma", "DropTesla", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
 			PLAY N 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
 			PLAY N 0;
-			goto Spawn+3;
+			goto Idle;
 		Spawn:
 			PLAY N 0;
-			PLAY N 0;
+			PLAY N 0
+			{
+				if (random(1,65536) <= 1)
+				{
+					A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
+					A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
+					A_SpawnItemEx("TSArtifactSpawner");
+					return resolvestate("Idle");
+				}
+				return resolvestate(null);
+			}
 			PLAY N 0 A_Jump(32, "ItemDrop1", "ItemDrop2", "ItemDrop3", "ItemDrop4", "ItemDrop5", "ItemDrop6");
+		Idle:
 			PLAY N -1;
 			Stop;
 	}
@@ -121,6 +138,12 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 		DropBFG:
 			PLAY W 0 A_SpawnItemEx("BFG9000");
 			goto ItemDrop6+3;
+		DropTesla:
+			PLAY W 0 A_SpawnItemEx("TeslaCannon");
+			goto ItemDrop6+3;
+		DropBHGen:
+			PLAY W 0 A_SpawnItemEx("BHGen");
+			goto ItemDrop6+3;
 		ItemDrop1:
 			PLAY W 0 A_SpawnItemEx("GreenArmor");
 			goto Spawn+3;
@@ -141,15 +164,26 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 			}
 			goto Spawn+3;
 		ItemDrop6:
-			PLAY W 0 A_Jump(64, "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
-			PLAY W 0 A_Jump(128, "DropPlasma", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
+			PLAY W 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY W 0 A_Jump(128, "DropPlasma", "DropTesla", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
 			PLAY W 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
 			PLAY W 0;
 			goto Spawn+3;
 		Spawn:
 			PLAY W 0;
-			PLAY W 0;
+			PLAY W 0
+			{
+				if (random(1,262144) <= 1)
+				{
+					A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
+					A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
+					A_SpawnItemEx("TSArtifactSpawner");
+					return resolvestate("Idle");
+				}
+				return resolvestate(null);
+			}
 			PLAY W 0 A_Jump(8, "ItemDrop1", "ItemDrop2", "ItemDrop3", "ItemDrop4", "ItemDrop5", "ItemDrop6");
+		Idle:
 			PLAY W -1;
 			Stop;
 	}

@@ -2218,7 +2218,10 @@ class KCStatusBarMain : BaseStatusBar
 
 		x += wsspace;
 		// Slot 7
-		weaponsincurslot = 1;
+		weaponsincurslot = 2;
+		baseinc = 2;
+		x -= baseinc;
+		y -= baseinc;
 		wsname = "BFG9000Marine";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -2236,6 +2239,27 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		wsname = "BHGen";
+		wsammoname = "Cell";
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			
+			wsnum = 7;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
+		x -= baseinc;
+		y -= baseinc;
 		
 		x += wsspace;
 		/*
