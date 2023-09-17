@@ -3357,6 +3357,12 @@ class EVP_Footsteps : Actor
 		StringTable.Localize("$STEP_FLATSOTEX").Split(allSF,":");
 		Console.Printf("OTex Footsteps TXT Loaded");
 		*/
+		// Other CompatPacks
+		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
+		{
+			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
+			Console.Printf("Epic2 Footsteps TXT Loaded");
+		}
 		
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)
 		{

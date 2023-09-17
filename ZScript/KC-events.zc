@@ -2367,1318 +2367,1344 @@ class KC_EventHandler : EventHandler
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		if (inflicter && inflicter.target) source = inflicter.target;
-		if (inflicter && inflicter.master) mastor = inflicter.master;
-		string mod = "NONE";
-		if (victim && victim.damagetype) 
+		if (MiscItem)
 		{
-			mod = victim.damagetype; // = e.damagetype;
-			if (kcdebug_worlddied) Console.Printf("damagetype [inflicter]: %s", mod);
-		}
-		else
-		{
-			if (inflicter)
+			if (inflicter && inflicter.target) source = inflicter.target;
+			if (inflicter && inflicter.master) mastor = inflicter.master;
+			string mod = "NONE";
+			if (victim && victim.damagetype) 
 			{
-				mod = inflicter.damagetype; // = e.damagetype;
+				mod = victim.damagetype; // = e.damagetype;
 				if (kcdebug_worlddied) Console.Printf("damagetype [inflicter]: %s", mod);
 			}
 			else
 			{
-				if (source)
+				if (inflicter)
 				{
-					mod = source.damagetype; // = e.damagetype;
-					if (kcdebug_worlddied) Console.Printf("damagetype [source]: %s", mod);
+					mod = inflicter.damagetype; // = e.damagetype;
+					if (kcdebug_worlddied) Console.Printf("damagetype [inflicter]: %s", mod);
+				}
+				else
+				{
+					if (source)
+					{
+						mod = source.damagetype; // = e.damagetype;
+						if (kcdebug_worlddied) Console.Printf("damagetype [source]: %s", mod);
+					}
 				}
 			}
-		}
-		string vict = "NONE";
-		string infl = "NONE";
-		string sour = "NONE";
-		string mast = "NONE";
-		if (victim) vict = victim.GetClassName();
-		if (inflicter) infl = inflicter.GetClassName();
-		if (source) sour = source.GetClassName();
-		if (mastor) mast = mastor.GetClassName();
-		let globalvars = KCGlobalVariables.Get();
-		int TruePlayerLevel = 0;
-		if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
-		int user_type;
-		KCCreature KCCVict;
-		if (victim) KCCVict = KCCreature(victim);
-		bool waslegendary = false;
-		if (victim) 
-		{
-			let LDLItem = LDLegendaryMonsterTracker(victim.FindInventory("LDLegendaryMonsterTracker"));
-			if (LDLItem)
+			string vict = "NONE";
+			string infl = "NONE";
+			string sour = "NONE";
+			string mast = "NONE";
+			if (victim) vict = victim.GetClassName();
+			if (inflicter) infl = inflicter.GetClassName();
+			if (source) sour = source.GetClassName();
+			if (mastor) mast = mastor.GetClassName();
+			let globalvars = KCGlobalVariables.Get();
+			int TruePlayerLevel = 0;
+			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+			int user_type;
+			KCCreature KCCVict;
+			if (victim) KCCVict = KCCreature(victim);
+			bool waslegendary = false;
+			if (victim) 
 			{
-				waslegendary = true;
-				LDLItem.condemned = true;
-				victim.A_SetInventory("LDLegendaryWasLegendary",1);
+				let LDLItem = LDLegendaryMonsterTracker(victim.FindInventory("LDLegendaryMonsterTracker"));
+				if (LDLItem)
+				{
+					waslegendary = true;
+					LDLItem.condemned = true;
+					victim.A_SetInventory("LDLegendaryWasLegendary",1);
+				}
+				KCCVict = KCCreature(victim);
 			}
-			KCCVict = KCCreature(victim);
-		}
 
-		int armorbonusrolls;
-		int healthbonusrolls;
-		
-		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-		string nm, nn, no, np;
-		
-		int Kills = playera.CountInv("KillsCount");
-		// Drop Tables
-		string dropname;
-		int basedropdiv;
-		double luckbase;
-		double skillmult = 1;
-		if (skill <= 0) skillmult = 0.667;
-		if (skill == 1) skillmult = 0.8;
-		if (skill == 2) skillmult = 1;
-		if (skill == 3) skillmult = 1.25;
-		if (skill >= 4) skillmult = 1.5;
-		int droptimes;
-		int lvldivider;
-		int basechance;
-		int maxchance;
-		int bossdropmulti = randompick(randompick(1,2,2),3,3,3,3,3,3,3,3,randompick(4,4,5));
-		if (specialtype & 8 || // CCards' Ancient One Boss V:
-				specialtype & 256 || // CCards' Agitated Revenant V:
-				specialtype & 512) // CCards' ROM3R-0.666
-		{
-			bossdropmulti *= 4;
-			skillmult *= 0.25;
-		}
-		if (specialtype & 128) // CCards Exploding Spooder
-		{
-			bossdropmulti *= 0.25;
-			skillmult *= 4;
-		}
-		if (waslegendary) skillmult *= frandom(0.334,0.4585);
-		bool candropitems = false;
-		if (specialtype) candropitems = true;
-		if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
-		if (Computer(victim) ||
-				ExplosiveBarrel(victim) ||
-				Pod(victim) ||
-				Piston(victim) ||
-				Pottery1(victim) ||
-				Pottery2(victim) ||
-				Pottery3(victim) ||
-				PowerCoupling(victim) ||
-				PowerCrystal(victim) ||
-				TreeDestructible(victim) ||
-				WoodenBarrel(victim) ||
-				ZCorpseSitting(victim) ||
-				ZSuitOfArmor(victim) ||
-				ZShrub1(victim) ||
-				ZShrub2(victim) ||
-				ZXmasTree(victim) ||
-				ZPoisonShroom(victim)) candropitems = false;
-		if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
-		
-		if (!playerkill || !allykill)
-		{
-			if (random(1,256) <= 1) candropitems = true;
-												 else candropitems = false;
-		}
-		
-		if (candropitems)
-		{
-			droptimes = 1;
-			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+			int armorbonusrolls;
+			int healthbonusrolls;
 			
-			luckbase = 0.0625 + (monsterrating * 0.015625);
-			luckbase *= kc_luckfactor;
-			lvldivider = 35;
-			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
-			if (inflicter && ((source && KCPlayerPawn(source))))
+			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+			string nm, nn, no, np;
+			
+			int Kills = playera.CountInv("KillsCount");
+			// Drop Tables
+			string dropname;
+			int basedropdiv;
+			double luckbase;
+			double skillmult = 1;
+			double allcompletefactor = 0.0234375;
+			double allkillsfactor = 0.0078125;
+			double allsecretsfactor = 0.0078125;
+			double allitemsfactor = 0.0078125;
+			if (skill <= 0) skillmult = 0.667;
+			if (skill == 1) skillmult = 0.8;
+			if (skill == 2) skillmult = 1;
+			if (skill == 3) skillmult = 1.25;
+			if (skill >= 4) skillmult = 1.5;
+			int droptimes;
+			int lvldivider;
+			int basechance;
+			int maxchance;
+			int bossdropmulti = randompick(randompick(1,2,2),3,3,3,3,3,3,3,3,randompick(4,4,5));
+			if (specialtype & 8 || // CCards' Ancient One Boss V:
+					specialtype & 256 || // CCards' Agitated Revenant V:
+					specialtype & 512) // CCards' ROM3R-0.666
 			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				bossdropmulti *= 4;
+				skillmult *= 0.25;
 			}
-			else
-			if (inflicter && KCPlayerPawn(inflicter))
+			if (specialtype & 128) // CCards Exploding Spooder
 			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				bossdropmulti *= 0.25;
+				skillmult *= 4;
 			}
-			if (victim.bBOSS) droptimes *= bossdropmulti;
-			for (int i; i < droptimes; i++)
+			if (waslegendary) skillmult *= frandom(0.334,0.4585);
+			bool candropitems = false;
+			if (specialtype) candropitems = true;
+			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
+			if (Computer(victim) ||
+					ExplosiveBarrel(victim) ||
+					Pod(victim) ||
+					Piston(victim) ||
+					Pottery1(victim) ||
+					Pottery2(victim) ||
+					Pottery3(victim) ||
+					PowerCoupling(victim) ||
+					PowerCrystal(victim) ||
+					TreeDestructible(victim) ||
+					WoodenBarrel(victim) ||
+					ZCorpseSitting(victim) ||
+					ZSuitOfArmor(victim) ||
+					ZShrub1(victim) ||
+					ZShrub2(victim) ||
+					ZXmasTree(victim) ||
+					ZPoisonShroom(victim)) candropitems = false;
+			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
+			
+			if (!playerkill || !allykill)
 			{
-				// Specific Drops from Specific Monsters
-				let monsterp = Actor(victim);
+				if (random(1,256) <= 1) candropitems = true;
+													 else candropitems = false;
+			}
+			
+			if (candropitems)
+			{
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
 				
-				// Doom Monsters
-				basedropdiv = 512;
-				basedropdiv *= skillmult;
-				luckbase = 0.25 + (monsterrating * 0.0625);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
-				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				
-				double rand = 2.0;
-				string droptype;
-				if (vict == "Zombieman" ||
-						vict == "ShotgunGuy" ||
-						vict == "ChaingunGuy" || 
-						vict == "WolfensteinSS")
+				lvldivider = 35;
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
-					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("RadSuit2",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (vict == "Cacodemon")
+				else
+				if (inflicter && KCPlayerPawn(inflicter))
 				{
-					if (random(1,basedropdiv) <= random(2,3)) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (vict == "Demon" || 
-						vict == "Spectre")
+				if (victim.bBOSS) droptimes *= bossdropmulti;
+				for (int i; i < droptimes; i++)
 				{
-					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				}
-				if (vict == "Archvile")
-				{
-					if (random(1,basedropdiv) <= random(4,5)) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				}
-				if (vict == "HellKnight" ||
-						vict == "BaronOfHell")
-				{
-					if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				}
-				
-				if (Zombieman(victim) || 
-						ChaingunGuy(victim) || 
-						SpiderMastermind(victim))
-				{
-					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+					// Specific Drops from Specific Monsters
+					let monsterp = Actor(victim);
+					
+					// Doom Monsters
+					basedropdiv = 512;
+					basedropdiv *= skillmult;
+					luckbase = 0.25 + (monsterrating * 0.0625);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					
+					double rand = 2.0;
+					string droptype;
+					if (vict == "Zombieman" ||
+							vict == "ShotgunGuy" ||
+							vict == "ChaingunGuy" || 
+							vict == "WolfensteinSS")
 					{
-						droptype = "Clip";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("RadSuit2",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+					if (vict == "Cacodemon")
 					{
-						droptype = "Clip";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,basedropdiv) <= random(2,3)) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+					if (vict == "Demon" || 
+							vict == "Spectre")
 					{
-						droptype = "Clip";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (vict == "Archvile")
+					{
+						if (random(1,basedropdiv) <= random(4,5)) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					if (vict == "HellKnight" ||
+							vict == "BaronOfHell")
+					{
+						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					
-					if (Zombieman(victim))
+					if (Zombieman(victim) || 
+							ChaingunGuy(victim) || 
+							SpiderMastermind(victim))
 					{
+						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+						{
+							droptype = "Clip";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+						{
+							droptype = "Clip";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "Clip";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						
+						if (Zombieman(victim))
+						{
+							if (random(1,basedropdiv) <= 1) 
+							{
+								droptype = "Pistol";
+								if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "Glock21";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+								{
+									droptype = "Clip";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+							}
+						}
+						if (ChaingunGuy(victim))
+						{
+							if (random(1,basedropdiv) <= 1) 
+							{
+								if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+								{
+									droptype = "TommyGun";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+									{
+										droptype = "TommAmmo";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+									if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+									{
+										droptype = "TommAmmo";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+									if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+									{
+										droptype = "TommAmmo";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+								}
+								else
+								{
+									droptype = "Chaingun";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+									{
+										droptype = "Clip";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+									if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+									{
+										droptype = "Clip";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+									if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+									{
+										droptype = "Clip";
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									}
+								}
+							}
+						}
+						if (SpiderMastermind(victim))
+						{
+							droptype = "Chaingun";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							droptype = "Clip";
+							if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "Chaingun";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+					}
+					if (ShotgunGuy(victim))
+					{
+						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "Shell";
+							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 						if (random(1,basedropdiv) <= 1) 
 						{
-							droptype = "Pistol";
-							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "Glock21";
+							droptype = "Shotgun";
+							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "SuperShotgun";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 							{
-								droptype = "Clip";
-								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								droptype = "Shell";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
 							{
-								droptype = "Clip";
-								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								droptype = "Shell";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 							{
-								droptype = "Clip";
-								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								droptype = "Shell";
+								if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
 					}
-					if (ChaingunGuy(victim))
+					if (Revenant(victim))
 					{
+						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "Bolts";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Cell";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Rocket";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Rocket";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+						if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
+						{
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								droptype = "Rocket";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+					}
+					if (Arachnotron(victim))
+					{
+						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+						{
+							droptype = "Cell";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 						if (random(1,basedropdiv) <= 1) 
 						{
 							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
 							{
-								droptype = "TommyGun";
+								droptype = "TeslaCannon";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-								{
-									droptype = "TommAmmo";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
-									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								}
-								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-								{
-									droptype = "TommAmmo";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
-									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								}
 								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 								{
-									droptype = "TommAmmo";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									droptype = "Bolts";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+								{
+									droptype = "Bolts";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+								{
+									droptype = "Bolts";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								}
 							}
 							else
 							{
-								droptype = "Chaingun";
+								droptype = "PlasmaRifle";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								}
-								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-								}
 								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									droptype = "Cell";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+								{
+									droptype = "Cell";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+								{
+									droptype = "Cell";
+									if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								}
 							}
 						}
 					}
-					if (SpiderMastermind(victim))
+					if (HellKnight(victim) ||
+							BaronOfHell(victim))
 					{
-						droptype = "Chaingun";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						droptype = "Clip";
-						if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
-
+						int dropdiv = 64;
+						if (BaronOfHell(victim)) dropdiv = 16;
+						if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
+						{
+							droptype = "BackPack";
+							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 						{
-							droptype = "Chaingun";
+							droptype = "BackPack";
+							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
+						{
+							droptype = "BackPack";
+							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
+						if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
+						{
+							droptype = "BackPack";
+							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
 					}
-				}
-				if (ShotgunGuy(victim))
-				{
-					if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-					{
-						droptype = "Shell";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-					{
-						droptype = "Shell";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-					{
-						droptype = "Shell";
-						if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,basedropdiv) <= 1) 
-					{
-						droptype = "Shotgun";
-						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "SuperShotgun";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-						{
-							droptype = "Shell";
-							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-						{
-							droptype = "Shell";
-							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-						{
-							droptype = "Shell";
-							if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ShellBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-				}
-				if (Revenant(victim))
-				{
-					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "Bolts";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Cell";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "Bolts";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Cell";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "Bolts";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Cell";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Rocket";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Rocket";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					if (random(1,(basedropdiv*1.75)) <= random(2,3)) 
-					{
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							droptype = "Rocket";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-				}
-				if (Arachnotron(victim))
-				{
-					if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-					{
-						droptype = "Cell";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-					{
-						droptype = "Cell";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
-					{
-						droptype = "Cell";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,basedropdiv) <= 1) 
+					if (Cyberdemon(victim))
 					{
 						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
 						{
-							droptype = "TeslaCannon";
+							droptype = "Devastator";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							droptype = "MiniRockets";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "Devastator";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
 							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 							{
-								droptype = "Bolts";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 							{
-								droptype = "Bolts";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
-							if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+							if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 							{
-								droptype = "Bolts";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
+							{
+								droptype = "MiniRockets";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
 						else
 						{
-							droptype = "PlasmaRifle";
+							droptype = "RocketLauncher";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							droptype = "RocketAmmo";
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "RocketLauncher";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+							{
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+							{
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
 							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 							{
-								droptype = "Cell";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
+							{
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 							{
-								droptype = "Cell";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
-							if (random(1,(basedropdiv*0.875)) <= random(2,3)) 
+							if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 							{
-								droptype = "Cell";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
+							{
+								droptype = "RocketAmmo";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
 					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom] (\c[brick]%s\c-): %d", vict, basedropdiv);
+					
+					// Heretic Monsters
+					basedropdiv = 512;
+					basedropdiv *= skillmult;
+					luckbase = 0.25 + (monsterrating * 0.0625);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					
+					
+					// Hexen Monsters
+					basedropdiv = 512;
+					basedropdiv *= skillmult;
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					
+					
+					// Strife Monsters
+					basedropdiv = 512;
+					basedropdiv *= skillmult;
+					luckbase = 0.25 + (monsterrating * 0.0625);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				}
-				if (HellKnight(victim) ||
-						BaronOfHell(victim))
+				
+				
+				// Ammo/Weapons
+				string droptype;
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+				luckbase *= kc_luckfactor;
+				lvldivider = 50;
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
-					int dropdiv = 64;
-					if (BaronOfHell(victim)) dropdiv = 16;
-					if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
-					{
-						droptype = "BackPack";
-						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-					{
-						droptype = "BackPack";
-						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-					{
-						droptype = "BackPack";
-						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-					if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
-					{
-						droptype = "BackPack";
-						if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (Cyberdemon(victim))
+				else
+				if (inflicter && KCPlayerPawn(inflicter))
 				{
-					if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
-					{
-						droptype = "Devastator";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						droptype = "MiniRockets";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-						{
-							droptype = "Devastator";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
-						{
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
-					else
-					{
-						droptype = "RocketLauncher";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						droptype = "RocketAmmo";
-						if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-						{
-							droptype = "RocketLauncher";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
-						{
-							droptype = "RocketAmmo";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBox";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-					}
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("Monster Specific Drop [Doom] (\c[brick]%s\c-): %d", vict, basedropdiv);
-				
-				// Heretic Monsters
-				basedropdiv = 512;
-				basedropdiv *= skillmult;
-				luckbase = 0.25 + (monsterrating * 0.0625);
-				luckbase *= kc_luckfactor;
-				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				
-				
-				// Hexen Monsters
-				basedropdiv = 512;
-				basedropdiv *= skillmult;
-				luckbase = 0.25 + (monsterrating * 0.0625);
-				luckbase *= kc_luckfactor;
-				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				
-				
-				// Strife Monsters
-				basedropdiv = 512;
-				basedropdiv *= skillmult;
-				luckbase = 0.25 + (monsterrating * 0.0625);
-				luckbase *= kc_luckfactor;
-				if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-			}
-			
-			
-			// Ammo/Weapons
-			string droptype;
-			droptimes = 1;
-			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
-			luckbase = 0.0625 + (monsterrating * 0.015625);
-			luckbase *= kc_luckfactor;
-			lvldivider = 50;
-			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
-			if (inflicter && ((source && KCPlayerPawn(source))))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			else
-			if (inflicter && KCPlayerPawn(inflicter))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			if (victim.bBOSS) droptimes *= bossdropmulti;
-			for (int i; i < droptimes; i++)
-			{
-				// Weapons/Backpacks [Type 6]
-				basechance = kc_inventorydroprate6;
-				basechance *= skillmult;
-				luckbase = 0.25 + (monsterrating * 0.0625);
-				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
-				int rollrand = random(1,maxchance);
-				if (rollrand <= 1) // Main Drop Chance
+				if (victim.bBOSS) droptimes *= bossdropmulti;
+				for (int i; i < droptimes; i++)
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon/Ammo Drop Roll Success");
-					int temp = 1;
-					if (MiscItem) 
+					// Weapons/Backpacks [Type 6]
+					basechance = kc_inventorydroprate6;
+					basechance *= skillmult;
+					luckbase = 0.25 + (monsterrating * 0.0625);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+					int rollrand = random(1,maxchance);
+					if (rollrand <= 1) // Main Drop Chance
 					{
-						temp = (1 + (TrueLuck * 0.08334));
-						temp *= 2.5;
-					}
-					int randroll = random(1,32);
-					nm = "CCards_Actor_Maestro"; if (vict == nm) randroll = random(1,4);
-					if (randroll <= temp) // Weapons
-					{
-						double rand = 1.0;
-						user_type = random(1,13);
-						droptype = "Backpack";
-						if (user_type == 1) 
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon/Ammo Drop Roll Success");
+						int temp = 1;
+						if (MiscItem) 
 						{
-							droptype = "Pistol";
-							if (playera.GetClassName() == "KCPlayer") droptype = "PistolMarine";
-							if (random(1,4) <= 1 && playera.CountInv(droptype)) droptype = "Glock21";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
+							temp = (1 + (TrueLuck * 0.08334));
+							temp *= 2.5;
 						}
-						if (user_type == 2) 
+						int randroll = random(1,32);
+						nm = "CCards_Actor_Maestro"; if (vict == nm) randroll = random(1,4);
+						if (randroll <= temp) // Weapons
 						{
-							droptype = "Chaingun";
-							if (playera.GetClassName() == "KCPlayer") droptype = "ChaingunMarine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 3) 
-						{
-							droptype = "Shotgun";
-							if (playera.GetClassName() == "KCPlayer") droptype = "ShotgunMarine";
-							if (playera.CountInv(droptype)) 
+							double rand = 1.0;
+							user_type = random(1,13);
+							droptype = "Backpack";
+							if (user_type == 1) 
 							{
-								if (random(1,32) <= 1) droptype = "SuperShotgunMarine";
+								droptype = "Pistol";
+								if (playera.GetClassName() == "KCPlayer") droptype = "PistolMarine";
+								if (random(1,4) <= 1 && playera.CountInv(droptype)) droptype = "Glock21";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
 							}
-						}
-						if (user_type == 4) 
-						{
-							droptype = "TommyGun";
-							if (playera.CountInv(droptype)) 
+							if (user_type == 2) 
 							{
-								droptype = "DualTommyGuns";
+								droptype = "Chaingun";
+								if (playera.GetClassName() == "KCPlayer") droptype = "ChaingunMarine";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
-																					 else droptype = "TommyGun";
 							}
-							else droptype = "TommyGun";
-						}
-						if (user_type == 5) 
-						{
-							droptype = "SuperShotgun";
-							if (playera.GetClassName() == "KCPlayer") droptype = "SuperShotgunMarine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 6) 
-						{
-							droptype = "RocketLauncher";
-							if (playera.GetClassName() == "KCPlayer") droptype = "RocketLauncherMarine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 7) 
-						{
-							droptype = "BFG9000";
-							if (playera.GetClassName() == "KCPlayer") droptype = "BFG9000Marine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 8)
-						{
-							droptype = "PlasmaRifle";
-							if (playera.GetClassName() == "KCPlayer") droptype = "PlasmaRifleMarine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 9)
-						{
-							droptype = "Devastator";
-							if (playera.CountInv(droptype)) 
+							if (user_type == 3) 
 							{
-								droptype = "DualDevastators";
+								droptype = "Shotgun";
+								if (playera.GetClassName() == "KCPlayer") droptype = "ShotgunMarine";
+								if (playera.CountInv(droptype)) 
+								{
+									if (random(1,32) <= 1) droptype = "SuperShotgunMarine";
+									if (playera.CountInv(droptype)) droptype = "Backpack";
+								}
+							}
+							if (user_type == 4) 
+							{
+								droptype = "TommyGun";
+								if (playera.CountInv(droptype)) 
+								{
+									droptype = "DualTommyGuns";
+									if (playera.CountInv(droptype)) droptype = "Backpack";
+																						 else droptype = "TommyGun";
+								}
+								else droptype = "TommyGun";
+							}
+							if (user_type == 5) 
+							{
+								droptype = "SuperShotgun";
+								if (playera.GetClassName() == "KCPlayer") droptype = "SuperShotgunMarine";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
-																					 else droptype = "DevastatorGenerator";
 							}
-							else droptype = "DevastatorGenerator";
-						}
-						if (user_type == 10)
-						{
-							droptype = "SawThrower";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 11)
-						{
-							droptype = "ImpalerXBow";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (user_type == 12) 
-						{
-							droptype = "TeslaCannon";
-							if (playera.CountInv(droptype)) 
+							if (user_type == 6) 
 							{
-								if (playera.CountInv("DualTeslaCannons")) droptype = "Backpack";
+								droptype = "RocketLauncher";
+								if (playera.GetClassName() == "KCPlayer") droptype = "RocketLauncherMarine";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
 							}
-						}
-						if (user_type == 13) 
-						{
-							droptype = "BHGen";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-						}
-						if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
-						if (!(droptype == "Backpack" ||
-								droptype == "CombatPack"))
-						{
-							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-							double raredropsndvol = frandom(1.75,2.25);
-							int raredropsndchannel = randompick(191,192,222,223,264,265);
-							victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
-						else
-						{
-							
-						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[green]Weapon Drop\c- - user_type: %d [%s]", user_type, droptype);
-					}
-					else // Ammo
-					{
-						double rand = 3.0;
-						int temp = 48;
-						if (MiscItem) temp = (48 + (TrueLuck * 0.25));
-						int randroll2 = random(1,256);
-						int ammodrops = randompick(1,1,1,1,1,1,1,2,2,3);
-						if (MiscItem) ammodrops += (TrueLuck * frandompick(0,0,0,0,0,0,0,0.0125,0.0125,0.025));
-						nm = "CCards_Actor_Maestro"; 
-						if (vict == nm) 
-						{
-							temp *= random(2,3);
-							ammodrops *= random(2,4);
-							if (random(1,4) <= 1) randroll2 = random(1,128);
-						}
-						for (int i2; i2 < ammodrops; i2++)
-						{
-							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
-							if (randroll2 <= temp) 
+							if (user_type == 7) 
 							{
-								user_type = random(1,13);
-								if (user_type == 1) droptype = "ClipBox";
-								if (user_type == 2) droptype = "ClipBox";
-								if (user_type == 3) droptype = "ShellBox";
-								if (user_type == 4) droptype = "TommAmmoBig";
-								if (user_type == 5) droptype = "ShellBox";
-								if (user_type == 6) droptype = "RocketBox";
-								if (user_type == 7) droptype = "CellPack";
-								if (user_type == 8) droptype = "CellPack";
-								if (user_type == 9) droptype = "MiniRocketBox";
-								if (user_type == 10) droptype = "SawBox";
-								if (user_type == 11) droptype = "ImpalerBolts";
-								if (user_type == 12) droptype = "BoltsLarge";
-								if (user_type == 13) droptype = "CellPack";
+								droptype = "BFG9000";
+								if (playera.GetClassName() == "KCPlayer") droptype = "BFG9000Marine";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (user_type == 8)
+							{
+								droptype = "PlasmaRifle";
+								if (playera.GetClassName() == "KCPlayer") droptype = "PlasmaRifleMarine";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (user_type == 9)
+							{
+								droptype = "Devastator";
+								if (playera.CountInv(droptype)) 
+								{
+									droptype = "DualDevastators";
+									if (playera.CountInv(droptype)) droptype = "Backpack";
+																						 else droptype = "DevastatorGenerator";
+								}
+								else droptype = "DevastatorGenerator";
+							}
+							if (user_type == 10)
+							{
+								droptype = "SawThrower";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (user_type == 11)
+							{
+								droptype = "ImpalerXBow";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (user_type == 12) 
+							{
+								droptype = "TeslaCannon";
+								if (playera.CountInv(droptype)) 
+								{
+									if (playera.CountInv("DualTeslaCannons")) droptype = "Backpack";
+								}
+							}
+							if (user_type == 13) 
+							{
+								droptype = "BHGen";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
+							if (!(droptype == "Backpack" ||
+									droptype == "CombatPack"))
+							{
+								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							else
 							{
-								user_type = random(1,13);
-								if (user_type == 1) droptype = "Clip";
-								if (user_type == 2) droptype = "Clip";
-								if (user_type == 3) droptype = "Shell";
-								if (user_type == 4) droptype = "TommAmmo";
-								if (user_type == 5) droptype = "Shell";
-								if (user_type == 6) droptype = "RocketAmmo";
-								if (user_type == 7) droptype = "Cell";
-								if (user_type == 8) droptype = "Cell";
-								if (user_type == 9) droptype = "MiniRocket";
-								if (user_type == 10) droptype = "Saws";
-								if (user_type == 11) droptype = "ImpalerBolts";
-								if (user_type == 12) droptype = "Bolts";
-								if (user_type == 13) droptype = "Cell";
+								
 							}
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[green]Weapon Drop\c- - user_type: %d [%s]", user_type, droptype);
 						}
+						else // Ammo
+						{
+							double rand = 3.0;
+							int temp = 48;
+							if (MiscItem) temp = (48 + (TrueLuck * 0.25));
+							int randroll2 = random(1,256);
+							int ammodrops = randompick(1,1,1,1,1,1,1,2,2,3);
+							if (MiscItem) ammodrops += (TrueLuck * frandompick(0,0,0,0,0,0,0,0.0125,0.0125,0.025));
+							nm = "CCards_Actor_Maestro"; 
+							if (vict == nm) 
+							{
+								temp *= random(2,3);
+								ammodrops *= random(2,4);
+								if (random(1,4) <= 1) randroll2 = random(1,128);
+							}
+							for (int i2; i2 < ammodrops; i2++)
+							{
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
+								if (randroll2 <= temp) 
+								{
+									user_type = random(1,13);
+									if (user_type == 1) droptype = "ClipBox";
+									if (user_type == 2) droptype = "ClipBox";
+									if (user_type == 3) droptype = "ShellBox";
+									if (user_type == 4) droptype = "TommAmmoBig";
+									if (user_type == 5) droptype = "ShellBox";
+									if (user_type == 6) droptype = "RocketBox";
+									if (user_type == 7) droptype = "CellPack";
+									if (user_type == 8) droptype = "CellPack";
+									if (user_type == 9) droptype = "MiniRocketBox";
+									if (user_type == 10) droptype = "SawBox";
+									if (user_type == 11) droptype = "ImpalerBolts";
+									if (user_type == 12) droptype = "BoltsLarge";
+									if (user_type == 13) droptype = "CellPack";
+								}
+								else
+								{
+									user_type = random(1,13);
+									if (user_type == 1) droptype = "Clip";
+									if (user_type == 2) droptype = "Clip";
+									if (user_type == 3) droptype = "Shell";
+									if (user_type == 4) droptype = "TommAmmo";
+									if (user_type == 5) droptype = "Shell";
+									if (user_type == 6) droptype = "RocketAmmo";
+									if (user_type == 7) droptype = "Cell";
+									if (user_type == 8) droptype = "Cell";
+									if (user_type == 9) droptype = "MiniRocket";
+									if (user_type == 10) droptype = "Saws";
+									if (user_type == 11) droptype = "ImpalerBolts";
+									if (user_type == 12) droptype = "Bolts";
+									if (user_type == 13) droptype = "Cell";
+								}
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);
+							}
+						}
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon/Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll);
 					}
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Weapon/Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll);
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [weapon/ammo]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [weapon/ammo]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
-			}
-			
-			
-			// Heal Items
-			droptimes = 1;
-			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
-			luckbase = 0.0625 + (monsterrating * 0.015625);
-			luckbase *= kc_luckfactor;
-			lvldivider = 35;
-			
-			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
-			if (inflicter && ((source && KCPlayerPawn(source))))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			else
-			if (inflicter && KCPlayerPawn(inflicter))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			if (victim.bBOSS) droptimes *= (bossdropmulti * 2);
-			for (int i; i < droptimes; i++)
-			{
-				double rand = 2.0;
-				// Health Items [Type 7]
-				basechance = kc_inventorydroprate7;
-				basechance *= skillmult;
-				luckbase = 0.5 + (monsterrating * 0.125);
-				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
 				
-				if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				if (random(1,(maxchance*9)) == 1) 
-				{
-					string bname = "Berserk";
-					victim.A_SpawnItemEx(bname,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [heal]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
-			}
-
-			droptimes = 1;
-			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
-			luckbase = 0.0625 + (monsterrating * 0.015625);
-			luckbase *= kc_luckfactor;
-			lvldivider = 70;
-			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
-			if (inflicter && ((source && KCPlayerPawn(source))))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			else
-			if (inflicter && KCPlayerPawn(inflicter))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			if (victim.bBOSS) droptimes *= bossdropmulti;
-			for (int i; i < droptimes; i++)
-			{
-				double rand = 2.0;
-				// Armor Items [Type 8]
-				basechance = kc_inventorydroprate8;
-				basechance *= skillmult;
-				luckbase = 1.0 + (monsterrating * 0.25);
+				
+				// Heal Items
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				int rollrand = random(1,maxchance);
-				if (rollrand <= 1)
+				lvldivider = 35;
+				
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Full Armor Drop Roll Success");
-					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					double raredropsndvol = frandom(1.75,2.25);
-					int raredropsndchannel = randompick(191,192,222,223,264,265);
-					victim.A_StartSound("rareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					//Full Armor Drops
-					user_type = random(1,100);
-					if (user_type >= 1 && user_type <= 67) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-					else if (user_type >= 68 && user_type <= 89) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-					else if (user_type >= 90 && user_type <= 98) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-					else if (user_type >= 99) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
 				else
+				if (inflicter && KCPlayerPawn(inflicter))
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses [Attempt]");
-					armorbonusrolls = 1;
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				}
+				if (victim.bBOSS) droptimes *= (bossdropmulti * 2);
+				for (int i; i < droptimes; i++)
+				{
+					double rand = 2.0;
+					// Health Items [Type 7]
+					basechance = kc_inventorydroprate7;
+					basechance *= skillmult;
+					luckbase = 0.5 + (monsterrating * 0.125);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
 					
-					// Armor Bonus Drops
-					if (armorbonusrolls > 0)
+					if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (random(1,(maxchance*9)) == 1) 
 					{
-						double rand = 2.0;
-						int baseval = randompick(2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3);
-						for (int i = 0; i < armorbonusrolls; i++)
-						{
-							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses \c[orange][Attempt %d / %d]", (i+1), armorbonusrolls);
-							string armortype = "ArmorBonus2";
-							if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-							if (random(1,(baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-							if (random(1,(baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-							if (random(1,(baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
+						string bname = "Berserk";
+						victim.A_SpawnItemEx(bname,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [heal]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [armor]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
-				
-				healthbonusrolls = (randompick(0,0,0,1,1,1,1,2) + (TruePlayerLevel * 0.03125));
-				// Health Bonuses
-				if (healthbonusrolls > 0)
-				{
-					double rand = 3.0;
-					int baseval2 = randompick(2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4);
-					for (int i = 0; i < healthbonusrolls; i++)
-					{
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Health Bonuses \c[orange][Attempt %d / %d]", (i+1), healthbonusrolls);
-						string teatype = "HealthBonus2";
-						if (random(1,(baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						if (random(1,(baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-					}
-				}
-			}
-			
-			// Random Inventory Item Drops
-			droptimes = 1;
-			if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-			if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-			if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-			if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-			if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-			if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-			if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-			if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
-			luckbase = 0.0625 + (monsterrating * 0.015625);
-			luckbase *= kc_luckfactor;
-			if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
-			if (inflicter && ((source && KCPlayerPawn(source))))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			else
-			if (inflicter && KCPlayerPawn(inflicter))
-			{
-				if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-			}
-			if (victim.bBOSS) droptimes *= bossdropmulti;
-			for (int i; i < droptimes; i++)
-			{
-				// Primary [Type 1]
-				basechance = kc_inventorydroprate1;
-				basechance *= skillmult;
-				luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
+
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				int randroll = random(1,maxchance);
-				if (randroll <= 1)
+				lvldivider = 70;
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Primary Drop [success]");
-					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					double raredropsndvol = frandom(1.75,2.25);
-					int raredropsndchannel = randompick(191,192,222,223,264,265);
-					//victim.A_StartSound("misc/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					//user_type = random(1,145);
-					//if (user_type >= 1 && user_type <= 60) { victim.A_SpawnItemEx("CherryBombPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-					//if (user_type >= 61 && user_type <= 100) { victim.A_SpawnItemEx("SpinnerPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-					//if (user_type >= 101 && user_type <= 125) { victim.A_SpawnItemEx("BRocketPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-					//if (user_type >= 126 && user_type <= 140) { victim.A_SpawnItemEx("PopperPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-					//if (user_type >= 141 && user_type <= 144) { victim.A_SpawnItemEx("SnakePickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-					//if (user_type >= 145) { victim.A_SpawnItemEx("KilletanteEffigy",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [primaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
-				
-				// Secondary [Type 2]
-				basechance = kc_inventorydroprate2;
-				basechance *= skillmult;
-				luckbase = 0.5 + (monsterrating * 0.125); // (512)
-				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				int rollrand = random(1,maxchance);
-				if (rollrand <= 1)
+				else
+				if (inflicter && KCPlayerPawn(inflicter))
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Secondary Drop [success]");
-					//
-					//
-					//
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
-				
-				// Rare Powerup Drop [Type 3]
-				basechance = kc_inventorydroprate3;
-				basechance *= skillmult;
-				luckbase = 2.0 + (monsterrating * 0.5); // (512) 
-				luckbase *= kc_luckfactor;
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				rollrand = random(1,maxchance);
-				if (rollrand <= 1)
+				if (victim.bBOSS) droptimes *= bossdropmulti;
+				for (int i; i < droptimes; i++)
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("Rare Drop [success]");
-					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					double raredropsndvol = frandom(1.75,2.25);
-					int raredropsndchannel = randompick(191,192,222,223,264,265);
-					string raredropsndname = "rareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					if (gameinfo.gametype & 1) // Doom Mode
+					double rand = 2.0;
+					// Armor Items [Type 8]
+					basechance = kc_inventorydroprate8;
+					basechance *= skillmult;
+					luckbase = 1.0 + (monsterrating * 0.25);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					int rollrand = random(1,maxchance);
+					if (rollrand <= 1)
 					{
-						user_type = random(1,22);
-						if (user_type >= 1 && user_type <= 7) victim.A_SpawnItemEx("BlurSphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-						if (user_type >= 8 && user_type <= 13) victim.A_SpawnItemEx("Infrared",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-						if (user_type >= 14 && user_type <= 19) victim.A_SpawnItemEx("RadSuit",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-						if (user_type >= 20 && user_type <= 22) victim.A_SpawnItemEx("InvulnerabilitySphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-					}
-					if (gameinfo.gametype & 2) // Heretic Mode
-					{
-						user_type = random(1,13);
-						if (user_type >= 1 && user_type <= 6) victim.A_SpawnItemEx("ArtiInvisibility",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-						if (user_type >= 7 && user_type <= 12) victim.A_SpawnItemEx("ArtiTomeOfPower",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-						if (user_type >= 13) victim.A_SpawnItemEx("ArtiInvulnerability",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-					}
-					if (gameinfo.gametype & 4) // Hexen Mode
-					{
-						user_type = random(1,20);
-						victim.A_SpawnItemEx("ArtiInvulnerability2",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-					}
-					if (gameinfo.gametype & 8) // Strife Mode
-					{
-					}
-				}
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [tritaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
-				
-				// Extremely Rare Drops [Type 5]
-				int timefreezes;
-				if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
-				basechance = kc_inventorydroprate5;
-				basechance *= skillmult;
-				if (timefreezes)
-				{
-					double basediv = 0.5;
-					double basediv2 = 0.125;
-					if ((playera.CountInv("KCTimeFreezer1") ||
-							 playera.CountInv("KCTimeFreezer2") ||
-							 playera.CountInv("KCTimeFreezer3")))
-					{
-						basediv = 0.5;
-						basediv2 = 0.125;
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Full Armor Drop Roll Success");
+						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						double raredropsndvol = frandom(1.75,2.25);
+						int raredropsndchannel = randompick(191,192,222,223,264,265);
+						victim.A_StartSound("rareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						//Full Armor Drops
+						user_type = random(1,100);
+						if (user_type >= 1 && user_type <= 67) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 68 && user_type <= 89) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 90 && user_type <= 98) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 99) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
 					}
 					else
 					{
-						basediv = 0.9375;
-						basediv2 = 0.25;
-					}
-					if (MiscItem.TimeArmorRelicsOwned >= 1) 
-					{
-						basediv *= 1.334;
-						basediv2 *= 0.67;
-					}
-					if (MiscItem.TimeArmorRelicsOwned >= 2) 
-					{
-						basediv *= 1.334;
-						basediv2 *= 0.67;
-					}
-					if (timefreezes >= 20)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 40)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 80)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 160)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 320)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 640)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 1280)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 2560)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 5120)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 10240)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-					if (timefreezes >= 20480)
-					{
-						basechance *= basediv;
-						basechance -= (timefreezes * basediv2);
-					}
-				}
-				luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
-				luckbase *= kc_tsaluckfactor;
-				if (MiscItem)
-				{
-					if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
-					if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
-					
-					if (MiscItem.TimeArmorRelicsOwned <= 2)
-					{
-						int TSATrueLuck;
-						int PLevel = TruePlayerLevel;
-						if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
-						if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
-						if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
-						if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
-						if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
-						TSATrueLuck *= kc_pluckfactor;
-						if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-						if (basechance < 1) basechance = 1;
-						maxchance = basechance;
-						rollrand = random(1,maxchance);
-						if (rollrand <= 1)
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses [Attempt]");
+						armorbonusrolls = 1;
+						
+						// Armor Bonus Drops
+						if (armorbonusrolls > 0)
 						{
-							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
-							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-							double raredropsndvol = frandom(1.75,2.25);
-							int raredropsndchannel = randompick(193,194,224,225,266,267);
-							string raredropsndname = "ultrarareitem/spawn";
-							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-
-							raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-							raredropsndvol = frandom(1.75,2.25);
-							raredropsndchannel = randompick(293,294,324,325,366,367);
-							raredropsndname = "tsarmor/spawn";
-							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-							
-							victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							double rand = 2.0;
+							int baseval = randompick(2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3);
+							for (int i = 0; i < armorbonusrolls; i++)
+							{
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses \c[orange][Attempt %d / %d]", (i+1), armorbonusrolls);
+								string armortype = "ArmorBonus2";
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
 						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
+					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [armor]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
+					
+					healthbonusrolls = (randompick(0,0,0,1,1,1,1,2) + (TruePlayerLevel * 0.03125));
+					// Health Bonuses
+					if (healthbonusrolls > 0)
+					{
+						double rand = 3.0;
+						int baseval2 = randompick(2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4);
+						for (int i = 0; i < healthbonusrolls; i++)
+						{
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Health Bonuses \c[orange][Attempt %d / %d]", (i+1), healthbonusrolls);
+							string teatype = "HealthBonus2";
+							if (random(1,(baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						}
 					}
 				}
 				
-				/*
-				// ?? [Type 10]
-				basechance = kc_inventorydroprate10;
-				basechance *= skillmult;
-				luckbase = 1.25 + (monsterrating * 0.3125);
-				luckbase *= kc_luckfactor
-				// Weapons and IP Attacks do not effect drop rates here V:
-				if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-				maxchance = basechance;
-				if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [ultimarare]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
-				if (random(1,maxchance) <= 1)
+				// Random Inventory Item Drops
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+				luckbase *= kc_luckfactor;
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("?? Drop [success]");
-					double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					double raredropsndvol = frandom(1.75,2.25);
-					int raredropsndchannel = randompick(193,194,224,225,266,267);
-					string raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					raredropsndvol = frandom(1.75,2.25);
-					raredropsndchannel = randompick(293,294,324,325,366,367);
-					raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					raredropsndvol = frandom(1.75,2.25);
-					raredropsndchannel = randompick(393,394,424,425,466,467);
-					raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					raredropsndvol = frandom(1.75,2.25);
-					raredropsndchannel = randompick(493,494,524,525,566,567);
-					raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-					raredropsndvol = frandom(1.75,2.25);
-					raredropsndchannel = randompick(593,594,624,625,666,667);
-					raredropsndname = "ultrarareitem/spawn";
-					victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-					
-					victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
 				}
-				*/
+				else
+				if (inflicter && KCPlayerPawn(inflicter))
+				{
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				}
+				if (victim.bBOSS) droptimes *= bossdropmulti;
+				for (int i; i < droptimes; i++)
+				{
+					// Primary [Type 1]
+					basechance = kc_inventorydroprate1;
+					basechance *= skillmult;
+					luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					int randroll = random(1,maxchance);
+					if (randroll <= 1)
+					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Primary Drop [success]");
+						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						double raredropsndvol = frandom(1.75,2.25);
+						int raredropsndchannel = randompick(191,192,222,223,264,265);
+						//victim.A_StartSound("misc/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						//user_type = random(1,145);
+						//if (user_type >= 1 && user_type <= 60) { victim.A_SpawnItemEx("CherryBombPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+						//if (user_type >= 61 && user_type <= 100) { victim.A_SpawnItemEx("SpinnerPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+						//if (user_type >= 101 && user_type <= 125) { victim.A_SpawnItemEx("BRocketPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+						//if (user_type >= 126 && user_type <= 140) { victim.A_SpawnItemEx("PopperPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+						//if (user_type >= 141 && user_type <= 144) { victim.A_SpawnItemEx("SnakePickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+						//if (user_type >= 145) { victim.A_SpawnItemEx("KilletanteEffigy",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
+					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [primaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
+					
+					// Secondary [Type 2]
+					basechance = kc_inventorydroprate2;
+					basechance *= skillmult;
+					luckbase = 0.5 + (monsterrating * 0.125); // (512)
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					int rollrand = random(1,maxchance);
+					if (rollrand <= 1)
+					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Secondary Drop [success]");
+						//
+						//
+						//
+					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
+					
+					// Rare Powerup Drop [Type 3]
+					basechance = kc_inventorydroprate3;
+					basechance *= skillmult;
+					luckbase = 2.0 + (monsterrating * 0.5); // (512) 
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					rollrand = random(1,maxchance);
+					if (rollrand <= 1)
+					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Rare Drop [success]");
+						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						double raredropsndvol = frandom(1.75,2.25);
+						int raredropsndchannel = randompick(191,192,222,223,264,265);
+						string raredropsndname = "rareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						if (gameinfo.gametype & 1) // Doom Mode
+						{
+							user_type = random(1,22);
+							if (user_type >= 1 && user_type <= 7) victim.A_SpawnItemEx("BlurSphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							if (user_type >= 8 && user_type <= 13) victim.A_SpawnItemEx("Infrared",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							if (user_type >= 14 && user_type <= 19) victim.A_SpawnItemEx("RadSuit",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							if (user_type >= 20 && user_type <= 22) victim.A_SpawnItemEx("InvulnerabilitySphere",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						}
+						if (gameinfo.gametype & 2) // Heretic Mode
+						{
+							user_type = random(1,13);
+							if (user_type >= 1 && user_type <= 6) victim.A_SpawnItemEx("ArtiInvisibility",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							if (user_type >= 7 && user_type <= 12) victim.A_SpawnItemEx("ArtiTomeOfPower",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							if (user_type >= 13) victim.A_SpawnItemEx("ArtiInvulnerability",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						}
+						if (gameinfo.gametype & 4) // Hexen Mode
+						{
+							user_type = random(1,20);
+							victim.A_SpawnItemEx("ArtiInvulnerability2",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+						}
+						if (gameinfo.gametype & 8) // Strife Mode
+						{
+						}
+					}
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [tritaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
+					
+					// Extremely Rare Drops [Type 5]
+					int timefreezes;
+					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+					basechance = kc_inventorydroprate5;
+					basechance *= skillmult;
+					if (timefreezes)
+					{
+						double basediv = 0.5;
+						double basediv2 = 0.125;
+						if ((playera.CountInv("KCTimeFreezer1") ||
+								 playera.CountInv("KCTimeFreezer2") ||
+								 playera.CountInv("KCTimeFreezer3")))
+						{
+							basediv = 0.5;
+							basediv2 = 0.125;
+						}
+						else
+						{
+							basediv = 0.9375;
+							basediv2 = 0.25;
+						}
+						if (MiscItem.TimeArmorRelicsOwned >= 1) 
+						{
+							basediv *= 1.334;
+							basediv2 *= 0.67;
+						}
+						if (MiscItem.TimeArmorRelicsOwned >= 2) 
+						{
+							basediv *= 1.334;
+							basediv2 *= 0.67;
+						}
+						if (timefreezes >= 20)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 40)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 80)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 160)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 320)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 640)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 1280)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 2560)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 5120)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 10240)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 20480)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+					}
+					luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_tsaluckfactor;
+					if (MiscItem)
+					{
+						if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
+						if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
+						if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
+						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+						luckbase *= kc_tsaluckfactor;
+						
+						if (MiscItem.TimeArmorRelicsOwned <= 2)
+						{
+							int TSATrueLuck;
+							int PLevel = TruePlayerLevel;
+							if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
+							if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
+							if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
+							if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
+							if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
+							TSATrueLuck *= kc_pluckfactor;
+							if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+							if (basechance < 1) basechance = 1;
+							maxchance = basechance;
+							rollrand = random(1,maxchance);
+							if (rollrand <= 1)
+							{
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
+								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(193,194,224,225,266,267);
+								string raredropsndname = "ultrarareitem/spawn";
+								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+
+								raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								raredropsndvol = frandom(1.75,2.25);
+								raredropsndchannel = randompick(293,294,324,325,366,367);
+								raredropsndname = "tsarmor/spawn";
+								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								
+								victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+							}
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
+						}
+					}
+					
+					/*
+					// ?? [Type 10]
+					basechance = kc_inventorydroprate10;
+					basechance *= skillmult;
+					luckbase = 1.25 + (monsterrating * 0.3125);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor
+					// Weapons and IP Attacks do not effect drop rates here V:
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [ultimarare]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
+					if (random(1,maxchance) <= 1)
+					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("?? Drop [success]");
+						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						double raredropsndvol = frandom(1.75,2.25);
+						int raredropsndchannel = randompick(193,194,224,225,266,267);
+						string raredropsndname = "ultrarareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						raredropsndvol = frandom(1.75,2.25);
+						raredropsndchannel = randompick(293,294,324,325,366,367);
+						raredropsndname = "ultrarareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						raredropsndvol = frandom(1.75,2.25);
+						raredropsndchannel = randompick(393,394,424,425,466,467);
+						raredropsndname = "ultrarareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						raredropsndvol = frandom(1.75,2.25);
+						raredropsndchannel = randompick(493,494,524,525,566,567);
+						raredropsndname = "ultrarareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						raredropsndvol = frandom(1.75,2.25);
+						raredropsndchannel = randompick(593,594,624,625,666,667);
+						raredropsndname = "ultrarareitem/spawn";
+						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						
+						victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+					}
+					*/
+				}
 			}
 		}
 		
@@ -4477,6 +4503,12 @@ class KC_StaticEventHandler : StaticEventHandler
 		StringTable.Localize("$STEP_FLATSOTEX").Split(allSF,":");
 		Console.Printf("OTex Footsteps TXT Loaded [Eventside]");
 		*/
+		// Other CompatPacks
+		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
+		{
+			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
+			Console.Printf("Epic2 Footsteps TXT Loaded");
+		}
 		
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)
 		{
