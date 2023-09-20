@@ -3858,12 +3858,12 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 			PLSG B 1 BRIGHT 
 			{
 				A_FireProjectile("PlasmaBallNew",0.0,true,0,0,FPF_NOAUTOAIM,0.0);
-				if (random(1,256) <= 240) invoker.cooldownmeter++;
+				if (random(1,256) <= randompick(236,240,244)) invoker.cooldownmeter++;
 			}
 			PLSG CA 1;
 			PLSG A 1 
 			{
-				if (invoker.cooldownmeter >= 50) return resolvestate("Cooldown");
+				if (invoker.cooldownmeter >= kc_plasmacooldownlimit) return resolvestate("Cooldown");
 																		 else A_ReFire();
 				return resolvestate(null);
 			}
@@ -3878,13 +3878,26 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 					int shotcost = (invoker.burstamt * 2 / 3);
 					if (!A_CheckInfiniteAmmo())
 					{
-						if (CountInv("Cell") < shotcost) return resolvestate("Ready");
-																				else A_TakeInventory("Cell",shotcost);
+						if (CountInv("Cell") < shotcost) 
+						{
+							if (CountInv("Cell") < 2)
+							{
+								if (invoker.cooldownmeter >= 0) return resolvestate("Cooldown");
+								return resolvestate("Ready");
+							}
+							else A_TakeInventory("Cell",shotcost);
+							return resolvestate(null);
+						}
+						else A_TakeInventory("Cell",shotcost);
 						return resolvestate(null);
 					}
 					return resolvestate(null);
 				}
-				else return resolvestate("Ready");
+				else 
+				{
+					if (invoker.cooldownmeter >= 0) return resolvestate("Cooldown");
+					return resolvestate("Ready");
+				}
 				
 				return resolvestate(null);
 			}
@@ -3895,87 +3908,124 @@ class PlasmaRifleMarine : MarineWeapon replaces PlasmaRifle
 				{
 					A_FireProjectile("AltPlasmaBall",frandom(-spread,spread),false,0,0,FPF_NOAUTOAIM,frandom(-spread,spread));
 				}
-				//A_FirePlasma(); 
-				if (random(1,256) <= 240) invoker.cooldownmeter += invoker.burstamt;
+				if (random(1,256) <= randompick(236,240,244)) invoker.cooldownmeter += invoker.burstamt;
 			}
 			PLSG CA 1;
 			PLSG A 1 
 			{
-				if (invoker.cooldownmeter >= 50) return resolvestate("Cooldown");
+				if (invoker.cooldownmeter >= kc_plasmacooldownlimit) return resolvestate("Cooldown");
 																		else A_ReFire();
 				return resolvestate(null);
 			}
 			goto CoolDown;
 		Cooldown:
+			PLSG D 0
+			{
+				if (invoker.cooldownmeter < (kc_plasmacooldownlimit * 0.015625)) return resolvestate("Ready");
+				return resolvestate(null);
+			}
 			PLSG D 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 			}
 			PLSG E 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG F 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 			}
 			PLSG G 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
-				if (invoker.cooldownmeter >= 50) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG H 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 			}
 			PLSG I 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
-				if (invoker.cooldownmeter >= 50) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG IIII 1
 			{
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(3);
-				if (invoker.cooldownmeter >= randompick(43,44,44,44)) A_SetTics(4);
-				if (invoker.cooldownmeter >= 50) A_SetTics(5);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.015625)) A_SetTics(randompick(0,0,0,1));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.03125)) A_SetTics(randompick(0,1));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(random(1,2));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(random(2,3));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(random(3,4));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(random(4,5));
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1.0)) A_SetTics(5);
 			}
 			PLSG I 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
-				if (invoker.cooldownmeter >= 50) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG H 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 			}
 			PLSG G 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
-				if (invoker.cooldownmeter >= 50) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG F 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 			}
 			PLSG E 1
 			{
-				if (invoker.cooldownmeter >= 25) A_SetTics(2);
-				if (invoker.cooldownmeter >= 50) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.25)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.5)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.75)) A_SetTics(4);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 1)) A_SetTics(5);
 			}
 			PLSG D 1
 			{
 				A_SetTics(0);
-				if (invoker.cooldownmeter >= random(12,13)) A_SetTics(1);
-				if (invoker.cooldownmeter >= random(37,38)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.125)) A_SetTics(1);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.375)) A_SetTics(2);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.625)) A_SetTics(3);
+				if (invoker.cooldownmeter >= (kc_plasmacooldownlimit * 0.875)) A_SetTics(4);
 				invoker.cooldownmeter = 0;
 			}
 			Goto Ready;

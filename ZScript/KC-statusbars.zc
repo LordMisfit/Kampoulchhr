@@ -2807,6 +2807,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "PlasmaRifleMarine" ||
 					PlayerWeapon is "TeslaCannon" ||
 					PlayerWeapon is "BFG9000Marine" ||
+					PlayerWeapon is "BHGen" ||
 					PlayerWeapon is "ImpalerXBow" ||
 					PlayerWeapon is "SawThrower")
 			{
@@ -2818,10 +2819,11 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
-				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST\c-");
-				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST\c-");
-				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704\c-");
-				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT\c-");
+				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST [~2-10 CELLS/SHOT]\c-");
+				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
+				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");
+				if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]MEGA BLACK-HOLE [~150 CELLS]\c-");
+				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT [~3 ARROWS]\c-");
 				if (PlayerWeapon is "SawThrower") LegendStr.AppendFormat(" = \c[blue]MELEE CHOPPER ATTACK\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
