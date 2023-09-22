@@ -2826,12 +2826,12 @@ class PlayerStatItem : Inventory
 				TickTimer = timestopactivetics % 35;
 				if (TickTimer == 0)
 				{
-					owner.A_StopSound(218); 
+					owner.A_StopSound(218);
 					owner.A_StartSound("TimeStopTick",218,CHANF_DEFAULT,(frandom[statitem](0.40,0.60) * tickvol),ATTN_NONE); 
 				}
 				if (timestopactivetics == 65) 
 				{
-					owner.A_StopSound(217); 
+					owner.A_StopSound(217);
 					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
 				}
 				if (!A_CheckNoTimer()) 

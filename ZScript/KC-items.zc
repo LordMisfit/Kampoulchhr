@@ -2571,6 +2571,40 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 	States
 	{
 		Spawn:
+			BPAK A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (!bDROPPED)
+				{
+					if (playera.CountInv("BackpackTier2"))
+					{
+						if (random(1,9) <= 1)
+						{
+							A_SpawnItemEx("CombatPack");
+							Destroy();
+						}
+					}
+					else
+					if (playera.CountInv("BackpackTier1"))
+					{
+						if (random(1,24) <= 1)
+						{
+							A_SpawnItemEx("CombatPack");
+							Destroy();
+						}
+					}
+					else
+					{
+						if (random(1,64) <= 1)
+						{
+							A_SpawnItemEx("CombatPack");
+							Destroy();
+						}
+					}
+				}
+			}
+		Idle:
 			BPAK A -1;
 			Stop;
 		Pickup:
