@@ -2234,41 +2234,75 @@ class PlayerStatItem : Inventory
 
 		int levelmodulo, levelbonustype;
 		levelmodulo = PlayerLevel % 20;
-		if (levelmodulo == 0) levelbonustype = 0;
-		else if (levelmodulo == 4) levelbonustype = 1;
-		else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-		else if (levelmodulo == 8) levelbonustype = 1;
-		else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-		else if (levelmodulo == 12) levelbonustype = 1;
-		else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-		else if (levelmodulo == 16) levelbonustype = 1;
-		else levelbonustype = 2;
+		if (HeiwaPlayer(owner)) 
+		{
+			if (levelmodulo == 0) levelbonustype = 0;
+			else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+			else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+			else if (levelmodulo == 8) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+			else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+			else if (levelmodulo == 12) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+			else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+			else if (levelmodulo == 16) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+			else levelbonustype = randompick[statitem](2,2,2,2,2,1);
+		}
+		else
+		{
+			if (levelmodulo == 0) levelbonustype = 0;
+			else if (levelmodulo == 4) levelbonustype = 1;
+			else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			else if (levelmodulo == 8) levelbonustype = 1;
+			else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			else if (levelmodulo == 12) levelbonustype = 1;
+			else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			else if (levelmodulo == 16) levelbonustype = 1;
+			else levelbonustype = 2;
+		}
 		if (kcdebug_levelupdisplays) Console.Printf("\cyLevel Check\c-: %d, \cxModulo\c-: %d, \czBonus Type\c-: %d", PlayerLevel, levelmodulo, levelbonustype);
 		
 		double RandomizedStatChance, RandomizedStatChance2;
 		RandomizedStatChance = 1.00000000; // 192;
 		if (levelbonustype == 0) // Levels 20, 40, 60, 80, 100, 120, 140, 160, 180 & 200
 		{
-			RandomizedStatChance -= (0.1 * random[statitem](4,8)); // 112 to 152
+			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.125 * random[statitem](5,9)); // 112 to 152
+												 else RandomizedStatChance -= (0.1 * random[statitem](4,8)); // 112 to 152
 		}
 		else
 		if (levelbonustype == 1) // Levels [0/2/4/6/8/10/12/14/16/18]4, [0/2/4/6/8/10/12/14/16/18]8, [1/3/5/7/9/11/13/15/17/19]2, & [1/3/5/7/9/11/13/15/17/19]6
 		{
-			RandomizedStatChance -= (0.02 * random[statitem](4,8)); // 160 to 176
+			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.025 * random[statitem](5,9)); // 112 to 152
+												 else RandomizedStatChance -= (0.02 * random[statitem](4,8)); // 160 to 176
 		}
 		else
 		if (levelbonustype == 2) // Any other level that's not a multiple of 4 or 20
 		{
-			RandomizedStatChance -= (0.004 * random[statitem](4,8));
+			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.005 * random[statitem](5,9)); // 112 to 152
+												 else RandomizedStatChance -= (0.004 * random[statitem](4,8));
 		}
 		double RNDSCSubtractor1 = 0;
 		double RNDSCSubtractor2 = 0;
-		RNDSCSubtractor1 = (PlayerLevel * 0.32);
-		RNDSCSubtractor1 = clamp(RNDSCSubtractor1, 0.00000, 0.33334);
+		if (HeiwaPlayer(owner)) 
+		{
+			RNDSCSubtractor1 = (PlayerLevel * 0.40);
+			RNDSCSubtractor1 = clamp(RNDSCSubtractor1, 0.00000, 0.41667);
+		}
+		else
+		{
+			RNDSCSubtractor1 = (PlayerLevel * 0.32);
+			RNDSCSubtractor1 = clamp(RNDSCSubtractor1, 0.00000, 0.33334);
+		}
 		if (PlayerLevel > 100)
 		{
-			RNDSCSubtractor2 = ((PlayerLevel - 100) * 0.4);
-			RNDSCSubtractor2 = clamp(RNDSCSubtractor2, 0.00000, 0.33334);
+			if (HeiwaPlayer(owner)) 
+			{
+				RNDSCSubtractor2 = ((PlayerLevel - 100) * 0.5);
+				RNDSCSubtractor2 = clamp(RNDSCSubtractor2, 0.00000, 0.41667);
+			}
+			else
+			{
+				RNDSCSubtractor2 = ((PlayerLevel - 100) * 0.4);
+				RNDSCSubtractor2 = clamp(RNDSCSubtractor2, 0.00000, 0.33334);
+			}
 		}
 		if (kcdebug_levelupdisplays) Console.Printf("\cyRNDSCSubtractor1\c-: %.8f, \cxRNDSCSubtractor2\c-: %.8f", RNDSCSubtractor1, RNDSCSubtractor2);
 
@@ -2276,17 +2310,37 @@ class PlayerStatItem : Inventory
 		RNDSCSubtractor += RNDSCSubtractor1; // Adds [level 1-100] range value
 		RNDSCSubtractor += RNDSCSubtractor2; // Adds [level 101-200] range value
 		RandomizedStatChance -= RNDSCSubtractor;
-		if (RandomizedStatChance < 0.005208334) RandomizedStatChance = 0.005208334;
+		if (HeiwaPlayer(owner)) 
+		{
+			if (RandomizedStatChance < 0.0039062505) RandomizedStatChance = 0.0039062505;
+		}
+		else
+		{
+			if (RandomizedStatChance < 0.005208334) RandomizedStatChance = 0.005208334;
+		}
 		if (kcdebug_levelupdisplays) Console.Printf("\cyRNDSCSubtractor\c-: %.8f, \cxRandomizedStatChance\c-: %.8f", RNDSCSubtractor, RandomizedStatChance);
 
 		RandomizedStatChance2 = 1.00000000;
-		if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.041666667; // 23
-		if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.041666667; // 22
-		if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.041666667; // 21
-		if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.041666667; // 20
-		if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.083333334; // 18
-		if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.083333334; // 16
-		if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.083333334; // 14
+		if (HeiwaPlayer(owner)) 
+		{
+			if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.05208333375; // 23
+			if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.05208333375; // 22
+			if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.05208333375; // 21
+			if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.05208333375; // 20
+			if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.1041666675; // 18
+			if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.1041666675; // 16
+			if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.1041666675; // 14
+		}
+		else
+		{
+			if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.041666667; // 23
+			if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.041666667; // 22
+			if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.041666667; // 21
+			if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.041666667; // 20
+			if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.083333334; // 18
+			if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.083333334; // 16
+			if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.083333334; // 14
+		}
 		if (kcdebug_levelupdisplays) Console.Printf("\cyStat Chance 1\c-: %.8f, \cxStat Chance 2\c-: %.8f", RandomizedStatChance, RandomizedStatChance2);
 		
 		//********************************
@@ -2299,32 +2353,66 @@ class PlayerStatItem : Inventory
 		double BaseChance2;
 		int LvlStatMulti = 1;
 		// Luck Boost [1]
-		BaseChance1 = 0.25;
-		BaseChance2 = 0.083333334;
+		if (KCPlayer(owner))
+		{
+			BaseChance1 = 0.375;
+			BaseChance2 = 0.083333334;
+		}
+		if (HeiwaPlayer(owner))
+		{
+			BaseChance1 = 0.625;
+			BaseChance2 = 0.083333334;
+		}
+		
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
 
 		// Speed Boost [1]
-		BaseChance1 = 0.5625;
-		BaseChance2 = 0.083333334;
+		if (KCPlayer(owner))
+		{
+			BaseChance1 = 0.5625;
+			BaseChance2 = 0.083333334;
+		}
+		if (HeiwaPlayer(owner))
+		{
+			BaseChance1 = 0.875;
+			BaseChance2 = 0.083333334;
+		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
 		
 		// Attack Boost [1]
-		BaseChance1 = 0.4375;
-		BaseChance2 = 0.083333334;
+		if (KCPlayer(owner))
+		{
+			BaseChance1 = 0.3375;
+			BaseChance2 = 0.083333334;
+		}
+		if (HeiwaPlayer(owner))
+		{
+			BaseChance1 = 0.675;
+			BaseChance2 = 0.083333334;
+		}
+		
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
 		
 		// Defense Boost [1]
-		BaseChance1 = 0.225;
-		BaseChance2 = 0.083333334;
+		if (KCPlayer(owner))
+		{
+			BaseChance1 = 0.675;
+			BaseChance2 = 0.083333334;
+		}
+		if (HeiwaPlayer(owner))
+		{
+			BaseChance1 = 0.3375;
+			BaseChance2 = 0.083333334;
+		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -2483,39 +2571,96 @@ class PlayerStatItem : Inventory
 		if (playerset) BaseMass = playerset.originalmass;
 		MassGain = 0;
 
-		if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
-		else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
-		else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
-		else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
-
-		MassGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
-		if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
-		if (levelbonustype == 1) MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
-		if (levelbonustype == 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+		if (KCPlayer(owner))
+		{
+			if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0675,0.075));
+			else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.06,0.0675));
+			else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+			else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+			
+			MassGain += 													randompick[statitem](0,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2);
+			if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3);
+			if (levelbonustype == 1) MassGain += randompick[statitem](0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2);
+			if (levelbonustype == 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1);
+		}
+		
+		if (HeiwaPlayer(owner)) 
+		{
+			if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+			else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+			else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
+			else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			
+			MassGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
+			if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+			if (levelbonustype == 1) MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
+			if (levelbonustype == 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+		}
+		
 		if (TrueGameSkill <= SKILL_VERY_EASY) 
 		{
-			MassGain += randompick[statitem](0,0,0,0,0,1,1,2,2,3);
-			MassGain += (BaseMass / 324);
+			if (KCPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,1,1,2,2,3);
+				MassGain += (BaseMass / random(259,260));
+			}
+			if (HeiwaPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,1,1,2,2,3);
+				MassGain += (BaseMass / 324);
+			}
 		}
 		if (TrueGameSkill == SKILL_EASY) 
 		{
-			MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
-			MassGain += (BaseMass / 405);
+			if (KCPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
+				MassGain += (BaseMass / 324);
+			}
+			if (HeiwaPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
+				MassGain += (BaseMass / 405);
+			}
 		}
 		if (TrueGameSkill == SKILL_NORMAL) 
 		{
-			MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
-			MassGain += (BaseMass / 486);
+			if (KCPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
+				MassGain += (BaseMass / 389);
+			}
+			if (HeiwaPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
+				MassGain += (BaseMass / 486);
+			}
 		}
 		if (TrueGameSkill == SKILL_HARD) 
 		{
-			MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
-			MassGain += (BaseMass / 557);
+			if (KCPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
+				MassGain += (BaseMass / 446);
+			}
+			if (HeiwaPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
+				MassGain += (BaseMass / 557);
+			}
 		}
 		if (TrueGameSkill == SKILL_VERY_HARD)
 		{
-			MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
-			MassGain += (BaseMass / 648);
+			if (KCPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
+				MassGain += (BaseMass / 514);
+			}
+			if (HeiwaPlayer(owner)) 
+			{
+				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
+				MassGain += (BaseMass / 648);
+			}
 		}
 		MassLevelAdd += MassGain;
 		if (type == 1) 
