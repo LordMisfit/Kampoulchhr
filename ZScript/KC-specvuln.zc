@@ -366,7 +366,12 @@ class CompatVulnItem : PlaceholderItem
 				if (FoundPlayer) 
 				{
 					int bosscritres = 75;
-					if (FoundPlayer.CountInv("TimeSeraphVisor")) bosscritres *= 0.25;
+					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
+					{
+						if (FoundPlayer.CountInv("TSArmorTier2")) bosscritres *= 0.1;
+						else if (FoundPlayer.CountInv("TSArmorTier1")) bosscritres *= 0.25;
+						else bosscritres *= 0.625;
+					}
 					
 					if (FoundPlayer.CountInv("DealCriticalHit"))
 					{

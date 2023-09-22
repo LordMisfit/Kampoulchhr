@@ -1915,6 +1915,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Boss_Romero"; if (victim.GetClassName() == nm) specialtype += 512;
 				nm = "CCards_Actor_Bane"; if (victim.GetClassName() == nm) specialtype += 1024;
 				nm = "CCards_Actor_Maestro"; if (victim.GetClassName() == nm) specialtype += 2048;
+				nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.GetClassName() == nm) specialtype += 4096;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -3088,6 +3089,7 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.GetClassName() == nm) maxchance *= random(2,4);
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1) // Main Drop Chance
 					{
@@ -3098,8 +3100,10 @@ class KC_EventHandler : EventHandler
 							temp = (1 + (TrueLuck * 0.08334));
 							temp *= 2.5;
 						}
-						int randroll = random(1,32);
-						nm = "CCards_Actor_Maestro"; if (vict == nm) randroll = random(1,4);
+						int randrollmax = 32;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) randrollmax /= 8;
+						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.GetClassName() == nm) randrollmax *= 4;
+						int randroll = random(1,randrollmax);
 						if (randroll <= temp) // Weapons
 						{
 							double rand = 1.0;
@@ -3226,6 +3230,13 @@ class KC_EventHandler : EventHandler
 							{
 								temp *= random(2,3);
 								ammodrops *= random(2,4);
+								if (random(1,4) <= 1) randroll2 = random(1,128);
+							}
+							nm = "CCards_Actor_MiniMonsterPowerup"; 
+							if (vict == nm) 
+							{
+								temp /= random(2,3);
+								ammodrops /= random(2,4);
 								if (random(1,4) <= 1) randroll2 = random(1,128);
 							}
 							for (int i2; i2 < ammodrops; i2++)
@@ -3826,6 +3837,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Boss_Romero"; if (victim.GetClassName() == nm) specialtype += 512;
 				nm = "CCards_Actor_Bane"; if (victim.GetClassName() == nm) specialtype += 1024;
 				nm = "CCards_Actor_Maestro"; if (victim.GetClassName() == nm) specialtype += 2048;
+				nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.GetClassName() == nm) specialtype += 4096;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -3939,6 +3951,7 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 512) ExpGain *= 0.5; // CCards_Boss_Romero
 						if (specialtype & 1024) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_Bane
 						if (specialtype & 2048) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_Maestro
+						if (specialtype & 4096) ExpGain *= frandompick(0.125,0.25); // CCards_Actor_MiniMonsterPowerup
 						nm = "CCards_Actor_BorrowedTimeBuff";
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);
