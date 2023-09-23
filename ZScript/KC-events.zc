@@ -3722,6 +3722,23 @@ class KC_EventHandler : EventHandler
 		return PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill;
 	}
 	
+	double A_GetExpLowCap(double BaseExpMultiBonus)
+	{
+		double BaseExpLowcap = 1;
+		BaseExpLowCap *= BaseExpMultiBonus;
+		BaseExpLowcap *= kc_expmultiplier;
+		double xx1 = int(BaseExpLowcap / 1);
+		double xx2 = BaseExpLowcap % 1.0;
+		xx2 = int(xx2 * 10000);
+		if (random(1,10000) <= xx2) xx1 += 1;
+		
+		int ExpLowcap = xx1;
+		if (ExpLowcap < 1) ExpLowcap = 1;
+		//Console.Printf("BaseExpLowCap: %.8f, xx1: %.8f, xx2: %.8f, ExpLowCap: %d", BaseExpLowCap, xx1, xx2, ExpLowcap);
+		
+		return ExpLowcap;
+	}
+	
 	override void WorldThingDied(WorldEvent e)
 	{
 		if (Level.MapName != "TITLEMAP")
@@ -3987,6 +4004,30 @@ class KC_EventHandler : EventHandler
 							else if (PLevel <= 701) ExpGain *= (1.00 + (TrueLuck * frandompick(0.005,0.005,0.005,0.01,0.01,0.02,0.02,0.02,0.04,0.04,0.04,0.04,0.08)));
 							else if (PLevel <= 1001) ExpGain *= (1.00 + (TrueLuck * frandompick(0.005,0.005,0.01,0.01,0.02,0.02,0.02,0.04,0.04,0.04,0.04,0.08,0.08)));
 						}
+						double BaseExpMultiBonus = 1.0;
+						if (playera) 
+						{
+							if (HeiwaPlayer(playera))
+							{
+								BaseExpMultiBonus = 1.5;
+								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.125;
+								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.125;
+								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.25;
+							}
+							else
+							{
+								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.25;
+								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
+								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.5;
+							}
+						}
+						else
+						{
+							if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.25;
+							if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
+							if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.5;
+						}
+						ExpGain *= BaseExpMultiBonus;
 						if (MiscItem)
 						{
 							int OExpGain = ExpGain;
@@ -4023,13 +4064,15 @@ class KC_EventHandler : EventHandler
 						{
 							int OExpGain = ExpGain;
 							ExpGain *= (KCC.expshare * frandom(0.667,1.000));
-							if (ExpGain < 1) ExpGain = 1;
+							int ExpLowCap = A_GetExpLowCap(BaseExpMultiBonus);
+							if (ExpGain < ExpLowCap) ExpGain = ExpLowCap;
 							if (kcdebug_worlddied && ExpGain) Console.Printf("[KCC.expshare] x%.4f, ExpGain: %d [%d]", KCC.expshare, ExpGain, OExpGain);
 						}
 						
 						if (giveexp && kc_expgains && Level.MapName != "TITLEMAP")
 						{
-							if (ExpGain < 1) ExpGain = 1;
+							int ExpLowCap = A_GetExpLowCap(BaseExpMultiBonus);
+							if (ExpGain < ExpLowCap) ExpGain = ExpLowCap;
 							
 							Actor playera = players[0].mo;
 							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))

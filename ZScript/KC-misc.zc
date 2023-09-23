@@ -2350,7 +2350,23 @@ class PlayerStatItem : Inventory
 		double LvlSkillMulti;
 		double RollValue;
 		double BaseChance1;
+		double BaseChance1a = 0.2;
+		if (HeiwaPlayer(owner)) BaseChance1a = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
+		double BaseChance1b = 0.2;
+		if (HeiwaPlayer(owner)) BaseChance1b = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
+		double BaseChance1c = 0.2;
+		if (HeiwaPlayer(owner)) BaseChance1c = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
+		double BaseChance1d = 0.2;
+		if (HeiwaPlayer(owner)) BaseChance1d = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
 		double BaseChance2;
+		double BaseChance2a = 0.825;
+		if (HeiwaPlayer(owner)) BaseChance2a = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
+		double BaseChance2b = 0.825;
+		if (HeiwaPlayer(owner)) BaseChance2b = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
+		double BaseChance2c = 0.825;
+		if (HeiwaPlayer(owner)) BaseChance2c = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
+		double BaseChance2d = 0.825;
+		if (HeiwaPlayer(owner)) BaseChance2d = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
 		int LvlStatMulti = 1;
 		// Luck Boost [1]
 		if (KCPlayer(owner))
@@ -2363,7 +2379,34 @@ class PlayerStatItem : Inventory
 			BaseChance1 = 0.625;
 			BaseChance2 = 0.083333334;
 		}
-		
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [2]
+		BaseChance1 *= BaseChance1a;
+		BaseChance2 *= BaseChance2a;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [3]
+		BaseChance1 *= BaseChance1b;
+		BaseChance2 *= BaseChance2b;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [4]
+		BaseChance1 *= BaseChance1c;
+		BaseChance2 *= BaseChance2c;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		// Luck Boost [5]
+		BaseChance1 *= BaseChance1d;
+		BaseChance2 *= BaseChance2d;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -2384,6 +2427,34 @@ class PlayerStatItem : Inventory
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [2]
+		BaseChance1 *= BaseChance1a;
+		BaseChance2 *= BaseChance2a;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [3]
+		BaseChance1 *= BaseChance1b;
+		BaseChance2 *= BaseChance2b;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [4]
+		BaseChance1 *= BaseChance1c;
+		BaseChance2 *= BaseChance2c;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [5]
+		BaseChance1 *= BaseChance1d;
+		BaseChance2 *= BaseChance2d;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
 		
 		// Attack Boost [1]
 		if (KCPlayer(owner))
@@ -2396,7 +2467,34 @@ class PlayerStatItem : Inventory
 			BaseChance1 = 0.675;
 			BaseChance2 = 0.083333334;
 		}
-		
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [2]
+		BaseChance1 *= BaseChance1a;
+		BaseChance2 *= BaseChance2a;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [3]
+		BaseChance1 *= BaseChance1b;
+		BaseChance2 *= BaseChance2b;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [4]
+		BaseChance1 *= BaseChance1c;
+		BaseChance2 *= BaseChance2c;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [5]
+		BaseChance1 *= BaseChance1d;
+		BaseChance2 *= BaseChance2d;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -2413,6 +2511,34 @@ class PlayerStatItem : Inventory
 			BaseChance1 = 0.3375;
 			BaseChance2 = 0.083333334;
 		}
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [2]
+		BaseChance1 *= BaseChance1a;
+		BaseChance2 *= BaseChance2a;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [3]
+		BaseChance1 *= BaseChance1b;
+		BaseChance2 *= BaseChance2b;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [4]
+		BaseChance1 *= BaseChance1c;
+		BaseChance2 *= BaseChance2c;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [5]
+		BaseChance1 *= BaseChance1d;
+		BaseChance2 *= BaseChance2d;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -2675,6 +2801,7 @@ class PlayerStatItem : Inventory
 				if (skill >= 4) MassGain *= 1.0;
 			}
 		}
+		if (kcdebug_levelupdisplays) Console.Printf("MassGain: %d", MassGain);
 		
 		if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/levelup",101,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
 	}
