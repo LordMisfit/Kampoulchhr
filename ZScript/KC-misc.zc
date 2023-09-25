@@ -9,6 +9,7 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	double tracerheight;
 	int darmortype;
 	int IsMorphed, WasMorphed, WasMorphProj;
 	int MorphTimer;
@@ -618,6 +619,8 @@ class PlayerStatItem : Inventory
 				owner.player.health = owner.player.mo.health = CurrentHealth;
 				owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
 				
+				tracerheight = (owner.height * 0.5);
+				
 				//*************************************
 				//*************************************
 				//*************************************
@@ -889,6 +892,42 @@ class PlayerStatItem : Inventory
 					//
 				}
 				
+				double ssainverse = 1.0;
+				double ssainverseadd = 0.0;
+				if (owner.CountInv("TimeSeraphCharm")) 
+				{
+					ssainverseadd += 0.5;
+					if (owner.CountInv("TSArmorTier1")) ssainverseadd += 0.5;
+
+					if (owner.CountInv("TimeSeraphPocketWatch")) 
+					{
+						ssainverseadd += 2.0;
+						if (owner.CountInv("TSArmorTier2")) ssainverseadd += 2.5;
+					}
+					if (owner.CountInv("TimeSeraphBangle")) 
+					{
+						ssainverseadd += 0.125;
+						if (owner.CountInv("KCPowerTorchBangle")) ssainverseadd += 0.125;
+					}
+					
+					double ssain1 = 1.5;
+					double ssain2 = 2.0;
+					double ssain3 = 2.5;
+					double ssain4 = 3.0;
+					double ssain5 = 3.5;
+					double ssain6 = 4.0;
+					double ssain7 = 4.5;
+					ssainverseadd *= frandompick(ssain1,
+																			 ssain2,ssain2,ssain2,ssain2,
+																			 ssain3,ssain3,ssain3,ssain3,ssain3,ssain3,ssain3,ssain3,
+																			 ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,ssain4,
+																			 ssain5,ssain5,ssain5,ssain5,ssain5,ssain5,ssain5,ssain5,
+																			 ssain6,ssain6,ssain6,ssain6,
+																			 ssain7);
+					ssainverse += ssainverseadd;
+					if (kcdebug_hpregen) Console.Printf("ssainverse: %.8f, ssainverseadd: %.8f", ssainverse, ssainverseadd);
+				}
+
 				// HP Regeneration
 				BaseRegenMulti = 1.0;
 				if (!owner.CountInv("NoRegeneration"))
@@ -906,9 +945,9 @@ class PlayerStatItem : Inventory
 							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Regen]: %d", HPRegenBoostTimer);
 							
 							double ssa = 1.00;
-							if (owner.CountInv("TSArmorTier2")) ssa += 0.025;
-							if (owner.CountInv("TSArmorTier1")) ssa += 0.00625;
+							ssa *= ssainverse;
 							inc *= ssa;
+							if (kcdebug_hpregen) Console.Printf("ssa [Regen]: %.8f", ssa);
 							
 							if (weapon is "FistMarine" && owner.CountInv("FistPlayerBlockItem")) 
 							{
@@ -1012,9 +1051,9 @@ class PlayerStatItem : Inventory
 							
 							
 							double ssa = 1.00;
-							if (owner.CountInv("TSArmorTier2")) ssa -= 0.025;
-							if (owner.CountInv("TSArmorTier1")) ssa -= 0.00625;
+							ssa /= ssainverse;
 							inc *= ssa;
+							if (kcdebug_hpregen) Console.Printf("ssa [Degen]: %.8f", ssa);
 							
 							if (weapon is "FistMarine" && Owner.CountInv("FistPlayerBlockItem")) 
 							{
@@ -2236,32 +2275,68 @@ class PlayerStatItem : Inventory
 		levelmodulo = PlayerLevel % 20;
 		if (HeiwaPlayer(owner)) 
 		{
-			if (levelmodulo == 0) levelbonustype = 0;
-			else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,1,1,0);
-			else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,1,1);
-			else if (levelmodulo == 8) levelbonustype = randompick[statitem](1,1,1,1,1,0);
-			else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,1,1);
-			else if (levelmodulo == 12) levelbonustype = randompick[statitem](1,1,1,1,1,0);
-			else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,1,1);
-			else if (levelmodulo == 16) levelbonustype = randompick[statitem](1,1,1,1,1,0);
-			else levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			if (random(1,100) <= 25)
+			{
+				if (levelmodulo == 0) levelbonustype = 0;
+				else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,0,0);
+				else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,1,1,0);
+				else if (levelmodulo == 8) levelbonustype = randompick[statitem](1,1,1,0,0);
+				else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,1,1,0);
+				else if (levelmodulo == 12) levelbonustype = randompick[statitem](1,1,1,0,0);
+				else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,1,1,0);
+				else if (levelmodulo == 16) levelbonustype = randompick[statitem](1,1,1,0,0);
+				else levelbonustype = randompick[statitem](2,2,2,1,1);
+			}
+			else
+			{
+				if (levelmodulo == 0) levelbonustype = 0;
+				else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 8) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 12) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 16) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			}
 		}
 		else
 		{
-			if (levelmodulo == 0) levelbonustype = 0;
-			else if (levelmodulo == 4) levelbonustype = 1;
-			else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-			else if (levelmodulo == 8) levelbonustype = 1;
-			else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-			else if (levelmodulo == 12) levelbonustype = 1;
-			else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,2,1);
-			else if (levelmodulo == 16) levelbonustype = 1;
-			else levelbonustype = 2;
+			if (random(1,100) <= 25)
+			{
+				if (levelmodulo == 0) levelbonustype = randompick(0,0,0,0,0,-1);
+				else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 8) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 12) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,1,1);
+				else if (levelmodulo == 16) levelbonustype = randompick[statitem](1,1,1,1,1,0);
+				else levelbonustype = randompick[statitem](2,2,2,2,2,1);
+			}
+			else
+			{
+				if (levelmodulo == 0) levelbonustype = 0;
+				else if (levelmodulo == 4) levelbonustype = 1;
+				else if (levelmodulo == 5) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+				else if (levelmodulo == 8) levelbonustype = 1;
+				else if (levelmodulo == 10) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+				else if (levelmodulo == 12) levelbonustype = 1;
+				else if (levelmodulo == 15) levelbonustype = randompick[statitem](2,2,2,2,2,1);
+				else if (levelmodulo == 16) levelbonustype = 1;
+				else levelbonustype = 2;
+			}
 		}
 		if (kcdebug_levelupdisplays) Console.Printf("\cyLevel Check\c-: %d, \cxModulo\c-: %d, \czBonus Type\c-: %d", PlayerLevel, levelmodulo, levelbonustype);
 		
 		double RandomizedStatChance, RandomizedStatChance2;
 		RandomizedStatChance = 1.00000000; // 192;
+		if (levelbonustype <= -1) // Levels 20, 40, 60, 80, 100, 120, 140, 160, 180 & 200
+		{
+			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.25 * random[statitem](5,9)); // 112 to 152
+												 else RandomizedStatChance -= (0.2 * random[statitem](4,8)); // 112 to 152
+		}
+		else
 		if (levelbonustype == 0) // Levels 20, 40, 60, 80, 100, 120, 140, 160, 180 & 200
 		{
 			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.125 * random[statitem](5,9)); // 112 to 152
@@ -2274,7 +2349,7 @@ class PlayerStatItem : Inventory
 												 else RandomizedStatChance -= (0.02 * random[statitem](4,8)); // 160 to 176
 		}
 		else
-		if (levelbonustype == 2) // Any other level that's not a multiple of 4 or 20
+		if (levelbonustype >= 2) // Any other level that's not a multiple of 4 or 20
 		{
 			if (HeiwaPlayer(owner)) RandomizedStatChance -= (0.005 * random[statitem](5,9)); // 112 to 152
 												 else RandomizedStatChance -= (0.004 * random[statitem](4,8));
@@ -2573,9 +2648,10 @@ class PlayerStatItem : Inventory
 			else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
 			
 			HPMaxGain += 													randompick[statitem](0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3);
+			if (levelbonustype <= -1) HPMaxGain += randompick[statitem](1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3);
 			if (levelbonustype == 0) HPMaxGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3);
 			if (levelbonustype == 1) HPMaxGain += randompick[statitem](0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3);
-			if (levelbonustype == 2) HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2);
+			if (levelbonustype >= 2) HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2);
 		}
 		if (HeiwaPlayer(owner))
 		{
@@ -2602,9 +2678,10 @@ class PlayerStatItem : Inventory
 			else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
 			
 			HPMaxGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
+			if (levelbonustype <= -1) HPMaxGain += randompick[statitem](1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
 			if (levelbonustype == 0) HPMaxGain += randompick[statitem](0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3);
 			if (levelbonustype == 1) HPMaxGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
-			if (levelbonustype == 2) HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
+			if (levelbonustype >= 2) HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
 		}
 		
 		if (TrueGameSkill <= SKILL_VERY_EASY) 
@@ -2705,9 +2782,10 @@ class PlayerStatItem : Inventory
 			else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
 			
 			MassGain += 													randompick[statitem](0,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2);
+			if (levelbonustype <= -1) MassGain += randompick[statitem](1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3);
 			if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3);
 			if (levelbonustype == 1) MassGain += randompick[statitem](0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2);
-			if (levelbonustype == 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1);
+			if (levelbonustype >= 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1);
 		}
 		
 		if (HeiwaPlayer(owner)) 
@@ -2718,9 +2796,10 @@ class PlayerStatItem : Inventory
 			else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
 			
 			MassGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
+			if (levelbonustype <= -1) MassGain += randompick[statitem](1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3);
 			if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
 			if (levelbonustype == 1) MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
-			if (levelbonustype == 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+			if (levelbonustype >= 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
 		}
 		
 		if (TrueGameSkill <= SKILL_VERY_EASY) 
