@@ -1271,11 +1271,17 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playerdamagemobj) Console.Printf("(\c[green][A_CheckNeverBleed]\c-  [player], type: %d, damage: %d)", type, damage);
 	}
 
-	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false)
+	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false, Actor inflictor = null, Actor source = null)
 	{
 		A_CheckNeverBleed(0, damage, flags);
 		string nm, nn, no, np;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		string infl, sour, vict;
+		vict = GetClassName();
+		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
+		if (source == null) sour = "NONE"; else sour = source.GetClassName();
+
 		int prevdmg = damage;
 		
 		// Any attack based on temperates, as well as lightning and wind, 
@@ -1298,6 +1304,25 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
+			//CCards_NukeExplosion
+			nm = "CCards_NukeExplosion";
+			if ((source && sour == nm) ||
+					(inflictor && infl == nm))
+			{
+				if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion");
+				damage *= frandom(0.50,0.75);
+				if (flags & DMG_FORCED) flags &= ~DMG_FORCED;
+				if (flags & DMG_FOILBUDDHA) flags &= ~DMG_FOILBUDDHA;
+				if (flags & DMG_FOILINVUL) flags &= ~DMG_FOILINVUL;
+				if (flags & DMG_NO_PROTECT) flags &= ~DMG_NO_PROTECT;
+				if (mod == 'Normal') 
+				{
+					if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion - Normal");
+					damage = 0;
+					return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
+				}
+			}
+			
 			// Fire/Heat-based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Fire' || 
 					mod == 'CCFire' || 
@@ -2443,7 +2468,7 @@ class KCPlayerPawn : PlayerPawn
 		bool tsafullnulldmg = false;
 		if (!isinvuln)
 		{
-			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg);
+			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg, source, inflictor);
 			if (TimeSeraphArmor && tsafullnulldmg) damage = 0;
 		}
 		

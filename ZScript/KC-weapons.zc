@@ -6261,6 +6261,15 @@ class ImpalerXBow : MarineWeapon
 			Goto RealReady;
 		
 		AltFire:
+			CBOW B 0
+			{
+				if (CountInv("ImpalerBolts") <= 2) 
+				{
+					if (CountInv("ImpalerBolts") <= 0) return resolvestate("FakeReady");
+					else return resolvestate("RealReady");
+				}
+				return resolvestate(null);
+			}
 			CBOW B 6
 			{
 				actor player = players[0].mo;
