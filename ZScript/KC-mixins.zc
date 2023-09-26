@@ -441,6 +441,7 @@ mixin class StunItems
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Thunder")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Electric")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Electricity")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.ShockFloor")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Lightning")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Shock")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Sceptre")) || 
@@ -1917,6 +1918,7 @@ mixin class MonsterCollider
 			miracle = true;
 		}
 		if (mod == 'IceWater') mod = 'Ice';
+		if (mod == 'ShockFloor') mod = 'Shock';
 		if (kcdebug_actordmgdisplays) Console.Printf("    (\czActor Defensive Input [Pre?]\c-: \cyDamageFactor: %.8f)", DamageFactor);
 		//************************************************************************
 		let ret = super.DamageMobj(inflictor, source, damage, mod, flags, angle);

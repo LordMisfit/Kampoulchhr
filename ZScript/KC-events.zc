@@ -4596,6 +4596,7 @@ class KC_StaticEventHandler : StaticEventHandler
 			int idx;
 			int textfound = 0;
 			string texname;
+			string texname_c;
 			/*
 			Console.Printf("centfloor [%d]: %.4f", i, level.Sectors[i].CenterFloor());
 			Console.Printf("centceiling [%d]: %.4f", i, level.Sectors[i].CenterCeiling());
@@ -4613,6 +4614,7 @@ class KC_StaticEventHandler : StaticEventHandler
 			*/
 			
 			texname = texman.GetName(level.Sectors[i].GetTexture(sector.floor));
+			texname_c = texman.GetName(level.Sectors[i].GetTexture(sector.ceiling));
 			idx = fs_textures.Find(int(level.Sectors[i].GetTexture(sector.floor)));
 			if (idx != fs_textures.Size()) textfound = 1;
 			else 
@@ -4654,9 +4656,12 @@ class KC_StaticEventHandler : StaticEventHandler
 							texname == "LAVA2" ||
 							texname == "LAVA3" ||
 							texname == "LAVA4") damagetyp = 'Magma';
+					if (texname == "FLAT22" ||
+							texname_c == "FLAT22") damagetyp = 'Shock';
 				}
 			}
 			if (damagetyp == 'Ice') damagetyp = 'IceWater';
+			if (damagetyp == 'Shock') damagetyp = 'ShockFloor';
 			if (initdamagetyp != damagetyp) level.Sectors[i].damagetype = damagetyp;
 			if (kcdebug_worldloaded) Console.Printf("    \czFireFloorAdjuster\c-: %d / %d (%s to %s)", i, l, initdamagetyp, damagetyp);
 			
