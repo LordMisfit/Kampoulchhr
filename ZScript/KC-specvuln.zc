@@ -172,7 +172,45 @@ class CompatVulnItem : PlaceholderItem
 					 flags & DMG_EXPLOSION) ActorDefenseIgnoreFactor += (BarrelFactor * (1.00 - ActorDefenseIgnoreFactor));
 			
 			double BHoleFactor = frandom(0.334,0.4167);
-			if (mod == 'BlackHole') ActorDefenseIgnoreFactor += (BHoleFactor * (1.00 - ActorDefenseIgnoreFactor));
+			if ((mod == 'BlackHole') ||
+					(infl == "DMBall" || infl == "DMBall2")) 
+			{
+				int bhlvl1chance = randompick(1,1,1,2);
+				int bhlvl2chance = 5;
+				int bhlvl3chance = 25;
+				if (infl == "DMBall2")
+				{
+					int bhlvl1chance = 1;
+					int bhlvl2chance = random(2,3);
+					int bhlvl3chance = randompick(6,6,6,7);
+				}
+				if (random(1,bhlvl1chance) <= 1)
+				{
+					if (!owner.CountInv("BlackHoleSpeedPenalty1")) owner.A_SetInventory("BlackHoleSpeedPenalty1",1);
+					else
+					{
+						if (!owner.CountInv("BlackHoleSpeedPenalty1b")) owner.A_SetInventory("BlackHoleSpeedPenalty1b",1);
+					}
+					if (random(1,bhlvl2chance) <= 1) 
+					{
+						if (!owner.CountInv("BlackHoleSpeedPenalty2")) owner.A_SetInventory("BlackHoleSpeedPenalty2",1);
+						else
+						{
+							if (!owner.CountInv("BlackHoleSpeedPenalty2b")) owner.A_SetInventory("BlackHoleSpeedPenalty2b",1);
+						}
+						if (random(1,bhlvl3chance) <= 1) 
+						{
+							if (!owner.CountInv("BlackHoleSpeedPenalty3")) owner.A_SetInventory("BlackHoleSpeedPenalty3",1);
+							else
+							{
+								if (!owner.CountInv("BlackHoleSpeedPenalty3b")) owner.A_SetInventory("BlackHoleSpeedPenalty3b",1);
+							}
+						}
+					}
+				}
+
+				ActorDefenseIgnoreFactor += (BHoleFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
 			
 			double RailFactor = frandom(0.3,0.334);
 			if (mod == 'Railgun') ActorDefenseIgnoreFactor += (RailFactor * (1.00 - ActorDefenseIgnoreFactor));
@@ -318,10 +356,12 @@ class CompatVulnItem : PlaceholderItem
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
 				
+				string nm = "CCards_Actor_StoneDeath";
 				if (source && 
 						prevtarget != source && 
 						(PlayerPawn(source) || source.bFRIENDLY) && 
 						!owner.bFRIENDLY && 
+						owner.GetClassName() != nm &&
 						!owner.bDORMANT)
 				{
 					int initdmg = newdamage;
@@ -413,6 +453,7 @@ class CompatVulnItem : PlaceholderItem
 					if (kcdebug_actordmgdisplays && MiscItem) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): Critbase: %d / %d", GetClassName(), MiscItem.CritChance, CritRoll);
 					if (FoundPlayer.CountInv("CheatCrit") || FoundPlayer.CountInv("CheatCritUltimate")) criticalhit = true;
 				}
+				if (criticalhit && (damageType == 'BlackHole' && random(1,8) <= 7)) criticalhit = false;
 				
 				int initdmg = newdamage;
 				if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): initdmg vs Damage: %d vs %d (damageType: %s, damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damageType, owner.DamageFactor);

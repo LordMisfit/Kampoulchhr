@@ -1937,6 +1937,7 @@ class KC_EventHandler : EventHandler
 				}
 				if (KCPlayerPawn(victim)) showdmglog = false;
 				if (mod == 'SilentMassacre') showdmglog = false;
+				nm = "CCards_Actor_StoneDeath"; if (vict == nm) showdmglog = false;
 				if (isCCardsIllusion) showdmglog = false;
 				if (showdmglog)
 				{
@@ -2037,6 +2038,7 @@ class KC_EventHandler : EventHandler
 				if (KCPlayerPawn(victim)) showdmglog = false;
 				if (mod == 'SilentMassacre') showdmglog = false;
 				if (isCCardsIllusion) showdmglog = false;
+				nm = "CCards_Actor_StoneDeath"; if (vict == nm) showdmglog = false;
 				if (kc_combatlog && showdmglog)
 				{
 					//Console.Printf("showdmglog 2");
@@ -2090,6 +2092,7 @@ class KC_EventHandler : EventHandler
 				outputdmgfactor /= tempdmgval;
 				bool playwsounds = true;
 				if (mod == 'SilentMassacre') playwsounds = false;
+				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playwsounds = false;
 				if (isCCardsIllusion) playwsounds = false;
 				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d", playwsounds);
 				
@@ -2157,6 +2160,7 @@ class KC_EventHandler : EventHandler
 				bool playdthsounds = false;
 				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdthsounds = true;
 				if (mod == 'SilentMassacre') playdthsounds = false;
+				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdthsounds = false;
 				if (isCCardsIllusion) playdthsounds = false;
 				
 				if (playdthsounds)
@@ -2272,6 +2276,7 @@ class KC_EventHandler : EventHandler
 				bool playdmgsounds = false;
 				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdmgsounds = true;
 				if (mod == 'SilentMassacre') playdmgsounds = false;
+				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdmgsounds = false;
 				if (isCCardsIllusion) playdmgsounds = false;
 				
 				if (playdmgsounds)
