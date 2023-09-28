@@ -8066,7 +8066,7 @@ class BlackHole : KCProjectile
 		int baseforce = -360;
 		int basedist = 340;
 		int basefdist = 10;
-		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE;
+		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE|RTF_THRUSTZ;
 		int flags2 = XF_HURTSOURCE;
 		if (target)
 		{
@@ -8078,7 +8078,7 @@ class BlackHole : KCProjectile
 				baseforce = -720;
 				basedist = 680;
 				basefdist = 20;
-				flags1 = RTF_NOIMPACTDAMAGE;
+				flags1 = RTF_NOIMPACTDAMAGE|RTF_THRUSTZ;
 				flags2 = 0;
 			}
 		}
@@ -8153,7 +8153,7 @@ class BlackHole2 : BlackHole
 		int baseforce = -720;
 		int basedist = 680;
 		int basefdist = 20;
-		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE;
+		int flags1 = RTF_AFFECTSOURCE|RTF_NOIMPACTDAMAGE|RTF_THRUSTZ;
 		int flags2 = XF_HURTSOURCE;
 		if (target)
 		{
@@ -8165,7 +8165,7 @@ class BlackHole2 : BlackHole
 				baseforce = -1440;
 				basedist = 1360;
 				basefdist = 40;
-				flags1 = RTF_NOIMPACTDAMAGE;
+				flags1 = RTF_NOIMPACTDAMAGE|RTF_THRUSTZ;
 				flags2 = 0;
 			}
 		}
