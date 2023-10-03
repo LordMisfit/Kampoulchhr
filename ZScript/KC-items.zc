@@ -2111,6 +2111,7 @@ class ArmorBonusBig : ArmorBonus2
 class KCGreenArmor : KCArmorPickup replaces GreenArmor
 {
 	mixin HUDRecovery;
+	mixin TSASpawnCheck;
 	default
 	{
 		Radius 20;
@@ -2286,9 +2287,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 					int rollrand = random(1,basechance);
 					if (rollrand <= 1)
 					{
-						A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
-						A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
-						A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION,0,tid);
+						A_TSASpawnMessage();
 						Destroy();
 					}
 				}
@@ -2353,6 +2352,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 class KCBlueArmor : KCArmorPickup replaces BlueArmor
 {
 	mixin HUDRecovery;
+	mixin TSASpawnCheck;
 	default
 	{
 		Radius 20;
@@ -2527,9 +2527,7 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 					int rollrand = random(1,basechance);
 					if (rollrand <= 1)
 					{
-						A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
-						A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
-						A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION,0,tid);
+						A_TSASpawnMessage();
 						Destroy();
 					}
 				}

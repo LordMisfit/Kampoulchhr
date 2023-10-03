@@ -4604,7 +4604,7 @@ class PlayerDashJump : Inventory
 			if (random[statitem](1,100) <= dashgruntchance)
 			{
 				int dashgruntrand = 0;
-				//if (Owner.GetClassName() == "HeiwaPlayer") dashgruntsound = "";
+				if (Owner.GetClassName() == "HeiwaPlayer") dashgruntsound = "";
 				if (MiscItem && MiscItem.CanTalkUnderwater)
 				{
 					double maskpitch = 1.00;

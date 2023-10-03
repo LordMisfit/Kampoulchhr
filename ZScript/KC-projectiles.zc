@@ -157,6 +157,9 @@ class KCProjectile : KCBaseZSC
 	KCCreature kcactor;
 	
 	private class<Inventory> iDTech1Check, iDTech1Check2, iDTech1Check3, iDTech1Check4, iDTech1Check5, iDTech1Check6, iDTech1Check7, iDTech1Check8;
+
+	int ishellcoreproj;
+	property ishellcore: ishellcoreproj;
 	
 	int maxunfreezetime;
 	int maxunfreezedist;
@@ -1497,6 +1500,53 @@ class KCBulletTracer : KCFastProjectile
 		}
 	}
 	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		KCPlayerPawn playpawn;
+		KCPlayerPawn playpawn2;
+		Actor KCActor;
+		Actor KCActor2;
+		playpawn = KCPlayerPawn(target);
+		playpawn2 = KCPlayerPawn(other);
+		KCActor = Actor(target);
+		KCActor2 = Actor(other);
+
+		// Non-passive means the one moving into the other is performing the checks.
+		if (!passive)
+		{
+			// if fired by a player actor, check for friendliness from the passive actor
+			if (playpawn) 
+			{
+				// Pass through different species of select types.
+				if (other.bFRIENDLY == 1)
+				{
+					if (A_CheckFriendCollisionProjTypePlayer(self)) return false;
+					if (A_CheckFriendCollisionProjTypePlayer2(self)) return false;
+				}
+			}
+			else
+			if (KCActor && KCActor.bFRIENDLY)
+			{
+				// Pass through different species of select types or players
+				if (other.bFRIENDLY == 1 || playpawn2)
+				{
+					//if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
+					//else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
+				}
+			}
+			else 
+			{
+			}
+		}
+		// We don't really care about others making the check.
+		
+		return true;
+	}
+
 	action void A_SpawnTracerTrail(string name = "KCBulletTracerTrail", int extranum = 6, double spread = -2.5)
 	{
 		double posx = 0.0;

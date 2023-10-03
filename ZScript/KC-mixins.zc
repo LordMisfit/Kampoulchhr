@@ -2475,3 +2475,13 @@ mixin class ActorStateReplace
 		return count;
 	}
 }
+
+mixin class TSASpawnCheck
+{
+	void A_TSASpawnMessage()
+	{
+		A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
+		A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
+		A_SpawnItemEx("TSArtifactSpawner");
+	}
+}

@@ -3177,9 +3177,9 @@ class KCPlayer : KCPlayerPawn
 		Health 100;
 		Radius 16;
 		Height 56;
-		Mass 100;
+		Mass 104; // 100
 		PainChance 255;
-		Player.DisplayName "Marine";
+		Player.DisplayName "Doom Marine";
 		Player.CrouchSprite "PLYC";
 		Player.StartItem "PistolMarine";
 		Player.StartItem "FistMarine";
@@ -3205,6 +3205,8 @@ class KCPlayer : KCPlayerPawn
 		Player.Colorset 5, "$TXT_COLOR_LIGHTBROWN",	0x38, 0x47,  0x3A;
 		Player.Colorset 6, "$TXT_COLOR_LIGHTRED",	0xB0, 0xBF,  0xB2;
 		Player.Colorset 7, "$TXT_COLOR_LIGHTBLUE",	0xC0, 0xCF,  0xC2;
+		Tag "Doom Marine";
+		+PLAYERPAWN.NOTHRUSTWHENINVUL
 	}
 	
 	
@@ -3330,12 +3332,22 @@ class HeiwaPlayer : KCPlayerPawn
 	int stepCounter;
 	default
 	{
+		Health 84; // 100
+		Player.MaxHealth 84;
+		Player.MugShotMaxHealth -1; // 84
+		Radius 13; // 26
+		Height 51;
+		Mass 72; 
+		Player.DisplayName "??????? ?????";
+		//Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 2, "Glock21";
 		Player.WeaponSlot 4, "TommyGun";
 		Player.WeaponSlot 5, "Devastator";
 		Player.WeaponSlot 6, "TeslaCannon";
 		Player.WeaponSlot 7, "BHGen";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
+		Tag "??????? ?????";
+		+PLAYERPAWN.NOTHRUSTWHENINVUL
 	}
 	
 	override void Tick()

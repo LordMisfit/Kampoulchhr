@@ -1434,6 +1434,12 @@ class KC_EventHandler : EventHandler
 					ExplosiveBarrel2(spawnee) ||
 					Pod(spawnee)) spawnee.bPUSHABLE = true;
 			
+			if (ExplosiveBarrel(spawnee)) 
+			{
+				spawnee.ProjectilePassHeight = 32;
+				//spawnee.A_SetSize(10,32);
+			}
+			
 			if (KCCreature(spawnee))
 			{
 				KCC = KCCreature(spawnee);
