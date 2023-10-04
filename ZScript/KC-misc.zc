@@ -1938,11 +1938,12 @@ class PlayerStatItem : Inventory
 			int dropamt;
 			string itemname;
 			int baseholdamount;
-			double leveladd;
+			double leveladd, atkadd;
 			int itemsmax;
 			int itemid;
 			double baselvlfactor = 50.0;
 			if (owner.CountInv("PlayingHexen")) baselvlfactor = 33.4;
+			double baseatkfactor = 50.0;
 			double minf = 1.0;
 			if (minf < 0.5) minf = 0.5;
 			baselvlfactor *= minf;
@@ -1965,15 +1966,15 @@ class PlayerStatItem : Inventory
 			baseholdmultibp2 = 4.0; // 2.0
 			if (owner.CountInv("PlayingHexen")) baselvlfactor = 150.0;
 			
-			CalcInvLimit("Clip", 200, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Shell", 50, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("RocketAmmo", 50, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Cell", 300, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("TommAmmo", 500, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("MiniRockets", 200, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("ImpalerBolts", 40, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Bolts", 450, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Saws", 50, baselvlfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Clip", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Shell", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("RocketAmmo", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Cell", 300, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("TommAmmo", 500, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("MiniRockets", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("ImpalerBolts", 40, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Bolts", 450, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			CalcInvLimit("Saws", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
 		}
 		//
 		//
@@ -2092,11 +2093,11 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
-		void CalcInvLimit(name itemtype, int baseholdamount, double baselvlfactor, double baseholdmultibp1, double baseholdmultibp2, int invintervals)
+		void CalcInvLimit(name itemtype, int baseholdamount, double baselvlfactor, double baseatkfactor, double baseholdmultibp1, double baseholdmultibp2, int invintervals)
 		{
 			int dropamt;
 			string itemname;
-			double leveladd;
+			double leveladd, atkadd;
 			int itemsmax;
 			int itemid;
 			
@@ -2124,11 +2125,29 @@ class PlayerStatItem : Inventory
 				if (kcdebug_inventorylimits) Console.Printf("baseholdamount  [\c[green]%s\c-]: %.2f (baselvlfactor: %.4f)", itemname, int(baseholdamount), baselvlfactor);
 				if (kc_expgains)
 				{
-					if (isammo && kc_dynamicammolimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
-					else if (kc_dynamicinventorylimits) leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+					if (isammo) 
+					{
+						if (kc_dynamicammolimits)
+						{
+							leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+							atkadd = (baseholdamount * double((TruePlayerATK / baseatkfactor)));
+						}
+					}
+					else
+					{
+						if (kc_dynamicinventorylimits) 
+						{
+							leveladd = (baseholdamount * double((ActualLevel / baselvlfactor)));
+							atkadd = (baseholdamount * double((TruePlayerATK / baseatkfactor)));
+						}
+					}
 				}
-				if (kcdebug_inventorylimits) Console.Printf("leveladd  [\c[green]%s\c-]: %.2f", itemname, int(leveladd));
-				itemsmax = (baseholdamount + int(leveladd));
+				if (kcdebug_inventorylimits) 
+				{
+					Console.Printf("leveladd [\c[green]%s\c-]: %.2f", itemname, int(leveladd));
+					Console.Printf("atkadd [\c[green]%s\c-]: %.2f", itemname, int(atkadd));
+				}
+				itemsmax = (baseholdamount + int(leveladd) + int(atkadd));
 				currentitemtype.MaxAmount = itemsmax;
 				if (invintervals > 1)
 				{
@@ -2137,8 +2156,14 @@ class PlayerStatItem : Inventory
 				}
 				if (currentitemtype.MaxAmount < 1) currentitemtype.MaxAmount = 1;
 				
-				if (!isammo && currentitemtype.Amount > currentitemtype.MaxAmount) { dropamt = currentitemtype.MaxAmount - currentitemtype.Amount; owner.A_DropInventory(itemname,dropamt); }
-				else if (currentitemtype.Amount > currentitemtype.MaxAmount) currentitemtype.Amount = currentitemtype.MaxAmount;
+				if (!isammo)
+				{
+					if (currentitemtype.Amount > currentitemtype.MaxAmount) { dropamt = currentitemtype.MaxAmount - currentitemtype.Amount; owner.A_DropInventory(itemname,dropamt); }
+				}
+				else
+				{
+					if (currentitemtype.Amount > currentitemtype.MaxAmount) currentitemtype.Amount = currentitemtype.MaxAmount;
+				}
 			}
 		}
 	
