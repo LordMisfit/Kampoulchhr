@@ -3037,12 +3037,12 @@ class KCPlayerPawn : PlayerPawn
 		{
 			if (!passive)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PPawnVoodoo] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PPawnVoodoo] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return true;
 			}
 			else
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PPawnVoodoo] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PPawnVoodoo] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
 				return true;
 			}
 		}
@@ -3051,17 +3051,17 @@ class KCPlayerPawn : PlayerPawn
 			// Non-passive means the one moving into the other is performing the checks.
 			if (!passive)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PlayerPawn] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PlayerPawn] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				// Pass through different species of select types.
 				if (other.bFRIENDLY == 1)
 				{
-					if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+					if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
 					return false;
 				}
 			}
 			else
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PlayerPawn] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[red]Collision:\c- Passive - (\c[green]%s\c-) [PlayerPawn] vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic); 
 				return true;
 			}
 		}

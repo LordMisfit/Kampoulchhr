@@ -958,16 +958,16 @@ mixin class MonsterCollider
 		// Non-passive means the one moving into the other is performing the checks.
 		if (!passive)
 		{
-			if (kcdebug_generalcollisions) Console.Printf("\c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+			if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 			
 			// Pass through certain shield parts, ones that would normally cause a monster to be bumped around by running into them
 			if (shieldpiece)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[sapphire]Collision:  Passive - \c[green]%s\c- [ShieldPiece] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+				if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[sapphire]Collision:  Passive - \c[green]%s\c- [ShieldPiece] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 				if (ShieldPartMeleeNoReflect(shieldpiece) || ShieldPartMeleeNoReflect(shieldpiece) ||
 						KickShieldReflect(shieldpiece) || KickShieldNoReflect(shieldpiece))
 				{
-					if (kcdebug_generalcollisions) Console.Printf("\c[sapphire]Collision: Passive - \c[green]%s\c- [MeleeShieldPart] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+					if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[sapphire]Collision: Passive - \c[green]%s\c- [MeleeShieldPart] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 					if (ExplosiveBarrel(self)) return false;
 					if (ExplosiveBarrel2(self)) return false;
 					if (Pod(self)) return false;
@@ -979,24 +979,24 @@ mixin class MonsterCollider
 			// Pass through players, if the calling monster is Friendly
 			if (bFRIENDLY == 1 && other.GetSpecies() == "Players")
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerType] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerType] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return false; 
 			}
 
 			// Pass through other actors, if the calling monster is Friendly
 			if (bFRIENDLY == 1 && other.bFRIENDLY == 1)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return false; 
 			}
 		}
 		else
 		{
-			if (kcdebug_generalcollisions) Console.Printf("\c[red]Collision:\c- NotPassive - (\c[green]%s\c-) vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
+			if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[red]Collision:\c- NotPassive - (\c[green]%s\c-) vs \c[orange]%s\c- {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 			
 			if (shieldpiece)
 			{
-				if (kcdebug_generalcollisions) Console.Printf("\c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
+				if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [Friendly] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
 				return false;
 			}
 			return true; 
@@ -2158,7 +2158,7 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyDoom:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendlyDoom:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 
@@ -2168,7 +2168,7 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyHeretic:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendlyHeretic:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 	
@@ -2178,7 +2178,7 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyHexen:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendlyHexen:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 
@@ -2188,7 +2188,7 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyStrife:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendlyStrife:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 	
@@ -2198,7 +2198,7 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendlyOthers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendlyOthers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 
@@ -2208,10 +2208,10 @@ mixin class CollisionChecker
 		
 		int type;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypeFriendly1:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypeFriendly1:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
-
+	
 	int A_CheckPropCollisionTracers(Actor actr)
 	{
 		infl = actr.GetClassName();
@@ -2244,12 +2244,25 @@ mixin class CollisionChecker
 				Stalagtite(actr) ||
 				TallGreenColumn(actr) ||
 				TallRedColumn(actr) ||
-				TorchTree(actr))
+				TorchTree(actr) ||
+				BloodyTwitch(actr) ||
+				DeadStick(actr) ||
+				HangBNoBrain(actr) ||
+				HangNoGuts(actr) ||
+				HangTLookingDown(actr) ||
+				HangTLookingUp(actr) ||
+				HangTNoBrain(actr) ||
+				HangTSkull(actr) ||
+				LiveStick(actr) ||
+				Meat2(actr) ||
+				Meat3(actr) ||
+				Meat4(actr) ||
+				Meat5(actr))
 		{
 			type = 1;
 		}
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckPropCollisionTracers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckPropCollisionTracers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 
@@ -2265,7 +2278,7 @@ mixin class CollisionChecker
 		int type;
 		if (ProjD && PlayPawn) type = 1;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypePlayer:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypePlayer:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 
@@ -2286,7 +2299,7 @@ mixin class CollisionChecker
 				infl == "CrazyBallDD"
 			 ) type = 1;
 		
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]CheckFriendCollisionProjTypePlayer2:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]CheckFriendCollisionProjTypePlayer2:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 	
@@ -2305,7 +2318,7 @@ mixin class CollisionChecker
 				SawPuff(actr) ||
 				KCBulletPuff2(actr)) type = 1;
 	
-		if (kcdebug_generalcollisions) Console.Printf("\c[brick]A_CheckCollisionProjShieldExemption:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]A_CheckCollisionProjShieldExemption:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		return type;
 	}
 }
