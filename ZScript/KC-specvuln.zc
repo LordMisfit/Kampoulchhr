@@ -357,11 +357,13 @@ class CompatVulnItem : PlaceholderItem
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
 				
 				string nm = "CCards_Actor_StoneDeath";
+				string nn = "CCards_Actor_MysteryEgg";
 				if (source && 
 						prevtarget != source && 
 						(PlayerPawn(source) || source.bFRIENDLY) && 
 						!owner.bFRIENDLY && 
 						owner.GetClassName() != nm &&
+						owner.GetClassName() != nn &&
 						!owner.bDORMANT)
 				{
 					int initdmg = newdamage;

@@ -1504,6 +1504,7 @@ mixin class MonsterCollider
 		}
 		
 		nm = "CCards_Actor_StoneDeath";
+		nn = "CCards_Actor_MysteryEgg";
 		bool surprisehit = false;
 		if (source && 
 				target != source && 
@@ -1516,6 +1517,7 @@ mixin class MonsterCollider
 				!PracticeTarget2(self) &&
 				!KCUniqueBoss(self) &&
 				GetClassName() != nm &&
+				GetClassName() != nn &&
 				!bDORMANT)
 		{
 			int initdmg = damage;
