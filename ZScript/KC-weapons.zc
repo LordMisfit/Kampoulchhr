@@ -172,7 +172,7 @@ class KCWeaponBase : Weapon
 		return Level;
 	}
 	
-	action void A_FireBulletsEx(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = 1, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0)
+	action void A_FireBulletsEx(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = 1, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0, double defenseignorefactor = 0.00)
 	{
 		let player = player;
 		if (!player) return;
@@ -214,6 +214,15 @@ class KCWeaponBase : Weapon
 				damage *= random[cabullet](1, 3);
 
 			let puff = LineAttack(bangle, range, bslope, damage, 'Hitscan', pufftype, laflags, t);
+			if (puff)
+			{
+				KCPuff newpuff;
+				newpuff = KCPuff(puff);
+				if (newpuff)
+				{
+					newpuff.defenseignorefactor = defenseignorefactor;
+				}
+			}
 
 			if (missile != null)
 			{
@@ -266,6 +275,16 @@ class KCWeaponBase : Weapon
 					damage *= random[cabullet](1, 3);
 
 				let puff = LineAttack(pangle, range, slope, damage, 'Hitscan', pufftype, laflags, t);
+				if (puff)
+				{
+					KCPuff newpuff;
+					newpuff = KCPuff(puff);
+					if (newpuff)
+					{
+						newpuff.defenseignorefactor = defenseignorefactor;
+					}
+				}
+				
 
 				if (missile != null)
 				{
@@ -295,7 +314,7 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
-	action void A_FireBullets(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = 1, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0)
+	action void A_FireBullets(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = 1, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0, double defenseignorefactor = 0.00)
 	{
 		int sflags = flags;
 		if (sflags & FBF_USEAMMO) sflags -= FBF_USEAMMO;
@@ -308,39 +327,39 @@ class KCWeaponBase : Weapon
 		{
 			playera.angle -= spread2angle;
 			playera.pitch -= spread2pitch;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 			playera.pitch = pptc;
 
 			playera.angle -= spread2angle;
 			playera.pitch += spread2pitch;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 			playera.pitch = pptc;
 
 			playera.angle += spread2angle;
 			playera.pitch -= spread2pitch;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 			playera.pitch = pptc;
 
 			playera.angle += spread2angle;
 			playera.pitch += spread2pitch;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 			playera.pitch = pptc;
 		}
 		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
 		{
 			playera.angle -= spread1angle;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 			
 			playera.angle += spread1angle;
-			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy);
+			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 		}
-		A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy);
+		A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 	}
 
 	action Actor, Actor A_FireProjectileEx(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)	
@@ -1346,7 +1365,7 @@ class KCWeaponBase : Weapon
 			bJustAttacked = true;
 	}
 
-	protected action void GunShot(int accurate, Class<Actor> pufftype, double pitch)
+	protected action void GunShot(int accurate, Class<Actor> pufftype, double pitch, double defenseignorefactor)
 	{
 		int damage = 5;
 		int randpick = randompick[GunShot](1,2,3);
@@ -1388,10 +1407,19 @@ class KCWeaponBase : Weapon
 			}
 		}
 		
-		LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Bullet', pufftype);
+		let puff = LineAttack(ang, PLAYERMISSILERANGE, pitch, damage, 'Bullet', pufftype);
+		if (puff)
+		{
+			KCPuff newpuff;
+			newpuff = KCPuff(puff);
+			if (newpuff)
+			{
+				newpuff.defenseignorefactor = defenseignorefactor;
+			}
+		}
 	}
 	
-	action void A_SetBulletTracerDmg(actor BombShotsB, actor BombShots, double dmg, name dmgtype)
+	action void A_SetBulletTracerDmg(actor BombShotsB, actor BombShots, double dmg, name dmgtype, double defenseignorefactor)
 	{
 		if (BombShots)
 		{
@@ -1401,6 +1429,7 @@ class KCWeaponBase : Weapon
 			{
 				BS1.DamageType = dmgtype;
 				BS1.finaldamagedealt = dmg;
+				BS1.defenseignorefactor = defenseignorefactor;
 			}
 		}
 	}
@@ -1421,7 +1450,7 @@ class KCWeaponBase : Weapon
 				randangle = (shotangle * 0.625);
 			}
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
 	
@@ -1473,7 +1502,7 @@ class KCWeaponBase : Weapon
 				}
 
 				A_StartSound ("weapons/pistol", CHAN_WEAPON);
-				GunShot(accurate, "KCBulletPuff2", BulletSlope());
+				GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
 			}
 		}
 	}
@@ -1491,7 +1520,7 @@ class KCWeaponBase : Weapon
 			randpitch *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			randangle *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
 	
@@ -1546,7 +1575,7 @@ class KCWeaponBase : Weapon
 				
 				for (int i = 0; i < 7; i++)
 				{
-					GunShot(false, "KCBulletPuff2", pitch);
+					GunShot(false, "KCBulletPuff2", pitch, 0.0);
 				}
 			}
 		}
@@ -1565,7 +1594,7 @@ class KCWeaponBase : Weapon
 			randangle *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			randpitch *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
 	
@@ -1673,7 +1702,7 @@ class KCWeaponBase : Weapon
 				randangle = (shotangle * 0.625);
 			}
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
 	
@@ -1735,7 +1764,7 @@ class KCWeaponBase : Weapon
 				}
 				
 				player.mo.PlayAttacking2 ();
-				GunShot (accurate, "KCBulletPuff2", BulletSlope ());
+				GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
 			}
 		}
 	}
@@ -4035,7 +4064,7 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 				randangle = (shotangle * 0.625);
 			}
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
 
@@ -4160,7 +4189,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 				double randpitch = ptcoffset;
 				double randangle = angoffset;
 				[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-				A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive');
+				A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 			}
 		}
 	}
@@ -4271,7 +4300,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 							double shotheight = 36;
 							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 							[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive');
+							A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 						}
 					}
 					else
@@ -4677,7 +4706,7 @@ class Glock21 : MarineWeapon
 						double shotheight = 36;
 						if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 						[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet');
+						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.334,0.667));
 					}
 				}
 				else
@@ -4697,13 +4726,13 @@ class Glock21 : MarineWeapon
 							double shotheight = 36;
 							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 							[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet');
+							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.334,0.667));
 						}
 					}
 					else
 					{
 						A_StartSound ("weapons/glockfire", CHAN_WEAPON);
-						A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM);
+						A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(0.334,0.667));
 					}
 				}
 			}
@@ -4736,7 +4765,7 @@ class Glock21 : MarineWeapon
 						double shotheight = 36;
 						if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 						[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet');
+						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
 					}
 				}
 				else
@@ -4756,13 +4785,13 @@ class Glock21 : MarineWeapon
 							double shotheight = 36;
 							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 							[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet');
+							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
 						}
 					}
 					else
 					{
 						A_StartSound ("weapons/glockfire", CHAN_WEAPON);
-						A_FireBullets(4.25,6.75,-1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM);
+						A_FireBullets(4.25,6.75,-1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(0.334,0.667));
 					}
 				}
 			}
@@ -4903,7 +4932,7 @@ class TommyGun : MarineWeapon
 			double randpitch = shotpitch;
 			double randangle = shotangle;
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet');
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
 		}
 	}
 	

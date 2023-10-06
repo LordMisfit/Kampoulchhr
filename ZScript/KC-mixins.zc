@@ -1025,6 +1025,26 @@ mixin class MonsterCollider
 		}
 		else
 		{
+			double ProjFactor;
+			KCProjectile KCProj;
+			if (inflictor)
+			{
+				KCProj = KCProjectile(inflictor);
+			}
+			else
+			{
+				if (source)
+				{
+					KCProj = KCProjectile(source);
+				}
+			}
+			if (KCProj)
+			{
+				ProjFactor = KCProj.defenseignorefactor;
+				ActorDefenseIgnoreFactor += (ProjFactor * (1.00 - ActorDefenseIgnoreFactor));
+				//Console.Printf("ProjFactor: %.8f", ProjFactor);
+			}
+		
 			double WhistleFactor = 0.75;
 			if (inflictor && PlayerWhistle(inflictor) || source && PlayerWhistle(source)) ActorDefenseIgnoreFactor += (WhistleFactor * (1.00 - ActorDefenseIgnoreFactor));
 			
@@ -2309,7 +2329,6 @@ mixin class CollisionChecker
 
 		int type;
 		if (BulletPuff(actr) || 
-				KCPuff(actr) || 
 				FistPuff(actr) || 
 				KickPuff(actr) || 
 				HowitzerBase(actr) || 

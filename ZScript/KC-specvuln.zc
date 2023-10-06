@@ -68,6 +68,26 @@ class CompatVulnItem : PlaceholderItem
 		}
 		else
 		{
+			double ProjFactor;
+			KCProjectile KCProj;
+			if (inflictor)
+			{
+				KCProj = KCProjectile(inflictor);
+			}
+			else
+			{
+				if (source)
+				{
+					KCProj = KCProjectile(source);
+				}
+			}
+			if (KCProj)
+			{
+				ProjFactor = KCProj.defenseignorefactor;
+				ActorDefenseIgnoreFactor += (ProjFactor * (1.00 - ActorDefenseIgnoreFactor));
+				//Console.Printf("ProjFactor: %.8f", ProjFactor);
+			}
+
 			KCPlayerPawn FoundPlayer;
 			FoundPlayer = KCPlayerPawn(source);
 			if (FoundPlayer)
