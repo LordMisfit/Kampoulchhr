@@ -1,0 +1,2288 @@
+// BASE Spawner
+class KCMonsterSpawner : RandomSpawner2 abstract
+{
+	mixin EvolveMonsters;
+	
+	int user_dontdroprandomstuff;
+	int user_dontdropnormaldrops;
+	int evolvechance;
+	int doomtype;
+	int deathtimer;
+	string MonsterName;
+	actor player;
+	PlayerStatItem MiscItem;
+	KCGlobalVariables globalvars;
+	int MapsFinished;
+	bool gotd1;
+
+	// This function is needed for handling boss replacers 
+	// [also this is to try to fix the problem of INSTANT effects on the death of spawned "boss" monsters in maps like E2M8/E3M8 so you can try to pick up the bosses' drops before the level ends]
+	override void Tick()
+	{
+		Actor.Tick(); // Actor instead of Super in order to replace the original code added to RandomSpawner instead of adding to it.
+		if (GetAge() <= 1) 
+		{
+			player = players[0].mo;
+			if (globalvars) MapsFinished = globalvars.MapsFinished;
+		}
+		KCCreature monstertype;
+		if (tracer) monstertype = KCCreature(tracer);
+		if (tracer == null)
+		{
+			int dtimermax = 35;
+			if (deathtimer > dtimermax)
+			{
+				deathtimer++;
+				A_BossDeath();
+				if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
+				Destroy();
+			}
+		}
+		else
+		{
+			if (monstertype)
+			{
+				MonsterName = monstertype.GetClassName();
+				if (monstertype.bossdeathactivate)
+				{
+					deathtimer++;
+					int dtimermax = 35;
+					if (IceLich(tracer)) dtimermax = 3;
+					if (HellWarrior(tracer)) dtimermax = 40;
+					if (FlyingBalrogDVDS(tracer)) dtimermax = 43;
+					if (BaronOfHellNew(tracer) ||
+							HellKnightNew(tracer) ||
+							Belphegor(tracer) ||
+							Cybruiser(tracer))
+					{
+						dtimermax = 48;
+					}
+					if (ArachnotronNew(tracer) ||
+							RailArachnotron(tracer) || 
+							FusionArachnotron(tracer) || 
+							ArachnotronMK2(tracer)) 
+					{
+						dtimermax = 55;
+					}
+					if (MancubusNew(tracer) ||
+							Hectebus(tracer) ||
+							Daedabus(tracer)) 
+					{
+						dtimermax = 54;
+					}
+					if (ArchonOfHell(tracer)) dtimermax = 60;
+					if (BruiserDemon(tracer)) dtimermax = 74;
+					if (PyroDemon(tracer)) dtimermax = 101;
+					if (CyberDemonNew(tracer) ||
+							Annihilator(tracer))
+					{
+						dtimermax = 120;
+					}
+					if (SpiderMastermindNew(tracer) ||
+							Demolisher(tracer))
+					{
+						dtimermax = 130;
+					}
+					if (dydudebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]: %d / %d", MonsterName, monstertype.bossdeathactivate, deathtimer, dtimermax);
+					if (deathtimer > dtimermax)
+					{
+						A_BossDeath();
+						if (dydudebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]", MonsterName, monstertype.bossdeathactivate);
+						Destroy();
+					}
+				}
+			}
+			else
+			{
+				if (tracer.health <= 0)
+				{
+					deathtimer++;
+					int dtimermax = 35;
+					if (HellWarrior(tracer)) dtimermax = 40;
+					if (FlyingBalrogDVDS(tracer)) dtimermax = 43;
+					if (BaronOfHellNew(tracer) ||
+							HellKnightNew(tracer) ||
+							Belphegor(tracer) ||
+							Cybruiser(tracer))
+					{
+						dtimermax = 48;
+					}
+					if (ArachnotronNew(tracer) ||
+							RailArachnotron(tracer) || 
+							FusionArachnotron(tracer) || 
+							ArachnotronMK2(tracer)) 
+					{
+						dtimermax = 55;
+					}
+					if (MancubusNew(tracer) ||
+							Hectebus(tracer) ||
+							Daedabus(tracer)) 
+					{
+						dtimermax = 54;
+					}
+					if (ArchonOfHell(tracer)) dtimermax = 60;
+					if (BruiserDemon(tracer)) dtimermax = 74;
+					if (PyroDemon(tracer)) dtimermax = 101;
+					if (CyberDemonNew(tracer) ||
+							Annihilator(tracer))
+					{
+						dtimermax = 120;
+					}
+					if (SpiderMastermindNew(tracer) ||
+							Demolisher(tracer))
+					{
+						dtimermax = 130;
+					}
+					if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner: %d / %d", deathtimer, dtimermax);
+					if (deathtimer > dtimermax)
+					{
+						A_BossDeath();
+						if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
+						Destroy();
+					}
+				}
+			}
+		}
+	}
+	
+	protected bool CheckUOHYM()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+	
+	bool IsDoom1()
+	{
+		bool Doom1 = false;
+		if (exex_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
+		{
+			Doom1 = true;
+			if (dydudebug_monsterspawns) Console.Printf("Doom1: %d", Doom1);
+		}
+		return Doom1;
+	}
+	
+	bool IsDoom2()
+	{
+		bool Doom2 = false;
+		if (exex_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
+		{
+			Doom2 = true;
+			if (dydudebug_monsterspawns) Console.Printf("Doom2: %d", Doom2);
+		}
+		return Doom2;
+	}
+	
+	protected void A_DebugPrintOut(string classname, bool Doom1)
+	{
+		if (dydudebug_monsterspawns) 
+		{
+			if (Doom1) Console.Printf("(Doom1 Mode) \c[green]classname [%s]: \c[yellow]%s", GetClassName(), classname);
+						else Console.Printf("\c[green]classname [%s]: \c[yellow]%s", GetClassName(), classname);
+		}
+	}
+	
+	protected bool CanFitHere(Class<Actor> actorClass) 
+	{
+		let actor = Spawn(actorClass, Pos, NO_REPLACE);
+		
+		if (actor == null)
+			return false;
+		else 
+		{
+			let result = actor.TestMobjLocation();
+			actor.ClearCounters();
+			actor.Destroy();
+			return result;
+		}
+	}
+	
+	override void PostSpawn(actor spawned)
+	{
+		super.PostSpawn(spawned);
+		if (spawned)
+		{
+			//spawned.special = special;
+			//spawned.Args[0] = Args[0];
+			//spawned.Args[1] = Args[1];
+			//spawned.Args[2] = Args[2];
+			//spawned.Args[3] = Args[3];
+			//spawned.Args[4] = Args[4];
+			KCCreature KCC;
+			KCC = KCCreature(spawned);
+			if (KCC)
+			{
+				KCC.user_dontdroprandomstuff = user_dontdroprandomstuff;
+				KCC.user_dontdropnormaldrops = user_dontdropnormaldrops;
+			}
+		}
+	}
+}
+
+/*
+// Doom Monsters
+class ZombiemanSpawner : KCMonsterSpawner replaces Zombieman
+{
+	Default
+	{
+		//$Sprite "RNMSA0"
+		Radius 20;
+		Height 56;
+	}
+	
+	override Name ChooseSpawn()
+	{
+		string classname = "ZombiemanNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,4096) <= 1) 
+			{
+				classname = "ArchvileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,1024) <= 1) 
+			{
+				int randvar = random(1,3);
+				if (randvar <= 1) classname = "MancubusSpawner";
+				if (randvar == 2) classname = "HellKnightSpawner";
+				if (randvar >= 3) classname = "ArachnotronSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+				else
+				{
+					// Defaults to a Hell Knight due to it being the most likely thing to fit in the same space
+					classname = "HellKnightSpawner";
+					if (CanFitHere(classname)) 
+					{
+						result = classname;
+						gotd1 = true;
+					}
+				}
+			}
+			else
+			if (random(1,256) <= 1) 
+			{
+				classname = "RevenantSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,32) <= 1) 
+			{
+				classname = "ChaingunGuySpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		if (!gotd1)
+		{
+			spawndoomtype = true;
+			
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (kc_monsterevolutions && spawndoomtype)
+			{
+				if (random(1,256) <= 4)
+				{
+					classname = "ShotgunGuySpawner";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= 8)
+				{
+					classname = "SuicideBomber";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else 
+				if (random(1,256) <= 8)
+				{
+					classname = "HellClericDVDS";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= evolvechance)
+				{
+					if (random(1,2) <= 1) classname = "RocketLauncherGuy";
+					else
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,320) <= evolveChance)
+						{
+							if (random(1,2) <= 1) classname = "RepeaterZombie";
+															 else classname = "KarasawaGuy";
+							if (CanFitHere(classname)) result = classname;
+						}
+						else
+						{
+							classname = "PlasmaGuy";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+				}
+				else
+				{
+					classname = "ZombiemanNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+class StealthZombiemanSpawner : ZombiemanSpawner replaces StealthZombieman { }
+
+// Shotgun Guy
+class ShotgunGuySpawner : KCMonsterSpawner replaces ShotgunGuy
+{
+	Default
+	{
+		//$Sprite "RNMSB0"
+		Radius 20;
+		Height 56;
+	}
+	
+	override Name ChooseSpawn()
+	{
+		string classname = "ShotgunGuyNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,2048) <= 1) 
+			{
+				classname = "ArchvileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,512) <= 1) 
+			{
+				classname = "HellKnightSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,128) <= 1) 
+			{
+				classname = "RevenantSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,16) <= 1) 
+			{
+				classname = "ChaingunGuySpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		if (!gotd1)
+		{
+			spawndoomtype = true;
+			
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (kc_monsterevolutions && spawndoomtype)
+			{
+				if (random(1,256) <= 4)
+				{
+					classname = "ZombiemanSpawner";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= 8)
+				{
+					classname = "SuicideBomber";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= 8)
+				{
+					classname = "HellClericDVDS";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= evolvechance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolvechance) classname = "FemaleRailZombie";
+																				else classname = "SuperShotgunGuy";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					classname = "ShotgunGuyNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthShotgunGuySpawner : ShotgunGuySpawner replaces StealthShotgunGuy { }
+
+// Chaingun Guy
+class ChaingunGuySpawner : KCMonsterSpawner replaces ChaingunGuy
+{
+	Default
+	{
+		//$Sprite "RNMSC0"
+		Radius 20;
+		Height 56;
+	}
+	
+	override Name ChooseSpawn()
+	{
+		string classname = "ChaingunGuyNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,256) <= 4 && !IsDoom1()) 
+			{
+				// Gives an VERY-RARE chance for a ChaingunGuy to use Zombieman or ShotgunGuy spawns instead. :V
+				if (random(1,2) == 1) classname = "ShotgunGuySpawner"; 
+												 else classname = "ZombiemanSpawner";
+				if (CanFitHere(classname)) result = classname;
+			} 
+			else
+			if (random(1,256) <= 8)
+			{
+				classname = "SuicideBomber";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			if (random(1,256) <= 4)
+			{
+				classname = "HellClericDVDS";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			if (random(1,256) <= evolvechance)
+			{
+				if (random(1,320) <= evolvechance) classname = "BFGGuy";
+																			else classname = "Minigunner";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			{
+				classname = "ChaingunGuyNew";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthChaingunGuySpawner : ChaingunGuySpawner replaces StealthChaingunGuy { }
+
+// Wolfenstein SS
+class WolfensteinSSSpawner : KCMonsterSpawner replaces WolfensteinSS
+{
+	Default
+	{
+		//$Sprite "RNMSC0"
+		Radius 20;
+		Height 56;
+	}
+	
+	override Name ChooseSpawn()
+	{
+		string classname = "WolfensteinSSNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		spawndoomtype = true;
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+// Imp
+class DoomImpSpawner : KCMonsterSpawner replaces DoomImp
+{
+	Default
+	{
+		//$Sprite "RNMSD0"
+		Radius 20;
+		Height 56;
+	}
+	override Name ChooseSpawn()
+	{
+		string classname = "DoomImpNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,384) <= 1) 
+			{
+				classname = "ArchVileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,96) <= 1) 
+			{
+				int randvar = random(1,3);
+				if (randvar <= 1) classname = "MancubusSpawner";
+				if (randvar == 2) classname = "HellKnightSpawner";
+				if (randvar >= 3) classname = "ArachnotronSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+				else
+				{
+					// Defaults to a Hell Knight due to it being the most likely thing to fit in the same space
+					classname = "HellKnightSpawner";
+					if (CanFitHere(classname)) 
+					{
+						result = classname;
+						gotd1 = true;
+					}
+				}
+			}
+			else
+			if (random(1,48) <= 1) 
+			{
+				classname = "RevenantSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,16) <= 1)
+			{
+				classname = "ChaingunGuySpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		if (!gotd1)
+		{
+			spawndoomtype = true;
+			
+			if (kc_monsterevolutions && spawndoomtype)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,256) <= 8)
+				{
+					classname = "HellClericDVDS";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolveChance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,320) <= evolveChance)
+						{
+							classname = "NetherDarkImp";
+							if (CanFitHere(classname)) result = classname;
+							else
+							{
+								int type = random(1,3);
+								if (type <= 1) classname = "STDarkImp";
+								if (type == 2) classname = "DarkImp";
+								if (type >= 3) classname = "VoidDarkImp";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+						else
+						{
+							int type = random(1,3);
+							if (type <= 1) classname = "STDarkImp";
+							if (type == 2) classname = "DarkImp";
+							if (type >= 3) classname = "VoidDarkImp";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+					else
+					{
+						classname = "DoomImpNew";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthDoomImpSpawner : DoomImpSpawner replaces StealthDoomImp { }
+
+// Demon
+class DemonSpawner : KCMonsterSpawner replaces Demon
+{
+	Default
+	{
+		//$Sprite "RNMSE0"
+		Radius 30;
+		Height 56;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "DemonNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,1024) <= 1) 
+			{
+				classname = "ArchvileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,128) <= 1) 
+			{
+				int randvar = random(1,3);
+				if (randvar <= 1) classname = "MancubusSpawner";
+				if (randvar == 2) classname = "HellKnightSpawner";
+				if (randvar >= 3) classname = "ArachnotronSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+				else
+				{
+					// Defaults to a Hell Knight due to it being the most likely thing to fit in the same space
+					classname = "HellKnightSpawner";
+					if (CanFitHere(classname)) 
+					{
+						result = classname;
+						gotd1 = true;
+					}
+				}
+			}
+			else
+			if (random(1,16) <= 1) 
+			{
+				classname = "RevenantSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+
+		if (!gotd1)
+		{
+			spawndoomtype = true;
+			
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (kc_monsterevolutions && spawndoomtype)
+			{
+				if (random(1,256) <= 16)
+				{
+					classname = "HellClericDVDS";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolveChance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,512) <= evolveChance)
+						{
+							classname = "ChaingunSpectre";
+							if (CanFitHere(classname)) result = classname;
+						}
+						else
+						{
+							if (random(1,16) <= 1)
+							{
+								classname = "ChaingunSpectre";
+								if (CanFitHere(classname)) result = classname;
+							}
+							else
+							{
+								classname = "BloodSpectre";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+					}
+					else
+					{
+						classname = "SpectreNew";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+				else
+				if (random(1,256) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,512) <= evolveChance)
+					{
+						classname = "ChaingunDemon";
+						if (CanFitHere(classname)) result = classname;
+					}
+					else
+					{
+						if (random(1,16) <= 1)
+						{
+							classname = "ChaingunDemon";
+							if (CanFitHere(classname)) result = classname;
+						}
+						else
+						{
+							classname = "BloodDemon";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+				}
+				else
+				{
+					classname = "DemonNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+class SpectreSpawner : KCMonsterSpawner replaces Spectre
+{
+	Default
+	{
+		//$Sprite "RNMSF0"
+		Radius 30;
+		Height 56;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "SpectreNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,1024) <= 1) 
+			{
+				classname = "ArchvileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,128) <= 1) 
+			{
+				int randvar = random(1,3);
+				if (randvar <= 1) classname = "MancubusSpawner";
+				if (randvar == 2) classname = "HellKnightSpawner";
+				if (randvar >= 3) classname = "ArachnotronSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+				else
+				{
+					// Defaults to a Hell Knight due to it being the most likely thing to fit in the same space
+					classname = "HellKnightSpawner";
+					if (CanFitHere(classname)) 
+					{
+						result = classname;
+						gotd1 = true;
+					}
+				}
+			}
+			else
+			if (random(1,16) <= 1) 
+			{
+				classname = "RevenantSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+
+		if (!gotd1)
+		{
+			spawndoomtype = true;
+			
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (kc_monsterevolutions && spawndoomtype)
+			{
+				if (random(1,256) <= 16)
+				{
+					classname = "HellClericDVDS";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				if (random(1,256) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,512) <= evolveChance)
+					{
+						classname = "ChaingunSpectre";
+						if (CanFitHere(classname)) result = classname;
+					}
+					else
+					{
+						if (random(1,16) <= 1)
+						{
+							classname = "ChaingunSpectre";
+							if (CanFitHere(classname)) result = classname;
+						}
+						else
+						{
+							classname = "BloodSpectre";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+				}
+				else
+				{
+					classname = "SpectreNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthDemonSpawner : DemonSpawner replaces StealthDemon { }
+
+// Revenant
+class RevenantSpawner : KCMonsterSpawner replaces Revenant
+{
+	Default
+	{
+		//$Sprite "RNMSG0"
+		Radius 20;
+		Height 56;
+	}
+	override Name ChooseSpawn()
+	{
+		string classname = "RevenantNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,256) <= 16)
+			{
+				classname = "HellClericDVDS";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			if (random(1,320) <= evolveChance)
+			{
+				classname = "DeathIncarnate";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthRevenantSpawner : RevenantSpawner replaces StealthRevenant { }
+
+// Cacodemon
+class CacodemonSpawner : KCMonsterSpawner replaces Cacodemon
+{
+	Default
+	{
+		//$Sprite "RNMSH0"
+		Radius 31;
+		Height 56;
+	}
+	override Name ChooseSpawn()
+	{
+		string classname = "CacodemonNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,128) <= 1) 
+			{
+				classname = "LostSoulSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+			else
+			if (random(1,16) <= 1) 
+			{
+				classname = "PainElementalSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		spawndoomtype = true;
+		
+		evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,256) <= evolvechance) // Upgrade to Other Cacos
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,320) <= evolvechance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,384) <= evolvechance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,448) <= evolvechance)
+						{
+							classname = "HadesOverlord";
+							if (CanFitHere(classname)) result = classname;
+							else
+							{
+								classname = "HadesElemental";
+								if (CanFitHere(classname)) result = classname;
+								else
+								{
+									classname = "Abaddon";
+									if (CanFitHere(classname)) result = classname;
+									else
+									{
+										classname = "Cacolantern";
+										if (CanFitHere(classname)) result = classname;
+										else
+										{
+											classname = "CacodemonNew";
+											if (CanFitHere(classname)) result = classname;
+										}
+									}
+								}
+							}
+						}
+						else
+						{
+							classname = "HadesElemental";
+							if (CanFitHere(classname)) result = classname;
+							else
+							{
+								classname = "Abaddon";
+								if (CanFitHere(classname)) result = classname;
+								else
+								{
+									classname = "Cacolantern";
+									if (CanFitHere(classname)) result = classname;
+									else
+									{
+										classname = "CacodemonNew";
+										if (CanFitHere(classname)) result = classname;
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						classname = "Abaddon";
+						if (CanFitHere(classname)) result = classname;
+						else
+						{
+							classname = "Cacolantern";
+							if (CanFitHere(classname)) result = classname;
+							else
+							{
+								classname = "CacodemonNew";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+					}
+				}
+				else
+				{
+					classname = "Cacolantern";
+					if (CanFitHere(classname)) result = classname;
+					else
+					{
+						classname = "CacodemonNew";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+			}
+			else
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,768) <= evolvechance) // Upgrade to Hades Scion
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,960) <= evolvechance)
+					{
+						classname = "HadesOverlord";
+						if (CanFitHere(classname)) result = classname;
+						else
+						{
+							classname = "HadesElemental";
+							if (CanFitHere(classname)) result = classname;
+							else
+							{
+								classname = "CacodemonNew";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+					}
+					else
+					{
+						classname = "HadesElemental";
+						if (CanFitHere(classname)) result = classname;
+						else
+						{
+							classname = "CacodemonNew";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+				}
+				else
+				{
+					classname = "CacodemonNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthCacodemonSpawner : CacodemonSpawner replaces StealthCacodemon { }
+
+// Pain Elemental
+class PainElementalSpawner : KCMonsterSpawner replaces PainElemental
+{
+	Default
+	{
+		//$Sprite "RNMSI0"
+		Radius 31;
+		Height 56;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "PainElementalNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,256) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,320) <= evolveChance)
+				{
+					classname = "HadesOverlord";
+					if (CanFitHere(classname)) result = classname;
+					else
+					{
+						classname = "HadesElemental";
+						if (CanFitHere(classname)) result = classname;
+						else
+						{
+							classname = "PainElementalNew";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+				}
+				else
+				{
+					classname = "HadesElemental";
+					if (CanFitHere(classname)) result = classname;
+					else
+					{
+						classname = "PainElementalNew";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+// LostSoul
+class LostSoulSpawner : KCMonsterSpawner replaces LostSoul
+{
+	Default
+	{
+		//$Sprite "RNMSR0"
+		Radius 16;
+		Height 56;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "LostSoulNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+		
+		if (IsDoom1())
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			// >_>;
+			if (random(1,32) <= 1) 
+			{
+				classname = "PainElementalSpawner";
+				if (CanFitHere(classname))
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,384) <= 1)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolveChance) classname = "BetaLostSoul"; 
+																				else classname = "ForgottenOne";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolveChance) classname = "BetaLostSoul"; 
+																				else classname = "LostSoulAnnoying";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+			else
+			{
+				if (random(1,256) <= evolveChance) classname = "BetaLostSoul"; 
+																			else classname = "LostSoulNew";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+// Arachnotron
+class ArachnotronSpawner : KCMonsterSpawner replaces Arachnotron
+{
+	Default
+	{
+		//$Sprite "RNMSJ0"
+		Radius 64;
+		Height 64;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "ArachnotronNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolvechance)
+			{
+				if (random(1,2) == 1) classname = "FusionArachnotron";
+												 else classname = "ArachnotronMK2";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			{
+				if (random(1,256) <= randompick(96,128,128,128,128,160))
+				{
+					classname = "RailArachnotron";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					classname = "ArachnotronNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthArachnotronSpawner : ArachnotronSpawner replaces StealthArachnotron { }
+
+// Hell Knight
+class HellKnightSpawner : KCMonsterSpawner replaces HellKnight
+{
+	Default
+	{
+		//$Sprite "RNMSK0"
+		Radius 24;
+		Height 64;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "HellKnightNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= 8)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,512) <= evolveChance) classname = "Hierophant";
+																			else classname = "FlyingBalrogDVDS";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			if (random(1,256) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,320) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,384) <= evolveChance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,448) <= evolveChance)
+						{
+							evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+							if (random(1,1024) > evolvechance)
+							{
+								if (random(1,4) <= 1) classname = "Hierophant";
+																 else classname = "FlyingBalrogDVDS";
+								if (CanFitHere(classname)) result = classname;
+							}
+							else
+							{
+								classname = "PyroDemon";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+						else
+						{
+							int barontype = random(1,3);
+							if (barontype <= 1) classname = "BruiserDemon";
+							if (barontype == 2) classname = "ArchonofHell";
+							if (barontype >= 3) classname = "CyBruiser";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+					else
+					{
+						classname = "Belphegor";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+				else
+				{
+					classname = "BaronOfHellNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+			else
+			{
+				if (random(1,1024) <= evolveChance)
+				{
+					classname = "HellWarrior";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					classname = "HellKnightNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthHellKnightSpawner : HellKnightSpawner replaces StealthHellKnight { }
+
+// Mancubus
+class MancubusSpawner : KCMonsterSpawner replaces Fatso
+{
+	Default
+	{
+		//$Sprite "RNMSL0"
+		Radius 48;
+		Height 64;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "MancubusNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolvechance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,320) <= evolvechance)
+				{
+					classname = "Daedabus";
+					if (CanFitHere(classname)) result = classname;
+				}
+				else
+				{
+					classname = "Hectebus";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthMancubusSpawner : MancubusSpawner replaces StealthFatso { }
+
+// Archvile
+class ArchvileSpawner : KCMonsterSpawner replaces Archvile
+{
+	Default
+	{
+		//$Sprite "RNMSM0"
+		Radius 20;
+		Height 56;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "ArchvileNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,512) <= evolvechance)
+			{
+				classname = "Diabloist";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthArchvileSpawner : ArchvileSpawner replaces StealthArchvile { }
+
+// Baron Of Hell
+class BaronofHellSpawner : KCMonsterSpawner replaces BaronofHell
+{
+	Default
+	{
+		//$Sprite "RNMSN0"
+		Radius 24;
+		Height 64;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "BaronOfHellNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		// Barons in E1M8 of Doom1 mode can't/shouldn't be able to become a different species 
+		// type at all to mitigate tag 666 problems :V
+		if (IsDoom1() && level.mapname != "E1M8")
+		{
+			spawndoomtype = false;
+			bool success;
+			bool success2;
+			int numtimes;
+			
+			if (random(1,128) <= 1) 
+			{
+				int randvar = random(1,3);
+				if (randvar <= 1) classname = "MancubusSpawner";
+				if (randvar == 2) classname = "HellKnightSpawner";
+				if (randvar >= 3) classname = "ArachnotronSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+				else
+				{
+					// Defaults to a Hell Knight due to it being the most likely thing to fit in the same space
+					classname = "HellKnightSpawner";
+					if (CanFitHere(classname)) 
+					{
+						result = classname;
+						gotd1 = true;
+					}
+				}
+			}
+			else
+			if (random(1,32) <= 1) 
+			{
+				classname = "ArchvileSpawner";
+				if (CanFitHere(classname)) 
+				{
+					result = classname;
+					gotd1 = true;
+				}
+			}
+		}
+		
+		spawndoomtype = true;
+		
+		evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			if (random(1,256) <= 8)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,512) <= evolvechance) classname = "Hierophant";
+																			else classname = "FlyingBalrogDVDS";
+				if (CanFitHere(classname)) result = classname;
+			}
+			else
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,256) <= evolvechance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,320) <= evolvechance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,384) <= evolvechance)
+						{
+							evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+							if (random(1,1024) <= evolvechance)
+							{
+								if (random(1,4) <= 1) classname = "Hierophant";
+																 else classname = "FlyingBalrogDVDS";
+								if (CanFitHere(classname)) result = classname;
+							}
+							else
+							{
+								classname = "PyroDemon";
+								if (CanFitHere(classname)) result = classname;
+							}
+						}
+						else
+						{
+							int barontype = random(1,3);
+							if (barontype <= 1) classname = "BruiserDemon";
+							if (barontype == 2) classname = "ArchonofHell";
+							if (barontype >= 3) classname = "CyBruiser";
+							if (CanFitHere(classname)) result = classname;
+						}
+					}
+					else
+					{
+						classname = "Belphegor";
+						if (CanFitHere(classname)) result = classname;
+					}
+				}
+				else
+				{
+					if (random(1,4096) <= evolvechance) classname = "HellWarrior";
+																				 else classname = "BaronOfHellNew";
+					if (CanFitHere(classname)) result = classname;
+				}
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+class StealthBaronSpawner : BaronofHellSpawner replaces StealthBaron { }
+
+// Spider Mastermind
+class SpiderMastermindSpawner : KCMonsterSpawner replaces SpiderMastermind
+{
+	Default
+	{
+		//$Sprite "RNMSO0"
+		Radius 128;
+		Height 100;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "SpiderMastermindNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolvechance)
+			{
+				classname = "Demolisher";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+// Cyberdemon
+class CyberdemonSpawner : KCMonsterSpawner replaces Cyberdemon
+{
+	Default
+	{
+		//$Sprite "RNMSP0"
+		Radius 40;
+		Height 110;
+	}
+
+	override Name ChooseSpawn()
+	{
+		string classname = "CyberdemonNew";
+		string result = classname;
+		if (CheckUOHYM()) return result;
+		bool spawndoomtype;
+
+		spawndoomtype = true;
+		
+		if (kc_monsterevolutions && spawndoomtype)
+		{
+			evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolvechance)
+			{
+				classname = "Annihilator";
+				if (CanFitHere(classname)) result = classname;
+			}
+		}
+		
+		A_DebugPrintOut(classname, gotd1);
+		return result;
+	}
+}
+
+//
+// Gargoyle spawner
+class GargoyleSpawner : KCMonsterSpawner replaces HereticImp
+{
+	Default
+	{
+		+FLOAT
+		+NOGRAVITY
+		+SPAWNFLOAT
+		+DONTOVERLAP
+	}
+
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolveChance)
+			{
+				if (random(1,2) == 1)
+					return "WatcherImp";
+				else
+					return "PlagueImp";
+			}
+			else
+				return "HereticImpLeaderNew";
+		}
+		else
+			return "HereticImpNew";
+	}
+}
+
+// Gargoyle Leader spawner
+class GargoyleLeaderSpawner : KCMonsterSpawner replaces HereticImpLeader
+{
+	Default
+	{
+		+FLOAT
+		+NOGRAVITY
+		+SPAWNFLOAT
+		+DONTOVERLAP
+	}
+
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			if (random(1,2) == 1)
+				return "WatcherImp";
+			else
+				return "PlagueImp";
+		}
+		else
+			return "HereticImpLeaderNew";
+	}
+}
+
+// Golem Spawner
+class GolemSpawner : KCMonsterSpawner replaces Mummy
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,256) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,1024) <= evolveChance)
+					{
+						evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+						if (random(1,256) <= evolveChance)
+						{
+							if (random(1,4) == 1)
+							{
+								if (CanFitHere("FrostGolemGhost")) return "FrostGolemGhost";
+								else return "MummyLeaderGhostNew";
+							}
+							else
+							{
+								if (CanFitHere("FrostGolem")) return "FrostGolem";
+								else return "MummyLeaderNew";
+							}
+						}
+						else
+						{
+							if (random(1,4) == 1)
+							{
+								if (CanFitHere("IceGolemGhost")) return "IceGolemGhost";
+								else return "MummyLeaderGhostNew";
+							}
+							else
+							{
+								if (CanFitHere("IceGolem")) return "IceGolem";
+								else return "MummyLeaderNew";
+							}
+						}
+					}
+					else
+						return "MummyLeaderGhostNew";
+				}
+				else
+					return "MummyLeaderNew";
+			}
+			else
+				return "MummyGhostNew";
+		}
+		else
+			return "MummyNew";
+	}
+}
+
+// Golem Ghost Spawner
+class GolemGhostSpawner : KCMonsterSpawner replaces MummyGhost
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,1024) <= evolveChance)
+				{
+					evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+					if (random(1,256) <= evolveChance)
+					{
+						if (random(1,4) == 1)
+						{
+							if (CanFitHere("FrostGolemGhost")) return "FrostGolemGhost";
+							else return "MummyLeaderGhostNew";
+						}
+						else
+						{
+							if (CanFitHere("FrostGolem")) return "FrostGolem";
+							else return "MummyLeaderNew";
+						}
+					}
+					else
+					{
+						if (random(1,4) == 1)
+						{
+							if (CanFitHere("IceGolemGhost")) return "IceGolemGhost";
+							else return "MummyLeaderGhostNew";
+						}
+						else
+						{
+							if (CanFitHere("IceGolem")) return "IceGolem";
+							else return "MummyLeaderNew";
+						}
+					}
+				}
+				else
+					return "MummyLeaderGhostNew";
+			}
+			else
+				return "MummyLeaderNew";
+		}
+		else
+			return "MummyGhostNew";
+	}
+}
+
+// NitroGolem Spawner
+class NitroGolemSpawner : KCMonsterSpawner replaces MummyLeader
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,1024) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,256) <= evolveChance)
+				{
+					if (random(1,4) == 1)
+					{
+						if (CanFitHere("FrostGolemGhost")) return "FrostGolemGhost";
+						else return "MummyLeaderGhostNew";
+					}
+					else
+					{
+						if (CanFitHere("FrostGolem")) return "FrostGolem";
+						else return "MummyLeaderNew";
+					}
+				}
+				else
+				{
+					if (random(1,4) == 1)
+					{
+						if (CanFitHere("IceGolemGhost")) return "IceGolemGhost";
+						else return "MummyLeaderGhostNew";
+					}
+					else
+					{
+						if (CanFitHere("IceGolem")) return "IceGolem";
+						else return "MummyLeaderNew";
+					}
+				}
+			}
+			else
+				return "MummyLeaderGhostNew";
+		}
+		else
+			return "MummyLeaderNew";
+	}
+}
+
+// NitroGolem Ghost Spawner
+class NitroGolemGhostSpawner : KCMonsterSpawner replaces MummyLeaderGhost
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,1024) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,256) <= evolveChance)
+			{
+				if (random(1,4) == 1)
+				{
+					if (CanFitHere("FrostGolemGhost")) return "FrostGolemGhost";
+					else return "MummyLeaderGhostNew";
+				}
+				else
+				{
+					if (CanFitHere("FrostGolem")) return "FrostGolem";
+					else return "MummyLeaderNew";
+				}
+			}
+			else
+			{
+				if (random(1,4) == 1)
+				{
+					if (CanFitHere("IceGolemGhost")) return "IceGolemGhost";
+					else return "MummyLeaderGhostNew";
+				}
+				else
+				{
+					if (CanFitHere("IceGolem")) return "IceGolem";
+					else return "MummyLeaderNew";
+				}
+			}
+		}
+		else
+			return "MummyLeaderGhostNew";
+	}
+}
+
+// Undead Warrior/Knight spawner
+class KnightSpawner : KCMonsterSpawner replaces Knight
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,2048) <= evolveChance)
+			{
+				if (random(1,4) == 1)
+					return "DeathKnightGhost";
+				else
+					return "DeathKnight";
+			}
+			else
+				return "KnightGhostNew";
+		}
+		else
+			return "KnightNew";
+	}
+}
+
+// Undead Warrior/Knight spawner
+class KnightGhostSpawner : KCMonsterSpawner replaces KnightGhost
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,2048) <= evolveChance)
+			return "DeathKnightGhost";
+		else
+			return "KnightGhostNew";
+	}
+}
+
+// Disciple Spawner
+class WizardSpawner : KCMonsterSpawner replaces Wizard
+{
+	Default
+	{
+		+FLOAT
+		+NOGRAVITY
+		+SPAWNFLOAT
+		+DONTOVERLAP
+	}
+
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,384) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,768) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,1152) <= evolveChance)
+					return "Banshee";
+				else 
+					return "HereticApprenticeNew";
+			}
+			else
+				return "GreaterDisciple";
+		}
+		else
+			return "WizardNew";
+		
+	}
+}
+
+
+// IronLich Spawner
+class LichSpawner : KCMonsterSpawner replaces Ironlich
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,384) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,512) <= evolveChance)
+					return "BloodLich";
+				else
+					return "GoldLich";
+			}
+			else
+				return "IceLich";
+		}
+		else
+			return "IronLichNew";
+	}
+}
+
+// Sabreclaw Spawner
+class ClinkSpawner : KCMonsterSpawner replaces Clink
+{
+	Default
+	{
+		+FLOAT
+		+NOGRAVITY
+		+SPAWNFLOAT
+		+DONTOVERLAP
+	}
+
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,768) <= evolveChance)
+		{
+			if (CanFitHere("DarkClink")) return "DarkClink";
+			else return "ClinkNew";
+		}
+		else
+			return "ClinkNew";
+	}
+}
+
+// Weredragon Spawner
+class WeredragonSpawner : KCMonsterSpawner // replaces Beast
+{
+	Default
+	{
+		+FLOAT
+		+NOGRAVITY
+		+SPAWNFLOAT
+		+DONTOVERLAP
+	}
+
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,768) <= evolveChance)
+		{
+			if (CanFitHere("ShadowBeast")) return "ShadowBeast";
+			else return "BeastNew";
+		}
+		else
+			return "BeastNew";
+	}
+}
+
+// Ophidian spawner
+class SnakeSpawner : KCMonsterSpawner replaces Snake
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,384) <= evolvechance)
+		{
+			if (random(1,384) <= evolvechance)
+				return "Serpathor";
+			else
+				return "HellGuard";
+		}
+		else
+			return "SnakeNew";
+	}
+}
+
+// Ettin
+class EttinSpawner : KCMonsterSpawner replaces Ettin
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,1024) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,4096) <= evolveChance)
+				return "Bormereth";
+			else
+				return "EttinCommander";
+		}
+		else
+			return "EttinNew";
+	}
+}
+
+class AfritSpawner : KCMonsterSpawner replaces FireDemon
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,512) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,2048) <= evolveChance)
+					return "FireDemonQueen";
+				else
+					return "FireDemonCommander";
+			}
+			else
+				return "FireDemonLeader";
+		}
+		else
+			return "FireDemonNew";
+	}
+}
+
+class BishopSpawner : KCMonsterSpawner replaces Bishop
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,512) <= evolveChance)
+			{
+				evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+				if (random(1,2048) <= evolveChance)
+					return "DarkPatriarch";
+				else
+					return "VampireEE";
+			}
+			else
+				return "DarkDisciple";
+		}
+		else
+			return "BishopNew";
+	}
+}
+class StalkerSpawner : KCMonsterSpawner replaces Serpent
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+			return "IceStalker";
+		else
+			return "StalkerNew";
+	}
+}
+
+class StalkerLeaderSpawner : KCMonsterSpawner replaces SerpentLeader
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,256) <= evolveChance)
+			return "IceStalkerLeader";
+		else
+			return "StalkerLeaderNew";
+	}
+}
+
+// Green Chaos Serpent Spawner
+class Demon1Spawner : KCMonsterSpawner replaces Demon1
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,512) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,4096) <= evolveChance)
+				return "EtherealChaosSerpentNew";
+			else
+				return "MagmaChaosSerpentNew";
+		}
+		else
+			return "GreenChaosSerpentNew";
+	}
+}
+
+// Brown Chaos Serpent Spawner
+class Demon2Spawner : KCMonsterSpawner replaces Demon2
+{
+	override Name ChooseSpawn()
+	{
+		int evolvechance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+		
+		if (random(1,512) <= evolveChance)
+		{
+			evolveChance = A_GetEvolveChance(player,MiscItem,MapsFinished);
+			if (random(1,4096) <= evolveChance)
+				return "EtherealChaosSerpentNew";
+			else
+				return "BlackChaosSerpentNew";
+		}
+		else
+			return "BrownChaosSerpentNew";
+	}
+}
+*/
