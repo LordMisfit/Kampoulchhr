@@ -2560,6 +2560,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) basedropdiv *= random(4,8);
 					
 					double rand = 2.0;
 					string droptype;
