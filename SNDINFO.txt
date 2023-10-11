@@ -564,6 +564,345 @@ $random step/lava { step/lava1 step/lava2 step/lava3 step/lava4 }
 
 step/squeaky1		squeak1
 
+// Monsters
+
+//Pain Sounds
+imp/pain			dsbgpn
+skull/pain			dssklpn
+nazi/pain				nazipn
+cacodemon/pain		dscacopn
+knight/pain			dshkpain
+revenant/pain		dsskpain
+dincarnate/pain		dsincpn
+arachnotron/pain		dsaracp2
+farachnotron/pain		dsaracpn
+baron/pain			dsbrspn
+archon/pain			dsar2pn
+cyberdemon/pain		dscybrpn
+annihilator/pain		dsannpn
+mastermind/pain		dsspipn
+demolisher/pain		dsdempn
+
+cyber/stomp			dscybstm
+monster/annsit         dsannsit
+monster/anndth         dsanndth
+monster/anhoof         dsanhoof
+weapons/hrlexp         dshrlexp
+weapons/hrlfir         dshrlfir
+
+monster/demsit dsdemsit
+spider2/attack dscannon
+monster/demdth dsdemdth
+
+// HellCleric
+$random hellcleric/sight    { hellcleric/sight1 hellcleric/sight2 }
+hellcleric/sight1    dshcsit2
+hellcleric/sight2    dshcsit3
+$random hellcleric/pain     { hellcleric/pain1 hellcleric/pain2 }
+hellcleric/pain1    dshcpn1
+hellcleric/pain2    dshcpn2
+$random hellcleric/death    { hellcleric/death1 hellcleric/death2 }
+hellcleric/death1   dshcdth2
+hellcleric/death2   dshcdth3
+hellcleric/active   null
+
+// FlyingBalrog
+
+flyingbalrog/sight DSBLRSGT
+flyingbalrog/idle DSBLRACT
+flyingbalrog/pain DSBLRPN1
+flyingbalrog/death DSBLRDTH
+flyingbalrog/death2 DSBLRDT2
+
+// Suicide Bomber
+
+suicide/scream dssuscrm
+suicide/sit dssusit
+
+// Death Incarnate
+monster/incsit      dsincsit
+monster/incdth      dsincdth
+monster/incexp      dsincexp
+monster/incact      dsincact
+monster/incatk      dsincatk
+monster/inchit      dsinchit
+
+// Hades Sphere
+monster/hadsit      dshadsit
+monster/haddth      dshaddth
+monster/hadexp      dshadexp
+monster/hadtel      dshadtel
+monster/hadwlk      dshadwlk
+
+caco/shadowsplit			    DSCACOSS
+
+// PUFF RICOCHET
+$random puff/ric       { puff/ric1 puff/ric2 puff/ric3 puff/ric4 puff/ric5 puff/ric6 puff/ric7 }
+puff/ric1          dsrich1
+puff/ric2          dsrich2
+puff/ric3          dsrich3
+puff/ric4          dsrich4
+puff/ric5          dsrich5
+puff/ric6          dsrich6
+puff/ric7          dsrich7 
+
+baby/chargerailgun	DSRGCHRG
+weapons/minigunfire	DSMINIGN
+
+superbaron/scream      dssbsit
+superbaron/pain        dssbpain
+superbaron/death       dssbdth
+superbaron/act         dssbact
+
+blooddemon/sight       DSBLDSIT
+blooddemon/pain        DSBLDPAI
+blooddemon/death       DSBLDDTH
+blooddemon/active      DSBLDACT
+blooddemon/melee       DSBLDATK
+blooddemon/walk        DSBLDWAL
+
+// Hell Warrior
+hellwarrior/sight			hlwarsit
+hellwarrior/pain			hlwarpn
+hellwarrior/death			hlwardth
+hellwarrior/shotfire		hwshfire
+hellwarrior/shothit			hwshhit
+
+// Cybruiser
+monster/cbrupn dscbrpn
+monster/cbrusit dscbrsit
+monster/cbrudth dscbrdth
+monster/cbruwlk dscbrwlk
+monster/cbrufir dscbrfir
+weapons/hellex dshellex
+
+// Belphegor
+belphegor/sight			dsbltsit
+belphegor/pain			dsbltpn
+belphegor/death			dsbltdth
+
+// Dark Imp
+$random darkimp/sight		{ darkimp/sight1  darkimp/sight2 }
+$random darkimp/death		{ darkimp/death1  darkimp/death2 }
+darkimp/sight1			dsbgsit1
+darkimp/sight2			dsbgsit2
+darkimp/active			dsbgact
+darkimp/pain				dsbgpn
+darkimp/melee			dsclaw
+darkimp/death1			dsbgdth1
+darkimp/death2			dsbgdth2
+darkimp/attack			dsfirsht
+darkimp/shotx			dsfirxpl
+$pitchset darkimp/sight1 0.875
+$pitchset darkimp/sight2 0.875
+$pitchset darkimp/active 0.875
+$pitchset darkimp/pain 0.875
+$pitchset darkimp/death1 0.875
+$pitchset darkimp/death2 0.875
+$limit darkimp/active 6
+
+$pitchshiftrange -1
+
+// ST Dark Imp
+$random darkimp2/sight		{ darkimp2/sight1  darkimp2/sight2 }
+$random darkimp2/death		{ darkimp2/death1  darkimp2/death2 }
+darkimp2/sight1			dsbgsit1
+darkimp2/sight2			dsbgsit2
+darkimp2/active			dsbgact
+darkimp2/pain			dsbgpn
+darkimp2/melee			dsclaw
+darkimp2/death1			dsbgdth1
+darkimp2/death2			dsbgdth2
+darkimp2/attack			dsfirsht
+darkimp2/shotx			dsfirxpl
+$pitchset darkimp2/sight1 0.875
+$pitchset darkimp2/sight2 0.875
+$pitchset darkimp2/active 0.875
+$pitchset darkimp2/pain 0.875
+$pitchset darkimp2/death1 0.875
+$pitchset darkimp2/death2 0.875
+$limit darkimp2/active 6
+
+$pitchshiftrange -3
+
+// Void Dark Imp
+$random darkimp3/sight		{ darkimp3/sight1  darkimp3/sight2 }
+$random darkimp3/death		{ darkimp3/death1  darkimp3/death2 }
+darkimp3/sight1			dsbgsit1
+darkimp3/sight2			dsbgsit2
+darkimp3/active			dsbgact
+darkimp3/pain			dsbgpn
+darkimp3/melee			dsclaw
+darkimp3/death1			dsbgdth1
+darkimp3/death2			dsbgdth2
+darkimp3/attack			dsfirsht
+darkimp3/shotx			dsfirxpl
+$pitchset darkimp3/sight1 0.875
+$pitchset darkimp3/sight2 0.875
+$pitchset darkimp3/active 0.875
+$pitchset darkimp3/pain 0.875
+$pitchset darkimp3/death1 0.875
+$pitchset darkimp3/death2 0.875
+$limit darkimp3/active 6
+
+$pitchshiftrange -5
+
+// Nether Dark Imp
+$random darkimp4/sight		{ darkimp4/sight1  darkimp4/sight2 }
+$random darkimp4/death		{ darkimp4/death1  darkimp4/death2 }
+darkimp4/sight1			dsbgsit1
+darkimp4/sight2			dsbgsit2
+darkimp4/active			dsbgact
+darkimp4/pain			dsbgpn
+darkimp4/melee			dsclaw
+darkimp4/death1			dsbgdth1
+darkimp4/death2			dsbgdth2
+darkimp4/attack			dsfirsht
+darkimp4/shotx			dsfirxpl
+$pitchset darkimp4/sight1 0.625
+$pitchset darkimp4/sight2 0.625
+$pitchset darkimp4/active 0.625
+$pitchset darkimp4/pain 0.625
+$pitchset darkimp4/death1 0.625
+$pitchset darkimp4/death2 0.625
+$limit darkimp4/active 6
+
+monster/diagra dsdiagra
+monster/diasit dsdiasit
+monster/diapai dsdiapai
+monster/diadth dsdiadth
+monster/diaact dsdiaact
+weapons/firbfi dsfirbfi
+weapons/firmfi dsfirmfi
+weapons/firex4 dsfirex4
+weapons/diasht dsdiasht
+weapons/firex3 dsfirex3
+diabloistgravitystart diagrvst
+diabloistgravitymiss gravmiss
+diabloistgravitypulse diagrvpl
+diabloistgravityend diagrven
+
+// Bone related stuff [gibs, rattles: from GMOTA v1.2, thanks goes to Combine Kegan for finding these o.o]
+$random boner/rattle {rattle1 rattle2 rattle3 rattle4 rattle5}
+rattle1						RTL1
+rattle2						RTL2
+rattle3						RTL3
+rattle4						RTL4
+rattle5						RTL5
+
+bonebounce1 					BNBNC1
+bonebounce2 					BNBNC2
+bonebounce3 					BNBNC3
+$random gibs/bones 				{ bonebounce1 bonebounce2 bonebounce3 }
+$volume gibs/bones 				0.50
+
+misc/ZAHANDO  ZAHANDO
+
+// Female Zombies
+fem/sight FEMZSIT
+fem/pain FEMZPAIN
+fem/death FEMZDHT
+fem/active FEMZACT
+
+// Railgun
+Railgun/IdlePulse RAILPULS
+
+hect/see               DSMANSI2
+hect/pain              DSMNPAIN
+hect/die               DSMANDT2
+hect/active            DSMANACT
+hect/raiseguns         DSMANATK
+$pitchset hect/active 0.75
+$pitchset hect/pain 0.75
+$pitchset hect/raiseguns 0.75
+
+Daedabus/Sight		DAEDSIGH
+$Random Daedabus/Active	{ DAEDACT1 DAEDACT2 }
+DAEDACT1		DAEDACT1
+DAEDACT2		DAEDACT2
+Daedabus/Attack		DAEDATTK
+$Random Daedabus/pain	{ DAEDPAI1 DAEDPAI2 }
+DAEDPAI1		DAEDPAI1
+DAEDPAI2		DAEDPAI2
+Daedabus/Death 		DAEDDEAT
+
+
+// Forgotten One
+$Random Forgotten/Attack { FRGOATK1 FRGOATK2 FRGOATK3 }
+FRGOATK1	FRGOATK1
+FRGOATK2	FRGOATK2
+FRGOATK3	FRGOATK3
+$Random Forgotten/Active { FRGOACT1 FRGOACT2 FRGOACT3 }
+FRGOACT1	FRGOACT1
+FRGOACT2	FRGOACT2
+FRGOACT3	FRGOACT3
+FRGOACT4	FRGOACT4
+$Random Forgotten/Pain { FRGOPAI1 FRGOPAI2 FRGOPAI3 }
+FRGOPAI1	FRGOPAI1
+FRGOPAI2	FRGOPAI2
+FRGOPAI3	FRGOPAI3
+$Random Forgotten/Death { FRGODEA1 FRGODEA2 FRGODEA3 }
+FRGODEA1	FRGODEA1
+FRGODEA2	FRGODEA2
+FRGODEA3	FRGODEA3
+
+monster/arcsit         dsarcsit
+monster/ar2sit         dsar2sit
+monster/arcdth         dsarcdth
+monster/ar2dth         dsar2dth
+archon/pain            dsar2pn
+
+pyro/see BE-SEE
+pyro/idle BE-IDLE
+pyro/tele BE-TELE
+pyro/pain DE_PAIN_
+pyro/death BE-DEATH
+pyro/blast DP_ATTAC
+
+pyro/flame DSFLAMER
+pyro/explosion DSPIPEX1
+pyro/flamepoof DSHITW
+pyro/blastexplosion DSFRBXPL
+pyro/comet DSCMTLNC
+pyro/cometdeath DSCMTEXP
+pyro/bomb DSRDSHOT
+pyro/bombhit DSRDHIT
+
+// Hierophant
+weapons/firmfi	dsfirmfi
+weapons/firex5	dsfirex5
+monster/hiesit	dshiesit
+monster/hieact	dshieact
+monster/hiepai	dshiepai
+monster/hiedth	dshiedth
+monster/curse1	dscurse1
+monster/curse2	dscurse2 
+
+fusionspid/die         FUSPDIE
+fusionspid/see         FUSPSEE
+
+weapons/devexp      dsdevexp
+weapons/devzap      dsdevzap
+monster/ovlsit      dsovlsit
+monster/ovlact      dsovlact
+monster/ovlpai      dsovlpai
+monster/ovldth      dsovldth
+monster/helsit      dshelsit
+monster/helac1      dshelac1
+monster/helac2      dshelac2
+monster/helpai      dshelpai
+monster/heldth      dsheldth
+monster/heltel      dsheltel
+weapons/chaofi      dschaofi
+weapons/shock       dsshock
+
+//Doom Sounds
+$Random Archvile/Firewall         { Archvile/Fire1 Archvile/Fire2 Archvile/Fire3 }
+
+Archvile/Fire1     VILFIRE1
+Archvile/Fire2     VILFIRE2
+Archvile/Fire3     VILFIRE3
+
 //LDL
 
 effects/legendaryenemyloop					LDLELOOP

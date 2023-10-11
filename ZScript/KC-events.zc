@@ -434,7 +434,7 @@ class KC_EventHandler : EventHandler
 				if (monsterlevel >= (100 * levelmulfact)) fastchance = 200;
 				if (random(1,100) <= fastchance)
 				{
-					//if (HellCleric(spawnee) || HellClericDVDS(spawnee) || HellClericSpectral(spawnee)) spawnee.bALWAYSFAST = true;
+					if (HellCleric(spawnee) || HellClericDVDS(spawnee) || HellClericSpectral(spawnee)) spawnee.bALWAYSFAST = true;
 					if (Demon(spawnee)) spawnee.bALWAYSFAST = true;
 					if (DemonNew(spawnee)) spawnee.bALWAYSFAST = true;
 					if (LostSoul(spawnee)) spawnee.bALWAYSFAST = true;
@@ -730,24 +730,24 @@ class KC_EventHandler : EventHandler
 						
 						// Specific Monsters
 						if (SpiderMastermind(spawnee)) LevelCheck += random(3,6);
-						//if (SpiderMastermindNew(spawnee)) LevelCheck += random(3,6);
+						if (SpiderMastermindNew(spawnee)) LevelCheck += random(3,6);
 						if (Cyberdemon(spawnee)) LevelCheck += random(3,6);
-						//if (CyberdemonNew(spawnee)) LevelCheck += random(3,6);
-						//if (Annihilator(spawnee) || Demolisher(spawnee)) LevelCheck += random(3,6);
+						if (CyberdemonNew(spawnee)) LevelCheck += random(3,6);
+						if (Annihilator(spawnee) || Demolisher(spawnee)) LevelCheck += random(3,6);
 						if (Minotaur(spawnee) || MinotaurFriend(spawnee)) LevelCheck += random(3,6);
 
 						// Specific Bosses
 						// Tier 1 Boss
 						if (Sorcerer1(spawnee)) LevelCheck += random(9,18);
-						//if (DSparilMountedNew(spawnee)) LevelCheck += random(9,18);
+						if (DSparilMountedNew(spawnee)) LevelCheck += random(9,18);
 						if (FighterBoss(spawnee)) LevelCheck += random(9,18);
 						if (ClericBoss(spawnee)) LevelCheck += random(9,18);
 						if (MageBoss(spawnee)) LevelCheck += random(9,18);
 						// Tier 2 Boss
 						if (Sorcerer2(spawnee)) LevelCheck += random(15,30);
-						//if (DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
+						if (DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
 						if (Korax(spawnee)) LevelCheck += random(15,30);
-						//if (KoraxNew(spawnee)) LevelCheck += random(15,30);
+						if (KoraxNew(spawnee)) LevelCheck += random(15,30);
 						if (spawnname == "ThamuzNew" || spawnname == "TchernobogNew") LevelCheck += random(15,30);
 						// Tier 3 Boss
 						if (spawnname == "PennywiseBoss" || spawnname == "TchernobogNew") LevelCheck += random(23,45);
@@ -1737,8 +1737,21 @@ class KC_EventHandler : EventHandler
 				// Keeps the Romero Heads in Hell Ground MAP07 from being too strong. :P
 				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && (BossBrain(spawnee))) specialenemy = true;
 
-				if (Revenant(spawnee)) spawnee.ProjectilePassHeight = 84;
-				//if (RevenantNew(spawnee)) spawnee.ProjectilePassHeight = 84;
+				if (DoomImp(spawnee)) spawnee.PainSound = "imp/pain";
+				if (LostSoul(spawnee)) spawnee.PainSound = "skull/pain";
+				if (WolfensteinSS(spawnee)) spawnee.PainSound = "nazi/pain";
+				if (Cacodemon(spawnee)) spawnee.PainSound = "caco/pain";
+				if (HellKnight(spawnee)) spawnee.PainSound = "knight/pain";
+				if (Revenant(spawnee)) 
+				{
+					spawnee.PainSound = "revenant/pain";
+					spawnee.ProjectilePassHeight = 84;
+				}
+				if (RevenantNew(spawnee)) spawnee.ProjectilePassHeight = 84;
+				if (Arachnotron(spawnee)) spawnee.PainSound = "arachnotron/pain";
+				if (BaronOfHell(spawnee)) spawnee.PainSound = "baron/pain";
+				if (Cyberdemon(spawnee)) spawnee.PainSound = "cyberdemon/pain";
+				if (SpiderMastermind(spawnee)) spawnee.PainSound = "mastermind/pain";
 				
 				if (Demon1(spawnee) || Demon2(spawnee)) spawnee.ProjectilePassHeight = 104;
 				
