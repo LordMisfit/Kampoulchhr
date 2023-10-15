@@ -1434,12 +1434,6 @@ class KC_EventHandler : EventHandler
 					ExplosiveBarrel2(spawnee) ||
 					Pod(spawnee)) spawnee.bPUSHABLE = true;
 			
-			if (ExplosiveBarrel(spawnee)) 
-			{
-				spawnee.ProjectilePassHeight = 32;
-				//spawnee.A_SetSize(10,32);
-			}
-			
 			if (KCCreature(spawnee))
 			{
 				KCC = KCCreature(spawnee);
@@ -1454,8 +1448,17 @@ class KC_EventHandler : EventHandler
 			if (Rocket(spawnee)) spawnee.DamageType = 'Explosive';
 			if (PlasmaBall1(spawnee) ||
 					PlasmaBall2(spawnee)) spawnee.DamageType = 'BFG';
-			if (ExplosiveBarrel(spawnee)) spawnee.DamageType = 'Explosive';
-			nm = "CCards_Actor_CardExplosiveBarrel"; if (spawnname == nm) spawnee.DamageType = 'Explosive';
+			if (ExplosiveBarrel(spawnee)) 
+			{
+				spawnee.DamageType = 'Explosive';
+				spawnee.ProjectilePassHeight = 32;
+			}
+			nm = "CCards_Actor_CardExplosiveBarrel"; 
+			if (spawnname == nm) 
+			{
+				spawnee.DamageType = 'Explosive';
+				spawnee.ProjectilePassHeight = 32;
+			}
 			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			nm = "CCards_Actor_PilotedMechPlasma"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			
