@@ -2828,6 +2828,8 @@ class KCStatusBarMain : BaseStatusBar
 			LegendStr = "";
 			if (PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
+					PlayerWeapon is "ShotgunMarine" ||
+					PlayerWeapon is "SuperShotgunMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "TommyGun" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
@@ -2843,6 +2845,8 @@ class KCStatusBarMain : BaseStatusBar
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "ShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "SuperShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
