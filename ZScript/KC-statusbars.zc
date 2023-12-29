@@ -2756,14 +2756,18 @@ class KCStatusBarMain : BaseStatusBar
 																					 else LegendStr.AppendFormat(" = \c[Purple]");
 				}
 				LY += LYInc;
+				double sec = double(MiscItem.timefreeze1duration);
+				double sec2 = double(MiscItem.timefreeze1cooldown * MiscItem.timefreeze1cooldownratio2);
 				if (MiscItem.timestopcooldown1tics)
 				{
-					LegendStr.AppendFormat("[ON COOLDOWN]\c-");
+					double sec3 = double(MiscItem.timestopcooldown1tics * 1.0 / TICRATE);
+					LegendStr.AppendFormat("[ON COOLDOWN]\c- [~%.2f Secs]", sec3);
 				}
 				else
 				{
-					if (MiscItem.timestopstate) LegendStr.AppendFormat("TIME UNFREEZE\c-");
-																 else LegendStr.AppendFormat("TIME FREEZE\c-");
+					
+					if (MiscItem.timestopstate) LegendStr.AppendFormat("TIME UNFREEZE\c- [~%.2f Secs]", sec2);
+																 else LegendStr.AppendFormat("TIME FREEZE\c- [~%.2f Secs]", sec);
 				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
