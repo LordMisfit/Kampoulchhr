@@ -2761,13 +2761,25 @@ class KCStatusBarMain : BaseStatusBar
 				if (MiscItem.timestopcooldown1tics)
 				{
 					double sec3 = double(MiscItem.timestopcooldown1tics * 1.0 / TICRATE);
-					LegendStr.AppendFormat("[ON COOLDOWN]\c- [~%.2f Secs]", sec3);
+					LegendStr.AppendFormat("[ON COOLDOWN]\c- ");
+					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec3);
+																					 else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec3);
 				}
 				else
 				{
 					
-					if (MiscItem.timestopstate) LegendStr.AppendFormat("TIME UNFREEZE\c- [~%.2f Secs]", sec2);
-																 else LegendStr.AppendFormat("TIME FREEZE\c- [~%.2f Secs]", sec);
+					if (MiscItem.timestopstate) 
+					{
+						LegendStr.AppendFormat("TIME UNFREEZE\c- ");
+						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec2);
+																						else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec2);
+					}
+					else 
+					{
+						LegendStr.AppendFormat("TIME FREEZE\c- ");
+						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[lightblue][~%.2f Secs]\c-", sec);
+																						else LegendStr.AppendFormat("\c[sapphire][~%.2f Secs]\c-", sec);
+					}
 				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}

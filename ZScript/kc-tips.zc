@@ -64,6 +64,10 @@ class kc_ListMenuNote : ListMenuItem
 		string keyname1;
 		
 		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("'Kampoulchhr' roughly translates in Khmer to 'Supreme Being'.");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("+user4", true, false));
 		quote.AppendFormat("\c- = \c[sapphire]Guards with Fist\c-");
 		add(quote);
@@ -71,6 +75,10 @@ class kc_ListMenuNote : ListMenuItem
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("KC_TimeStop", true, false));
 		quote.AppendFormat("\c- = \c[sapphire]Activates/Cancels \c[HeiwaDeluge]Time Freeze Ability\c[sapphire]\c-");
+		add(quote);
+		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Your Time Freeze will extend in duration and reduce in cooldown the more it it used. The key legend for your weapons will show these times.");
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
