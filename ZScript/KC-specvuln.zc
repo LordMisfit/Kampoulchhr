@@ -334,31 +334,36 @@ class CompatVulnItem : PlaceholderItem
 				// Time Stop
 				if (FoundPlayer) 
 				{
-					if (MiscItem && MiscItem.timestopactivetics > 0)
+					bool isaghost;
+					nm = "CCards_Actor_Ghost"; 
+					if (!CountInv(nm)) 
 					{
-						double factor1 = frandompick(0.2,0.25);
-						double factor2 = frandompick(0.6,0.75);
-						if (MiscItem.timestoptype == 1) // Defensive
+						if (MiscItem && MiscItem.timestopactivetics > 0)
 						{
-							TOTALFactor *= factor1;
-							if (damageType == 'Bullet' || 
-									damageType == 'Pellet' ||
-									damageType == 'Ripsaw' ||
-									damageType == 'SawShot' ||
-									damageType == 'Chainsaw') TOTALFactor *= factor2;
-							owner.A_StopSound(14);
-							owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
-						}
-						if (MiscItem.timestoptype == 2) // Offensive
-						{
-							TOTALFactor /= factor1;
-							if (damageType == 'Bullet' || 
-									damageType == 'Pellet' ||
-									damageType == 'Ripsaw' ||
-									damageType == 'SawShot' ||
-									damageType == 'Chainsaw') TOTALFactor /= factor2;
-							owner.A_StopSound(14);
-							owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+							double factor1 = frandompick(0.2,0.25);
+							double factor2 = frandompick(0.6,0.75);
+							if (MiscItem.timestoptype == 1) // Defensive
+							{
+								TOTALFactor *= factor1;
+								if (damageType == 'Bullet' || 
+										damageType == 'Pellet' ||
+										damageType == 'Ripsaw' ||
+										damageType == 'SawShot' ||
+										damageType == 'Chainsaw') TOTALFactor *= factor2;
+								owner.A_StopSound(14);
+								owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+							}
+							if (MiscItem.timestoptype == 2) // Offensive
+							{
+								TOTALFactor /= factor1;
+								if (damageType == 'Bullet' || 
+										damageType == 'Pellet' ||
+										damageType == 'Ripsaw' ||
+										damageType == 'SawShot' ||
+										damageType == 'Chainsaw') TOTALFactor /= factor2;
+								owner.A_StopSound(14);
+								owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+							}
 						}
 					}
 					

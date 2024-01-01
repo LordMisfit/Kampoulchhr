@@ -57,7 +57,7 @@ class KC_EventHandler : EventHandler
 		
 		// CCards
 		if ((level.time >= 3 && level.time <= 35) ||
-				(((level.time - 35) % 350) == 0))
+				(((level.time - 35) % 175) == 0))
 		{
 			int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
 			if (kcdebug_worldtick) Console.Printf("d: %d [time: %d]", d, level.time);
@@ -66,9 +66,52 @@ class KC_EventHandler : EventHandler
 				let globalvars = KCGlobalVariables.Get();
 				globalvars.PlayingCCards = true;
 				actor player = players[0].mo;
-				player.A_SetInventory("PlayingCCards",1);
 				Actor mo;
 				string nm;
+
+				player.A_SetInventory("PlayingCCards",1);
+				nm = "CCards_Actor_PlushWeapon1";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx1",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon2";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx2",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon3";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx3",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon4";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx4",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon5";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx5",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon6";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx6",1);
+					player.A_SetInventory(nm,0);
+				}
+				nm = "CCards_Actor_PlushWeapon7";
+				if (player.CountInv(nm))
+				{
+					player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
+					player.A_SetInventory(nm,0);
+				}
 				
 				nm = "CCards_Actor_BigStomach";
 				nm = "CCards_Actor_SwapCurse";
