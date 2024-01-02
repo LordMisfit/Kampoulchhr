@@ -128,6 +128,17 @@ class CompatVulnItem : PlaceholderItem
 				}
 			}
 			
+			double PlushFactor = 1.00;
+			nm = "CCards_Actor_ThrownPlushEx";
+			nn = "CCards_Actor_ThrownPlushExB";
+			no = "CCards_Actor_ThrownPlush";
+			if (infl == nm ||
+					infl == nn ||
+					infl == no )
+			{
+				ActorDefenseIgnoreFactor += (PlushFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			
 			double ExplosivesFactor = frandompick(0.625,0.6667,0.75);
 			// Suicide Bombers/Kamikaze Enemy Attacks/RockBomb Shards
 			nm = "SuicideBomber";
@@ -336,6 +347,7 @@ class CompatVulnItem : PlaceholderItem
 				{
 					bool isaghost;
 					nm = "CCards_Actor_Ghost"; 
+					nn = "CCards_Actor_AchillesCurse"; 
 					if (!CountInv(nm)) 
 					{
 						if (MiscItem && MiscItem.timestopactivetics > 0)
@@ -604,6 +616,7 @@ class CompatVulnItem : PlaceholderItem
 							ActorDefenseIgnoreFactor -= temp1;
 						}
 					}
+
 					if (ActorDefenseIgnoreFactor > 0.00)
 					{
 						int predmg = newdamage;

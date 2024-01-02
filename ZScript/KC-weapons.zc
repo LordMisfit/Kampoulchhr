@@ -8582,7 +8582,9 @@ class CCards_Actor_PlushWeaponEx1 : MarineWeapon
 			}
 			CC_P A 0 
 			{
-				A_FireProjectile("CCards_Actor_ThrownPlushEx", 0, 0, 0, 0, FPF_NOAUTOAIM);
+				if (A_CheckBerserk()) A_FireProjectile("CCards_Actor_ThrownPlushExB", 0, 0, 0, 0, FPF_NOAUTOAIM);
+				else A_FireProjectile("CCards_Actor_ThrownPlushEx", 0, 0, 0, 0, FPF_NOAUTOAIM);
+				
 				invoker.Destroy();
 			}
 			stop;
@@ -8592,12 +8594,13 @@ class CCards_Actor_PlushWeaponEx1 : MarineWeapon
 	}
 }
 
-class CCards_Actor_ThrownPlushEx : KCProjectile
+class CCards_Actor_ThrownPlushEx : KCFastProjectile
 {
+	int dmg;
 	Default
 	{
 		PROJECTILE;
-		damage 1;
+		damagefunction (dmg);
 		speed 50;
 		-NOGRAVITY;
 		scale 0.4;
@@ -8606,7 +8609,17 @@ class CCards_Actor_ThrownPlushEx : KCProjectile
 		+FORCEXYBILLBOARD;
 		radius 8;
 	}
-
+	
+	override void PostBeginPlay()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		dmg = 1;
+		if (MiscItem) dmg *= MiscItem.PlayerLevel;
+		dmg *= random(1,8);
+		super.PostBeginPlay();
+	}
+	
 	states
 	{
 		Spawn:
@@ -8626,11 +8639,69 @@ class CCards_Actor_ThrownPlushEx : KCProjectile
 			{
 				A_SpawnITemEx("CCards_Actor_ThrownPlushFX", 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
 			}
-
 			A_SetTranslation("CCards_Mist");
 			bNOGRAVITY = true;
 		}
 		C_F0 GHI 3;
+		stop;
+	}
+
+	override void BeginPlay()
+	{
+		A_StartSound("corruptioncards/squeakytoy", CHAN_6);
+	}
+}
+
+class CCards_Actor_ThrownPlushExB : CCards_Actor_ThrownPlushEx
+{
+	Default
+	{
+		PROJECTILE;
+		damagefunction (dmg);
+		speed 250;
+		-NOGRAVITY;
+		scale 0.4;
+		+ROLLSPRITE;
+		+ROLLCENTER;
+		+FORCEXYBILLBOARD;
+		radius 8;
+	}
+	
+	override void PostBeginPlay()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		dmg = 10;
+		if (MiscItem) dmg *= MiscItem.PlayerLevel;
+		dmg *= random(4,8);
+		super.PostBeginPlay();
+	}
+	
+	states
+	{
+		Spawn:
+			CC_P C 1
+			{
+				roll += 110;
+			}
+			loop;
+		Death:
+			TNT1 A 0;
+			CC_P C 0
+			{
+				A_StopSound(CHAN_6);
+				A_StartSound("corruptioncards/illusionbreak", CHAN_6);
+				A_StopSound(CHAN_7);
+				A_StartSound("corruptioncards/illusionbreak", CHAN_7);
+	
+				for(int i; i < 64; i++)
+				{
+					A_SpawnITemEx("CCards_Actor_ThrownPlushFX", 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
+				}
+				A_SetTranslation("CCards_Mist");
+				bNOGRAVITY = true;
+			}
+			C_F0 GHI 3;
 		stop;
 	}
 
