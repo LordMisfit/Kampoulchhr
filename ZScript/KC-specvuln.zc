@@ -292,7 +292,11 @@ class CompatVulnItem : PlaceholderItem
 			if (surprisehit) 
 			{
 				nm = "SonicNail";
-				if (inflictor && inflictor.GetClassName() == nm)
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						 inflictor.GetClassName() == "ImpalerMissile" ||
+						 inflictor.GetClassName() == "ImpalerMissile2" ||
+						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
 					ActorDefenseIgnoreFactor += ((random(30,32) * 0.03125) * (1.00 - ActorDefenseIgnoreFactor));
 				}
@@ -345,10 +349,22 @@ class CompatVulnItem : PlaceholderItem
 				// Time Stop
 				if (FoundPlayer) 
 				{
+					if (owner.CountInv("LDLegendaryMonsterTransformed"))
+					{
+						nm = "SonicNail";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == "ImpalerMissile" ||
+								inflictor.GetClassName() == "ImpalerMissile2" ||
+								inflictor.GetClassName() == "ImpalerMissile3"))
+						{
+							TOTALFactor *= 5.0;
+						}
+					}
 					bool isaghost;
 					nm = "CCards_Actor_Ghost"; 
 					nn = "CCards_Actor_AchillesCurse"; 
-					if (!CountInv(nm)) 
+					if (!owner.CountInv(nm)) 
 					{
 						if (MiscItem && MiscItem.timestopactivetics > 0)
 						{
