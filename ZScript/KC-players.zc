@@ -1333,7 +1333,9 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Magma' || 
 					mod == 'Flare' || 
 					mod == 'Solar' || 
-					mod == 'SpecialFire')
+					mod == 'SpecialFire' ||
+					(source && Archvile(source)) ||
+					(inflictor && Archvile(inflictor)))
 			{
 				flags |= DMG_THRUSTLESS;
 				temperateshield = 1;
