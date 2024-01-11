@@ -1,3 +1,10 @@
+OptionValue "KeyLegendSpot"
+{
+	-1, "DISABLED"
+	0, "Lower Right"
+	1, "Upper Left [DEFAULT]"
+}
+
 OptionValue "PlayerTracers"
 {
 	0, "Hitscans"
@@ -70,6 +77,21 @@ OptionMenu "KC-GeneralMenu1"
 	KCTextfield "Time Freeze Projectile Disperse Range",		"This determines [in map units] the range projectiles will disperse from their origin point before coming to a stop while you have time frozen. This option is not cheaty to alter-mid game, as it is best to change it for better planning of time freeze projectile barrages with certain variants of time freeze. Default: 256 [map units]",		"kc_tfprojdisrange"
 	KCOption "Allow MP-Only Monsters in SP",		"Turn on to enable Multiplayer-tagged monsters in Single Player for more challenge. Default: No",		"kc_enablempmonstersinsp",			"YesNo_DefaultNo"
 	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the player's hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
+}
+
+
+OptionMenu "KC-HUDOptions"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - HUD Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Show Keys Legend [Weapons/Etc]",		"Determines where the key legend for binds for special abilities (i.e. Time Freeze) and your current weapon are. Default: Upper Left",		"KChud_keylegendspot",				"KeyLegendSpot"
+	
+	StaticText ""
+	Command "Restore Default Settings", 			"KC_defaultshud"
 }
 
 OptionMenu "KC-DebugMenu1"
@@ -222,6 +244,7 @@ OptionMenu "KCOptions"
 	IfGame(Strife) { Position -88 }
 	
 	KCSubMenu "General Options [1]",		"General Options [page 1].",		"KC-GeneralMenu1"
+	KCSubMenu "HUD Options",		"Options for the HUD.",		"KC-HUDOptions"
 	StaticText " "
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
