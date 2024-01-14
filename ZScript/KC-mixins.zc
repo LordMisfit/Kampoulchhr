@@ -2253,6 +2253,7 @@ mixin class CollisionChecker
 	{
 		infl = actr.GetClassName();
 		int type;
+		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]A_CheckPropCollisionTracers:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);
 		
 		//Console.Printf("@#@^");
 		if (Column(actr) ||

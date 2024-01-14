@@ -2699,11 +2699,11 @@ class ShieldPartBase : KCBaseZSC
 		if (shieldee && target)
 		{
 			target = shieldee;
-			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[ShieldPartBase (Tick)]: %p [%p]", shieldee, target);
+			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[ShieldPartBase (Tick)]: %p [%p] [tic: %d]", shieldee, target, gametic);
 			if (target) 
 			{
 				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,attachang,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE,null,0,0,attachptc);
-				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d", GetAge());
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d [tic: %d]", GetAge(), gametic);
 			}
 		}
 		Super.Tick();
@@ -2841,8 +2841,6 @@ class ShieldPartBase : KCBaseZSC
 		{
 			if (other)
 			{
-				//if (HealBall(other) || HealBallEE(other)) return false;
-				//if (EvilWarriorShieldBall(other) || EvilWarriorShieldBall(other)) return false;
 			}
 			if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[red]non-passive: %s\c-", gametic, GetClassName());
 			playpawn = PlayerPawn(other.target);
