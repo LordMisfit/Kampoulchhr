@@ -1,5 +1,15 @@
 class KCWeaponBase : Weapon
 {
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	const SKILL_EXTREME = 5;
+	const SKILL_HORRIBLE = 6;
+	const SKILL_IMPOSSIBLE = 7;
+	const SKILL_OMEGA = 8;
+	
 	mixin DmgCalc;
 	mixin InvWeaponShare;
 	mixin ActorStateReplace;
@@ -490,7 +500,14 @@ class KCWeaponBase : Weapon
 	
 	action void A_CustomPunchEx(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
 	{
+		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
+		string nm, nn, no, np;
+
 		let player = self.player;
+		let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = invoker.ActualLevel;
+
+		let globalvars = KCGlobalVariables.Get();
 		if (!player) return;
 
 		let weapon = player.ReadyWeapon;
@@ -499,6 +516,7 @@ class KCWeaponBase : Weapon
 		double pitch;
 		FTranslatedLineTarget t;
 		int	actualdamage;
+		//Name modtype = 'Melee';
 
 		if (!norandom)
 			damage *= random[cwpunch](1, 8);
@@ -514,20 +532,53 @@ class KCWeaponBase : Weapon
 				return;	// out of ammo
 		}
 
+		// >:) [for later special checks]
+		if (t.linetarget && !t.linetarget.bDORMANT)
+		{
+		}
+		
 		if (pufftype == NULL)
 			pufftype = 'BulletPuff';
 		int puffFlags = LAF_ISMELEEATTACK | ((flags & CPF_NORANDOMPUFFZ) ? LAF_NORANDOMPUFFZ : 0);
 
 		Actor puff;
 		[puff, actualdamage] = LineAttack (angle, range, pitch, damage, 'Melee', pufftype, puffFlags, t);
+		if (puff)
+		{
+			let KickingPuff = KickPuff(puff);
+			if (KickingPuff && pufftype == 'KickPuff')
+			{
+				if (MiscItem)
+				{
+					KickingPuff.ProjectileKickBack = (375 * (1.0 + (TruePlayerLevel * 0.0334)));
+					if (player.mo.CountInv("PowerStrength") || player.mo.CountInv("KCPowerStrength"))
+					{
+						KickingPuff.ProjectileKickBack *= 2.5;
+					}
+					//Console.Printf("ProjectileKickBack (KickingPuff): %d", KickingPuff.ProjectileKickBack);
+				}
+			}
+		}
 
 		if (!t.linetarget)
 		{
 			if (MissSound) A_StartSound(MissSound, CHAN_WEAPON);
 		}
-		else
+		else // The attack hits and deals feasible damage
 		{
-			if (lifesteal > 0 && !(t.linetarget.bDontDrain))
+			bool isCCardsIllusion = false;
+			if (t.linetarget.bNOBLOOD == true && 
+					t.linetarget.bNOPAIN == true &&
+					t.linetarget.bNOTARGETSWITCH == true &&
+					t.linetarget.bNOINFIGHTING == true &&
+					t.linetarget.bFULLVOLACTIVE == false && 
+					t.linetarget.bFULLVOLDEATH == false &&
+					t.linetarget.bBOSS == false) isCCardsIllusion = true;
+
+			if (lifesteal > 0 && 
+					!(t.linetarget.bDontDrain) && 
+					!isCCardsIllusion && 
+					!t.linetarget.bDORMANT)
 			{
 				if (flags & CPF_STEALARMOR)
 				{
@@ -542,6 +593,7 @@ class KCWeaponBase : Weapon
 						{
 							armorbonus.SaveAmount *= int(actualdamage * lifesteal);
 							if (lifestealmax > 0) armorbonus.MaxSaveAmount = lifestealmax;
+							
 							armorbonus.bDropped = true;
 							armorbonus.ClearCounters();
 
@@ -552,11 +604,43 @@ class KCWeaponBase : Weapon
 						}
 					}
 				}
-				else
+				else // Other Steal HP :V
 				{
-					GiveBody (int(actualdamage * lifesteal), lifestealmax);
+					bool canstealHP = true;
+					
+					if (canstealHP)
+					{
+						int prevhealth = player.mo.health;
+						int stealamt = (actualdamage * lifesteal);
+						if (stealamt > lifestealmax) stealamt = lifestealmax;
+						GiveBody(stealamt);
+						//GiveBody (int(actualdamage * lifesteal), lifestealmax);
+						int draindiff = player.mo.health - prevhealth;
+						if (draindiff) 
+						{
+							player.mo.A_SetBlend("ff ee ee",0.1875,random(21,31));
+							player.mo.A_StopSound(17);
+							player.mo.A_StopSound(18);
+							player.mo.A_StartSound("player/hpdrain",17,CHANF_DEFAULT,frandom(0.75,1.00),ATTN_NORM,frandom(1.35,1.65));
+							player.mo.A_StartSound("player/hpdrain",18,CHANF_DEFAULT,frandom(0.75,1.00),ATTN_NORM,frandom(1.8,2.2));
+							//invoker.A_RecoverHUD(draindiff, 0, true);
+							
+							if (exex_combatlog)
+							{
+								string comblog = "";
+								comblog.AppendFormat("\c[red]*\c- ");
+								comblog.AppendFormat("\c[brick]%d\c- HP \c[green]drained\c-", draindiff);
+								if (t.linetarget) comblog.AppendFormat(" from \c[red]%s\c-", t.linetarget.GetTag());
+								comblog.AppendFormat("!");
+								if (dydudebug_showgametic) comblog.AppendFormat(" [%d]", gametic);
+								
+								Console.Printf(comblog);
+							}
+						}
+					}
 				}
 			}
+			
 			if (weapon != NULL)
 			{
 				if (MeleeSound) A_StartSound(MeleeSound, CHAN_WEAPON);
@@ -566,7 +650,7 @@ class KCWeaponBase : Weapon
 			if (!(flags & CPF_NOTURN))
 			{
 				// turn to face target
-				self.Angle = t.angleFromSource;
+				if (!t.linetarget.bFRIENDLY) self.Angle = t.angleFromSource;
 			}
 
 			if (flags & CPF_PULLIN) self.bJustAttacked = true;
@@ -628,8 +712,10 @@ class KCWeaponBase : Weapon
 		}
 		A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
 	}
+	
 	action int A_CheckMeleeDestroyProj(int type = 0)
 	{
+		int TrueGameSkill = skill;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = invoker.ActualLevel;
@@ -676,7 +762,7 @@ class KCWeaponBase : Weapon
 		if (MaxCheck <= 0.01) MaxCheck = 0.01;
 		double randomroll = frandom(0.01,MaxCheck);
 		if (randomroll <= 1.0) MeleeDestroyProjectiles = 1;
-		if (debugmelee) Console.Printf("\c[green]MeleeDestroyProjectiles [weapon]:\c- type: %d, RandomRoll / MaxCheck: %.4f / %.4f, MeleeDestroyProjectiles: %d, checkvalfactor: %.4f (\c[gold]%.4f\c-)", type, randomroll, MaxCheck, MeleeDestroyProjectiles, checkvalfactor, (checkvalfactor * (TruePlayerLevel+1)));
+		if (debugmelee) Console.Printf("\cxMeleeDestroyProjectiles [weapon]:\c- type: %d, RandomRoll / MaxCheck: %.4f / %.4f, MeleeDestroyProjectiles: %d, checkvalfactor: %.4f (\c[gold]%.4f\c-)", type, randomroll, MaxCheck, MeleeDestroyProjectiles, checkvalfactor, (checkvalfactor * (TruePlayerLevel+1)));
 
 		return MeleeDestroyProjectiles;
 	}
@@ -686,14 +772,14 @@ class KCWeaponBase : Weapon
 		if (mo)
 		{
 			if (kcdebug_showvisibleshieldparts == 1 ||
-					kcdebug_showvisibleshieldparts >= 3) Console.Printf("[mo]: %s", mo.GetClassName());
+					kcdebug_showvisibleshieldparts >= 3) Console.Printf("[\cxA_MeleeSetUpAttach [weapons.zc]\c- - mo]: %s", mo.GetClassName());
 			ShieldPartBase SHmo;
 			SHmo = ShieldPartBase(mo);
 			if (SHmo)
 			{
 				actor playera = players[0].mo;
 				if (kcdebug_showvisibleshieldparts == 1 ||
-						kcdebug_showvisibleshieldparts >= 3) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
+						kcdebug_showvisibleshieldparts >= 3) Console.Printf("[\cxA_MeleeSetUpAttach [weapons.zc]\c- - SHmo]: %s", SHmo.GetClassName());
 				SHmo.attachx = xpos;
 				SHmo.attachy = ypos;
 				SHmo.attachz = zpos;
@@ -702,7 +788,7 @@ class KCWeaponBase : Weapon
 				SHmo.shieldee = playera;
 				SHmo.target = playera;
 				if (kcdebug_showvisibleshieldparts == 1 ||
-						kcdebug_showvisibleshieldparts >= 3) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+						kcdebug_showvisibleshieldparts >= 3) Console.Printf("\cxA_MeleeSetUpAttach [weapons.zc]\c- - attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
 			}
 		}
 	}
@@ -712,6 +798,8 @@ class KCWeaponBase : Weapon
 	{
 		bool spawned;
 		actor mo;
+		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 		
 		let globalvars = KCGlobalVariables.Get();
 		actor playera = players[0].mo;
@@ -780,8 +868,6 @@ class KCWeaponBase : Weapon
 			A_SetAngle(angle+spread1angle);
 			angoffset += spread1angle;
 		}
-		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 	}
 	
 	action void A_Destroy()

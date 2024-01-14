@@ -275,6 +275,7 @@ class KCCreature : KCBaseZSC
 
 	int A_CheckMeleeDestroyProj(int type = 0)
 	{
+		int TrueGameSkill = skill;
 		int TruePlayerLevel = CountInv("MonsterLevel");
 
 		int debugmelee = kcdebug_meleeinformation;
@@ -284,29 +285,29 @@ class KCCreature : KCBaseZSC
 		checkvalfactor *= 0.5;
 		if (type == 0) // Punch
 		{
-			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
-			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
-			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
-			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
-			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			if (skill <= SKILL_VERY_EASY) checkvalfactor = frandom(0.09,0.15);
+			if (skill == SKILL_EASY) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == SKILL_NORMAL) checkvalfactor = frandom(0.075,0.125);
+			if (skill == SKILL_HARD) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
 			checkvalfactor *= 0.5;
 		}
 		if (type == 1) // Uppercut
 		{
-			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
-			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
-			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
-			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
-			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			if (skill <= SKILL_VERY_EASY) checkvalfactor = frandom(0.09,0.15);
+			if (skill == SKILL_EASY) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == SKILL_NORMAL) checkvalfactor = frandom(0.075,0.125);
+			if (skill == SKILL_HARD) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
 			checkvalfactor *= 0.875;
 		}
 		if (type == 2) // Kick
 		{
-			if (skill <= 0) checkvalfactor = frandom(0.09,0.15);
-			if (skill == 1) checkvalfactor = frandom(0.0825,0.1375);
-			if (skill == 2) checkvalfactor = frandom(0.075,0.125);
-			if (skill == 3) checkvalfactor = frandom(0.0675,0.1125);
-			if (skill >= 4) checkvalfactor = frandom(0.06,0.10);
+			if (skill <= SKILL_VERY_EASY) checkvalfactor = frandom(0.09,0.15);
+			if (skill == SKILL_EASY) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == SKILL_NORMAL) checkvalfactor = frandom(0.075,0.125);
+			if (skill == SKILL_HARD) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
 			checkvalfactor *= frandompick(0.875,1,1.125);
 		}
 		checkvalfactor *= 1.5;
@@ -326,21 +327,21 @@ class KCCreature : KCBaseZSC
 	{
 		if (mo)
 		{
-			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[mo]: %s", mo.GetClassName());
+			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[\cyA_MeleeSetUpAttach\c- - mo]: %s", mo.GetClassName());
 			ShieldPartBase SHmo;
 			SHmo = ShieldPartBase(mo);
 			if (SHmo)
 			{
 				actor playera = players[0].mo;
-				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[SHmo]: %s", SHmo.GetClassName());
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[\cyA_MeleeSetUpAttach\c- - SHmo]: %s", SHmo.GetClassName());
 				SHmo.attachx = xpos;
 				SHmo.attachy = ypos;
 				SHmo.attachz = zpos;
 				SHmo.attachang = ang;
 				SHmo.attachptc = ptc;
-				SHmo.shieldee = playera;
-				SHmo.target = playera;
-				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+				SHmo.shieldee = self;
+				SHmo.target = self;
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("\cyA_MeleeSetUpAttach\c- - attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
 			}
 		}
 	}
@@ -774,14 +775,6 @@ class ShieldPartBase : KCBaseZSC
 		+NOSPRITESHADOW;
 		+DONTSPLASH;
 	}
-
-/*
-	override void PostBeginPlay()
-	{
-		
-		Super.PostBeginPlay();
-	}
-*/
 	
 	override void Tick()
 	{
@@ -840,10 +833,12 @@ class ShieldPartBase : KCBaseZSC
 		{
 			if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[green]passive: %s\c-", gametic, GetClassName());
 			if (A_CheckCollisionProjShieldExemption(other)) return false; //ShieldPartBase
+			////////////////
 
 			// Pass through different species of select types.
 			//if (EvilWarriorShieldBall(other) || EvilWarriorShieldBall(other)) return false;
 			if (playpawn) return false; // Player Checking
+			if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[green]passive (post playpawn check): %s\c-", gametic, GetClassName());
 
 			// Projectile Checking
 			if (UniqueProjectile)
@@ -853,6 +848,7 @@ class ShieldPartBase : KCBaseZSC
 				playpawn2 = PlayerPawn(master);
 				if (playpawn && playpawn2) return false;
 			}
+			if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[green]passive (post UniqueProjectile check): %s\c-", gametic, GetClassName());
 			// Fast Projectile Checking
 			if (UniqueProjectileFast)
 			{
@@ -861,11 +857,11 @@ class ShieldPartBase : KCBaseZSC
 				playpawn2 = PlayerPawn(master);
 				if (playpawn && playpawn2) return false;
 			}
+			if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[green]passive (post UniqueProjectileFast check): %s\c-", gametic, GetClassName());
 
 			if (other)
 			{
 				if (kcdebug_shieldcollision & 1) Console.Printf("\cyShieldPartBase (gametic %d):\c- \c[gold]KCPuff: %s\c-", gametic, other.GetClassName());
-				int type = 0;
 				if (KCPuff(other) && playpawn) return false;
 				if (FistPuff(other) && playpawn) return false;
 				if (KickPuff(other) && playpawn) return false;
@@ -874,12 +870,6 @@ class ShieldPartBase : KCBaseZSC
 				if (ChainsawPuff(other) && playpawn) return false;
 				if (Chainsaw2Puff(other) && playpawn) return false;
 				if (SawPuff(other) && playpawn) return false;
-				/*
-				if (type >= 1)
-				{
-					return false;
-				}
-				*/
 				if (other.bMISSILE)
 				{
 					//

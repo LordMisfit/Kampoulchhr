@@ -109,25 +109,32 @@ class KCTimeFreezeProjTracker : KCBaseZSC
 
 class KCProjectile : KCBaseZSC
 {
+	int ishellcoreproj;
+	property ishellcore: ishellcoreproj;
+	int maxunfreezetime;
+	int maxunfreezedist;
+	property TimeFreezeTicLimit: maxunfreezetime;
+	property TimeFreezeDistLimit: maxunfreezedist;
 	double defenseignorefactor;
 	actor ProjTrackerConn;
-	bool isillusionaryproj;
+	int kctimefreezeduration;
+	bool WasNoTimeFreeze;
+	vector3 spawnorigin;
+	
 	int user_projtimer;
+	bool isillusionaryproj;
 	float user_ignoreaoeimmunity;
 	int saveddmg; // Save damage from things like A_CustomPunch for puffs
 	int user_canafflict;
 	int user_ailmentmaxchance;
-	int kctimefreezeduration;
-	bool WasNoTimeFreeze;
-	vector3 spawnorigin;
+	mixin InvWeaponShare;
+	mixin HUDRecovery;
 	
 	int user_hitsparkrand;
 	int user_sparksizelevel;
 	double user_sparkscalemulti;
 	int user_noseektimer, user_seektimer;
 	int projtouchedshieldactor;
-	mixin InvWeaponShare;
-	mixin HUDRecovery;
 	
 	actor OriginalActor;
 	string OriginalActorType;
@@ -143,7 +150,9 @@ class KCProjectile : KCBaseZSC
 	bool hitawall;
 	bool hitaceiling;
 	bool hitafloor;
-
+	
+	
+	
 	int timesrippedoverall;
 	int maxtimesrippedoverall;
 	
@@ -153,19 +162,10 @@ class KCProjectile : KCBaseZSC
 	int accudamagefactor;
 	
 	int PlayerLevel;
-	
 	PlayerPawn playpawn;
 	KCCreature kcactor;
 	
 	private class<Inventory> iDTech1Check, iDTech1Check2, iDTech1Check3, iDTech1Check4, iDTech1Check5, iDTech1Check6, iDTech1Check7, iDTech1Check8;
-
-	int ishellcoreproj;
-	property ishellcore: ishellcoreproj;
-	
-	int maxunfreezetime;
-	int maxunfreezedist;
-	property TimeFreezeTicLimit: maxunfreezetime;
-	property TimeFreezeDistLimit: maxunfreezedist;
 
 	default
 	{
@@ -245,7 +245,128 @@ class KCProjectile : KCBaseZSC
 		nm = "JustKicked"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
 		nm = "JustPunched"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
 		nm = "JustUppercutted"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+		//
 		nm = "JustShieldDashed"; if (CountInv(nm) > 0) A_SetInventory(nm,0);
+	}
+	
+	
+	void TimeFreezeProjectileCheck()
+	{
+		if (target)
+		{
+			if (PlayerPawn(target))
+			{
+				if (target.CountInv("PowerTimeFreezer") ||
+						target.CountInv("KCMiscTimeFreezer") ||
+						target.CountInv("DebugTimeFreezer") ||
+						target.CountInv("KCTimeFreezer") ||
+						target.CountInv("KCTimeFreezer1") ||
+						target.CountInv("KCTimeFreezer2") ||
+						target.CountInv("KCTimeFreezer3") ||
+						target.CountInv("DashTimeFreezer") ||
+						!target.player.timefreezer)
+				{
+					if (target.CountInv("DebugTimeFreezer"))
+					{
+						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+						if (kcdebug_timefreezedebugaffectproj) bNOTIMEFREEZE = false;
+					}
+					else
+					{
+						if (target.CountInv("KCTimeFreezer") ||
+								target.CountInv("KCTimeFreezer1") ||
+								target.CountInv("KCTimeFreezer2") ||
+								target.CountInv("KCTimeFreezer3"))
+						{
+							bool spawned;
+							if (kctimefreezeduration <= 0) 
+							{
+								if (!ProjTrackerConn)
+								{
+									[spawned, ProjTrackerConn] = target.A_SpawnItemEx("KCTimeFreezeProjTracker",0,0,(target.height*0.5),flags:SXF_NOCHECKPOSITION);
+									if (ProjTrackerConn) 
+									{
+										if (kcdebug_timefreezedebug1) Console.Printf("\c[green]ProjTrackerConn");
+										KCTimeFreezeProjTracker TrackConn;
+										TrackConn = KCTimeFreezeProjTracker(ProjTrackerConn);
+										if (TrackConn) TrackConn.ConnProj = self;
+									}
+								}
+							}
+							double dist3d = Distance3D(target);
+							if (ProjTrackerConn) dist3d = Distance3D(ProjTrackerConn);
+							if (kctimefreezeduration >= 0 && kctimefreezeduration <= maxunfreezetime)
+							{
+								if (dist3d >= maxunfreezedist)
+								{
+									if (bNOTIMEFREEZE) 
+									{
+										bNOTIMEFREEZE = false;
+										if (ProjTrackerConn) ProjTrackerConn.Destroy();
+									}
+									kctimefreezeduration = maxunfreezetime * -1;
+								}
+								else
+								{
+									if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+									kctimefreezeduration++;
+								}
+								if (kcdebug_timefreezedebug1) 
+								{
+									if (ProjTrackerConn) Console.Printf("[%p: %s - tracker: %p] kctimefreezeduration: %d / %d, dist: %d / %d", self, GetClassName(), ProjTrackerConn, kctimefreezeduration, maxunfreezetime, dist3d, maxunfreezedist);
+																	else Console.Printf("[%p: %s] kctimefreezeduration: %d / %d, dist: %d / %d", self, GetClassName(), kctimefreezeduration, maxunfreezetime, dist3d, maxunfreezedist);
+								}
+							}
+							else
+							{
+								if (bNOTIMEFREEZE) 
+								{
+									bNOTIMEFREEZE = false;
+									if (ProjTrackerConn) ProjTrackerConn.Destroy();
+								}
+							}
+						}
+						else
+						{
+							if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+						}
+					}
+				}
+				else
+				{
+					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+			else
+			{
+				if (!bNOTIMEFREEZE)
+				{
+					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+				}
+				else
+				{
+					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
+				}
+			}
+		}
+	}
+	
+	override void Tick()
+	{
+		TimeFreezeProjectileCheck();
+		
+		if (OriginalActor != null) 
+		{ 
+			if (target != OriginalActor && target == KCPlayerPawn(target)) REFLECTEDMONSTERPROJ = true;
+		}
+		
+		if (REFLECTEDMONSTERPROJ && bDONTREFLECT == false) 
+		{
+			//Console.Printf("REFLECTEDMONSTERPROJ (%d)", level.time);
+			bDONTREFLECT = true;
+		}
+		
+		Super.Tick();
 	}
 	
 	int A_MeleeImpactRadius(int attacktype)
@@ -676,126 +797,6 @@ class KCProjectile : KCBaseZSC
 		if (pos.Z + height >= ceilingz) hitaceiling = true;
 		//Console.Printf("pos.z: %d, height: %d, ceilingz: %d, hitceiling: %d", pos.z, height, ceilingz, hitaceiling);
 	}
-	
-	void TimeFreezeProjectileCheck()
-	{
-		if (target)
-		{
-			if (PlayerPawn(target))
-			{
-				if (target.CountInv("PowerTimeFreezer") ||
-						target.CountInv("KCMiscTimeFreezer") ||
-						target.CountInv("DebugTimeFreezer") ||
-						target.CountInv("KCTimeFreezer") ||
-						target.CountInv("KCTimeFreezer1") ||
-						target.CountInv("KCTimeFreezer2") ||
-						target.CountInv("KCTimeFreezer3") ||
-						target.CountInv("DashTimeFreezer") ||
-						!target.player.timefreezer)
-				{
-					if (target.CountInv("DebugTimeFreezer"))
-					{
-						if (!kcdebug_timefreezedebugaffectproj && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-						if (kcdebug_timefreezedebugaffectproj) bNOTIMEFREEZE = false;
-					}
-					else
-					{
-						if (target.CountInv("KCTimeFreezer") ||
-								target.CountInv("KCTimeFreezer1") ||
-								target.CountInv("KCTimeFreezer2") ||
-								target.CountInv("KCTimeFreezer3"))
-						{
-							bool spawned;
-							if (kctimefreezeduration <= 0) 
-							{
-								if (!ProjTrackerConn)
-								{
-									[spawned, ProjTrackerConn] = target.A_SpawnItemEx("KCTimeFreezeProjTracker",0,0,(target.height*0.5),flags:SXF_NOCHECKPOSITION);
-									if (ProjTrackerConn) 
-									{
-										if (kcdebug_timefreezedebug1) Console.Printf("\c[green]ProjTrackerConn");
-										KCTimeFreezeProjTracker TrackConn;
-										TrackConn = KCTimeFreezeProjTracker(ProjTrackerConn);
-										if (TrackConn) TrackConn.ConnProj = self;
-									}
-								}
-							}
-							double dist3d = Distance3D(target);
-							if (ProjTrackerConn) dist3d = Distance3D(ProjTrackerConn);
-							if (kctimefreezeduration >= 0 && kctimefreezeduration <= maxunfreezetime)
-							{
-								if (dist3d >= maxunfreezedist)
-								{
-									if (bNOTIMEFREEZE) 
-									{
-										bNOTIMEFREEZE = false;
-										if (ProjTrackerConn) ProjTrackerConn.Destroy();
-									}
-									kctimefreezeduration = maxunfreezetime * -1;
-								}
-								else
-								{
-									if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-									kctimefreezeduration++;
-								}
-								if (kcdebug_timefreezedebug1) 
-								{
-									if (ProjTrackerConn) Console.Printf("[%p: %s - tracker: %p] kctimefreezeduration: %d / %d, dist: %d / %d", self, GetClassName(), ProjTrackerConn, kctimefreezeduration, maxunfreezetime, dist3d, maxunfreezedist);
-																	else Console.Printf("[%p: %s] kctimefreezeduration: %d / %d, dist: %d / %d", self, GetClassName(), kctimefreezeduration, maxunfreezetime, dist3d, maxunfreezedist);
-								}
-							}
-							else
-							{
-								if (bNOTIMEFREEZE) 
-								{
-									bNOTIMEFREEZE = false;
-									if (ProjTrackerConn) ProjTrackerConn.Destroy();
-								}
-							}
-						}
-						else
-						{
-							if (!bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-						}
-					}
-				}
-				else
-				{
-					if (bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-			else
-			{
-				if (!bNOTIMEFREEZE)
-				{
-					if (target && target.bNOTIMEFREEZE) bNOTIMEFREEZE = true;
-				}
-				else
-				{
-					if (target && !target.bNOTIMEFREEZE) bNOTIMEFREEZE = false;
-				}
-			}
-		}
-	}
-	
-	override void Tick()
-	{
-		TimeFreezeProjectileCheck();
-		
-		if (OriginalActor != null) 
-		{ 
-			if (target != OriginalActor && target == KCPlayerPawn(target)) REFLECTEDMONSTERPROJ = true;
-		}
-		
-		if (REFLECTEDMONSTERPROJ && bDONTREFLECT == false) 
-		{
-			//Console.Printf("REFLECTEDMONSTERPROJ (%d)", level.time);
-			bDONTREFLECT = true;
-		}
-		
-		Super.Tick();
-	}
-	
 	//
 	//
 	// A_SeekerMissile that will clear its tracer pointer if the tracer is friendly.
@@ -1537,12 +1538,12 @@ class KCBulletTracer : KCFastProjectile
 				// Pass through different species of select types or players
 				if (other.bFRIENDLY == 1 || playpawn2)
 				{
-					//if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
+					if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
 				}
 				else
 				{
@@ -1763,7 +1764,6 @@ class KCHowitzerTracer : KCBulletTracer
 	}
 }
 
-
 // Projectiles derived from this class should rip through actors,
 // but not actually hit them more than once.
 class SingleDamageRipper : KCProjectile abstract
@@ -1868,12 +1868,12 @@ class SingleDamageFastRipper : KCFastProjectile abstract
 				// Pass through different species of select types or players
 				if (other.bFRIENDLY == 1 || playpawn2)
 				{
-					//if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
-					//else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
+					if (A_CheckFriendCollisionProjTypeFriendlyDoom() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHeretic() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyHexen() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyStrife() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendlyOthers() > 0) return false;
+					else if (A_CheckFriendCollisionProjTypeFriendly1() > 0) return false;
 				}
 			}
 			else 
