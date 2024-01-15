@@ -29,9 +29,19 @@ class KCWeaponBase : Weapon
 	bool PickupUseVoice;
 	bool PickupUseVoice2;
 	string PickupSnd2;
+	double DmgIgnoreFctr1;
+	double DmgIgnoreFctr2;
+	double DmgIgnoreFctr3;
+	double DmgIgnoreFctr4;
+	double DmgIgnoreFctr5;
 	property PickUpVoice: PickupUseVoice;
 	property PickUpVoice2: PickupUseVoice2;
 	property PickupSound2: PickupSnd2;
+	property DamageIgnoreFactor1: DmgIgnoreFctr1;
+	property DamageIgnoreFactor2: DmgIgnoreFctr2;
+	property DamageIgnoreFactor3: DmgIgnoreFctr3;
+	property DamageIgnoreFactor4: DmgIgnoreFctr4;
+	property DamageIgnoreFactor5: DmgIgnoreFctr5;
 	
 	default
 	{
@@ -1523,6 +1533,21 @@ class KCWeaponBase : Weapon
 		{
 			KCBulletTracer BS1;
 			BS1 = KCBulletTracer(BombShots);
+			if (BS1)
+			{
+				BS1.DamageType = dmgtype;
+				BS1.finaldamagedealt = dmg;
+				BS1.defenseignorefactor = defenseignorefactor;
+			}
+		}
+	}
+	
+	action void A_SetBulletTracerRipperDmg(actor BombShotsB, actor BombShots, double dmg, name dmgtype, double defenseignorefactor)
+	{
+		if (BombShots)
+		{
+			KCBulletTracerSingleRipper BS1;
+			BS1 = KCBulletTracerSingleRipper(BombShots);
 			if (BS1)
 			{
 				BS1.DamageType = dmgtype;
@@ -4765,6 +4790,8 @@ class Glock21 : MarineWeapon
 		Weapon.SlotNumber 2;
 		Weapon.Kickback 75;
 		Weapon.UpSound "weapons/glockup";
+		KCWeaponBase.DamageIgnoreFactor1 0.445;
+		KCWeaponBase.DamageIgnoreFactor2 0.667;
 		//AttackSound "weapons/glockfire";
 		Scale 0.5;
 	}
@@ -4784,7 +4811,7 @@ class Glock21 : MarineWeapon
 			LIBF A 0 A_GunFlash;
 			LIBF A 0 
 			{
-				int randdmg = randompick(5,6,6,6,7)*random(1,3);
+				int randdmg = ((randompick(3,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,7) - 1) * random(1,3));
 				actor playera = players[0].mo;
 				if (playera.CountInv("KCTimeFreezer") ||
 						playera.CountInv("KCTimeFreezer1") ||
@@ -4803,8 +4830,8 @@ class Glock21 : MarineWeapon
 						double randangle = !player.refire ? 0.0 : (2.0 * 0.5);
 						double shotheight = 36;
 						if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-						[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.334,0.667));
+						[BombShotsB, BombShots] = A_FireProjectileEx("KCGlockTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+						A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 					}
 				}
 				else
@@ -4823,14 +4850,14 @@ class Glock21 : MarineWeapon
 							double randangle = !player.refire ? 0.0 : (2.0 * 0.5);
 							double shotheight = 36;
 							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-							[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.334,0.667));
+							[BombShotsB, BombShots] = A_FireProjectileEx("KCGlockTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+							A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 						}
 					}
 					else
 					{
 						A_StartSound ("weapons/glockfire", CHAN_WEAPON);
-						A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(0.334,0.667));
+						A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 					}
 				}
 			}
@@ -4843,7 +4870,7 @@ class Glock21 : MarineWeapon
 			LIBF A 0 A_GunFlash;
 			LIBF A 0 
 			{
-				int randdmg = randompick(5,6,6,6,7)*random(1,3);
+				int randdmg = ((randompick(3,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,7) - 1) * random(1,3));
 				actor playera = players[0].mo;
 				if (playera.CountInv("KCTimeFreezer") ||
 						playera.CountInv("KCTimeFreezer1") ||
@@ -4862,8 +4889,8 @@ class Glock21 : MarineWeapon
 						double randangle = (4.5 * 0.5);
 						double shotheight = 36;
 						if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-						[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-						A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
+						[BombShotsB, BombShots] = A_FireProjectileEx("KCGlockTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+						A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 					}
 				}
 				else
@@ -4882,14 +4909,14 @@ class Glock21 : MarineWeapon
 							double randangle = (4.5 * 0.5);
 							double shotheight = 36;
 							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-							[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
+							[BombShotsB, BombShots] = A_FireProjectileEx("KCGlockTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+							A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 						}
 					}
 					else
 					{
 						A_StartSound ("weapons/glockfire", CHAN_WEAPON);
-						A_FireBullets(4.25,6.75,-1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(0.334,0.667));
+						A_FireBullets(4.25,6.75,-1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(invoker.DmgIgnoreFctr1,invoker.DmgIgnoreFctr2));
 					}
 				}
 			}
@@ -5030,7 +5057,7 @@ class TommyGun : MarineWeapon
 			double randpitch = shotpitch;
 			double randangle = shotangle;
 			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', 0.0);
+			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.05,0.1));
 		}
 	}
 	
@@ -5116,7 +5143,7 @@ class TommyGun : MarineWeapon
 			}
 			else
 			{
-				A_FireBullets(shotangle,shotpitch,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
+				A_FireBullets(shotangle,shotpitch,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ, defenseignorefactor: frandom(0.05,0.1));
 			}
 		}
 		A_SetAngle(currang);
@@ -5345,7 +5372,7 @@ class TommAmmo : Ammo
 	States
 	{
 		Spawn:
-			TOMA A 1 Bright;
+			TOMA A 1;
 			Loop;
 	}
 }
@@ -5362,7 +5389,7 @@ class TommAmmoBig : TommAmmo
 	States
 	{
 		Spawn:
-			TOMA B 1 Bright;
+			TOMA B 1;
 			Loop;
 	}
 }
@@ -8718,12 +8745,13 @@ class CCards_Actor_ThrownPlushEx : KCFastProjectile
 		TNT1 A 0;
 		CC_P C 0
 		{
+			string nm = "CCards_Actor_ThrownPlushFX";
 			A_StopSound(CHAN_6);
 			A_StartSound("corruptioncards/illusionbreak", CHAN_6);
 
-			for(int i; i<32; i++)
+			for(int i; i < 32; i++)
 			{
-				A_SpawnITemEx("CCards_Actor_ThrownPlushFX", 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
+				A_SpawnItemEx(nm, 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
 			}
 			A_SetTranslation("CCards_Mist");
 			bNOGRAVITY = true;
@@ -8775,6 +8803,7 @@ class CCards_Actor_ThrownPlushExB : CCards_Actor_ThrownPlushEx
 			TNT1 A 0;
 			CC_P C 0
 			{
+				string nm = "CCards_Actor_ThrownPlushFX";
 				A_StopSound(CHAN_6);
 				A_StartSound("corruptioncards/illusionbreak", CHAN_6);
 				A_StopSound(CHAN_7);
@@ -8782,7 +8811,7 @@ class CCards_Actor_ThrownPlushExB : CCards_Actor_ThrownPlushEx
 	
 				for(int i; i < 64; i++)
 				{
-					A_SpawnITemEx("CCards_Actor_ThrownPlushFX", 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
+					A_SpawnItemEx(nm, 0, 0, 0, frandom(2, 12), 0, frandom(-8, 8), random(0,360), SXF_NOCHECKPOSITION);
 				}
 				A_SetTranslation("CCards_Mist");
 				bNOGRAVITY = true;
