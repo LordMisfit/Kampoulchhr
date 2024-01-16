@@ -2815,6 +2815,7 @@ class KCStatusBarMain : BaseStatusBar
 			Array<String> UserKeys5;
 			string temp1, temp2;
 			if (PlayerWeapon is "FistMarine" ||
+					PlayerWeapon is "Glock21" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
@@ -2823,6 +2824,7 @@ class KCStatusBarMain : BaseStatusBar
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
 				if (PlayerWeapon is "FistMarine") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
+				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
