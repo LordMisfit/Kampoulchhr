@@ -1577,56 +1577,66 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	action bool A_CheckTracerConditions(bool check = false)
+	{
+		actor playera = players[0].mo;
+		if ((playera.CountInv("KCTimeFreezer") ||
+				playera.CountInv("KCTimeFreezer1") ||
+				playera.CountInv("KCTimeFreezer2") ||
+				playera.CountInv("KCTimeFreezer3")) ||
+				kc_playertracers) check = true;
+		
+		return check;
+	}
+	
+	action double A_GetShotHeightTracer(double shotheight = 36)
+	{
+		actor playera = players[0].mo;
+		KCPlayerPawn KCP;
+		KCP = KCPlayerPawn(playera);
+		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
+		
+		return shotheight;
+	}
+	
 	action void A_FirePistol(int type = 0)
 	{
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double shotpitch = 3.549;
 		double shotangle = 5.625;
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_PistolTracer(playera, type, shotpitch, shotangle, shotheight);
+			A_PistolTracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else
 		{
-			if (kc_playertracers)
+			int accurate;
+			if (type > 0) accurate = -1;
+			
+			if (player != null)
 			{
-				A_PistolTracer(playera, type, shotpitch, shotangle, shotheight);
+				Weapon weap = player.ReadyWeapon;
+				if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+				{
+					if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+						return;
+			
+					player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+				}
+				player.mo.PlayAttacking2();
+			
+				accurate = !player.refire;
+				if (type > 0) accurate = -1;
 			}
 			else
 			{
-				int accurate;
-				if (type > 0) accurate = -1;
-
-				if (player != null)
-				{
-					Weapon weap = player.ReadyWeapon;
-					if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
-					{
-						if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
-							return;
-
-						player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
-					}
-					player.mo.PlayAttacking2();
-
-					accurate = !player.refire;
-					if (type > 0) accurate = -1;
-				}
-				else
-				{
-					accurate = 1;
-				}
-
-				A_StartSound ("weapons/pistol", CHAN_WEAPON);
-				GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
+				accurate = 1;
 			}
+			
+			A_StartSound ("weapons/pistol", CHAN_WEAPON);
+			GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
 		}
 	}
 	
@@ -1652,8 +1662,6 @@ class KCWeaponBase : Weapon
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double shotpitch = 0.0;
 		double shotangle = 5.625;
 		if (type >= 1)
@@ -1663,43 +1671,33 @@ class KCWeaponBase : Weapon
 			A_Recoil(0.75 * random(randompick(0,1,1,1),randompick(3,3,3,4)));
 		}
 
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_Shotgun1Tracer(playera, type, shotpitch, shotangle, shotheight);
+			A_Shotgun1Tracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else 
 		{
-			if (kc_playertracers)
+			if (player == null)
 			{
-				A_Shotgun1Tracer(playera, type, shotpitch, shotangle, shotheight);
+				return;
 			}
-			else
-			{
-				if (player == null)
-				{
-					return;
-				}
 
-				A_StartSound ("weapons/shotgf", CHAN_WEAPON);
-				Weapon weap = player.ReadyWeapon;
-				if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
-				{
-					if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
-						return;
-					
-					player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
-				}
-				player.mo.PlayAttacking2 ();
+			A_StartSound ("weapons/shotgf", CHAN_WEAPON);
+			Weapon weap = player.ReadyWeapon;
+			if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+			{
+				if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
+					return;
 				
-				double pitch = BulletSlope ();
-				
-				for (int i = 0; i < 7; i++)
-				{
-					GunShot(false, "KCBulletPuff2", pitch, 0.0);
-				}
+				player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+			}
+			player.mo.PlayAttacking2 ();
+			
+			double pitch = BulletSlope ();
+			
+			for (int i = 0; i < 7; i++)
+			{
+				GunShot(false, "KCBulletPuff2", pitch, 0.0);
 			}
 		}
 	}
@@ -1726,69 +1724,57 @@ class KCWeaponBase : Weapon
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double shotpitch = 7.097;
 		double shotangle = 11.25;
 		if (type >= 1)
 		{
-			shotpitch = (7.097 * 1.875);
-			shotangle = (11.25 * 1.125);
+			shotpitch = (7.097 * 2.125);
+			shotangle = (11.25 * 1.375);
 			A_Recoil(3.0 * random(randompick(0,1,1,1),randompick(3,3,3,4)));
 		}
 
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_Shotgun2Tracer(playera, type, shotpitch, shotangle, shotheight);
+			A_Shotgun2Tracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else 
 		{
-			if (kc_playertracers)
+			if (player == null)
 			{
-				A_Shotgun2Tracer(playera, type, shotpitch, shotangle, shotheight);
+				return;
 			}
-			else
+
+			A_StartSound ("weapons/sshotf", CHAN_WEAPON);
+			Weapon weap = player.ReadyWeapon;
+			if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
 			{
-				if (player == null)
-				{
+				if (!weap.DepleteAmmo (weap.bAltFire, true, 2))
 					return;
-				}
+				
+				player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
+			}
+			player.mo.PlayAttacking2 ();
 
-				A_StartSound ("weapons/sshotf", CHAN_WEAPON);
-				Weapon weap = player.ReadyWeapon;
-				if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
-				{
-					if (!weap.DepleteAmmo (weap.bAltFire, true, 2))
-						return;
-					
-					player.SetPsprite(PSP_FLASH, weap.FindState('Flash'), true);
-				}
-				player.mo.PlayAttacking2 ();
-
-				double pitch = BulletSlope ();
-					
-				for (int i = 0 ; i < 20 ; i++)
-				{
-					int damage = 5 * random[FireSG2](1, 3);
-					
-					double ang = Random2[FireSG2]() * (shotangle / 256);
-					ang *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
-					ang += angle;
-					double ptc = Random2[FireSG2]() * (shotpitch / 256);
-					ptc *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
-					ptc += pitch;
-					
-					// Doom adjusts the bullet slope by shifting a random number [-255,255]
-					// left 5 places. At 2048 units away, this means the vertical position
-					// of the shot can deviate as much as 255 units from nominal. So using
-					// some simple trigonometry, that means the vertical angle of the shot
-					// can deviate by as many as ~7.097 degrees.
-					
-					LineAttack (ang, PLAYERMISSILERANGE, ptc, damage, 'Bullet', "BulletPuff");
-				}
+			double pitch = BulletSlope ();
+				
+			for (int i = 0 ; i < 20 ; i++)
+			{
+				int damage = 5 * random[FireSG2](1, 3);
+				
+				double ang = Random2[FireSG2]() * (shotangle / 256);
+				ang *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
+				ang += angle;
+				double ptc = Random2[FireSG2]() * (shotpitch / 256);
+				ptc *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
+				ptc += pitch;
+				
+				// Doom adjusts the bullet slope by shifting a random number [-255,255]
+				// left 5 places. At 2048 units away, this means the vertical position
+				// of the shot can deviate as much as 255 units from nominal. So using
+				// some simple trigonometry, that means the vertical angle of the shot
+				// can deviate by as many as ~7.097 degrees.
+				
+				LineAttack (ang, PLAYERMISSILERANGE, ptc, damage, 'Bullet', "BulletPuff");
 			}
 		}
 	}
@@ -1834,61 +1820,49 @@ class KCWeaponBase : Weapon
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double shotpitch = 3.549;
 		double shotangle = 5.625;
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_ChaingunTracer(playera, type, shotpitch, shotangle, shotheight);
+			A_ChaingunTracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else
 		{
-			if (kc_playertracers)
+			int accurate;
+			if (type > 0) accurate = -2;
+			
+			if (player == null)
 			{
-				A_ChaingunTracer(playera, type, shotpitch, shotangle, shotheight);
+				return;
 			}
-			else
+			
+			Weapon weap = player.ReadyWeapon;
+			if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
 			{
-				int accurate;
-				if (type > 0) accurate = -2;
-				
-				if (player == null)
-				{
+				if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
 					return;
-				}
-
-				Weapon weap = player.ReadyWeapon;
-				if (weap != null && invoker == weap && stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+			
+				A_StartSound ("weapons/chngun", CHAN_WEAPON);
+			
+				State flash = weap.FindState('Flash');
+				if (flash != null)
 				{
-					if (!weap.DepleteAmmo (weap.bAltFire, true, 1))
-						return;
-
-					A_StartSound ("weapons/chngun", CHAN_WEAPON);
-
-					State flash = weap.FindState('Flash');
-					if (flash != null)
+					// Removed most of the mess that was here in the C++ code because SetSafeFlash already does some thorough validation.
+					State atk = weap.FindState('Fire');
+					let psp = player.GetPSprite(PSP_WEAPON);
+					if (psp) 
 					{
-						// Removed most of the mess that was here in the C++ code because SetSafeFlash already does some thorough validation.
-						State atk = weap.FindState('Fire');
-						let psp = player.GetPSprite(PSP_WEAPON);
-						if (psp) 
-						{
-							State cur = psp.CurState;
-							int theflash = atk == cur? 0:1;
-							player.SetSafeFlash(weap, flash, theflash);
-						}
+						State cur = psp.CurState;
+						int theflash = atk == cur? 0:1;
+						player.SetSafeFlash(weap, flash, theflash);
 					}
-					accurate = !player.refire;
-					if (type > 0) accurate = -2;
 				}
-				
-				player.mo.PlayAttacking2 ();
-				GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
+				accurate = !player.refire;
+				if (type > 0) accurate = -2;
 			}
+			
+			player.mo.PlayAttacking2 ();
+			GunShot(accurate, "KCBulletPuff2", BulletSlope(), 0.0);
 		}
 	}
 	
@@ -4196,31 +4170,19 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double shotpitch = 3.55;
 		double shotangle = 7.1;
 
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_MinigunTracer(playera, type, shotpitch, shotangle, shotheight);
+			A_MinigunTracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else
 		{
-			if (kc_playertracers)
-			{
-				A_MinigunTracer(playera, type, shotpitch, shotangle, shotheight);
-			}
-			else
-			{
-				A_StartSound("weapons/minigunfire", CHAN_WEAPON);
-				A_StartSound("weapons/minigunfire", CHAN_WEAPON);
-				A_FireBullets(frandom(-shotangle,shotangle), frandom(-shotpitch,shotpitch), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
-				A_FireBullets(frandom(-shotangle,shotangle), frandom(-shotpitch,shotpitch), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
-			}
+			A_StartSound("weapons/minigunfire", CHAN_WEAPON);
+			A_StartSound("weapons/minigunfire", CHAN_WEAPON);
+			A_FireBullets(frandom(-shotangle,shotangle), frandom(-shotpitch,shotpitch), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
+			A_FireBullets(frandom(-shotangle,shotangle), frandom(-shotpitch,shotpitch), 1, (5*random(1,3)), "KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ);
 		}
 	}
 	
@@ -4287,8 +4249,6 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 		actor playera = players[0].mo;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		double angoffset = 0;
 		double ptcoffset = 0;
 		double baserecoil = frandom(7.5,8.5);
@@ -4311,7 +4271,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 				double origang = playera.angle;
 				double randpitch = ptcoffset;
 				double randangle = angoffset;
-				[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 				A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 			}
 		}
@@ -4345,17 +4305,13 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 					A_SetTics(8);
 					
 					actor playera = players[0].mo;
-					if (playera.CountInv("KCTimeFreezer") ||
-							playera.CountInv("KCTimeFreezer1") ||
-							playera.CountInv("KCTimeFreezer2") ||
-							playera.CountInv("KCTimeFreezer3"))
+					if (A_CheckTracerConditions())
 					{
 						A_Howitizer(1);
 					}
 					else
 					{
-						if (kc_playertracers) A_Howitizer(1);
-														 else A_Howitizer(0);
+						A_Howitizer(0);
 					}
 				}
 				else
@@ -4420,9 +4376,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 							double origang = playera.angle;
 							double randpitch = ptcoffset;
 							double randangle = angoffset;
-							double shotheight = 36;
-							if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-							[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+							[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 							A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 						}
 					}
@@ -4828,15 +4782,10 @@ class Glock21 : MarineWeapon
 				randangle = !player.refire ? (0.4 * 0.5) : (1.0 * 0.5);
 			}
 		}
-		double shotheight = 36;
 		if (kcdebug_attackfuncinfo) Console.Printf("ammomode: %d, shottype: %s, randdmg: %d, randpitch: %.4f, randangle: %.4f, defignore1: %.4f, defignore2: %.4f", invoker.ammomode, shottype, randdmg, randpitch, randangle, defignore1, defignore2);
 		A_StartSound ("weapons/glockfire", CHAN_WEAPON);
 		
-		if ((playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3")) ||
-				kc_playertracers)
+		if (A_CheckTracerConditions())
 		{
 			A_TakeInventory("Clip",1);
 			for (int i = 0; i < 1; i++)
@@ -4844,8 +4793,7 @@ class Glock21 : MarineWeapon
 				actor BombShotsB, BombShots;
 				KCPlayerPawn KCP;
 				KCP = KCPlayerPawn(playera);
-				if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
-				[BombShotsB, BombShots] = A_FireProjectileEx(shottype,frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				[BombShotsB, BombShots] = A_FireProjectileEx(shottype,frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 				A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(defignore1,defignore2));
 			}
 		}
@@ -5045,8 +4993,6 @@ class TommyGun : MarineWeapon
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		double shotheight = 36;
-		if (KCP) shotheight = ((KCP.AttackZOffSet) * KCP.player.crouchfactor);
 		
 		int temp1 = randompick(3,3,3,3,3,3,4,4,4,4,5,5) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
 		double barrageangoffset = 0.0;
@@ -5105,23 +5051,13 @@ class TommyGun : MarineWeapon
 		A_SetAngle(angle+barrageangoffset);
 		
 		int randdmg = temp1;
-		if (playera.CountInv("KCTimeFreezer") ||
-				playera.CountInv("KCTimeFreezer1") ||
-				playera.CountInv("KCTimeFreezer2") ||
-				playera.CountInv("KCTimeFreezer3"))
+		if (A_CheckTracerConditions())
 		{
-			A_TommyTracer(playera, type, shotpitch, shotangle, shotheight, randdmg);
+			A_TommyTracer(playera, type, shotpitch, shotangle, A_GetShotHeightTracer(36), randdmg);
 		}
 		else
 		{
-			if (kc_playertracers)
-			{
-				A_TommyTracer(playera, type, shotpitch, shotangle, shotheight, randdmg);
-			}
-			else
-			{
-				A_FireBullets(shotangle,shotpitch,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ, defenseignorefactor: frandom(0.05,0.1));
-			}
+			A_FireBullets(shotangle,shotpitch,-1,(temp1),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ, defenseignorefactor: frandom(0.05,0.1));
 		}
 		A_SetAngle(currang);
 	}
