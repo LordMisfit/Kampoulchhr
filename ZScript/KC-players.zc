@@ -1304,12 +1304,12 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
-			//CCards_NukeExplosion
+			// Allows the Time Seraph's Armor to partially tank a CCards Nuke without being instant death :V
 			nm = "CCards_NukeExplosion";
 			if ((source && sour == nm) ||
 					(inflictor && infl == nm))
 			{
-				if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion");
+				if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion [TSArmor] start");
 				damage *= frandom(0.50,0.75);
 				if (flags & DMG_FORCED) flags &= ~DMG_FORCED;
 				if (flags & DMG_FOILBUDDHA) flags &= ~DMG_FOILBUDDHA;
@@ -1343,7 +1343,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
-			// Ice-Based Coverage [blocked entirely by temperates shield :P]
+			// Ice/Chill-Based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Ice' || 
 					mod == 'IceWater' || 
 					mod == 'Frost' || 
@@ -1355,7 +1355,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
-			// Thunder based Coverage [blocked entirely by temperates shield :P]
+			// Thunder/Shock-based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Thunder' || 
 					mod == 'Electric' || 
 					mod == 'Electricity' || 
@@ -1412,6 +1412,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage: %d [prevdmg: %d]", damage, prevdmg);
 			}
 			
+			// Determines How Much of the Including Base Damage is Inflicted on the Armor's "Shield Energy" [if temperate stuff isn't a factor]
 			if (MiscItem)
 			{
 				nm = "TSArmorTier1";
@@ -2063,8 +2064,14 @@ class KCPlayerPawn : PlayerPawn
 			}
 			else 
 			{
-				if (GetClassName() == "KCPlayer") damage = ceil(damage * frandompick(0.9375,0.96875,0.96875,0.96875));
-				if (GetClassName() == "HeiwaPlayer") damage = ceil(damage * frandompick(1.03125,1.03125,1.03125,1.0625));
+				if (GetClassName() == "KCPlayer") 
+				{
+					damage = ceil(damage * frandompick(0.9375,0.96875,0.96875,0.96875));
+				}
+				if (GetClassName() == "HeiwaPlayer") 
+				{
+					damage = ceil(damage * frandompick(1.03125,1.03125,1.03125,1.0625));
+				}
 			}
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Step 1ba]: %d", damage);
 		}
@@ -2077,13 +2084,23 @@ class KCPlayerPawn : PlayerPawn
 				mod == 'SigilDrain' ||
 				mod == 'SpectralLow')
 		{
-			if (SigilDrain) { } else damage = ceil(damage * 0.875);
+			if (SigilDrain) { } 
+			else 
+			{
+				if (GetClassName() == "KCPlayer") 
+				{
+					if (mod == 'Poison' || mod == 'PoisonCloud') damage = ceil(damage * 0.875);
+					if (mod == 'Magic') damage = ceil(damage * 1.125);
+				}
+				if (GetClassName() == "HeiwaPlayer")
+				{
+					if (mod == 'Eldritch') damage = ceil(damage * 0.125);
+					if (mod == 'Magic') damage = ceil(damage * 0.875);
+				}
+			}
 			if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 			{
-				if (mod == 'Eldritch') 
-				{
-					damage *= 0.25;
-				}
+				if (mod == 'Eldritch') damage *= 0.25;
 			}
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage (non-normal base) [Step 1bb]: %d", damage);
 		}
@@ -2124,9 +2141,7 @@ class KCPlayerPawn : PlayerPawn
 				if (BulletPuff(self))
 				{
 					olddmg = damage;
-					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Hit by Doom Bullet");
-					
-					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Bullet Buff]: %d (%d)", damage, olddmg);
+					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Hit by Doom Bullet: PDamage: %d (%d)", damage, olddmg);
 				}
 				useflatdefense = true;
 			}
@@ -2248,7 +2263,8 @@ class KCPlayerPawn : PlayerPawn
 				if (mod == 'Crush')
 				{
 					double basecrushdmgfact;
-					if (PowerStrength(FindInventory("PowerStrength")) || KCPowerStrength(FindInventory("KCPowerStrength")))
+					if (PowerStrength(FindInventory("PowerStrength")) || 
+							KCPowerStrength(FindInventory("KCPowerStrength")))
 					{
 						basecrushdmgfact = frandompick(25,33.4,33.4,50,50,50,50,50,50,66.7,66.7,75);
 					}

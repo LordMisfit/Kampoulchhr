@@ -361,10 +361,18 @@ class CompatVulnItem : PlaceholderItem
 							TOTALFactor *= 5.0;
 						}
 					}
+					
+					if (LostSoul(owner) || 
+							owner.GetClassName() == "LostSoul")
+					{
+						if (owner.InStateSequence(owner.curstate,owner.ResolveState("Missile"))) TOTALFactor *= 2.0;
+					}
+					
 					bool isaghost;
 					nm = "CCards_Actor_Ghost"; 
 					nn = "CCards_Actor_AchillesCurse"; 
-					if (!owner.CountInv(nm)) 
+					if (!(owner.CountInv(nm) || 
+								owner.CountInv(nn)))
 					{
 						if (MiscItem && MiscItem.timestopactivetics > 0)
 						{

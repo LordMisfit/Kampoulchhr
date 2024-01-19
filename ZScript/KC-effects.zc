@@ -2922,3 +2922,248 @@ class BlackHoleSpeedPenalty2 : BlackHoleSpeedPenalty1 { }
 class BlackHoleSpeedPenalty2b : BlackHoleSpeedPenalty1 { }
 class BlackHoleSpeedPenalty3 : BlackHoleSpeedPenalty1 { }
 class BlackHoleSpeedPenalty3b : BlackHoleSpeedPenalty1 { }
+
+class PowerProtectionTimeCheck : PowerProtection
+{
+	mixin TimerCheck;
+	default
+	{
+		Inventory.Icon "";
+		Powerup.Duration 2147483646; // 8
+		Powerup.Color "00 00 00", 0.00;
+	}
+	
+	int A_GetPlayerLvl()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int Level = 0;
+		if (MiscItem)
+		{
+			if (kc_expgains) Level = MiscItem.PlayerLevel;
+		}
+		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_GetPlayerLvl - TempDefenseBuff)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
+		return Level;
+	}
+}
+
+class PowerMorphTimeCheck : PowerMorph
+{
+	mixin TimerCheck;
+}
+
+class DMGWeakness20Percent : PowerProtectionTimeCheck 
+{
+	default 
+	{
+		Damagefactor "normal", 1.00;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 1.2;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+class DMGWeakness50Percent : PowerProtectionTimeCheck 
+{
+	default 
+	{
+		Damagefactor "normal", 1.00;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 1.5;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+class DMGWeakness75Percent : PowerProtectionTimeCheck 
+{
+	default 
+	{
+		Damagefactor "normal", 1.00;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 1.75;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+class DMGWeakness100Percent : PowerProtectionTimeCheck 
+{
+	default 
+	{
+		Damagefactor "normal", 1.00;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 2.0;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+class DMGBonus30Percent : PowerDamageTimeCheck 
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+		
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (!passive && damage > 0)
+		{
+			double TOTALFactor = 1.3;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+		}
+	}
+}
+class DMGBonus75Percent : PowerDamageTimeCheck
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+		
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (!passive && damage > 0)
+		{
+			double TOTALFactor = 1.75;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+		}
+	}
+}
+
+class DMGReduction25Percent : PowerProtectionTimeCheck
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.25;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+class DMGReduction30Percent : PowerProtectionTimeCheck
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.7;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+class DMGReduction62_5Percent : PowerProtectionTimeCheck
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.375;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+class DMGReduction75Percent : PowerProtectionTimeCheck 
+{
+	default
+	{
+		damagefactor "normal", 1.0;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	} 
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.25;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}

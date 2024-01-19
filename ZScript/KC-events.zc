@@ -10,6 +10,16 @@ class KC_EventHandler : EventHandler
 	const SKILL_IMPOSSIBLE = 7;
 	const SKILL_OMEGA = 8;
 	
+	bool A_CheckKCTimeFreeze()
+	{
+		bool freeze = false;
+		actor playera = players[0].mo;
+		if ((playera.CountInv("KCTimeFreezer1") ||
+				 playera.CountInv("KCTimeFreezer2") ||
+				 playera.CountInv("KCTimeFreezer3"))) freeze = true;
+		return freeze;
+	}
+	
 	bool A_CheckUOHYM()
 	{
 		bool UOHYM = false;
@@ -56,20 +66,71 @@ class KC_EventHandler : EventHandler
 		}
 		
 		// CCards
-		if ((level.time >= 3 && level.time <= 35) ||
-				(((level.time - 35) % 175) == 0))
+		int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+		if (d != -1)
 		{
-			int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
-			if (kcdebug_worldtick) Console.Printf("d: %d [time: %d]", d, level.time);
-			if (d != -1)
+			if (kcdebug_worldtick) Console.Printf("[CCards lump found] d: %d [time: %d]", d, level.time);
+			let globalvars = KCGlobalVariables.Get();
+			globalvars.PlayingCCards = true;
+			actor player = players[0].mo;
+			if (player && !player.CountInv("PlayingCCards")) player.A_SetInventory("PlayingCCards",1);
+			
+			Actor mo;
+			string nm;
+			ThinkerIterator it;
+			
+			if (A_CheckKCTimeFreeze())
 			{
-				let globalvars = KCGlobalVariables.Get();
-				globalvars.PlayingCCards = true;
-				actor player = players[0].mo;
-				Actor mo;
-				string nm;
-
-				player.A_SetInventory("PlayingCCards",1);
+				nm = "CCards_Actor_AttentionDebuff";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo) 
+					{
+						if (mo.target) mo.target == null;
+						if (mo.tracer) mo.tracer == null;
+						mo.Destroy();
+					}
+				}
+				
+				nm = "CCards_Actor_Confetti";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+				}
+				
+				nm = "CCards_Actor_AttentionNoise";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+						mo.A_StopSound(7);
+					}
+				}
+			}
+			else
+			{
+				nm = "CCards_Actor_AttentionNoise";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						if (mo.bNOTIMEFREEZE == false) 
+						{
+							mo.bNOTIMEFREEZE == true;
+							mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
+						}
+					}
+				}
+			}
+			
+			if ((level.time >= 3 && level.time <= 35) ||
+					(((level.time - 35) % 70) == 0))
+			{
 				nm = "CCards_Actor_PlushWeapon1";
 				if (player.CountInv(nm))
 				{
@@ -112,9 +173,15 @@ class KC_EventHandler : EventHandler
 					player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
 					player.A_SetInventory(nm,0);
 				}
-				
+			}
+
+			if ((level.time >= 3 && level.time <= 35) ||
+					(((level.time - 35) % 175) == 0))
+			{
 				nm = "CCards_Actor_BigStomach";
 				nm = "CCards_Actor_SwapCurse";
+				nm = "CCards_Actor_AttentionNoise";
+				nm = "CCards_Actor_AttentionCurse";
 				//
 				nm = "CCards_Actor_MonsterDisguise";
 				ThinkerIterator it = ThinkerIterator.Create(nm);
@@ -1504,6 +1571,19 @@ class KC_EventHandler : EventHandler
 			}
 			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			nm = "CCards_Actor_PilotedMechPlasma"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
+
+			if (A_CheckKCTimeFreeze())
+			{
+				nm = "CCards_Actor_AttentionDebuff";
+				if (spawnname == nm) 
+				{
+					if (spawnee.target) spawnee.target == null;
+					if (spawnee.tracer) spawnee.tracer == null;
+					spawnee.Destroy();
+				}
+				nm = "CCards_Actor_Confetti";
+				if (spawnname == nm) spawnee.Destroy();
+			}
 			
 			//
 			Inventory invspawnee;
@@ -4074,9 +4154,9 @@ class KC_EventHandler : EventHandler
 						}
 						ExpGain *= alterchance;
 						
+						int PLevel = playera.CountInv("PlayerLevel");
 						If (PLuck)
 						{
-							int PLevel = playera.CountInv("PlayerLevel");
 									 if (PLevel <= 11) ExpGain *= (1.00 + (TrueLuck * frandompick(0,0.00125,0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.02)));
 							else if (PLevel <= 26) ExpGain *= (1.00 + (TrueLuck * frandompick(0.00125,0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.01,0.02,0.02)));
 							else if (PLevel <= 66) ExpGain *= (1.00 + (TrueLuck * frandompick(0.00125,0.0025,0.0025,0.0025,0.005,0.005,0.005,0.01,0.01,0.02,0.02,0.02,0.04)));
@@ -4091,10 +4171,17 @@ class KC_EventHandler : EventHandler
 						{
 							if (HeiwaPlayer(playera))
 							{
-								BaseExpMultiBonus = 1.5;
-								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.125;
-								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.125;
-								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.25;
+											if (PLevel < 2) BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
+								else if (PLevel < 5) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
+								else if (PLevel < 10) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
+								else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.875,2.25,2.25,2.25,2.625);
+																 else BaseExpMultiBonus = frandompick(1.25,1.5,1.5,1.5,1.75);
+								
+								double BaseExpMultiBonus2 = 1.0;
+								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus2 += 0.125;
+								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus2 += 0.125;
+								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus2 += 0.25;
+								BaseExpMultiBonus *= BaseExpMultiBonus2;
 							}
 							else
 							{
