@@ -89,6 +89,10 @@ class KC_EventHandler : EventHandler
 					{
 						if (mo.target) mo.target == null;
 						if (mo.tracer) mo.tracer == null;
+						for (int i = 0; i < 12; i++)
+						{
+							mo.A_StopSound(i);
+						}
 						mo.Destroy();
 					}
 				}
@@ -119,11 +123,8 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo)
 					{
-						if (mo.bNOTIMEFREEZE == false) 
-						{
-							mo.bNOTIMEFREEZE == true;
-							mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
-						}
+						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
+						mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
 					}
 				}
 			}
@@ -180,8 +181,6 @@ class KC_EventHandler : EventHandler
 			{
 				nm = "CCards_Actor_BigStomach";
 				nm = "CCards_Actor_SwapCurse";
-				nm = "CCards_Actor_AttentionNoise";
-				nm = "CCards_Actor_AttentionCurse";
 				//
 				nm = "CCards_Actor_MonsterDisguise";
 				ThinkerIterator it = ThinkerIterator.Create(nm);
@@ -1579,6 +1578,10 @@ class KC_EventHandler : EventHandler
 				{
 					if (spawnee.target) spawnee.target == null;
 					if (spawnee.tracer) spawnee.tracer == null;
+					for (int i = 0; i < 12; i++)
+					{
+						spawnee.A_StopSound(i);
+					}
 					spawnee.Destroy();
 				}
 				nm = "CCards_Actor_Confetti";
