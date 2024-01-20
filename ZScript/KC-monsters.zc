@@ -8,6 +8,9 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 	
 	States
 	{
+		DropChainsaw:
+			PLAY N 0 A_SpawnItemEx("Chainsaw");
+			goto ItemDrop6+3;
 		DropPistol:
 			PLAY N 0 A_SpawnItemEx("Pistol");
 			goto ItemDrop6+3;
@@ -102,6 +105,9 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 	
 	States
 	{
+		DropChainsaw:
+			PLAY W 0 A_SpawnItemEx("Chainsaw");
+			goto ItemDrop6+3;
 		DropPistol:
 			PLAY W 0 A_SpawnItemEx("Pistol");
 			goto ItemDrop6+3;

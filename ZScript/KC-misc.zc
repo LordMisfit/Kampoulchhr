@@ -3140,6 +3140,62 @@ class PlayerStatItem : Inventory
 					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
 					if (TimeArmorRelicsOwned >= 3) TSARegenAmt *= 0.325;
 				}
+				else
+				{
+					PlayerPawn plr;
+					plr = PlayerPawn(owner);
+					if (plr)
+					{
+						double plrspeed = (plr.vel.x * plr.vel.x) + (plr.vel.y * plr.vel.y) + (plr.vel.z * plr.vel.z);
+						bool isrunning = false;
+						bool ismanualmove = false;
+						if (plr.player.cmd.buttons & BT_MOVELEFT ||
+								plr.player.cmd.buttons & BT_MOVERIGHT ||
+								plr.player.cmd.buttons & BT_FORWARD ||
+								plr.player.cmd.buttons & BT_BACK) ismanualmove = true;
+						if (cl_run) 
+						{
+							if (plr.player.cmd.buttons & BT_SPEED) isrunning = false; 
+																								else isrunning = true; 
+						}
+						else
+						{
+							if (plr.player.cmd.buttons & BT_SPEED) isrunning = true; 
+																								else isrunning = false; 
+						}
+						double basespd = 1024;
+						if (TimeArmorRelicsOwned >= 1) 
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
+							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
+							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+						}
+						if (TimeArmorRelicsOwned >= 2) 
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
+							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
+							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+						}
+						if (TimeArmorRelicsOwned >= 3) 
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
+							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
+							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+						}
+						double mulfactor = 1.0;
+						mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
+						if (mulfactor < 1.0) mulfactor = 1.0;
+						TSARegenAmt *= mulfactor;
+						Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d", plrspeed, basespd, mulfactor, TSARegenAmt);
+					}
+				}
+				
 				if (!A_CheckNoTimer()) 
 				{
 					int TimeArmorEnergyMod = (TimeArmorEnergyMaxTics / 100);

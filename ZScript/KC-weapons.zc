@@ -3876,27 +3876,28 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 					Console.Printf("Not Dropped");
 					if (playera.CountInv("ChainsawMarine"))
 					{
-						Console.Printf("ChainsawMarine [has]");
+						//Console.Printf("ChainsawMarine [has]");
 						if (random(1,4) <= 1)
 						{
-							Console.Printf("Translocator [has Chainsaw]");
+							//Console.Printf("Translocator [has Chainsaw]");
 							droptype = "Translocator";
 							A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
 							Destroy();
 						}
 						else
 						{
+							//Console.Printf("SpawnOtherWeapon [has Chainsaw]");
 							invoker.A_SpawnOtherWeapon();
 						}
 					}
 					else
 					{
-						Console.Printf("ChainsawMarine [hasn't]");
+						//Console.Printf("ChainsawMarine [hasn't]");
 						if (!playera.CountInv("Translocator"))
 						{
 							if (random(1,4) <= 1)
 							{
-								Console.Printf("Translocator [hasn't Chainsaw]");
+								//Console.Printf("Translocator [hasn't Chainsaw]");
 								droptype = "Translocator";
 								A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
 								Destroy();
@@ -3904,14 +3905,14 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 							else
 							if (random(1,8) <= 1)
 							{
-								Console.Printf("SpawnOtherWeapon [hasn't Chainsaw]");
+								//Console.Printf("SpawnOtherWeapon [hasn't Chainsaw]");
 								invoker.A_SpawnOtherWeapon();
 							}
 						}
 						else
 						if (random(1,8) <= 1)
 						{
-							Console.Printf("SpawnOtherWeapon [hasn't Chainsaw (2)]");
+							//Console.Printf("SpawnOtherWeapon [hasn't Chainsaw (2)]");
 							invoker.A_SpawnOtherWeapon();
 						}
 					}
@@ -3938,9 +3939,16 @@ class PistolMarine : MarineWeapon replaces Pistol
 		Tag "$TAG_PISTOL";
 	}
 	
+	void A_SpawnOtherWeapon()
+	{
+	}
+	
 	States
 	{
 		Spawn:
+			2PIS E 0 NoDelay
+			{
+			}
 		Idle:
 			2PIS E -1;
 			Loop;
