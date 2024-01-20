@@ -3708,6 +3708,7 @@ class KC_EventHandler : EventHandler
 					int timefreezes;
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					basechance = kc_inventorydroprate5;
+					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") basechance *= 0.75;
 					basechance *= skillmult;
 					if (timefreezes)
 					{
@@ -3792,6 +3793,7 @@ class KC_EventHandler : EventHandler
 						}
 					}
 					luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") luckbase *= 1.334;
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_tsaluckfactor;
 					if (MiscItem)
@@ -3836,50 +3838,6 @@ class KC_EventHandler : EventHandler
 							if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 						}
 					}
-					
-					/*
-					// ?? [Type 10]
-					basechance = kc_inventorydroprate10;
-					basechance *= skillmult;
-					luckbase = 1.25 + (monsterrating * 0.3125);
-					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
-					luckbase *= kc_luckfactor
-					// Weapons and IP Attacks do not effect drop rates here V:
-					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-					maxchance = basechance;
-					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [ultimarare]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
-					if (random(1,maxchance) <= 1)
-					{
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("?? Drop [success]");
-						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						double raredropsndvol = frandom(1.75,2.25);
-						int raredropsndchannel = randompick(193,194,224,225,266,267);
-						string raredropsndname = "ultrarareitem/spawn";
-						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						raredropsndvol = frandom(1.75,2.25);
-						raredropsndchannel = randompick(293,294,324,325,366,367);
-						raredropsndname = "ultrarareitem/spawn";
-						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						raredropsndvol = frandom(1.75,2.25);
-						raredropsndchannel = randompick(393,394,424,425,466,467);
-						raredropsndname = "ultrarareitem/spawn";
-						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						raredropsndvol = frandom(1.75,2.25);
-						raredropsndchannel = randompick(493,494,524,525,566,567);
-						raredropsndname = "ultrarareitem/spawn";
-						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-						raredropsndvol = frandom(1.75,2.25);
-						raredropsndchannel = randompick(593,594,624,625,666,667);
-						raredropsndname = "ultrarareitem/spawn";
-						victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						
-						victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-					}
-					*/
 				}
 			}
 		}
@@ -4172,7 +4130,7 @@ class KC_EventHandler : EventHandler
 						double BaseExpMultiBonus = 1.0;
 						if (playera) 
 						{
-							if (HeiwaPlayer(playera))
+							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
 							{
 											if (PLevel < 2) BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
 								else if (PLevel < 5) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
@@ -4291,7 +4249,7 @@ class KC_EventHandler : EventHandler
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
 						
-						if (playoneliner && playera.GetClassName() == "HeiwaPlayer" && MiscItem)
+						if (playoneliner && (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") && MiscItem)
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							bool voicecheck = false;
@@ -4357,7 +4315,7 @@ class KC_EventHandler : EventHandler
 					//* Killed With Certain Weapons *
 					//*******************************
 					if (source && 
-							(KCPlayerPawn(source) || source.GetClassName() == "HeiwaPlayer") && 
+							(KCPlayerPawn(source) || (HeiwaPlayer(source) || source.GetClassName() == "HeiwaPlayer")) && 
 							(victim.bCOUNTKILL || specialtype || specialtype2))
 					{
 						//
