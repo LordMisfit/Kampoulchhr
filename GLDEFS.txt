@@ -667,3 +667,113 @@ PointLight BHEXP_7
 	Color 0.3 0.3 0.4
 	Size 140
 }
+
+//Brightmaps
+
+Brightmap Sprite VTLWA0
+{
+	Map BMVTLW
+	DisableFullBright
+}
+Brightmap Sprite VTLWB0
+{
+	Map BMVTLW
+	DisableFullBright
+}
+Brightmap Sprite VTLWE0
+{
+	Map BMVTLW
+	DisableFullBright
+}
+Brightmap Sprite VTLWF0
+{
+	Map BMVTLW
+	DisableFullBright
+}
+
+
+
+//Beacon
+Pointlight TLBeaconLightG
+{
+	color 0.33 0.67 0.33
+	size 32
+	offset 0 12 0
+}
+Pointlight TLBeaconLightR
+{
+	color 0.67 0.33 0.33
+	size 32
+	offset 0 12 0
+}
+Object TLbeacon
+{
+	Frame VTLBB	{Light TLBeaconLightG}
+}
+Object TLbeacon
+{
+	Frame VTLBC	{Light TLBeaconLightR}
+}
+
+// Teleport fog
+flickerlight VTFOG1
+{
+    color 0.4 1.0 0.4
+    size 42
+    secondarySize 96
+    chance 0.4
+	attenuate 1
+}
+
+flickerlight VTFOG2
+{
+    color 0.4 1.0 0.4
+    size 30
+    secondarySize 72
+    chance 0.4
+	attenuate 1
+}
+
+flickerlight VTFOG3
+{
+    color 0.4 1.0 0.4
+    size 18
+    secondarySize 48
+    chance 0.4
+	attenuate 1
+}
+
+flickerlight VTFOG4
+{
+    color 0.4 1.0 0.4
+    size 8
+    secondarySize 24
+    chance 0.4
+	attenuate 1
+}
+
+object Translocator
+{
+	frame VTLFK { light VTFOG1 }
+    frame VTLFA { light VTFOG1 }
+    frame VTLFB { light VTFOG2 }
+    frame VTLFC { light VTFOG2 }
+    frame VTLFD { light VTFOG2 }
+    frame VTLFE { light VTFOG3 }
+    frame VTLFF { light VTFOG4 }
+    frame VTLFI { light VTFOG4 }
+    frame VTLFJ { light VTFOG3 }
+
+}
+
+object TLBeaconFog
+{
+    frame VTBFA { light VTFOG1 }
+    frame VTBFB { light VTFOG2 }
+    frame VTBFC { light VTFOG2 }
+    frame VTBFD { light VTFOG2 }
+    frame VTBFE { light VTFOG3 }
+    frame VTBFF { light VTFOG4 }
+    frame VTBFI { light VTFOG4 }
+    frame VTBFJ { light VTFOG3 }
+}

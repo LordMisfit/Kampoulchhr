@@ -8560,6 +8560,372 @@ class BHExplosion2 : BHExplosion
 }
 
 //
+Class Translocator : MarineWeapon
+{
+	actor bacon, beacon;
+	actor dummy;
+	bool tfenabled;
+	int tfradius;
+	bool tfdynamicdamage;
+	int tfdamage;
+	Override Void PostBeginPlay()
+	{
+		tfenabled = true;		// enable/disable telefrag
+		tfradius = 16;			// telefrag radius (player radius is 16)
+		tfdynamicdamage = true;	// use the player's current health+armor values as telefrag damage
+		tfdamage = 400;			// fixed telefrag damage (only used if tfdynamicdamage = false)
+		Super.PostBeginPlay();
+	}
+	Default
+	{
+		//$Category Weapons
+		//$Sprite VTLPA0
+		//$Title "Translocator"
+		Weapon.AmmoGive 1;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoType1 "TLBeaconAmmo";
+		Weapon.BobSpeed 0.0;
+		Weapon.SlotNumber 1;
+		//Weapon.SlotPriority 0;
+		//Weapon.SelectionOrder 4000;
+		Inventory.PickupMessage "You got the Translocator!";
+		Inventory.PickupSound "misc/w_pkup";
+		Obituary "%o was telefragged by %k!";
+		+FLOORCLIP;	
+		+WEAPON.NOAUTOAIM;
+		+WEAPON.NOAUTOFIRE;
+		+WEAPON.NOALERT;
+		+WEAPON.AMMO_OPTIONAL;
+	}
+	States
+	{
+		Spawn:
+			VTLP A -1;
+			Stop;
+		Ready:
+			VTLW D 1 A_WeaponReady();
+			Loop;
+		ReadyLaunched:
+			VTLW A 1 A_WeaponReady();
+			Loop;
+		Deselect:
+			TNT1 A 0
+			{
+				if (invoker.beacon) Player.SetPSprite(PSP_WEAPON,invoker.FindState("DeselectLaunched"));
+			}
+			VTLW D 1 A_Lower(12);
+			Loop;
+		DeselectLaunched:
+			VTLW A 1 A_Lower(12);
+			Loop;
+		Select:
+			TNT1 A 0
+			{
+				if (invoker.beacon) Player.SetPSprite(PSP_WEAPON,invoker.FindState("SelectLaunched"));
+			}
+			VTLW D 1 A_Raise(12);
+			Loop;
+		SelectLaunched:
+			VTLW CCCCCC 1 A_Raise(12);
+			Goto ReadyLaunched;
+		//----------------------------------Launch Beacon-------------------------------
+		Fire:
+			TNT1 A 0
+			{	
+				if (!invoker.beacon) 
+				{
+					[invoker.bacon, invoker.beacon] = A_FireProjectileEx("TLBeacon",spawnheight:-5,pitch:-5);
+					if (invoker.beacon)
+					{
+						A_Startsound("Translocator/shoot");
+						Player.SetPSprite(PSP_WEAPON,invoker.FindState("Launched"));
+					}
+					else
+					{
+						Player.SetPSprite(PSP_WEAPON,invoker.FindState("Warning2"));
+					}
+				}
+				else
+				{
+					//------------------------------------Spawn Dummy-------------------------------	
+					if (invoker.dummy = Spawn("TLBeaconDummy",invoker.beacon.pos + (0,0,invoker.beacon.height)))
+					{
+						invoker.dummy.target = invoker.beacon.target;
+						vector3 newpos;
+						newpos = invoker.CheckSpace(invoker.dummy);
+						invoker.dummy.angle = invoker.beacon.angle;
+						invoker.dummy.SetXYZ(newpos);
+						if (newpos == (0,0,0))
+						{
+							invoker.dummy.Destroy();
+							Player.SetPSprite(PSP_WEAPON,invoker.FindState("Warning"));
+						}
+						else
+						{
+						//------------------------------------Teleport----------------------------------						
+							A_SpawnItemex("TLBeaconFog");
+							if (invoker.tfenabled)
+							{
+								if (invoker.tfdynamicdamage)
+								{
+									invoker.tfdamage = invoker.owner.health + invoker.owner.FindInventory("BasicArmor").amount;
+								}
+								invoker.dummy.A_Explode(invoker.tfdamage,invoker.tfradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius);
+							}
+							self.target = invoker.dummy;
+							A_Warp(AAPTR_TARGET, zofs: -invoker.beacon.height, flags: WARPF_USECALLERANGLE);
+							invoker.dummy.A_SpawnItemex("TLBeaconFog2",xofs:-8);
+							invoker.beacon.Destroy();
+							invoker.dummy.Destroy();
+							A_GiveInventory("TLBeaconAmmo");
+							Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
+						}
+					}
+					else
+					{
+						Player.SetPSprite(PSP_WEAPON,invoker.FindState("Warning"));
+					}
+				}
+			}
+			VTLW C 7;
+			Goto Ready;
+		//----------------------------------Recall Beacon-------------------------------
+		AltFire:
+			TNT1 A 0 
+			{
+				if (invoker.beacon) 
+				{
+					invoker.beacon.A_SpawnItemEx("TLBeaconFog");
+					invoker.beacon.Destroy();
+					A_GiveInventory("TLBeaconAmmo");
+					Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
+				}
+			}
+			Goto Ready;
+		//------------------------------------Misc States-------------------------------
+		Launched:
+			VTLW A 1 
+			{
+				A_WeaponReady();
+				if (!invoker.beacon)
+				{
+					A_GiveInventory("TLBeaconAmmo");
+					Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
+				}
+			}
+			Loop;
+		Warning:
+			VTLW E 7
+			{
+				A_Startsound("Translocator/warning");
+				A_WeaponReady();
+				if (!invoker.beacon)
+				{
+					A_GiveInventory("TLBeaconAmmo");
+					Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
+				}
+				else
+				{
+					invoker.beacon.Setstatelabel("Red");
+				}
+			}
+			Goto Launched;
+		Warning2:
+			VTLW F 7
+			{
+				A_Startsound("Translocator/warning");
+				A_WeaponReady();
+			}
+			Goto Ready;
+		Reload:
+			TNT1 A 0 A_GunFlash;
+			VTLW D 4 A_Startsound("Translocator/teleport",volume:0.5,pitch:1.5);
+			Goto Ready;
+		Flash:
+			VTLF KABCDEFGHIJ 2;
+			Stop;
+	}
+}
+//---------------------------Dummy Collision Detection--------------------------
+extend Class Translocator
+{
+	vector3 CheckSpace(actor testobj)
+	{
+		vector3 oldpos = testobj.pos;
+		vector3 testpos;
+		vector3 newpos;
+		int cmc;
+		int ang = 20;
+		int rad = testobj.radius;
+		vector3 dir = (rad,0,0);
+		double c = cos(ang);
+		double s = sin(ang);
+
+		for (double i = 0; abs(i) < 360; i += ang)
+		{
+			dir = (dir.x*c - dir.y*s, dir.x*s + dir.y*c,0);
+			testpos = level.Vec3Offset(oldpos,dir,0);
+			vector2 cmpos = (testpos.x,testpos.y);
+			bool cm = testobj.Checkmove(cmpos);
+			if (cm)
+			{	
+				cmc += 1;
+				if (cmc == 360/ang) return oldpos;
+				newpos = testpos;
+				continue;
+			}
+		}
+		return newpos;
+	}	
+}
+//-----------------------------------Beacon-------------------------------------
+Class TLBeacon : KCBaseZSC
+{
+	Default
+	{
+		Radius 9;
+		Height 5;
+		Deathheight 5;
+		Speed 30;
+		Scale 0.4;
+		Gravity 0.3;
+		Projectile;
+		Damage 0;
+	
+		BounceFactor 0.2;
+		WallBounceFactor 0.2;
+		+THRUACTORS;
+		-NOGRAVITY;
+		-NOTELEPORT;
+		-NOBLOCKMAP;
+		+BOUNCEONWALLS;
+		+BOUNCEONCEILINGS;
+		+DONTBOUNCEONSKY;
+		SeeSound "";
+		BounceSound "Translocator/bounce";
+		DeathSound "";
+	}
+	States
+	{
+		Spawn:
+		Death:
+			TNT1 A 0
+			{
+				if (!TestMobjLocation())
+				{
+					Destroy();
+				}
+			}
+			VTLB BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 1 TLParticleG();
+			Loop;
+		Red:
+			VTLB CCCCCAAAAACCCCCAAAAACCCCCAAAAACCCCC 1 TLParticleR();
+			Goto Death;
+	}
+}
+
+Extend Class TLBeacon
+{
+	void TLParticleG()
+	{
+		if (pos.z != floorz)
+		{
+			A_SpawnParticle("green",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+		}
+	}
+	void TLParticleR()
+	{
+		if (pos.z != floorz)
+		{
+			A_SpawnParticle("red",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+		}
+	}
+}
+
+//--------------------------------Misc Actors-----------------------------------
+Class TLBeaconFog : KCBaseZSC
+{
+	Default
+	{
+		+NOINTERACTION;
+		+NOBLOCKMAP;
+		+NOTELEPORT;
+		+NOGRAVITY;
+		+ZDOOMTRANS;
+		RenderStyle "Add";
+		scale 0.5;
+		 
+	}
+	States
+	{
+		Spawn:
+			VTBF A 4 Bright Nodelay A_Startsound("Translocator/teleport",volume:0.5,pitch:1.5);
+			VTBF BCDEFGHIJ 4 Bright;
+			Stop;
+	}
+}
+
+Class TLBeaconFog2 : KCBaseZSC
+{
+	Default
+	{
+		scale 1.0;
+	}
+	States
+	{
+		Spawn:
+			VTBF A 4 Bright;
+			VTBF BCDEFGHIJ 4 Bright;
+			Stop;
+	}
+}
+
+Class TLBeaconAmmo : Ammo  //not used as an item to pick up
+{
+	Default
+	{
+		//$Category Ammunition
+		//$Sprite VTLBB0
+		//$Title "Translocator Beacon"
+		Inventory.Amount 1;
+		Ammo.BackpackAmount 1;
+		Inventory.MaxAmount 1;
+		Ammo.BackpackMaxAmount 1;
+		Inventory.PickupMessage "Picked up a Translocator Beacon.";
+		Inventory.Icon "VTLBB0";
+	}
+	States
+	{
+		Spawn:
+			VTLB A -1;
+			Loop;
+	}
+}
+
+Class TLBeaconDummy : Actor
+{
+	Default
+	{
+		Radius 16;// player radius 16
+		Height 51;// player height 56 - beacon height 5
+		+NOGRAVITY;
+		+NOINTERACTION;
+		+NOBLOCKMAP;
+		+NOTELEPORT;
+		Renderstyle "add";
+	}
+	States
+	{
+	Spawn:
+		PLAY A 10
+		{
+			Alpha -= 0.1;
+		}
+		Loop;
+	}
+}
+
+//
 class CCards_Actor_PlushWeaponEx1 : MarineWeapon
 {
 	Default
