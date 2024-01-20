@@ -3757,6 +3757,96 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 		+WEAPON.MELEEWEAPON		
 		+WEAPON.NOAUTOSWITCHTO
 	}
+	
+	void A_SpawnOtherWeapon()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string droptype = "BackPack";
+		int user_type = random(1,11);
+		if (user_type == 1) 
+		{
+			droptype = "Pistol";
+			if (playera.GetClassName() == "KCPlayer") droptype = "PistolMarine";
+			if (random(1,4) <= 1 && playera.CountInv(droptype)) droptype = "Glock21";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 2) 
+		{
+			droptype = "Chaingun";
+			if (playera.GetClassName() == "KCPlayer") droptype = "ChaingunMarine";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 3) 
+		{
+			droptype = "Shotgun";
+			if (playera.GetClassName() == "KCPlayer") droptype = "ShotgunMarine";
+			if (playera.CountInv(droptype)) 
+			{
+				if (random(1,32) <= 1) droptype = "SuperShotgunMarine";
+				if (playera.CountInv(droptype)) droptype = "Backpack";
+			}
+		}
+		if (user_type == 4) 
+		{
+			droptype = "TommyGun";
+			if (playera.CountInv(droptype)) 
+			{
+				droptype = "DualTommyGuns";
+				if (playera.CountInv(droptype)) droptype = "Backpack";
+																	 else droptype = "TommyGun";
+			}
+			else droptype = "TommyGun";
+		}
+		if (user_type == 5) 
+		{
+			droptype = "SuperShotgun";
+			if (playera.GetClassName() == "KCPlayer") droptype = "SuperShotgunMarine";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 6) 
+		{
+			droptype = "RocketLauncher";
+			if (playera.GetClassName() == "KCPlayer") droptype = "RocketLauncherMarine";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 7) 
+		{
+			droptype = "BFG9000";
+			if (playera.GetClassName() == "KCPlayer") droptype = "BFG9000Marine";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 8)
+		{
+			droptype = "PlasmaRifle";
+			if (playera.GetClassName() == "KCPlayer") droptype = "PlasmaRifleMarine";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 9)
+		{
+			droptype = "Devastator";
+			if (playera.CountInv(droptype)) 
+			{
+				droptype = "DualDevastators";
+				if (playera.CountInv(droptype)) droptype = "Backpack";
+																	 else droptype = "DevastatorGenerator";
+			}
+			else droptype = "DevastatorGenerator";
+		}
+		if (user_type == 10)
+		{
+			droptype = "SawThrower";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		if (user_type == 11)
+		{
+			droptype = "ImpalerXBow";
+			if (playera.CountInv(droptype)) droptype = "Backpack";
+		}
+		A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
+		Destroy();
+	}
+	
 	States
 	{
 		Ready:
@@ -3775,100 +3865,61 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 		
 		Spawn:
 		Idle:
-			CSAW A 1
+			CSAW A 1 NoDelay
 			{
+				string droptype = "Backpack";
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (!bDROPPED && 
-						playera.GetClassName() == "KCPlayer" && 
-						playera.CountInv("ChainsawMarine"))
+						playera.GetClassName() == "KCPlayer")
 				{
-					int user_type = random(1,11);
-					string droptype = "Backpack";
-					if (user_type == 1) 
+					Console.Printf("Not Dropped");
+					if (playera.CountInv("ChainsawMarine"))
 					{
-						droptype = "Pistol";
-						if (playera.GetClassName() == "KCPlayer") droptype = "PistolMarine";
-						if (random(1,4) <= 1 && playera.CountInv(droptype)) droptype = "Glock21";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 2) 
-					{
-						droptype = "Chaingun";
-						if (playera.GetClassName() == "KCPlayer") droptype = "ChaingunMarine";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 3) 
-					{
-						droptype = "Shotgun";
-						if (playera.GetClassName() == "KCPlayer") droptype = "ShotgunMarine";
-						if (playera.CountInv(droptype)) 
+						Console.Printf("ChainsawMarine [has]");
+						if (random(1,4) <= 1)
 						{
-							if (random(1,32) <= 1) droptype = "SuperShotgunMarine";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
+							Console.Printf("Translocator [has Chainsaw]");
+							droptype = "Translocator";
+							A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
+							Destroy();
+						}
+						else
+						{
+							invoker.A_SpawnOtherWeapon();
 						}
 					}
-					if (user_type == 4) 
+					else
 					{
-						droptype = "TommyGun";
-						if (playera.CountInv(droptype)) 
+						Console.Printf("ChainsawMarine [hasn't]");
+						if (!playera.CountInv("Translocator"))
 						{
-							droptype = "DualTommyGuns";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-																				 else droptype = "TommyGun";
+							if (random(1,4) <= 1)
+							{
+								Console.Printf("Translocator [hasn't Chainsaw]");
+								droptype = "Translocator";
+								A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
+								Destroy();
+							}
+							else
+							if (random(1,8) <= 1)
+							{
+								Console.Printf("SpawnOtherWeapon [hasn't Chainsaw]");
+								invoker.A_SpawnOtherWeapon();
+							}
 						}
-						else droptype = "TommyGun";
-					}
-					if (user_type == 5) 
-					{
-						droptype = "SuperShotgun";
-						if (playera.GetClassName() == "KCPlayer") droptype = "SuperShotgunMarine";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 6) 
-					{
-						droptype = "RocketLauncher";
-						if (playera.GetClassName() == "KCPlayer") droptype = "RocketLauncherMarine";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 7) 
-					{
-						droptype = "BFG9000";
-						if (playera.GetClassName() == "KCPlayer") droptype = "BFG9000Marine";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 8)
-					{
-						droptype = "PlasmaRifle";
-						if (playera.GetClassName() == "KCPlayer") droptype = "PlasmaRifleMarine";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 9)
-					{
-						droptype = "Devastator";
-						if (playera.CountInv(droptype)) 
+						else
+						if (random(1,8) <= 1)
 						{
-							droptype = "DualDevastators";
-							if (playera.CountInv(droptype)) droptype = "Backpack";
-																				 else droptype = "DevastatorGenerator";
+							Console.Printf("SpawnOtherWeapon [hasn't Chainsaw (2)]");
+							invoker.A_SpawnOtherWeapon();
 						}
-						else droptype = "DevastatorGenerator";
 					}
-					if (user_type == 10)
-					{
-						droptype = "SawThrower";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					if (user_type == 11)
-					{
-						droptype = "ImpalerXBow";
-						if (playera.CountInv(droptype)) droptype = "Backpack";
-					}
-					A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION);
-					Destroy();
 				}
 			}
-			Loop;
+		Idle2:
+			CSAW A -1;
+			stop;
 	}
 }
 class PistolMarine : MarineWeapon replaces Pistol
@@ -8597,6 +8648,36 @@ Class Translocator : MarineWeapon
 		+WEAPON.NOALERT;
 		+WEAPON.AMMO_OPTIONAL;
 	}
+	
+	vector3 CheckSpace(actor testobj)
+	{
+		vector3 oldpos = testobj.pos;
+		vector3 testpos;
+		vector3 newpos;
+		int cmc;
+		int ang = 20;
+		int rad = testobj.radius;
+		vector3 dir = (rad,0,0);
+		double c = cos(ang);
+		double s = sin(ang);
+
+		for (double i = 0; abs(i) < 360; i += ang)
+		{
+			dir = (dir.x*c - dir.y*s, dir.x*s + dir.y*c,0);
+			testpos = level.Vec3Offset(oldpos,dir,0);
+			vector2 cmpos = (testpos.x,testpos.y);
+			bool cm = testobj.Checkmove(cmpos);
+			if (cm)
+			{	
+				cmc += 1;
+				if (cmc == 360/ang) return oldpos;
+				newpos = testpos;
+				continue;
+			}
+		}
+		return newpos;
+	}	
+	
 	States
 	{
 		Spawn:
@@ -8746,38 +8827,6 @@ Class Translocator : MarineWeapon
 			Stop;
 	}
 }
-//---------------------------Dummy Collision Detection--------------------------
-extend Class Translocator
-{
-	vector3 CheckSpace(actor testobj)
-	{
-		vector3 oldpos = testobj.pos;
-		vector3 testpos;
-		vector3 newpos;
-		int cmc;
-		int ang = 20;
-		int rad = testobj.radius;
-		vector3 dir = (rad,0,0);
-		double c = cos(ang);
-		double s = sin(ang);
-
-		for (double i = 0; abs(i) < 360; i += ang)
-		{
-			dir = (dir.x*c - dir.y*s, dir.x*s + dir.y*c,0);
-			testpos = level.Vec3Offset(oldpos,dir,0);
-			vector2 cmpos = (testpos.x,testpos.y);
-			bool cm = testobj.Checkmove(cmpos);
-			if (cm)
-			{	
-				cmc += 1;
-				if (cmc == 360/ang) return oldpos;
-				newpos = testpos;
-				continue;
-			}
-		}
-		return newpos;
-	}	
-}
 //-----------------------------------Beacon-------------------------------------
 Class TLBeacon : KCBaseZSC
 {
@@ -8794,6 +8843,7 @@ Class TLBeacon : KCBaseZSC
 	
 		BounceFactor 0.2;
 		WallBounceFactor 0.2;
+		+NOTIMEFREEZE;
 		+THRUACTORS;
 		-NOGRAVITY;
 		-NOTELEPORT;
@@ -8805,6 +8855,22 @@ Class TLBeacon : KCBaseZSC
 		BounceSound "Translocator/bounce";
 		DeathSound "";
 	}
+	
+	void TLParticleG()
+	{
+		if (pos.z != floorz)
+		{
+			A_SpawnParticle("green",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+		}
+	}
+	void TLParticleR()
+	{
+		if (pos.z != floorz)
+		{
+			A_SpawnParticle("red",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+		}
+	}
+	
 	States
 	{
 		Spawn:
@@ -8821,24 +8887,6 @@ Class TLBeacon : KCBaseZSC
 		Red:
 			VTLB CCCCCAAAAACCCCCAAAAACCCCCAAAAACCCCC 1 TLParticleR();
 			Goto Death;
-	}
-}
-
-Extend Class TLBeacon
-{
-	void TLParticleG()
-	{
-		if (pos.z != floorz)
-		{
-			A_SpawnParticle("green",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
-		}
-	}
-	void TLParticleR()
-	{
-		if (pos.z != floorz)
-		{
-			A_SpawnParticle("red",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
-		}
 	}
 }
 
