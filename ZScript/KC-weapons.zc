@@ -3850,17 +3850,39 @@ class ChainsawMarine : MarineWeapon replaces Chainsaw
 	States
 	{
 		Ready:
-			SAWG CD 4 A_WeaponReady;
+			SAWG AB 4 A_WeaponReady; // SAWG CD 4 A_WeaponReady;
 			Loop;
 		Deselect:
-			SAWG C 1 A_Lower(12);
+			SAWG A 1 A_Lower(12); // SAWG C 1 A_Lower(12);
+			TNT1 A 0 A_StopSound(5);
 			Loop;
 		Select:
-			SAWG C 1 A_Raise(12);
+			SAWG A 1 A_Raise(12); // SAWG C 1 A_Raise(12);
 			Loop;
+		/*
 		Fire:
 			SAWG AB 4 A_Saw(pufftype:"ChainsawPuff");
 			SAWG B 0 A_ReFire;
+			Goto Ready;
+		*/
+		Fire:
+			SAWG CD 1;
+		Hold:
+			SAWG E 2;
+			SAWG F 2 
+			{
+				//A_StartSound("weapons/sawfull", 5, CHANF_LOOP, 1.0);
+				A_Saw(pufftype:"ChainsawPuff");
+			}
+			SAWG E 2;
+			SAWG F 2
+			{
+				//A_StartSound("weapons/sawfull", 5, CHANF_LOOP, 1.0);
+				A_Saw(pufftype:"ChainsawPuff");
+			}
+			TNT1 A 0 A_ReFire;
+			TNT1 A 0 A_StopSound(5);
+			SAWG FEDC 1 A_WeaponReady();
 			Goto Ready;
 		
 		Spawn:
