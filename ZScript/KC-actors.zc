@@ -3385,3 +3385,30 @@ class ItemFallSpot : Actor
 			stop;
 	}
 }
+
+class TimeFreezeSource : KCBaseZSC
+{
+	default
+	{
+		height 1;
+		radius 1;
+	}
+	
+	states
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_GiveInventory("TimeFreezerKeepSound",1);
+			}
+		Idle:
+			TNT1 A 35;
+			loop;
+		Death:
+			TNT1 A 0
+			{
+				A_TakeInventory("TimeFreezerKeepSound",0x7FFFFFFF);
+			}
+			stop;
+	}
+}

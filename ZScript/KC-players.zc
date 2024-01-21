@@ -3265,6 +3265,25 @@ class KCPlayer : KCPlayerPawn
 	override void Tick()
 	{
 		super.Tick(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+		bNOTIMEFREEZE = false;
+		if (!bNOTIMEFREEZE) 
+		{
+			if (CountInv("TimeSeraphCharm") && 
+					CountInv("TimeSeraphPocketWatch"))
+			{
+				bNOTIMEFREEZE = true;
+			}
+			else
+			{
+				if ((CountInv("KCTimeFreezer") ||
+						 CountInv("KCTimeFreezer1") ||
+						 CountInv("KCTimeFreezer2") ||
+						 CountInv("KCTimeFreezer3")))
+				{
+					bNOTIMEFREEZE = true;
+				}
+			}
+		}
 		
 		if (InStateSequence(curstate,ResolveState("Death")) ||
 				InStateSequence(curstate,ResolveState("XDeath")) ||
@@ -3364,6 +3383,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Mass 72; 
 		Player.DisplayName "??????? ?????";
 		//Player.SoundClass "HeiwaPlayer";
+		Player.WeaponSlot 1, "FistHeiwa", "Translocator";
 		Player.WeaponSlot 2, "Glock21";
 		Player.WeaponSlot 4, "TommyGun";
 		Player.WeaponSlot 5, "Devastator";
@@ -3371,12 +3391,20 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.WeaponSlot 7, "BHGen";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		Tag "??????? ?????";
-		+PLAYERPAWN.NOTHRUSTWHENINVUL
+		+PLAYERPAWN.NOTHRUSTWHENINVUL;
+		+NOTIMEFREEZE;
 	}
 	
+	override void PostBeginPlay()
+	{
+		super.PostBeginPlay(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+		bNOTIMEFREEZE = true; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
+	}
+
 	override void Tick()
 	{
 		super.Tick(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+		bNOTIMEFREEZE = true; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 		
 		if (InStateSequence(curstate,ResolveState("Death")) ||
 				InStateSequence(curstate,ResolveState("XDeath")) ||
