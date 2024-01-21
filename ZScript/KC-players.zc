@@ -1292,15 +1292,19 @@ class KCPlayerPawn : PlayerPawn
 		int temperateshield = 0;
 		
 		// Time Seraph Armor Checks
+		int tsadefbase = kc_tsadefensebase;
+		if (tsadefbase <= 25) tsadefbase = 25;
+		if (tsadefbase >= 40000) tsadefbase = 40000;
+		if (kcdebug_playerdamagemobj) Console.Printf("tsadefbase: %d", tsadefbase);
 		if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
-			TSArmorDmgDivisor = 1000000;
+			TSArmorDmgDivisor = (tsadefbase * tsadefbase);
 		}
 		else if (CountInv("TSArmorTier1"))
 		{
 			TimeSeraphArmor = 1;
-			TSArmorDmgDivisor = 1000;
+			TSArmorDmgDivisor = tsadefbase;
 		}
 		if (TimeSeraphArmor)
 		{

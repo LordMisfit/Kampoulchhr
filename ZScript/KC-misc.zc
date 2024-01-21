@@ -3166,27 +3166,27 @@ class PlayerStatItem : Inventory
 						double basespd = 1024;
 						if (TimeArmorRelicsOwned >= 1) 
 						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
-							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
-							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
 						}
 						if (TimeArmorRelicsOwned >= 2) 
 						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
-							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
-							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
 						}
 						if (TimeArmorRelicsOwned >= 3) 
 						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= 160;
-							if (TrueGameSkill == SKILL_EASY) basespd -= 144;
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= 128;
-							if (TrueGameSkill == SKILL_HARD) basespd -= 112;
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= 96;
+							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
 						}
 						double mulfactor = 1.0;
 						mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
