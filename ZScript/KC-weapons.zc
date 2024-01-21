@@ -4597,6 +4597,97 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 		}
 	}
 	
+	action void A_FireMissileAng(int type = 0)
+	{
+		if (type == 0)
+		{
+			if (CountInv("RLMode") == 3)
+			{
+				A_SetTics(8);
+				
+				actor playera = players[0].mo;
+				if (A_CheckTracerConditions())
+				{
+					A_Howitizer(1);
+				}
+				else
+				{
+					A_Howitizer(0);
+				}
+			}
+			else
+			{
+				double angoffset = 0.0;
+				double ptcoffset = 0.0;
+				double ofsxyset = 0.0;
+				double heightoffset = 0.0;
+				string firetype = "RocketPlayer";
+				if (CountInv("RLMode") == 1) 
+				{
+					firetype = "STGrenade";
+					if (random(1,4) <= 3) A_AlertMonsters();
+				}
+				if (CountInv("RLMode") == 2) firetype = "RocketPlayerSeeking";
+				A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
+			}
+		}
+		else
+		{
+			if (CountInv("RLMode") == 3)
+			{
+				A_SetTics(4);
+				double angoffset = frandom(-15,15);
+				double ptcoffset = frandom(-15,15);
+				double baserecoil = frandom(7.5,8.5);
+				A_StartSound("howitzer/shot",CHAN_7);
+				A_AlertMonsters();
+				A_Recoil(baserecoil);
+				A_Quake((2.0 - (CountInv("PlayerATK") / 24)), 8, 0, 1024, "nosound/silent");
+				A_Quake((4.0 - (CountInv("PlayerATK") / 36)), 8, 0, 512, "nosound/silent");
+				A_Quake((6.0 - (CountInv("PlayerATK") / 48)), 8, 0, 256, "nosound/silent");
+				
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_TakeInventory("RocketAmmo",1);
+					for (int i = 0; i < 1; i++)
+					{
+						actor BombShotsB, BombShots;
+						KCPlayerPawn KCP;
+						KCP = KCPlayerPawn(playera);
+						double origang = playera.angle;
+						double randpitch = ptcoffset;
+						double randangle = angoffset;
+						[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+						A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
+					}
+				}
+				else
+				{
+					A_FireBullets(angoffset, ptcoffset, 1, (40*random(1,8)), "HowitzerBase", FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ,32768);
+				}
+			}
+			else
+			{
+				double angoffset = frandom(-3.75,3.75);
+				double ptcoffset = frandom(-3.75,3.75);
+				double ofsxyset = 0.0;
+				double heightoffset = 0.0;
+				string firetype = "RocketPlayer";
+				if (CountInv("RLMode") == 1) 
+				{
+					firetype = "STGrenade";
+					if (random(1,4) <= 3) A_AlertMonsters();
+				}
+				if (CountInv("RLMode") == 2) firetype = "RocketPlayerDrunk";
+				A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
+			}
+		}
+	}
+	
 	States
 	{
 		Ready:
@@ -4609,6 +4700,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 			MISG A 1 A_Raise(12);
 			Loop;
 		Fire:
+			/*
 			MISG B 4 
 			{
 				if (CountInv("RLMode") == 3) A_SetTics(8);
@@ -4620,35 +4712,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 			}
 			MISG B 4 
 			{
-				if (CountInv("RLMode") == 3)
-				{
-					A_SetTics(8);
-					
-					actor playera = players[0].mo;
-					if (A_CheckTracerConditions())
-					{
-						A_Howitizer(1);
-					}
-					else
-					{
-						A_Howitizer(0);
-					}
-				}
-				else
-				{
-					double angoffset = 0.0;
-					double ptcoffset = 0.0;
-					double ofsxyset = 0.0;
-					double heightoffset = 0.0;
-					string firetype = "RocketPlayer";
-					if (CountInv("RLMode") == 1) 
-					{
-						firetype = "STGrenade";
-						if (random(1,4) <= 3) A_AlertMonsters();
-					}
-					if (CountInv("RLMode") == 2) firetype = "RocketPlayerSeeking";
-					A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
-				}
+				A_FireMissileAng(0);
 			}
 			MISG B 4
 			{
@@ -4659,8 +4723,56 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 				if (CountInv("RLMode") == 3) A_SetTics(8);
 			}
 			MISG B 0 A_ReFire;
+			*/
+			MISG A 2 BRIGHT
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(4);
+			}
+			MISG B 1 BRIGHT
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG C 1 BRIGHT
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG D 1
+			{
+				A_FireMissileAng(0);
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG E 1
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG F 1
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG F 1
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG G 1
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG H 1
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG A 1 
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG A 9
+			{
+				if (CountInv("RLMode") == 3) A_SetTics(18);
+			}
+			MISG A 0 A_Refire();
 			Goto Ready;
 		AltFire:
+			/*
 			MISG B 3 
 			{
 				if (CountInv("RLMode") == 3) A_SetTics(6);
@@ -4668,64 +4780,66 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 			}
 			MISG B 2 
 			{
-				if (CountInv("RLMode") == 3)
-				{
-					A_SetTics(4);
-					double angoffset = frandom(-15,15);
-					double ptcoffset = frandom(-15,15);
-					double baserecoil = frandom(7.5,8.5);
-					A_StartSound("howitzer/shot",CHAN_7);
-					A_AlertMonsters();
-					A_Recoil(baserecoil);
-					A_Quake((2.0 - (CountInv("PlayerATK") / 24)), 8, 0, 1024, "nosound/silent");
-					A_Quake((4.0 - (CountInv("PlayerATK") / 36)), 8, 0, 512, "nosound/silent");
-					A_Quake((6.0 - (CountInv("PlayerATK") / 48)), 8, 0, 256, "nosound/silent");
-					
-					actor playera = players[0].mo;
-					if (playera.CountInv("KCTimeFreezer") ||
-							playera.CountInv("KCTimeFreezer1") ||
-							playera.CountInv("KCTimeFreezer2") ||
-							playera.CountInv("KCTimeFreezer3"))
-					{
-						A_TakeInventory("RocketAmmo",1);
-						for (int i = 0; i < 1; i++)
-						{
-							actor BombShotsB, BombShots;
-							KCPlayerPawn KCP;
-							KCP = KCPlayerPawn(playera);
-							double origang = playera.angle;
-							double randpitch = ptcoffset;
-							double randangle = angoffset;
-							[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
-							A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
-						}
-					}
-					else
-					{
-						A_FireBullets(angoffset, ptcoffset, 1, (40*random(1,8)), "HowitzerBase", FBF_USEAMMO|FBF_NORANDOM|FBF_NORANDOMPUFFZ,32768);
-					}
-				}
-				else
-				{
-					double angoffset = frandom(-3.75,3.75);
-					double ptcoffset = frandom(-3.75,3.75);
-					double ofsxyset = 0.0;
-					double heightoffset = 0.0;
-					string firetype = "RocketPlayer";
-					if (CountInv("RLMode") == 1) 
-					{
-						firetype = "STGrenade";
-						if (random(1,4) <= 3) A_AlertMonsters();
-					}
-					if (CountInv("RLMode") == 2) firetype = "RocketPlayerDrunk";
-					A_FireProjectile(firetype,angoffset,true,ofsxyset,heightoffset,FPF_NOAUTOAIM,ptcoffset);
-				}
+				A_FireMissileAng(1);
 			}
 			MISG B 1
 			{
 				if (CountInv("RLMode") == 3) A_SetTics(2);
 			}
 			MISG B 0 A_ReFire;
+			*/
+			MISG A 2 BRIGHT
+			{
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(2);
+			}
+			MISG B 1 BRIGHT
+			{
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG C 1 BRIGHT
+			{
+				A_SetTics(0);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG D 1
+			{
+				A_FireMissileAng(1);
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG E 1
+			{
+				A_SetTics(0);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG F 1
+			{
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG G 1
+			{
+				A_SetTics(0);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG H 1
+			{
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG A 1
+			{
+				A_SetTics(0);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG A 1
+			{
+				A_SetTics(1);
+				if (CountInv("RLMode") == 3) A_SetTics(1);
+			}
+			MISG A 0 A_Refire();
 			Goto Ready;
 
 		// Fire Mode
