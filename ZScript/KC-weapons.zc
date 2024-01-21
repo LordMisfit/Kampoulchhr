@@ -4052,9 +4052,9 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 			SHTG CB 5;
 			SHTG A 3;
 			*/
-			SHTF A 2 BRIGHT A_FireShotgun(0);
+			SHTF A 2 BRIGHT;
 			SHTF B 2 BRIGHT;
-			SHTG B 1;
+			SHTG B 1 A_FireShotgun(0);
 			SHTG C 1;
 			SHTG D 1;
 			SHTG A 1;
@@ -4099,14 +4099,13 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 			*/
 			SHTF A 2 BRIGHT 
 			{
-				A_FireShotgun(1);
 				A_SetTics(1);
 			}
 			SHTF B 2 BRIGHT
 			{
 				A_SetTics(1);
 			}
-			SHTG B 1;
+			SHTG B 1 A_FireShotgun(1);
 			SHTG C 1
 			{
 				A_SetTics(0);
