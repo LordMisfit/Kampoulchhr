@@ -1,5 +1,15 @@
 class KCStatusBarMain : BaseStatusBar
 {
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	const SKILL_EXTREME = 5;
+	const SKILL_HORRIBLE = 6;
+	const SKILL_IMPOSSIBLE = 7;
+	const SKILL_OMEGA = 8;
+	
 	DynamicValueInterpolator mHealthInterpolator;
 	DynamicValueInterpolator mArmorInterpolator;
 	DynamicValueInterpolator mEXPInterpolator;
@@ -28,6 +38,8 @@ class KCStatusBarMain : BaseStatusBar
 	int HPPulseInc, APPulseInc, TSAPulseInc;
 	int HPPulseTimer, APPulseTimer, TSAPulseTimer;
 	
+	int TrueGameSkill;
+
 	override void Init()
 	{
 		Super.Init();
@@ -93,6 +105,7 @@ class KCStatusBarMain : BaseStatusBar
 	override void Tick()
 	{
 		Super.Tick();
+		TrueGameSkill = skill;
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
@@ -1407,6 +1420,32 @@ class KCStatusBarMain : BaseStatusBar
 				ScopeImg = TexMan.CheckForTexture("ZOOMSCOP", TexMan.TYPE_MiscPatch);
 				DrawTexture(ScopeImg, scopepos, displayflags, scopealpha, (-1, -1), scopescale);
 				SetSize(0, 320, 200);
+			}
+			
+			if (level.isFrozen() && !CPlayerPawn.bNOTIMEFREEZE)
+			{
+				textureid BlindImg = TexMan.CheckForTexture("BLNDHAZE", TexMan.TYPE_MiscPatch);
+				double blindalpha = 0.00;
+				double blindbase;
+				if (TrueGameSkill <= SKILL_VERY_EASY)	blindbase = 0.5;
+				if (TrueGameSkill == SKILL_EASY)			blindbase = 0.75;
+				if (TrueGameSkill == SKILL_NORMAL)		blindbase = 0.875;
+				if (TrueGameSkill == SKILL_HARD)			blindbase = 0.9375;
+				if (TrueGameSkill >= SKILL_VERY_HARD)	blindbase = 0.96875;
+				if (MiscItem)
+				{
+					//if (MiscItem.drowndebufflevel >= 1) blindalpha = blindbase * MiscItem.drowndebufflevel;
+					blindalpha = blindbase;
+					Console.Printf("blindalpha: %.4f", blindalpha);
+					if (blindalpha > 0.00)
+					{
+						SetSize(0, 1920, 1080);
+						vector2 blindpos = (960, 540);
+						DrawTexture(BlindImg, blindpos, DI_ITEM_CENTER|DI_ITEM_VCENTER, BlindAlpha);
+						DrawTexture(BlindImg, blindpos, DI_ITEM_CENTER|DI_ITEM_VCENTER, (BlindAlpha*0.875));
+						SetSize(0, 320, 200);
+					}
+				}
 			}
 		}
 	}
