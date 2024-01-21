@@ -1,0 +1,725 @@
+/*
+ACTOR Sakuya 31176
+{
+	//$Category "Touhou Characters"
+	Tag "Sakuya Izayoi"
+	floatspeed 10
+	Speed 10
+	fastspeed 12
+	MONSTER
+	Health 2000
+	Radius 24
+	Height 64
+	Scale 0.7
+	MinMissileChance 160
+	Mass 7000
+	//MeleeThreshold 35 //Man I need to clean this code up so much
+	//MeleeRange 65 //This takes a lot of time, you know
+	Species SDM
+	+DONTHURTSPECIES
+	+LOOKALLAROUND
+	+FLOORCLIP
+	+NOTIMEFREEZE
+	+DONTFALL
+	+DONTRIP
+	+DONTMORPH
+	+NORADIUSDMG
+	+AMBUSH
+	+BOSS
+	+NOICEDEATH
+	Painchance 4
+	Painsound "touhou/pain"
+	Deathsound "touhou/nuefire"
+	Obituary "%o was knived by Sakuya."
+	DropItem "SakuyaJackTheLudoBile"
+	States
+	{
+		Spawn:
+			SAKU A 0
+			SAKU A 1 Thing_ChangeTID(0,6035)
+			SAKU A 1 ACS_NamedExecute("BHI_BossStartAttack",0,6035,2,false)
+			SAKU A 1 ACS_NamedExecute("BHI_BossStartTimer",0,6035,40)
+		Idle:
+			SAKU A 3 A_Look
+			Loop
+		See:
+			SAKU A 3 A_Chase
+			Loop
+		Pain:
+			SAKU S 5 A_Pain
+			Goto See
+		Melee:
+		Missile:
+			SAKU A 0 A_JumpIfInTargetInventory("UltraMode",1,"MissileUltra")
+			SAKU A 0 A_JumpIfInTargetInventory("LunaticMode",1,"MissileLunatic")
+			SAKU A 0 A_JumpIfInTargetInventory("HardMode",1,"MissileHard")
+			SAKU A 0 A_JumpIfInTargetInventory("NormalMode",1,"MissileNormal")
+			SAKU A 0 A_JumpIfInTargetInventory("EasyMode",1,"MissileEasy")
+			Goto MissileNormal
+		MissileEasy:
+			SAKU LMNO 5 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,40)
+			SAKU P 5 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-40)
+			SAKU QR 5 A_FaceTarget
+			SAKU FGH 5 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU K 5 A_FaceTarget
+			SAKU FGH 5 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU K 5 A_FaceTarget
+			Goto See
+		MissileNormal:
+			SAKU LMNO 4 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,40)
+			SAKU P 4 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-40)
+			SAKU QR 4 A_FaceTarget
+			SAKU LMNO 4 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,60)
+			SAKU P 4 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-60)
+			SAKU FGH 4 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU K 4 A_FaceTarget
+			SAKU FGH 4 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU K 4 A_FaceTarget
+			Goto See
+		MissileHard:
+			SAKU LMNO 3 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,20)
+			SAKU P 3 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-20)
+			SAKU QR 3 A_FaceTarget
+			SAKU LMNO 3 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,40)
+			SAKU P 3 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-40)
+			SAKU QR 3 A_FaceTarget
+			SAKU LMNO 3 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,60)
+			SAKU P 3 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-60)
+			SAKU QR 3 A_FaceTarget
+			SAKU FGH 3 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU K 3 A_FaceTarget
+			SAKU FGH 3 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU K 3 A_FaceTarget
+			Goto See
+		MissileLunatic:
+			SAKU LMNO 2 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,20)
+			SAKU P 2 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-20)
+			SAKU QR 2 A_FaceTarget
+			SAKU LMNO 2 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,40)
+			SAKU P 2 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-40)
+			SAKU QR 2 A_FaceTarget
+			SAKU LMNO 2 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,60)
+			SAKU P 2 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-60)
+			SAKU QR 2 A_FaceTarget
+			SAKU LMNO 2 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,80)
+			SAKU P 2 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-80)
+			SAKU QR 2 A_FaceTarget
+			SAKU FGH 2 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU K 2 A_FaceTarget
+			SAKU FGH 2 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU K 2 A_FaceTarget
+		Goto See
+			MissileUltra:
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,20)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-20)
+			SAKU QR 1 A_FaceTarget
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,40)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-40)
+			SAKU QR 1 A_FaceTarget
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,60)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-60)
+			SAKU QR 1 A_FaceTarget
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,80)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-80)
+			SAKU QR 1 A_FaceTarget
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,100)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-100)
+			SAKU QR 1 A_FaceTarget
+			SAKU LMNO 1 A_FaceTarget
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,30)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,60)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,120)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,150)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,180)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,210)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,240)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,270)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,300)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,330)
+			SAKU P 0 A_CustomMissile("SakuyaKnife1",32,0,360)
+			SAKU P 0 A_CustomMissile("SakuyaNS1OrbSpawnerBlue",32,0,120)
+			SAKU P 1 A_CustomMissile("SakuyaNS1OrbSpawnerGreen",32,0,-120)
+			SAKU QR 1 A_FaceTarget
+			SAKU FGH 1 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU K 1 A_FaceTarget
+			SAKU FGH 1 A_FaceTarget
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-90)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-81)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-72)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-63)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-54)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-45)
+			SAKU I 1 A_CustomMissile("SakuyaKnife2",32,0,-36)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-27)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,-9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,0)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,9)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,18)
+			SAKU J 1 A_CustomMissile("SakuyaKnife2",32,0,27)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,36)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,45)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,54)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,63)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,72)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,81)
+			SAKU K 1 A_CustomMissile("SakuyaKnife2",32,0,90)
+			SAKU K 1 A_FaceTarget
+			Goto See
+		Death:
+			SAKU S 1 ACS_NamedTerminate("BHI_BossStartAttack",0)
+			SAKU S 1 ACS_NamedExecute("BHI_BossStopAttack",0)
+			SAKU S 0 A_GiveInventory("BulletDeathTrigger",1)
+			SAKU S 0 A_NoBlocking
+			SAKU S 0 A_Scream
+			SAKU SSSSSSSSSS 1 A_FadeOut(0.1)
+			Stop
+	}
+}
+actor SakuyaTimeFreeze : PowerupGiver
+{
+	inventory.pickupmessage ""
+	inventory.maxamount 0
+	powerup.type "TimeFreezer"
+	powerup.duration 0x7FFFFFFD
+	+AUTOACTIVATE
+	+INVENTORY.FANCYPICKUPSOUND
+	states
+	{
+		Spawn:
+			TNT1 A 0
+			stop
+	}
+}
+actor SakuyaKnife1 //Blue Knife
+{
+	Speed 12
+	FastSpeed 24
+	Damage (10)
+	Radius 8
+	Height 16
+	Scale 1.2
+	Projectile
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			KNIF A 1 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"Death")
+			Loop
+		Death:
+			KNIF AAAAAAAAAA 1 A_FadeOut(0.1)
+			Stop
+	}
+}
+actor SakuyaKnife2 //Red Knife
+{
+	Speed 12
+	FastSpeed 24
+	Damage (10)
+	Radius 8
+	Height 16
+	Scale 1.2
+	Projectile
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			KNF2 A 1 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"Death")
+			Loop
+		Death:
+			KNF2 AAAAAAAAAA 1 A_FadeOut(0.1)
+			Stop
+	}
+}
+ACTOR SakuyaNS1OrbSpawnerBlue
+{
+	Radius 8
+	Height 16
+	Speed 12
+	FastSpeed 8
+	damage (20)
+	Scale 2.0
+	Projectile
+	+FORCEXYBILLBOARD
+	RenderStyle Add
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			BRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbBlue",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			BRIC A 0 Bright A_SetAngle(angle+10)
+			BRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbBlue",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			BRIC A 0 Bright A_SetAngle(angle+10)
+			BRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbBlue",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			BRIC A 0 Bright A_SetAngle(angle+10)
+			BRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbBlue",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			BRIC A 0 Bright A_SetAngle(angle+10)
+			BRIC A 0 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"AltDeath")
+			BRIC A 0 Bright A_JumpIfInventory("EnemyCounter1",18,"Death")
+			BRIC A 0 Bright A_GiveInventory("EnemyCounter1")
+			Loop
+		Death:
+			BRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+		AltDeath:
+			BRIC A 0 Bright A_GiveInventory("BulletDeathTrigger",1)
+			BRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+	}
+}
+ACTOR SakuyaNS1OrbBlue
+{
+	Radius 4
+	Height 8
+	Speed 12
+	FastSpeed 24
+	damage (10)
+	Scale 2.0
+	Projectile
+	+FORCEXYBILLBOARD
+	RenderStyle Add
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			BRIC A 1 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"Death")
+			Loop
+		Death:
+			BRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+	}
+}
+ACTOR SakuyaNS1OrbSpawnerGreen
+{
+	Radius 8
+	Height 16
+	Speed 12
+	FastSpeed 8
+	damage (20)
+	Scale 2.0
+	Projectile
+	+FORCEXYBILLBOARD
+	RenderStyle Add
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			GRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbGreen",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			GRIC A 0 Bright A_SetAngle(angle-10)
+			GRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbGreen",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			GRIC A 0 Bright A_SetAngle(angle-10)
+			GRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbGreen",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			GRIC A 0 Bright A_SetAngle(angle-10)
+			GRIC A 2 Bright A_CustomMissile("SakuyaNS1OrbGreen",0,0,0,CMF_AIMDIRECTION|CMF_TRACKOWNER)
+			GRIC A 0 Bright A_SetAngle(angle-10)
+			GRIC A 0 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"AltDeath")
+			GRIC A 0 Bright A_JumpIfInventory("EnemyCounter1",18,"Death")
+			GRIC A 0 Bright A_GiveInventory("EnemyCounter1")
+			Loop
+		Death:
+			GRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+		AltDeath:
+			GRIC A 0 Bright A_GiveInventory("BulletDeathTrigger",1)
+			GRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+	}
+}
+ACTOR SakuyaNS1OrbGreen
+{
+	Radius 4
+	Height 16
+	Speed 12
+	FastSpeed 24
+	damage (10)
+	Scale 2.0
+	Projectile
+	+FORCEXYBILLBOARD
+	RenderStyle Add
+	SeeSound "touhou/fire"
+	DeathSound "touhou/hit"
+	States
+	{
+		Spawn:
+			GRIC A 1 Bright A_JumpIfInTargetInventory("BulletDeathTrigger",1,"Death")
+			Loop
+		Death:
+			GRIC AAAAAAAAAA 1 Bright A_FadeOut
+			Stop
+	}
+}
+*/
