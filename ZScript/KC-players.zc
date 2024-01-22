@@ -3452,6 +3452,11 @@ class EVP_Footsteps : Actor
 		Console.Printf("OTex Footsteps TXT Loaded");
 		*/
 		// Other CompatPacks
+		if (Wads.CheckNumForName("KC-AUGZEN", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSAUGZEN").Split(allSF,":");
+			Console.Printf("AUGER;ZENITH Footsteps TXT Loaded");
+		}
 		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
