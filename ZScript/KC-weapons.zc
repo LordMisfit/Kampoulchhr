@@ -2925,7 +2925,7 @@ class FistMarine : MarineWeapon replaces Fist
 	States
 	{
 		Ready:
-			PUNG A 1
+			PUND A 1
 			{
 				A_SetInventory("IsPunching",0);
 				A_SetInventory("IsUppercutting",0);
@@ -2935,7 +2935,7 @@ class FistMarine : MarineWeapon replaces Fist
 			}
 			loop;
 		Deselect:
-			PUNG A 1 
+			PUND A 1 
 			{
 				A_Lower(18);
 				A_SetInventory("IsPunching",0);
@@ -2943,7 +2943,7 @@ class FistMarine : MarineWeapon replaces Fist
 			}
 			loop;
 		Select: 
-			PUNG A 1 
+			PUND A 1 
 			{
 				A_Raise(18);
 				A_SetInventory("IsPunching",0);
@@ -2964,7 +2964,7 @@ class FistMarine : MarineWeapon replaces Fist
 			TNT1 A 0 A_Jump(128,"RightPunch");
 			goto LeftPunch;
 		LeftPunch:
-			PUNG B 4
+			PUND B 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -2981,7 +2981,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG C 4
+			PUND C 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3028,7 +3028,7 @@ class FistMarine : MarineWeapon replaces Fist
 					}
 				}
 			}
-			PUNG D 5
+			PUND D 5
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3046,7 +3046,7 @@ class FistMarine : MarineWeapon replaces Fist
 
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG C 4
+			PUND C 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3063,7 +3063,7 @@ class FistMarine : MarineWeapon replaces Fist
 
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG B 5
+			PUND B 5
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3082,7 +3082,7 @@ class FistMarine : MarineWeapon replaces Fist
 				A_SetInventory("IsPunching",1);
 				A_Refire();
 			}
-			PUNG B 0 
+			PUND B 0 
 			{
 				A_SetInventory("UsingMeleeAttack",0);
 				A_SetInventory("IsPunching",0);
@@ -3090,7 +3090,7 @@ class FistMarine : MarineWeapon replaces Fist
 			goto Ready;
 
 		RightPunch:
-			PUNG F 4
+			PUND F 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3107,7 +3107,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG G 4
+			PUND G 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3154,7 +3154,7 @@ class FistMarine : MarineWeapon replaces Fist
 					}
 				}
 			}
-			PUNG H 5
+			PUND H 5
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3172,7 +3172,7 @@ class FistMarine : MarineWeapon replaces Fist
 
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG G 4
+			PUND G 4
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3189,7 +3189,7 @@ class FistMarine : MarineWeapon replaces Fist
 
 				A_SetInventory("IsPunching",1);
 			}
-			PUNG F 5
+			PUND F 5
 			{
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -3208,7 +3208,7 @@ class FistMarine : MarineWeapon replaces Fist
 				A_SetInventory("IsPunching",1);
 				A_Refire();
 			}
-			PUNG F 0 
+			PUND F 0 
 			{
 				A_SetInventory("UsingMeleeAttack",0);
 				A_SetInventory("IsPunching",1);
@@ -4035,13 +4035,13 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 	States
 	{
 		Ready:
-			SHTG A 1 A_WeaponReady;
+			SHTC A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			SHTG A 1 A_Lower(12);
+			SHTC A 1 A_Lower(12);
 			Loop;
 		Select:
-			SHTG A 1 A_Raise(12);
+			SHTC A 1 A_Raise(12);
 			Loop;
 		Fire:
 			/*
@@ -4054,20 +4054,20 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 			*/
 			SHTF A 2 BRIGHT;
 			SHTF B 2 BRIGHT;
-			SHTG B 1 A_FireShotgun(0);
-			SHTG C 1;
-			SHTG D 1;
-			SHTG A 1;
-			SHTG E 1;
-			SHTG G 1;
-			SHTG I 1;
-			SHTG K 2;
-			SHTG M 2;
-			SHTG O 2;
-			SHTG Q 3;
-			SHTG R 2;
-			SHTG QPONMLKJIHGFE 1;
-			SHTG A 7 A_ReFire;
+			SHTC B 1 A_FireShotgun(0);
+			SHTC C 1;
+			SHTC D 1;
+			SHTC A 1;
+			SHTC E 1;
+			SHTC G 1;
+			SHTC I 1;
+			SHTC K 2;
+			SHTC M 2;
+			SHTC O 2;
+			SHTC Q 3;
+			SHTC R 2;
+			SHTC QPONMLKJIHGFE 1;
+			SHTC A 7 A_ReFire;
 			Goto Ready;
 		AltFire:
 			/*
@@ -4105,66 +4105,66 @@ class ShotgunMarine : MarineWeapon replaces Shotgun
 			{
 				A_SetTics(1);
 			}
-			SHTG B 1 A_FireShotgun(1);
-			SHTG C 1
+			SHTC B 1 A_FireShotgun(1);
+			SHTC C 1
 			{
 				A_SetTics(0);
 			}
-			SHTG D 1;
-			SHTG A 1
+			SHTC D 1;
+			SHTC A 1
 			{
 				A_SetTics(0);
 			}
-			SHTG E 1;
-			SHTG G 1
+			SHTC E 1;
+			SHTC G 1
 			{
 				A_SetTics(0);
 			}
-			SHTG I 1;
-			SHTG KMO 2
+			SHTC I 1;
+			SHTC KMO 2
 			{
 				A_SetTics(1);
 			}
-			SHTG Q 3
+			SHTC Q 3
 			{
 				A_SetTics(random(1,2));
 			}
-			SHTG R 2
+			SHTC R 2
 			{
 				A_SetTics(1);
 			}
-			SHTG Q 1;
-			SHTG P 1
+			SHTC Q 1;
+			SHTC P 1
 			{
 				A_SetTics(0);
 			}
-			SHTG O 1;
-			SHTG N 1
+			SHTC O 1;
+			SHTC N 1
 			{
 				A_SetTics(0);
 			}
-			SHTG M 1;
-			SHTG L 1
+			SHTC M 1;
+			SHTC L 1
 			{
 				A_SetTics(0);
 			}
-			SHTG K 1;
-			SHTG J 1
+			SHTC K 1;
+			SHTC J 1
 			{
 				A_SetTics(0);
 			}
-			SHTG I 1;
-			SHTG H 1
+			SHTC I 1;
+			SHTC H 1
 			{
 				A_SetTics(0);
 			}
-			SHTG G 1;
-			SHTG F 1
+			SHTC G 1;
+			SHTC F 1
 			{
 				A_SetTics(0);
 			}
-			SHTG E 1;
-			SHTG A 7
+			SHTC E 1;
+			SHTC A 7
 			{
 				A_SetTics(random(3,4));
 				A_ReFire();
@@ -4199,13 +4199,13 @@ class SuperShotgunMarine : MarineWeapon replaces SuperShotgun
 	States
 	{
 		Ready:
-			SHT2 A 1 A_WeaponReady;
+			SHT4 A 1 A_WeaponReady;
 			Loop;
 		Deselect:
-			SHT2 A 1 A_Lower(12);
+			SHT4 A 1 A_Lower(12);
 			Loop;
 		Select:
-			SHT2 A 1 A_Raise(12);
+			SHT4 A 1 A_Raise(12);
 			Loop;
 		Fire:
 			/*
@@ -4223,48 +4223,48 @@ class SuperShotgunMarine : MarineWeapon replaces SuperShotgun
 			SHT2 H 6 A_CloseShotgun2;
 			SHT2 A 5 A_ReFire;
 			*/
-			SG2F A 2 BRIGHT;
-			SG2F B 2 BRIGHT A_FireShotgun2(0);
-			SHT2 B 1;
-			SHT2 C 1;
-			SHT2 D 1;
-			SHT2 A 1;
-			SHT2 A 1;
-			SHT2 A 1;
-			SHT2 A 1;
-			SHT2 A 1;
-			SHT2 A 2 A_CheckReload();
-			SHT2 E 2;
-			SHT2 F 2;
-			SHT2 G 2;
-			SHT2 H 2;
-			SHT2 I 2;
-			SHT2 J 2;
-			SHT2 K 2;
+			SG4F A 2 BRIGHT;
+			SG4F B 2 BRIGHT A_FireShotgun2(0);
+			SHT4 B 1;
+			SHT4 C 1;
+			SHT4 D 1;
+			SHT4 A 1;
+			SHT4 A 1;
+			SHT4 A 1;
+			SHT4 A 1;
+			SHT4 A 1;
+			SHT4 A 2 A_CheckReload();
+			SHT4 E 2;
+			SHT4 F 2;
+			SHT4 G 2;
+			SHT4 H 2;
+			SHT4 I 2;
+			SHT4 J 2;
+			SHT4 K 2;
 			TNT1 A 0 A_OpenShotgun2();
-			SHT2 L 2;
-			SHT2 M 2;
-			SHT2 N 2;
-			SHT2 O 2;
-			SHT2 P 2;
-			SHT2 Q 1;
-			SHT2 R 1;
-			SHT2 S 1;
-			SHT2 T 1 A_LoadShotgun2();
-			SHT2 U 2;
-			SHT2 V 2;
-			SHT2 W 2;
-			SHT2 X 2;
-			SHT2 Y 2;
-			SHT2 Z 2;
-			ST2F A 1 A_StartSound("weapons/sshotc", CHAN_WEAPON);
-			ST2F A 1;
-			ST2F B 1;
-			SHT2 A 1 A_WeaponReady();
+			SHT4 L 2;
+			SHT4 M 2;
+			SHT4 N 2;
+			SHT4 O 2;
+			SHT4 P 2;
+			SHT4 Q 1;
+			SHT4 R 1;
+			SHT4 S 1;
+			SHT4 T 1 A_LoadShotgun2();
+			SHT4 U 2;
+			SHT4 V 2;
+			SHT4 W 2;
+			SHT4 X 2;
+			SHT4 Y 2;
+			SHT4 Z 2;
+			SH4F A 1 A_StartSound("weapons/sshotc", CHAN_WEAPON);
+			SH4F A 1;
+			SH4F B 1;
+			SHT4 A 1 A_WeaponReady();
 			Goto Ready;
 		// unused states
-			SHT2 B 7;
-			SHT2 A 3;
+			SHT4 B 7;
+			SHT4 A 3;
 			Goto Deselect;
 		AltFire:
 			/*
@@ -4315,145 +4315,145 @@ class SuperShotgunMarine : MarineWeapon replaces SuperShotgun
 				A_ReFire();
 			}
 			*/
-			SG2F A 2 BRIGHT 
+			SG4F A 2 BRIGHT 
 			{
 				A_SetTics(1);
 			}
-			SG2F B 2 BRIGHT
+			SG4F B 2 BRIGHT
 			{
 				A_SetTics(1);
 				A_FireShotgun2(1);
 			}
-			SHT2 B 1;
-			SHT2 C 1
+			SHT4 B 1;
+			SHT4 C 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 D 1;
-			SHT2 A 1
+			SHT4 D 1;
+			SHT4 A 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 A 1;
-			SHT2 A 1
+			SHT4 A 1;
+			SHT4 A 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 A 1;
-			SHT2 A 1
+			SHT4 A 1;
+			SHT4 A 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 A 2 
+			SHT4 A 2 
 			{
 				A_SetTics(1);
 				A_CheckReload();
 			}
-			SHT2 E 2
+			SHT4 E 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 F 2
+			SHT4 F 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 G 2
+			SHT4 G 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 H 2
+			SHT4 H 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 I 2
+			SHT4 I 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 J 2
+			SHT4 J 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 K 2
+			SHT4 K 2
 			{
 				A_SetTics(1);
 			}
 			TNT1 A 0 A_OpenShotgun2();
-			SHT2 L 2
+			SHT4 L 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 M 2
+			SHT4 M 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 N 2
+			SHT4 N 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 O 2
+			SHT4 O 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 P 2
+			SHT4 P 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 Q 1;
-			SHT2 R 1
+			SHT4 Q 1;
+			SHT4 R 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 S 1;
-			SHT2 T 1
+			SHT4 S 1;
+			SHT4 T 1
 			{
 				A_SetTics(0);
 				A_LoadShotgun2();
 			}
-			SHT2 U 2
+			SHT4 U 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 V 2
+			SHT4 V 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 W 2
+			SHT4 W 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 X 2
+			SHT4 X 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 Y 2
+			SHT4 Y 2
 			{
 				A_SetTics(1);
 			}
-			SHT2 Z 2
+			SHT4 Z 2
 			{
 				A_SetTics(1);
 			}
-			ST2F A 1 
+			SH4F A 1 
 			{
 				A_SetTics(0);
 				A_StartSound("weapons/sshotc", CHAN_WEAPON);
 			}
-			ST2F A 1;
-			ST2F B 1
+			SH4F A 1;
+			SH4F B 1
 			{
 				A_SetTics(0);
 			}
-			SHT2 A 1 
+			SHT4 A 1 
 			{
 				A_WeaponReady();
 			}
 			Goto Ready;
 		// unused states
-			SHT2 B 7
+			SHT4 B 7
 			{
 				A_SetTics(random(3,4));
 			}
-			SHT2 A 3
+			SHT4 A 3
 			{
 				A_SetTics(random(1,2));
 			}
