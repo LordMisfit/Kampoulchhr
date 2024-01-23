@@ -1577,6 +1577,39 @@ class KCStatusBarMain : BaseStatusBar
 		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, -20+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
+		// Shows a Special Icon for a specific 'mode'
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer" && 
+				(MiscItem && MiscItem.heiwavhardmodifier))
+		{
+			double cloverAlphaPulse = -0.125;
+			int cloverAlphaTimer = level.time % 40;
+			if (cloverAlphaTimer == 0) cloverAlphaPulse = -0.125;
+			if (cloverAlphaTimer == 1 || cloverAlphaTimer == 39) cloverAlphaPulse = -0.1125;
+			if (cloverAlphaTimer == 2 || cloverAlphaTimer == 38) cloverAlphaPulse = -0.1000;
+			if (cloverAlphaTimer == 3 || cloverAlphaTimer == 37) cloverAlphaPulse = -0.0875;
+			if (cloverAlphaTimer == 4 || cloverAlphaTimer == 36) cloverAlphaPulse = -0.075;
+			if (cloverAlphaTimer == 5 || cloverAlphaTimer == 35) cloverAlphaPulse = -0.0625;
+			if (cloverAlphaTimer == 6 || cloverAlphaTimer == 34) cloverAlphaPulse = -0.05;
+			if (cloverAlphaTimer == 7 || cloverAlphaTimer == 33) cloverAlphaPulse = -0.0375;
+			if (cloverAlphaTimer == 8 || cloverAlphaTimer == 32) cloverAlphaPulse = -0.025;
+			if (cloverAlphaTimer == 9 || cloverAlphaTimer == 31) cloverAlphaPulse = -0.0125;
+			if (cloverAlphaTimer == 10 || cloverAlphaTimer == 30) cloverAlphaPulse = -0.00;
+			if (cloverAlphaTimer == 11 || cloverAlphaTimer == 29) cloverAlphaPulse = 0.0125;
+			if (cloverAlphaTimer == 12 || cloverAlphaTimer == 28) cloverAlphaPulse = 0.025;
+			if (cloverAlphaTimer == 13 || cloverAlphaTimer == 27) cloverAlphaPulse = 0.0375;
+			if (cloverAlphaTimer == 14 || cloverAlphaTimer == 26) cloverAlphaPulse = 0.05;
+			if (cloverAlphaTimer == 15 || cloverAlphaTimer == 25) cloverAlphaPulse = 0.0625;
+			if (cloverAlphaTimer == 16 || cloverAlphaTimer == 24) cloverAlphaPulse = 0.075;
+			if (cloverAlphaTimer == 17 || cloverAlphaTimer == 23) cloverAlphaPulse = 0.0875;
+			if (cloverAlphaTimer == 18 || cloverAlphaTimer == 22) cloverAlphaPulse = 0.10;
+			if (cloverAlphaTimer == 19 || cloverAlphaTimer == 21) cloverAlphaPulse = 0.125;
+			if (cloverAlphaTimer == 20) cloverAlphaPulse = 0.1375;
+			cloverAlphaPulse *= 2;
+			double cloveralpha = 1.0;
+			cloveralpha = 0.875 + cloverAlphaPulse;
+			DrawImage("CACLOVER", (20+HPDmgShakeX, -4+HPDmgShakeY+ycorrection), 0, cloveralpha, (-1, -1), (0.5, 0.5));
+		}
+		
 		// Show Max Health
 		string MaxHPS = "\c[brick] / ";
 		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);

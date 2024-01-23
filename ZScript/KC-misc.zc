@@ -4669,7 +4669,11 @@ class PlayerDashJump : Inventory
 		if (skill == SKILL_NORMAL) baseAddDashLevel = 1.375;
 		if (skill == SKILL_HARD) baseAddDashLevel = 1.25;
 		if (skill >= SKILL_VERY_HARD) baseAddDashLevel = 1.125;
-		if (owner.GetClassName() == "HeiwaPlayer") baseAddDashLevel *= 2.0;
+		if (owner.GetClassName() == "HeiwaPlayer") 
+		{
+			if (MiscItem && MiscItem.heiwavhardmodifier) baseAddDashLevel *= 3.25;
+																							else baseAddDashLevel *= 2.0;
+		}
 
 		AddDashLevel = (TruePlayerLevel * (baseAddDashLevel * ADashFactor));
 		if (TruePlayerLevel >= DashLvlTier1Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier1Thresh) * ((baseAddDashLevel * 0.25) * ADashFactor));
@@ -4689,7 +4693,12 @@ class PlayerDashJump : Inventory
 					if (skill == SKILL_NORMAL) BaseDashChargeMax = random[statitem](27,30);
 					if (skill == SKILL_HARD) BaseDashChargeMax = random[statitem](25,27);
 					if (skill >= SKILL_VERY_HARD) BaseDashChargeMax = random[statitem](22,25);
-					if (owner.GetClassName() == "HeiwaPlayer") BaseDashChargeMax -= random(2,3);
+					
+					if (owner.GetClassName() == "HeiwaPlayer")
+					{
+						if (MiscItem && MiscItem.heiwavhardmodifier) BaseDashChargeMax += random(2,4);
+																										else BaseDashChargeMax -= random(2,3);
+					}
 				}
 				else
 				{
@@ -4701,7 +4710,12 @@ class PlayerDashJump : Inventory
 						if (skill == SKILL_NORMAL) BaseDashChargeMax = random[statitem](27,30);
 						if (skill == SKILL_HARD) BaseDashChargeMax = random[statitem](25,27);
 						if (skill >= SKILL_VERY_HARD) BaseDashChargeMax = random[statitem](22,25);
-						if (owner.GetClassName() == "HeiwaPlayer") BaseDashChargeMax -= random(2,3);
+						
+						if (owner.GetClassName() == "HeiwaPlayer")
+						{
+							if (MiscItem && MiscItem.heiwavhardmodifier) BaseDashChargeMax += random(2,4);
+																											else BaseDashChargeMax -= random(2,3);
+						}
 					}
 					else
 					{
