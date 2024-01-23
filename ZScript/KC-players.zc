@@ -82,6 +82,16 @@ class KCPlayerPawn : PlayerPawn
 		//Species "Player";
 	}
 	
+	bool A_CheckKCTimeFreeze()
+	{
+		bool freeze = false;
+		actor playera = players[0].mo;
+		if ((playera.CountInv("KCTimeFreezer1") ||
+				 playera.CountInv("KCTimeFreezer2") ||
+				 playera.CountInv("KCTimeFreezer3"))) freeze = true;
+		return freeze;
+	}
+	
 	int A_CheckActualLevel(int type = 0)
 	{
 		actor playera = players[0].mo;
@@ -172,9 +182,7 @@ class KCPlayerPawn : PlayerPawn
 			
 			// Time Freeze Air Control
 			double TMFreezeAirControl = 1.0;
-			if ((CountInv("KCTimeFreezer1") ||
-					 CountInv("KCTimeFreezer2") ||
-					 CountInv("KCTimeFreezer3"))) TMFreezeAirControl *= 8.0;
+			if (A_CheckKCTimeFreeze()) TMFreezeAirControl *= 8.0;
 
 			// Armor items
 			double ArmorAirControl = 1.00;
@@ -899,6 +907,15 @@ class KCPlayerPawn : PlayerPawn
 												translation, level.GetChecksum());
 			}
 			
+			//
+			string nm;
+			if (A_CheckKCTimeFreeze())		
+			{
+				//Console.Printf("@#$@$");
+				nm = "CCards_Actor_RainSludgeSlow"; if (CountInv(nm)) A_TakeInventory(nm,0x7FFFFFFD);
+				nm = "CCards_Actor_RainDamaged"; if (CountInv(nm)) A_TakeInventory(nm,0x7FFFFFFD);
+			}
+
 			// Death Stuff
 			double fademax = 1.00;
 			if (health <= 0)
@@ -2402,9 +2419,7 @@ class KCPlayerPawn : PlayerPawn
 		
 		if (CountInv("PowerTimeFreezer") || 
 				CountInv("KCMiscTimeFreezer") || 
-				CountInv("KCTimeFreezer1") || 
-				CountInv("KCTimeFreezer2") || 
-				CountInv("KCTimeFreezer3") || 
+				A_CheckKCTimeFreeze() || 
 				(CountInv("DebugTimeFreezer") && kcdebug_timeslowinterval > 1) || 
 				CountInv("DashTimeFreezer"))
 		{
@@ -3152,9 +3167,7 @@ class KCPlayerPawn : PlayerPawn
 		player.SetPsprite(PSP_WEAPON, stat);
 		if (!weapn.bNoAlert)
 		{
-			if (!(CountInv("KCTimeFreezer1") ||
-						CountInv("KCTimeFreezer2") ||
-						CountInv("KCTimeFreezer3")))
+			if (!A_CheckKCTimeFreeze())
 			{
 				SoundAlert(self, false);
 			}
@@ -3181,9 +3194,7 @@ class KCPlayerPawn : PlayerPawn
 		player.SetPsprite(PSP_WEAPON, stat);
 		if (!weapn.bNoAlert)
 		{
-			if (!(CountInv("KCTimeFreezer1") ||
-						CountInv("KCTimeFreezer2") ||
-						CountInv("KCTimeFreezer3")))
+			if (!A_CheckKCTimeFreeze())
 			{
 				SoundAlert(self, false);
 			}
@@ -3275,10 +3286,7 @@ class KCPlayer : KCPlayerPawn
 			}
 			else
 			{
-				if ((CountInv("KCTimeFreezer") ||
-						 CountInv("KCTimeFreezer1") ||
-						 CountInv("KCTimeFreezer2") ||
-						 CountInv("KCTimeFreezer3")))
+				if (A_CheckKCTimeFreeze())
 				{
 					bNOTIMEFREEZE = true;
 				}
@@ -3381,7 +3389,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Radius 13; // 26
 		Height 51;
 		Mass 72; 
-		Player.DisplayName "??????? ?????";
+		Player.DisplayName "'Heiwa' [VERY BETA LUL :V]";
 		//Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa", "Translocator";
 		Player.WeaponSlot 2, "Glock21";
@@ -3390,7 +3398,26 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.WeaponSlot 6, "TeslaCannon";
 		Player.WeaponSlot 7, "BHGen";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
-		Tag "??????? ?????";
+		Player.StartItem "Translocator";
+		Player.StartItem "Glock21";
+		Player.StartItem "TommyGun";
+		Player.StartItem "Devastator";
+		Player.StartItem "TeslaCannon";
+		Player.StartItem "BHGen";
+		Player.StartItem "ImpalerXBow";
+		Player.StartItem "SawThrower";
+		Player.StartItem "Clip", 200;
+		Player.StartItem "Shell", 50;
+		Player.StartItem "RocketAmmo", 50;
+		Player.StartItem "Cell", 300;
+		Player.StartItem "TommAmmo", 500;
+		Player.StartItem "MiniRockets", 200;
+		Player.StartItem "Saws", 50;
+		Player.StartItem "ImpalerBolts", 40;
+		Player.StartItem "Bolts", 450;
+		Player.StartItem "PlayerStatItem";
+		Player.StartItem "PlayerDashJump";
+		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
 		+NOTIMEFREEZE;
 	}
