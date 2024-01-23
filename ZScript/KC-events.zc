@@ -76,7 +76,7 @@ class KC_EventHandler : EventHandler
 			if (player && !player.CountInv("PlayingCCards")) player.A_SetInventory("PlayingCCards",1);
 			
 			Actor mo;
-			string nm;
+			string nm, nn, no, np;
 			ThinkerIterator it;
 			
 			if (A_CheckKCTimeFreeze())
@@ -130,6 +130,21 @@ class KC_EventHandler : EventHandler
 						mo.A_StopSound(7);
 					}
 				}
+				
+				/*
+				nm = "CCards_Actor_SwapCurse";
+				nn = "CCards_Actor_SwapCurseDummy";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo.CountInv(nm) > 0)
+					{
+						Console.Printf("32kn42km4");
+						mo.SetInventory(nm,0);
+						mo.SetInventory(nn,1);
+					}
+				}
+				*/
 			}
 			else
 			{
@@ -143,8 +158,24 @@ class KC_EventHandler : EventHandler
 						mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
 					}
 				}
+				
+				/*
+				nm = "CCards_Actor_SwapCurseDummy";
+				nn = "CCards_Actor_SwapCurse";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo.CountInv(nm) > 0)
+					{
+						Console.Printf("@#$@RE");
+						mo.SetInventory(nm,0);
+						mo.SetInventory(nn,1);
+					}
+				}
+				*/
 			}
 			
+
 			if ((level.time >= 3 && level.time <= 35) ||
 					(((level.time - 35) % 70) == 0))
 			{
@@ -4307,12 +4338,48 @@ class KC_EventHandler : EventHandler
 										string voicenm;
 										double voicevol = frandom(1.25,1.75);
 										if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
-										int randvoice = 0;
+										int randvoice = random(1,8);
 										if (randvoice == 1) 
 										{
-											voicenm = ""; //
-											Console.Printf("\c[HeiwaDeluge]\c-"); //
+											voicenm = "Heiwa/GoToHell"; //
+											Console.Printf("\c[HeiwaDeluge]'Go to Hell!!'\c-"); //
 										}
+										if (randvoice == 2) 
+										{
+											voicenm = "Heiwa/HereReward"; //
+											Console.Printf("\c[HeiwaDeluge]'Here's your 'reward'!'\c-"); //
+										}
+										if (randvoice == 3) 
+										{
+											voicenm = "Heiwa/HearUCry"; //
+											Console.Printf("\c[HeiwaDeluge]'Let me hear you cry!'\c-"); //
+										}
+										if (randvoice == 4) 
+										{
+											voicenm = "Heiwa/HowULikeThat"; //
+											Console.Printf("\c[HeiwaDeluge]'How'd you like that!?'\c-"); //
+										}
+										if (randvoice == 5) 
+										{
+											voicenm = "Heiwa/UWantMore"; //
+											Console.Printf("\c[HeiwaDeluge]'Oh, you want more?!'\c-"); //
+										}
+										if (randvoice == 6) 
+										{
+											voicenm = "Heiwa/ISaidMove"; //
+											Console.Printf("\c[HeiwaDeluge]'I said -'MOVE'-!!'\c-"); //
+										}
+										if (randvoice == 7) 
+										{
+											voicenm = "Heiwa/UInMyWay"; //
+											Console.Printf("\c[HeiwaDeluge]'You're in my way!'\c-"); //
+										}
+										if (randvoice == 8) 
+										{
+											voicenm = "Heiwa/HeyShutMouth"; //
+											Console.Printf("\c[HeiwaDeluge]'Hey! Shut your mouth!'\c-"); //
+										}
+										if (kcdebug_worlddied) Console.Printf("One-Liner: %d", randvoice);
 										//
 										//
 										//

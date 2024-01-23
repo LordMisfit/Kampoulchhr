@@ -4347,7 +4347,7 @@ class PlayerDashJump : Inventory
 		if (skill == SKILL_NORMAL) baseAddDashLevel = 1.375;
 		if (skill == SKILL_HARD) baseAddDashLevel = 1.25;
 		if (skill >= SKILL_VERY_HARD) baseAddDashLevel = 1.125;
-		if (owner.GetClassName() == "HeiwaPlayer") baseAddDashLevel *= 1.5;
+		if (owner.GetClassName() == "HeiwaPlayer") baseAddDashLevel *= 2.0;
 
 		AddDashLevel = (TruePlayerLevel * (baseAddDashLevel * ADashFactor));
 		if (TruePlayerLevel >= DashLvlTier1Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier1Thresh) * ((baseAddDashLevel * 0.25) * ADashFactor));
@@ -4705,7 +4705,21 @@ class PlayerDashJump : Inventory
 			if (random[statitem](1,100) <= dashgruntchance)
 			{
 				int dashgruntrand = 0;
-				if (Owner.GetClassName() == "HeiwaPlayer") dashgruntsound = "";
+				if (Owner.GetClassName() == "HeiwaPlayer")
+				{
+					dashgruntrand = random[statitem](1,6);
+					if (kc_heiwaextravoices)
+					{
+						if (dashgruntrand >= 1 && dashgruntrand <= 3) dashgruntsound = "HeiwaJumpSND";
+						if (dashgruntrand == 4) dashgruntsound = "HeiwaKiai1";
+						if (dashgruntrand == 5) dashgruntsound = "HeiwaKiai4";
+						if (dashgruntrand == 6) dashgruntsound = "HeiwaKiai5";
+					}
+					else
+					{
+						dashgruntsound = "HeiwaJumpSND";
+					}
+				}
 				if (MiscItem && MiscItem.CanTalkUnderwater)
 				{
 					double maskpitch = 1.00;

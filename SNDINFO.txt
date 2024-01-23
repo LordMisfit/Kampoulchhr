@@ -38,13 +38,13 @@ $playersound				KCPlayer	other	*fist		dspunch
 $playersound				KCPlayer	other	*usefail	dscnoway
 
 // Sounds for Heiwa player
-//$playeralias	HeiwaPlayer	male	*death		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*xdeath		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*wimpydeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*crazydeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*burndeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*splat		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	male	*gibbed		      HeiwaDeathSet1
+$playeralias	HeiwaPlayer	male	*death		      HeiwaDeath
+$playeralias	HeiwaPlayer	male	*xdeath		      HeiwaDeath
+$playeralias	HeiwaPlayer	male	*wimpydeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	male	*crazydeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	male	*burndeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	male	*splat		      HeiwaDeath
+$playeralias	HeiwaPlayer	male	*gibbed		      HeiwaDeath
 $playeralias	HeiwaPlayer	male	*pain100	      Heiwa/Pain1A
 $playeralias	HeiwaPlayer	male	*pain75		      Heiwa/Pain2A
 $playeralias	HeiwaPlayer	male	*pain50		      Heiwa/Pain3A
@@ -62,13 +62,13 @@ $playersound	HeiwaPlayer	male	*surface	      null
 $playersound	HeiwaPlayer	male	*gasp		        null
 $playersound	HeiwaPlayer	male	*poison	        null
 
-//$playeralias	HeiwaPlayer	female	*death		    HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*xdeath		    HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*wimpydeath		HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*crazydeath		HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*burndeath		HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*splat		    HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	female	*gibbed		    HeiwaDeathSet1
+$playeralias	HeiwaPlayer	female	*death		    HeiwaDeath
+$playeralias	HeiwaPlayer	female	*xdeath		    HeiwaDeath
+$playeralias	HeiwaPlayer	female	*wimpydeath		HeiwaDeath
+$playeralias	HeiwaPlayer	female	*crazydeath		HeiwaDeath
+$playeralias	HeiwaPlayer	female	*burndeath		HeiwaDeath
+$playeralias	HeiwaPlayer	female	*splat		    HeiwaDeath
+$playeralias	HeiwaPlayer	female	*gibbed		    HeiwaDeath
 $playeralias	HeiwaPlayer	male	*pain100	      Heiwa/Pain1A
 $playeralias	HeiwaPlayer	male	*pain75		      Heiwa/Pain2A
 $playeralias	HeiwaPlayer	male	*pain50		      Heiwa/Pain3A
@@ -86,13 +86,13 @@ $playersound	HeiwaPlayer	female	*surface	    null
 $playersound	HeiwaPlayer	female	*gasp		      null
 $playersound	HeiwaPlayer	female	*poison	      null
 
-//$playeralias	HeiwaPlayer	other	*death		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*xdeath		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*wimpydeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*crazydeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*burndeath		  HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*splat		      HeiwaDeathSet1
-//$playeralias	HeiwaPlayer	other	*gibbed		      HeiwaDeathSet1
+$playeralias	HeiwaPlayer	other	*death		      HeiwaDeath
+$playeralias	HeiwaPlayer	other	*xdeath		      HeiwaDeath
+$playeralias	HeiwaPlayer	other	*wimpydeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	other	*crazydeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	other	*burndeath		  HeiwaDeath
+$playeralias	HeiwaPlayer	other	*splat		      HeiwaDeath
+$playeralias	HeiwaPlayer	other	*gibbed		      HeiwaDeath
 $playeralias	HeiwaPlayer	male	*pain100	      Heiwa/Pain1A
 $playeralias	HeiwaPlayer	male	*pain75		      Heiwa/Pain2A
 $playeralias	HeiwaPlayer	male	*pain50		      Heiwa/Pain3A
@@ -109,6 +109,37 @@ $playersound	HeiwaPlayer	other	*dive		        null
 $playersound	HeiwaPlayer	other	*surface	      null
 $playersound	HeiwaPlayer	other	*gasp		        null
 $playersound	HeiwaPlayer	other	*poison	        null
+
+HeiwaDeathS1 HEIDTHS1
+$pitchshift HeiwaDeathS1 0
+
+$random HeiwaDeathScreams { HeiwaDeathS1 }
+$pitchshift HeiwaDeathScreams 0
+
+HeiwaDeathQ1 HEIDTHQ1
+$pitchshift HeiwaDeathQ1 0
+
+HeiwaDeathQ3 HEIDTHQ2
+$pitchshift HeiwaDeathQ2 0
+
+HeiwaDeathQ3 HEIDTHQ3
+$pitchshift HeiwaDeathQ3 0
+
+HeiwaDeathQ4 HEIDTHQ4
+$pitchshift HeiwaDeathQ4 0
+
+HeiwaDeathQ5 HEIDTHQ5
+$pitchshift HeiwaDeathQ5 0
+
+$random HeiwaDeathQuotes {	HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 
+														HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 
+														HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 
+														HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 
+														HeiwaDeathQ5 HeiwaDeathQ5 }
+$pitchshift HeiwaDeathQuotes 0
+
+$random HeiwaDeath { HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathQuotes }
+$pitchshift HeiwaDeath 0
 
 HeiwaPain11		HEIPN3
 $pitchshift HeiwaPain11 0
@@ -192,6 +223,67 @@ $pitchshift HeiwaGiggle2 0
 $random HeiwaLaugh		{ HeiwaGiggle1 HeiwaGiggle2 }
 $pitchshift HeiwaLaugh 0
 $limit HeiwaLaugh 1
+
+HeiwaKiai1	HEIKIAI1
+$pitchshift HeiwaKiai1 0
+
+HeiwaKiai2	HEIKIAI1
+$pitchshift HeiwaKiai2 0
+
+HeiwaKiai3a	HEIKIAI3
+$pitchshift HeiwaKiai3a 0
+
+HeiwaKiai3b	HEIKIAI3B
+$pitchshift HeiwaKiai3b 0
+
+HeiwaKiai3c	HEIKIAI3C
+$pitchshift HeiwaKiai3c 0
+
+$random HeiwaKiai3 { HeiwaKiai3a HeiwaKiai3b HeiwaKiai3c }
+$pitchshift HeiwaKiai3 0
+
+HeiwaKiai4	HEIKIAI4
+$pitchshift HeiwaKiai4 0
+
+HeiwaKiai5	HEIKIAI5
+$pitchshift HeiwaKiai5 0
+
+$random HeiwaKiais { HeiwaKiai1 HeiwaKiai2 HeiwaKiai3 HeiwaKiai4 HeiwaKiai5 }
+$pitchshift HeiwaKiais 0
+
+HeiwaDash1 	HEIDASG1
+$pitchshift HeiwaDash1 0
+
+$random HeiwaDashSnds { HeiwaDash1 }
+$pitchshift HeiwaDashSnds 0
+
+// Taunts
+
+Heiwa/GoToHell	HEIGTHEL
+$pitchshift Heiwa/GoToHell 0
+
+Heiwa/HereReward	HEIHRREW
+$pitchshift Heiwa/HereReward 0
+
+Heiwa/HearUCry	HEIHRCRY
+$pitchshift Heiwa/HearUCry 0
+
+Heiwa/HowULikeThat	HEIULKTH
+$pitchshift Heiwa/HowULikeThat 0
+
+Heiwa/UWantMore	HEIWNTM
+$pitchshift Heiwa/UWantMore 0
+
+Heiwa/ISaidMove	HEIISMV1
+$pitchshift Heiwa/ISaidMove 0
+
+Heiwa/UInMyWay	HEIINMWY
+$pitchshift Heiwa/UInMyWay 0
+
+Heiwa/HeyShutMouth	HEIHSHTM
+$pitchshift Heiwa/HeyShutMouth 0
+
+// End Heiwa Sounds
 
 
 inv_fail	INVIFAIL

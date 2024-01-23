@@ -3388,7 +3388,14 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.MugShotMaxHealth -1; // 84
 		Radius 13; // 26
 		Height 51;
+		Player.AttackZOffset 8;
+		Player.JumpZ 9;
+		Player.GruntSpeed 12;
+		Player.FallingScreamSpeed 35, 40;
+		Player.ViewHeight 38;
 		Mass 72; 
+		PainChance 255;
+		Speed 1;
 		Player.DisplayName "'Heiwa' [VERY BETA LUL :V]";
 		Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa", "Translocator";
@@ -3417,6 +3424,8 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.StartItem "Bolts", 450;
 		Player.StartItem "PlayerStatItem";
 		Player.StartItem "PlayerDashJump";
+		Player.ForwardMove 2.125, 1.0625;
+		Player.SideMove 2.125, 1.0625;
 		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
 		+NOTIMEFREEZE;
@@ -3507,8 +3516,6 @@ class HeiwaPlayer : KCPlayerPawn
 			Goto Spawn;
 		Death:
 			PLAY H 0 A_APPBreatheReset();
-			PLAY H 0 A_PlayerSkinCheck("AltSkinDeath");
-		Death1:
 			PLAY H 10;
 			PLAY I 10 A_PlayerScream;
 			PLAY J 10 A_NoBlocking;
@@ -3516,31 +3523,12 @@ class HeiwaPlayer : KCPlayerPawn
 			PLAY N -1;
 			Stop;
 		XDeath:
-			PLAY O 0 A_APPBreatheReset();
-			PLAY O 0 A_PlayerSkinCheck("AltSkinXDeath");
-		XDeath1:
-			PLAY O 5;
-			PLAY P 5 A_XScream;
-			PLAY Q 5 A_NoBlocking;
-			PLAY RSTUV 5;
-			PLAY W -1;
-			Stop;
-		AltSkinDeath:
 			PLAY H 0 A_APPBreatheReset();
-			PLAY H 6;
-			PLAY I 6 A_PlayerScream;
-			PLAY JK 6;
-			PLAY L 6 A_NoBlocking;
-			PLAY MNO 6;
-			PLAY P -1;
-			Stop;
-		AltSkinXDeath:
-			PLAY Q 0 A_APPBreatheReset();
-			PLAY Q 5 A_PlayerScream;
-			PLAY R 0 A_NoBlocking;
-			PLAY R 5 A_SkullPop;
-			PLAY STUVWX 5;
-			PLAY Y -1;
+			PLAY H 10;
+			PLAY I 10 A_PlayerScream;
+			PLAY J 10 A_NoBlocking;
+			PLAY KLM 10;
+			PLAY N -1;
 			Stop;
 	}
 }
