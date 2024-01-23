@@ -3119,6 +3119,7 @@ class KCPlayerPawn : PlayerPawn
 			// Console.Printf("%.8f", HealthRatio);
 			if (health > 0)
 			{
+				Console.Printf("@#S#");
 				string painsnd = "";
 				if (HealthRatio >= 0.751) painsnd = "Heiwa/Pain1A";
 				else if (HealthRatio >= 0.501 && HealthRatio < 0.750) painsnd = "Heiwa/Pain2A";
@@ -3243,7 +3244,6 @@ class KCPlayer : KCPlayerPawn
 		Tag "Doom Marine";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL
 	}
-	
 	
 	int A_KCMChase(int tics = 4)
 	{
@@ -3390,7 +3390,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Height 51;
 		Mass 72; 
 		Player.DisplayName "'Heiwa' [VERY BETA LUL :V]";
-		//Player.SoundClass "HeiwaPlayer";
+		Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa", "Translocator";
 		Player.WeaponSlot 2, "Glock21";
 		Player.WeaponSlot 4, "TommyGun";
@@ -3449,6 +3449,99 @@ class HeiwaPlayer : KCPlayerPawn
 				breathtic = 0;
 			}
 		}
+	}
+	
+	int A_KCMChase(int tics = 4)
+	{
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			if (MiscItem.HUDSpeed >= 4.0) tics = ceil(tics *= 0.875);
+			if (MiscItem.HUDSpeed >= 3.0) tics = ceil(tics *= 0.9375);
+			if (MiscItem.HUDSpeed >= 2.0) tics = ceil(tics *= 0.96875);
+			if (MiscItem.HUDSpeed <= 0.75) tics = ceil(tics *= 1.25);
+			if (MiscItem.HUDSpeed <= 0.50) tics = ceil(tics *= 1.5);
+			if (MiscItem.HUDSpeed <= 0.25) tics = ceil(tics *= 1.75);
+			if (MiscItem.HUDSpeed <= 0.0625) tics = ceil(tics *= 2.0);
+		}
+		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) tics = ceil(tics *= 0.875);
+		if (CountInv("OverFullHealth3")) tics = ceil(tics *= 0.85);
+		if (CountInv("OverFullHealth2")) tics = ceil(tics *= 0.9);
+		if (CountInv("OverFullHealth1")) tics = ceil(tics *= 0.95);
+		if (CountInv("NormalHealth")) tics = ceil(tics *= 1);
+		if (CountInv("DecentHealth")) tics = ceil(tics *= 1.125);
+		if (CountInv("LowHealth")) tics = ceil(tics *= 1.25);
+		if (CountInv("CriticalHealth")) tics = ceil(tics *= 1.375);
+		
+		if (kcdebug_playerwalkdisplays) Console.Printf("Tics (See): %d", tics);
+		if (tics < 1) tics = 1;
+		A_SetTics(tics);
+		return tics;
+	}
+	
+	States
+	{
+		Spawn:
+			PLAY A 4;
+			Loop;
+		See:
+			PLAY ABCD 4 
+			{
+				A_KCMChase(4);
+				A_SetInventory("IsStepping",(A_KCMChase(4)*2));
+			}
+			Loop;
+		Missile:
+			PLAY EEE 4;
+			Goto Spawn;
+		Melee:
+			PLAY FF 3 BRIGHT;
+			Goto Missile;
+		Pain:
+			PLAY G 4;
+			PLAY G 4 
+			{
+				A_KCPain();
+				A_SetInventory("IsStepping",0);
+			}
+			Goto Spawn;
+		Death:
+			PLAY H 0 A_APPBreatheReset();
+			PLAY H 0 A_PlayerSkinCheck("AltSkinDeath");
+		Death1:
+			PLAY H 10;
+			PLAY I 10 A_PlayerScream;
+			PLAY J 10 A_NoBlocking;
+			PLAY KLM 10;
+			PLAY N -1;
+			Stop;
+		XDeath:
+			PLAY O 0 A_APPBreatheReset();
+			PLAY O 0 A_PlayerSkinCheck("AltSkinXDeath");
+		XDeath1:
+			PLAY O 5;
+			PLAY P 5 A_XScream;
+			PLAY Q 5 A_NoBlocking;
+			PLAY RSTUV 5;
+			PLAY W -1;
+			Stop;
+		AltSkinDeath:
+			PLAY H 0 A_APPBreatheReset();
+			PLAY H 6;
+			PLAY I 6 A_PlayerScream;
+			PLAY JK 6;
+			PLAY L 6 A_NoBlocking;
+			PLAY MNO 6;
+			PLAY P -1;
+			Stop;
+		AltSkinXDeath:
+			PLAY Q 0 A_APPBreatheReset();
+			PLAY Q 5 A_PlayerScream;
+			PLAY R 0 A_NoBlocking;
+			PLAY R 5 A_SkullPop;
+			PLAY STUVWX 5;
+			PLAY Y -1;
+			Stop;
 	}
 }
 
