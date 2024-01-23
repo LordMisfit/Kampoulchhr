@@ -523,6 +523,11 @@ mixin class DmgCalc
 		// Character Check [base damage]
 		damage = random(12,18); // random(18,24);
 		if (altfire == 1) damage = random(84,117); // random(126,148);
+		if (HeiwaPlayer(playera))
+		{
+			damage = random(8,12); // random(18,24);
+			if (altfire == 1) damage = random(56,78); // random(126,148);
+		}
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
 
 		// [STRIFE] Stamina Upgrades
@@ -538,13 +543,29 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,192) <= (191 - (TruePlayerLevel * 0.01875)))
 			{
-				if (altfire == 0) adddmg = randompick(1,2,2,2,3); // randompick(2,2,3);
-				if (altfire == 1) adddmg = randompick(7,7,8,8,9); // randompick(8,10,10);
+				if (HeiwaPlayer(playera))
+				{
+					if (altfire == 0) adddmg = randompick(0,1,1,1,2); // randompick(2,2,3);
+					if (altfire == 1) adddmg = randompick(5,6,6,6,7); // randompick(8,10,10);
+				}
+				else
+				{
+					if (altfire == 0) adddmg = randompick(1,2,2,2,3); // randompick(2,2,3);
+					if (altfire == 1) adddmg = randompick(7,7,8,8,9); // randompick(8,10,10);
+				}
 			}
 			else
 			{
-				if (altfire == 0) adddmg = randompick(3,3,4,4,4,5); // randompick(4,5,6);
-				if (altfire == 1) adddmg = randompick(11,12,12,13,13,14); // randompick(14,16,18);
+				if (HeiwaPlayer(playera))
+				{
+					if (altfire == 0) adddmg = randompick(2,2,3,3,3,4); // randompick(4,5,6);
+					if (altfire == 1) adddmg = randompick(9,10,10,11,11,12); // randompick(14,16,18);
+				}
+				else
+				{
+					if (altfire == 0) adddmg = randompick(3,3,4,4,4,5); // randompick(4,5,6);
+					if (altfire == 1) adddmg = randompick(11,12,12,13,13,14); // randompick(14,16,18);
+				}
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;
@@ -613,6 +634,7 @@ mixin class DmgCalc
 		int strengthcounter;
 
 		damage = random(30,45); // random(45,60);
+		if (HeiwaPlayer(playera)) damage = random(20,40);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f", damage);
 
 		// [STRIFE] Stamina Upgrades
@@ -630,10 +652,12 @@ mixin class DmgCalc
 			if (random(1,128) <= (127 - (TruePlayerLevel * 0.025)))
 			{
 				adddmg = randompick(2,4,4,5,5,6,6,7); // randompick(3,5,8);
+				if (HeiwaPlayer(playera)) adddmg = randompick(1,2,3,4,4,5,6,6);
 			}
 			else
 			{
-				adddmg = adddmg = randompick(6,7,7,8,8,9,9,10); // randompick(6,8,10);
+				adddmg = randompick(6,7,7,8,8,9,9,10); // randompick(6,8,10);
+				if (HeiwaPlayer(playera)) adddmg = randompick(4,5,6,7,8,9,10,11); // randompick(6,8,10);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;

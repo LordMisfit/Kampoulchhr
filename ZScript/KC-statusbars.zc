@@ -2014,6 +2014,7 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "FistMarine";
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "FistHeiwa";
 		if (CPlayerPawn.CountInv(wsname))
 		{
 			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);
@@ -2326,10 +2327,9 @@ class KCStatusBarMain : BaseStatusBar
 		y -= baseinc;
 		
 		x += wsspace;
-		/*
 		// Slot 8
 		weaponsincurslot = 1;
-		wsname = "KCSigil";
+		wsname = "Translocator"; // "KCSigil"
 		wsammoname = "";
 		//ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
@@ -2346,7 +2346,6 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
-		*/ 
 		x += wsspace;
 		// Slot 9
 		weaponsincurslot = 1;
@@ -2854,6 +2853,7 @@ class KCStatusBarMain : BaseStatusBar
 			Array<String> UserKeys5;
 			string temp1, temp2;
 			if (PlayerWeapon is "FistMarine" ||
+					PlayerWeapon is "FistHeiwa" ||
 					PlayerWeapon is "Glock21" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
@@ -2862,7 +2862,7 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
-				if (PlayerWeapon is "FistMarine") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
+				if (PlayerWeapon is "FistMarine" || PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{

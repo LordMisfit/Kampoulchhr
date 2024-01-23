@@ -720,6 +720,11 @@ class KCPlayerPawn : PlayerPawn
 							if (berserked) weaponsinkfactor -= frandom(0.75,0.875);
 												else weaponsinkfactor -= frandom(0.50,0.75);
 						}
+						if (PlayerWeapon is "FistHeiwa") 
+						{
+							if (berserked) weaponsinkfactor -= frandom(0.75,0.875);
+												else weaponsinkfactor -= frandom(0.50,0.75);
+						}
 						/*
 						If (PlayerWeapon is "EvilWarriorShield")
 						{
@@ -737,6 +742,7 @@ class KCPlayerPawn : PlayerPawn
 						}
 						*/
 						if (PlayerWeapon is "FistMarine") weaponsinkfactor *= 1.0;
+						if (PlayerWeapon is "FistHeiwa") weaponsinkfactor *= 1.0;
 						else
 						{
 							weaponsinkfactor *= 1.875;
@@ -1989,7 +1995,7 @@ class KCPlayerPawn : PlayerPawn
 		{
 			bool weapcheck = false;
 			flags |= DMG_NO_ARMOR;
-			if (weapon is "FistMarine" && CountInv("FistPlayerBlockItem")) 
+			if ((weapon is "FistMarine" || weapon is "FistHeiwa") && CountInv("FistPlayerBlockItem")) 
 			{
 				damage *= frandompick(0.001,0.001,0.01,0.01,0.01,0.01,0.1,0.1);
 				weapcheck = true;
@@ -3119,7 +3125,6 @@ class KCPlayerPawn : PlayerPawn
 			// Console.Printf("%.8f", HealthRatio);
 			if (health > 0)
 			{
-				Console.Printf("@#S#");
 				string painsnd = "";
 				if (HealthRatio >= 0.751) painsnd = "Heiwa/Pain1A";
 				else if (HealthRatio >= 0.501 && HealthRatio < 0.750) painsnd = "Heiwa/Pain2A";
@@ -3222,13 +3227,14 @@ class KCPlayer : KCPlayerPawn
 		Player.StartItem "Clip", 50;
 		Player.StartItem "PlayerStatItem";
 		Player.StartItem "PlayerDashJump";
-		Player.WeaponSlot 1, "FistMarine", "ChainsawMarine", "Translocator";
+		Player.WeaponSlot 1, "FistMarine", "ChainsawMarine";
 		Player.WeaponSlot 2, "PistolMarine", "Glock21";
 		Player.WeaponSlot 3, "ShotgunMarine", "SuperShotgunMarine";
 		Player.WeaponSlot 4, "ChaingunMarine", "TommyGun";
 		Player.WeaponSlot 5, "RocketLauncherMarine", "Devastator";
 		Player.WeaponSlot 6, "PlasmaRifleMarine", "TeslaCannon";
 		Player.WeaponSlot 7, "BFG9000Marine";
+		Player.WeaponSlot 8, "Translocator";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		
 		Player.ColorRange 112, 127;
@@ -3398,13 +3404,15 @@ class HeiwaPlayer : KCPlayerPawn
 		Speed 1;
 		Player.DisplayName "'Heiwa' [VERY BETA LUL :V]";
 		Player.SoundClass "HeiwaPlayer";
-		Player.WeaponSlot 1, "FistHeiwa", "Translocator";
+		Player.WeaponSlot 1, "FistHeiwa";
 		Player.WeaponSlot 2, "Glock21";
 		Player.WeaponSlot 4, "TommyGun";
 		Player.WeaponSlot 5, "Devastator";
 		Player.WeaponSlot 6, "TeslaCannon";
 		Player.WeaponSlot 7, "BHGen";
+		Player.WeaponSlot 8, "Translocator";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
+		Player.StartItem "FistHeiwa";
 		Player.StartItem "Translocator";
 		Player.StartItem "Glock21";
 		Player.StartItem "TommyGun";

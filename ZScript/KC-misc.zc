@@ -9,6 +9,7 @@ class PlayerStatItem : Inventory
 	const SKILL_HARD = 3;
 	const SKILL_VERY_HARD = 4;
 	
+	bool heiwavhardmodifier;
 	double tracerheight;
 	int darmortype;
 	int IsMorphed, WasMorphed, WasMorphProj;
@@ -111,7 +112,7 @@ class PlayerStatItem : Inventory
 	double BaseRegenMulti;
 	double atkfct, deffct, spdfct, jmpfct, suvfct;
 
-	int HPMaxGain, MassGain;
+	int HPMaxGain, MassGain, VitHPMaxGain;
 	int SurvivalRate;
 
 	int PrevHealthRatio;
@@ -125,6 +126,9 @@ class PlayerStatItem : Inventory
 	int HealthNoRPGAdd;
 	double HealthNoRPGAdd2;
 	int HealthBonusAdd;
+	double VitalityPieces;
+	int VitalityCurrHPBoosts;
+	int VitalityCurrHPBoosts2;
 	int MaxHealthLimit;
 	
 	int MaxPsychicPoints;
@@ -259,6 +263,23 @@ class PlayerStatItem : Inventory
 		return LegendStr;
 	}
 	
+	bool A_CheckTimeFreeze()
+	{
+		bool check = false;
+		string nm, nn, no;
+		nm = "KCTimeFreezer1";
+		nn = "KCTimeFreezer2";
+		no = "KCTimeFreezer3";
+		if (owner)
+		{
+			if (owner.CountInv(nm) || owner.CountInv(nn) || owner.CountInv(no)) 
+			{
+				check = true;
+			}
+		}
+		return check;
+	}
+	
 	override void DoEffect()
 	{
 		let playeractor = KCPlayerPawn(owner);
@@ -281,6 +302,20 @@ class PlayerStatItem : Inventory
 				
 				if (whistlecooldown) whistlecooldown--;
 				
+				// Check Heiwa's Weapons
+				if (owner.GetClassName() == "HeiwaPlayer") 
+				{
+					string nm;
+					nm = "FistMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "ChainsawMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "PistolMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "ShotgunMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "SuperShotgunMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "ChaingunMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "RocketLauncherMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "PlasmaRifleMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+					nm = "BFG9000Marine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
+				}
 				// Mode Check
 				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
 				if (ClassicDoomType & 1) { owner.A_SetInventory("PlayingDoom",1); } // Doom
@@ -422,40 +457,60 @@ class PlayerStatItem : Inventory
 
 						atkfct = deffct = spdfct = jmpfct = suvfct = 1.00;
 						double variance = 0.10;
+						heiwavhardmodifier = false;
 						if (owner.GetClassName() == "HeiwaPlayer")
 						{
 							if (TrueGameSkill == SKILL_VERY_EASY)
 							{
-								MaxHealthTrue = 90;
+								MaxHealthTrue = 45;
 								variance = 0.05;
 							}
 							if (TrueGameSkill == SKILL_EASY)
 							{
-								MaxHealthTrue = 75; 
+								MaxHealthTrue = 45; 
 								variance = 0.075;
 							}
 							if (TrueGameSkill == SKILL_NORMAL)
 							{
-								MaxHealthTrue = 60; 
+								MaxHealthTrue = 30; 
 								variance = 0.10;
 							}
 							if (TrueGameSkill == SKILL_HARD)
 							{
-								MaxHealthTrue = 45; 
+								MaxHealthTrue = 30; 
 								variance = 0.125;
 							}
 							if (TrueGameSkill == SKILL_VERY_HARD)
 							{
+								if (random(1,8) <= 1) heiwavhardmodifier = true;
 								MaxHealthTrue = 30;
 								variance = 0.15;
+								if (heiwavhardmodifier) 
+								{
+									MaxHealthTrue = 15;
+									variance = 0.30;
+								}
 							}
 						}
-						TempLUCK = PlayerLuck;
-						atkfct += frandom[statitem](-variance,variance);
-						deffct += frandom[statitem](-variance,variance);
-						spdfct += frandom[statitem](-variance,variance);
-						jmpfct += frandom[statitem](-variance,variance);
-						suvfct += frandom[statitem](-variance,variance);
+						if (heiwavhardmodifier) 
+						{
+							PlayerLuck *= 2.5;
+							TempLUCK = PlayerLuck;
+							atkfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							deffct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							spdfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							jmpfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							suvfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+						}
+						else
+						{
+							TempLUCK = PlayerLuck;
+							atkfct += frandom[statitem](-variance,variance);
+							deffct += frandom[statitem](-variance,variance);
+							spdfct += frandom[statitem](-variance,variance);
+							jmpfct += frandom[statitem](-variance,variance);
+							suvfct += frandom[statitem](-variance,variance);
+						}
 						if (kcdebug_startupinfo) Console.Printf("atkfct: %.8f, deffct: %.8f, spdfct: %.8f, jmpfct: %.8f, suvfct: %.8f, Luck: %d", atkfct, deffct, spdfct, jmpfct, suvfct, PlayerLuck);
 						
 						
@@ -682,6 +737,7 @@ class PlayerStatItem : Inventory
 		CurrentHealth = owner.player.mo.health;
 		int HealthBonusAdd2 = HealthBonusAdd;
 		int HealthLevelAdd2 = HealthLevelAdd;
+		int VitalityPiecesAdd = floor(int(VitalityPieces));
 		HealthNoRPGAdd2 = 0;
 		if (!kc_expgains)
 		{
@@ -698,7 +754,23 @@ class PlayerStatItem : Inventory
 			if (skill >= 4) HealthLevelAdd2 = (HealthNoRPGADD * 2.0);
 		}
 		MaxHealthTrue = (BaseStartMaxHealth + int(HealthNoRPGAdd2) + HealthLevelAdd2 + HealthBonusAdd2);
-		if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
+		if (owner.GetClassName() == "HeiwaPlayer") 
+		{
+			MaxHealthTrue += int(VitalityPiecesAdd * 15);
+			while (VitalityCurrHPBoosts < VitalityPiecesAdd)
+			{
+				CurrentHealth += 15;
+				owner.player.health += 15;
+				owner.player.mo.health += 15;
+				VitalityCurrHPBoosts++;
+			}
+			
+			if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), VitalityPiecesAdd: (%d * 15) (%.8f), VitalityCurrHPBoosts: %d, HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, VitalityPiecesAdd, VitalityPieces, VitalityCurrHPBoosts, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
+		}
+		else
+		{
+			if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
+		}
 	}
 	
 	
@@ -966,7 +1038,7 @@ class PlayerStatItem : Inventory
 							inc *= ssa;
 							if (kcdebug_hpregen) Console.Printf("ssa [Regen]: %.8f", ssa);
 							
-							if (weapon is "FistMarine" && owner.CountInv("FistPlayerBlockItem")) 
+							if ((weapon is "FistMarine" || weapon is "FistHeiwa") && owner.CountInv("FistPlayerBlockItem")) 
 							{
 								if (owner.CountInv("FistPlayerBlock")) inc = ceil(inc * frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)); 
 								if (owner.CountInv("FistPlayerBlock2")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.125); 
@@ -1072,7 +1144,7 @@ class PlayerStatItem : Inventory
 							inc *= ssa;
 							if (kcdebug_hpregen) Console.Printf("ssa [Degen]: %.8f", ssa);
 							
-							if (weapon is "FistMarine" && Owner.CountInv("FistPlayerBlockItem")) 
+							if ((weapon is "FistMarine" || weapon is "FistHeiwa") && Owner.CountInv("FistPlayerBlockItem")) 
 							{
 								if (owner.CountInv("FistPlayerBlock")) inc = ceil(inc * frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556));
 								if (owner.CountInv("FistPlayerBlock2")) inc = ceil(inc * (frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556)) * 0.8888888888888889); 
@@ -1202,9 +1274,10 @@ class PlayerStatItem : Inventory
 			//***********
 			int SkillFactor, PerkFactor;
 			int EvadeRateCap = 7500;
+			if (owner.GetClassName() == "HeiwaPlayer") EvadeRateCap = 9375;
 			EvasionRate = 0;
-			SPDEvadeCheck = 8.9; // Base
-			// DD Trilogy NO-Rpg Bonuses
+			SPDEvadeCheck = 5.75; // Base
+			if (owner.GetClassName() == "HeiwaPlayer") SPDEvadeCheck = 11.5;
 			
 			int BaseEVA = SPDEvadeCheck;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0a - SPD Evade Check (base)]: %.4f\c-", SPDEvadeCheck);
@@ -1271,7 +1344,9 @@ class PlayerStatItem : Inventory
 				if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate % [STEP 2a - Rat Morph Check (Cap)]: %d,\c- Added: %d, PerkFactor: %d", EvadeRateCap, SkillFactor, PerkFactor);
 			}
 			
-			if (Owner.CountInv("PowerInvisibility") || Owner.CountInv("KCPowerInvisibility") || Owner.CountInv("PowerGhost"))
+			if (Owner.CountInv("PowerInvisibility") || 
+					Owner.CountInv("KCPowerInvisibility") || 
+					Owner.CountInv("PowerGhost"))
 			{
 				PerkFactor = 3334;
 				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
@@ -1307,15 +1382,23 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		int SurviveRateCap = 7500;
+		if (owner.GetClassName() == "HeiwaPlayer") SurviveRateCap = 9375;
 		weapon = owner.player.ReadyWeapon;
 		
 		if (!A_CheckNoTimer())
 		{
 			SurvivalRate = 100 * suvfct; // out of 10000 [100 = 1%]
+			if (owner.GetClassName() == "HeiwaPlayer") SurvivalRate = 25 * suvfct;
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Base]: %d", SurvivalRate);
-			SurvivalRate += (TruePlayerLevel * 5); // +0.05% per level
+			
+			if (owner.GetClassName() == "HeiwaPlayer") SurvivalRate += (TruePlayerLevel * 8.75); // +0.0875% per level
+																						else SurvivalRate += (TruePlayerLevel * 5); // +0.05% per level
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Level]: %d", SurvivalRate);
-			if (PlayerLuck) SurvivalRate += (PlayerLuck * 1.25); // +0.0125% per Luck Point
+			if (PlayerLuck) 
+			{
+				if (owner.GetClassName() == "HeiwaPlayer") SurvivalRate += (PlayerLuck * 1.1875); // +0.011875% per Luck Point
+																							else SurvivalRate += (PlayerLuck * 1.25); // +0.0125% per Luck Point
+			}
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Luck]: %d", SurvivalRate);
 			
 			PerkFactor = 0;
@@ -1326,30 +1409,95 @@ class PlayerStatItem : Inventory
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Buffs]: %d", SurvivalRate);
 			
 			int buddhatype = 0;
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (owner.CountInv("TSArmorTier2"))
+				{
+					SurvivalRate += 7500;
+					SurviveRateCap += 7500;
+				}
+				else
+				if (owner.CountInv("TSArmorTier1"))
+				{
+					SurvivalRate += 3750;
+					SurviveRateCap += 3750;
+				}
+			}
+			else
+			{
+				if (owner.CountInv("TSArmorTier2"))
+				{
+					SurvivalRate += 2500;
+					SurviveRateCap += 2500;
+				}
+				else
+				if (owner.CountInv("TSArmorTier1"))
+				{
+					SurvivalRate += 1250;
+					SurviveRateCap += 1250;
+				}
+			}
+			
 			if (Owner.CountInv("FistPlayerBlockItem"))
 			{
 				if (Owner.CountInv("FistPlayerBlock4"))
 				{ 
-					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.5,0.5,0.5,0.5,0.75));
-					SurviveRateCap += 2250;
+					if (owner.GetClassName() == "HeiwaPlayer")
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.625,0.625,0.625,0.625,0.875));
+						if (random(1,8) <= 1) SurviveRateCap += 3000;
+														 else SurviveRateCap += 1500;
+					}
+					else
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.5,0.5,0.5,0.5,0.75));
+						SurviveRateCap += 2250;
+					}
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Handed Guard (3)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("FistPlayerBlock3"))
 				{ 
-					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.375,0.375,0.375,0.375,0.5625));
-					SurviveRateCap += 1500;
+					if (owner.GetClassName() == "HeiwaPlayer")
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.5,0.5,0.5,0.5,0.6875));
+						if (random(1,16) <= 1) SurviveRateCap += 2000;
+															else SurviveRateCap += 1000;
+					}
+					else
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.375,0.375,0.375,0.375,0.5625));
+						SurviveRateCap += 1500;
+					}
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Handed Guard (3)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("FistPlayerBlock2"))
 				{ 
-					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.375));
-					SurviveRateCap += 1000;
+					if (owner.GetClassName() == "HeiwaPlayer")
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.375,0.375,0.375,0.375,0.5));
+						if (random(1,24) <= 1) SurviveRateCap += randompick(1333,1333,1334);
+															else SurviveRateCap += randompick(666,667,667);
+					}
+					else
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.375));
+						SurviveRateCap += 1000;
+					}
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Handed Guard (2)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("FistPlayerBlock"))
 				{
-					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.125,0.125,0.125,0.125,0.1875));
-					SurviveRateCap += 500;
+					if (owner.GetClassName() == "HeiwaPlayer")
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.3125));
+						if (random(1,32) <= 1) SurviveRateCap += randompick(666,667,667);
+															else SurviveRateCap += randompick(333,333,334);
+					}
+					else
+					{
+						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.125,0.125,0.125,0.125,0.1875));
+						SurviveRateCap += 500;
+					}
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Handed Guard (1)]: %d", SurvivalRate);
 				}
 			}
@@ -1357,6 +1505,10 @@ class PlayerStatItem : Inventory
 			if (SurviveRateCap >= 10000) SurviveRateCap = 10000;
 			if (SurvivalRate > SurviveRateCap) SurvivalRate = SurviveRateCap;
 			if (kcdebug_survivecheat && SurvivalRate <= 9995) SurvivalRate = 9995;
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (A_CheckTimeFreeze()) SurvivalRate = 20000;
+			}
 			if (owner.CountInv("GiveTempMortalSurvive")) SurvivalRate = 20000;
 			int SurviveRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
 			if (SurviveRNGVal <= SurvivalRate) owner.player.cheats |= CF_BUDDHA; else owner.player.cheats &= ~CF_BUDDHA;
@@ -1369,7 +1521,6 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
-	
 	void CritRateCalc()
 	{
 		weapon = owner.player.ReadyWeapon;
@@ -1378,8 +1529,20 @@ class PlayerStatItem : Inventory
 
 		owner.A_SetInventory("DealCriticalHit",0);
 		CritChance = 128;
-		if (kc_expgains) CritChance = (128 - (ActualLevel * frandompick[statitem](0.03125,0.03125,0.03125,0.03125,0.0625,0.0625,0.0625,0.0625,0.09375,0.09375,0.09375,0.09375,0.125,0.125,0.125,0.125,0.15625,0.1875,0.21875,0.25)));
-		if (CritChance <= 64) CritChance = 64;
+		if (owner.GetClassName() == "HeiwaPlayer") CritChance = 160;
+		if (kc_expgains) 
+		{
+			CritChance = (128 - (ActualLevel * frandompick[statitem](0.03125,0.03125,0.03125,0.03125,0.0625,0.0625,0.0625,0.0625,0.09375,0.09375,0.09375,0.09375,0.125,0.125,0.125,0.125,0.15625,0.1875,0.21875,0.25)));
+			if (owner.GetClassName() == "HeiwaPlayer") CritChance = (160 - (ActualLevel * frandompick[statitem](0.05,0.05,0.05,0.05,0.1,0.1,0.1,0.1,0.15,0.15,0.15,0.15,0.2,0.2,0.2,0.2,0.25,0.3,0.35,0.4)));
+		}
+		if (owner.GetClassName() == "HeiwaPlayer") 
+		{
+			if (CritChance <= 40) CritChance = 40;
+		}
+		else 
+		{
+			if (CritChance <= 64) CritChance = 64;
+		}
 		if (owner.CountInv("PowerDouble")) CritChance *= 0.75;
 		if (owner.CountInv("PowerHalve")) CritChance *= 1.3334;
 		if (owner.CountInv("PlayerDashing")) CritChance *= 0.875;
@@ -1388,14 +1551,35 @@ class PlayerStatItem : Inventory
 			if (owner.CountInv("TSArmorTier2")) CritChance *= 0.1;
 			else if (owner.CountInv("TSArmorTier1")) CritChance *= 0.25;
 			else CritChance *= 0.625;
+			if (owner.GetClassName() == "HeiwaPlayer") CritChance *= frandompick(0.625,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.875);
 		}
-		if (CritChance <= 4) CritChance = 4;
+		if (owner.GetClassName() == "HeiwaPlayer")
+		{
+			int temp = random(3,4);
+			if (CritChance <= temp) CritChance = temp;
+		}
+		else 
+		{
+			if (CritChance <= 4) CritChance = 4;
+		}
 
 		double specitemfactor = 1.00;
 		CritChance *= specitemfactor;
-		if (CritChance <= 3) CritChance = 3;
+		if (owner.GetClassName() == "HeiwaPlayer") 
+		{
+			int temp = random(2,3);
+			if (CritChance <= temp) CritChance = temp;
+		}
+		else 
+		{
+			if (CritChance <= 3) CritChance = 3;
+		}
 		
-		if (MortalBlowCritBoostTimer > 0) CritChance *= 0.125;
+		if (MortalBlowCritBoostTimer > 0) 
+		{
+			if (owner.GetClassName() == "HeiwaPlayer") CritChance *= 0.09375;
+																						else CritChance *= 0.125;
+		}
 		else
 		{
 			if (owner.CountInv("OverFullHealth3")) CritChance *= 1.25;
@@ -1407,7 +1591,14 @@ class PlayerStatItem : Inventory
 			else if (owner.CountInv("CriticalHealth")) CritChance *= 0.75;
 		}
 		if (CritChance <= 1) CritChance = 1;
-		if (CritChance >= 128) CritChance = 128;
+		if (owner.GetClassName() == "HeiwaPlayer")
+		{
+			if (CritChance >= 160) CritChance = 160;
+		}
+		else
+		{
+			if (CritChance >= 128) CritChance = 128;
+		}
 		
 		CritRoll = random[statitem](1,CritChance);
 		if (CritRoll <= 1) owner.A_SetInventory("DealCriticalHit",1);
@@ -1423,6 +1614,7 @@ class PlayerStatItem : Inventory
 			TotalMass = 100;
 			BaseMass = TotalMass;
 			double massmulfactor = 0.22223;
+			if (owner.GetClassName() == "HeiwaPlayer") massmulfactor = 0.188889;
 			massmulfactor *= kc_pbalfactor;
 			if (kc_expgains) massmulfactor *= 1.0;
 			let playerset = KCPlayerPawn(owner);
@@ -1474,23 +1666,45 @@ class PlayerStatItem : Inventory
 			
 			if (berserked) 
 			{
-				if (ActualLevel >= 200) TotalMass *= 1.556;
-				else if (ActualLevel >= 150) TotalMass *= 1.445;
-				else if (ActualLevel >= 100) TotalMass *= 1.334;
-				else if (ActualLevel >= 50) TotalMass *= 1.223;
-				else TotalMass *= 1.112;
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (ActualLevel >= 200) TotalMass *= 1.556;
+					else if (ActualLevel >= 150) TotalMass *= 1.445;
+					else if (ActualLevel >= 100) TotalMass *= 1.334;
+					else if (ActualLevel >= 50) TotalMass *= 1.223;
+					else TotalMass *= 1.112;
+				}
+				else
+				{
+					if (ActualLevel >= 200) TotalMass *= 1.776;
+					else if (ActualLevel >= 150) TotalMass *= 1.667;
+					else if (ActualLevel >= 100) TotalMass *= 1.554;
+					else if (ActualLevel >= 50) TotalMass *= 1.445;
+					else TotalMass *= 1.334;
+				}
 			}
 
 			if (Owner.CountInv("PowerGuard")) TotalMass *= 3;
 			if (Owner.CountInv("PowerWeaken")) TotalMass /= 1.5;
 			
 			// Fist Blocks
-			if ((weapon is "FistMarine") && owner.CountInv("FistPlayerBlockItem"))
+			if ((weapon is "FistMarine" || weapon is "FistHeiwa") && 
+					 owner.CountInv("FistPlayerBlockItem"))
 			{
-				if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 2;
-				if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 2.667;
-				if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 4;
-				if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 7.5;
+				if (weapon is "FistMarine")
+				{
+					if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 2;
+					if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 2.667;
+					if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 4;
+					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 7.5;
+				}
+				else if (weapon is "FistHeiwa")
+				{
+					if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 2.5;
+					if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 3.33375;
+					if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 5;
+					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 9.375;
+				}
 			}
 			/*
 			If (owner.player.ReadyWeapon is "EvilWarriorShield")
@@ -1578,6 +1792,7 @@ class PlayerStatItem : Inventory
 		if (!A_CheckNoTimer())
 		{
 			double CharacterJumpZ = 8.25;
+			if (owner.GetClassName() == "HeiwaPlayer") CharacterJumpZ = 9;
 			if (IsMorphed == 1) 
 			{
 				CharacterJumpZ *= 0.334;
@@ -1587,6 +1802,7 @@ class PlayerStatItem : Inventory
 			// Level
 			double LevelJumpZ = 1.00;
 			double baseval = 0.004375;
+			if (owner.GetClassName() == "HeiwaPlayer") baseval = 0.004773;
 			baseval *= kc_pjumpfactor;
 			if (kc_expgains) 
 			{
@@ -1605,6 +1821,7 @@ class PlayerStatItem : Inventory
 			// Speed
 			double SpeedJumpZ = 1.00;
 			baseval = 0.004375;
+			if (owner.GetClassName() == "HeiwaPlayer") baseval = 0.004773;
 			baseval *= kc_pjumpfactor;
 			if (kc_expgains && kc_extraatkdefspd) 
 			{
@@ -1739,33 +1956,61 @@ class PlayerStatItem : Inventory
 			double armordiffmod = 1.00;
 			int ArmorAmt = owner.CountInv(armorclasstype);
 			double ArmorEnc = 0.00;
-			ArmorEnc *= kc_armorencumbrance;
-			if (owner.waterlevel >= 3) 
+			if (owner.GetClassName() == "HeiwaPlayer")
 			{
-				ArmorEnc *= 1.25;
+				if (darmortype == 1) ArmorEnc = (ArmorAmt * (0.00025 * armordiffmod)); // 0.025;
+				if (darmortype == 2) ArmorEnc = (ArmorAmt * (0.0003125 * armordiffmod)); // 0.0625;
 			}
+			else
+			{
+				if (darmortype == 1) ArmorEnc = (ArmorAmt * (0.000025 * armordiffmod)); // 0.0025;
+				if (darmortype == 2) ArmorEnc = (ArmorAmt * (0.00003125 * armordiffmod)); // 0.00625;
+			}
+			ArmorEnc *= kc_armorencumbrance;
+			if (owner.waterlevel >= 3) ArmorEnc *= 1.25;
+			
 			double lvlfact = 0.02;
 			if (skill <= 0) lvlfact = 0.04;
 			if (skill == 1) lvlfact = 0.035;
 			if (skill == 2) lvlfact = 0.03;
 			if (skill == 3) lvlfact = 0.025;
 			if (skill >= 4) lvlfact = 0.02;
-			if (owner.waterlevel >= 3) 
-			{
-				lvlfact *= 0.75;
-			}
+			if (owner.GetClassName() == "HeiwaPlayer") lvlfact *= 1.75;
+			if (owner.waterlevel >= 3) lvlfact *= 0.75;
+			
 			if (ArmorEnc > 0.0) ArmorEnc *= (1.0 - (ActualLevel * lvlfact));
 			ArmorJumpZ -= ArmorEnc;
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Armor]: %.8f, ArmorEnc: %.8f, kc_armorencumbrance: %.8f", ArmorJumpZ, ArmorEnc, kc_armorencumbrance);
 
 			// Special
 			double SpecialJumpZ = 1.00;
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (owner.CountInv("TSArmorTier2")) 
+				{
+					if (owner.CountInv("TimeSeraphVisor")) SpecialJumpZ *= frandompick(1.0,1.1875,1.1875,1.1875,1.375); 
+																						else SpecialJumpZ *= frandompick(1.0,1.125,1.125,1.125,1.25);
+				}
+			}
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [SpecialItems]: %.8f", SpecialJumpZ);
 
 			// Weapon Checks
 			weapon = owner.player.ReadyWeapon;
 			double WeaponJumpZ = 1.00;
 			double WeaponJumpEx = 0.00;
+			if (weapon is "FistMarine" || 
+					weapon is "FistHeiwa")
+			{
+				if (berserked) 
+				{
+					if (owner.GetClassName() == "HeiwaPlayer") WeaponJumpEx += 0.24735;
+																								else WeaponJumpEx += 0.1625;
+				}
+				else 
+				{
+					WeaponJumpEx += 0.125;
+				}
+			}
 			/*
 			If (weapon is "EvilWarriorShield")
 			{
@@ -1787,10 +2032,20 @@ class PlayerStatItem : Inventory
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [WeaponEquipped]: %.8f, WeaponJumpEx: %.8f, kc_weaponencumbrance: %.8f", WeaponJumpZ, WeaponJumpEx, kc_weaponencumbrance);
 			
 			double FistBlockJumpZ = 1.00;
-			if (Owner.CountInv("FistPlayerSpeedFactor")) FistBlockJumpZ = 0.75;
-			if (Owner.CountInv("FistPlayerSpeedFactor2")) FistBlockJumpZ = 0.825;
-			if (Owner.CountInv("FistPlayerSpeedFactor3")) FistBlockJumpZ = 0.90;
-			if (Owner.CountInv("FistPlayerSpeedFactor4")) FistBlockJumpZ = 0.975;
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (Owner.CountInv("FistPlayerSpeedFactor")) FistBlockJumpZ = 0.875;
+				if (Owner.CountInv("FistPlayerSpeedFactor2")) FistBlockJumpZ = 0.9125;
+				if (Owner.CountInv("FistPlayerSpeedFactor3")) FistBlockJumpZ = 0.95;
+				if (Owner.CountInv("FistPlayerSpeedFactor4")) FistBlockJumpZ = 0.9875;
+			}
+			else
+			{
+				if (Owner.CountInv("FistPlayerSpeedFactor")) FistBlockJumpZ = 0.75;
+				if (Owner.CountInv("FistPlayerSpeedFactor2")) FistBlockJumpZ = 0.825;
+				if (Owner.CountInv("FistPlayerSpeedFactor3")) FistBlockJumpZ = 0.90;
+				if (Owner.CountInv("FistPlayerSpeedFactor4")) FistBlockJumpZ = 0.975;
+			}
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Fist-Blocking]: %.8f", FistBlockJumpZ);
 			
 			// Drowning Debuff
@@ -2200,6 +2455,7 @@ class PlayerStatItem : Inventory
 			globalvars.spdfct = spdfct = 1.0;
 			globalvars.jmpfct = jmpfct = 1.0;
 			globalvars.suvfct = suvfct = 1.0;
+			globalvars.heiwavhardmodifier = heiwavhardmodifier = 0;
 			globalvars.PlayerATK = PlayerATK = 2;
 			globalvars.PlayerDEF = PlayerDEF = 2;
 			globalvars.PlayerSPD = PlayerSPD = 2;
@@ -2208,6 +2464,9 @@ class PlayerStatItem : Inventory
 			globalvars.HealthNoRPGAdd = HealthNoRPGAdd = 0;
 			globalvars.HealthNoRPGAdd2 = HealthNoRPGAdd2 = 0;
 			globalvars.HealthBonusAdd = HealthBonusAdd = 0;
+			globalvars.VitalityPieces = VitalityPieces = 0;
+			globalvars.VitalityCurrHPBoosts = VitalityCurrHPBoosts = 0;
+			globalvars.VitalityCurrHPBoosts2 = VitalityCurrHPBoosts2 = 0;
 			globalvars.MassLevelAdd = MassLevelAdd = 0;
 			globalvars.MassNoRPGAdd = MassNoRPGAdd = 0;
 			globalvars.MassNoRPGAdd2 = MassNoRPGAdd2 = 0;
@@ -2229,6 +2488,7 @@ class PlayerStatItem : Inventory
 			spdfct = globalvars.spdfct;
 			jmpfct = globalvars.jmpfct;
 			suvfct = globalvars.suvfct;
+			heiwavhardmodifier = globalvars.heiwavhardmodifier;
 			PlayerATK = globalvars.PlayerATK;
 			PlayerDEF = globalvars.PlayerDEF;
 			PlayerSPD = globalvars.PlayerSPD;
@@ -2238,6 +2498,9 @@ class PlayerStatItem : Inventory
 			HealthNoRPGAdd = globalvars.HealthNoRPGAdd;
 			HealthNoRPGAdd2 = globalvars.HealthNoRPGAdd2;
 			HealthBonusAdd = globalvars.HealthBonusAdd;
+			VitalityPieces = globalvars.VitalityPieces;
+			VitalityCurrHPBoosts = globalvars.VitalityCurrHPBoosts;
+			VitalityCurrHPBoosts2 = globalvars.VitalityCurrHPBoosts2;
 			MassLevelAdd = globalvars.MassLevelAdd;
 			MassNoRPGAdd = globalvars.MassNoRPGAdd;
 			MassNoRPGAdd2 = globalvars.MassNoRPGAdd2;
@@ -2317,7 +2580,9 @@ class PlayerStatItem : Inventory
 		levelmodulo = PlayerLevel % 20;
 		if (HeiwaPlayer(owner)) 
 		{
-			if (random(1,100) <= 25)
+			int basechance = 25;
+			if (heiwavhardmodifier) basechance = random(12,13);
+			if (random(1,100) <= basechance)
 			{
 				if (levelmodulo == 0) levelbonustype = 0;
 				else if (levelmodulo == 4) levelbonustype = randompick[statitem](1,1,1,0,0);
@@ -2495,6 +2760,11 @@ class PlayerStatItem : Inventory
 		{
 			BaseChance1 = 0.625;
 			BaseChance2 = 0.083333334;
+			if (heiwavhardmodifier) 
+			{
+				BaseChance1 = 0.875;
+				BaseChance2 = 0.25;
+			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
@@ -2539,6 +2809,11 @@ class PlayerStatItem : Inventory
 		{
 			BaseChance1 = 0.875;
 			BaseChance2 = 0.083333334;
+			if (heiwavhardmodifier) 
+			{
+				BaseChance1 = 1.125;
+				BaseChance2 = 0.25;
+			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
@@ -2583,6 +2858,11 @@ class PlayerStatItem : Inventory
 		{
 			BaseChance1 = 0.675;
 			BaseChance2 = 0.083333334;
+			if (heiwavhardmodifier) 
+			{
+				BaseChance1 = 0.925;
+				BaseChance2 = 0.25;
+			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
@@ -2627,6 +2907,11 @@ class PlayerStatItem : Inventory
 		{
 			BaseChance1 = 0.3375;
 			BaseChance2 = 0.083333334;
+			if (heiwavhardmodifier) 
+			{
+				BaseChance1 = 0.5875;
+				BaseChance2 = 0.25;
+			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
@@ -2664,6 +2949,7 @@ class PlayerStatItem : Inventory
 		// Health/HP Boost
 		CurrentHealth = owner.player.mo.health;
 		HPMaxGain = 0;
+		VitHPMaxGain = 0;
 		
 		if (KCPlayer(owner))
 		{
@@ -2791,6 +3077,7 @@ class PlayerStatItem : Inventory
 				HPMaxGain += (MaxHealthTrue / random(347,349));
 			}
 		}
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) HPMaxGain *= frandom(1.125,1.375);
 		
 		if (HPMaxGain < 1) HPMaxGain = 1;
 		owner.player.mo.health += HPMaxGain;
@@ -2909,6 +3196,8 @@ class PlayerStatItem : Inventory
 				MassGain += (BaseMass / 648);
 			}
 		}
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) MassGain *= frandom(1.125,1.375);
+
 		MassLevelAdd += MassGain;
 		if (type == 1) 
 		{
@@ -2921,6 +3210,41 @@ class PlayerStatItem : Inventory
 				if (skill == 3) MassGain *= 1.25;
 				if (skill >= 4) MassGain *= 1.0;
 			}
+		}
+		
+		// Vitality Points [Heiwa Only, 1 full point = +15 max HP ala EarthBound :V]
+		double vitgain0 = frandompick(0.0,0.0625,0.0625,0.0625,0.0625,0.0625,0.125);
+		double vitgain1 = (vitgain0 + 0.0625);
+		double vitgain2 = (vitgain0 + 0.1875);
+		double vitgain3 = (vitgain0 + 0.25);
+		
+		double VitalPieceGain = 0.0;
+		VitalPieceGain += 													frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2);
+		if (levelbonustype <= -1) VitalPieceGain += frandompick[statitem](vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain3,vitgain3,vitgain3,vitgain3,vitgain3);
+		if (levelbonustype == 0)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain3,vitgain3);
+		if (levelbonustype == 1)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain3);
+		if (levelbonustype >= 2)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1);
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) VitalPieceGain *= frandom(1.125,1.375);
+		VitalityPieces += VitalPieceGain;
+
+		int VitalityPiecesAdd = floor(int(VitalityPieces));
+		if (HeiwaPlayer(owner))
+		{
+			if (kcdebug_levelupdisplays) Console.Printf("VitHPMaxGain [pre]: %d, VitalityCurrHPBoosts2: (%d / %d)", VitHPMaxGain, VitalityCurrHPBoosts2, VitalityPiecesAdd);
+			while (VitalityCurrHPBoosts2 < VitalityPiecesAdd)
+			{
+				VitHPMaxGain += 15;
+				if (heiwavhardmodifier) 
+				{
+					(MassGain += (randompick(6,7,7,8,8,8,8,9,9,10) + randompick(-1,0,0,0,0,0,0,0,0,1)) * frandom(1.125,1.375));
+				}
+				else
+				{
+					MassGain += (randompick(6,7,7,8,8,8,8,9,9,10) + randompick(-1,0,0,0,0,0,0,0,0,1));
+				}
+				VitalityCurrHPBoosts2++;
+			}
+			if (kcdebug_levelupdisplays) Console.Printf("VitHPMaxGain [post]: %d, VitalityCurrHPBoosts2: (%d / %d)", VitHPMaxGain, VitalityCurrHPBoosts2, VitalityPiecesAdd);
 		}
 		if (kcdebug_levelupdisplays) Console.Printf("MassGain: %d", MassGain);
 		
@@ -2975,7 +3299,8 @@ class PlayerStatItem : Inventory
 					if (!owner.CountInv("SilentLevelUp"))
 					{
 						string LevelUpMsg = "";
-						LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
+						if (VitHPMaxGain > 0) LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP, \c[green]+%d Vitality\c[brick]]", PlayerLevel, (HPMaxGain + VitHPMaxGain), (VitHPMaxGain / 15));
+														 else LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
 						if (kc_extraatkdefspd)
 						{
 							if ((PlayerATK > PrevATK) || (PlayerDEF > PrevDEF) || (PlayerSPD > PrevSPD)) LevelUpMsg.AppendFormat("\n\n");
@@ -3131,10 +3456,7 @@ class PlayerStatItem : Inventory
 				TSARegenAmt = (8.0 + (PlayerLevel * 0.000625));
 				TSARegenAmt *= TimeArmorRelicsOwned;
 				if (TSARegenAmt) TSARegenAmt *= kc_tsaregenspd;
-				nm = "KCTimeFreezer1";
-				nn = "KCTimeFreezer2";
-				no = "KCTimeFreezer3";
-				if (owner.CountInv(nm) || owner.CountInv(nn) || owner.CountInv(no)) 
+				if (A_CheckTimeFreeze()) 
 				{
 					if (TimeArmorRelicsOwned == 1) TSARegenAmt *= 0.25;
 					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
@@ -3485,13 +3807,9 @@ class PlayerStatItem : Inventory
 		
 		string nt;
 		// Hand To Hand
-		if (weapon is "FistMarine") 
+		if (weapon is "FistMarine" || weapon is "FistHeiwa") 
 		{
 		}
-		//else
-		//if (weapon is "FistHeiwa") 
-		//{
-		//}
 		else
 		{
 			nt = "FistPlayerSpeedFactor"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
@@ -3785,11 +4103,15 @@ class PlayerStatItem : Inventory
 		owner.player.mo.maxhealth = MaxHealthTrue;
 		// Set Global Vars [End]
 		// Set Global Vars [End]
+		globalvars.heiwavhardmodifier = heiwavhardmodifier;
 		globalvars.BaseStartMaxHealth = BaseStartMaxHealth;
 		globalvars.HealthLevelAdd = HealthLevelAdd;
 		globalvars.HealthNoRPGADD = HealthNoRPGADD;
 		globalvars.HealthNoRPGADD2 = HealthNoRPGADD2;
 		globalvars.HealthBonusAdd = HealthBonusAdd;
+		globalvars.VitalityPieces = VitalityPieces;
+		globalvars.VitalityCurrHPBoosts = VitalityCurrHPBoosts;
+		globalvars.VitalityCurrHPBoosts2 = VitalityCurrHPBoosts2;
 		globalvars.MassLevelAdd = MassLevelAdd;
 		globalvars.MassNoRPGAdd = MassNoRPGAdd;
 		globalvars.MassNoRPGAdd2 = MassNoRPGAdd2;
@@ -4502,7 +4824,7 @@ class PlayerDashJump : Inventory
 			MaxDashCooldown *= 1.75;
 		}
 		
-		if (weapon is "FistMarine")
+		if (weapon is "FistMarine" || weapon is "FistHeiwa")
 		{
 			if (kc_expgains)
 			{
