@@ -3622,6 +3622,7 @@ class EVP_Footsteps : Actor
 			int sndchanshift = 0;
 			if (type == 1) sndchanshift = 10;
 			fstpitch = frandom(0.96375,1.03125);
+			if (plr.GetClassName() == "HeiwaPlayer") fstpitch *= 1.334;
 			
 			fstvolume = CVar.GetCvar("kc_footstepvolume", players[0]).GetFloat();
 			fstvolume *= truecrouchfactor;
@@ -3815,8 +3816,7 @@ class EVP_Footsteps : Actor
 				(plr.waterlevel <= 1 && plr.WaterDepth <= (plr.height * 0.1667)) &&
 				(plr.pos.z - plr.floorz) <= 0 &&
 				!plr.CountInv("DashTics") &&
-				ismanualmove &&
-				(plr.GetClassName() == "KCPlayer"))
+				ismanualmove)
 		{
 			HandleFootsteps(0,isrunning); // Walking
 			
