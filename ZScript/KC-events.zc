@@ -4331,7 +4331,7 @@ class KC_EventHandler : EventHandler
 									int maxchance = 256;
 									if (waslegendary) maxchance *= 0.25;
 									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
-									if (maxchance <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
+									if (random(1,maxchance) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 									{
 										double maskpitch = 1.00;
 										if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
