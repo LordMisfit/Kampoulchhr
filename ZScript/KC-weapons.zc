@@ -343,6 +343,8 @@ class KCWeaponBase : Weapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double pang = playera.angle;
 		double pptc = playera.pitch;
+		A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
+		/*
 		if (playera.CountInv("KCPowerSpread2"))
 		{
 			playera.angle -= spread2angle;
@@ -379,10 +381,10 @@ class KCWeaponBase : Weapon
 			A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, sflags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
 			playera.angle = pang;
 		}
-		A_FireBulletsEx(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy, defenseignorefactor);
+		*/
 	}
 
-	action Actor, Actor A_FireProjectileEx(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)	
+	action Actor, Actor A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)	
 	{
 		let player = self.player;
 		if (!player) return null, null;
@@ -432,83 +434,15 @@ class KCWeaponBase : Weapon
 			}
 			if (kcdebug_weaponstatdisplays)
 			{
-				if (misl) Console.Printf("\c[green](A_FireProjectileEx)\c- misl: %p [%s]", misl, misl.GetClassName());
-				if (realmisl) Console.Printf("\c[green](A_FireProjectileEx)\c- realmisl: %p [%s]", realmisl, realmisl.GetClassName());
+				if (misl) Console.Printf("\c[green](A_FireProjectile)\c- misl: %p [%s]", misl, misl.GetClassName());
+				if (realmisl) Console.Printf("\c[green](A_FireProjectile)\c- realmisl: %p [%s]", realmisl, realmisl.GetClassName());
 			}
 			return misl, realmisl;
 		}
 		return null, null;
 	}
 	
-	//action Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor, Actor A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
-	action void A_FireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
-	{
-		actor misl1, misl2, misl3, misl4, misl5, misl6, misl7;
-		actor realmisl1, realmisl2, realmisl3, realmisl4, realmisl5, realmisl6, realmisl7;
-		
-		let globalvars = KCGlobalVariables.Get();
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		double pang = playera.angle;
-		double pptc = playera.pitch;
-		if (playera.CountInv("KCPowerSpread2"))
-		{
-			playera.angle -= spread2angle;
-			playera.pitch -= spread2pitch;
-			[misl7, realmisl7] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle -= spread2angle;
-			playera.pitch += spread2pitch;
-			[misl6, realmisl6] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle += spread2angle;
-			playera.pitch -= spread2pitch;
-			[misl5, realmisl5] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle += spread2angle;
-			playera.pitch += spread2pitch;
-			[misl4, realmisl4] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-			playera.pitch = pptc;
-		}
-		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
-		{
-			playera.angle -= spread1angle;
-			[misl3, realmisl3] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-			
-			playera.angle += spread1angle;
-			[misl2, realmisl2] = A_FireProjectileEx(missiletype, angle, false, spawnofs_xy, spawnheight, flags, pitch);
-			playera.angle = pang;
-		}
-		[misl1, realmisl1] = A_FireProjectileEx(missiletype, angle, useammo, spawnofs_xy, spawnheight, flags, pitch);
-		if (kcdebug_weaponstatdisplays)
-		{
-			if (misl1) Console.Printf("\c[yellow](A_FireProjectile)\c- misl1: %p [%s]", misl1, misl1.GetClassName());
-			if (realmisl1) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl1: %p [%s]", realmisl1, realmisl1.GetClassName());
-			if (misl2) Console.Printf("\c[yellow](A_FireProjectile)\c- misl2: %p [%s]", misl2, misl2.GetClassName());
-			if (realmisl2) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl2: %p [%s]", realmisl2, realmisl2.GetClassName());
-			if (misl3) Console.Printf("\c[yellow](A_FireProjectile)\c- misl3: %p [%s]", misl3, misl3.GetClassName());
-			if (realmisl3) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl3: %p [%s]", realmisl3, realmisl3.GetClassName());
-			if (misl4) Console.Printf("\c[yellow](A_FireProjectile)\c- misl4: %p [%s]", misl4, misl4.GetClassName());
-			if (realmisl4) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl4: %p [%s]", realmisl4, realmisl4.GetClassName());
-			if (misl5) Console.Printf("\c[yellow](A_FireProjectile)\c- misl5: %p [%s]", misl5, misl5.GetClassName());
-			if (realmisl5) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl5: %p [%s]", realmisl5, realmisl5.GetClassName());
-			if (misl6) Console.Printf("\c[yellow](A_FireProjectile)\c- misl6: %p [%s]", misl6, misl6.GetClassName());
-			if (realmisl6) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl6: %p [%s]", realmisl6, realmisl6.GetClassName());
-			if (misl7) Console.Printf("\c[yellow](A_FireProjectile)\c- misl7: %p [%s]", misl7, misl7.GetClassName());
-			if (realmisl7) Console.Printf("\c[yellow](A_FireProjectile)\c- realmisl7: %p [%s]", realmisl7, realmisl7.GetClassName());
-		}
-		//return misl1, realmisl1, misl2, realmisl2, misl3, realmisl3, misl4, realmisl4, misl5, realmisl5, misl6, realmisl6, misl7, realmisl7;
-	}
-	
-	action void A_CustomPunchEx(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
+	action void A_CustomPunch(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
 	{
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np;
@@ -676,52 +610,6 @@ class KCWeaponBase : Weapon
 			}
 		}
 	}
-
-	action void A_CustomPunch(int damage, bool norandom = false, int flags = CPF_USEAMMO, class<Actor> pufftype = "BulletPuff", double range = 0, double lifesteal = 0, int lifestealmax = 0, class<BasicArmorBonus> armorbonustype = "ArmorBonus", sound MeleeSound = 0, sound MissSound = "")
-	{
-		let globalvars = KCGlobalVariables.Get();
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		double pang = playera.angle;
-		double pptc = playera.pitch;
-		if (playera.CountInv("KCPowerSpread2"))
-		{
-			playera.angle -= spread2angle;
-			playera.pitch -= spread2pitch;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle -= spread2angle;
-			playera.pitch += spread2pitch;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle += spread2angle;
-			playera.pitch -= spread2pitch;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-			playera.pitch = pptc;
-
-			playera.angle += spread2angle;
-			playera.pitch += spread2pitch;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-			playera.pitch = pptc;
-		}
-		if (playera.CountInv("KCPowerSpread2") || playera.CountInv("KCPowerSpread1"))
-		{
-			playera.angle -= spread1angle;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-			
-			playera.angle += spread1angle;
-			A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-			playera.angle = pang;
-		}
-		A_CustomPunchEx(damage, norandom, flags, pufftype, range, lifesteal, lifestealmax, armorbonustype, MeleeSound, MissSound);
-	}
 	
 	action int A_CheckMeleeDestroyProj(int type = 0)
 	{
@@ -816,6 +704,7 @@ class KCWeaponBase : Weapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double pang = playera.angle;
 		double pptc = playera.pitch;
+		/*
 		if (playera.CountInv("KCPowerSpread2"))
 		{
 			A_SetAngle(angle+spread2angle);
@@ -878,6 +767,7 @@ class KCWeaponBase : Weapon
 			A_SetAngle(angle+spread1angle);
 			angoffset += spread1angle;
 		}
+		*/
 	}
 	
 	action void A_Destroy()
@@ -1572,7 +1462,7 @@ class KCWeaponBase : Weapon
 				randpitch = (shotpitch * 0.625);
 				randangle = (shotangle * 0.625);
 			}
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
@@ -1652,7 +1542,7 @@ class KCWeaponBase : Weapon
 			double randangle = (shotangle * 0.5);
 			randpitch *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			randangle *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
@@ -1714,7 +1604,7 @@ class KCWeaponBase : Weapon
 			double randangle = (shotangle * 0.5);
 			randangle *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
 			randpitch *= frandompick(0.25,0.334,0.334,0.334,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.375,0.445,0.445,0.445,0.5);
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
@@ -1810,7 +1700,7 @@ class KCWeaponBase : Weapon
 				randpitch = (shotpitch * 0.625);
 				randangle = (shotangle * 0.625);
 			}
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
@@ -4508,7 +4398,7 @@ class ChaingunMarine : MarineWeapon replaces Chaingun
 				randpitch = (shotpitch * 0.625);
 				randangle = (shotangle * 0.625);
 			}
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (5 * random(1,3)), 'Bullet', 0.0);
 		}
 	}
@@ -4619,7 +4509,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 				double origang = playera.angle;
 				double randpitch = ptcoffset;
 				double randangle = angoffset;
-				[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				[BombShotsB, BombShots] = A_FireProjectile("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 				A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 			}
 		}
@@ -4689,7 +4579,7 @@ class RocketLauncherMarine : MarineWeapon replaces RocketLauncher
 						double origang = playera.angle;
 						double randpitch = ptcoffset;
 						double randangle = angoffset;
-						[BombShotsB, BombShots] = A_FireProjectileEx("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+						[BombShotsB, BombShots] = A_FireProjectile("KCHowitzerTracer",frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 						A_SetBulletTracerDmg(BombShotsB, BombShots, (40 * random(1,8)), 'Explosive', 0.0);
 					}
 				}
@@ -5255,7 +5145,7 @@ class Glock21 : MarineWeapon
 				actor BombShotsB, BombShots;
 				KCPlayerPawn KCP;
 				KCP = KCPlayerPawn(playera);
-				[BombShotsB, BombShots] = A_FireProjectileEx(shottype,frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				[BombShotsB, BombShots] = A_FireProjectile(shottype,frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 				A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(defignore1,defignore2));
 			}
 		}
@@ -5443,7 +5333,7 @@ class TommyGun : MarineWeapon
 			double origang = playera.angle;
 			double randpitch = shotpitch;
 			double randangle = shotangle;
-			[BombShotsB, BombShots] = A_FireProjectileEx("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.05,0.1));
 		}
 	}
@@ -6883,7 +6773,7 @@ class ImpalerXBow : MarineWeapon
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				BombShots = A_FireProjectileEx("ImpalerMissile",0,1);
+				BombShots = A_FireProjectile("ImpalerMissile",0,1);
 				A_SetSonicNailStats(BombShots,0);
 				
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -6984,15 +6874,15 @@ class ImpalerXBow : MarineWeapon
 				let globalvars = KCGlobalVariables.Get();
 				double xspread = frandompick(1.25,2.5,2.5,2.5,3.75);
 				actor BombShots;
-				BombShots = A_FireProjectileEx("ImpalerMissile",0,1);
+				BombShots = A_FireProjectile("ImpalerMissile",0,1);
 				A_SetSonicNailStats(BombShots,0);
-				BombShots = A_FireProjectileEx("ImpalerMissile2",xspread,0);
+				BombShots = A_FireProjectile("ImpalerMissile2",xspread,0);
 				A_SetSonicNailStats(BombShots,1);
-				BombShots = A_FireProjectileEx("ImpalerMissile2",-xspread,0);
+				BombShots = A_FireProjectile("ImpalerMissile2",-xspread,0);
 				A_SetSonicNailStats(BombShots,1);
-				BombShots = A_FireProjectileEx("ImpalerMissile3",(xspread*2),0);
+				BombShots = A_FireProjectile("ImpalerMissile3",(xspread*2),0);
 				A_SetSonicNailStats(BombShots,2);
-				BombShots = A_FireProjectileEx("ImpalerMissile3",(-xspread*2),0);
+				BombShots = A_FireProjectile("ImpalerMissile3",(-xspread*2),0);
 				A_SetSonicNailStats(BombShots,2);
 				
 				A_XBowRecoil(2.1875);
@@ -9146,7 +9036,7 @@ Class Translocator : MarineWeapon
 			{	
 				if (!invoker.beacon) 
 				{
-					[invoker.bacon, invoker.beacon] = A_FireProjectileEx("TLBeacon",spawnheight:-5,pitch:-5);
+					[invoker.bacon, invoker.beacon] = A_FireProjectile("TLBeacon",spawnheight:-5,pitch:-5);
 					if (invoker.beacon)
 					{
 						A_Startsound("Translocator/shoot");
@@ -9260,7 +9150,7 @@ Class Translocator : MarineWeapon
 }
 
 //
-class FistHeiwa : MarineWeapon replaces Fist
+class FistHeiwa : MarineWeapon // replaces Fist
 {
 	default
 	{
@@ -9386,7 +9276,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 3)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
@@ -9403,7 +9293,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 2;
+				int tic = 3;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 4)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
@@ -9452,7 +9342,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 2)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 8)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
@@ -9470,7 +9360,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 2;
+				int tic = 3;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 1)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
@@ -9487,7 +9377,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 5)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 11)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
@@ -9514,7 +9404,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 3)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
@@ -9531,7 +9421,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 2;
+				int tic = 3;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 4)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
@@ -9580,7 +9470,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 2)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 8)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
@@ -9598,7 +9488,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 2;
+				int tic = 3;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 1)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
@@ -9615,7 +9505,7 @@ class FistHeiwa : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				int tic = 3;
+				int tic = 4;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 5)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 11)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
