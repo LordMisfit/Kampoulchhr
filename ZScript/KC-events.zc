@@ -291,7 +291,7 @@ class KC_EventHandler : EventHandler
 	actor, int, int AddLevelSpecials(actor spawnee, int monsterlevel, int monsterrating)
 	{
 		double levelmulfact = 1.5;
-		if (exex_monsterlevelenabledflags)
+		if (kc_monsterlevelenabledflags)
 		{
 			if (monsterlevel >= (10 * levelmulfact))
 			{
@@ -459,7 +459,7 @@ class KC_EventHandler : EventHandler
 	actor, int, int AddLevelSpecials2(actor spawnee, int monsterlevel, int monsterrating)
 	{
 		double levelmulfact = 1.5;
-		if (exex_monsterlevelenabledflags)
+		if (kc_monsterlevelenabledflags)
 		{
 			if (monsterlevel >= (40 * levelmulfact))
 			{
@@ -578,7 +578,7 @@ class KC_EventHandler : EventHandler
 	actor, int, int AddLevelSpecials3(actor spawnee, int monsterlevel, int monsterrating)
 	{
 		double levelmulfact = 1.5;
-		if (exex_monsterlevelenabledflags)
+		if (kc_monsterlevelenabledflags)
 		{
 			int fastchance = 0;
 			if (monsterlevel >= (25 * levelmulfact))
@@ -1902,6 +1902,12 @@ class KC_EventHandler : EventHandler
 					if (Skill >= 4) basehealth *= 20;
 					spawnee.health = basehealth;
 				}
+				// ?????????? ??'s ???????????
+				nm = "EviternatusAnta"; extracheck = nm;
+				nm = "EviternatusBete"; extracheck = nm;
+				nm = "EviternatusCeph"; extracheck = nm;
+				nm = "EviternatusDelp"; extracheck = nm;
+				
 				// TUTNT's Source Boss
 				nm = "TheSource"; extracheck = nm;
 				if (spawnname == extracheck) 
@@ -3307,6 +3313,7 @@ class KC_EventHandler : EventHandler
 				{
 					// Weapons/Backpacks [Type 6]
 					basechance = kc_inventorydroprate6;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3542,6 +3549,7 @@ class KC_EventHandler : EventHandler
 					double rand = 2.0;
 					// Health Items [Type 7]
 					basechance = kc_inventorydroprate7;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3588,6 +3596,7 @@ class KC_EventHandler : EventHandler
 					double rand = 2.0;
 					// Armor Items [Type 8]
 					basechance = kc_inventorydroprate8;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 1.0 + (monsterrating * 0.25);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3679,6 +3688,7 @@ class KC_EventHandler : EventHandler
 				{
 					// Primary [Type 1]
 					basechance = kc_inventorydroprate1;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3705,6 +3715,7 @@ class KC_EventHandler : EventHandler
 					
 					// Secondary [Type 2]
 					basechance = kc_inventorydroprate2;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 0.5 + (monsterrating * 0.125); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3723,6 +3734,7 @@ class KC_EventHandler : EventHandler
 					
 					// Rare Powerup Drop [Type 3]
 					basechance = kc_inventorydroprate3;
+					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
 					luckbase = 2.0 + (monsterrating * 0.5); // (512) 
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -3768,7 +3780,8 @@ class KC_EventHandler : EventHandler
 					int timefreezes;
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					basechance = kc_inventorydroprate5;
-					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") basechance *= 0.75;
+					basechance *= kc_inventorydropratemulti;
+					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") basechance *= 0.875;
 					basechance *= skillmult;
 					if (timefreezes)
 					{
@@ -3851,7 +3864,7 @@ class KC_EventHandler : EventHandler
 						}
 					}
 					luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
-					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") luckbase *= 1.334;
+					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") luckbase *= 1.143;
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_tsaluckfactor;
 					if (MiscItem)
@@ -3896,6 +3909,36 @@ class KC_EventHandler : EventHandler
 							if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 						}
 					}
+					
+					// Capsules [Type 12] (Heiwa Only)
+					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+					{
+						basechance = kc_inventorydroprate12;
+						basechance *= kc_inventorydropratemulti;
+						basechance *= skillmult;
+						luckbase = 1.75 + (monsterrating * 0.3875); // (512) 
+						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+						luckbase *= kc_luckfactor;
+						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+						maxchance = basechance;
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d)", maxchance, basechance);
+						if (random(1,maxchance) <= 1)
+						{
+							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(193,194,224,225,266,267);
+							string raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							raredropsndvol = frandom(1.75,2.25);
+							raredropsndchannel = randompick(293,294,324,325,366,367);
+							raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							
+							victim.A_SpawnItemEx("VitalCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+						}
+					}
+					
 				}
 			}
 		}
@@ -4190,11 +4233,22 @@ class KC_EventHandler : EventHandler
 						{
 							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
 							{
-											if (PLevel < 2) BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
-								else if (PLevel < 5) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
-								else if (PLevel < 10) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
-								else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.875,2.25,2.25,2.25,2.625);
-																 else BaseExpMultiBonus = frandompick(1.25,1.5,1.5,1.5,1.75);
+								if (MiscItem && MiscItem.heiwavhardmodifier)
+								{
+											 if (PLevel < 5)  BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
+									else if (PLevel < 10) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
+									else if (PLevel < 25) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
+									else if (PLevel < 50) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
+																	 else BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
+								}
+								else
+								{
+											 if (PLevel < 2)  BaseExpMultiBonus = frandompick(5.5,7.334,7.334,7.334,6.772);
+									else if (PLevel < 5)  BaseExpMultiBonus = frandompick(3.75,5.0,5.0,5.0,6.25);
+									else if (PLevel < 10) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
+									else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.5,2.0,2.0,2.0,2.5);
+																	 else BaseExpMultiBonus = frandompick(1.125,1.25,1.25,1.25,1.375);
+								}
 								
 								double BaseExpMultiBonus2 = 1.0;
 								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus2 += 0.125;
@@ -4208,12 +4262,6 @@ class KC_EventHandler : EventHandler
 								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
 								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.5;
 							}
-						}
-						else
-						{
-							if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.25;
-							if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
-							if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.5;
 						}
 						ExpGain *= BaseExpMultiBonus;
 						if (MiscItem)

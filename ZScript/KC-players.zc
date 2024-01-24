@@ -2004,7 +2004,8 @@ class KCPlayerPawn : PlayerPawn
 			flags |= DMG_NO_ARMOR;
 			if ((weapon is "FistMarine" || weapon is "FistHeiwa") && CountInv("FistPlayerBlockItem")) 
 			{
-				damage *= frandompick(0.001,0.001,0.01,0.01,0.01,0.01,0.1,0.1);
+				if (weapon is "FistHeiwa") damage *= frandompick(0.00025,0.00025,0.0025,0.0025,0.0025,0.0025,0.025,0.025);
+															else damage *= frandompick(0.001,0.001,0.01,0.01,0.01,0.01,0.1,0.1);
 				weapcheck = true;
 			}
 			/*

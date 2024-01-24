@@ -3351,3 +3351,91 @@ class CellPackSpawner : BaseAmmoSpawner replaces CellPack
 			Stop;
 	}
 }
+
+class StatCaspuleBase : CustomInventoryExt
+{
+	default
+	{
+		+FLOATBOB;
+		+DONTGIB;
+		+COUNTITEM;
+		Scale 0.5;
+		Radius 12;
+		Height 24;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.Pickupsound "Capsule/Pickup";
+	}
+}
+
+class VitalCapsule : StatCaspuleBase
+{
+	default
+	{
+		+DONTGIB;
+		+COUNTITEM;
+		+INVENTORY.ALWAYSPICKUP;
+		Inventory.Pickupsound "Capsule/Pickup";
+		Inventory.PickupMessage "Picked up a \cnVitality Capsule\c-! \c[brick]Max HP increased by 15!\c-";
+	}
+	
+	States
+	{
+		Spawn:
+			CAPS V -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem)
+				{
+					MiscItem.VitalityPieces++;
+					globalvars.VitalityPieces++;
+				}
+			}
+			Stop;
+	}
+}
+/*
+class IQCapsule : StatCaspuleBase
+{
+	States
+	{
+		Spawn:
+			CAPS I -1;
+			Stop;
+	}
+}
+
+class GutsCapsule : StatCaspuleBase
+{
+	States
+	{
+		Spawn:
+			CAPS G -1;
+			Stop;
+	}
+}
+
+class SpeedCapsule : StatCaspuleBase
+{
+	States
+	{
+		Spawn:
+			CAPS S -1;
+			Stop;
+	}
+}
+
+class LuckCapsule : StatCaspuleBase
+{
+	States
+	{
+		Spawn:
+			CAPS L -1;
+			Stop;
+	}
+}
+*/
