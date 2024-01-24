@@ -2072,7 +2072,7 @@ class PlayerStatItem : Inventory
 			if (weapon is "FistMarine" || 
 					weapon is "FistHeiwa")
 			{
-				if (berserked) 
+				if (berserked)
 				{
 					if (owner.GetClassName() == "HeiwaPlayer") WeaponJumpEx += 0.20;
 																								else WeaponJumpEx += 0.1625;
@@ -2080,6 +2080,38 @@ class PlayerStatItem : Inventory
 				else 
 				{
 					WeaponJumpEx += 0.125;
+				}
+			}
+			if (weapon is "Devastator")
+			{
+				bool dualdevs = false;
+				if (owner.CountInv("DualDevastators") && !owner.CountInv("DualDevastatorsDisabled")) dualdevs = true;
+
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (dualdevs)
+					{
+						if (berserked) WeaponJumpEx -= 0.05625;
+											else WeaponJumpEx -= 0.225;
+					}
+					else
+					{
+						if (berserked) WeaponJumpEx -= 0.025;
+											else WeaponJumpEx -= 0.1;
+					}
+				}
+				else
+				{
+					if (dualdevs)
+					{
+						if (berserked) WeaponJumpEx -= 0.028125;
+											else WeaponJumpEx -= 0.1125;
+					}
+					else
+					{
+						if (berserked) WeaponJumpEx -= 0.0125;
+											else WeaponJumpEx -= 0.05;
+					}
 				}
 			}
 			/*
@@ -4796,6 +4828,61 @@ class PlayerStatItem : Inventory
 		Speed *= ArmorFactor;
 		HUDSpeed *= ArmorFactor;
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Armor]: %.8f", ArmorFactor);
+
+		double WeaponFactor = 1.0;
+		double WeaponFactorEx = 0.0;
+		// Weapon Checks
+		if ((weapon is "FistMarine" || weapon is "FistHeiwa"))
+		{
+			if (berserked)
+			{
+				if (owner.GetClassName() == "HeiwaPlayer") WeaponFactorEx += 0.275;
+																							else WeaponFactorEx += 0.25;
+			}
+			else 
+			{
+				if (owner.GetClassName() == "HeiwaPlayer") WeaponFactorEx += 0.1375;
+																							else WeaponFactorEx += 0.125;
+			}
+		}
+		if (weapon is "Devastator")
+		{
+			bool dualdevs = false;
+			if (owner.CountInv("DualDevastators") && !owner.CountInv("DualDevastatorsDisabled")) dualdevs = true;
+
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (dualdevs)
+				{
+					if (berserked) WeaponFactorEx -= 0.1125;
+										else WeaponFactorEx -= 0.45;
+				}
+				else
+				{
+					if (berserked) WeaponFactorEx -= 0.05;
+										else WeaponFactorEx -= 0.2;
+				}
+			}
+			else
+			{
+				if (dualdevs)
+				{
+					if (berserked) WeaponFactorEx -= 0.05625;
+										else WeaponFactorEx -= 0.225;
+				}
+				else
+				{
+					if (berserked) WeaponFactorEx -= 0.025;
+										else WeaponFactorEx -= 0.1;
+				}
+			}
+		}
+
+		WeaponFactorEx *= kc_weaponencumbrance;
+		WeaponFactor += WeaponFactorEx;
+		Speed *= WeaponFactor;
+		HUDSpeed *= WeaponFactor;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [WeaponEquipped]: %.8f", WeaponFactor);
 		//
 		Speed *= spdfct;
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Final]: %.8f, HUDSpeed: %.2f", Speed, HUDSpeed);
