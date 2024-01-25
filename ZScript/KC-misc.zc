@@ -104,8 +104,10 @@ class PlayerStatItem : Inventory
 	int PlayerDEF, TruePlayerDEF;
 	int PlayerSPD, TruePlayerSPD;
 	int PlayerVIT, TruePlayerVIT;
+	int PlayerIQ, TruePlayerIQ;
+	int PlayerGUTS, TruePlayerGUTS;
 	int PlayerLUCK, TruePlayerLUCK, TempLUCK;
-	int PrevATK, PrevDEF, PrevSPD, PrevLUCK;
+	int PrevATK, PrevDEF, PrevSPD, PrevVIT, PrevGUTS, PrevLUCK;
 	int BaseDashChargeMax;
 	int ExtraDashCharge;
 	
@@ -1596,6 +1598,7 @@ class PlayerStatItem : Inventory
 		{
 			if (CritChance <= 64) CritChance = 64;
 		}
+		if (PlayerGUTS > 0) CritChance *= (1.0 - double(PlayerGUTS / 256.0));
 		if (owner.CountInv("PowerDouble")) CritChance *= 0.75;
 		if (owner.CountInv("PowerHalve")) CritChance *= 1.3334;
 		if (owner.CountInv("PlayerDashing")) CritChance *= 0.875;
@@ -2562,6 +2565,9 @@ class PlayerStatItem : Inventory
 			globalvars.PlayerATK = PlayerATK = 2;
 			globalvars.PlayerDEF = PlayerDEF = 2;
 			globalvars.PlayerSPD = PlayerSPD = 2;
+			globalvars.PlayerVIT = PlayerVIT = 0;
+			globalvars.PlayerIQ = PlayerIQ = 0;
+			globalvars.PlayerGUTS = PlayerGUTS = 0;
 			globalvars.PlayerLuck = PlayerLuck = 2;
 			globalvars.HealthLevelAdd = HealthLevelAdd = 0;
 			globalvars.HealthNoRPGAdd = HealthNoRPGAdd = 0;
@@ -2595,6 +2601,9 @@ class PlayerStatItem : Inventory
 			PlayerATK = globalvars.PlayerATK;
 			PlayerDEF = globalvars.PlayerDEF;
 			PlayerSPD = globalvars.PlayerSPD;
+			PlayerVIT = globalvars.PlayerVIT;
+			PlayerIQ = globalvars.PlayerIQ;
+			PlayerGUTS = globalvars.PlayerGUTS;
 			PlayerLuck = globalvars.PlayerLuck;
 			MaxHealthTrue = globalvars.MaxHealthTrue;
 			HealthLevelAdd = globalvars.HealthLevelAdd;
@@ -3374,6 +3383,9 @@ class PlayerStatItem : Inventory
 		PlayerATK = owner.CountInv("PlayerATK");
 		PlayerDEF = owner.CountInv("PlayerDEF");
 		PlayerSPD = owner.CountInv("PlayerSPD");
+		PlayerVIT = owner.CountInv("PlayerVIT");
+		PlayerIQ = owner.CountInv("PlayerIQ");
+		PlayerGUTS = owner.CountInv("PlayerGUTS");
 		PlayerLuck = owner.CountInv("PlayerLuck");
 
 		int levelmodulo, levelbonustype;
@@ -4236,6 +4248,9 @@ class PlayerStatItem : Inventory
 		globalvars.PlayerATK = PlayerATK;
 		globalvars.PlayerDEF = PlayerDEF;
 		globalvars.PlayerSPD = PlayerSPD;
+		globalvars.PlayerVIT = PlayerVIT;
+		globalvars.PlayerIQ = PlayerIQ;
+		globalvars.PlayerGUTS = PlayerGUTS;
 		globalvars.PlayerLuck = PlayerLuck;
 	}
 	
@@ -5001,6 +5016,9 @@ class PlayerDashJump : Inventory
 		int TruePlayerATK;
 		int TruePlayerDEF;
 		int TruePlayerSPD;
+		int TruePlayerVIT;
+		int TruePlayerIQ;
+		int TruePlayerGUTS;
 		int TruePlayerLUCK;
 		if (MiscItem)
 		{

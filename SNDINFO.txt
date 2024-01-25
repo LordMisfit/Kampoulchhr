@@ -111,9 +111,15 @@ $playersound	HeiwaPlayer	other	*gasp		        null
 $playersound	HeiwaPlayer	other	*poison	        null
 
 HeiwaDeathS1 HEIDTHS1
+HeiwaDeathS2 HEIDTHS2
+HeiwaDeathS3 HEIDTHS3
+HeiwaDeathS4 HEIDTHS4
 $pitchshift HeiwaDeathS1 0
+$pitchshift HeiwaDeathS2 0
+$pitchshift HeiwaDeathS3 0
+$pitchshift HeiwaDeathS4 0
 
-$random HeiwaDeathScreams { HeiwaDeathS1 }
+$random HeiwaDeathScreams { HeiwaDeathS1 HeiwaDeathS1 HeiwaDeathS1 HeiwaDeathS2 HeiwaDeathS3 HeiwaDeathS4 }
 $pitchshift HeiwaDeathScreams 0
 
 HeiwaDeathQ1 HEIDTHQ1
@@ -131,14 +137,20 @@ $pitchshift HeiwaDeathQ4 0
 HeiwaDeathQ5 HEIDTHQ5
 $pitchshift HeiwaDeathQ5 0
 
-$random HeiwaDeathQuotes {	HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 
-														HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 
-														HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 
-														HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 
-														HeiwaDeathQ5 HeiwaDeathQ5 }
+HeiwaDeathQ6 HEIDTHQ6
+$pitchshift HeiwaDeathQ6 0
+
+HeiwaDeathQ7 HEIDTHQ7
+$pitchshift HeiwaDeathQ7 0
+
+$random HeiwaDeathQuotes {	HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 HeiwaDeathQ1 
+														HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 HeiwaDeathQ2 
+														HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 HeiwaDeathQ3 
+														HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 HeiwaDeathQ4 
+														HeiwaDeathQ5 HeiwaDeathQ5 HeiwaDeathQ6 HeiwaDeathQ6 HeiwaDeathQ7 HeiwaDeathQ7 }
 $pitchshift HeiwaDeathQuotes 0
 
-$random HeiwaDeath { HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathQuotes HeiwaDeathQuotes }
+$random HeiwaDeath { HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathScreams HeiwaDeathQuotes HeiwaDeathQuotes HeiwaDeathQuotes }
 $pitchshift HeiwaDeath 0
 
 HeiwaPain11		HEIPN3
@@ -150,7 +162,10 @@ $pitchshift HeiwaPain12 0
 HeiwaPain13		HEIOW1
 $pitchshift HeiwaPain13 0
 
-$random Heiwa/Pain1A { HeiwaPain11 HeiwaPain11 HeiwaPain11 HeiwaPain11 HeiwaPain12 HeiwaPain12 HeiwaPain12 HeiwaPain13 }
+HeiwaPain14		HEIPN8
+$pitchshift HeiwaPain14 0
+
+$random Heiwa/Pain1A { HeiwaPain11 HeiwaPain11 HeiwaPain11 HeiwaPain11 HeiwaPain12 HeiwaPain12 HeiwaPain12 HeiwaPain13 HeiwaPain14 }
 $pitchshift Heiwa/Pain1A 0
 
 HeiwaPain21		HEIPN1
@@ -162,7 +177,10 @@ $pitchshift HeiwaPain22 0
 HeiwaPain23		HEIDAMN1
 $pitchshift HeiwaPain23 0
 
-$random Heiwa/Pain2A { HeiwaPain21 HeiwaPain21 HeiwaPain21 HeiwaPain21 HeiwaPain22 HeiwaPain22 HeiwaPain23 }
+HeiwaPain24		HEIPN10
+$pitchshift HeiwaPain24 0
+
+$random Heiwa/Pain2A { HeiwaPain21 HeiwaPain21 HeiwaPain21 HeiwaPain21 HeiwaPain22 HeiwaPain22 HeiwaPain23 HeiwaPain24 HeiwaPain24 }
 $pitchshift Heiwa/Pain2A 0
 
 HeiwaPain31		HEIPN4
@@ -174,7 +192,10 @@ $pitchshift HeiwaPain32 0
 HeiwaPain33		HEIOW2
 $pitchshift HeiwaPain33 0
 
-$random Heiwa/Pain3A { HeiwaPain31 HeiwaPain31 HeiwaPain31 HeiwaPain31 HeiwaPain32 HeiwaPain32 HeiwaPain33 }
+HeiwaPain34		HEIOW7
+$pitchshift HeiwaPain34 0
+
+$random Heiwa/Pain3A { HeiwaPain31 HeiwaPain31 HeiwaPain31 HeiwaPain31 HeiwaPain32 HeiwaPain32 HeiwaPain33 HeiwaPain34 HeiwaPain34 }
 $pitchshift Heiwa/Pain3A 0
 
 HeiwaPain41		HEIPN5
@@ -186,38 +207,50 @@ $pitchshift HeiwaPain42 0
 HeiwaPain43		HEITHHRT
 $pitchshift HeiwaPain43 0
 
-$random Heiwa/Pain4A { HeiwaPain41 HeiwaPain41 HeiwaPain41 HeiwaPain41 HeiwaPain42 HeiwaPain42 HeiwaPain43 }
+HeiwaPain44		HEIPN9
+$pitchshift HeiwaPain44 0
+
+
+$random Heiwa/Pain4A { HeiwaPain41 HeiwaPain41 HeiwaPain41 HeiwaPain41 HeiwaPain42 HeiwaPain42 HeiwaPain43 HeiwaPain44 HeiwaPain44 }
 $pitchshift Heiwa/Pain4A 0
 
 
 HeiwaGrunt1		HEIGRNT1
 HeiwaGrunt2		HEIGRNT2
 HeiwaGrunt3		HEIGRNT3
-$random HeiwaUseFail { HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt3 }
+HeiwaGrunt4		HEIGRNT4
+$random HeiwaUseFail { HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt1 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt2 HeiwaGrunt3 HeiwaGrunt4 }
+$pitchshift HeiwaGrunt1 0
+$pitchshift HeiwaGrunt2 0
+$pitchshift HeiwaGrunt3 0
+$pitchshift HeiwaGrunt4 0
 $pitchshift HeiwaUseFail 0
 
 HeiwaLand1		HEILAND1
-HeiwaLand2		null
+HeiwaLand2		HEILAND1
 HeiwaLand3		null
 HeiwaLand4		null
 HeiwaLand5		null
 $random HeiwaLand { HeiwaLand1 HeiwaLand2 HeiwaLand3 HeiwaLand4 HeiwaLand5 }
+$pitchshift HeiwaLand1 0
+$pitchshift HeiwaLand2 0
+$pitchshift HeiwaLand3 0
+$pitchshift HeiwaLand4 0
+$pitchshift HeiwaLand5 0
 $pitchshift HeiwaLand 0
 
 HeiwaJump1			HEIJUMP1
-HeiwaJump2			HEIJUMP1
-HeiwaJump3			HEIJUMP1
+HeiwaJump2			HEIJUMP2
 $pitchshift HeiwaJump1 0
 $pitchshift HeiwaJump2 0
-$pitchshift HeiwaJump3 0
-$random HeiwaJumpSND { HeiwaJump1 HeiwaJump2 HeiwaJump3 }
+$random HeiwaJumpSND { HeiwaJump1 HeiwaJump2 }
 $random HeiwaJumps { null HeiwaJumpSND HeiwaJumpSND }
 $pitchshift HeiwaJumpSND 0
 $pitchshift HeiwaJumps 0
 $limit HeiwaJumps 1
 
 HeiwaGiggle1			HEILAFF1
-HeiwaGiggle2			HEILAFF1
+HeiwaGiggle2			HEILAFF2
 $pitchshift HeiwaGiggle1 0
 $pitchshift HeiwaGiggle2 0
 $random HeiwaLaugh		{ HeiwaGiggle1 HeiwaGiggle2 }
@@ -252,10 +285,29 @@ $random HeiwaKiais { HeiwaKiai1 HeiwaKiai2 HeiwaKiai3 HeiwaKiai4 HeiwaKiai5 }
 $pitchshift HeiwaKiais 0
 
 HeiwaDash1 	HEIDASG1
+HeiwaDash2 	HEIJUMP2
 $pitchshift HeiwaDash1 0
+$pitchshift HeiwaDash2 0
 
-$random HeiwaDashSnds { HeiwaDash1 }
+$random HeiwaDashSnds { HeiwaDash1 HeiwaDash2 }
 $pitchshift HeiwaDashSnds 0
+
+// Misc
+
+Heiwa/ReflievedSigh	HEIRELEF1
+$pitchshift Heiwa/ReflievedSigh 0
+
+Heiwa/ABigHelp	HEIBIGHLP
+$pitchshift Heiwa/ABigHelp 0
+
+Heiwa/OohNice	HEINICE1
+$pitchshift Heiwa/OohNice 0
+
+Heiwa/TimesLikeThis	HEITMST1
+$pitchshift Heiwa/TimesLikeThis 0
+
+Heiwa/WantSomethingSweet	HEIWNTSW
+$pitchshift Heiwa/WantSomethingSweet 0
 
 // Taunts
 
@@ -282,6 +334,9 @@ $pitchshift Heiwa/UInMyWay 0
 
 Heiwa/HeyShutMouth	HEIHSHTM
 $pitchshift Heiwa/HeyShutMouth 0
+
+Heiwa/WontHoldBack	HEIWTHLB
+$pitchshift Heiwa/WontHoldBack 0
 
 // End Heiwa Sounds
 

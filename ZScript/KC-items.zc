@@ -125,6 +125,27 @@ class CustomInventoryExt : CustomInventory
 		}
 	}
 	
+	action void A_CapsuleSpawn(int basechance)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (HeiwaPlayer(playera))
+		{
+			if (!bDROPPED && random(1,basechance) <= 1)
+			{
+				int user_type = random(1,20);
+				string spawntype;
+				if (user_type >= 1 && user_type <= 4) spawntype = "VitalCapsule";
+				if (user_type >= 5 && user_type <= 8)  spawntype = "SpeedCapsule";
+				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
+				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
+				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
+				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
+				self.Destroy();
+			}
+		}
+	}
+	
 	action bool A_CheckHealthLevels(double maxhealthratio = 1.0)
 	{
 		actor playera = players[0].mo;
@@ -950,6 +971,11 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 	States
 	{
 		Spawn:
+			PSTR A 0 NoDelay
+			{
+				A_CapsuleSpawn(16);
+			}
+		Idle:
 			PSTR A -1;
 			Stop;
 		Pickup:
@@ -985,6 +1011,36 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 	States
 	{
 		Spawn:
+			BON1 A 0 NoDelay
+			{
+				if (bDROPPED)
+				{
+					if (random(1,1024) <= 1)
+					{
+						actor mo;
+						bool spawned;
+						[spawned, mo] = A_SpawnItemEx("HealthBonusBig",0,0,0,0,0,0,0,0,tid);
+						if (mo) mo.bDROPPED = true;
+						self.Destroy();
+					}
+				}
+				else
+				{
+					if (random(1,1024) <= random(6,10))
+					{
+						actor mo;
+						bool spawned;
+						[spawned, mo] = A_SpawnItemEx("HealthBonusBig",0,0,0,0,0,0,0,0,tid);
+						if (mo) mo.bDROPPED = false;
+						self.Destroy();
+					}
+					else
+					{
+						A_CapsuleSpawn(4096); // 16384
+					}
+				}
+			}
+		Idle:
 			BON1 AABBCCDDCCBB 3 BRIGHT;
 			Loop;
 		Pickup:
@@ -1033,7 +1089,10 @@ class HealthBonusBig : CustomInventoryExt
 	States
 	{
 		Spawn:
-			BON3 A 0;
+			BON3 A 0 NoDelay
+			{
+				A_CapsuleSpawn((4096/random(6,10))); // 16384
+			}
 			goto Float;
 		Float:
 			BON3 ABCDCB 6 BRIGHT;
@@ -1779,7 +1838,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.01);
 			if (SaveAmount < 1) SaveAmount = 1;
-			MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+			if (MiscItem.darmortype <= 1) MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+			if (MiscItem.darmortype >= 2) MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
 		}
 		else
 		{
@@ -1921,9 +1981,61 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		return true;
 	}
 	
+	
+	action void A_CapsuleSpawn(int basechance)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (HeiwaPlayer(playera))
+		{
+			if (!bDROPPED && random(1,basechance) <= 1)
+			{
+				int user_type = random(1,20);
+				string spawntype;
+				if (user_type >= 1 && user_type <= 4) spawntype = "VitalCapsule";
+				if (user_type >= 5 && user_type <= 8)  spawntype = "SpeedCapsule";
+				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
+				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
+				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
+				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
+				self.Destroy();
+			}
+		}
+	}
+	
 	States
 	{
 		Spawn:
+			BON2 A 0 NoDelay
+			{
+				if (bDROPPED)
+				{
+					if (random(1,1024) <= 1)
+					{
+						bool spawned;
+						actor mo;
+						[spawned, mo] = A_SpawnItemEx("ArmorBonusBig",0,0,0,0,0,0,0,0,tid);
+						if (mo) mo.bDROPPED = true;
+						self.Destroy();
+					}
+				}
+				else
+				{
+					if (random(1,1024) <= random(6,10))
+					{
+						actor mo;
+						bool spawned;
+						[spawned, mo] = A_SpawnItemEx("ArmorBonusBig",0,0,0,0,0,0,0,0,tid);
+						if (mo) mo.bDROPPED = false;
+						self.Destroy();
+					}
+					else
+					{
+						A_CapsuleSpawn(4096); // 16384
+					}
+				}
+			}
+		Idle:
 			BON2 ABCDCB 6;
 			Loop;
 	}
@@ -2090,7 +2202,8 @@ class ArmorBonusBig : ArmorBonus2
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.10);
 			if (SaveAmount < 1) SaveAmount = 1;
-			MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+			if (MiscItem.darmortype <= 1) MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+			if (MiscItem.darmortype >= 2) MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
 		}
 		else
 		{
@@ -2103,6 +2216,12 @@ class ArmorBonusBig : ArmorBonus2
 	States
 	{
 		Spawn:
+			BON4 A 0 NoDelay
+			{
+				A_CapsuleSpawn((4096/random(6,10))); // 16384
+			}
+			goto Idle;
+		Idle:
 			BON4 AABBCCDDCCBB 3;
 			Loop;
 
@@ -3371,11 +3490,7 @@ class VitalCapsule : StatCaspuleBase
 {
 	default
 	{
-		+DONTGIB;
-		+COUNTITEM;
-		+INVENTORY.ALWAYSPICKUP;
-		Inventory.Pickupsound "Capsule/Pickup";
-		Inventory.PickupMessage "Picked up a \cnVitality Capsule\c-! \c[brick]Max HP increased by 15!\c-";
+		Inventory.PickupMessage "Picked up a \cnVitality Capsule\c-! \c[brick]Max HP permanently increased by 15!\c-";
 	}
 	
 	States
@@ -3398,44 +3513,115 @@ class VitalCapsule : StatCaspuleBase
 			Stop;
 	}
 }
-/*
+
 class IQCapsule : StatCaspuleBase
 {
+	default
+	{
+		Inventory.PickupMessage "Picked up an \cnIQ Capsule\c-! \c[brick]Max PP permanently increased by 5!\c-";
+	}
+	
 	States
 	{
 		Spawn:
 			CAPS I -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem)
+				{
+					MiscItem.PlayerIQ++;
+					globalvars.PlayerIQ++;
+				}
+			}
 			Stop;
 	}
 }
 
 class GutsCapsule : StatCaspuleBase
 {
+	default
+	{
+		Inventory.PickupMessage "Picked up a \cnGuts Capsule\c-! \c[brick]Critical Hit Chance permenantly increased slightly!\c-";
+	}
+	
 	States
 	{
 		Spawn:
 			CAPS G -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem)
+				{
+					MiscItem.PlayerGUTS++;
+					globalvars.PlayerGUTS++;
+				}
+			}
 			Stop;
 	}
 }
 
 class SpeedCapsule : StatCaspuleBase
 {
+	default
+	{
+		Inventory.PickupMessage "Picked up a \cnSpeed Capsule\c-! \c[brick]Speed permanently increased by 1!\c-";
+	}
+	
 	States
 	{
 		Spawn:
 			CAPS S -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem)
+				{
+					MiscItem.PlayerSPD++;
+					globalvars.PlayerSPD++;
+				}
+			}
 			Stop;
 	}
 }
 
 class LuckCapsule : StatCaspuleBase
 {
+	default
+	{
+		Inventory.PickupMessage "Picked up a \cnLuck Capsule\c-! \c[brick]Luck permanently increased by 1!\c-";
+	}
+	
 	States
 	{
 		Spawn:
 			CAPS L -1;
 			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem)
+				{
+					MiscItem.PlayerLuck++;
+					globalvars.PlayerLuck++;
+				}
+			}
+			Stop;
 	}
 }
-*/
