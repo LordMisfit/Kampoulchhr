@@ -933,7 +933,7 @@ class MiniBerserk : CustomInventoryExt
 					}
 				}
 				
-				if (HeiwaPlayer(playera) && random(1,32) <= 1)
+				if (HeiwaPlayer(playera) && random(1,20) <= 1)
 				{
 					double maskpitch = 1.00;
 					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
@@ -942,6 +942,8 @@ class MiniBerserk : CustomInventoryExt
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					voicenm = "Heiwa/WantSomethingSweet"; //
 					Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
+					playera.A_StopSound(CHAN_VOICE);
+					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 				
 				if (HeiwaPlayer(playera)) A_GiveBerserk(int(22.5 * TICRATE),false);
@@ -1035,6 +1037,8 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					voicenm = "Heiwa/WantSomethingSweet"; //
 					Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
+					playera.A_StopSound(CHAN_VOICE);
+					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 				
 				if (HeiwaPlayer(playera)) A_GiveBerserk(int(90 * TICRATE),false);
