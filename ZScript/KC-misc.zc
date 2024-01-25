@@ -416,7 +416,7 @@ class PlayerStatItem : Inventory
 							if (CuLv >= 850 && CuLv <= 899) BaseMulti4 = 70;
 							if (CuLv >= 900 && CuLv <= 949) BaseMulti4 = 72;
 							if (CuLv >= 950 && CuLv <= 999) BaseMulti4 = 74;
-							if (CuLv >= 100) BaseMulti4 = 75;
+							if (CuLv >= 1000) BaseMulti4 = 75;
 							
 							BaseMulti3 = (BaseMulti4 + (CuLv * ((BaseMulti4 * BaseMulti5) * BaseMulti3b)));
 							
@@ -2085,6 +2085,38 @@ class PlayerStatItem : Inventory
 					WeaponJumpEx += 0.125;
 				}
 			}
+			if (weapon is "TommyGun")
+			{
+				bool dualtommys = false;
+				if (owner.CountInv("DualTommyGuns") && !owner.CountInv("DualTommyGunsDisabled")) dualtommys = true;
+				
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (dualtommys)
+					{
+						if (berserked) WeaponJumpEx -= 0.028125;
+											else WeaponJumpEx -= 0.1125;
+					}
+					else
+					{
+						if (berserked) WeaponJumpEx -= 0.0125;
+											else WeaponJumpEx -= 0.05;
+					}
+				}
+				else
+				{
+					if (dualtommys)
+					{
+						if (berserked) WeaponJumpEx -= 0.0140625;
+											else WeaponJumpEx -= 0.05625;
+					}
+					else
+					{
+						if (berserked) WeaponJumpEx -= 0.00625;
+											else WeaponJumpEx -= 0.025;
+					}
+				}
+			}
 			if (weapon is "Devastator")
 			{
 				bool dualdevs = false;
@@ -2115,6 +2147,19 @@ class PlayerStatItem : Inventory
 						if (berserked) WeaponJumpEx -= 0.0125;
 											else WeaponJumpEx -= 0.05;
 					}
+				}
+			}
+			if (weapon is "BHGen")
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (berserked) WeaponJumpEx -= 0.0625;
+										else WeaponJumpEx -= 0.25;
+				}
+				else
+				{
+					if (berserked) WeaponJumpEx -= 0.046875;
+										else WeaponJumpEx -= 0.1875;
 				}
 			}
 			/*
@@ -4865,11 +4910,50 @@ class PlayerStatItem : Inventory
 			}
 			WeaponFactorEx += tempfactor1;
 		}
+		if (weapon is "TommyGun")
+		{
+			bool dualtommys = false;
+			if (owner.CountInv("DualTommyGuns") && !owner.CountInv("DualTommyGunsDisabled")) dualtommys = true;
+			
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (dualtommys)
+				{
+					if (berserked) tempfactor1 = 0.05625;
+										else tempfactor1 = 0.225;
+				}
+				else
+				{
+					if (berserked) tempfactor1 = 0.025;
+										else tempfactor1 = 0.1;
+				}
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+			}
+			else
+			{
+				if (dualtommys)
+				{
+					if (berserked) tempfactor1 = 0.028125;
+										else tempfactor1 = 0.1125;
+				}
+				else
+				{
+					if (berserked) tempfactor1 = 0.0125;
+										else tempfactor1 = 0.05;
+				}
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (MarineWeapLevel * 0.834)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+			WeaponFactorEx -= tempfactor1;
+		}
 		if (weapon is "Devastator")
 		{
 			bool dualdevs = false;
 			if (owner.CountInv("DualDevastators") && !owner.CountInv("DualDevastatorsDisabled")) dualdevs = true;
-
+			
 			if (owner.GetClassName() == "HeiwaPlayer")
 			{
 				if (dualdevs)
@@ -4899,6 +4983,26 @@ class PlayerStatItem : Inventory
 				}
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
 				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+			WeaponFactorEx -= tempfactor1;
+		}
+		if (weapon is "BHGen")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (berserked) tempfactor1 = 0.125;
+									else tempfactor1 = 0.5;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+			}
+			else
+			{
+				if (berserked) tempfactor1 = 0.09375;
+									else tempfactor1 = 0.375;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;

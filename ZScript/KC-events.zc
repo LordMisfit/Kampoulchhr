@@ -4724,7 +4724,32 @@ class KC_EventHandler : EventHandler
 		if (e.Name == "AAAX")   
 		{
 			int key1, key2;
-
+			
+			
+			[key1, key2] = Bindings.GetKeysForCommand("MKeyTest");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				if (buttons & BT_SPEED) level.total_monsters += 1;
+													 else level.total_monsters -= 1;
+			}
+			[key1, key2] = Bindings.GetKeysForCommand("MKeyTest2");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				if (buttons & BT_SPEED) level.total_items += 1;
+													 else level.total_items -= 1;
+			}
+			[key1, key2] = Bindings.GetKeysForCommand("MKeyTest3");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				if (buttons & BT_SPEED) level.total_secrets += 1;
+													 else level.total_secrets -= 1;
+			}
+			[key1, key2] = Bindings.GetKeysForCommand("MKeyTest4");
+			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
+			{
+				if (level.mapname == "E1M8") Floor_LowerToLowest(666, 8);
+			}
+			
 			[key1, key2] = Bindings.GetKeysForCommand("KC_CheatClear");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{

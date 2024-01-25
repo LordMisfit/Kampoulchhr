@@ -7108,8 +7108,8 @@ class TeslaCannon : MarineWeapon
 			double spread = (randompick(32,36,40,44,48) * 0.015625);
 			A_StartSound("Tesla/AltFire2",CHAN_WEAPON);
 			A_StartSound("Tesla/AltFire2",CHAN_BODY);
-			A_FireProjectile("TeslaShot2",0,1,spread);
-			A_FireProjectile("TeslaShot2",0,1,-spread);
+			A_FireProjectile("TeslaShot2",0,1,spread,0);
+			A_FireProjectile("TeslaShot2",0,1,-spread,0);
 		}
 		else
 		{
@@ -7566,7 +7566,7 @@ class TeslaBallBig : KCFastProjectile
 	default
 	{
 		Health 1000;
-		Radius 14;
+		Radius 8;
 		Height 16;
 		Speed 125; // 38;
 		Mass 200;
@@ -7930,7 +7930,7 @@ class TeslaProjectile : KCFastProjectile
 	default
 	{
 		Speed 75; // 72;
-		Radius 8;
+		Radius 4;
 		Height 8;
 		RenderStyle "Add";
 		DamageFunction (10 * random(1,8)); //DamageFunction (random(24,32));
@@ -7966,7 +7966,7 @@ class TeslaProjectile2 : TeslaProjectile
 	default
 	{
 		Speed 75; // 72;
-		Radius 8;
+		Radius 4;
 		Height 8;
 		Scale 0.5;
 		RenderStyle "Add";
@@ -8002,7 +8002,7 @@ class TeslaShot : KCFastProjectile
 {
 	default
 	{
-		Radius 13;
+		Radius 6;
 		Height 8;
 		Speed 75;
 		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
@@ -8041,8 +8041,8 @@ class TeslaShot2 : KCFastProjectile
 {
 	default
 	{
+		radius 5;
 		height 10;
-		radius 10;
 		Speed 75;
 		SeeSound "";
 		DamageType "Lightning";
@@ -8088,8 +8088,8 @@ class TeslaShot2Dual : KCFastProjectile
 {
 	default
 	{
+		radius 5;
 		height 10;
-		radius 10;
 		Speed 75;
 		SeeSound "";
 		DamageType "Lightning";
