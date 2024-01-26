@@ -38,6 +38,9 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 		DropDevastator:
 			PLAY N 0 A_SpawnItemEx("DevastatorGenerator");
 			goto ItemDrop6+3;
+		DropDeviation:
+			PLAY N 0 A_SpawnItemEx("Deviation");
+			goto ItemDrop6+3;
 		DropImpalerBow:
 			PLAY N 0 A_SpawnItemEx("ImpalerXBow");
 			goto ItemDrop6+3;
@@ -73,7 +76,7 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 			}
 			goto Idle;
 		ItemDrop6:
-			PLAY N 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY N 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropDeviation", "DropSawThrower");
 			PLAY N 0 A_Jump(128, "DropPlasma", "DropTesla", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
 			PLAY N 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
 			PLAY N 0;
@@ -135,6 +138,9 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 		DropDevastator:
 			PLAY W 0 A_SpawnItemEx("DevastatorGenerator");
 			goto ItemDrop6+3;
+		DropDeviation:
+			PLAY W 0 A_SpawnItemEx("Deviation");
+			goto ItemDrop6+3;
 		DropImpalerBow:
 			PLAY W 0 A_SpawnItemEx("ImpalerXBow");
 			goto ItemDrop6+3;
@@ -170,7 +176,7 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 			}
 			goto Spawn+3;
 		ItemDrop6:
-			PLAY W 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropSawThrower");
+			PLAY W 0 A_Jump(64, "DropBHGen", "DropBFG", "DropRocket", "DropDevastator", "DropDeviation", "DropSawThrower");
 			PLAY W 0 A_Jump(128, "DropPlasma", "DropTesla", "DropRocket", "DropChaingun", "DropSShotgun", "DropSawThrower", "DropImpalerBow");
 			PLAY W 0 A_Jump(256, "DropPistol", "DropGlock", "DropShotgun", "DropSShotgun", "DropChainGun", "DropTommyGun");
 			PLAY W 0;

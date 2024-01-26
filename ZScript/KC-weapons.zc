@@ -4061,8 +4061,31 @@ class PistolSpawner : CustomInventoryExt replaces Pistol
 		{
 			if (!bDROPPED)
 			{
-				droptype = "Glock21";
 				if (playera.CountInv(droptype))
+				{
+					if (random(1,7) <= 2) 
+					{
+						droptype = "Glock21";
+						if (random(1,5) <= 1)
+						{
+							droptype = "Clip";
+							if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						}
+					}
+					else
+					{
+						if (random(1,5) <= 1)
+						{
+							droptype = "Clip";
+							if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+						}
+						else
+						{
+							droptype = "PistolMarine";
+						}
+					}
+				}
+				else
 				{
 					if (random(1,5) <= 1)
 					{
@@ -4465,6 +4488,10 @@ class SuperShotgunSpawner : CustomInventoryExt replaces SuperShotgun
 							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
 							if (mo) { mo.bDROPPED = bDROPPED; }
 						}
+						else
+						{
+							droptype = "ShotgunMarine";
+						}
 					}
 					else
 					{
@@ -4838,6 +4865,10 @@ class ChaingunSpawner : CustomInventoryExt replaces Chaingun
 								droptype = "TommAmmo";
 								if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
 							}
+							else
+							{
+								droptype = "ChaingunMarine";
+							}
 						}
 					}
 					else
@@ -4846,6 +4877,10 @@ class ChaingunSpawner : CustomInventoryExt replaces Chaingun
 						{
 							droptype = "TommAmmo";
 							if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+						}
+						else
+						{
+							droptype = "ChaingunMarine";
 						}
 					}
 				}
@@ -4867,6 +4902,10 @@ class ChaingunSpawner : CustomInventoryExt replaces Chaingun
 							{
 								droptype = "TommAmmo";
 								if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+							}
+							else
+							{
+								droptype = "ChaingunMarine";
 							}
 						}
 					}
@@ -4998,6 +5037,67 @@ class RocketLauncherSpawner : CustomInventoryExt replaces RocketLauncher
 		bool spawned;
 		actor mo;
 		string droptype = "RocketLauncherMarine";
+		
+		string droptypeheiwa = "Devastator";
+		string droptypeammo = "RocketAmmo";
+		string droptypeammobig = "RocketBox";
+		int dropchancemax = 7;
+		int dropchance = 2;
+		if (playera.GetClassName() == "HeiwaPlayer")
+		{
+			if (bDROPPED)
+			{
+				dropchancemax = 35;
+				dropchance = 4;
+			}
+			else
+			{
+				dropchancemax = 7;
+				dropchance = 4;
+			}
+			
+			if (random(1,2) <= 1) 
+			{
+				droptypeheiwa = "Devastator";
+				droptypeammo = "MiniRockets";
+				droptypeammobig = "MiniRocketBox";
+			}
+			else 
+			{
+				droptypeheiwa = "Deviation";
+				droptypeammo = "RocketAmmo";
+				droptypeammobig = "RocketBox";
+			}
+			
+			if (random(1,dropchancemax) <= dropchance) 
+			{
+				droptype = droptypeheiwa;
+				if (playera.CountInv(droptype))
+				{
+					if (random(1,5) <= 1)
+					{
+						droptype = droptypeammo;
+						if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+					}
+					else
+					{
+						droptype = "RocketLauncherMarine";
+					}
+				}
+			}
+			else
+			{
+				if (random(1,5) <= 1)
+				{
+					droptype = droptypeammobig;
+				}
+				else
+				{
+					droptype = "RocketLauncherMarine";
+				}
+			}
+		}
+		Console.Printf("%s", droptype);
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
 		Destroy();
@@ -5370,6 +5470,73 @@ class PlasmaRifleSpawner : CustomInventoryExt replaces PlasmaRifle
 		bool spawned;
 		actor mo;
 		string droptype = "PlasmaRifleMarine";
+		if (playera.GetClassName() == "HeiwaPlayer") 
+		{
+			if (!bDROPPED)
+			{
+				if (random(1,7) <= 2) 
+				{
+					droptype = "TeslaCannon";
+					if (playera.CountInv(droptype))
+					{
+						if (random(1,7) <= 2)
+						{
+							droptype = "DualTeslaCannonPickup";
+						}
+						else
+						{
+							if (random(1,5) <= 1)
+							{
+								droptype = "Bolts";
+								if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+							}
+							else
+							{
+								droptype = "PlasmaRifleMarine";
+							}
+						}
+					}
+					else
+					{
+						if (random(1,5) <= 1)
+						{
+							droptype = "Bolts";
+							if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+						}
+						else
+						{
+							droptype = "PlasmaRifleMarine";
+						}
+					}
+				}
+			}
+			else
+			{
+				if (random(1,35) <= 2)
+				{
+					droptype = "TeslaCannon";
+					if (playera.CountInv(droptype))
+					{
+						if (random(1,35) <= 2)
+						{
+							droptype = "DualTeslaCannonPickup";
+						}
+						else
+						{
+							if (random(1,5) <= 1)
+							{
+								droptype = "Bolts";
+								if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "BoltsLarge";
+							}
+							else
+							{
+								droptype = "PlasmaRifleMarine";
+							}
+						}
+					}
+				}
+			}
+		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
 		Destroy();
@@ -5617,6 +5784,66 @@ class BFG9000Spawner : CustomInventoryExt replaces BFG9000
 		bool spawned;
 		actor mo;
 		string droptype = "BFG9000Marine";
+		if (playera.GetClassName() == "HeiwaPlayer") 
+		{
+			if (!bDROPPED)
+			{
+				if (random(1,7) <= 2) 
+				{
+					droptype = "BHGen";
+					if (playera.CountInv(droptype))
+					{
+						if (random(1,5) <= 1)
+						{
+							droptype = "Cell";
+							if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+						}
+						else
+						{
+							droptype = "BFG9000Marine";
+						}
+					}
+					else
+					{
+						if (random(1,5) <= 1)
+						{
+							droptype = "Cell";
+							if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+						}
+						else
+						{
+							droptype = "BFG9000Marine";
+						}
+					}
+				}
+			}
+			else
+			{
+				if (random(1,35) <= 2)
+				{
+					droptype = "TeslaCannon";
+					if (playera.CountInv(droptype))
+					{
+						if (random(1,35) <= 2)
+						{
+							droptype = "DualTeslaCannonPickup";
+						}
+						else
+						{
+							if (random(1,5) <= 1)
+							{
+								droptype = "Cell";
+								if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "CellPack";
+							}
+							else
+							{
+								droptype = "BFG9000Marine";
+							}
+						}
+					}
+				}
+			}
+		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
 		Destroy();
@@ -5823,17 +6050,182 @@ class Glock21 : MarineWeapon
 			LIBF A 0 A_CheckforReload(12,"Ready");
 			Goto DryFire;
 		DryFire:
-			LIBG A 12 A_StartSound("weapons/glockdry");
+			LIBG A 12 
+			{
+				A_StartSound("weapons/glockdry");
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 5) A_SetTics(9);
+					if (TruePlayerLevel >= 10) A_SetTics(8);
+					if (TruePlayerLevel >= 20) A_SetTics(7);
+					if (TruePlayerLevel >= 25) A_SetTics(6);
+					if (TruePlayerLevel >= 35) A_SetTics(5);
+					if (TruePlayerLevel >= 40) A_SetTics(4);
+					if (TruePlayerLevel >= 50) A_SetTics(3);
+					if (TruePlayerLevel >= 55) A_SetTics(2);
+					if (TruePlayerLevel >= 65) A_SetTics(1);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 10) A_SetTics(9);
+					if (TruePlayerLevel >= 30) A_SetTics(8);
+					if (TruePlayerLevel >= 40) A_SetTics(7);
+					if (TruePlayerLevel >= 50) A_SetTics(6);
+					if (TruePlayerLevel >= 70) A_SetTics(5);
+					if (TruePlayerLevel >= 80) A_SetTics(4);
+					if (TruePlayerLevel >= 100) A_SetTics(3);
+					if (TruePlayerLevel >= 110) A_SetTics(2);
+					if (TruePlayerLevel >= 130) A_SetTics(1);
+				}
+			}
 			Goto Reload+1;
 		Reload:
 			TNT1 A 0 A_CheckforReload(1,"Ready",true);
-			LIBG A 1 A_StartSound("weapons/glockout");
-			LIBM AB 1;
-			LIBR ABC 2;
-			LIBR D 0 A_StartSound("weapons/glockin");
-			LIBR D 2 A_ResetReloadCounter;
-			LIBR EF 1;
-			LIBG A 3;
+			LIBG A 1 
+			{
+				A_StartSound("weapons/glockout");
+			}
+			LIBM A 1
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 25) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 50) A_SetTics(0);
+				}
+			}
+			LIBM B 1
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 35) A_SetTics(1);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 70) A_SetTics(1);
+				}
+			}
+			LIBR A 2
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 10) A_SetTics(1);
+					if (TruePlayerLevel >= 35) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 20) A_SetTics(1);
+					if (TruePlayerLevel >= 70) A_SetTics(0);
+				}
+			}
+			LIBR B 2
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 5) A_SetTics(1);
+					if (TruePlayerLevel >= 45) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 10) A_SetTics(1);
+					if (TruePlayerLevel >= 90) A_SetTics(0);
+				}
+			}
+			LIBR C 2
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 15) A_SetTics(1);
+					if (TruePlayerLevel >= 50) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 30) A_SetTics(1);
+					if (TruePlayerLevel >= 100) A_SetTics(0);
+				}
+			}
+			LIBR D 2 
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 20) A_SetTics(1);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 40) A_SetTics(1);
+				}
+				A_StartSound("weapons/glockin");
+				A_ResetReloadCounter();
+			}
+			LIBR E 1
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 45) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 90) A_SetTics(0);
+				}
+			}
+			LIBR F 1
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 30) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 60) A_SetTics(0);
+				}
+			}
+			LIBG A 3
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
+				if (playera.GetClassName() == "HeiwaPlayer")
+				{
+					if (TruePlayerLevel >= 10) A_SetTics(2);
+					if (TruePlayerLevel >= 25) A_SetTics(1);
+					if (TruePlayerLevel >= 40) A_SetTics(0);
+				}
+				else
+				{
+					if (TruePlayerLevel >= 20) A_SetTics(2);
+					if (TruePlayerLevel >= 50) A_SetTics(1);
+					if (TruePlayerLevel >= 80) A_SetTics(0);
+				}
+			}
 			Goto Ready;
 		Flash:
 			TNT1 A 2 A_Light2;
@@ -9530,6 +9922,195 @@ class BHExplosion2 : BHExplosion
 			DBX3 A 1 Bright A_SetScale(4.25);
 			TNT1 A 0 A_FadeOut(0.09);
 			Stop;
+	}
+}
+
+class Deviation : MarineWeapon // replaces RocketLauncher
+{
+	default
+	{
+		Inventory.PickupSound "misc/w_pkup";
+		Inventory.PickupMessage "You got the \ca''Deviation'' Dumb Missile Launcher\c-! \cx[Slot 5]\c-";
+		Weapon.UpSound "weapons/gemiup";
+		Weapon.AmmoType "RocketAmmo";
+		Weapon.AmmoType1 "RocketAmmo";
+		Weapon.AmmoType2 "RocketAmmo";
+		Weapon.AmmoGive 6;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoUse2 1;
+		Weapon.SlotNumber 5;
+		Scale 0.85;
+	}
+	States
+	{
+		Spawn:
+			RNPR A -1;
+			LOOP;
+		Ready: 
+			RPRL A 1 A_WeaponReady();
+			LOOP;
+		Deselect: 
+			RPRL A 1 A_Lower(12);
+			Loop;
+		Select: 
+			RPRL A 1 A_Raise(12);
+			Loop;
+		AltFire:
+			RPRL A 0 A_StartSound("weapons/gemifire",CHAN_WEAPON);
+			RPRL A 0 A_GunFlash();
+			RPRL BC 1 Bright;
+			RPRL C 0 
+			{
+				A_Recoil(frandom(2.25,4.5));
+				A_FireProjectile("DumbRocket",frandom(4.5,-4.5),1,0,0);
+			}
+			RPRL DEF 1 Bright;
+			RPRL A 3;
+			Goto Ready;
+		AltFlash:
+			TNT1 A 5 A_Light2();
+			TNT1 A 3 A_Light1();
+			TNT1 A 0 A_Light0();
+			Stop;
+		Fire:
+			RPRL A 0 A_StartSound("weapons/gemifire",CHAN_WEAPON);
+			RPRL A 0 A_GunFlash();
+			RPRL BC 2 Bright;
+			RPRL C 0 
+			{
+				A_Recoil(frandom(0.225,0.45));
+				A_FireProjectile("DeviationRocket",frandom(0.45,-0.45),1,0,0);
+			}
+			RPRL DEF 2 Bright;
+			RPRL A 6;
+			Goto Ready;
+		Flash:
+			TNT1 A 10 A_Light2();
+			TNT1 A 6 A_Light1();
+			TNT1 A 0 A_Light0();
+			Stop;
+	}
+}
+
+class DumbRocket : RocketBase
+{
+	default
+	{
+		Speed 30;
+		-RANDOMIZE;
+		-ROCKETTRAIL;
+		SeeSound "";
+		DamageType "Explosive";
+	}
+	
+	States
+	{
+		Spawn:
+			MISD A 1 Bright 
+			{
+				A_SeekerMissile(2,2,SMF_LOOK,128,10);
+				A_ChangeVelocity (1, frandom(-3, 3), frandom(-2, 2), 1);
+				A_SpawnItemEx("DumbTrail", 0, random(2,-2), random(2,-2), 0, 0, 0, 0, 128, 0);
+			}
+			Loop;
+		Death:
+			TNT1 A 0 
+			{
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			TNT1 A 0 A_Explode(128,128,XF_HURTSOURCE,false,randompick(32,64,64,64,64,64,96));
+			TNT1 AAAAAAAAAA 0 bright A_SpawnItemEx("Smoke", 0, 0, 0, random(2,-2), random(2,-2), 1+random(1,-3), 0, 128, 0);
+			TNT1 AAAA 0 bright A_SpawnItemEx("Boomy", 0, random(2,-2), random(2,-2), 0, 0, 1, 0, 128, 0);
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class DeviationRocket : RocketBase
+{
+	default
+	{
+		Speed 60;
+		-RANDOMIZE;
+		-ROCKETTRAIL;
+		SeeSound "";
+		DamageType "Explosive";
+	}
+	
+	States
+	{
+		Spawn:
+			MISD A 1 Bright 
+			{
+				A_SeekerMissile(2,2,SMF_LOOK,randompick(1,1,1,1,1,1,2),10);
+				A_ChangeVelocity (0.01, frandom(-0.03, 0.03), frandom(-0.02, 0.02), 1);
+				A_SpawnItemEx("DumbTrail", 0, random(2,-2), random(2,-2), 0, 0, 0, 0, 128, 0);
+			}
+			Loop;
+		Death:
+			TNT1 A 0 
+			{
+				A_Quake(1, 4, 0, 512, "nosound/silent");
+				A_Quake(4, 4, 0, 256, "nosound/silent");
+			}
+			TNT1 A 0 A_Explode(128,128,XF_HURTSOURCE,false,randompick(32,64,64,64,64,64,96));
+			TNT1 AAAAAAAAAA 0 bright A_SpawnItemEx("Smoke", 0, 0, 0, random(2,-2), random(2,-2), 1+random(1,-3), 0, 128, 0);
+			TNT1 AAAA 0 bright A_SpawnItemEx("Boomy", 0, random(2,-2), random(2,-2), 0, 0, 1, 0, 128, 0);
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class Smoke : KCBaseZSC
+{
+	default
+	{
+		Scale 0.5;
+		Alpha 0.55;
+		RenderStyle "Add";
+		+NOCLIP;
+		+NOGRAVITY;
+	}
+	
+	States
+	{
+		Spawn:
+			SMOK ABCDEFGHIJKLMNOPQ 1 BRIGHT;
+			Stop;
+	}
+}
+
+class Boomy : KCBaseZSC
+{ 
+	default
+	{
+		Scale 1;
+		Alpha 0.75;
+		RenderStyle "Add";
+		+NOCLIP;
+		+NOGRAVITY;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_Jump(255,"Spawn1","Spawn2");
+		Spawn1:    
+			EXP1 ABCDEFGHIJKLMNOP 1 BRIGHT;
+			Stop;
+		Spawn2:
+			EXP2 ABCDEFGHIJKLMNOP 1 BRIGHT;
+			Stop;
+	}
+}
+
+class DumbTrail : Smoke
+{
+	default
+	{
+		Scale 0.175;
+		Alpha 0.3;
 	}
 }
 

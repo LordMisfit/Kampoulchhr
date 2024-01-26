@@ -2229,6 +2229,7 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "RocketLauncherMarine";
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "Deviation";
 		wsammoname = "RocketAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
@@ -2363,11 +2364,12 @@ class KCStatusBarMain : BaseStatusBar
 		// Slot 8
 		weaponsincurslot = 1;
 		wsname = "Translocator"; // "KCSigil"
-		wsammoname = "";
+		wsammoname = "TLBeaconAmmo";
 		//ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, CurrHealth, PlayerMaxHP, 1);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			//[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, CurrHealth, PlayerMaxHP, 1);
 			
 			wsnum = 8;
 			if (wsweapon is wsname)
@@ -2920,6 +2922,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "TommyGun" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
+					PlayerWeapon is "Deviation" ||
 					PlayerWeapon is "Devastator" ||
 					PlayerWeapon is "PlasmaRifleMarine" ||
 					PlayerWeapon is "TeslaCannon" ||
@@ -2938,6 +2941,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
+				if (PlayerWeapon is "Deviation") LegendStr.AppendFormat(" = \c[blue]DRUNKEN ROCKET [FASTER FIRE]\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST [~2-10 CELLS/SHOT]\c-");
 				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");

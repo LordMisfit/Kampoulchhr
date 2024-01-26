@@ -2761,6 +2761,21 @@ class KC_EventHandler : EventHandler
 					
 					double rand = 2.0;
 					string droptype;
+					if (vict == "Zombieman")
+					{
+						if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+						{
+							droptype = "Glock21";
+							if (playera.CountInv(droptype))
+							{
+								if (random(1,32) <= 1) victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							else
+							{
+								if (random(1,32) <= 4) victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
+					}
 					if (vict == "Zombieman" ||
 							vict == "ShotgunGuy" ||
 							vict == "ChaingunGuy" || 
@@ -3000,7 +3015,7 @@ class KC_EventHandler : EventHandler
 							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
 							{
 								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							else
@@ -3015,7 +3030,7 @@ class KC_EventHandler : EventHandler
 							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
 							{
 								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							else
@@ -3030,7 +3045,7 @@ class KC_EventHandler : EventHandler
 							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3))
 							{
 								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketsBox";
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							else
@@ -3145,56 +3160,68 @@ class KC_EventHandler : EventHandler
 					{
 						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
 						{
-							droptype = "Devastator";
+							string droptype1 = "Devastator";
+							string droptypeammo = "MiniRockets";
+							string droptypeammobig = "MiniRocketBox";
+							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+							{
+								if (random(1,2) <= 1)
+								{
+									droptype1 = "Deviation";
+									droptypeammo = "RocketAmmo";
+									droptypeammobig = "RocketBox";
+								}
+							}
+							droptype = droptype1;
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							droptype = "MiniRockets";
-							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+							droptype = droptypeammo;
+							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 							{
-								droptype = "Devastator";
+								droptype = droptype1;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*0.5)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 							if (random(1,(basedropdiv*1.0)) <= random(2,3)) 
 							{
-								droptype = "MiniRockets";
-								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "MiniRocketBox";
+								droptype = droptypeammo;
+								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
@@ -3340,6 +3367,7 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
+							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,14);
 							droptype = "Backpack";
 							if (user_type == 1) 
 							{
@@ -3433,6 +3461,11 @@ class KC_EventHandler : EventHandler
 								droptype = "BHGen";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
 							}
+							if (user_type == 14)
+							{
+								droptype = "Deviation";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
 							if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
 							if (!(droptype == "Backpack" ||
 									droptype == "CombatPack"))
@@ -3477,6 +3510,7 @@ class KC_EventHandler : EventHandler
 								if (randroll2 <= temp) 
 								{
 									user_type = random(1,13);
+									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,14);
 									if (user_type == 1) droptype = "ClipBox";
 									if (user_type == 2) droptype = "ClipBox";
 									if (user_type == 3) droptype = "ShellBox";
@@ -3490,6 +3524,7 @@ class KC_EventHandler : EventHandler
 									if (user_type == 11) droptype = "ImpalerBolts";
 									if (user_type == 12) droptype = "BoltsLarge";
 									if (user_type == 13) droptype = "CellPack";
+									if (user_type == 14) droptype = "RocketBox";
 								}
 								else
 								{
@@ -3507,6 +3542,7 @@ class KC_EventHandler : EventHandler
 									if (user_type == 11) droptype = "ImpalerBolts";
 									if (user_type == 12) droptype = "Bolts";
 									if (user_type == 13) droptype = "Cell";
+									if (user_type == 14) droptype = "Rocket";
 								}
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);

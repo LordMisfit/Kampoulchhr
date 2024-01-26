@@ -2207,6 +2207,19 @@ class PlayerStatItem : Inventory
 					}
 				}
 			}
+			if (weapon is "Deviation")
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (berserked) WeaponJumpEx -= 0.0375;
+										else WeaponJumpEx -= 0.15;
+				}
+				else
+				{
+					if (berserked) WeaponJumpEx -= 0.025;
+										else WeaponJumpEx -= 0.10;
+				}
+			}
 			if (weapon is "Devastator")
 			{
 				bool dualdevs = false;
@@ -2511,15 +2524,30 @@ class PlayerStatItem : Inventory
 			baseholdmultibp2 = 4.0; // 2.0
 			if (owner.CountInv("PlayingHexen")) baselvlfactor = 150.0;
 			
-			CalcInvLimit("Clip", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Shell", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("RocketAmmo", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Cell", 300, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("TommAmmo", 500, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("MiniRockets", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("ImpalerBolts", 40, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Bolts", 450, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-			CalcInvLimit("Saws", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			if (owner.GetClassName() == "HeiwaPlayer") 
+			{
+				CalcInvLimit("Clip", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Shell", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("RocketAmmo", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Cell", 150, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("TommAmmo", 250, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("MiniRockets", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("ImpalerBolts", 20, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Bolts", 225, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Saws", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			}
+			else
+			{
+				CalcInvLimit("Clip", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Shell", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("RocketAmmo", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Cell", 300, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("TommAmmo", 500, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("MiniRockets", 200, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("ImpalerBolts", 40, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Bolts", 450, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				CalcInvLimit("Saws", 50, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+			}
 		}
 		//
 		//
@@ -5247,6 +5275,25 @@ class PlayerStatItem : Inventory
 				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+			WeaponFactorEx -= tempfactor1;
+		}
+		if (weapon is "Deviation")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (berserked) tempfactor1 = 0.075;
+									else tempfactor1 = 0.3;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+			}
+			else
+			{
+				if (berserked) tempfactor1 = 0.05;
+									else tempfactor1 = 0.2;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+			}
 			tempfactor1 *= tempfactor2;
 			WeaponFactorEx -= tempfactor1;
 		}
