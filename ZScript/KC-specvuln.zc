@@ -360,6 +360,28 @@ class CompatVulnItem : PlaceholderItem
 						{
 							TOTALFactor *= 5.0;
 						}
+						nm = "DeviationRocket";
+						nn = "DumbRocket";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == nn))
+						{
+							TOTALFactor *= 2.0;
+						}
+					}
+					
+					if (owner.bNORADIUSDMG)
+					{
+						nm = "DeviationRocket";
+						nn = "DumbRocket";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == nn) && 
+								inflictor.bFORCERADIUSDMG &&
+								flags & DMG_EXPLOSION)
+						{
+							TOTALFactor *= 0.5;
+						}
 					}
 					
 					if (LostSoul(owner) || 
