@@ -1104,6 +1104,12 @@ class PlayerStatItem : Inventory
 								if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
 								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
 							}
+							else
+							{
+								if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(4.2,5.0));
+								if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+								if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(1.16,1.2));
+							}
 							
 							if (kc_healthregendegentype >= 1)
 							{
@@ -1118,6 +1124,29 @@ class PlayerStatItem : Inventory
 								else if (CurrentHealth <= (MaxHealthTrue * 0.10)) inc = floor(inc * 5);
 								else if (CurrentHealth <= (MaxHealthTrue * 0.25)) inc = floor(inc * 1.25);
 								else if (CurrentHealth <= (MaxHealthTrue * 0.50)) inc = floor(inc * 1.0625);
+							}
+							if (owner.GetClassName() == "HeiwaPlayer") 
+							{
+								double RegenLevelBase = 25;
+								double incfactor;
+								if (TrueGameSkill <= SKILL_VERY_EASY) RegenLevelBase = 12.5;
+								if (TrueGameSkill == SKILL_EASY) RegenLevelBase = 18.75;
+								if (TrueGameSkill == SKILL_NORMAL) RegenLevelBase = 25;
+								if (TrueGameSkill == SKILL_HARD) RegenLevelBase = 31.25;
+								if (TrueGameSkill >= SKILL_VERY_HARD) RegenLevelBase = 37.5;
+								if (heiwavhardmodifier) RegenLevelBase *= 1.5;
+								if (heiwavhardmodifier)
+								{
+									incfactor = (1.00 + (TruePlayerLevel * double(5.00 / RegenLevelBase)));
+									if (incfactor >= 6.00) incfactor = 6.00;
+								}
+								else
+								{
+									incfactor = (1.00 + (TruePlayerLevel * double(3.00 / RegenLevelBase)));
+									if (incfactor >= 4.00) incfactor = 4.00;
+								}
+								inc *= incfactor;
+								if (kcdebug_hpregen) Console.Printf("Heiwa [Regen - Level Bonus]: %.8f, inc: %d", incfactor, inc);
 							}
 							
 							if (BaseRegenMulti) BaseRegenMulti = (inc / BaseRegenMulti);
@@ -1237,6 +1266,12 @@ class PlayerStatItem : Inventory
 								if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
 								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
 							}
+							else
+							{
+								if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(4.2,5.0)));
+								if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / 1.8));
+								if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(1.16,1.2)));
+							}
 							
 							if (kc_healthregendegentype >= 1)
 							{
@@ -1261,6 +1296,21 @@ class PlayerStatItem : Inventory
 								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.5);
 								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.25);
 								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
+							}
+							if (owner.GetClassName() == "HeiwaPlayer") 
+							{
+								double DegenLevelBase = 25;
+								double incfactor;
+								if (TrueGameSkill <= SKILL_VERY_EASY) DegenLevelBase = 12.5;
+								if (TrueGameSkill == SKILL_EASY) DegenLevelBase = 18.75;
+								if (TrueGameSkill == SKILL_NORMAL) DegenLevelBase = 25;
+								if (TrueGameSkill == SKILL_HARD) DegenLevelBase = 31.25;
+								if (TrueGameSkill >= SKILL_VERY_HARD) DegenLevelBase = 37.5;
+								if (heiwavhardmodifier) DegenLevelBase *= 0.67;
+								incfactor = (1.00 - (TruePlayerLevel * double(1.00 / DegenLevelBase)));
+								if (incfactor <= 0.00) incfactor = 0.00;
+								inc *= incfactor;
+								if (kcdebug_hpregen) Console.Printf("Heiwa [Degen - Level Penalty]: %.8f, inc: %d", incfactor, inc);
 							}
 							
 							if (BaseRegenMulti) BaseRegenMulti = (inc / BaseRegenMulti);
@@ -2013,33 +2063,73 @@ class PlayerStatItem : Inventory
 			double ArmorJumpZ = 1.00;
 			double armordiffmod = 1.00;
 			int ArmorAmt = owner.CountInv(armorclasstype);
+			double ArmorRatio = 0.0;
+			if (MaxHealthTrue > 0) ArmorRatio = double((ArmorAmt * 1.0) / (MaxHealthTrue * 1.0));
 			double ArmorEnc = 0.00;
-			if (owner.GetClassName() == "HeiwaPlayer")
+			double ArmorWeight;
+			if (owner.CountInv("TSArmorTier2"))
 			{
-				if (darmortype == 1) 
+				if (owner.GetClassName() == "HeiwaPlayer")
 				{
-					if (berserked) ArmorEnc = (ArmorAmt * (0.00025 * armordiffmod)); // 0.025;
-										else ArmorEnc = (ArmorAmt * (0.0005 * armordiffmod)); // 0.05;
+					ArmorWeight = 0.015625;
+					if (berserked) ArmorWeight *= 0.25;
 				}
-				if (darmortype == 2) 
+				else
 				{
-					if (berserked) ArmorEnc = (ArmorAmt * (0.0003125 * armordiffmod)); // 0.0625;
-										else ArmorEnc = (ArmorAmt * (0.000625 * armordiffmod)); // 0.0625;
+					ArmorWeight = 0.0625;
+					if (berserked) ArmorWeight *= 0.875;
 				}
+				ArmorWeight *= armordiffmod;
+				ArmorEnc = ArmorWeight;
+			}
+			else
+			if (owner.CountInv("TSArmorTier1"))
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					ArmorWeight = 0.0125;
+					if (berserked) ArmorWeight *= 0.25;
+				}
+				else
+				{
+					ArmorWeight = 0.05;
+					if (berserked) ArmorWeight *= 0.875;
+				}
+				ArmorWeight *= armordiffmod;
+				ArmorEnc = ArmorWeight;
 			}
 			else
 			{
-				if (darmortype == 1) 
+				if (owner.GetClassName() == "HeiwaPlayer")
 				{
-					if (berserked) ArmorEnc = (ArmorAmt * (0.000025 * armordiffmod)); // 0.0025;
-										else ArmorEnc = (ArmorAmt * (0.00005 * armordiffmod)); // 0.0025;
+					if (darmortype == 1) // Green Armor [Doom-type] (100% of HP max)
+					{
+						ArmorWeight = 0.25;
+						if (berserked) ArmorWeight *= 0.4;
+					}
+					if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
+					{
+						ArmorWeight = 0.20;
+						if (berserked) ArmorWeight *= 0.4;
+					}
 				}
-				if (darmortype == 2) 
+				else
 				{
-					if (berserked) ArmorEnc = (ArmorAmt * (0.00003125 * armordiffmod)); // 0.00625;
-										else ArmorEnc = (ArmorAmt * (0.0000625 * armordiffmod)); // 0.00625;
+					if (darmortype == 1) // Green Armor [Doom-type] (100% of HP max)
+					{
+						ArmorWeight = 0.1875;
+						if (berserked) ArmorWeight *= 0.6;
+					}
+					if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
+					{
+						ArmorWeight = 0.15;
+						if (berserked) ArmorWeight *= 0.6;
+					}
 				}
+				ArmorWeight *= armordiffmod;
+				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
+			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, MaxHealthTrue);
 			ArmorEnc *= kc_armorencumbrance;
 			if (owner.waterlevel >= 3) ArmorEnc *= 1.25;
 			
@@ -3172,33 +3262,57 @@ class PlayerStatItem : Inventory
 		}
 		if (HeiwaPlayer(owner))
 		{
-			if (random(1,256) <= 80) 
+			if (random(1,256) <= random(64,80)) 
 			{
-				HPMaxGain += randompick(0,0,0,1,1,1,1,2);
-				if (random(1,256) <= 20) 
+				if (heiwavhardmodifier) HPMaxGain += randompick(0,0,0,0,0,1,1,1);
+													 else HPMaxGain += randompick(0,0,0,1,1,1,1,2);
+				if (random(1,256) <= random(16,20)) 
 				{
-					HPMaxGain += randompick(0,0,0,1,1,1,1,2);
-					if (random(1,256) <= 5) 
+					if (heiwavhardmodifier) HPMaxGain += randompick(0,0,0,0,0,1,1,1);
+														 else HPMaxGain += randompick(0,0,0,1,1,1,1,2);
+					if (random(1,256) <= random(4,5)) 
 					{
-						HPMaxGain += randompick(0,0,1,1,1,1,1,2);
-						if (random(1,256) <= randompick(1,1,1,2)) 
+						if (heiwavhardmodifier) HPMaxGain += randompick(0,0,0,0,1,1,1,1);
+															 else HPMaxGain += randompick(0,0,1,1,1,1,1,2);
+						if (random(1,256) <= random(1,randompick(1,1,1,2)))
 						{
-							HPMaxGain += randompick(0,0,1,1,1,1,1,2);
+							if (heiwavhardmodifier) HPMaxGain += randompick(0,0,0,0,1,1,1,1);
+																 else HPMaxGain += randompick(0,0,1,1,1,1,1,2);
 						}
 					}
 				}
 			}
+			if (heiwavhardmodifier)
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
+				else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			}
+			else
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03375,0.0375));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.03375));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.02625,0.03));
+				else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0225,0.02625));
+			}
 			
-			if (PlayerLevel >= 151 && PlayerLevel <= 200)				HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03375,0.0375));
-			else if (PlayerLevel >= 101 && PlayerLevel <= 150)	HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.03375));
-			else if (PlayerLevel >= 51 && PlayerLevel <= 100)		HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.02625,0.03));
-			else if (PlayerLevel <= 50)													HPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0225,0.02625));
-			
-			HPMaxGain += 													randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
-			if (levelbonustype <= -1) HPMaxGain += randompick[statitem](0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
-			if (levelbonustype == 0) HPMaxGain += randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3);
-			if (levelbonustype == 1) HPMaxGain += randompick[statitem](0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
-			if (levelbonustype >= 2) HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
+			if (heiwavhardmodifier)
+			{
+				HPMaxGain += 													 randompick[statitem](0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+				if (levelbonustype <= -1)	HPMaxGain += randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3);
+				if (levelbonustype == 0)	HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2);
+				if (levelbonustype == 1)	HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2);
+				if (levelbonustype >= 2)	HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+			}
+			else
+			{
+				HPMaxGain += 													 randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
+				if (levelbonustype <= -1)	HPMaxGain += randompick[statitem](0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
+				if (levelbonustype == 0)	HPMaxGain += randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3);
+				if (levelbonustype == 1)	HPMaxGain += randompick[statitem](0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+				if (levelbonustype >= 2)	HPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
+			}
 		}
 		
 		if (TrueGameSkill <= SKILL_VERY_EASY) 
@@ -3210,8 +3324,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				HPMaxGain += randompick[statitem](1,1,2,2,3);
-				HPMaxGain += (MaxHealthTrue / 216);
+				if (heiwavhardmodifier)
+				{
+					HPMaxGain += randompick[statitem](0,1,1,2,2);
+					HPMaxGain += (MaxHealthTrue / 270);
+				}
+				else
+				{
+					HPMaxGain += randompick[statitem](1,1,2,2,3);
+					HPMaxGain += (MaxHealthTrue / 216);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_EASY) 
@@ -3223,8 +3345,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				HPMaxGain += randompick[statitem](0,1,1,2,2);
-				HPMaxGain += (MaxHealthTrue / 270);
+				if (heiwavhardmodifier)
+				{
+					HPMaxGain += randompick[statitem](0,0,1,1,2);
+					HPMaxGain += (MaxHealthTrue / 324);
+				}
+				else
+				{
+					HPMaxGain += randompick[statitem](0,1,1,2,2);
+					HPMaxGain += (MaxHealthTrue / 270);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_NORMAL) 
@@ -3236,8 +3366,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				HPMaxGain += randompick[statitem](0,0,1,1,2);
-				HPMaxGain += (MaxHealthTrue / 324);
+				if (heiwavhardmodifier)
+				{
+					HPMaxGain += randompick[statitem](0,0,0,1,1);
+					HPMaxGain += (MaxHealthTrue / 378);
+				}
+				else
+				{
+					HPMaxGain += randompick[statitem](0,0,1,1,2);
+					HPMaxGain += (MaxHealthTrue / 324);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_HARD) 
@@ -3249,8 +3387,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				HPMaxGain += randompick[statitem](0,0,0,1,1);
-				HPMaxGain += (MaxHealthTrue / 378);
+				if (heiwavhardmodifier)
+				{
+					HPMaxGain += randompick[statitem](0,0,0,0,1);
+					HPMaxGain += (MaxHealthTrue / 432);
+				}
+				else
+				{
+					HPMaxGain += randompick[statitem](0,0,0,1,1);
+					HPMaxGain += (MaxHealthTrue / 378);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_VERY_HARD)
@@ -3262,13 +3408,24 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				HPMaxGain += randompick[statitem](0,0,0,0,1);
-				HPMaxGain += (MaxHealthTrue / 432);
+				if (heiwavhardmodifier)
+				{
+					if (random(1,2) <= 1) 
+					{
+						HPMaxGain += randompick[statitem](0,0,0,0,1);
+						HPMaxGain += (MaxHealthTrue / 488);
+					}
+				}
+				else
+				{
+					HPMaxGain += randompick[statitem](0,0,0,0,1);
+					HPMaxGain += (MaxHealthTrue / 432);
+				}
 			}
 		}
 		if (HeiwaPlayer(owner) && heiwavhardmodifier) HPMaxGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
 		
-		if (HPMaxGain < 1) HPMaxGain = 1;
+		if (!(HeiwaPlayer(owner) && heiwavhardmodifier && random(1,4) <= 1)) if (HPMaxGain < 1) HPMaxGain = 1;
 		owner.player.mo.health += HPMaxGain;
 		HealthLevelAdd += HPMaxGain;
 		if (type == 1) 
@@ -3308,16 +3465,37 @@ class PlayerStatItem : Inventory
 		
 		if (HeiwaPlayer(owner)) 
 		{
-			if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
-			else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
-			else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
-			else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			if (heiwavhardmodifier)
+			{
+				if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0675,0.075));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.06,0.0675));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+				else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+			}
+			else
+			{
+				if (PlayerLevel >= 151 && PlayerLevel <= 200)				MassGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MassGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MassGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
+				else if (PlayerLevel <= 50)													MassGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			}
 			
-			MassGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
-			if (levelbonustype <= -1) MassGain += randompick[statitem](1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3);
-			if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
-			if (levelbonustype == 1) MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
-			if (levelbonustype >= 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+			if (heiwavhardmodifier)
+			{
+				MassGain += 													randompick[statitem](0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1);
+				if (levelbonustype <= -1)	MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2);
+				if (levelbonustype == 0)	MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
+				if (levelbonustype == 1)	MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1);
+				if (levelbonustype >= 2)	MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+			}
+			else
+			{
+				MassGain += 													randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,1,1,2,2);
+				if (levelbonustype <= -1) MassGain += randompick[statitem](1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3);
+				if (levelbonustype == 0) MassGain += randompick[statitem](1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+				if (levelbonustype == 1) MassGain += randompick[statitem](0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2);
+				if (levelbonustype >= 2) MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1);
+			}
 		}
 		
 		if (TrueGameSkill <= SKILL_VERY_EASY) 
@@ -3329,8 +3507,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				MassGain += randompick[statitem](0,0,0,0,0,1,1,2,2,3);
-				MassGain += (BaseMass / 324);
+				if (heiwavhardmodifier)
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
+					MassGain += (BaseMass / 405);
+				}
+				else
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,1,1,2,2,3);
+					MassGain += (BaseMass / 324);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_EASY) 
@@ -3342,8 +3528,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
-				MassGain += (BaseMass / 405);
+				if (heiwavhardmodifier)
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
+					MassGain += (BaseMass / 486);
+				}
+				else
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,1,1,2,2);
+					MassGain += (BaseMass / 405);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_NORMAL) 
@@ -3355,8 +3549,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
-				MassGain += (BaseMass / 486);
+				if (heiwavhardmodifier)
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
+					MassGain += (BaseMass / 557);
+				}
+				else
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,1,1,2);
+					MassGain += (BaseMass / 486);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_HARD) 
@@ -3368,8 +3570,16 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
-				MassGain += (BaseMass / 557);
+				if (heiwavhardmodifier)
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
+					MassGain += (BaseMass / 648);
+				}
+				else
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,0,1,1);
+					MassGain += (BaseMass / 557);
+				}
 			}
 		}
 		if (TrueGameSkill == SKILL_VERY_HARD)
@@ -3381,8 +3591,19 @@ class PlayerStatItem : Inventory
 			}
 			if (HeiwaPlayer(owner)) 
 			{
-				MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
-				MassGain += (BaseMass / 648);
+				if (heiwavhardmodifier)
+				{
+					if (random(1,2) <= 1)
+					{
+						MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
+						MassGain += (BaseMass / 720);
+					}
+				}
+				else
+				{
+					MassGain += randompick[statitem](0,0,0,0,0,0,0,0,0,1);
+					MassGain += (BaseMass / 648);
+				}
 			}
 		}
 		if (HeiwaPlayer(owner) && heiwavhardmodifier) MassGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
@@ -3406,6 +3627,13 @@ class PlayerStatItem : Inventory
 		double vitgain1 = (vitgain0 + 0.03125); // (vitgain0 + 0.0625);
 		double vitgain2 = (vitgain0 + 0.09375); // (vitgain0 + 0.1875);
 		double vitgain3 = (vitgain0 + 0.125); // (vitgain0 + 0.25);
+		if (heiwavhardmodifier)
+		{
+			vitgain0 = frandompick(0.0125,0.0375,0.0375,0.0375,0.0375,0.0375,0.0625);
+			vitgain1 = (vitgain0 + 0.0625);
+			vitgain2 = (vitgain0 + 0.1875);
+			vitgain3 = (vitgain0 + 0.25);
+		}
 		
 		double VitalPieceGain = 0.0;
 		VitalPieceGain += 													frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2);
@@ -3703,7 +3931,7 @@ class PlayerStatItem : Inventory
 							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
 						}
 						double mulfactor = 1.0;
-						mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
+						if (basespd) mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
 						if (mulfactor < 1.0) mulfactor = 1.0;
 						TSARegenAmt *= mulfactor;
 						//Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d", plrspeed, basespd, mulfactor, TSARegenAmt);
@@ -4869,37 +5097,78 @@ class PlayerStatItem : Inventory
 			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Fist Block]: %.8f", PlayerFistBlockFactor);
 		}
 		//
+		let MiscItem = PlayerStatItem(Owner.FindInventory("PlayerStatItem"));
 		int ArmorAmt = owner.CountInv(armorclasstype);
+		double ArmorRatio = 0.0;
+		if (MaxHealthTrue > 0) ArmorRatio = double((ArmorAmt * 1.0) / (MaxHealthTrue * 1.0));
 		double armordiffmod = 1.00;
 		double ArmorFactor = 1.0;
+		double ArmorWeight;
 		ArmorM = 0;
-		if (darmortype == 1)
+		if (owner.CountInv("TSArmorTier2"))
 		{
 			if (owner.GetClassName() == "HeiwaPlayer")
 			{
-				if (berserked) ArmorM = (ArmorAmt * (0.00025 * armordiffmod)); // -0.025;
-									else ArmorM = (ArmorAmt * (0.0005 * armordiffmod)); // -0.05;
+				ArmorWeight = 0.015625;
+				if (berserked) ArmorWeight *= 0.25;
 			}
 			else
 			{
-				if (berserked) ArmorM = (ArmorAmt * (0.000025 * armordiffmod)); // -0.0025
-									else ArmorM = (ArmorAmt * (0.00005 * armordiffmod)); // -0.005
+				ArmorWeight = 0.0625;
+				if (berserked) ArmorWeight *= 0.875;
 			}
+			ArmorWeight *= armordiffmod;
+			ArmorM = ArmorWeight;
 		}
-		if (darmortype == 2) 
+		else
+		if (owner.CountInv("TSArmorTier1"))
 		{
 			if (owner.GetClassName() == "HeiwaPlayer")
 			{
-				if (berserked) ArmorM = (ArmorAmt * (0.0003125 * armordiffmod)); // -0.03125;
-									else ArmorM = (ArmorAmt * (0.000625 * armordiffmod)); // -0.0625;
+				ArmorWeight = 0.0125;
+				if (berserked) ArmorWeight *= 0.25;
 			}
 			else
 			{
-				if (berserked) ArmorM = (ArmorAmt * (0.00003125 * armordiffmod)); // -0.003125
-									else ArmorM = (ArmorAmt * (0.0000625 * armordiffmod)); // -0.00625
+				ArmorWeight = 0.05;
+				if (berserked) ArmorWeight *= 0.875;
 			}
+			ArmorWeight *= armordiffmod;
+			ArmorM = ArmorWeight;
 		}
-		let MiscItem = PlayerStatItem(Owner.FindInventory("PlayerStatItem"));
+		else
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (darmortype == 1) // Green Armor [Doom-type] (100% of HP max)
+				{
+					ArmorWeight = 0.25;
+					if (berserked) ArmorWeight *= 0.4;
+				}
+				if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
+				{
+					ArmorWeight = 0.20;
+					if (berserked) ArmorWeight *= 0.4;
+				}
+			}
+			else
+			{
+				if (darmortype == 1) // Green Armor [Doom-type] (100% of HP max)
+				{
+					ArmorWeight = 0.1875;
+					if (berserked) ArmorWeight *= 0.6;
+				}
+				if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
+				{
+					ArmorWeight = 0.15;
+					if (berserked) ArmorWeight *= 0.6;
+				}
+			}
+			ArmorWeight *= armordiffmod;
+			ArmorM = (ArmorWeight * ArmorRatio);
+		}
+		if (kcdebug_speedcalcs) Console.Printf("ArmorM: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorM, ArmorWeight, ArmorRatio, ArmorAmt, MaxHealthTrue);
+
 		ArmorM *= kc_armorencumbrance;
 		ArmorML = ArmorM;
 		if (owner.waterlevel >= 3) ArmorM *= 1.25;
@@ -4913,7 +5182,7 @@ class PlayerStatItem : Inventory
 		if (owner.waterlevel >= 3) lvlfact *= 0.75;
 		
 		if (ArmorM > 0.0) ArmorM *= (1.0 - (ActualLevel * lvlfact));
-		if (kcdebug_armordisplays) Console.Printf("%.8f (%.8f), exex_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorM, ArmorML, exex_armorencumbrance, armordiffmod);
+		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), exex_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorM, ArmorML, kc_armorencumbrance, armordiffmod);
 		if (ArmorM < 0.0) ArmorM = 0.0;
 		ArmorFactor = (1.0 - ArmorM);
 		if (ArmorFactor > 1.00) ArmorFactor = 1.00;

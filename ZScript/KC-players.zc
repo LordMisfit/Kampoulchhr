@@ -1323,8 +1323,8 @@ class KCPlayerPawn : PlayerPawn
 		
 		// Time Seraph Armor Checks
 		int tsadefbase = kc_tsadefensebase;
-		if (tsadefbase <= 25) tsadefbase = 25;
-		if (tsadefbase >= 40000) tsadefbase = 40000;
+		if (tsadefbase <= 10) tsadefbase = 10;
+		if (tsadefbase >= 100000) tsadefbase = 100000;
 		if (kcdebug_playerdamagemobj) Console.Printf("tsadefbase: %d", tsadefbase);
 		if (CountInv("TSArmorTier2"))
 		{
@@ -1482,6 +1482,13 @@ class KCPlayerPawn : PlayerPawn
 				if (CountInv(nn)) TSTicDmg *= frandom(0.334,0.667);
 				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
 				if (TSTicDmg) TSTicDmg *= kc_tsadmgfactor;
+				if (source)
+				{
+					if (sour == "EviternatusAnta" ||
+							sour == "EviternatusBete" ||
+							sour == "EviternatusCeph" ||
+							sour == "EviternatusDelp") TSTicDmg *= random(20,30);
+				}
 				if (!temperateshield)
 				{
 					if (!level.isFrozen())
@@ -3397,9 +3404,9 @@ class HeiwaPlayer : KCPlayerPawn
 	int stepCounter;
 	default
 	{
-		Health 84; // 100
-		Player.MaxHealth 84;
-		Player.MugShotMaxHealth -1; // 84
+		Health 45; // 100
+		Player.MaxHealth 45;
+		Player.MugShotMaxHealth -1; // 45
 		Radius 13; // 26
 		Height 51;
 		Player.AttackZOffset 8;
@@ -3407,20 +3414,23 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.GruntSpeed 12;
 		Player.FallingScreamSpeed 35, 40;
 		Player.ViewHeight 38;
-		Mass 72; 
+		Mass 72; // 72
 		PainChance 255;
 		Speed 1;
-		Player.DisplayName "'Heiwa' [VERY BETA LUL :V]";
+		Player.DisplayName "'Heiwa' [IN BETA :V]";
 		Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa";
 		Player.WeaponSlot 2, "Glock21";
+		//Player.WeaponSlot 3, "";
 		Player.WeaponSlot 4, "TommyGun";
 		Player.WeaponSlot 5, "Devastator";
 		Player.WeaponSlot 6, "TeslaCannon";
 		Player.WeaponSlot 7, "BHGen";
 		Player.WeaponSlot 8, "Translocator";
+		//Player.WeaponSlot 9, "";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		Player.StartItem "FistHeiwa";
+		/*
 		Player.StartItem "Translocator";
 		Player.StartItem "Glock21";
 		Player.StartItem "TommyGun";
@@ -3438,6 +3448,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.StartItem "Saws", 50;
 		Player.StartItem "ImpalerBolts", 40;
 		Player.StartItem "Bolts", 450;
+		*/
 		Player.StartItem "PlayerStatItem";
 		Player.StartItem "PlayerDashJump";
 		Player.ForwardMove 2.125, 1.0625;
