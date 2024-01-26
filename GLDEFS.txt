@@ -276,6 +276,141 @@ object ArmorBonusBig
 	frame BON4D { light SUPERARMORBONUS4 }
 }
 
+pointlight BLASTERBALL
+{
+	color 1.0 0.4 0.4
+	size 84
+	attenuate 1
+}
+
+flickerlight BLASTER_X1
+{
+	color 1.0 0.5 0.5
+	size 96
+	secondarySize 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTER_X2
+{
+	color 1.0 0.4 0.4
+	size 120
+	secondarySize 132
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTER_X3
+{
+	color 1.0 0.25 0.25
+	size 96
+	secondarySize 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTER_X4
+{
+	color 1.0 0.1 0.1
+	size 12
+	secondarySize 24
+	chance 0.4
+	attenuate 1
+}
+
+object PistolBlast
+{
+	frame PLSSA { light BLASTERBALL }
+	frame PLSSB { light BLASTERBALL }
+	
+	frame PLSEA { light BLASTER_X1 }
+	frame PLSEB { light BLASTER_X2 }
+	frame PLSEC { light BLASTER_X2 }
+	frame PLSED { light BLASTER_X3 }
+	frame PLSEE { light BLASTER_X4 }
+}
+
+pointlight BLASTERBALLWEAK
+{
+	color 1.0 0.4 0.4
+	size 56 // 84
+	attenuate 1
+}
+
+flickerlight BLASTERWEAK_X1
+{
+	color 1.0 0.5 0.5
+	size 64 // 96
+	secondarySize 72 // 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTERWEAK_X2
+{
+	color 1.0 0.4 0.4
+	size 80 // 120
+	secondarySize 88 // 132
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTERWEAK_X3
+{
+	color 1.0 0.25 0.25
+	size 64 // 96
+	secondarySize 72 // 108
+	chance 0.4
+	attenuate 1
+}
+
+flickerlight BLASTERWEAK_X4
+{
+	color 1.0 0.1 0.1
+	size 9 // 12
+	secondarySize 18 // 24
+	chance 0.4
+	attenuate 1
+}
+
+object PistolBlastWeak
+{
+	frame PLSSA { light BLASTERBALLWEAK }
+	frame PLSSB { light BLASTERBALLWEAK }
+	
+	frame PLSEA { light BLASTERWEAK_X1 }
+	frame PLSEB { light BLASTERWEAK_X2 }
+	frame PLSEC { light BLASTERWEAK_X2 }
+	frame PLSED { light BLASTERWEAK_X3 }
+	frame PLSEE { light BLASTERWEAK_X4 }
+}
+
+
+brightmap Sprite BLAPA0
+{
+	Map BLAPA0
+	disablefullbright
+}
+
+brightmap Sprite BLAPB0
+{
+	Map BLAPB0
+	disablefullbright
+}
+
+brightmap Sprite BLPSE0
+{
+	Map BLPSE0
+	disablefullbright
+}
+
+brightmap Sprite LLPSE0
+{
+	Map LLPSE0
+	disablefullbright
+}
+
 //Underwater shader
 HardwareShader PostProcess scene
 {

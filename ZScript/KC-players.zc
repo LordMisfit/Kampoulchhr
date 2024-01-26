@@ -2101,21 +2101,35 @@ class KCPlayerPawn : PlayerPawn
 				mod != 'SigilDrain' || 
 				mod != 'SpectralLow')
 		{
+			double useddmgfactor = 1.0;
 			if (SigilDrain || flags & DMG_FIXEDDMG) 
 			{
 			}
 			else 
 			{
-				if (GetClassName() == "KCPlayer") 
+				// Determines the primary defense modifier based on character in use
+				double dmgfactor1 = 1.0;
+				double dmgfactor2 = 1.0;
+				double dmgfactor3 = 1.0;
+				if (GetClassName() == "KCPlayer")
 				{
-					damage = ceil(damage * frandompick(0.9375,0.96875,0.96875,0.96875));
+					dmgfactor1 = 0.9375;
+					dmgfactor2 = 0.875;
+					dmgfactor3 = 0.8125;
 				}
 				if (GetClassName() == "HeiwaPlayer") 
 				{
-					damage = ceil(damage * frandompick(1.03125,1.03125,1.03125,1.0625));
+					dmgfactor1 = 1.0625;
+					dmgfactor2 = 1.125;
+					dmgfactor3 = 1.1875;
 				}
+				useddmgfactor = frandompick(dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor2,dmgfactor2,dmgfactor3);
+					if (GetClassName() == "HeiwaPlayer") damage = ceil(damage * useddmgfactor); // Rounds up damage for Heiwa
+				else if (GetClassName() == "KCPlayer") damage = floor(damage * useddmgfactor); // Rounds down damage for Doomguy
+																					else damage = (damage * useddmgfactor); // Doesn't favor rounding damage for any other class :V
+				
 			}
-			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Step 1ba]: %d", damage);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Step 1ba]: %d (useddmgfactor: %.8f)", damage, useddmgfactor);
 		}
 		else
 		if (mod == 'Magic' || 
@@ -2476,7 +2490,7 @@ class KCPlayerPawn : PlayerPawn
 			if (bINVULNERABLE || player.cheats & CF_GODMODE2 || player.cheats & CF_GODMODE || CountInv("KCPowerInvuln") || CountInv("PowerInvulnerable"))
 			{ 
 				if (SigilDrain) damage = 0;
-				A_StartSound("Player/TookNoDamageInvuln",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
+				if (health > 0) A_StartSound("Player/TookNoDamageInvuln",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
 				isinvuln = true;
 			}
 		}
@@ -2675,7 +2689,7 @@ class KCPlayerPawn : PlayerPawn
 					}
 					else
 					{
-						A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
+						if (health > 0) A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
 						combatlogmsg.AppendFormat("\c[white]No Damage \c-");
 					}
 					if (kcdebug_dmgdiffdebug)
@@ -3420,7 +3434,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.DisplayName "'Heiwa' [IN BETA :V]";
 		Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa";
-		Player.WeaponSlot 2, "Glock21";
+		Player.WeaponSlot 2, "Glock21", "BlasterPistol", "BlasterPistols";
 		//Player.WeaponSlot 3, "";
 		Player.WeaponSlot 4, "TommyGun";
 		Player.WeaponSlot 5, "Devastator", "Deviation";

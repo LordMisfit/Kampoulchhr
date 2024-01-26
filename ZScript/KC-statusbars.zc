@@ -2093,7 +2093,13 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "PistolMarine";
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") 
+		{
+			if (CPlayerPawn.CountInv("BlasterPistols")) wsname = "BlasterPistols";
+			else if (CPlayerPawn.CountInv("BlasterPistol")) wsname = "BlasterPistol";
+		}
 		wsammoname = "Clip";
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsammoname = "Cell";
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
 		{
@@ -2365,7 +2371,7 @@ class KCStatusBarMain : BaseStatusBar
 		weaponsincurslot = 1;
 		wsname = "Translocator"; // "KCSigil"
 		wsammoname = "TLBeaconAmmo";
-		//ammotype = CPlayerPawn.FindInventory(wsammoname);
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
 		{
 			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
