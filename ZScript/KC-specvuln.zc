@@ -332,7 +332,10 @@ class CompatVulnItem : PlaceholderItem
 
 		if (owner)
 		{
-			if (!(owner.bISMONSTER || owner.bSHOOTABLE || ShieldPartBase(owner))) Destroy();
+			if (!(owner.bISMONSTER || 
+						owner.bSHOOTABLE) ||
+						ShieldPartBase(owner) ||
+						PlayerPawn(owner)) Destroy();
 			
 			ownername = owner.GetClassName();
 			if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER

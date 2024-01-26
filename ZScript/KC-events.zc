@@ -706,6 +706,9 @@ class KC_EventHandler : EventHandler
 			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
 			string spawnname = spawnee.GetClassName();
 			string nm, nn, no, np;
+			bool isCCardsMini = false;
+			nm = "CCards_Actor_MiniMonsterPowerup"; 
+			if (spawnee.CountInv(nm)) isCCardsMini = true;
 			
 			double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
 			double hpmulti2, atkmulti2, defmulti2, spdmulti2, massmulti2;
@@ -946,6 +949,7 @@ class KC_EventHandler : EventHandler
 						mult *= 0.9;
 						mult *= (1.0 + (0.125 * monsterrating));
 						mult *= truemultbase;
+						if (isCCardsMini) mult *= 0.5;
 						if (kcdebug_monsterscaling) Console.Printf("\c[red]mult [pre-attack]: %.8f\c-, FRIENDLY?: %d, monsterrating: %d", mult, spawnee.bFRIENDLY, monsterrating);
 
 						// Attack
@@ -1012,6 +1016,7 @@ class KC_EventHandler : EventHandler
 						mult2 *= (random(2,4) * 0.9);
 						mult2 *= (1.0 + ((random(5,10) * 0.0125) * monsterrating));
 						mult2 *= truemultbase;
+						if (isCCardsMini) mult2 *= 0.5;
 						
 						MapCheck = globalvars.MapsFinished;
 						
@@ -1580,9 +1585,10 @@ class KC_EventHandler : EventHandler
 					spawnee.bSHOOTABLE) && 
 					!exception) 
 			{
-				if (!(KCPlayerPawn(spawnee) ||
+				if (!(PlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
+						 ShieldPartBase(spawnee) ||
 						 ShieldPartBase(spawnee) ||
 						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
 			}
@@ -3954,10 +3960,18 @@ class KC_EventHandler : EventHandler
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
 						luckbase = 1.9375 + (monsterrating * 0.3875); // (512) 
-						if (victim.bBOSS) // Boss-flagged monsters have a much higher chance to drop a Capsule :V
+						if (victim.bBOSS) // Boss-flagged monsters have a much higher chance to drop a Capsule as their initial drop
 						{
-							basechance *= 0.125;
-							luckbase *= 8.0;
+							if (droptimes % 8 == 0)
+							{
+								basechance *= 0.125;
+								luckbase *= 8.0;
+							}
+							else
+							{
+								basechance *= 0.75;
+								luckbase *= 1.334;
+							}
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
@@ -4245,6 +4259,13 @@ class KC_EventHandler : EventHandler
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);
 						nm = "CCards_Actor_FleaCurse"; if (victim.CountInv(nm)) ExpGain *= frandom(2.25,2.5);
 						ExpGain *= frandom(0.05,0.125);
+						if (MiscItem && MiscItem.PlayerIQ > 0) 
+						{
+							double IQBonus = (1.0 + double(MiscItem.PlayerIQ / 256.0));
+							ExpGain *= IQBonus;
+							if (kcdebug_worlddied) Console.Printf("[PlayerIQ] %d, [bonus: %.8f]", MiscItem.PlayerIQ, IQBonus);
+						}
+
 						
 						if ((source && source.bFRIENDLY) || (inflicter && inflicter.bFRIENDLY) || (mastor && mastor.bFRIENDLY)) ExpGain *= frandom(0.65,0.90);
 						if (KCPlayerPawn(source) && infl == "PlayerWhistle") ExpGain *= frandom(1.1875,1.3125);

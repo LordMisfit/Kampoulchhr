@@ -6341,6 +6341,7 @@ class TommyGun : MarineWeapon
 		Weapon.AmmoUse2 1;
 		Weapon.BobSpeed 0.334;
 		Weapon.BobStyle "Smooth";
+		Weapon.UpSound "weapons/tomup";
 		Inventory.PickupSound "TOMPKP";
 		Decal "Bulletchip";
 		Attacksound "DSTOMFR";
@@ -6710,6 +6711,7 @@ class Devastator : MarineWeapon
 		Scale 0.75;
 		Inventory.PickupSound "misc/w_pkup";
 		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
+		Weapon.UpSound "weapons/devup";
 		Weapon.AmmoType1 "MiniRockets";
 		Weapon.AmmoType2 "MiniRockets";
 		Weapon.AmmoGive 20;
@@ -10290,6 +10292,7 @@ Class Translocator : MarineWeapon
 		Inventory.PickupSound "misc/w_pkup";
 		Obituary "%o was telefragged by %k!";
 		+FLOORCLIP;	
+		+WEAPON.NOAUTOSWITCHTO;
 		+WEAPON.NOAUTOAIM;
 		+WEAPON.NOAUTOFIRE;
 		+WEAPON.NOALERT;
@@ -11583,6 +11586,7 @@ Class BlasterPistol : MarineWeapon
 	//$Category Weapons
 	//$Title "Blaster Pistol"
 	int shottype;
+	int altshottype;
 	
 	Default
 	{
@@ -11599,6 +11603,7 @@ Class BlasterPistol : MarineWeapon
 		Scale 0.5;
 		Weapon.WeaponScaleX 0.8;
 		Weapon.WeaponScaleY 1.0;
+		+WEAPON.AMMO_OPTIONAL;
 	}
    
 	States
@@ -11610,7 +11615,7 @@ Class BlasterPistol : MarineWeapon
 			BLPS A 1 A_Raise(12);
 			Loop;
 		Ready:
-			BLPS A 1 A_WeaponReady;
+			BLPS A 1 A_WeaponReady(WRF_ALLOWUSER4);
 			Loop;
 		Deselect:
 			BLPS A 1 A_Lower(12);
@@ -11637,17 +11642,18 @@ Class BlasterPistol : MarineWeapon
 				double shotangle = 0.0;
 				double shotpitch = 0.0;
 				double shotheight = 3;
-				if (CountInv("Cell") >= 1) 
+				if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
+				{
+					shotname = "PistolBlastWeak";
+					A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
+				}
+				else
 				{
 					shotname = "PistolBlast";
 					A_TakeInventory("Cell",1);
 					A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
 				}
-				else
-				{
-					shotname = "PistolBlastWeak";
-					A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
-				}
+				
 				if (invoker.shottype >= 1)
 				{
 					double spreadfactor = 1.0;
@@ -11698,6 +11704,27 @@ Class BlasterPistol : MarineWeapon
 			TNT1 A 2 Bright A_Light1;
 			TNT1 A 2 Bright A_Light2;
 			Goto LightDone;
+
+		// Fire Mode
+		User4:
+			BLPS A 0
+			{
+				A_StopSound(CHAN_6);
+				A_StartSound("weapons/blstrpst3",CHAN_6);
+				if (invoker.altshottype == 0)
+				{
+					invoker.altshottype = 1;
+					A_Print("Never Consume Cells [all shots are weakened by default]");
+				}
+				else
+				if (invoker.altshottype == 1)
+				{
+					invoker.altshottype = 0;
+					A_Print("Default to using Cells first");
+				}
+			}
+			BLPS A 8;
+			goto Ready;
 	}
 }
 
@@ -11722,6 +11749,7 @@ Class BlasterPistols : MarineWeapon
 		Scale 0.5;
 		Weapon.WeaponScaleX 0.8;
 		Weapon.WeaponScaleY 1.0;
+		+WEAPON.AMMO_OPTIONAL;
 	}
    
 	States

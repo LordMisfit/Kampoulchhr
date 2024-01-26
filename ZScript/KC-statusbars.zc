@@ -2896,6 +2896,7 @@ class KCStatusBarMain : BaseStatusBar
 			if (PlayerWeapon is "FistMarine" ||
 					PlayerWeapon is "FistHeiwa" ||
 					PlayerWeapon is "Glock21" ||
+					PlayerWeapon is "BlasterPistol" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
@@ -2905,6 +2906,7 @@ class KCStatusBarMain : BaseStatusBar
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
 				if (PlayerWeapon is "FistMarine" || PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
+				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
@@ -2919,10 +2921,13 @@ class KCStatusBarMain : BaseStatusBar
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
-
+			
+			// Alt-Fires
 			LegendStr = "";
 			if (PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
+					PlayerWeapon is "BlasterPistol" ||
+					//PlayerWeapon is "BlasterPistols" ||
 					PlayerWeapon is "ShotgunMarine" ||
 					PlayerWeapon is "SuperShotgunMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
@@ -2941,6 +2946,8 @@ class KCStatusBarMain : BaseStatusBar
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "ShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "SuperShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
