@@ -5845,6 +5845,319 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
+		if (weapon is "TommyGun")
+		{
+			bool dualtommys = false;
+			if (owner.CountInv("DualTommyGuns") && !owner.CountInv("DualTommyGunsDisabled")) dualtommys = true;
+
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (dualtommys)
+				{
+					if (!berserked)
+					{
+						DashCost *= 1.13334;
+						MaxDashCooldown *= 1.04445;
+					}
+					else 
+					{
+						DashCost *= 1.06667;
+						MaxDashCooldown *= 1.02223;
+					}
+				}
+				else
+				{
+					if (!berserked)
+					{
+						DashCost *= 1.06667;
+						MaxDashCooldown *= 1.02223;
+					}
+					else 
+					{
+						DashCost *= 1.03334;
+						MaxDashCooldown *= 1.01112;
+					}
+				}
+			}
+			else
+			{
+				if (dualtommys)
+				{
+					if (!berserked)
+					{
+						DashCost *= 1.06667;
+						MaxDashCooldown *= 1.02223;
+					}
+					else 
+					{
+						DashCost *= 1.03334;
+						MaxDashCooldown *= 1.01112;
+					}
+				}
+				else
+				{
+					if (!berserked)
+					{
+						DashCost *= 1.03334;
+						MaxDashCooldown *= 1.01112;
+					}
+					else 
+					{
+						DashCost *= 1.01667;
+						MaxDashCooldown *= 1.00556;
+					}
+				}
+			}
+		}
+		if (weapon is "Deviation")
+		{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.1875;
+						MaxDashCooldown *= 1.0625;
+					}
+					else
+					{
+						DashCost *= 1.09375;
+						MaxDashCooldown *= 1.03125;
+					}
+				}
+				else
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.09375;
+						MaxDashCooldown *= 1.03125;
+					}
+					else
+					{
+						DashCost *= 1.046875;
+						MaxDashCooldown *= 1.015625;
+					}
+				}
+		}
+		if (weapon is "Devastator")
+		{
+			bool dualdevs = false;
+			if (owner.CountInv("DualDevastators") && !owner.CountInv("DualDevastatorsDisabled")) dualdevs = true;
+			
+			if (dualdevs)
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.25;
+						MaxDashCooldown *= 1.0833333333333334;
+					}
+					else
+					{
+						DashCost *= 1.125;
+						MaxDashCooldown *= 1.0416666666666667;
+					}
+				}
+				else
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.125;
+						MaxDashCooldown *= 1.0416666666666667;
+					}
+					else
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+				}
+			}
+			else
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.125;
+						MaxDashCooldown *= 1.0416666666666667;
+					}
+					else
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+				}
+				else
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+					else
+					{
+						DashCost *= 1.03125;
+						MaxDashCooldown *= 1.010416666666667;
+					}
+				}
+			}
+		}
+		if (weapon is "TeslaCannon")
+		{
+			bool dualteslas = false;
+			if (owner.CountInv("DualTeslaCannons") && !owner.CountInv("DualTeslaCannonsDisabled")) dualteslas = true;
+			
+			if (dualteslas)
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.125;
+						MaxDashCooldown *= 1.0416666666666667;
+					}
+					else
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+				}
+				else
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+					else
+					{
+						DashCost *= 1.03125;
+						MaxDashCooldown *= 1.010416666666667;
+					}
+				}
+			}
+			else
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.125;
+						MaxDashCooldown *= 1.0416666666666667;
+					}
+					else
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+				}
+				else
+				{
+					if (!berserked) 
+					{
+						DashCost *= 1.0625;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+					else
+					{
+						DashCost *= 1.03125;
+						MaxDashCooldown *= 1.020833333333333;
+					}
+				}
+			}
+		}
+		if (weapon is "BHGen")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (!berserked) 
+				{
+					DashCost *= 1.375;
+					MaxDashCooldown *= 1.125;
+				}
+				else
+				{
+					DashCost *= 1.1875;
+					MaxDashCooldown *= 1.0625;
+				}
+			}
+			else
+			{
+				if (!berserked) 
+				{
+					DashCost *= 1.1875;
+					MaxDashCooldown *= 1.0625;
+				}
+				else
+				{
+					DashCost *= 1.09375;
+					MaxDashCooldown *= 1.03125;
+				}
+			}
+		}
+		/*
+		if (weapon is "EvilWarriorShield")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (!berserked)
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) 
+					{
+						DashCost *= (1.40 * (1.0 + (HellWarriorShieldLevel * 0.025)));
+						MaxDashCooldown *= (1.133334 * (1.0 + (HellWarriorShieldLevel * 0.0083334)));
+					}
+					else 
+					{
+						DashCost *= (1.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
+						MaxDashCooldown *= (1.066667 * (1.0 + (HellWarriorShieldLevel * 0.00416667)));
+					}
+				}
+				else
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) 
+					{
+						DashCost *= (1.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
+						MaxDashCooldown *= (1.066667 * (1.0 + (HellWarriorShieldLevel * 0.00416667)));
+					}
+					else 
+					{
+						DashCost *= (1.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+						MaxDashCooldown *= (1.033334 * (1.0 + (HellWarriorShieldLevel * 0.00208334)));
+					}
+				}
+			}
+			else
+			{
+				if (!berserked)
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) 
+					{
+						DashCost *= (1.40 * (1.0 + (HellWarriorShieldLevel * 0.025)));
+						MaxDashCooldown *= (1.133334 * (1.0 + (HellWarriorShieldLevel * 0.0083334)));
+					}
+					else 
+					{
+						DashCost *= (1.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
+						MaxDashCooldown *= (1.066667 * (1.0 + (HellWarriorShieldLevel * 0.00416667)));
+					}
+				}
+				else
+				{
+					if (Owner.CountInv("HWShieldBlockHold")) 
+					{
+						DashCost *= (1.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
+						MaxDashCooldown *= (1.066667 * (1.0 + (HellWarriorShieldLevel * 0.00416667)));
+					}
+					else 
+					{
+						DashCost *= (1.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+						MaxDashCooldown *= (1.033334 * (1.0 + (HellWarriorShieldLevel * 0.00208334)));
+					}
+				}
+			}
+		}
+		*/
 		
 		if (berserked) 
 		{

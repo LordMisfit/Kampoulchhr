@@ -1583,6 +1583,7 @@ class KC_EventHandler : EventHandler
 				if (!(KCPlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
+						 ShieldPartBase(spawnee) ||
 						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
 			}
 			
@@ -1936,7 +1937,6 @@ class KC_EventHandler : EventHandler
 				if (LostSoul(spawnee)) spawnee.PainSound = "skull/pain";
 				if (WolfensteinSS(spawnee)) spawnee.PainSound = "nazi/pain";
 				if (Cacodemon(spawnee)) spawnee.PainSound = "caco/pain";
-				if (HellKnight(spawnee)) spawnee.PainSound = "knight/pain";
 				if (Revenant(spawnee)) 
 				{
 					spawnee.PainSound = "revenant/pain";
@@ -1945,6 +1945,7 @@ class KC_EventHandler : EventHandler
 				if (RevenantNew(spawnee)) spawnee.ProjectilePassHeight = 84;
 				if (Arachnotron(spawnee)) spawnee.PainSound = "arachnotron/pain";
 				if (BaronOfHell(spawnee)) spawnee.PainSound = "baron/pain";
+				if (HellKnight(spawnee)) spawnee.PainSound = "knight/pain";
 				if (Cyberdemon(spawnee)) spawnee.PainSound = "cyberdemon/pain";
 				if (SpiderMastermind(spawnee)) spawnee.PainSound = "mastermind/pain";
 				
