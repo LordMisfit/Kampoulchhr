@@ -11573,7 +11573,8 @@ Class BlasterPickup : CustomInventoryExt
 			TNT1 A 0 A_GiveInventory ("BlasterPistol", 1);
 			Stop;
 		DoubleGuns:
-			TNT1 A 0 A_TakeInventory ("BlasterPistol", 1);
+			//TNT1 A 0 A_TakeInventory ("BlasterPistol", 1);
+			TNT1 A 0 A_GiveInventory ("BlasterPistol", 1);
 			TNT1 A 0 A_GiveInventory ("BlasterPistols", 1);
 			Stop;
 	}
@@ -11605,7 +11606,56 @@ Class BlasterPistol : MarineWeapon
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
 	}
-   
+	
+	action void A_BlasterPistolShot()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string shotname = "PistolBlast";
+		double shotangle = 0.0;
+		double shotpitch = 0.0;
+		double shotheight = 3;
+		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
+		{
+			shotname = "PistolBlastWeak";
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
+		}
+		else
+		{
+			shotname = "PistolBlast";
+			A_TakeInventory("Cell",1);
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
+		}
+		
+		if (invoker.shottype >= 1)
+		{
+			double spreadfactor = 1.0;
+			if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
+				if (spreadfactor < 0.334) spreadfactor = 0.334;
+			}
+			A_SetTics(1);
+			shotangle = (3.0 * spreadfactor);
+			shotpitch = (3.0 * spreadfactor);
+			shotheight = (frandom(-2.25,2.25) * spreadfactor);
+			if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
+				if (spreadfactor < 0.1667) spreadfactor = 0.1667;
+			}
+			A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
+		}
+		else
+		{
+			shotangle = 0.0;
+			shotpitch = 0.0;
+			shotheight = 0;
+		}
+		//Console.Printf("invoker.shottype: %d", invoker.shottype);
+		A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
+	}
+	
 	States
 	{
 		Spawn:
@@ -11635,52 +11685,8 @@ Class BlasterPistol : MarineWeapon
 		FireRight2:
 			BLPS E 2 Bright
 			{
-				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				A_GunFlash();
-				string shotname = "PistolBlast";
-				double shotangle = 0.0;
-				double shotpitch = 0.0;
-				double shotheight = 3;
-				if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
-				{
-					shotname = "PistolBlastWeak";
-					A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
-				}
-				else
-				{
-					shotname = "PistolBlast";
-					A_TakeInventory("Cell",1);
-					A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
-				}
-				
-				if (invoker.shottype >= 1)
-				{
-					double spreadfactor = 1.0;
-					if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
-					{
-						spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
-						if (spreadfactor < 0.334) spreadfactor = 0.334;
-					}
-					A_SetTics(1);
-					shotangle = (3.0 * spreadfactor);
-					shotpitch = (3.0 * spreadfactor);
-					shotheight = (frandom(-2.25,2.25) * spreadfactor);
-					if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
-					{
-						spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
-						if (spreadfactor < 0.1667) spreadfactor = 0.1667;
-					}
-					A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
-				}
-				else
-				{
-					shotangle = 0.0;
-					shotpitch = 0.0;
-					shotheight = 0;
-				}
-				//Console.Printf("invoker.shottype: %d", invoker.shottype);
-				A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
+				A_BlasterPistolShot();
 			}
 			BLPS B 1;
 			BLPS C 1
@@ -11704,7 +11710,7 @@ Class BlasterPistol : MarineWeapon
 			TNT1 A 2 Bright A_Light1;
 			TNT1 A 2 Bright A_Light2;
 			Goto LightDone;
-
+		
 		// Fire Mode
 		User4:
 			BLPS A 0
@@ -11731,6 +11737,8 @@ Class BlasterPistol : MarineWeapon
 
 Class BlasterPistols : MarineWeapon
 {
+	int shottype;
+	int altshottype;
 	//$Title "Blaster Pistol x2"
 
 	Default
@@ -11738,11 +11746,11 @@ Class BlasterPistols : MarineWeapon
 		Inventory.Pickupsound "misc/w_pkup";
 		Inventory.PickupMessage "You got a \cuBlaster Pistol\c-! \cx[Slot 2]\c-";
 		Inventory.PickupMessage "You got a \cupair of Blaster Pistols\c-!";
-		Weapon.AmmoType "Cell";
 		Weapon.AmmoGive 50;
-		Weapon.AmmoUse 1;
+		Weapon.AmmoType "Cell";
+		Weapon.AmmoUse 0;
 		Weapon.Ammotype2 "Cell";
-		Weapon.AmmoUse2 1;
+		Weapon.AmmoUse2 0;
 		Weapon.SlotNumber 2;
 		Obituary "%o was blasted by %k.";
 		Tag "Blaster Pistols";
@@ -11751,7 +11759,56 @@ Class BlasterPistols : MarineWeapon
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
 	}
-   
+	
+	action void A_BlasterPistolShot()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string shotname = "PistolBlast";
+		double shotangle = 0.0;
+		double shotpitch = 0.0;
+		double shotheight = 3;
+		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
+		{
+			shotname = "PistolBlastWeak";
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
+		}
+		else
+		{
+			shotname = "PistolBlast";
+			A_TakeInventory("Cell",1);
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
+		}
+		
+		if (invoker.shottype >= 1)
+		{
+			double spreadfactor = 1.0;
+			if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
+				if (spreadfactor < 0.334) spreadfactor = 0.334;
+			}
+			A_SetTics(1);
+			shotangle = (3.0 * spreadfactor);
+			shotpitch = (3.0 * spreadfactor);
+			shotheight = (frandom(-2.25,2.25) * spreadfactor);
+			if (playera.GetClassName() == "HeiwaPlayer" && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
+				if (spreadfactor < 0.1667) spreadfactor = 0.1667;
+			}
+			A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
+		}
+		else
+		{
+			shotangle = 0.0;
+			shotpitch = 0.0;
+			shotheight = 0;
+		}
+		//Console.Printf("invoker.shottype: %d", invoker.shottype);
+		A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
+	}
+	
 	States
 	{
 		Spawn:
@@ -11767,7 +11824,7 @@ Class BlasterPistols : MarineWeapon
 			BLPS A 1 A_Raise(12);
 			Loop;
 		Ready:
-			TNT1 A 1 A_WeaponReady;
+			TNT1 A 1 A_WeaponReady(WRF_ALLOWUSER4);
 			Loop;
 						
 		Deselect:
@@ -11782,14 +11839,16 @@ Class BlasterPistols : MarineWeapon
 			BLPS A 1 A_JumpIf(GetPlayerInput(INPUT_BUTTONS) & BT_ALTATTACK, "FireRight");
 			Loop;
 		FireRight:
-			BLPS A 0 A_JumpIfInventory ("Cell", 1, "FireRight2");
-			Goto DryRight;
+			BLPS A 0 
+			{
+				invoker.shottype = 0;
+			}
+			Goto FireRight2;
 		FireRight2:
 			BLPS E 2 Bright
 			{
 				A_GunFlash();
-				A_StartSound("weapons/blstrpst2",CHAN_WEAPON);
-				A_FireProjectile ("PistolBlast", 0, 1, 12, 3);
+				A_BlasterPistolShot();
 			}
 			BLPS BCD 1;
 			BLPS CB 2;
@@ -11802,14 +11861,16 @@ Class BlasterPistols : MarineWeapon
 			LLPS A 1 A_JumpIf(GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK, "FireLeft");
 			Loop;	
 		FireLeft:
-			LLPS A 0 A_JumpIfInventory ("Cell", 1, "FireLeft2");
-			Goto DryLeft;
+			LLPS A 0 
+			{
+				invoker.shottype = 0;
+			}
+			Goto FireLeft2;
 		FireLeft2:
 			LLPS E 2 Bright
 			{
 				A_GunFlash();
-				A_StartSound("weapons/blstrpst2",CHAN_WEAPON);
-				A_FireProjectile ("PistolBlast", 0, 1, -12, 3);
+				A_BlasterPistolShot();
 			}
 			LLPS BCD 1;
 			LLPS CB 2;
@@ -11822,6 +11883,27 @@ Class BlasterPistols : MarineWeapon
 			TNT1 A 2 Bright A_Light1;
 			TNT1 A 2 Bright A_Light2;
 			Goto LightDone;
+		
+		// Fire Mode
+		User4:
+			BLPS A 0
+			{
+				A_StopSound(CHAN_6);
+				A_StartSound("weapons/blstrpst3",CHAN_6);
+				if (invoker.altshottype == 0)
+				{
+					invoker.altshottype = 1;
+					A_Print("Never Consume Cells [all shots are weakened by default]");
+				}
+				else
+				if (invoker.altshottype == 1)
+				{
+					invoker.altshottype = 0;
+					A_Print("Default to using Cells first");
+				}
+			}
+			BLPS A 8;
+			goto Ready;
 	}
 }
 

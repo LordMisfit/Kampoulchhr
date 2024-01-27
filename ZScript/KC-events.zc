@@ -3473,6 +3473,11 @@ class KC_EventHandler : EventHandler
 								droptype = "Deviation";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
 							}
+							if (user_type == 15)
+							{
+								droptype = "BlasterPistol"; // "BlasterPickup";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
 							if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
 							if (!(droptype == "Backpack" ||
 									droptype == "CombatPack"))
@@ -3516,7 +3521,7 @@ class KC_EventHandler : EventHandler
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
 								if (randroll2 <= temp) 
 								{
-									user_type = random(1,13);
+									user_type = random(1,15);
 									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,14);
 									if (user_type == 1) droptype = "ClipBox";
 									if (user_type == 2) droptype = "ClipBox";
@@ -3532,10 +3537,11 @@ class KC_EventHandler : EventHandler
 									if (user_type == 12) droptype = "BoltsLarge";
 									if (user_type == 13) droptype = "CellPack";
 									if (user_type == 14) droptype = "RocketBox";
+									if (user_type == 15) droptype = "CellPack";
 								}
 								else
 								{
-									user_type = random(1,13);
+									user_type = random(1,15);
 									if (user_type == 1) droptype = "Clip";
 									if (user_type == 2) droptype = "Clip";
 									if (user_type == 3) droptype = "Shell";
@@ -3550,6 +3556,7 @@ class KC_EventHandler : EventHandler
 									if (user_type == 12) droptype = "Bolts";
 									if (user_type == 13) droptype = "Cell";
 									if (user_type == 14) droptype = "Rocket";
+									if (user_type == 15) droptype = "Cell";
 								}
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);
