@@ -76,7 +76,7 @@ class KC_EventHandler : EventHandler
 			if (player && !player.CountInv("PlayingCCards")) player.A_SetInventory("PlayingCCards",1);
 			
 			Actor mo;
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			ThinkerIterator it;
 			
 			if (A_CheckKCTimeFreeze())
@@ -686,7 +686,7 @@ class KC_EventHandler : EventHandler
 	
 	bool CheckExceptions(actor checkee)
 	{
-		string nm, nn, no, np;
+		string nm, nn, no, np, nq, nr, ns, nt;
 		bool exception = false;
 		if (checkee)
 		{
@@ -705,7 +705,7 @@ class KC_EventHandler : EventHandler
 			int TruePlayerLevel = 0;
 			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
 			string spawnname = spawnee.GetClassName();
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			bool isCCardsMini = false;
 			nm = "CCards_Actor_MiniMonsterPowerup"; 
 			if (spawnee.CountInv(nm)) isCCardsMini = true;
@@ -1554,7 +1554,7 @@ class KC_EventHandler : EventHandler
 		KCCreature KCC;
 		
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-		string nm, nn, no, np, nq, nr;
+		string nm, nn, no, np, nq, nr, ns, nt;
 		actor spawnee = e.thing;
 		actor source;
 		actor mastor;
@@ -1666,7 +1666,7 @@ class KC_EventHandler : EventHandler
 					if (YellowSkull(invspawnee) || BlueSkull(invspawnee) || RedSkull(invspawnee)) invspawnee.PickupSound = "getskullkey";
 				}
 				string invspawnname = invspawnee.GetClassName();
-				string nm, nn, no, np, nq, nr;
+				string nm, nn, no, np, nq, nr, ns, nt;
 				
 				nm = "KDIZDGreenKey";
 				nn = "KDIZDSilverKey";
@@ -1891,7 +1891,7 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) basehealth *= 16;
 					if (Skill == 3) basehealth *= 18;
 					if (Skill >= 4) basehealth *= 20;
-					spawnee.health *= basehealth;
+					spawnee.health = basehealth;
 				}
 				nn = "ArchangelusB"; extracheck = nm;
 				if (spawnname == extracheck) 
@@ -1911,9 +1911,24 @@ class KC_EventHandler : EventHandler
 				}
 				// ?????????? ??'s ???????????
 				nm = "EviternatusAnta"; extracheck = nm;
-				nm = "EviternatusBete"; extracheck = nm;
-				nm = "EviternatusCeph"; extracheck = nm;
-				nm = "EviternatusDelp"; extracheck = nm;
+				if (spawnname == extracheck) 
+				{
+					if (Skill <= 0) healthmulfactor = 0.01125;
+					if (Skill == 1) healthmulfactor = 0.013125;
+					if (Skill == 2) healthmulfactor = 0.015;
+					if (Skill == 3) healthmulfactor = 0.016875;
+					if (Skill >= 4) healthmulfactor = 0.01875;
+					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					if (Skill <= 0) basehealth *= 12;
+					if (Skill == 1) basehealth *= 14;
+					if (Skill == 2) basehealth *= 16;
+					if (Skill == 3) basehealth *= 18;
+					if (Skill >= 4) basehealth *= 20;
+					spawnee.health = basehealth;
+				}
+				nn = "EviternatusBete";
+				no = "EviternatusCeph";
+				np = "EviternatusDelp";
 				
 				// TUTNT's Source Boss
 				nm = "TheSource"; extracheck = nm;
@@ -1998,7 +2013,7 @@ class KC_EventHandler : EventHandler
 			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			
 			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			actor spawnee = e.thing;
 			string spawnname = spawnee.GetClassName();
 			int TruePlayerLevel = 0;
@@ -2095,7 +2110,7 @@ class KC_EventHandler : EventHandler
 			}
 			
 			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			
 			if (victim)
 			{
@@ -2662,7 +2677,7 @@ class KC_EventHandler : EventHandler
 			int healthbonusrolls;
 			
 			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			
 			int Kills = playera.CountInv("KillsCount");
 			// Drop Tables
@@ -4133,7 +4148,7 @@ class KC_EventHandler : EventHandler
 			if (kcdebug_worlddied) Console.Printf("[%p (%s)] WorldThingDied", victim, vict);
 			
 			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-			string nm, nn, no, np;
+			string nm, nn, no, np, nq, nr, ns, nt;
 			
 			
 			if (victim && 
