@@ -2855,6 +2855,7 @@ class FistMarine : MarineWeapon replaces Fist
 		+INVENTORY.UNTOSSABLE;
 		Tag "Fist";
 		Obituary "%o chewed on %k's fist.";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	States
@@ -4046,6 +4047,7 @@ class ChainsawMarine : MarineWeapon // replaces Chainsaw
 		Tag "$TAG_CHAINSAW";
 		+WEAPON.MELEEWEAPON		
 		+WEAPON.NOAUTOSWITCHTO
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	States
@@ -4187,6 +4189,7 @@ class PistolMarine : MarineWeapon //replaces Pistol
 		+WEAPON.WIMPY_WEAPON
 		Inventory.PickupMessage "Picked up a \cupistol\c-! \cx[Slot 2]\c-";
 		Tag "$TAG_PISTOL";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	States
@@ -4345,6 +4348,7 @@ class ShotgunMarine : MarineWeapon //replaces Shotgun
 		Inventory.PickupMessage "Picked up a \cushotgun\c-! \cx[Slot 3]\c-";
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	States
@@ -4605,7 +4609,9 @@ class SuperShotgunMarine : MarineWeapon //replaces SuperShotgun
 		Inventory.PickupMessage "Picked up a \cusuper shotgun\c-! \cx[Slot 3]\c-";
 		Obituary "$OB_MPSSHOTGUN";
 		Tag "$TAG_SUPERSHOTGUN";
+		Inventory.RestrictedTo "KCPlayer";
 	}
+	
 	States
 	{
 		Ready:
@@ -4986,6 +4992,7 @@ class ChaingunMarine : MarineWeapon //replaces Chaingun
 		Inventory.PickupMessage "Picked up a \cuchaingun\c-! \cx[Slot 4]\c-";
 		Obituary "$OB_MPCHAINGUN";
 		Tag "$TAG_CHAINGUN";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	action void A_MinigunTracer(actor playera, int type, double shotpitch, double shotangle, double shotheight)
@@ -5173,6 +5180,7 @@ class RocketLauncherMarine : MarineWeapon //replaces RocketLauncher
 		+WEAPON.NOALERT;
 		Inventory.PickupMessage "Picked up a \carocket launcher\c-! \cx[Slot 5]\c-";
 		Tag "$TAG_ROCKETLAUNCHER";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	
 	action void A_Howitizer(int type)
@@ -5612,6 +5620,7 @@ class PlasmaRifleMarine : MarineWeapon //replaces PlasmaRifle
 		Weapon.AmmoType2 "Cell";
 		Tag "$TAG_PLASMARIFLE";
 		Inventory.PickupMessage "Picked up a \cvplasma rifle\c-! \cx[Slot 6]\c-";
+		Inventory.RestrictedTo "KCPlayer";
 	}
 	States
 	{
@@ -5917,7 +5926,9 @@ class BFG9000Marine : MarineWeapon //replaces BFG9000
 		+WEAPON.NOAUTOFIRE;
 		Inventory.PickupMessage "Picked up a \cvBFG9000\c-! \cx[Slot 7]\c-";
 		Tag "$TAG_BFG9000";
+		Inventory.RestrictedTo "KCPlayer";
 	}
+	
 	States
 	{
 		Ready:
@@ -5975,6 +5986,7 @@ class Glock21 : MarineWeapon
 		KCWeaponBase.DamageIgnoreFactor4 1.000;
 		//AttackSound "weapons/glockfire";
 		Scale 0.5;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_GlockAtk(int type = 0)
@@ -6347,6 +6359,7 @@ class TommyGun : MarineWeapon
 		Attacksound "DSTOMFR";
 		Scale 0.6;
 		Weapon.Kickback 150;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action bool A_DualTMGCheck()
@@ -6717,6 +6730,7 @@ class Devastator : MarineWeapon
 		Weapon.AmmoGive 20;
 		Weapon.AmmoUse1 1;
 		Weapon.AmmoUse2 1;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action bool A_DualDevCheck()
@@ -7307,6 +7321,7 @@ class SawThrower : MarineWeapon
 		Weapon.AmmoUse2 1;
 		Weapon.KickBack 20;
 		Scale 0.9;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	States
@@ -7650,6 +7665,7 @@ class ImpalerXBow : MarineWeapon
 		Weapon.UpSound "Weapon/XBowLoad";
 		Weapon.KickBack 20;
 		+WEAPON.NOALERT;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action int A_BowBerserkCheck(int tic)
@@ -8103,6 +8119,7 @@ class TeslaCannon : MarineWeapon
 		weapon.ammogive 100;
 		Weapon.Kickback 50;
 		//attacksound "Tesla/Fire1";
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action bool A_DualTeslaCheck()
@@ -9325,6 +9342,7 @@ class BHGen : MarineWeapon
 		Inventory.PickupMessage "You got the \cvBlack Hole Generator\c-! \cx[Slot 7]\c-";
 		Tag "Black Hole Generator";
 		+WEAPON.NOAUTOAIM;
+		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	States
@@ -9986,6 +10004,7 @@ class Deviation : MarineWeapon // replaces RocketLauncher
 		Weapon.AmmoUse2 1;
 		Weapon.SlotNumber 5;
 		Scale 0.85;
+		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	States
 	{
@@ -10491,6 +10510,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 		+INVENTORY.UNTOSSABLE;
 		Tag "Fist";
 		Obituary "%o chewed on %k's fist.";
+		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_HeiwaPrePunch()
@@ -11605,6 +11625,7 @@ Class BlasterPistol : MarineWeapon
 		Weapon.WeaponScaleX 0.8;
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
+		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_BlasterPistolShot()
@@ -11758,6 +11779,7 @@ Class BlasterPistols : MarineWeapon
 		Weapon.WeaponScaleX 0.8;
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
+		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_BlasterPistolShot()
@@ -12034,6 +12056,386 @@ Class PistolBlastWeak : PistolBlast
 	}
 }
 
+// Shadow Warrior's Riot Gun [courtest of Samsara Reincarnation v2.0 V:
+class SWRiotMode : Ammo
+{
+	default
+	{
+		Inventory.Amount 0;
+		Inventory.MaxAmount 1;
+		Inventory.Icon "TNT1A0";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class RiotClipCounter : CustomInventoryExt { default { Inventory.MaxAmount 4; } }
+class RiotGunCooldown : PowerProtectionTimeCheck { default { damagefactor "normal", 1.0; powerup.duration 17; } }
+
+class SWPuffSmoke : KCBaseZSC
+{
+	default
+	{
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+RANDOMIZE;
+		VSpeed 1;
+		Mass 5;
+		scale 0.4;
+		renderstyle "translucent";
+		alpha 0.5;
+	}
+	
+	states
+	{
+		Spawn:
+			WMI2 ABCDE 5;
+			stop;
+	}
+}
+
+class SWPuff : KCPuff
+{
+	default
+	{
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+RANDOMIZE;
+		+ALLOWPARTICLES;
+		scale 0.35;
+	}
+	
+	states
+	{
+		Spawn:
+			WMI1 A 0;
+			WMI1 A 0 A_SpawnItemEx("SWPuffSmoke",0,0,0,0,0,random(1,2) * 0.4,0,SXF_CLIENTSIDE);
+			WMI1 ABC 3 bright;
+			stop;
+	}
+}
+
+class BulletPuffSW : SWPuff
+{
+	default
+	{
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+RANDOMIZE;
+		+ALLOWPARTICLES;
+		scale 0.35;
+		VSpeed 0;
+		DamageType "SWBullet";
+		Decal "ShadowWarriorBulletChip";
+		Renderstyle "Translucent";
+		Alpha 0.75;
+	}
+	
+	States
+	{
+		Spawn:
+		Crash:
+			TNT1 A 0 A_StartSound("SWBullet/Ricochet");
+			WMI1 A 0 A_SpawnItemEx("SWPuffSmoke",0,0,0,0,0,random(1,2) * 0.4,0,SXF_CLIENTSIDE);
+			WMI1 ABC 3 bright;
+			Stop;
+		Melee:
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class SWRiotBullet : KCBulletTracer // KCFastProjectile
+{
+	default
+	{
+		//+BLOODSPLATTER;
+		//+NOTIMEFREEZE;
+		//+NOEXTREMEDEATH;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay bright;
+		Idle:
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			loop;
+		Death:
+		Crash:  
+			TNT1 A 0 A_StartSound("SWBullet/Ricochet");
+			TNT1 A 1 A_SpawnItemEx("BulletPuffSW",0,0,0,0,0,0,0,0,0); //SXF_CLIENTSIDE) ;-;          
+			stop;
+		XDeath:
+			TNT1 A 1;
+			stop;
+	}
+}
+class BulletPuffSWCoop : BulletPuffSW 
+{
+	default 
+	{
+		+MTHRUSPECIES;
+		+THRUSPECIES;
+		Species "Player";
+	}
+}
+/*
+class Riotgun : MarineWeapon
+{ 
+	default
+	{
+		weapon.selectionorder 300;
+		weapon.slotnumber 3;
+		Weapon.BobRangeX 0.75;
+		Weapon.BobRangeY 0.95;
+		Weapon.BobSpeed 1.1;
+		//+WEAPON.NOALERT;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoGive1 24;
+		Weapon.AmmoType1 "Shell";
+		Obituary "%o was blown new holes by %k's Riot Gun.";
+		attacksound "Weapons/RiotgunFire";
+		inventory.pickupmessage "Picked up a \cuRiot Gun\c-! \cx[Slot 2]\c-";
+		Inventory.PickupSound "Item/pickup";
+		//Decal "ShadowWarriorBulletChip";
+		Tag "Riot Gun";
+		Inventory.RestrictedTo "HeiwaPlayer";
+	}
+	States
+	{
+		Ready:
+			TNT1 A 0 A_JumpIfInventory("SWRiotMode", 1, "ModeReady");
+			RIOT C 1 A_WeaponReady;
+			Loop;
+		ModeReady:
+			RITO A 1 A_WeaponReady;
+			Loop;
+		Deselect:
+			TNT1 A 0 A_TakeInventory("SWFistYell", 0);
+			TNT1 A 0 A_TakeInventory("RiotClipCounter", 4);
+			TNT1 A 0 A_JumpIfInventory("SWRiotMode", 1, "ModeDeselect");
+		DeselectLoop:
+			RIOT A 1 A_Lower(12);
+			Loop;
+		ModeDeselect:
+			RITO A 1 A_Lower(12);
+			Loop;
+		Select:
+			TNT1 A 0 A_TakeInventory("SWFistYell", 0);
+			TNT1 A 0 A_StartSound("Weapons/RiotgunLoad",CHAN_6);
+			TNT1 A 0 A_JumpIfInventory("SWRiotMode", 1, "ModeSelect");
+		SelectLoop:
+			RIOT A 1 A_Raise(12);
+			Loop;
+		ModeSelect:
+			RITO A 1 A_Raise(12);
+			Loop;
+		Fire:
+			TNT1 A 0 A_JumpIfInventory("SWRiotMode", 1, "Fire2");
+			TNT1 A 0 A_CheckReload;
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2");
+			TNT1 A 0 A_StartSound("Weapons/RiotgunFire");
+			TNT1 A 0 A_AlertMonsters;
+			TNT1 A 0 
+			{
+				A_TakeInventory("Shell", 1, TIF_NOTAKEINFINITE);
+				A_FireBullets(4.5, 2.8, 12, 4, "BulletPuffSW", FBF_NORANDOM|FBF_NOFLASH);
+			}
+			RIOT D 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 ACS_NamedExecuteAlways("SW748", 0, 5);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 4.0);
+			RIOT G 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT E 0 A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			TNT1 A 0 A_GiveInventory("RiotClipCounter", 1);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 offset(7, 39) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 offset(15,47) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 offset(7, 39) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT E 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT F 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 0.5);
+			RIOT F 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT F 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT F 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+		
+			RIOT A 3 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT B 3 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 5 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT A 0 A_CheckReload;
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload");
+			Goto Ready;
+		
+		Fire2:
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2"); // necessary to be here as well for weapon change while firing situation
+			TNT1 A 0 A_CheckReload;
+			TNT1 A 0 A_StartSound("Weapons/RiotgunFire");
+			TNT1 A 0 A_AlertMonsters;
+			TNT1 A 0 
+			{
+				//A_GiveInventory("RiotShooter2", 1);
+				A_TakeInventory("Shell", 1, TIF_NOTAKEINFINITE);
+				A_FireBullets (6.2, 4.2, 12, 4, "BulletPuffSW", FBF_NORANDOM|FBF_NOFLASH);
+			}
+			RITO DE 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 ACS_NamedExecuteAlways("SW748", 0, 1);
+			TNT1 A 0 A_GiveInventory("RiotClipCounter", 1);
+			TNT1 A 0 A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 1.5);
+			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 2.0);
+			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 3.5);
+			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_CheckReload;
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2");
+		
+			TNT1 A 0 A_StartSound("Weapons/RiotgunFire");
+			TNT1 A 0 A_AlertMonsters;
+			TNT1 A 0 
+			{
+				//A_GiveInventory("RiotShooter2", 1);
+				A_TakeInventory("Shell", 1, TIF_NOTAKEINFINITE);
+				A_FireBullets (6.2, 4.2, 12, 4, "BulletPuffSW", FBF_NORANDOM|FBF_NOFLASH);
+			}
+			RITO DE 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 ACS_NamedExecuteAlways("SW748", 0, 2);
+			TNT1 A 0 A_GiveInventory("RiotClipCounter", 1);
+			TNT1 A 0 A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 1.5);
+			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 2.0);
+			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 3.5);
+			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_CheckReload;
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2");
+		
+			TNT1 A 0 A_StartSound("Weapons/RiotgunFire");
+			TNT1 A 0 A_AlertMonsters;
+			TNT1 A 0 
+			{
+				//A_GiveInventory("RiotShooter2", 1);
+				A_TakeInventory("Shell", 1, TIF_NOTAKEINFINITE);
+				A_FireBullets (6.2, 4.2, 12, 4, "BulletPuffSW", FBF_NORANDOM|FBF_NOFLASH);
+			}
+			RITO DE 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 ACS_NamedExecuteAlways("SW748", 0, 1);
+			TNT1 A 0 A_GiveInventory("RiotClipCounter", 1);
+			TNT1 A 0 A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 1.5);
+			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 2.0);
+			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 3.5);
+			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
+			TNT1 A 0 A_CheckReload;
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2");
+		
+			TNT1 A 0 A_StartSound("Weapons/RiotgunFire");
+			TNT1 A 0 A_AlertMonsters;
+			TNT1 A 0 
+			{
+				//A_GiveInventory("RiotShooter2", 1);
+				A_TakeInventory("Shell", 1, TIF_NOTAKEINFINITE);
+				A_FireBullets (6.2, 4.2, 12, 4, "BulletPuffSW", FBF_NORANDOM|FBF_NOFLASH);
+			}
+			RITO DE 1 Bright A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 ACS_NamedExecuteAlways("SW748", 0, 2);
+			TNT1 A 0 A_GiveInventory("RiotClipCounter", 1);
+			TNT1 A 0 A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 1.5);
+			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch - 2.0);
+			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_JumpIfInventory("SamsaraRecoilIsDisabled", 1, 2);
+			TNT1 A 0 A_SetPitch(pitch + 3.5);
+			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT A 0 A_CheckForReload(4, "Reload2");
+			TNT1 A 0 A_JumpIfInventory("RiotClipCounter", 4, "Reload2")	;
+		
+			Goto Ready;
+		Reload:
+			TNT1 A 0 A_JumpIfNoAmmo("Ready");
+			TNT1 A 0 A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
+			RIOT C 1 offset(0, 50) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 1 offset(0, 59) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 1 offset(0, 68) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 18 offset (0, 71) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 1 offset(0, 62) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 1 offset(0, 44) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
+			RIOT C 1 offset(0, 35) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RIOT C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_TakeInventory("RiotClipCounter", 4);
+			Goto Ready;
+		Reload2:
+			TNT1 A 0 A_JumpIfNoAmmo("Ready");
+			TNT1 A 0 A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
+			RITO A 1 offset(-1, 50) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 1 offset(-1, 59) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 1 offset(-1, 68) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 17 offset(-1, 71) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 1 offset(-1, 62) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 1 offset(-1, 44) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
+			RITO A 1 offset(-1, 35) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			RITO A 1 offset(-1, 32) A_WeaponReady(WRF_NOBOB | WRF_NOFIRE);
+			TNT1 A 0 A_TakeInventory("RiotClipCounter", 4);
+			Goto Ready;
+		AltFire:
+			TNT1 A 0 A_JumpIfInventory("RiotGunCooldown", 1, "Ready");
+			RIOT A 0 A_StartSound("Weapons/RiotgunLoad");
+			RITO A 1 A_WeaponReady(WRF_NOFIRE | WRF_NOSWITCH);
+			TNT1 A 0 A_GiveInventory("RiotGunCooldown", 1);
+			TNT1 A 0 A_JumpIfInventory("SWRiotMode", 1, "RiotOff");
+			RITO A 1 A_WeaponReady(WRF_NOFIRE | WRF_NOSWITCH);
+			TNT1 A 0 A_GiveInventory("SWRiotMode", 1);
+			RITO A 3 A_WeaponReady(WRF_NOFIRE | WRF_NOSWITCH);
+			Goto Ready;
+		RiotOff:
+			RIOT C 1 A_WeaponReady(WRF_NOFIRE | WRF_NOSWITCH);
+			TNT1 A 0 A_TakeInventory("SWRiotMode", 1);
+			RIOT C 4 A_WeaponReady(WRF_NOFIRE | WRF_NOSWITCH);
+			Goto Ready;
+		Spawn:
+			SW30 Z -1;
+			Stop;
+	}
+}
+*/
 //
 class CCards_Actor_PlushWeaponEx1 : MarineWeapon
 {

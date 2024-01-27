@@ -3374,7 +3374,7 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
-							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,14);
+							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
 							droptype = "Backpack";
 							if (user_type == 1) 
 							{
@@ -3475,7 +3475,12 @@ class KC_EventHandler : EventHandler
 							}
 							if (user_type == 15)
 							{
-								droptype = "BlasterPistol"; // "BlasterPickup";
+								droptype = "BlasterPickup";
+								if (playera.CountInv(droptype)) droptype = "Backpack";
+							}
+							if (user_type == 16)
+							{
+								droptype = "RiotGun";
 								if (playera.CountInv(droptype)) droptype = "Backpack";
 							}
 							if (droptype == "Backpack" && random(1,16) <= 1) droptype = "CombatPack";
@@ -3521,8 +3526,8 @@ class KC_EventHandler : EventHandler
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
 								if (randroll2 <= temp) 
 								{
-									user_type = random(1,15);
-									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,14);
+									user_type = random(1,13);
+									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
 									if (user_type == 1) droptype = "ClipBox";
 									if (user_type == 2) droptype = "ClipBox";
 									if (user_type == 3) droptype = "ShellBox";
@@ -3541,7 +3546,8 @@ class KC_EventHandler : EventHandler
 								}
 								else
 								{
-									user_type = random(1,15);
+									user_type = random(1,13);
+									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
 									if (user_type == 1) droptype = "Clip";
 									if (user_type == 2) droptype = "Clip";
 									if (user_type == 3) droptype = "Shell";
