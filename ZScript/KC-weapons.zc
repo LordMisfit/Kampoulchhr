@@ -17,6 +17,7 @@ class KCWeaponBase : Weapon
 
 	int temp1;
 	int tommybarrageno;
+	int tauntyell;
 	
 	int ActualLevel;
 	int kickspeed;
@@ -1918,6 +1919,58 @@ class KCWeaponBase : Weapon
 		}
 		// Restore autoaim setting
 		if (weap != null) weap.bNoAutoaim = doesautoaim;
+	}
+
+	// Allows Heiwa to occasionally shout kiais/taunts when firing certain weapons
+	action void A_HeiwaRGunKiais(int basechance = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
+		bool voicecheck = false;
+		if (MiscItem.OneLinerCooldown <= 0)
+		{
+			if (basechance <= 0) basechance = kc_heiwaonelinerbasechance;
+			if (basechance > 0)
+			{
+				if (playera.CountInv("DecentHealth")) basechance *= 1.25;
+				if (playera.CountInv("LowHealth")) basechance *= 1.5;
+				if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
+				if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
+				int maxchance = 256;
+				//Console.Printf("%d / %d", basechance, maxchance);
+				if (random(1,maxchance) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
+				{
+					double maskpitch = 1.00;
+					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					string voicenm;
+					double voicevol = frandom(1.25,1.75);
+					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+					int randvoice = random(1,2);
+					if (randvoice == 1) 
+					{
+						voicenm = "Heiwa/BangBangBang"; //
+						Console.Printf("\c[HeiwaDeluge]'Bangbangbang-bang!!'\c-"); //
+					}
+					if (randvoice == 2) 
+					{
+						voicenm = "Heiwa/DanceForMe"; //
+						Console.Printf("\c[HeiwaDeluge]'DANCE!!!'\c-"); //
+					}
+					
+					//Console.Printf("One-Liner: %d", randvoice);
+					//
+					//
+					//
+					if (randvoice > 0)
+					{
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+						MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
+					}
+				}
+			}
+		}
 	}
 	
 	States
@@ -4126,8 +4179,6 @@ class PistolSpawner : CustomInventoryExt replaces Pistol
 		bool spawned;
 		actor mo;
 		string droptype = "PistolMarine";
-		string droptypemarine = "PistolMarine";
-		string droptypeheiwa = "Glock21";
 		string droptypeammo = "Clip";
 		string droptypeammobig = "ClipBox";
 		int dropchancemax = 7;
@@ -4144,63 +4195,48 @@ class PistolSpawner : CustomInventoryExt replaces Pistol
 		}
 		if (playera.GetClassName() == "HeiwaPlayer")
 		{
-			if (random(1,8) <= 1) 
+			if (random(1,dropchancemax) <= dropchance) 
 			{
-				droptypeheiwa = "BlasterPickup";
-				droptypeammo = "Cell";
-				droptypeammobig = "CellPack";
-			}
-			else 
-			{
-				droptypeheiwa = "Glock21";
-				droptypeammo = "Clip";
-				droptypeammobig = "ClipBox";
-			}
-		}
-		else
-		{
-			if (random(1,8) <= 1) 
-			{
-				droptypemarine = "Glock21";
-				droptypeammo = "Clip";
-				droptypeammobig = "ClipBox";
-			}
-			else 
-			{
-				droptypemarine = "PistolMarine";
-				droptypeammo = "Clip";
-				droptypeammobig = "ClipBox";
-			}
-		}
-			
-		if (random(1,dropchancemax) <= dropchance) 
-		{
-			if (playera.GetClassName() == "HeiwaPlayer") droptype = droptypeheiwa;
-																							else droptype = droptypemarine;
-			if (playera.CountInv(droptype))
-			{
-				if (random(1,5) <= 1)
+				if (random(1,8) <= 1) 
 				{
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+					droptype = "BlasterPickup";
+					droptypeammo = "Cell";
+					droptypeammobig = "CellPack";
 				}
-				else
+				else 
 				{
-					droptype = "PistolMarine";
+					droptype = "Glock21";
+					droptypeammo = "Clip";
+					droptypeammobig = "ClipBox";
 				}
-			}
-		}
-		else
-		{
-			if (random(1,5) <= 1)
-			{
-				droptype = droptypeammobig;
-				if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 			}
 			else
 			{
 				droptype = "PistolMarine";
+				droptypeammo = "Clip";
+				droptypeammobig = "ClipBox";
 			}
+		}
+		else
+		{
+			if (random(1,dropchancemax) <= dropchance) 
+			{
+				droptype = "Glock21";
+				droptypeammo = "Clip";
+				droptypeammobig = "ClipBox";
+			}
+			else
+			{
+				droptype = "PistolMarine";
+				droptypeammo = "Clip";
+				droptypeammobig = "ClipBox";
+			}
+		}
+
+		if (random(1,5) <= 1)
+		{
+			droptype = droptypeammobig;
+			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
@@ -4294,70 +4330,75 @@ class ShotgunSpawner : CustomInventoryExt replaces Shotgun
 		bool spawned;
 		actor mo;
 		string droptype = "ShotgunMarine";
+		string droptypeammo = "Shell";
+		string droptypeammobig = "Shell";
+		int dropchancemax = 7;
+		int dropchance = 2;
+		if (bDROPPED)
+		{
+			dropchancemax = 35;
+			dropchance = 2;
+		}
+		else
+		{
+			dropchancemax = 7;
+			dropchance = 2;
+		}
 		if (playera.GetClassName() == "HeiwaPlayer") 
 		{
-			if (!bDROPPED)
+			if (random(1,dropchancemax) <= dropchance) 
 			{
-				if (random(1,7) <= 2) 
+				if (random(1,16) <= 1)
 				{
-					droptype = "ImpalerXBow";
+					droptype = "RiotGun";
+					droptypeammo = "Shell";
+					droptypeammobig = "ShellBox";
 				}
 				else
 				{
-					if (random(1,5) <= 1)
-					{
-						droptype = "ImpalerBolts";
-						if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) 
-						{
-							double rand = 3.0;
-							droptype = "ImpalerBolts";
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-						}
-					}
-					else
-					{
-						droptype = "ShotgunMarine";
-					}
+					droptype = "ImpalerXBow";
+					droptypeammo = "ImpalerBolts";
+					droptypeammobig = "ImpalerBoltsBig";
 				}
 			}
 			else
 			{
-				if (random(1,35) <= 2) 
+				if (random(1,16) <= 1) droptype = "SuperShotgunMarine";
+													else droptype = "ShotgunMarine";
+				droptypeammo = "Shell";
+				droptypeammobig = "ShellBox";
+			}
+		}
+		else
+		{
+			if (random(1,dropchancemax) <= dropchance) 
+			{
+				if (random(1,16) <= 1)
 				{
 					droptype = "ImpalerXBow";
+					droptypeammo = "ImpalerBolts";
+					droptypeammobig = "ImpalerBoltsBig";
 				}
 				else
 				{
-					if (random(1,5) <= 1)
-					{
-						droptype = "ImpalerBolts";
-						if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) 
-						{
-							double rand = 3.0;
-							droptype = "ImpalerBolts";
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-						}
-					}
-					else
-					{
-						droptype = "ShotgunMarine";
-					}
+					if (random(1,16) <= 1) droptype = "SuperShotgunMarine";
+														else droptype = "ShotgunMarine";
+					droptypeammo = "Shell";
+					droptypeammobig = "ShellBox";
 				}
 			}
+			else
+			{
+				if (random(1,16) <= 1) droptype = "SuperShotgunMarine";
+													else droptype = "ShotgunMarine";
+				droptypeammo = "Shell";
+				droptypeammobig = "ShellBox";
+			}
+		}
+		if (random(1,5) <= 1)
+		{
+			droptype = droptypeammobig;
+			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
@@ -4551,74 +4592,73 @@ class SuperShotgunSpawner : CustomInventoryExt replaces SuperShotgun
 		bool spawned;
 		actor mo;
 		string droptype = "SuperShotgunMarine";
+		string droptypeammo = "Shell";
+		string droptypeammobig = "Shell";
+		int dropchancemax = 7;
+		int dropchance = randompick(4,4,5);
+		if (bDROPPED)
+		{
+			dropchancemax = 35;
+			dropchance = 2;
+		}
+		else
+		{
+			dropchancemax = 7;
+			dropchance = randompick(4,4,5);
+		}
 		if (playera.GetClassName() == "HeiwaPlayer") 
 		{
-			if (!bDROPPED)
+			if (random(1,dropchancemax) <= dropchance) 
 			{
-				if (random(1,7) <= 4) 
+				if (random(1,16) <= 1)
 				{
-					droptype = "ImpalerXBow";
+					droptype = "RiotGun";
+					droptypeammo = "Shell";
+					droptypeammobig = "ShellBox";
 				}
 				else
 				{
-					if (random(1,5) <= 1)
-					{
-						droptype = "ImpalerBolts";
-						if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) 
-						{
-							double rand = 3.0;
-							droptype = "ImpalerBolts";
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-						}
-						else
-						{
-							droptype = "ShotgunMarine";
-						}
-					}
-					else
-					{
-						droptype = "ShotgunMarine";
-					}
+					droptype = "ImpalerXBow";
+					droptypeammo = "ImpalerBolts";
+					droptypeammobig = "ImpalerBoltsBig";
 				}
 			}
 			else
 			{
-				if (random(1,35) <= 4) 
+				droptype = "SuperShotgunMarine";
+				droptypeammo = "Shell";
+				droptypeammobig = "ShellBox";
+			}
+		}
+		else
+		{
+			if (random(1,dropchancemax) <= dropchance) 
+			{
+				if (random(1,16) <= 1)
 				{
 					droptype = "ImpalerXBow";
+					droptypeammo = "ImpalerBolts";
+					droptypeammobig = "ImpalerBoltsBig";
 				}
 				else
 				{
-					if (random(1,5) <= 1)
-					{
-						droptype = "ImpalerBolts";
-						if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) 
-						{
-							double rand = 3.0;
-							droptype = "ImpalerBolts";
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-							[spawned, mo] = A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),flags:SXF_NOCHECKPOSITION);
-							if (mo) { mo.bDROPPED = bDROPPED; }
-						}
-					}
-					else
-					{
-						droptype = "ShotgunMarine";
-					}
+					droptype = "SuperShotgunMarine";
+					droptypeammo = "Shell";
+					droptypeammobig = "ShellBox";
 				}
 			}
+			else
+			{
+				if (random(1,16) <= 1) droptype = "SuperShotgunMarine";
+													else droptype = "ShotgunMarine";
+				droptypeammo = "Shell";
+				droptypeammobig = "ShellBox";
+			}
+		}
+		if (random(1,5) <= 1)
+		{
+			droptype = droptypeammobig;
+			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
@@ -4936,72 +4976,55 @@ class ChaingunSpawner : CustomInventoryExt replaces Chaingun
 		bool spawned;
 		actor mo;
 		string droptype = "ChaingunMarine";
-		if (playera.GetClassName() == "HeiwaPlayer") 
+		string droptypeammo = "Clip";
+		string droptypeammobig = "ClipBox";
+		int dropchancemax = 7;
+		int dropchance = 2;
+		if (bDROPPED)
 		{
-			if (!bDROPPED)
+			dropchancemax = 35;
+			dropchance = 2;
+		}
+		else
+		{
+			dropchancemax = 7;
+			dropchance = 2;
+		}
+		if (playera.GetClassName() == "HeiwaPlayer")
+		{
+			if (random(1,dropchancemax) <= dropchance) 
 			{
-				if (random(1,7) <= 2) 
-				{
-					droptype = "TommyGun";
-					if (playera.CountInv(droptype))
-					{
-						if (random(1,7) <= 2)
-						{
-							droptype = "DualTommyGunPickup";
-						}
-						else
-						{
-							if (random(1,5) <= 1)
-							{
-								droptype = "TommAmmo";
-								if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
-							}
-							else
-							{
-								droptype = "ChaingunMarine";
-							}
-						}
-					}
-					else
-					{
-						if (random(1,5) <= 1)
-						{
-							droptype = "TommAmmo";
-							if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
-						}
-						else
-						{
-							droptype = "ChaingunMarine";
-						}
-					}
-				}
+				droptype = "TommyGun";
+				droptypeammo = "TommAmmo";
+				droptypeammobig = "TommAmmoBig";
 			}
 			else
 			{
-				if (random(1,35) <= 2)
-				{
-					droptype = "TommyGun";
-					if (playera.CountInv(droptype))
-					{
-						if (random(1,35) <= 2)
-						{
-							droptype = "DualTommyGunPickup";
-						}
-						else
-						{
-							if (random(1,5) <= 1)
-							{
-								droptype = "TommAmmo";
-								if (random(1,128) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
-							}
-							else
-							{
-								droptype = "ChaingunMarine";
-							}
-						}
-					}
-				}
+				droptype = "ChaingunMarine";
+				droptypeammo = "Clip";
+				droptypeammobig = "ClipBox";
 			}
+		}
+		else
+		{
+			if (random(1,dropchancemax) <= dropchance) 
+			{
+				droptype = "TommyGun";
+				droptypeammo = "TommAmmo";
+				droptypeammobig = "TommAmmoBig";
+			}
+			else
+			{
+				droptype = "ChaingunMarine";
+				droptypeammo = "Clip";
+				droptypeammobig = "ClipBox";
+			}
+		}
+		
+		if (random(1,5) <= 1)
+		{
+			droptype = droptypeammobig;
+			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
@@ -8143,12 +8166,30 @@ class ImpalerBolts : Ammo
 	default
 	{
 		Inventory.PickupMessage "Picked up a pack of \cfSteel bolts\c-";
-		Inventory.Amount 10;
+		Inventory.Amount 5;
 		Inventory.MaxAmount 40;
 		Inventory.Icon "CBWAA0";
 		Ammo.BackpackAmount 5;
 		Ammo.BackpackMaxAmount 80;
 		Inventory.PickupSound "getxbowpouch";
+	}
+	
+	States
+	{
+		Spawn:
+			CBWA A -1;
+			Stop;
+	}
+}
+
+class ImpalerBoltsBig : ImpalerBolts
+{
+	default
+	{
+		Inventory.PickupMessage "Picked up a huge pack of \cfSteel bolts\c-";
+		Inventory.Amount 20;
+		Inventory.PickupSound "getxbowpouch";
+		Scale 0.875;
 	}
 	
 	States
@@ -12229,7 +12270,6 @@ class Riotgun : MarineWeapon
 { 
 	int RiotClipCounter;
 	int SWRiotMode;
-	int SWFistYell;
 	int WeapFlagsTemp;
 	
 	default
@@ -12260,11 +12300,12 @@ class Riotgun : MarineWeapon
 		}
 		else
 		{
-			invoker.SWFistYell += mode;
-			if (invoker.SWFistYell >= 18)
+			invoker.tauntyell += mode;
+			if (invoker.tauntyell >= 18)
 			{
-				//GiveInventory("LoWangFrustratedTaunt", 1);
-				invoker.SWFistYell -= 12;
+				A_HeiwaRGunKiais(randompick(48,64,64,64,64,80));
+				invoker.tauntyell -= randompick(9,12,12,12,12,15);
+				if (invoker.tauntyell < 0) invoker.tauntyell = 0;
 			}
 		}
 	}

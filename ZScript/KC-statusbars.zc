@@ -2899,6 +2899,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
 					PlayerWeapon is "BlasterPistols" ||
+					PlayerWeapon is "RiotGun" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
@@ -2910,6 +2911,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
 				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
 				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
+				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
@@ -2963,6 +2965,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]FIRE RIGHT BLASTER\c-");
 				if (PlayerWeapon is "ShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "SuperShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
+				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");

@@ -1980,10 +1980,7 @@ class KC_EventHandler : EventHandler
 				
 				if (Demon1(spawnee) || Demon2(spawnee)) spawnee.ProjectilePassHeight = 104;
 				
-				if (ArchvileFire(spawnee))
-				{
-					spawnee.A_SetRenderStyle(frandom(0.625,0.875),STYLE_Add);
-				}
+				if (ArchvileFire(spawnee)) spawnee.A_SetRenderStyle(frandompick(0.50,0.625,0.75),STYLE_Add);
 				
 				// Monster "Scaling"
 				MonsterStatsSet(spawnee, basemonsterrating, practicetarget, specialenemy, ispeasant);
@@ -3671,7 +3668,7 @@ class KC_EventHandler : EventHandler
 									if (user_type == 8) droptype = "CellPack";
 									if (user_type == 9) droptype = "MiniRocketBox";
 									if (user_type == 10) droptype = "SawBox";
-									if (user_type == 11) droptype = "ImpalerBolts";
+									if (user_type == 11) droptype = "ImpalerBoltsBig";
 									if (user_type == 12) droptype = "BoltsLarge";
 									if (user_type == 13) droptype = "CellPack";
 									if (user_type == 14) droptype = "RocketBox";
