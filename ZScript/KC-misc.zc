@@ -2175,6 +2175,19 @@ class PlayerStatItem : Inventory
 					WeaponJumpEx += 0.125;
 				}
 			}
+			if (weapon is "RiotGun")
+			{
+				if (owner.GetClassName() == "HeiwaPlayer")
+				{
+					if (berserked) WeaponJumpEx -= 0.025;
+										else WeaponJumpEx -= 0.1;
+				}
+				else
+				{
+					if (berserked) WeaponJumpEx -= 0.0125;
+										else WeaponJumpEx -= 0.05;
+				}
+			}
 			if (weapon is "TommyGun")
 			{
 				bool dualtommys = false;
@@ -5239,6 +5252,25 @@ class PlayerStatItem : Inventory
 			}
 			WeaponFactorEx += tempfactor1;
 		}
+		if (weapon is "RiotGun")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (berserked) tempfactor1 = 0.03125;
+									else tempfactor1 = 0.125;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+			}
+			else
+			{
+				if (berserked) tempfactor1 = 0.078125;
+									else tempfactor1 = 0.01953125;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.334)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+			}
+			tempfactor1 *= tempfactor2;
+			WeaponFactorEx -= tempfactor1;
+		}
 		if (weapon is "TommyGun")
 		{
 			bool dualtommys = false;
@@ -5842,6 +5874,35 @@ class PlayerDashJump : Inventory
 				{
 					DashCost -= 4;
 					MaxDashCooldown -= randompick[statitem](1,2,3);
+				}
+			}
+		}
+		if (weapon is "RiotGun")
+		{
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (!berserked) 
+				{
+					DashCost *= 1.125;
+					MaxDashCooldown *= 1.0416666666666667;
+				}
+				else
+				{
+					DashCost *= 1.0625;
+					MaxDashCooldown *= 1.020833333333333;
+				}
+			}
+			else
+			{
+				if (!berserked) 
+				{
+					DashCost *= 1.0625;
+					MaxDashCooldown *= 1.020833333333333;
+				}
+				else
+				{
+					DashCost *= 1.03125;
+					MaxDashCooldown *= 1.020833333333333;
 				}
 			}
 		}

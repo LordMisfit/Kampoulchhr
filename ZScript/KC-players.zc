@@ -2212,13 +2212,34 @@ class KCPlayerPawn : PlayerPawn
 		{
 			if (AttackingActor == self)
 			{
+				useflatdefense = true;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Damage Is Own AOE");
-				damage = ceil(damage * (0.25 - (ActualLevel * 0.005)));
-				if (ActualLevel <= 100 && damage < 1) damage = 1;
-				useflatdefense = false;
+				if (inflictor)
+				{
+					if (DevastatorShot(inflictor))
+					{
+						damage = ceil(damage * (0.5 - (ActualLevel * 0.0025)));
+						if (ActualLevel <= 200 && damage < 1) damage = 1;
+						useflatdefense = false;
+					}
+					if (DeviationRocketBase(inflictor))
+					{
+						damage = ceil(damage * (0.875 - (ActualLevel * 0.000625)));
+						if (ActualLevel <= 200 && damage < 1) damage = 1;
+						useflatdefense = false;
+					}
+					if (TeslaBallBig(inflictor))
+					{
+						damage = ceil(damage * (0.75 - (ActualLevel * 0.00125)));
+						if (ActualLevel <= 200 && damage < 1) damage = 1;
+						useflatdefense = false;
+					}
+				}
 			}
 			else
 			{
+				useflatdefense = true;
+				/*
 				double set1, set2, set3;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Damage Is Not Own AOE");
 				set1 = (0.750 - (ActualLevel * 0.0150));
@@ -2229,44 +2250,11 @@ class KCPlayerPawn : PlayerPawn
 				if (set3 <= 0.25) set3 = 0.25;
 				if (AttackingActor != null)
 				{
-					/*
-					if (Cyberdemon(source) || CyberdemonNew(source) || Annihilator(source)) 
-					{
-						if (RocketMonster(inflictor) || Rocket2(inflictor) || HomRocket1(inflictor))
-						{
-							set1 = (0.875 - (ActualLevel * 0.0175));
-							set2 = (0.9375 - (ActualLevel * 0.01875));
-							set3 = (1.0 - (ActualLevel * 0.02));
-							if (set1 <= 0.21875) set1 = 0.21875;
-							if (set2 <= 0.234375) set2 = 0.234375;
-							if (set3 <= 0.25) set3 = 0.25;
-						}
-						else
-						{
-							set1 = (0.750 - (ActualLevel * 0.0150));
-							set2 = (0.875 - (ActualLevel * 0.0175));
-							set3 = (1.000 - (ActualLevel * 0.0200));
-							if (set1 <= 0.175) set1 = 0.175;
-							if (set2 <= 0.21875) set2 = 0.21875;
-							if (set3 <= 0.25) set3 = 0.25;
-						}
-					}
-					else 
-					if (Archvile(source) || ArchvileNew(source) || Diabloist(source)) 
-					{
-						set1 = (0.50 - (ActualLevel * 0.01));
-						set2 = (0.625 - (ActualLevel * 0.0125));
-						set3 = (0.75 - (ActualLevel * 0.015));
-						if (set1 <= 0.125) set1 = 0.125;
-						if (set2 <= 0.15625) set2 = 0.15625;
-						if (set3 <= 0.1875) set3 = 0.1875;
-					}
-					*/
 				}
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- set1: %.8f, set2: %.8f, set3: %.8f", set1, set2, set3);
 				damage = ceil(damage * frandompick(set1,set1,set2,set2,set2,set2,set2,set2,set3,set3));
 				if (ActualLevel <= 100 && damage < 1) damage = 1;
-				useflatdefense = true;
+				*/
 			}
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [AOE]: %d (%d)", damage, olddmg);
 		}
