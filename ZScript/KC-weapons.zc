@@ -1921,6 +1921,33 @@ class KCWeaponBase : Weapon
 		if (weap != null) weap.bNoAutoaim = doesautoaim;
 	}
 
+	action bool A_GunKiaiCheckTarget()
+	{
+		bool check = false;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		actor dmtarget;
+		PlayerPawn playpawn;
+		playpawn = PlayerPawn(self);
+		if (playpawn) 
+		{
+			if (AimTarget()) 
+			{
+				dmtarget = AimTarget();
+				if (dmtarget)
+				{
+					if (ShieldPartBase(dmtarget)) dmtarget == null;
+					if (ExplosiveBarrel(dmtarget)) dmtarget = null;
+					if (ExplosiveBarrel2(dmtarget)) dmtarget = null;
+					if (Pod(dmtarget)) dmtarget = null;
+					if (dmtarget && !dmtarget.bISMONSTER) dmtarget = null;
+				}
+				if (dmtarget != null) check = true;
+			}
+		}
+		return check;
+	}
+
 	// Allows Heiwa to occasionally shout kiais/taunts when firing certain weapons
 	action void A_HeiwaRGunKiais(int basechance = 0)
 	{
@@ -1928,7 +1955,7 @@ class KCWeaponBase : Weapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		bool voicecheck = false;
-		if (MiscItem.OneLinerCooldown <= 0)
+		if (playera.GetClassName() == "HeiwaPlayer" && MiscItem.OneLinerCooldown <= 0)
 		{
 			if (basechance <= 0) basechance = kc_heiwaonelinerbasechance;
 			if (basechance > 0)
@@ -1938,6 +1965,11 @@ class KCWeaponBase : Weapon
 				if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
 				if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
 				int maxchance = 256;
+				if (A_GunKiaiCheckTarget()) 
+				{
+					basechance *= frandom(3.2,4.8);
+					maxchance *= frandom(0.625,0.875);
+				}
 				//Console.Printf("%d / %d", basechance, maxchance);
 				if (random(1,maxchance) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 				{
@@ -1969,6 +2001,24 @@ class KCWeaponBase : Weapon
 						MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
 					}
 				}
+			}
+		}
+	}
+	
+	action void A_SW748(int mode = 0)
+	{
+		if (!mode)
+		{
+			//SetActorProperty(0, APROP_SPEED, 6.0);
+		}
+		else
+		{
+			invoker.tauntyell += mode;
+			if (invoker.tauntyell >= 180)
+			{
+				A_HeiwaRGunKiais(randompick(12,16,16,16,16,20));
+				invoker.tauntyell -= randompick(90,120,120,120,120,150);
+				if (invoker.tauntyell < 0) invoker.tauntyell = 0;
 			}
 		}
 	}
@@ -6633,6 +6683,7 @@ class TommyGun : MarineWeapon
 				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
+					A_SW748((randompick(0,1,1,1,1,2) + randompick(0,1,1,1,1,2)) * random(3,5));
 					A_TommyShot(0,0);
 					A_TommyShot(0,1);
 					return resolvestate(null);
@@ -6640,6 +6691,7 @@ class TommyGun : MarineWeapon
 				else
 				{
 					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+					A_SW748((randompick(0,1,1,1,1,2) * random(3,5)));
 					A_TommyShot(0,0);
 					return resolvestate(null);
 				}
@@ -6676,6 +6728,7 @@ class TommyGun : MarineWeapon
 				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
+					A_SW748((randompick(1,2,2,2,2,3) + randompick(1,2,2,2,2,3)) * random(3,5));
 					A_TommyShot(1,0);
 					A_TommyShot(1,1);
 					return resolvestate(null);
@@ -6683,6 +6736,7 @@ class TommyGun : MarineWeapon
 				else
 				{
 					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
+					A_SW748((randompick(1,2,2,2,2,3) * random(3,5)));
 					A_TommyShot(1,0);
 					return resolvestate(null);
 				}
@@ -8195,7 +8249,7 @@ class ImpalerBoltsBig : ImpalerBolts
 	States
 	{
 		Spawn:
-			CBWA A -1;
+			CBWA B -1;
 			Stop;
 	}
 }
@@ -12292,24 +12346,6 @@ class Riotgun : MarineWeapon
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
-	action void A_SW748(int mode = 0)
-	{
-		if (!mode)
-		{
-			//SetActorProperty(0, APROP_SPEED, 6.0);
-		}
-		else
-		{
-			invoker.tauntyell += mode;
-			if (invoker.tauntyell >= 18)
-			{
-				A_HeiwaRGunKiais(randompick(48,64,64,64,64,80));
-				invoker.tauntyell -= randompick(9,12,12,12,12,15);
-				if (invoker.tauntyell < 0) invoker.tauntyell = 0;
-			}
-		}
-	}
-	
 	action void A_RiotGunTracer(actor playera, int type, double shotpitch, double shotangle, double shotheight)
 	{
 		for (int i = 0; i < 12; i++)
@@ -12411,7 +12447,7 @@ class Riotgun : MarineWeapon
 			RIOT D 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				A_SW748(5);
+				A_SW748((5 * random(8,12)));
 				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 4.0);
 			}
 			RIOT G 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
@@ -12482,7 +12518,7 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748(1);
+				A_SW748((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
@@ -12512,7 +12548,7 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				A_SW748(2);
+				A_SW748((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
@@ -12542,7 +12578,7 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748(1);
+				A_SW748((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
@@ -12572,7 +12608,7 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748(2);
+				A_SW748((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
