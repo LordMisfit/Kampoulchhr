@@ -1919,24 +1919,8 @@ class KC_EventHandler : EventHandler
 				}
 				// ?????????? ??'s ???????????
 				nm = "EviternatusAnta"; extracheck = nm;
-				if (spawnname == extracheck) 
-				{
-					if (Skill <= 0) healthmulfactor = 0.01125;
-					if (Skill == 1) healthmulfactor = 0.013125;
-					if (Skill == 2) healthmulfactor = 0.015;
-					if (Skill == 3) healthmulfactor = 0.016875;
-					if (Skill >= 4) healthmulfactor = 0.01875;
-					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
-					if (Skill <= 0) basehealth *= 12;
-					if (Skill == 1) basehealth *= 14;
-					if (Skill == 2) basehealth *= 16;
-					if (Skill == 3) basehealth *= 18;
-					if (Skill >= 4) basehealth *= 20;
-					spawnee.health = basehealth;
-				}
-				nn = "EviternatusBete";
-				no = "EviternatusCeph";
-				np = "EviternatusDelp";
+				nm = "EviternatusBete"; extracheck = nm;
+				nm = "EviternatusCeph"; extracheck = nm;
 				
 				// TUTNT's Source Boss
 				nm = "TheSource"; extracheck = nm;
