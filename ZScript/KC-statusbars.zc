@@ -2164,6 +2164,7 @@ class KCStatusBarMain : BaseStatusBar
 		x += (baseinc * 2);
 		y += (baseinc * 2);
 		wsname = "SuperShotgunMarine";
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "RiotGun";
 		wsammoname = "Shell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))

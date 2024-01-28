@@ -10,6 +10,14 @@ class KC_EventHandler : EventHandler
 	const SKILL_IMPOSSIBLE = 7;
 	const SKILL_OMEGA = 8;
 	
+	bool A_CheckForHeiwaPlayer()
+	{
+		bool isHeiwa = false;
+		actor playera = players[0].mo;
+		if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") isHeiwa = true;
+		return isHeiwa;
+	}
+	
 	bool A_CheckKCTimeFreeze()
 	{
 		bool freeze = false;
@@ -2783,21 +2791,6 @@ class KC_EventHandler : EventHandler
 					
 					double rand = 2.0;
 					string droptype;
-					if (vict == "Zombieman")
-					{
-						if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
-						{
-							droptype = "Glock21";
-							if (playera.CountInv(droptype))
-							{
-								if (random(1,32) <= 1) victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							}
-							else
-							{
-								if (random(1,32) <= 4) victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							}
-						}
-					}
 					if (vict == "Zombieman" ||
 							vict == "ShotgunGuy" ||
 							vict == "ChaingunGuy" || 
@@ -2807,16 +2800,22 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "Cacodemon")
 					{
-						if (random(1,basedropdiv) <= random(2,3)) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						int itemdropbase = random(2,3);
+						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
+						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (vict == "Demon" || 
 							vict == "Spectre")
 					{
-						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						int itemdropbase = 1;
+						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
+						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (vict == "Archvile")
 					{
-						if (random(1,basedropdiv) <= random(4,5)) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+						int itemdropbase = random(4,5);
+						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
+						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					if (vict == "HellKnight" ||
 							vict == "BaronOfHell")
@@ -2849,39 +2848,82 @@ class KC_EventHandler : EventHandler
 						
 						if (Zombieman(victim))
 						{
+							string droptypeammo = "Clip";
+							string droptypeammobig = "ClipBox";
 							if (random(1,basedropdiv) <= 1) 
 							{
 								droptype = "Pistol";
-								if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) droptype = "Glock21";
+								if (A_CheckForHeiwaPlayer())
+								{
+									if (random(1,64) <= randompick(1,1,1,1,1,2,2,3))
+									{
+										if (random(1,16) <= 1)
+										{
+											droptype = "BlasterPickup";
+											droptypeammo = "Cell";
+											droptypeammobig = "CellPack";
+										}
+										else
+										{
+											droptype = "Glock21";
+											droptypeammo = "Clip";
+											droptypeammobig = "ClipBox";
+										}
+									}
+								}
+								else
+								{
+									if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+									{
+										droptype = "Glock21";
+										droptypeammo = "Clip";
+										droptypeammobig = "ClipBox";
+									}
+								}
+								double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								
+								// Ammo
 								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									droptype = droptypeammo;
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								}
 								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
 								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									droptype = droptypeammo;
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								}
 								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 								{
-									droptype = "Clip";
-									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+									droptype = droptypeammo;
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								}
 							}
 						}
 						if (ChaingunGuy(victim))
 						{
+							string droptypeammo = "Clip";
+							string droptypeammobig = "ClipBox";
 							if (random(1,basedropdiv) <= 1) 
 							{
-								if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
+								int chancebase = randompick(1,1,1,1,1,2,2,3);
+								if (A_CheckForHeiwaPlayer()) chancebase *= 4;
+								if (random(1,64) <= chancebase) 
 								{
 									droptype = "TommyGun";
+									double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+									double raredropsndvol = frandom(1.75,2.25);
+									int raredropsndchannel = randompick(191,192,222,223,264,265);
+									victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+									// Ammo
 									if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 									{
 										droptype = "TommAmmo";
@@ -2926,22 +2968,85 @@ class KC_EventHandler : EventHandler
 								}
 							}
 						}
+						if (WolfensteinSS(victim))
+						{
+							int chancebase = randompick(1,1,1,1,1,2,2,3);
+							if (A_CheckForHeiwaPlayer()) chancebase *= 4;
+							if (random(1,256) <= chancebase) 
+							{
+								droptype = "TommyGun";
+								double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.03125)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
+								{
+									droptype = "TommAmmo";
+									if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = "TommAmmoBig";
+									victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								}
+							}
+						}
 						if (SpiderMastermind(victim))
 						{
-							droptype = "Chaingun";
+							droptype = "ChaingunMarine";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							droptype = "Clip";
 							if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
 
 							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 							{
-								droptype = "Chaingun";
+								droptype = "ChaingunMarine";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+							if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
+							{
+								droptype = "Clip";
+								if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								droptype = "Clip";
+								if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								droptype = "Clip";
+								if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								droptype = "Clip";
+								if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								droptype = "Clip";
+								if (random(1,10) <= randompick(1,1,1,1,1,2,2,3)) droptype = "ClipBox";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
 					}
 					if (ShotgunGuy(victim))
 					{
+						if (A_CheckForHeiwaPlayer())
+						{
+							if (random(1,256) <= randompick(1,1,1,1,1,2,2,3)) 
+							{
+								droptype = "RiotGun";
+								double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							}
+						}
 						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 						{
 							droptype = "Shell";
@@ -3103,7 +3208,12 @@ class KC_EventHandler : EventHandler
 							if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
 							{
 								droptype = "TeslaCannon";
+								double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								
 								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 								{
 									droptype = "Bolts";
@@ -3126,6 +3236,10 @@ class KC_EventHandler : EventHandler
 							else
 							{
 								droptype = "PlasmaRifle";
+								double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(191,192,222,223,264,265);
+								victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 								{
@@ -3185,7 +3299,7 @@ class KC_EventHandler : EventHandler
 							string droptype1 = "Devastator";
 							string droptypeammo = "MiniRockets";
 							string droptypeammobig = "MiniRocketBox";
-							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+							if (A_CheckForHeiwaPlayer())
 							{
 								if (random(1,2) <= 1)
 								{
@@ -3195,6 +3309,10 @@ class KC_EventHandler : EventHandler
 								}
 							}
 							droptype = droptype1;
+							double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(191,192,222,223,264,265);
+							victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							droptype = droptypeammo;
 							if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
@@ -3389,7 +3507,7 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
-							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
+							if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
 							droptype = "Backpack";
 							if (user_type == 1) 
 							{
@@ -3542,7 +3660,7 @@ class KC_EventHandler : EventHandler
 								if (randroll2 <= temp) 
 								{
 									user_type = random(1,13);
-									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
+									if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
 									if (user_type == 1) droptype = "ClipBox";
 									if (user_type == 2) droptype = "ClipBox";
 									if (user_type == 3) droptype = "ShellBox";
@@ -3562,7 +3680,7 @@ class KC_EventHandler : EventHandler
 								else
 								{
 									user_type = random(1,13);
-									if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") user_type = random(1,16);
+									if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
 									if (user_type == 1) droptype = "Clip";
 									if (user_type == 2) droptype = "Clip";
 									if (user_type == 3) droptype = "Shell";
@@ -3852,7 +3970,7 @@ class KC_EventHandler : EventHandler
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					basechance = kc_inventorydroprate5;
 					basechance *= kc_inventorydropratemulti;
-					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") basechance *= 0.875;
+					if (A_CheckForHeiwaPlayer()) basechance *= 0.875;
 					basechance *= skillmult;
 					if (timefreezes)
 					{
@@ -3935,7 +4053,7 @@ class KC_EventHandler : EventHandler
 						}
 					}
 					luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
-					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") luckbase *= 1.143;
+					if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_tsaluckfactor;
 					if (MiscItem)
@@ -3982,7 +4100,7 @@ class KC_EventHandler : EventHandler
 					}
 					
 					// Capsules [Type 12] (Heiwa Only)
-					if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+					if (A_CheckForHeiwaPlayer())
 					{
 						basechance = kc_inventorydroprate12;
 						basechance *= kc_inventorydropratemulti;
@@ -4327,7 +4445,7 @@ class KC_EventHandler : EventHandler
 						double BaseExpMultiBonus = 1.0;
 						if (playera) 
 						{
-							if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer")
+							if (A_CheckForHeiwaPlayer())
 							{
 								if (MiscItem && MiscItem.heiwavhardmodifier)
 								{
