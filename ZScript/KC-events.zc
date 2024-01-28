@@ -1593,6 +1593,11 @@ class KC_EventHandler : EventHandler
 					spawnee.bSHOOTABLE) && 
 					!exception) 
 			{
+				if (spawnee.bISMONSTER)
+				{
+					if (A_CheckForHeiwaPlayer()) spawnee.bNOTIMEFREEZE = false;
+				}
+				
 				if (!(PlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
@@ -1921,6 +1926,9 @@ class KC_EventHandler : EventHandler
 				nm = "EviternatusAnta"; extracheck = nm;
 				nm = "EviternatusBete"; extracheck = nm;
 				nm = "EviternatusCeph"; extracheck = nm;
+
+				nm = "Apocalipsist"; extracheck = nm;
+				if (spawnname == extracheck && A_CheckForHeiwaPlayer()) spawnee.bNOTIMEFREEZE = false;
 				
 				// TUTNT's Source Boss
 				nm = "TheSource"; extracheck = nm;
@@ -1947,7 +1955,11 @@ class KC_EventHandler : EventHandler
 				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && (BossBrain(spawnee))) specialenemy = true;
 
 				if (DoomImp(spawnee)) spawnee.PainSound = "imp/pain";
-				if (LostSoul(spawnee)) spawnee.PainSound = "skull/pain";
+				if (LostSoul(spawnee)) 
+				{
+					spawnee.PainSound = "skull/pain";
+					spawnee.bONLYSLAMSOLID = true;
+				}
 				if (WolfensteinSS(spawnee)) spawnee.PainSound = "nazi/pain";
 				if (Cacodemon(spawnee)) spawnee.PainSound = "caco/pain";
 				if (Revenant(spawnee)) 

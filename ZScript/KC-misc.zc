@@ -2539,15 +2539,30 @@ class PlayerStatItem : Inventory
 			
 			if (owner.GetClassName() == "HeiwaPlayer") 
 			{
-				CalcInvLimit("Clip", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("Shell", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("RocketAmmo", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("Cell", 150, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("TommAmmo", 250, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("MiniRockets", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("ImpalerBolts", 20, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("Bolts", 225, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
-				CalcInvLimit("Saws", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				if (heiwavhardmodifier)
+				{
+					CalcInvLimit("Clip", 60, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Shell", 15, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("RocketAmmo", 15, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Cell", 90, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("TommAmmo", 150, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("MiniRockets", 60, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("ImpalerBolts", 12, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Bolts", 135, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Saws", 15, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				}
+				else
+				{
+					CalcInvLimit("Clip", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Shell", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("RocketAmmo", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Cell", 150, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("TommAmmo", 250, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("MiniRockets", 100, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("ImpalerBolts", 20, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Bolts", 225, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+					CalcInvLimit("Saws", 25, baselvlfactor, baseatkfactor, baseholdmultibp1, baseholdmultibp2, 1);
+				}
 			}
 			else
 			{

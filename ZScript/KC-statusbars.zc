@@ -1012,28 +1012,48 @@ class KCStatusBarMain : BaseStatusBar
 		return invY;
 	}
 	
-	int A_DrawFSAmmo(int invY = 0)
+	int, string A_DrawFSAmmo(int invY, string wsammoname)
 	{
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		let PlayerWeapon = MiscItem.weapon;
+		let ammotype = CPlayerPawn.FindInventory(wsammoname);
+		name armorclasstype = "KCArmor";
+		let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
 		int AmmoRatio;
 		int AmmoAmount;
 		int AmmoMaxAmount;
 		int wsfontclr = font.cr_gray;
 		double wsalpha = 1.0;
 		
-		Ammo ammotype1, ammotype2;
-		[ammotype1, ammotype2] = GetCurrentAmmo();
+		Ammo ammo1, ammo2;
+		[ammo1, ammo2] = GetCurrentAmmo();
 		int x = -30;
 		int y = -24;
 
-		if (ammotype1 != null)
+		if (ammo1 != null)
 		{
-			if (ammotype1.maxamount > 0)
+			string temp, temp2;
+			temp = "Glock21";
+			if (PlayerWeapon is temp)
 			{
-				AmmoAmount = ammotype1.amount;
-				AmmoMaxAmount = ammotype1.maxamount;
+				let Glock = Glock21(CPlayerPawn.FindInventory("Glock21"));
+				if (Glock && Glock.ammomode == 0)
+				{
+					int jx, jy;
+					jx = -30;
+					jy = -76;
+					textureid blimg = TexMan.CheckForTexture("GLKPENTR", TexMan.TYPE_MiscPatch);
+					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
+				}
+			}
+			//GLKPENTR
+			
+			if (ammo1.maxamount > 0)
+			{
+				AmmoAmount = ammo1.amount;
+				AmmoMaxAmount = ammo1.maxamount;
 				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
 				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
 				else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
@@ -1051,35 +1071,35 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			int DigitPush = 0;
-			if (ammotype1.MaxAmount > 99) DigitPush = 8;
-			if (ammotype1.MaxAmount > 999) DigitPush = 14;
-			if (ammotype1.MaxAmount > 9999) DigitPush = 20;
+			if (ammo1.MaxAmount > 99) DigitPush = 8;
+			if (ammo1.MaxAmount > 999) DigitPush = 14;
+			if (ammo1.MaxAmount > 9999) DigitPush = 20;
 
-			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCMFont, FormatNumber(ammotype1.MaxAmount, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
 			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
 			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
 			DrawString(mKCMFont, "/", ((x-27-DigitPush), y+7), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
-			DrawInventoryIcon(ammotype1, (-14, -4));
-			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCLFont, FormatNumber(ammotype1.Amount, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			DrawInventoryIcon(ammo1, (-14, -4));
+			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
 		else
 		{
 		}
 
-		if (ammotype2 != null && ammotype2 != ammotype1)
+		if (ammo2 != null && ammo2 != ammo1)
 		{
 			wsfontclr = font.cr_gray;
-			if (ammotype2.maxamount > 0)
+			if (ammo2.maxamount > 0)
 			{
-				AmmoAmount = ammotype2.amount;
-				AmmoMaxAmount = ammotype2.maxamount;
+				AmmoAmount = ammo2.amount;
+				AmmoMaxAmount = ammo2.maxamount;
 				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
 				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
 				else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
@@ -1096,11 +1116,12 @@ class KCStatusBarMain : BaseStatusBar
 				else wsfontclr = font.cr_gray;
 			}
 
-			DrawInventoryIcon(ammotype2, (-14, invY + 17));
-			DrawString(mKCLFont, FormatNumber(ammotype2.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			DrawInventoryIcon(ammo2, (-14, invY + 17));
+			DrawString(mKCLFont, FormatNumber(ammo2.Amount, 4), (-30, invY), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
-		return invY;
+		
+		return invY, wsammoname;
 	}
 	
 	void A_DrawFSArmor(double masterscale = 1.0)
@@ -3083,7 +3104,7 @@ class KCStatusBarMain : BaseStatusBar
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
 		
 		// Draw Ammo
-		int invY = A_DrawFSAmmo(-20);
+		int invY = A_DrawFSAmmo(-20, wsammoname);
 		
 		// Inventory [Selected]
 		invY = A_DrawFSInvSelected(invY);

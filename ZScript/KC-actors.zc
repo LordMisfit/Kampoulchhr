@@ -1757,9 +1757,21 @@ class KCHowitzerTracerTrail : KCBaseZSC
 
 class KCGlockTracer : KCBulletTracerSingleRipper
 {
+	int fuse;
 	default
 	{
 		Tag "Glock Shot";
+	}
+
+	override void Tick()
+	{
+		super.Tick();
+		
+		if (bNOCLIP) 
+		{
+			fuse++;
+			if (fuse >= 70) Destroy();
+		}
 	}
 }
 

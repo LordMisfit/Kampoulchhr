@@ -6160,6 +6160,16 @@ class Glock21 : MarineWeapon
 				KCPlayerPawn KCP;
 				KCP = KCPlayerPawn(playera);
 				[BombShotsB, BombShots] = A_FireProjectile(shottype,frandom(-randangle,randangle),false,0,A_GetShotHeightTracer(36),FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+				if (BombShots)
+				{
+					KCGlockTracer GLK;
+					GLK = KCGlockTracer(BombShots);
+					if (GLK && invoker.ammomode == 0)
+					{
+						//GLK.bNOCLIP = true;
+						//GLK.fuse = random(-5,5);
+					}
+				}
 				A_SetBulletTracerRipperDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(defignore1,defignore2));
 			}
 		}

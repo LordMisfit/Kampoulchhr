@@ -2235,6 +2235,12 @@ class KCPlayerPawn : PlayerPawn
 						useflatdefense = false;
 					}
 				}
+				if (mod == 'BlackHole' && GetClassName() == "HeiwaPlayer")
+				{
+					damage = 0;
+					return 0;
+				}
+				
 			}
 			else
 			{
