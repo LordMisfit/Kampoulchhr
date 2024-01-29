@@ -375,6 +375,16 @@ class CompatVulnItem : PlaceholderItem
 					
 					if (owner.bNORADIUSDMG)
 					{
+						nm = "DevastatorShot";
+						nn = "DevastatorShot2";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								inflictor.GetClassName() == nn) && 
+								inflictor.bFORCERADIUSDMG &&
+								flags & DMG_EXPLOSION)
+						{
+							TOTALFactor *= 0.25;
+						}
 						nm = "DeviationRocket";
 						nn = "DumbRocket";
 						if (inflictor && 
@@ -385,11 +395,31 @@ class CompatVulnItem : PlaceholderItem
 						{
 							TOTALFactor *= 0.5;
 						}
+						nm = "TeslaBallBig";
+						nn = "TeslaBallBigDual";
+						no = "TeslaProjectile";
+						np = "TeslaProjectile2";
+						if (inflictor && 
+								(inflictor.GetClassName() == nm ||
+								 inflictor.GetClassName() == nn ||
+								 inflictor.GetClassName() == no ||
+								 inflictor.GetClassName() == np) && 
+								inflictor.bFORCERADIUSDMG &&
+								flags & DMG_EXPLOSION)
+						{
+							if (ownername == "EviternatusAnta" ||
+									ownername == "EviternatusBete" ||
+									ownername == "EviternatusCeph")
+							{
+								TOTALFactor *= 1.5;
+							}
+						}
 					}
 					
 					if (LostSoul(owner) || 
 							owner.GetClassName() == "LostSoul")
 					{
+						owner.bONLYSLAMSOLID = true;
 						if (owner.InStateSequence(owner.curstate,owner.ResolveState("Missile"))) TOTALFactor *= 2.0;
 					}
 					

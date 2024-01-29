@@ -5238,7 +5238,7 @@ class PlayerStatItem : Inventory
 		if (owner.waterlevel >= 3) lvlfact *= 0.75;
 		
 		if (ArmorM > 0.0) ArmorM *= (1.0 - (ActualLevel * lvlfact));
-		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), exex_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorM, ArmorML, kc_armorencumbrance, armordiffmod);
+		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), kc_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorM, ArmorML, kc_armorencumbrance, armordiffmod);
 		if (ArmorM < 0.0) ArmorM = 0.0;
 		ArmorFactor = (1.0 - ArmorM);
 		if (ArmorFactor > 1.00) ArmorFactor = 1.00;

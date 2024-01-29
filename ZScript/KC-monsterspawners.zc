@@ -34,7 +34,7 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 			{
 				deathtimer++;
 				A_BossDeath();
-				if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
+				if (kcdebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
 				Destroy();
 			}
 		}
@@ -83,11 +83,11 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 					{
 						dtimermax = 130;
 					}
-					if (dydudebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]: %d / %d", MonsterName, monstertype.bossdeathactivate, deathtimer, dtimermax);
+					if (kcdebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]: %d / %d", MonsterName, monstertype.bossdeathactivate, deathtimer, dtimermax);
 					if (deathtimer > dtimermax)
 					{
 						A_BossDeath();
-						if (dydudebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]", MonsterName, monstertype.bossdeathactivate);
+						if (kcdebug_scriptdisplays) Console.Printf("%s [bossdeathactivate: %d]", MonsterName, monstertype.bossdeathactivate);
 						Destroy();
 					}
 				}
@@ -133,11 +133,11 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 					{
 						dtimermax = 130;
 					}
-					if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner: %d / %d", deathtimer, dtimermax);
+					if (kcdebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner: %d / %d", deathtimer, dtimermax);
 					if (deathtimer > dtimermax)
 					{
 						A_BossDeath();
-						if (dydudebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
+						if (kcdebug_scriptdisplays) Console.Printf("BOSS/BOSSDEATH type RandomSpawner Self-Destroyed/nulled");
 						Destroy();
 					}
 				}
@@ -155,10 +155,10 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 	bool IsDoom1()
 	{
 		bool Doom1 = false;
-		if (exex_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
+		//if (kc_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
 		{
 			Doom1 = true;
-			if (dydudebug_monsterspawns) Console.Printf("Doom1: %d", Doom1);
+			if (kcdebug_monsterspawns) Console.Printf("Doom1: %d", Doom1);
 		}
 		return Doom1;
 	}
@@ -166,17 +166,17 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 	bool IsDoom2()
 	{
 		bool Doom2 = false;
-		if (exex_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
+		//if (kc_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
 		{
 			Doom2 = true;
-			if (dydudebug_monsterspawns) Console.Printf("Doom2: %d", Doom2);
+			if (kcdebug_monsterspawns) Console.Printf("Doom2: %d", Doom2);
 		}
 		return Doom2;
 	}
 	
 	protected void A_DebugPrintOut(string classname, bool Doom1)
 	{
-		if (dydudebug_monsterspawns) 
+		if (kcdebug_monsterspawns) 
 		{
 			if (Doom1) Console.Printf("(Doom1 Mode) \c[green]classname [%s]: \c[yellow]%s", GetClassName(), classname);
 						else Console.Printf("\c[green]classname [%s]: \c[yellow]%s", GetClassName(), classname);

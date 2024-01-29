@@ -65,7 +65,6 @@ OptionValue "OnOff_DefaultOn"
 }
 
 // MENUS
-
 OptionMenu "KC-GeneralMenu1"
 {
 	Class "KCMenu"
@@ -79,6 +78,18 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the player's hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
 }
 
+OptionMenu "KC-GeneralMenu2"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - General Options - Part 2"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Player BPM",		"Default: On",		"kc_playerbpm",					"OnOff_DefaultOn"
+	KCOption "Player Low Health Tunnel (HUD Effect)",		"Default: On",		"kc_playerbpmhud",					"OnOff_DefaultOn"
+	KCTextfield "Footstep Volume",		"Set to 0.0 to silence footsteps if needed. Default: 1.0[x]",		"kc_footstepvolume"
+}
 
 OptionMenu "KC-HUDOptions"
 {
@@ -146,6 +157,7 @@ OptionMenu "KC-DebugMenu3"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
+	KCOption "Monster Spawner Displays",		"Shows debugging for monster spawners.",		"kcdebug_monsterspawns",				"OnOff_DefaultOff"
 }
 OptionMenu "KC-DebugMenuMain"
 {
@@ -248,6 +260,7 @@ OptionMenu "KCOptions"
 	IfGame(Strife) { Position -88 }
 	
 	KCSubMenu "General Options [1]",		"General Options [page 1].",		"KC-GeneralMenu1"
+	KCSubMenu "General Options [2]",		"General Options [page 2].",		"KC-GeneralMenu2"
 	KCSubMenu "HUD Options",		"Options for the HUD.",		"KC-HUDOptions"
 	StaticText " "
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
