@@ -1066,6 +1066,7 @@ class PlayerStatItem : Inventory
 								}
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
+							if (owner.CountInv("KCPowerKampoul")) inc *= frandom(32,48);
 							if (timestoptype > 0)
 							{
 								double boostf = 1.125;
@@ -1227,7 +1228,7 @@ class PlayerStatItem : Inventory
 								}
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
-							
+							if (owner.CountInv("KCPowerKampoul")) inc *= (1.0 / frandom(32,48));
 							if (timestoptype > 0)
 							{
 								double boostf = double(1.0 / 1.125);
@@ -1466,6 +1467,12 @@ class PlayerStatItem : Inventory
 			
 			if (EvadeRateCap >= 10000) EvadeRateCap = 10000;
 			if (EvasionRate >= EvadeRateCap) EvasionRate = EvadeRateCap;
+			if (owner.CountInv("KCPowerKampoul")) 
+			{
+				PerkFactor = 5000;
+				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
+				EvasionRate += SkillFactor;
+			}
 			int EvasionRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
 			if (EvasionRNGVal <= EvasionRate) 
 			{
@@ -1610,6 +1617,7 @@ class PlayerStatItem : Inventory
 			if (SurviveRateCap >= 10000) SurviveRateCap = 10000;
 			if (SurvivalRate > SurviveRateCap) SurvivalRate = SurviveRateCap;
 			if (kcdebug_survivecheat && SurvivalRate <= 9995) SurvivalRate = 9995;
+			if (owner.CountInv("KCPowerKampoul") && SurvivalRate <= 9999) SurvivalRate = 9999;
 			if (owner.GetClassName() == "HeiwaPlayer")
 			{
 				if (A_CheckTimeFreeze()) SurvivalRate = 20000;
@@ -2016,35 +2024,47 @@ class PlayerStatItem : Inventory
 			}
 			else if (CurrentHealth >= (MaxHealthTrue * 0.5)) 
 			{
-				if (skill <= 0) HealthJumpZ *= 0.984375;
-				if (skill == 1) HealthJumpZ *= 0.96875;
-				if (skill == 2) HealthJumpZ *= 0.9375;
-				if (skill == 3) HealthJumpZ *= 0.90625;
-				if (skill >= 4) HealthJumpZ *= 0.875;
+				if (!owner.CountInv("KCPowerKampoul")) 
+				{
+					if (skill <= 0) HealthJumpZ *= 0.984375;
+					if (skill == 1) HealthJumpZ *= 0.96875;
+					if (skill == 2) HealthJumpZ *= 0.9375;
+					if (skill == 3) HealthJumpZ *= 0.90625;
+					if (skill >= 4) HealthJumpZ *= 0.875;
+				}
 			}
 			else if (CurrentHealth >= (MaxHealthTrue * 0.25))
 			{
-				if (skill <= 0) HealthJumpZ *= 0.96875;
-				if (skill == 1) HealthJumpZ *= 0.9375;
-				if (skill == 2) HealthJumpZ *= 0.875;
-				if (skill == 3) HealthJumpZ *= 0.8125;
-				if (skill >= 4) HealthJumpZ *= 0.75;
+				if (!owner.CountInv("KCPowerKampoul")) 
+				{
+					if (skill <= 0) HealthJumpZ *= 0.96875;
+					if (skill == 1) HealthJumpZ *= 0.9375;
+					if (skill == 2) HealthJumpZ *= 0.875;
+					if (skill == 3) HealthJumpZ *= 0.8125;
+					if (skill >= 4) HealthJumpZ *= 0.75;
+				}
 			}
 			else if (CurrentHealth > 1)
 			{
-				if (skill <= 0) HealthJumpZ *= 0.9375;
-				if (skill == 1) HealthJumpZ *= 0.875;
-				if (skill == 2) HealthJumpZ *= 0.75;
-				if (skill == 3) HealthJumpZ *= 0.625;
-				if (skill >= 4) HealthJumpZ *= 0.5;
+				if (!owner.CountInv("KCPowerKampoul")) 
+				{
+					if (skill <= 0) HealthJumpZ *= 0.9375;
+					if (skill == 1) HealthJumpZ *= 0.875;
+					if (skill == 2) HealthJumpZ *= 0.75;
+					if (skill == 3) HealthJumpZ *= 0.625;
+					if (skill >= 4) HealthJumpZ *= 0.5;
+				}
 			}
 			else if (CurrentHealth == 1)
 			{
-				if (skill <= 0) HealthJumpZ *= 0.46875;
-				if (skill == 1) HealthJumpZ *= 0.4375;
-				if (skill == 2) HealthJumpZ *= 0.375;
-				if (skill == 3) HealthJumpZ *= 0.3125;
-				if (skill >= 4) HealthJumpZ *= 0.25;
+				if (!owner.CountInv("KCPowerKampoul")) 
+				{
+					if (skill <= 0) HealthJumpZ *= 0.46875;
+					if (skill == 1) HealthJumpZ *= 0.4375;
+					if (skill == 2) HealthJumpZ *= 0.375;
+					if (skill == 3) HealthJumpZ *= 0.3125;
+					if (skill >= 4) HealthJumpZ *= 0.25;
+				}
 			}
 			else if (CurrentHealth <= 0)
 			{
@@ -2143,8 +2163,11 @@ class PlayerStatItem : Inventory
 			if (owner.waterlevel >= 3) lvlfact *= 0.75;
 			
 			if (ArmorEnc > 0.0) ArmorEnc *= (1.0 - (ActualLevel * lvlfact));
-			ArmorJumpZ -= ArmorEnc;
-			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Armor]: %.8f, ArmorEnc: %.8f, kc_armorencumbrance: %.8f", ArmorJumpZ, ArmorEnc, kc_armorencumbrance);
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				ArmorJumpZ -= ArmorEnc;
+				if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Armor]: %.8f, ArmorEnc: %.8f, kc_armorencumbrance: %.8f", ArmorJumpZ, ArmorEnc, kc_armorencumbrance);
+			}
 
 			// Special
 			double SpecialJumpZ = 1.00;
@@ -4083,8 +4106,12 @@ class PlayerStatItem : Inventory
 				}
 				if (!A_CheckNoTimer()) 
 				{
-					timestopactivetics--;
-					timefreezegenduration++;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) { }
+					else 
+					{
+						timestopactivetics--;
+						timefreezegenduration++;
+					}
 				}
 				timefreeze1cooldownratio2 = 1.0 - ((timestopactivetics * 1.0) / (timestopactivemaxtics * 1.0));
 				if (kcdebug_timefreezechecks) Console.Printf("tickvol: %.8f, \c[green]timefreeze1cooldownratio2: %.8f, \c[brick]timefreeze2cooldownratio2: %.8f, \c[gray]timefreeze3cooldownratio2: %.8f", 
@@ -4104,7 +4131,13 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldown1tics <= 0)
 				{
-					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
+					if (timestopcooldown1tics == 0) 
+					{
+						timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += random(2,3); // 1
+					}
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					owner.A_SetInventory("KCTimeCooldown",1);
@@ -4123,7 +4156,13 @@ class PlayerStatItem : Inventory
 				owner.A_SetInventory("KCTimeFreezer3",0);
 				if (timestopcooldown1tics <= 0)
 				{
-					if (timestopcooldown1tics == 0) timefreeze1timesused += random(2,3); // 1
+					if (timestopcooldown1tics == 0) 
+					{
+						timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += random(2,3); // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += random(2,3); // 1
+					}
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					owner.A_SetInventory("KCTimeCooldown",1);
@@ -4145,6 +4184,13 @@ class PlayerStatItem : Inventory
 				if (!A_CheckNoTimer()) 
 				{
 					timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
 				}
 				if (timestopcooldown1tics == 0) 
 				{
@@ -4726,6 +4772,9 @@ class PlayerStatItem : Inventory
 			}
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Landing): %.8f", LandingFactor);
 			
+			double KCFactor = 1.0;
+			if (owner.CountInv("KCPowerKampoul")) KCFactor *= 2.5;
+
 			double TSAFactor = 1.0;
 			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - TSA): %.8f", TSAFactor);
@@ -4736,6 +4785,7 @@ class PlayerStatItem : Inventory
 												 * ATKFactor
 												 * SkillFactor
 												 * LandingFactor
+												 * KCFactor
 												 * TSAFactor
 												 * atkfct;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("\c[gold]Damage (!passive - Total): %.8f", TOTALFactor);
@@ -4892,6 +4942,9 @@ class PlayerStatItem : Inventory
 			if (Skill == SKILL_VERY_HARD) SkillFactor *= 1.25;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Skill): %.8f", SkillFactor);
 
+			double KCFactor = 1.0;
+			if (owner.CountInv("KCPowerKampoul")) KCFactor *= 0.4;
+
 			double TSAFactor = 1.0;
 			
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - deffct): %.8f", deffct);
@@ -4901,6 +4954,7 @@ class PlayerStatItem : Inventory
 												 * DEFFactor
 												 * PlayerFistBlockFactor
 												 * SkillFactor
+												 * KCFactor
 												 * TSAFactor
 												 * deffct;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
@@ -5020,35 +5074,47 @@ class PlayerStatItem : Inventory
 		}
 		else if (CurrentHealth >= (MaxHealthTrue * 0.5)) 
 		{
-			if (skill <= 0) HealthFactor *= 0.984375;
-			if (skill == 1) HealthFactor *= 0.96875;
-			if (skill == 2) HealthFactor *= 0.9375;
-			if (skill == 3) HealthFactor *= 0.90625;
-			if (skill >= 4) HealthFactor *= 0.875;
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				if (skill <= 0) HealthFactor *= 0.984375;
+				if (skill == 1) HealthFactor *= 0.96875;
+				if (skill == 2) HealthFactor *= 0.9375;
+				if (skill == 3) HealthFactor *= 0.90625;
+				if (skill >= 4) HealthFactor *= 0.875;
+			}
 		}
 		else if (CurrentHealth >= (MaxHealthTrue * 0.25))
 		{
-			if (skill <= 0) HealthFactor *= 0.96875;
-			if (skill == 1) HealthFactor *= 0.9375;
-			if (skill == 2) HealthFactor *= 0.875;
-			if (skill == 3) HealthFactor *= 0.8125;
-			if (skill >= 4) HealthFactor *= 0.75;
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				if (skill <= 0) HealthFactor *= 0.96875;
+				if (skill == 1) HealthFactor *= 0.9375;
+				if (skill == 2) HealthFactor *= 0.875;
+				if (skill == 3) HealthFactor *= 0.8125;
+				if (skill >= 4) HealthFactor *= 0.75;
+			}
 		}
 		else if (CurrentHealth > 1)
 		{
-			if (skill <= 0) HealthFactor *= 0.9375;
-			if (skill == 1) HealthFactor *= 0.875;
-			if (skill == 2) HealthFactor *= 0.75;
-			if (skill == 3) HealthFactor *= 0.625;
-			if (skill >= 4) HealthFactor *= 0.5;
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				if (skill <= 0) HealthFactor *= 0.9375;
+				if (skill == 1) HealthFactor *= 0.875;
+				if (skill == 2) HealthFactor *= 0.75;
+				if (skill == 3) HealthFactor *= 0.625;
+				if (skill >= 4) HealthFactor *= 0.5;
+			}
 		}
 		else if (CurrentHealth == 1)
 		{
-			if (skill <= 0) HealthFactor *= 0.46875;
-			if (skill == 1) HealthFactor *= 0.4375;
-			if (skill == 2) HealthFactor *= 0.375;
-			if (skill == 3) HealthFactor *= 0.3125;
-			if (skill >= 4) HealthFactor *= 0.25;
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				if (skill <= 0) HealthFactor *= 0.46875;
+				if (skill == 1) HealthFactor *= 0.4375;
+				if (skill == 2) HealthFactor *= 0.375;
+				if (skill == 3) HealthFactor *= 0.3125;
+				if (skill >= 4) HealthFactor *= 0.25;
+			}
 		}
 		else if (CurrentHealth <= 0)
 		{
@@ -5088,9 +5154,12 @@ class PlayerStatItem : Inventory
 			if (KickingFactor >= 1.000) KickingFactor = 1.000;
 			if (kcdebug_speedcalcs) Console.Printf("KickingFactor: %.8f, extra: %.8f, remainder: %.8f", KickingFactor, extra, remainder);
 			
-			Speed *= KickingFactor;
-			HUDSpeed *= KickingFactor;
-			if (kcdebug_speedcalcs) Console.Printf("SpeedX [kicking]: %.8f", KickingFactor);
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				Speed *= KickingFactor;
+				HUDSpeed *= KickingFactor;
+				if (kcdebug_speedcalcs) Console.Printf("SpeedX [kicking]: %.8f", KickingFactor);
+			}
 		}
 
 		if (Owner.CountInv("IsUppercutting") && owner.player.onground)
@@ -5107,9 +5176,12 @@ class PlayerStatItem : Inventory
 			if (UppercutFactor >= 1.000) UppercutFactor = 1.000;
 			if (kcdebug_speedcalcs) Console.Printf("UppercutFactor: %.8f, extra: %.8f, remainder: %.8f", UppercutFactor, extra, remainder);
 			
-			Speed *= UppercutFactor;
-			HUDSpeed *= UppercutFactor;
-			if (kcdebug_speedcalcs) Console.Printf("SpeedX [uppercut]: %.8f", UppercutFactor);
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				Speed *= UppercutFactor;
+				HUDSpeed *= UppercutFactor;
+				if (kcdebug_speedcalcs) Console.Printf("SpeedX [uppercut]: %.8f", UppercutFactor);
+			}
 		}
 
 		if (Owner.CountInv("IsPunching") && owner.player.onground)
@@ -5126,9 +5198,12 @@ class PlayerStatItem : Inventory
 			if (PunchFactor >= 1.000) PunchFactor = 1.000;
 			if (kcdebug_speedcalcs) Console.Printf("PunchFactor: %.8f, extra: %.8f, remainder: %.8f", PunchFactor, extra, remainder);
 			
-			Speed *= PunchFactor;
-			HUDSpeed *= PunchFactor;
-			if (kcdebug_speedcalcs) Console.Printf("SpeedX [uppercut]: %.8f", PunchFactor);
+			if (!owner.CountInv("KCPowerKampoul")) 
+			{
+				Speed *= PunchFactor;
+				HUDSpeed *= PunchFactor;
+				if (kcdebug_speedcalcs) Console.Printf("SpeedX [uppercut]: %.8f", PunchFactor);
+			}
 		}
 		
 		double PlayerFistBlockFactor = 1.0;
@@ -5242,9 +5317,12 @@ class PlayerStatItem : Inventory
 		if (ArmorM < 0.0) ArmorM = 0.0;
 		ArmorFactor = (1.0 - ArmorM);
 		if (ArmorFactor > 1.00) ArmorFactor = 1.00;
-		Speed *= ArmorFactor;
-		HUDSpeed *= ArmorFactor;
-		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Armor]: %.8f", ArmorFactor);
+		if (!owner.CountInv("KCPowerKampoul")) 
+		{
+			Speed *= ArmorFactor;
+			HUDSpeed *= ArmorFactor;
+			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Armor]: %.8f", ArmorFactor);
+		}
 
 		double WeaponFactor = 1.0;
 		double WeaponFactorEx = 0.0;
@@ -5822,6 +5900,12 @@ class PlayerDashJump : Inventory
 			DashCost *= 1.5;
 			MaxDashCooldown *= 1.75;
 		}
+		if (owner.CountInv("KCPowerKampoul"))
+		{
+			DashCost *= 0.2;
+			MaxDashCooldown *= 0.4;
+		}
+		if (kcdebug_showdashinformation) Console.Printf("DashSpeed [post powerup/health checks]: %.8f", DashSpeed);
 		
 		if (weapon is "FistMarine" || 
 				weapon is "FistHeiwa")
@@ -6729,6 +6813,7 @@ class PlayerDashJump : Inventory
 				if (pushingdirection != 0) basechargeint *= 0.25;
 				basecharge *= (1.0 + (TruePlayerLevel * basechargeint) + (TruePlayerSPD * basechargeint));
 				if (kcdebug_showdashinformation) Console.Printf("basecharge [dash]: %d, basechargeint: %.8f", basecharge, basechargeint);
+				if (owner.CountInv("KCPowerKampoul")) basecharge *= 4;
 				if (kcdebug_dashcheat) basecharge *= 4;
 				DashCharge += basecharge;
 				if (DashCharge > DashMaxCharge) DashCharge = DashMaxCharge;

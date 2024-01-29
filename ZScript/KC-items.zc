@@ -228,6 +228,51 @@ class CustomInventoryExt : CustomInventory
 	}
 }
 
+class KampoulSphere : CustomInventoryExt
+{
+	default
+	{
+		+DONTGIB
+		+FLOATBOB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		+INVENTORY.ADDITIVETIME
+		Inventory.PickupMessage "\c[HeiwaDeluge](W-What is this thing?!)";
+		Inventory.PickupSound "powerups/kampoul";
+		Scale 0.75;
+	}
+	
+	States
+	{
+		Spawn:
+			KMPS ABCDEFGHIJK 2 NoDelay bright; // 22
+			KMPS K 10 bright; // 32
+			KMPS KIJGFEDCBAL 2 bright; // 54
+			KMPS MNOPQRSTU 2 bright; // 72
+			KMPS U 10 bright; // 82
+			KMPS UTSRQPONM 2 bright; // 100
+			loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					A_StopSound(CHAN_VOICE);
+					Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
+					A_StartSound("Heiwa/ABigHelp",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+				}
+				A_GiveInventory("KCPowerKampoul");
+			}
+			Stop;
+	}
+}
+
 class TSArtifactSpawner : CustomInventoryExt
 {
 	default

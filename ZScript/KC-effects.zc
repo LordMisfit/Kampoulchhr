@@ -2160,6 +2160,93 @@ class KCPowerSpread2 : Powerup
 	}
 }
 
+class KCPowerKampoul : Powerup
+{
+	int fadeouttic;
+	string texname;
+	int timer;
+	double ticpiece;
+	mixin TimerCheck;
+	default
+	{
+		Powerup.Duration -15;
+		Inventory.Icon "KMPSA0";
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void Tick()
+	{
+		timer++;
+		int timemax = 104;
+		if (timer % timemax >= 0 && timer % timemax <= 1) texname = "KMPSA0";
+		if (timer % timemax >= 2 && timer % timemax <= 3) texname = "KMPSB0";
+		if (timer % timemax >= 4 && timer % timemax <= 5) texname = "KMPSC0";
+		if (timer % timemax >= 6 && timer % timemax <= 7) texname = "KMPSD0";
+		if (timer % timemax >= 8 && timer % timemax <= 9) texname = "KMPSE0";
+		if (timer % timemax >= 10 && timer % timemax <= 11) texname = "KMPSF0";
+		if (timer % timemax >= 12 && timer % timemax <= 13) texname = "KMPSG0";
+		if (timer % timemax >= 14 && timer % timemax <= 15) texname = "KMPSH0";
+		if (timer % timemax >= 16 && timer % timemax <= 17) texname = "KMPSI0";
+		if (timer % timemax >= 18 && timer % timemax <= 19) texname = "KMPSJ0";
+		if (timer % timemax >= 20 && timer % timemax <= 33) texname = "KMPSK0";
+		if (timer % timemax >= 34 && timer % timemax <= 35) texname = "KMPSJ0";
+		if (timer % timemax >= 36 && timer % timemax <= 37) texname = "KMPSI0";
+		if (timer % timemax >= 38 && timer % timemax <= 39) texname = "KMPSH0";
+		if (timer % timemax >= 40 && timer % timemax <= 41) texname = "KMPSG0";
+		if (timer % timemax >= 42 && timer % timemax <= 43) texname = "KMPSF0";
+		if (timer % timemax >= 44 && timer % timemax <= 45) texname = "KMPSE0";
+		if (timer % timemax >= 46 && timer % timemax <= 47) texname = "KMPSD0";
+		if (timer % timemax >= 48 && timer % timemax <= 49) texname = "KMPSC0";
+		if (timer % timemax >= 50 && timer % timemax <= 51) texname = "KMPSB0";
+		if (timer % timemax >= 52 && timer % timemax <= 53) texname = "KMPSA0";
+		if (timer % timemax >= 54 && timer % timemax <= 55) texname = "KMPSL0";
+		if (timer % timemax >= 56 && timer % timemax <= 57) texname = "KMPSM0";
+		if (timer % timemax >= 58 && timer % timemax <= 59) texname = "KMPSN0";
+		if (timer % timemax >= 60 && timer % timemax <= 61) texname = "KMPSO0";
+		if (timer % timemax >= 62 && timer % timemax <= 63) texname = "KMPSP0";
+		if (timer % timemax >= 64 && timer % timemax <= 65) texname = "KMPSQ0";
+		if (timer % timemax >= 66 && timer % timemax <= 67) texname = "KMPSR0";
+		if (timer % timemax >= 68 && timer % timemax <= 69) texname = "KMPSS0";
+		if (timer % timemax >= 70 && timer % timemax <= 71) texname = "KMPST0";
+		if (timer % timemax >= 72 && timer % timemax <= 85) texname = "KMPSU0";
+		if (timer % timemax >= 86 && timer % timemax <= 87) texname = "KMPST0";
+		if (timer % timemax >= 88 && timer % timemax <= 89) texname = "KMPSS0";
+		if (timer % timemax >= 90 && timer % timemax <= 91) texname = "KMPSR0";
+		if (timer % timemax >= 92 && timer % timemax <= 93) texname = "KMPSQ0";
+		if (timer % timemax >= 94 && timer % timemax <= 95) texname = "KMPSP0";
+		if (timer % timemax >= 96 && timer % timemax <= 97) texname = "KMPSO0";
+		if (timer % timemax >= 98 && timer % timemax <= 99) texname = "KMPSN0";
+		if (timer % timemax >= 100 && timer % timemax <= 101) texname = "KMPSM0";
+		if (timer % timemax >= 102 && timer % timemax <= 103) texname = "KMPSL0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		fadeouttic = 71;
+		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/kampoulfading",206,CHANF_DEFAULT,2.25,ATTN_NORM);
+		if (EffectTics > fadeouttic && owner) owner.A_StopSound(206);
+
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				if (!(playera.CountInv("KCTimeFreezer") ||
+							playera.CountInv("KCTimeFreezer1") ||
+							playera.CountInv("KCTimeFreezer2") ||
+							playera.CountInv("KCTimeFreezer3"))) EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
 class HellWarriorShieldLevel : PlaceHolderItem { default { Inventory.MaxAmount 10; } }
 class EWShieldIdleMode : PlaceholderItem { }
 class EWShieldDefendMode : PlaceholderItem { }

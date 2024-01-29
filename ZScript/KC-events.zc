@@ -1800,6 +1800,7 @@ class KC_EventHandler : EventHandler
 				
 				// Changes
 				int basehealth = spawnee.SpawnHealth();
+				if (basehealth <= 0) Console.Printf("\c[red]WARNING: %s has 0 base health!\c-", spawnname);
 				double healthmulfactor = 0.01;
 				
 				nm = "Balloon_Red"; extracheck = nm;
@@ -1903,14 +1904,15 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) healthmulfactor = 0.01;
 					if (Skill == 3) healthmulfactor = 0.01125;
 					if (Skill >= 4) healthmulfactor = 0.0125;
-					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					basehealth *= (1.0 + (TruePlayerLevel * healthmulfactor));
 					if (Skill <= 0) basehealth *= 12;
 					if (Skill == 1) basehealth *= 14;
 					if (Skill == 2) basehealth *= 16;
 					if (Skill == 3) basehealth *= 18;
 					if (Skill >= 4) basehealth *= 20;
-					spawnee.health = basehealth;
+					//spawnee.health = basehealth;
 				}
+				
 				nn = "ArchangelusB"; extracheck = nm;
 				if (spawnname == extracheck) 
 				{
@@ -1919,14 +1921,15 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) healthmulfactor = 0.015;
 					if (Skill == 3) healthmulfactor = 0.016875;
 					if (Skill >= 4) healthmulfactor = 0.01875;
-					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					basehealth *= (1.0 + (TruePlayerLevel * healthmulfactor));
 					if (Skill <= 0) basehealth *= 12;
 					if (Skill == 1) basehealth *= 14;
 					if (Skill == 2) basehealth *= 16;
 					if (Skill == 3) basehealth *= 18;
 					if (Skill >= 4) basehealth *= 20;
-					spawnee.health = basehealth;
+					//spawnee.health = basehealth;
 				}
+
 				// ?????????? ??'s ???????????
 				nm = "EviternatusAnta"; extracheck = nm;
 				nm = "EviternatusBete"; extracheck = nm;
@@ -1944,16 +1947,18 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) healthmulfactor = 0.0075;
 					if (Skill == 3) healthmulfactor = 0.0084375;
 					if (Skill >= 4) healthmulfactor = 0.009375;
-					basehealth *= (1.0 * (TruePlayerLevel * healthmulfactor));
+					basehealth *= (1.0 + (TruePlayerLevel * healthmulfactor));
 					if (Skill <= 0) basehealth *= 6;
 					if (Skill == 1) basehealth *= 7;
 					if (Skill == 2) basehealth *= 8;
 					if (Skill == 3) basehealth *= 9;
 					if (Skill >= 4) basehealth *= 10;
-					spawnee.health = basehealth;
+					//spawnee.health = basehealth;
 					specialenemy = true;
 				}
 			
+				if (basehealth <= 0) Console.Printf("\c[red]POST-WARNING: %s has 0 base health!\c-", spawnname);
+
 				// Keeps the Romero Heads in AUGER ZENITH, which can't be attacked directly by the player, from being able to gain extra HP/Stats so they can be killed properly on MAP21
 				if (playera.CountInv("PlayingAugerZenith") && (BossBrain(spawnee))) specialenemy = true;
 				// Keeps the Romero Heads in Hell Ground MAP07 from being too strong. :P
@@ -5050,6 +5055,9 @@ class KC_EventHandler : EventHandler
 						MiscItem.timefreeze1cooldownratio2 = 0.0;
 
 						MiscItem.timefreeze1timesused += random(2,3);
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze1timesused += random(2,3); // 1
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze1timesused += random(2,3); // 1
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze1timesused += random(2,3); // 1
 						playera.A_StopSound(217); // Cuts Wind-Down Off
 						playera.A_StopSound(218); // Cuts Ticks Off
 						playera.A_StartSound("TimeFreezeOut4a",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
