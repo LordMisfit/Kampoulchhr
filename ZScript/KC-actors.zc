@@ -2850,6 +2850,7 @@ class MeleeHitSpark4 : MeleeHitSpark1
 class ShieldPartBase : KCBaseZSC
 {
 	Actor oldtarget;
+	int fuse; // testing V:
 	
 	double attachx, attachy, attachz, attachang, attachptc;
 	actor shieldee;
@@ -2883,6 +2884,12 @@ class ShieldPartBase : KCBaseZSC
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 		+DONTSPLASH;
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (fuse <= 0) fuse = 1;
+		Super.PostBeginPlay();
 	}
 	
 	override void Tick()
@@ -3048,7 +3055,7 @@ class ShieldPartBase : KCBaseZSC
 	}
 }
 
-class ShieldPart : ShieldPartBase // The Main segment of the sceptre-shield which deflects/blocks attacks
+class ShieldPart : ShieldPartBase // The Main segment of the melee-shield[s] which deflects/blocks attacks
 {
 	default
 	{

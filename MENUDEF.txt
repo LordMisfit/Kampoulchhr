@@ -1,3 +1,22 @@
+OptionValue "StartTSArtifact"
+{
+	0, "No [DEFAULT]"
+	1, "Yes"
+}
+
+OptionValue "StartWeaponSingle"
+{
+	0, "No [DEFAULT]"
+	1, "Yes"
+}
+
+OptionValue "StartWeaponDual"
+{
+	0, "No [DEFAULT]"
+	1, "One"
+	2, "Both"
+}
+
 OptionValue "KeyLegendSpot"
 {
 	-1, "DISABLED"
@@ -89,6 +108,37 @@ OptionMenu "KC-GeneralMenu2"
 	KCOption "Player BPM",		"Default: On",		"kc_playerbpm",					"OnOff_DefaultOn"
 	KCOption "Player Low Health Tunnel (HUD Effect)",		"Default: On",		"kc_playerbpmhud",					"OnOff_DefaultOn"
 	KCTextfield "Footstep Volume",		"Set to 0.0 to silence footsteps if needed. Default: 1.0[x]",		"kc_footstepvolume"
+}
+
+
+OptionMenu "KC-HeiwaSpecific"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - HEIWA SPECIFIC OPTIONS"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+
+	KCOption "Starts w/ Time Seraph's Charm?",		"Determines if Heiwa starts a new game with the Teme Seraph's Charm [and access to the Level 1 Time Seraph's Armor].",		"kcheiwa_startcharm", 				"StartTSArtifact"
+	KCOption "Starts w/ Time Seraph's Pocket Watch?",		"Determines if Heiwa starts a new game with the Teme Seraph's Pocket Watch [and access to the Level 2 Time Seraph's Armor, though only IF you also have the Charm, otherwise the watch by itself doesn't allow access to the armor].",		"kcheiwa_startwatch", 				"StartTSArtifact"
+	KCOption "Starts w/ Time Seraph's Bangle?",		"Determines if Heiwa starts a new game with the Teme Seraph's Bangle [and access to the Time Seraph's Visor].",		"kcheiwa_startbangle", 				"StartTSArtifact"
+	StaticText " "
+	KCOption "Starts w/ Glock 21?",		"Determines if Heiwa starts a new game with the Glock 21 Pistol.",		"kcheiwa_startglock", 				"StartWeaponSingle"
+	KCOption "Starts w/ Blaster Pistol[s]?",		"Determines if Heiwa starts a new game with one or two Blaster Pistols.",		"kcheiwa_startblaster", 				"StartWeaponDual"
+	KCOption "Starts w/ Riot Gun?",		"Determines if Heiwa starts a new game with the Riot Gun.",		"kcheiwa_startriotgun", 				"StartWeaponSingle"
+	KCOption "Starts w/ Tommy Gun[s]?",		"Determines if Heiwa starts a new game with one or two Tommy Guns.",		"kcheiwa_starttommygun", 				"StartWeaponDual"
+	KCOption "Starts w/ Devastator[s]?",		"Determines if Heiwa starts a new game with one or two Devastators.",		"kcheiwa_startdevastator", 				"StartWeaponDual"
+	KCOption "Starts w/ Tesla Cannon[s]?",		"Determines if Heiwa starts a new game with one or two Tesla Cannons.",		"kcheiwa_starttesla", 				"StartWeaponDual"
+	KCOption "Starts w/ Black Hole Gen.?",		"Determines if Heiwa starts a new game with the Black Hole Generator [BTW: Heiwa is IMMUNE to the black holes launched by it, both damage and the pull :V].",		"kcheiwa_startbhgen", 				"StartWeaponSingle"
+	KCOption "Starts w/ Translocator?",		"Determines if Heiwa starts a new game with the Translocator Telebeacon System.",		"kcheiwa_starttransloc", 				"StartWeaponSingle"
+	KCOption "Starts w/ Saw Thrower?",		"Determines if Heiwa starts a new game with the Saw Thrower.",		"kcheiwa_startsawthrower", 				"StartWeaponSingle"
+	KCOption "Starts w/ Impaler Crossbow?",		"Determines if Heiwa starts a new game with the Impaler Crossbow.",		"kcheiwa_startimpaler", 				"StartWeaponSingle"
+	//StaticText " "
+	//KCOption "More Animated Hellcore Souls?",		"If toggled on, the Hellcore 'soul' in Heiwa's hand will animate more often and make a sound from the monster connected to it at random.",		"kcheiwa_hellcoresoulstype", 			"HellcoreSoulsType"
+	//KCOption "Hellcore Soul Levels Increase Heat?",		"If toggled on, each extra level of a Hellcore soul will add ~12.5% more heat induced when Heiwa uses them [i.e. +25% at Level 3, +100% at Level 9].",		"kcheiwa_hellcorelevelsheat", 			"HellcoreLevelsHeat"
+	
+	StaticText " "
+	Command "Restore Default Settings", 			"KC_defaultsHeiwa"
 }
 
 OptionMenu "KC-HUDOptions"
@@ -262,6 +312,8 @@ OptionMenu "KCOptions"
 	KCSubMenu "General Options [1]",		"General Options [page 1].",		"KC-GeneralMenu1"
 	KCSubMenu "General Options [2]",		"General Options [page 2].",		"KC-GeneralMenu2"
 	KCSubMenu "HUD Options",		"Options for the HUD.",		"KC-HUDOptions"
+	StaticText " "
+	KCSubMenu "Heiwa Specific Options",		"Heiwa Specific Options. V:",		"KC-HeiwaSpecific"
 	StaticText " "
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
