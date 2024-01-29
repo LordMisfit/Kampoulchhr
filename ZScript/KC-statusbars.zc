@@ -39,7 +39,16 @@ class KCStatusBarMain : BaseStatusBar
 	int HPPulseTimer, APPulseTimer, TSAPulseTimer;
 	
 	int TrueGameSkill;
-
+	
+	bool A_CheckForHeiwa()
+	{
+		bool result = false;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		if (CPlayerPawn.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(CPlayerPawn)) result = true;
+		return result;
+	}
+	
 	override void Init()
 	{
 		Super.Init();
@@ -1519,7 +1528,7 @@ class KCStatusBarMain : BaseStatusBar
 
 				LVLGraphic = "LVL";
 				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
-				if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic.AppendFormat("D");
+				if (A_CheckForHeiwa()) LVLGraphic.AppendFormat("D");
 				DrawImage(LVLGraphic, (168, -2+ycorrection), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 				//DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 				DrawString(mKCLFont, FormatNumber(PlayerLevel, 4), (168, -19+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
@@ -1556,7 +1565,7 @@ class KCStatusBarMain : BaseStatusBar
 					numdashes = dashcharge / dashcost;
 					string LVLGraphic = "HDASHGRY";
 					if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic = "HDASHGRN";
-					if (CPlayerPawn.GetClassName() == "HeiwaPlayer") LVLGraphic = "HDASHDLG";
+					if (A_CheckForHeiwa()) LVLGraphic = "HDASHDLG";
 					DrawImage(LVLGraphic, (168, -22+ycorrection), DI_TEXT_ALIGN_LEFT, 1.00, (-1, -1), (1.0, 1.0));
 					//DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 					DrawString(mKCLFont, FormatNumber(numdashes, 4), (168, -39+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_white, 1.00, -1, 4, (1.5, 1.5));
@@ -1599,7 +1608,7 @@ class KCStatusBarMain : BaseStatusBar
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, -20+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Shows a Special Icon for a specific 'mode'
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer" && 
+		if (A_CheckForHeiwa() && 
 				(MiscItem && MiscItem.heiwavhardmodifier))
 		{
 			double cloverAlphaPulse = -0.125;
@@ -2068,7 +2077,7 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "FistMarine";
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "FistHeiwa";
+		if (A_CheckForHeiwa()) wsname = "FistHeiwa";
 		if (CPlayerPawn.CountInv(wsname))
 		{
 			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);
@@ -2114,13 +2123,13 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "PistolMarine";
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") 
+		if (A_CheckForHeiwa()) 
 		{
 			if (CPlayerPawn.CountInv("BlasterPistols")) wsname = "BlasterPistols";
 			else if (CPlayerPawn.CountInv("BlasterPistol")) wsname = "BlasterPistol";
 		}
 		wsammoname = "Clip";
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsammoname = "Cell";
+		if (A_CheckForHeiwa()) wsammoname = "Cell";
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
 		{
@@ -2185,7 +2194,7 @@ class KCStatusBarMain : BaseStatusBar
 		x += (baseinc * 2);
 		y += (baseinc * 2);
 		wsname = "SuperShotgunMarine";
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "RiotGun";
+		if (A_CheckForHeiwa()) wsname = "RiotGun";
 		wsammoname = "Shell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))
@@ -2257,7 +2266,7 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "RocketLauncherMarine";
-		if (CPlayerPawn.GetClassName() == "HeiwaPlayer") wsname = "Deviation";
+		if (A_CheckForHeiwa()) wsname = "Deviation";
 		wsammoname = "RocketAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))

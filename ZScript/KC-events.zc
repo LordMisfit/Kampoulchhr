@@ -4636,7 +4636,7 @@ class KC_EventHandler : EventHandler
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
 						
-						if (playoneliner && (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") && MiscItem)
+						if (playoneliner && A_CheckForHeiwaPlayer() && MiscItem)
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							bool voicecheck = false;
@@ -4743,7 +4743,7 @@ class KC_EventHandler : EventHandler
 					//* Killed With Certain Weapons *
 					//*******************************
 					if (source && 
-							(KCPlayerPawn(source) || (HeiwaPlayer(source) || source.GetClassName() == "HeiwaPlayer")) && 
+							(KCPlayerPawn(source) || A_CheckForHeiwaPlayer()) && 
 							(victim.bCOUNTKILL || specialtype || specialtype2))
 					{
 						//

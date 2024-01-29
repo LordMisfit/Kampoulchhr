@@ -82,6 +82,14 @@ class KCPlayerPawn : PlayerPawn
 		//Species "Player";
 	}
 	
+	bool A_CheckForHeiwa()
+	{
+		bool result = false;
+		actor playera = players[0].mo;
+		if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
+		return result;
+	}
+	
 	bool A_CheckKCTimeFreeze()
 	{
 		bool freeze = false;
@@ -154,7 +162,7 @@ class KCPlayerPawn : PlayerPawn
 						if (foundstpsnd) volmult *= frandom(0.4,0.6);
 						string landsnd = "*land";
 						if (GetClassName() == "KCPlayer") landsnd = "land/bootland";
-						if (GetClassName() == "HeiwaPlayer") 
+						if (A_CheckForHeiwa()) 
 						{
 							landsnd = "land/bootland";
 							pitchmult = 1.334;
@@ -180,7 +188,7 @@ class KCPlayerPawn : PlayerPawn
 			if (MiscItem) PlayerSPD = MiscItem.TruePlayerSPD;
 			double AirControlBase = frandom(0.2432,0.2436);
 			if (GetClassName() == "KCPlayer") AirControlBase = frandom(0.1824,0.1827);
-			if (GetClassName() == "HeiwaPlayer") AirControlBase = frandom(0.3648,0.3654);
+			if (A_CheckForHeiwa()) AirControlBase = frandom(0.3648,0.3654);
 
 			// Stats Based AirControl
 			double StatAirControl = 1.00;
@@ -1180,7 +1188,7 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playermove) Console.Printf("\cz WaterLevel: %d (WaterDepth: %.4f)\c-, \cz Angle: %.8f, Pitch: %.8f\c-, \czPosX: %d, PosY: %d, PosZ: %d\c-,\nVelX: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelY: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelZ: %.8f/\cx%.8f\c- (%d/\cx%d\c-)\c-", waterlevel, WaterDepth, (angle % 360), pitch, pos.x, pos.y, pos.z, vel.x, newspeedvelsxd, (vel.x * 65536), newspeedvelsx, vel.y, newspeedvelsyd, (vel.y * 65536), newspeedvelsy, vel.z, newspeedvelszd, (vel.z * 65536), newspeedvelsz);
 
 		lasthealth = health;
-		if (GetClassName() == "HeiwaPlayer" && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+		if (A_CheckForHeiwa() && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
 		super.Tick();
 	}
 	
@@ -2118,14 +2126,14 @@ class KCPlayerPawn : PlayerPawn
 					dmgfactor2 = 0.875;
 					dmgfactor3 = 0.8125;
 				}
-				if (GetClassName() == "HeiwaPlayer") 
+				if (A_CheckForHeiwa()) 
 				{
 					dmgfactor1 = 1.0625;
 					dmgfactor2 = 1.125;
 					dmgfactor3 = 1.1875;
 				}
 				useddmgfactor = frandompick(dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor1,dmgfactor2,dmgfactor2,dmgfactor3);
-					if (GetClassName() == "HeiwaPlayer") damage = ceil(damage * useddmgfactor); // Rounds up damage for Heiwa
+												if (A_CheckForHeiwa()) damage = ceil(damage * useddmgfactor); // Rounds up damage for Heiwa
 				else if (GetClassName() == "KCPlayer") damage = floor(damage * useddmgfactor); // Rounds down damage for Doomguy
 																					else damage = (damage * useddmgfactor); // Doesn't favor rounding damage for any other class :V
 				
@@ -2149,7 +2157,7 @@ class KCPlayerPawn : PlayerPawn
 					if (mod == 'Poison' || mod == 'PoisonCloud') damage = ceil(damage * 0.875);
 					if (mod == 'Magic') damage = ceil(damage * 1.125);
 				}
-				if (GetClassName() == "HeiwaPlayer")
+				if (A_CheckForHeiwa())
 				{
 					if (mod == 'Eldritch') damage = ceil(damage * 0.125);
 					if (mod == 'Magic') damage = ceil(damage * 0.875);
@@ -2235,7 +2243,7 @@ class KCPlayerPawn : PlayerPawn
 						useflatdefense = false;
 					}
 				}
-				if (mod == 'BlackHole' && GetClassName() == "HeiwaPlayer")
+				if (mod == 'BlackHole' && A_CheckForHeiwa())
 				{
 					damage = 0;
 					return 0;
@@ -3141,7 +3149,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	void A_KCPain()
 	{
-		if (GetClassName() == "HeiwaPlayer")
+		if (A_CheckForHeiwa())
 		{
 			double MaxHealthTrue = CountInv("PlayerMaxHP");
 			if ((!player || !player.mo || player.mo != self) || !MaxHealthTrue) MaxHealthTrue = SpawnHealth();

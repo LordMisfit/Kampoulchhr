@@ -1773,6 +1773,11 @@ class PlayerStatItem : Inventory
 		if (A_CheckForHeiwa())
 		{
 			if (CritChance >= 160) CritChance = 160;
+			if (owner.CountInv("KCPowerKampoul"))
+			{
+				CritChance *= 0.5;
+				if (CritChance >= 80) CritChance = 80;
+			}
 		}
 		else
 		{
