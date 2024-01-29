@@ -5900,12 +5900,7 @@ class PlayerDashJump : Inventory
 			DashCost *= 1.5;
 			MaxDashCooldown *= 1.75;
 		}
-		if (owner.CountInv("KCPowerKampoul"))
-		{
-			DashCost *= 0.2;
-			MaxDashCooldown *= 0.4;
-		}
-		if (kcdebug_showdashinformation) Console.Printf("DashSpeed [post powerup/health checks]: %.8f", DashSpeed);
+		if (kcdebug_showdashinformation) Console.Printf("DashCost [post powerup/health checks]: %d", DashCost);
 		
 		if (weapon is "FistMarine" || 
 				weapon is "FistHeiwa")
@@ -6071,32 +6066,32 @@ class PlayerDashJump : Inventory
 		}
 		if (weapon is "Deviation")
 		{
-				if (owner.GetClassName() == "HeiwaPlayer")
+			if (owner.GetClassName() == "HeiwaPlayer")
+			{
+				if (!berserked) 
 				{
-					if (!berserked) 
-					{
-						DashCost *= 1.1875;
-						MaxDashCooldown *= 1.0625;
-					}
-					else
-					{
-						DashCost *= 1.09375;
-						MaxDashCooldown *= 1.03125;
-					}
+					DashCost *= 1.1875;
+					MaxDashCooldown *= 1.0625;
 				}
 				else
 				{
-					if (!berserked) 
-					{
-						DashCost *= 1.09375;
-						MaxDashCooldown *= 1.03125;
-					}
-					else
-					{
-						DashCost *= 1.046875;
-						MaxDashCooldown *= 1.015625;
-					}
+					DashCost *= 1.09375;
+					MaxDashCooldown *= 1.03125;
 				}
+			}
+			else
+			{
+				if (!berserked) 
+				{
+					DashCost *= 1.09375;
+					MaxDashCooldown *= 1.03125;
+				}
+				else
+				{
+					DashCost *= 1.046875;
+					MaxDashCooldown *= 1.015625;
+				}
+			}
 		}
 		if (weapon is "Devastator")
 		{
@@ -6384,6 +6379,11 @@ class PlayerDashJump : Inventory
 			if (skill == 2 && MaxDashCooldown <= 2) MaxDashCooldown = 2;
 			if (skill == 3 && MaxDashCooldown <= 2) MaxDashCooldown = 2;
 			if (skill >= 4 && MaxDashCooldown <= 3) MaxDashCooldown = 3;
+		}
+		if (owner.CountInv("KCPowerKampoul"))
+		{
+			DashCost *= 0.2;
+			MaxDashCooldown *= 0.4;
 		}
 		
 		
