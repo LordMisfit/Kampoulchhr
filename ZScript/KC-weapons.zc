@@ -127,6 +127,16 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	action bool A_CheckForHeiwa()
+	{
+		bool result = false;
+		if (player && player.mo)
+		{
+			if (player.mo.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(player.mo)) result = true;
+		}
+		return result;
+	}
+	
 	action double A_GetHandToHandSpd(int type)
 	{
 		double output;
@@ -796,27 +806,32 @@ class KCWeaponBase : Weapon
 				
 				if (player.ReadyWeapon is "Glock21") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor += 0.25;
+					if (A_CheckForHeiwa()) weaponfactor += 0.25;
 				}
 				if (player.ReadyWeapon is "BlasterPistol") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor += 0.25;
-																									else weaponfactor += 0.125;
+					if (A_CheckForHeiwa()) weaponfactor += 0.25;
+														else weaponfactor += 0.125;
 				}
 				if (player.ReadyWeapon is "BlasterPistols") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor += 0.1875;
-																									else weaponfactor += 0.09375;
+					if (A_CheckForHeiwa()) weaponfactor += 0.1875;
+														else weaponfactor += 0.09375;
 				}
 				if (player.ReadyWeapon is "TommyGun") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor += 0.15;
-																									else weaponfactor -= 0.10;
+					if (A_CheckForHeiwa()) weaponfactor += 0.15;
+														else weaponfactor -= 0.10;
+				}
+				if (player.ReadyWeapon is "RiotGun") 
+				{
+					if (A_CheckForHeiwa()) weaponfactor -= 0.1875;
+														else weaponfactor -= 0.093875;
 				}
 				if (player.ReadyWeapon is "BHGen") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor -= 0.5;
-																								 else weaponfactor -= 0.25;
+					if (A_CheckForHeiwa()) weaponfactor -= 0.5;
+														else weaponfactor -= 0.25;
 				}
 				if (player.ReadyWeapon is "Devastator") 
 				{
@@ -824,19 +839,19 @@ class KCWeaponBase : Weapon
 					if (player.mo.CountInv("DualDevastators") && !player.mo.CountInv("DualDevastatorsDisabled")) dualdevs = true;
 					if (dualdevs)
 					{
-						if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor -= 0.375;
-																									 else weaponfactor -= 0.1875;
+						if (A_CheckForHeiwa()) weaponfactor -= 0.375;
+															else weaponfactor -= 0.1875;
 					}
 					else
 					{
-						if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor -= 0.1875;
-																									 else weaponfactor -= 0.093875;
+						if (A_CheckForHeiwa()) weaponfactor -= 0.1875;
+															else weaponfactor -= 0.093875;
 					}
 				}
 				if (player.ReadyWeapon is "Deviation") 
 				{
-					if (player.mo.GetClassName() == "HeiwaPlayer") weaponfactor -= 0.25;
-																								 else weaponfactor = 0.125;
+					if (A_CheckForHeiwa()) weaponfactor -= 0.25;
+														else weaponfactor = 0.125;
 				}
 				nm = "ImpalerXBow";
 				if (player.ReadyWeapon is nm)  

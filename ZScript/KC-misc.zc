@@ -586,6 +586,29 @@ class PlayerStatItem : Inventory
 					if (kcheiwa_startsawthrower) owner.A_SetInventory("SawThrower",1);
 					if (kcheiwa_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
 				}
+				else
+				{
+					if (kcdoomg_startglock) owner.A_SetInventory("Glock21",1);
+					if (kcdoomg_starttommygun) 
+					{
+						if (kcdoomg_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
+						if (kcdoomg_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
+					}
+					if (kcdoomg_startdevastator) 
+					{
+						if (kcdoomg_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
+						if (kcdoomg_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
+					}
+					if (kcdoomg_starttesla) 
+					{
+						if (kcdoomg_starttesla >= 1) owner.A_SetInventory("TeslaCannon",1);
+						if (kcdoomg_starttesla >= 2) owner.A_SetInventory("DualTeslaCannons",1);
+					}
+					if (kcdoomg_startbhgen) owner.A_SetInventory("BHGen",1);
+					if (kcdoomg_starttransloc) owner.A_SetInventory("Translocator",1);
+					if (kcdoomg_startsawthrower) owner.A_SetInventory("SawThrower",1);
+					if (kcdoomg_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
+				}
 				
 				// Misc
 				weapon = owner.player.ReadyWeapon;

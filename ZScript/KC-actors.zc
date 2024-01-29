@@ -3075,8 +3075,10 @@ class ShieldPart : ShieldPartBase // The Main segment of the melee-shield[s] whi
 		Spawn:
 			HEXA C 2 bright NoDelay 
 			{
+				fuse--;
+				if (fuse <= 0) Destroy();
 			}
-			stop;
+			loop;
 		Pain.Magic:
 			TNT1 A 0;
 			stop;
@@ -3088,6 +3090,8 @@ class ShieldPart : ShieldPartBase // The Main segment of the melee-shield[s] whi
 			{
 				//Console.Printf("#$G#");
 			}
+		PainEnd:
+			TNT1 A 0 bright;
 			stop;
 		Death:
 			TNT1 A 0;

@@ -2957,6 +2957,17 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]FIRE LEFT BLASTER\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
+			if (PlayerWeapon is "SawThrower")
+			{
+				let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
+				if (SawT && SawT.revtimes >= 20)
+				{
+					LY += LYInc;
+					LegendStr.AppendFormat(ReturnKeyBind1("+attack", true, false));
+					LegendStr.AppendFormat(" = \c[blue]LAUNCH SUPER-REVVED SAW BLADE\c-");
+					if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+				}
+			}
 			
 			// Alt-Fires
 			LegendStr = "";

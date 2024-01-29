@@ -110,6 +110,25 @@ OptionMenu "KC-GeneralMenu2"
 	KCTextfield "Footstep Volume",		"Set to 0.0 to silence footsteps if needed. Default: 1.0[x]",		"kc_footstepvolume"
 }
 
+OptionMenu "KC-MarineSpecific"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - DOOMGUY SPECIFIC OPTIONS"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Starts w/ Glock 21?",		"Determines if Doomguy starts a new game with the Glock 21 Pistol.",		"kcdoomg_startglock", 				"StartWeaponSingle"
+	KCOption "Starts w/ Tommy Gun[s]?",		"Determines if Doomguy starts a new game with one or two Tommy Guns.",		"kcdoomg_starttommygun", 				"StartWeaponDual"
+	KCOption "Starts w/ Devastator[s]?",		"Determines if Doomguy starts a new game with one or two Devastators.",		"kcdoomg_startdevastator", 				"StartWeaponDual"
+	KCOption "Starts w/ Tesla Cannon[s]?",		"Determines if Doomguy starts a new game with one or two Tesla Cannons.",		"kcdoomg_starttesla", 				"StartWeaponDual"
+	KCOption "Starts w/ Black Hole Gen.?",		"Determines if Doomguy starts a new game with the Black Hole Generator [BTW: Doom is NOT immune to the black holes launched by it, both damage and the pull, unlike Heiwa is V:].",		"kcdoomg_startbhgen", 				"StartWeaponSingle"
+	KCOption "Starts w/ Translocator?",		"Determines if Doomguy starts a new game with the Translocator Telebeacon System.",		"kcdoomg_starttransloc", 				"StartWeaponSingle"
+	KCOption "Starts w/ Saw Thrower?",		"Determines if Doomguy starts a new game with the Saw Thrower.",		"kcdoomg_startsawthrower", 				"StartWeaponSingle"
+	KCOption "Starts w/ Impaler Crossbow?",		"Determines if Doomguy starts a new game with the Impaler Crossbow.",		"kcdoomg_startimpaler", 				"StartWeaponSingle"
+	StaticText " "
+	Command "Restore Default Settings", 			"KC_defaultsMarine"
+}
 
 OptionMenu "KC-HeiwaSpecific"
 {
@@ -288,8 +307,8 @@ OptionMenu "KC-CheatyOptions2"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
-	KCTextField "TSArmor Damage Taken (x)",		"Alters the effect of damage taken by the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsadmgfactor"
-	KCTextField "TSArmor Elem-Damage Absorbed (x)",		"Alters the effect of elemental damage ABSORBED by the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsaeabfactor"
+	KCTextField "TSArmor Damage Taken (x)",		"Alters the ratio of damage taken by the 'shield' of the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsadmgfactor"
+	KCTextField "TSArmor Elem-Damage Absorbed (x)",		"Alters the effect of elemental damage (i.e. Fire/Heat, Ice/Cold, Electricity, Wind) ABSORBED by the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsaeabfactor"
 	StaticText ""
 	KCTextField "TSArmor Drain Speed (x)",		"Alters the effect of drain of artifact energy when using Time Seraph's Armor. Default: 1.0[x]",		"kc_tsadrainspd"
 	KCTextField "TSArmor Regen Speed (x)",		"Alters the effect of regen of artifact energy when NOT using the Time Seraph's Armor. Default: 1.0[x]",		"kc_tsaregenspd"
@@ -313,6 +332,10 @@ OptionMenu "KCOptions"
 	KCSubMenu "General Options [2]",		"General Options [page 2].",		"KC-GeneralMenu2"
 	KCSubMenu "HUD Options",		"Options for the HUD.",		"KC-HUDOptions"
 	StaticText " "
+	IfGame(Doom)
+	{
+		KCSubMenu "Marine Specific Options",		"Marine Specific Options.",		"KC-MarineSpecific"
+	}
 	KCSubMenu "Heiwa Specific Options",		"Heiwa Specific Options. V:",		"KC-HeiwaSpecific"
 	StaticText " "
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
