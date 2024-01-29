@@ -4301,7 +4301,8 @@ class PistolSpawner : WeaponSpawner replaces Pistol
 		bool dropweap = false;
 		if (random(1,dropchancemax) <= dropchance)
 		{
-			if (playera.CountInv(droptype))
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
 				if (random(1,5) <= 1) dropammo = true;
 												 else dropweap = true;
@@ -4449,7 +4450,8 @@ class ShotgunSpawner : WeaponSpawner replaces Shotgun
 		bool dropweap = false;
 		if (random(1,dropchancemax) <= dropchance)
 		{
-			if (playera.CountInv(droptype))
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
 				if (random(1,5) <= 1) dropammo = true;
 												 else dropweap = true;
@@ -4693,7 +4695,8 @@ class SuperShotgunSpawner : WeaponSpawner replaces SuperShotgun
 		bool dropweap = false;
 		if (random(1,dropchancemax) <= dropchance)
 		{
-			if (playera.CountInv(droptype))
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
 				if (random(1,5) <= 1) dropammo = true;
 												 else dropweap = true;
@@ -5020,6 +5023,8 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 		bool spawned;
 		actor mo;
 		string droptype = "ChaingunMarine";
+		string droptypebase = "ChaingunMarine";
+		string droptypespecial = "ChaingunMarine";
 		string droptypeammo = "Clip";
 		string droptypeammobig = "ClipBox";
 		int dropchancemax = 7;
@@ -5046,18 +5051,9 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				dropchancemax = 7;
 				dropchance = 4;
 			}
-			if (random(1,dropchancemax) <= dropchance) 
-			{
-				droptype = "TommyGun";
-				droptypeammo = "TommAmmo";
-				droptypeammobig = "TommAmmoBig";
-			}
-			else
-			{
-				droptype = "ChaingunMarine";
-				droptypeammo = "ClipNew";
-				droptypeammobig = "ClipBoxNew";
-			}
+			droptypespecial = "TommyGun";
+			droptypeammo = "TommAmmo";
+			droptypeammobig = "TommAmmoBig";
 		}
 		else
 		{
@@ -5071,34 +5067,33 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				dropchancemax = 7;
 				dropchance = 2;
 			}
-			if (random(1,dropchancemax) <= dropchance) 
-			{
-				droptype = "TommyGun";
-				droptypeammo = "TommAmmo";
-				droptypeammobig = "TommAmmoBig";
-			}
-			else
-			{
-				droptype = "ChaingunMarine";
-				droptypeammo = "ClipNew";
-				droptypeammobig = "ClipBoxNew";
-			}
+			droptypespecial = "TommyGun";
+			droptypeammo = "TommAmmo";
+			droptypeammobig = "TommAmmoBig";
 		}
 		
-		if (random(1,5) <= 1)
+		bool dropammo = false;
+		bool dropweap = false;
+		if (random(1,dropchancemax) <= dropchance)
 		{
-			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
-				droptype = droptypeammo;
-				if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-				[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-				if (mo) { mo.bDROPPED = bDROPPED; }
+				tempdroptype = "DualTommyGuns";
+				if (playera.CountInv(tempdroptype))
+				{
+					if (random(1,5) <= 1) dropammo = true;
+													 else dropweap = true;
+				}
 			}
-			droptype = droptypeammobig;
-			if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
 		}
-		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
-		if (mo) { mo.bDROPPED = bDROPPED; }
+		else
+		{
+			if (random(1,5) <= 1) dropammo = true;
+		}
+				 if (dropweap) A_WeaponSpawn(droptypespecial);
+		else if (dropammo) A_AmmoSpawn(droptype, droptypeammo, droptypeammobig);
+									else A_WeaponSpawn(droptypebase);
 		Destroy();
 	}
 	
@@ -5223,8 +5218,8 @@ class RocketLauncherSpawner : WeaponSpawner replaces RocketLauncher
 		bool spawned;
 		actor mo;
 		string droptype = "RocketLauncherMarine";
-		string droptypemarine = "RocketLauncherMarine";
-		string droptypeheiwa = "Devastator";
+		string droptypebase = "RocketLauncherMarine";
+		string droptypespecial = "RocketLauncherMarine";
 		string droptypeammo = "RocketAmmoNew";
 		string droptypeammobig = "RocketBoxNew";
 		int dropchancemax = 7;
@@ -5243,82 +5238,46 @@ class RocketLauncherSpawner : WeaponSpawner replaces RocketLauncher
 		{
 			if (random(1,8) <= 1) 
 			{
-				droptypeheiwa = "Deviation";
+				droptypespecial = "Deviation";
 				droptypeammo = "RocketAmmoNew";
 				droptypeammobig = "RocketBoxNew";
 			}
 			else 
 			{
-				droptypeheiwa = "Devastator";
+				droptypespecial = "Devastator";
 				droptypeammo = "MiniRockets";
 				droptypeammobig = "MiniRocketBox";
 			}
 		}
 		else
 		{
-			if (random(1,8) <= 1) 
-			{
-				droptypemarine = "Devastator";
-				droptypeammo = "MiniRockets";
-				droptypeammobig = "MiniRocketBox";
-			}
-			else 
-			{
-				droptypemarine = "RocketLauncherMarine";
-				droptypeammo = "RocketAmmoNew";
-				droptypeammobig = "RocketBoxNew";
-			}
+			droptypespecial = "Devastator";
+			droptypeammo = "MiniRockets";
+			droptypeammobig = "MiniRocketBox";
 		}
-			
-		if (random(1,dropchancemax) <= dropchance) 
+		
+		bool dropammo = false;
+		bool dropweap = false;
+		if (random(1,dropchancemax) <= dropchance)
 		{
-			string tempdroptype = droptype;
-			if (playera.GetClassName() == "HeiwaPlayer") droptype = droptypeheiwa;
-																							else droptype = droptypemarine;
-			if (droptypeheiwa == "Devastator") tempdroptype = "DualDevastators";
-																		else tempdroptype = droptype;
-
+			string tempdroptype = droptypespecial;
 			if (playera.CountInv(tempdroptype))
 			{
-				if (random(1,5) <= 1)
+				tempdroptype = "DualDevastators";
+				if (playera.CountInv(tempdroptype))
 				{
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-					{
-						droptype = droptypeammo;
-						if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-						[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-						if (mo) { mo.bDROPPED = bDROPPED; }
-					}
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-				}
-				else
-				{
-					droptype = "RocketLauncherMarine";
+					if (random(1,5) <= 1) dropammo = true;
+													 else dropweap = true;
 				}
 			}
 		}
 		else
 		{
-			if (random(1,5) <= 1)
-			{
-				if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-				{
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-					[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-					if (mo) { mo.bDROPPED = bDROPPED; }
-				}
-				droptype = droptypeammobig;
-			}
-			else
-			{
-				droptype = "RocketLauncherMarine";
-			}
+			if (random(1,5) <= 1) dropammo = true;
 		}
-		//Console.Printf("%s", droptype);
-		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
-		if (mo) { mo.bDROPPED = bDROPPED; }
+				 if (dropweap) A_WeaponSpawn(droptypespecial);
+		else if (dropammo) A_AmmoSpawn(droptype, droptypeammo, droptypeammobig);
+									else A_WeaponSpawn(droptypebase);
 		Destroy();
 	}
 	
@@ -5690,8 +5649,8 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 		bool spawned;
 		actor mo;
 		string droptype = "PlasmaRifleMarine";
-		string droptypemarine = "PlasmaRifleMarine";
-		string droptypeheiwa = "TeslaCannon";
+		string droptypebase = "PlasmaRifleMarine";
+		string droptypespecial = "PlasmaRifleMarine";
 		string droptypeammo = "CellNew";
 		string droptypeammobig = "CellPackNew";
 		int dropchancemax = 7;
@@ -5708,9 +5667,6 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 		}
 		if (playera.GetClassName() == "HeiwaPlayer")
 		{
-			droptypeheiwa = "TeslaCannon";
-			droptypeammo = "Bolts";
-			droptypeammobig = "BoltsLarge";
 			if (bDROPPED)
 			{
 				dropchancemax = 40;
@@ -5721,12 +5677,12 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 				dropchancemax = 10;
 				dropchance = random(3,5);
 			}
+			droptypespecial = "TeslaCannon";
+			droptypeammo = "Bolts";
+			droptypeammobig = "BoltsLarge";
 		}
 		else
 		{
-			droptypeheiwa = "TeslaCannon";
-			droptypeammo = "Bolts";
-			droptypeammobig = "BoltsLarge";
 			if (bDROPPED)
 			{
 				dropchancemax = 80;
@@ -5737,56 +5693,33 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 				dropchancemax = 16;
 				dropchance = 1;
 			}
+			droptypespecial = "TeslaCannon";
+			droptypeammo = "Bolts";
+			droptypeammobig = "BoltsLarge";
 		}
-			
-		if (random(1,dropchancemax) <= dropchance) 
+		
+		bool dropammo = false;
+		bool dropweap = false;
+		if (random(1,dropchancemax) <= dropchance)
 		{
-			string tempdroptype = droptype;
-			if (playera.GetClassName() == "HeiwaPlayer") droptype = droptypeheiwa;
-																							else droptype = droptypemarine;
-			if (droptypeheiwa == "TeslaCannon") tempdroptype = "DualTeslaCannons";
-																		 else tempdroptype = droptype;
-			
-			if (playera.CountInv(tempdroptype)) // droptype
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
-				if (random(1,5) <= 1)
+				tempdroptype = "DualTeslaCannons";
+				if (playera.CountInv(tempdroptype))
 				{
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-					{
-						droptype = droptypeammo;
-						if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-						[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-						if (mo) { mo.bDROPPED = bDROPPED; }
-					}
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-				}
-				else
-				{
-					droptype = "PlasmaRifleMarine";
+					if (random(1,5) <= 1) dropammo = true;
+													 else dropweap = true;
 				}
 			}
 		}
 		else
 		{
-			if (random(1,5) <= 1)
-			{
-				if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-				{
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-					[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-					if (mo) { mo.bDROPPED = bDROPPED; }
-				}
-				droptype = droptypeammobig;
-			}
-			else
-			{
-				droptype = "PlasmaRifleMarine";
-			}
+			if (random(1,5) <= 1) dropammo = true;
 		}
-		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
-		if (mo) { mo.bDROPPED = bDROPPED; }
+				 if (dropweap) A_WeaponSpawn(droptypespecial);
+		else if (dropammo) A_AmmoSpawn(droptype, droptypeammo, droptypeammobig);
+									else A_WeaponSpawn(droptypebase);
 		Destroy();
 	}
 	
@@ -6033,8 +5966,8 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		bool spawned;
 		actor mo;
 		string droptype = "BFG9000Marine";
-		string droptypemarine = "BFG9000Marine";
-		string droptypeheiwa = "BHGen";
+		string droptypebase = "BFG9000Marine";
+		string droptypespecial = "BFG9000Marine";
 		string droptypeammo = "CellNew";
 		string droptypeammobig = "CellPackNew";
 		int dropchancemax = 7;
@@ -6051,7 +5984,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		}
 		if (playera.GetClassName() == "HeiwaPlayer")
 		{
-			droptypeheiwa = "BHGen";
+			droptypespecial = "BHGen";
 			droptypeammo = "CellNew";
 			droptypeammobig = "CellPackNew";
 			if (bDROPPED)
@@ -6067,7 +6000,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		}
 		else
 		{
-			droptypeheiwa = "BHGen";
+			droptypespecial = "BHGen";
 			droptypeammo = "CellNew";
 			droptypeammobig = "CellPackNew";
 			if (bDROPPED)
@@ -6082,48 +6015,25 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 			}
 		}
 		
-		if (random(1,dropchancemax) <= dropchance) 
+		
+		bool dropammo = false;
+		bool dropweap = false;
+		if (random(1,dropchancemax) <= dropchance)
 		{
-			if (playera.GetClassName() == "HeiwaPlayer") droptype = droptypeheiwa;
-																							else droptype = droptypemarine;
-			if (playera.CountInv(droptype))
+			string tempdroptype = droptypespecial;
+			if (playera.CountInv(tempdroptype))
 			{
-				if (random(1,5) <= 1)
-				{
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-					{
-						droptype = droptypeammo;
-						if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-						[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-						if (mo) { mo.bDROPPED = bDROPPED; }
-					}
-					droptype = droptypeammo;
-					if (random(1,4) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
-				}
-				else
-				{
-					droptype = "BFG9000Marine";
-				}
+				if (random(1,5) <= 1) dropammo = true;
+												 else dropweap = true;
 			}
 		}
 		else
 		{
-			if (random(1,5) <= 1)
-			{
-				if (random(1,4) <= randompick(1,1,1,1,1,2,2,3))
-				{
-					[spawned, mo] = A_SpawnItemEx(droptype,frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(0,2),flags:SXF_NOCHECKPOSITION);
-					if (mo) { mo.bDROPPED = bDROPPED; }
-				}
-				droptype = droptypeammobig;
-			}
-			else
-			{
-				droptype = "BFG9000Marine";
-			}
+			if (random(1,5) <= 1) dropammo = true;
 		}
-		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
-		if (mo) { mo.bDROPPED = bDROPPED; }
+				 if (dropweap) A_WeaponSpawn(droptypespecial);
+		else if (dropammo) A_AmmoSpawn(droptype, droptypeammo, droptypeammobig);
+									else A_WeaponSpawn(droptypebase);
 		Destroy();
 	}
 	
