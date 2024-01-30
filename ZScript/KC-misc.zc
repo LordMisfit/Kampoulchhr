@@ -3153,7 +3153,7 @@ class PlayerStatItem : Inventory
 				}
 				sielgracestartchancemax /= random(1,32);
 				if (sielgracestartchancemax < 2) sielgracestartchancemax = 2;
-				if (random(1,sielgracestartchancemax) <= 1) A_SielsGraceCooldown(1);
+				if (random(1,sielgracestartchancemax) <= 1) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
 																							 else sielsgraceactive = true;
 			}
 		}

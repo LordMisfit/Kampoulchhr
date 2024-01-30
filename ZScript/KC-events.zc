@@ -138,21 +138,6 @@ class KC_EventHandler : EventHandler
 						mo.A_StopSound(7);
 					}
 				}
-				
-				/*
-				nm = "CCards_Actor_SwapCurse";
-				nn = "CCards_Actor_SwapCurseDummy";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo.CountInv(nm) > 0)
-					{
-						Console.Printf("32kn42km4");
-						mo.SetInventory(nm,0);
-						mo.SetInventory(nn,1);
-					}
-				}
-				*/
 			}
 			else
 			{
@@ -166,21 +151,6 @@ class KC_EventHandler : EventHandler
 						mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
 					}
 				}
-				
-				/*
-				nm = "CCards_Actor_SwapCurseDummy";
-				nn = "CCards_Actor_SwapCurse";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo.CountInv(nm) > 0)
-					{
-						Console.Printf("@#$@RE");
-						mo.SetInventory(nm,0);
-						mo.SetInventory(nn,1);
-					}
-				}
-				*/
 			}
 			
 
@@ -234,11 +204,28 @@ class KC_EventHandler : EventHandler
 			if ((level.time >= 3 && level.time <= 35) ||
 					(((level.time - 35) % 175) == 0))
 			{
+				ThinkerIterator it;
+
 				nm = "CCards_Actor_BigStomach";
 				nm = "CCards_Actor_SwapCurse";
 				//
+				nm = "CCards_Actor_PriestPorridge";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					mo.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+					mo.Destroy();
+				}
+				nm = "CCards_Actor_HotPriestPorridge";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					mo.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+					mo.Destroy();
+				}
+
 				nm = "CCards_Actor_MonsterDisguise";
-				ThinkerIterator it = ThinkerIterator.Create(nm);
+				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
 					if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
@@ -1642,6 +1629,19 @@ class KC_EventHandler : EventHandler
 			}
 			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			nm = "CCards_Actor_PilotedMechPlasma"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
+
+			nm = "CCards_Actor_PriestPorridge"; 
+			if (spawnname == nm)
+			{
+				spawnee.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				spawnee.Destroy();
+			}
+			nm = "CCards_Actor_HotPriestPorridge"; 
+			if (spawnname == nm)
+			{
+				spawnee.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				spawnee.Destroy();
+			}
 
 			if (A_CheckKCTimeFreeze())
 			{
