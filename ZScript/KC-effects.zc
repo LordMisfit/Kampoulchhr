@@ -2231,13 +2231,17 @@ class KCPowerKampoul : Powerup
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
-			if (!A_CheckNoTimer())
+			if (owner.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(owner))
 			{
-				if (!(playera.CountInv("KCTimeFreezer") ||
-							playera.CountInv("KCTimeFreezer1") ||
-							playera.CountInv("KCTimeFreezer2") ||
-							playera.CountInv("KCTimeFreezer3"))) EffectTics--;
+				if (!A_CheckNoTimer())
+				{
+					if (!(playera.CountInv("KCTimeFreezer") ||
+								playera.CountInv("KCTimeFreezer1") ||
+								playera.CountInv("KCTimeFreezer2") ||
+								playera.CountInv("KCTimeFreezer3"))) EffectTics--;
+				}
 			}
+			else Destroy(); // Doomguy CANNOT use this powerup, and it will immediately fade away if you cheat to give it to him V:
 		}
 		
 		// Powerups cannot exist outside an inventory

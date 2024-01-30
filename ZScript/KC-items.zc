@@ -200,7 +200,6 @@ class CustomInventoryExt : CustomInventory
 				Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
 				playera.A_StopSound(CHAN_VOICE);
 				playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
-				//Heiwa/ReflievedSigh
 			}
 		}
 	}
@@ -244,6 +243,26 @@ class KampoulSphere : CustomInventoryExt
 		Scale 0.75;
 	}
 	
+	override void Tick()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (!HeiwaPlayer(playera))
+		{
+			bool spawned;
+			actor mo;
+			[spawned, mo] = A_SpawnItemEx("InvulnerabilitySphere2",flags:SXF_NOCHECKPOSITION,tid:tid);
+			if (mo) 
+			{
+				mo.bDROPPED = bDROPPED;
+				InvulnerabilitySphere2 invl;
+				invl = InvulnerabilitySphere2(mo);
+				if (invl) invl.timestrength = 3;
+			}
+		}
+		super.Tick();
+	}
+	
 	States
 	{
 		Spawn:
@@ -258,16 +277,19 @@ class KampoulSphere : CustomInventoryExt
 			TNT1 A 0 
 			{
 				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-				if (MiscItem && MiscItem.CanTalkUnderwater)
+				if (HeiwaPlayer(playera))
 				{
-					double maskpitch = 1.00;
-					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-					A_StopSound(CHAN_VOICE);
-					Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
-					A_StartSound("Heiwa/ABigHelp",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+					let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						double maskpitch = 1.00;
+						if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+						A_StopSound(CHAN_VOICE);
+						Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
+						A_StartSound("Heiwa/ABigHelp",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+					}
+					A_GiveInventory("KCPowerKampoul");
 				}
-				A_GiveInventory("KCPowerKampoul");
 			}
 			Stop;
 	}
@@ -982,7 +1004,7 @@ class MiniBerserk : CustomInventoryExt
 			{
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-				if (HeiwaPlayer(playera))
+				if (HeiwaPlayer(playera)) // Heiwa's HP is able to reach 150% via [Mini-]Berserks
 				{
 					if (A_CheckHealthLevels(1.50)) 
 					{
@@ -1078,7 +1100,7 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 
-				if (HeiwaPlayer(playera))
+				if (HeiwaPlayer(playera)) // Heiwa's HP is able to reach 150% via [Mini-]Berserks
 				{
 					if (A_CheckHealthLevels(1.5)) 
 					{
@@ -1277,6 +1299,11 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 				int MaxHealthTrue;
 				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int oldhealthratio;
+				if (playera.CountInv("NormalHealth")) oldhealthratio = 0;
+				if (playera.CountInv("DecentHealth")) oldhealthratio = 1;
+				if (playera.CountInv("LowHealth")) oldhealthratio = 2;
+				if (playera.CountInv("CriticalHealth")) oldhealthratio = 3;
 				
 				if (CurrentHealth < MaxHealthLimit)
 				{
@@ -1286,6 +1313,22 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 		
 					playera.health = CurrentHealth;
+				}
+				
+				if (HeiwaPlayer(playera) && 
+						(oldhealthratio == 3 || 
+						(oldhealthratio == 2 && random(1,25) <= 21) || 
+						(oldhealthratio == 1 && random(1,25) <= 9)))
+				{
+					double maskpitch = 1.00;
+					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					string voicenm;
+					double voicevol = frandom(1.25,1.75);
+					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+					voicenm = "Heiwa/ReflievedSigh"; //
+					Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+					playera.A_StopSound(CHAN_VOICE);
+					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 			}
 			Stop;
@@ -1370,6 +1413,11 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 				int MaxHealthLimit = MaxHealthTrue * 2;
 				int HealAmount;
 				int ptemp1, ptemp2;
+				int oldhealthratio;
+				if (playera.CountInv("NormalHealth")) oldhealthratio = 0;
+				if (playera.CountInv("DecentHealth")) oldhealthratio = 1;
+				if (playera.CountInv("LowHealth")) oldhealthratio = 2;
+				if (playera.CountInv("CriticalHealth")) oldhealthratio = 3;
 				
 				if (CurrentHealth < MaxHealthLimit)
 				{
@@ -1380,6 +1428,22 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 				
 					playera.health = CurrentHealth;
 				}
+				if (HeiwaPlayer(playera) && 
+						(oldhealthratio == 3 || 
+						(oldhealthratio == 2 && random(1,25) <= 21) || 
+						(oldhealthratio == 1 && random(1,25) <= 9)))
+				{
+					double maskpitch = 1.00;
+					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					string voicenm;
+					double voicevol = frandom(1.25,1.75);
+					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+					voicenm = "Heiwa/ReflievedSigh"; //
+					Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+					playera.A_StopSound(CHAN_VOICE);
+					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+				}
+
 				playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 			}
 			Stop;
@@ -1439,8 +1503,6 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 				{
 					double maskpitch = 1.00;
 					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-					//A_StopSound(CHAN_VOICE);
-					//A_StartSound("Dinah/What",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
 				A_GiveInventory("KCPowerInvisibility");
 			}
@@ -1451,6 +1513,7 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 // Invuln Sphere
 class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 {
+	int timestrength;
 	default
 	{
 		+DONTGIB
@@ -1467,6 +1530,30 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 	States
 	{
 		Spawn:
+			PINV A 0 Bright NoDelay
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (HeiwaPlayer(playera))
+				{
+					int basechance = randompick(20,24,24,28,28,28,28,32,32,32,32,32,32,32,32,32,32,32,32,36,36,36,36,40,40,44);
+					if (bDROPPED) basechance *= randompick(3,4,4,4,4,4,4,4,5);
+					if (random(1,basechance) <= 1)
+					{
+						bool spawned;
+						actor mo;
+						[spawned, mo] = A_SpawnItemEx("KampoulSphere",flags:SXF_NOCHECKPOSITION,tid:tid);
+						if (mo) 
+						{
+							mo.bDROPPED = bDROPPED;
+							KampoulSphere kmpl;
+							kmpl = KampoulSphere(mo);
+						}
+					}
+				}
+			}
+			goto Idle;
+		Idle:
 			PINV ABCDCB 6 Bright;
 			Loop;
 		Pickup:
@@ -1478,10 +1565,17 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 				{
 					double maskpitch = 1.00;
 					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-					//A_StopSound(CHAN_VOICE);
-					//A_StartSound("Dinah/What",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+					A_StopSound(CHAN_VOICE);
+					Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
+					A_StartSound("Heiwa/ABigHelp",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
-				A_GiveInventory("KCPowerInvuln");
+				
+				A_GiveInventory("KCPowerInvuln",1);
+				// If spawned from a KampoulSphere while playing as Doomguy, the pickup should give 4x invuln time overall V:
+				if (invoker.timestrength > 0 && KCPlayer(playera))
+				{
+					for (int i = 0; i < invoker.timestrength; i++) { A_GiveInventory("KCPowerInvuln",1); }
+				}
 			}
 			Stop;
 	}
@@ -2570,11 +2664,11 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			if (SaveAmount <= (MiscItem.MaxHealthTrue * 2)) SaveAmount = (MiscItem.MaxHealthTrue * 2);
 		}
 		else
 		{
-			SaveAmount = 200;
+			if (SaveAmount <= 200) SaveAmount = 200;
 		}
 		super.BeginPlay();
 	}

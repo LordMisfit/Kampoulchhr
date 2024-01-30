@@ -4166,6 +4166,43 @@ class KC_EventHandler : EventHandler
 						}
 					}
 					
+					// KampoulSphere [Type 10] (Heiwa Only)
+					if (A_CheckForHeiwaPlayer())
+					{
+						double allcompletefactorkmsp = (allcompletefactor * 7.5);
+						double allkillsfactorkmsp = (allkillsfactor * 2.5);
+						double allsecretsfactorkmsp = (allsecretsfactor * 2.5);
+						double allitemsfactorkmsp = (allitemsfactor * 2.5);
+						basechance = kc_inventorydroprate10;
+						basechance *= kc_inventorydropratemulti;
+						basechance *= skillmult;
+						luckbase = 1.0 + (monsterrating * 0.125); // (512) 
+						luckbase *= (0.25 + 
+												 (MiscItem.totalcompleted * allcompletefactorkmsp) + 
+												 (MiscItem.totalcompleted * allkillsfactorkmsp) + 
+												 (MiscItem.totalcompleted * allsecretsfactorkmsp) + 
+												 (MiscItem.totalcompleted * allitemsfactorkmsp));
+						luckbase *= kc_luckfactor;
+						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+						maxchance = basechance;
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d)", maxchance, basechance);
+						if (random(1,maxchance) <= 1)
+						{
+							double raredropsndpitch = frandompick(0.50,0.75,1.0,1.0625,1.125);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(193,194,224,225,266,267);
+							string raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							raredropsndpitch = frandompick(0.25,0.4375,0.5,0.5625,0.625);
+							raredropsndvol = frandom(1.75,2.25);
+							raredropsndchannel = randompick(293,294,324,325,366,367);
+							raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							
+							victim.A_SpawnItemEx("KampoulSphere",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+						}
+					}
+					
 					// Capsules [Type 12] (Heiwa Only)
 					if (A_CheckForHeiwaPlayer())
 					{
