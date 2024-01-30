@@ -15,10 +15,18 @@ class CustomInventoryExt : CustomInventory
 	
 	bool PickupUseVoice;
 	bool PickupUseVoice2;
+	bool PickupUseVoiceHeiwa;
+	bool PickupUseVoiceHeiwa2;
 	string PickupSnd2;
+	string PickupSndHeiwa;
+	string PickupSndHeiwa2;
 	property PickUpVoice: PickupUseVoice;
 	property PickUpVoice2: PickupUseVoice2;
+	property PickUpVoiceHeiwa: PickupUseVoiceHeiwa;
+	property PickUpVoiceHeiwa2: PickupUseVoiceHeiwa2;
 	property PickupSound2: PickupSnd2;
+	property PickupSoundHeiwa: PickupSndHeiwa;
+	property PickupSoundHeiwa2: PickupSndHeiwa2;
 	
 	override String PickupMessage()
 	{
@@ -104,6 +112,80 @@ class CustomInventoryExt : CustomInventory
 			toucher.A_StopSound(chan);
 			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
 		}
+		
+		// Plays Heiwa-Unique Lines for weapon drops
+		if (A_CheckForHeiwaSnds())
+		{
+			if (kcdebug_pickupsounds) Console.Printf("PickupSounds: A_CheckForHeiwaSnds() found");
+			if (PickupSndHeiwa != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa: %s", PickupSndHeiwa);
+				if (toucher != NULL && toucher.CheckLocalView())
+				{
+					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
+															else chan = CHAN_ITEM;
+					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+				}
+				else
+				{
+					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
+															else chan = CHAN_ITEM;
+					flags = CHANF_MAYBE_LOCAL;
+				}
+				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH: %d]", chan, PickupUseVoiceHeiwa);
+				
+				double maskpitch = 1.00;
+				if (PickupUseVoiceHeiwa) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+				}
+				toucher.A_StopSound(chan);
+				toucher.A_StartSound(PickupSndHeiwa, chan, flags, 1.0, atten, maskpitch);
+			}
+			
+			if (PickupSndHeiwa2 != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa2: %s", PickupSndHeiwa2);
+				if (toucher != NULL && toucher.CheckLocalView())
+				{
+					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
+															 else chan = CHAN_ITEM;
+					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+				}
+				else
+				{
+					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
+															 else chan = CHAN_ITEM;
+					flags = CHANF_MAYBE_LOCAL;
+				}
+				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH2: %d]", chan, PickupUseVoiceHeiwa2);
+				
+				double maskpitch = 1.00;
+				if (PickupUseVoiceHeiwa2) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+				}
+				toucher.A_StopSound(chan);
+				toucher.A_StartSound(PickupSndHeiwa2, chan, flags, 1.0, atten, maskpitch);
+			}
+		}
+	}
+	
+	action bool A_CheckForHeiwaSnds()
+	{
+		actor playera = players[0].mo;
+		bool result = false;
+		if (playera)
+		{
+			if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
+		}
+		return result;
 	}
 	
 	override void Tick()
@@ -580,7 +662,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 	default
 	{
 		//$Category KC Artifacts
-		Inventory.PickupMessage "\c[HeiwaDeluge]'With great protection comes great responsibility....'\c-";
+		Inventory.PickupMessage "\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-";
 		Inventory.Icon "TSCHA0";
 		Tag "";
 		+FLOATBOB

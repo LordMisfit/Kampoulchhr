@@ -204,16 +204,26 @@ class CompatVulnItem : PlaceholderItem
 			
 			double BHoleFactor = frandom(0.334,0.4167);
 			if ((mod == 'BlackHole') ||
-					(infl == "DMBall" || infl == "DMBall2")) 
+					(infl == "DMBall" || 
+					 infl == "DMBallMini" || 
+					 infl == "DMBall2")) 
 			{
 				int bhlvl1chance = randompick(1,1,1,2);
 				int bhlvl2chance = 5;
 				int bhlvl3chance = 25;
 				if (infl == "DMBall2")
 				{
-					int bhlvl1chance = 1;
-					int bhlvl2chance = random(2,3);
-					int bhlvl3chance = randompick(6,6,6,7);
+					bhlvl1chance = 1;
+					bhlvl2chance = random(2,3);
+					bhlvl3chance = randompick(6,6,6,7);
+					BHoleFactor *= 2;
+				}
+				if (infl == "DMBallMini")
+				{
+					bhlvl1chance = randompick(8,9);
+					bhlvl2chance = 20;
+					bhlvl3chance = 100;
+					BHoleFactor *= 0.5;
 				}
 				if (random(1,bhlvl1chance) <= 1)
 				{

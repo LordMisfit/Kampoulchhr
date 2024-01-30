@@ -2934,15 +2934,16 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
+					PlayerWeapon is "BHGen" ||
 					PlayerWeapon is "ImpalerXBow")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
 				if (PlayerWeapon is "FistMarine" || PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
-				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
-				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
-				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
-				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
+				else if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
+				else if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
+				else if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
+				else if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
@@ -2954,6 +2955,7 @@ class KCStatusBarMain : BaseStatusBar
 					if (CPlayerPawn.CountInv("DualDevastatorsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
 																													else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
+				else if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]CHANGE ALT-FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
@@ -3016,7 +3018,15 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST [~2-10 CELLS/SHOT]\c-");
 				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");
-				if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]MEGA BLACK-HOLE [~150 CELLS]\c-");
+				if (PlayerWeapon is "BHGen") 
+				{
+					let BHGn = BHGen(CPlayerPawn.FindInventory("BHGen"));
+					if (BHGn)
+					{
+						if (BHGn.altshottype >= 1) LegendStr.AppendFormat(" = \c[blue]MINI BLACK-HOLE [~25 CELLS]\c-");
+																	else LegendStr.AppendFormat(" = \c[blue]MEGA BLACK-HOLE [~125 CELLS]\c-");
+					}
+				}
 				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT [~3 ARROWS]\c-");
 				if (PlayerWeapon is "SawThrower") LegendStr.AppendFormat(" = \c[blue]MELEE CHOPPER ATTACK\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
