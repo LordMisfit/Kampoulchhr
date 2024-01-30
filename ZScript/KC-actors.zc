@@ -2884,11 +2884,14 @@ class ShieldPartBase : KCBaseZSC
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 		+DONTSPLASH;
+		+CANNOTPUSH;
+		+DONTTHRUST;
 	}
 	
 	override void PostBeginPlay()
 	{
-		if (fuse <= 0) fuse = 1;
+		fuse = (2 + kcdebug_shieldpartfuse);
+		if (fuse <= 2) fuse = 2;
 		Super.PostBeginPlay();
 	}
 	
@@ -2898,11 +2901,11 @@ class ShieldPartBase : KCBaseZSC
 		if (shieldee && target)
 		{
 			target = shieldee;
-			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[ShieldPartBase (Tick)]: %p [%p] [tic: %d]", shieldee, target, gametic);
+			if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("[ShieldPartBase \c[fire][%s]\c- (Tick)]: \c[green]shieldee: %p (%s)\c-, \c[gold]target: [%p (%s)]\c- [tic: %d]", GetClassName(), shieldee, shieldee.GetClassName(), target, target.GetClassName(), gametic);
 			if (target) 
 			{
 				A_Warp(AAPTR_TARGET,attachx,attachy,attachz,attachang,WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE,null,0,0,attachptc);
-				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("A_Warp [ShieldPartBase (Tick)]: %d [tic: %d]", GetAge(), gametic);
+				if (kcdebug_showvisibleshieldparts >= 2) Console.Printf("A_Warp [ShieldPartBase \c[fire][%s]\c- (Tick)]: age: %d [tic: %d]", GetClassName(), GetAge(), gametic);
 			}
 		}
 		Super.Tick();
@@ -3176,8 +3179,10 @@ class ShieldPartNoReflect : ShieldPart
 		Spawn:
 			HEXA A 2 bright NoDelay
 			{
+				fuse--;
+				if (fuse <= 0) Destroy();
 			}
-			stop;
+			loop;
 	}
 }
 
@@ -3253,9 +3258,12 @@ class ShieldPartMeleeNoReflect : ShieldPartBase
 	States
 	{
 		Spawn:
-			HEXA C 0 bright NoDelay;
-			HEXA C 1 bright;
-			stop;
+			HEXA C 1 bright NoDelay
+			{
+				fuse--;
+				if (fuse <= 0) Destroy();
+			}
+			loop;
 		Pain:
 			TNT1 A 0 bright
 			{
@@ -3267,6 +3275,8 @@ class ShieldPartMeleeNoReflect : ShieldPartBase
 					} else { A_StartSound("FistHitWall", 57); }
 				}
 			}
+		PainEnd:
+			TNT1 A 0 bright;
 			stop;
 	}
 }
@@ -3350,9 +3360,12 @@ class KickShieldNoReflect : ShieldPartMeleeNoReflect
 	States
 	{
 		Spawn:
-			HEXA C 0 bright NoDelay;
-			HEXA C 1 bright;
-			stop;
+			HEXA C 1 bright NoDelay
+			{
+				fuse--;
+				if (fuse <= 0) Destroy();
+			}
+			loop;
 		Pain:
 			TNT1 A 0 bright
 			{
@@ -3364,6 +3377,8 @@ class KickShieldNoReflect : ShieldPartMeleeNoReflect
 					} else { A_StartSound("FistHitWall", 57); }
 				}
 			}
+		PainEnd:
+			TNT1 A 0 bright;
 			stop;
 	}
 }
@@ -3377,6 +3392,7 @@ class KickShieldReflect : KickShieldNoReflect
 	}
 }
 
+//
 class NoItemSpawn : KCBaseZSC // A special 'drop' that is meant to be an empty "drop" for use in droptables
 {
 	states
