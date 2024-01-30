@@ -2664,11 +2664,11 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (SaveAmount <= (MiscItem.MaxHealthTrue * 2)) SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			SaveAmount = (MiscItem.MaxHealthTrue * 2);
 		}
 		else
 		{
-			if (SaveAmount <= 200) SaveAmount = 200;
+			SaveAmount = 200;
 		}
 		super.BeginPlay();
 	}
