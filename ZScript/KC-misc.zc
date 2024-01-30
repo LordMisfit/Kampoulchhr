@@ -23,6 +23,10 @@ class PlayerStatItem : Inventory
 	bool MercyInvulnOn;
 	int MercyInvulnTimer;
 	int MercyInvulnMod;
+	bool sielsgraceactive;
+	int sielsgraceactivations;
+	int sielsgracecooldown;
+	int sielsgracecooldownbase;
 	
 	int BaseFlatDefValue, BaseFlatDefValueCrush, BaseFlatDefValueDmgFlr, BaseFlatDefValueHUD;
 	int ArmorDefValue, ArmorDefValueCrush, ArmorDefValueDmgFlr, ArmorDefValueHUD;
@@ -250,6 +254,33 @@ class PlayerStatItem : Inventory
 		return result;
 	}
 	
+	void A_SielsGraceCooldown()
+	{
+		sielsgracecooldown = sielsgracecooldownbase;
+		double levelbasis = 0.20;
+				 if (TruePlayerLevel <= 5) levelbasis = 0.20;
+		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) sielsgracecooldown *= 0.375;
+		else if (TruePlayerLevel >= 21 && TruePlayerLevel <= 50) sielsgracecooldown *= 0.625;
+		else if (TruePlayerLevel >= 51 && TruePlayerLevel <= 100) sielsgracecooldown *= 1.125;
+		else if (TruePlayerLevel >= 101 && TruePlayerLevel <= 200) sielsgracecooldown *= 1.75;
+		else if (TruePlayerLevel >= 201 && TruePlayerLevel <= 500) sielsgracecooldown *= 2.5;
+		else if (TruePlayerLevel >= 501) sielsgracecooldown *= 4.875;
+		sielsgracecooldown *= (1.0 + ((TruePlayerLevel) * levelbasis));
+
+		double activationbasis = 0.015625;
+				 if (TruePlayerLevel <= 5) activationbasis = 0.015625;
+		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) activationbasis = 0.03125;
+		else if (TruePlayerLevel >= 21 && TruePlayerLevel <= 50) activationbasis = 0.0625;
+		else if (TruePlayerLevel >= 51 && TruePlayerLevel <= 100) activationbasis = 0.125;
+		else if (TruePlayerLevel >= 101 && TruePlayerLevel <= 200) activationbasis = 0.25;
+		else if (TruePlayerLevel >= 201 && TruePlayerLevel <= 500) activationbasis = 0.5;
+		else if (TruePlayerLevel >= 501) activationbasis = 0.9375;
+		sielsgracecooldown *= (1.0 + ((sielsgraceactivations) * activationbasis));
+		
+		if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown *= 0.25;
+		Console.Printf("sielsgracecooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, levelbasis, activationbasis);
+	}
+	
 	string ReturnKeyBind1(string keybindget)
 	{
 		string LegendStr = "";
@@ -311,6 +342,31 @@ class PlayerStatItem : Inventory
 				
 				if (whistlecooldown) whistlecooldown--;
 				
+				// Mode Check
+				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
+				if (ClassicDoomType & 1) { owner.A_SetInventory("PlayingDoom",1); } // Doom
+				if (ClassicDoomType & 2) { owner.A_SetInventory("PlayingHeretic",1); } // Heretic
+				if (ClassicDoomType & 4) { owner.A_SetInventory("PlayingHexen",1); } // HeXen
+				if (ClassicDoomType & 8) { owner.A_SetInventory("PlayingStrife",1); } // Strife
+				if (kcdebug_miscitemdebug) Console.Printf("%d", ClassicDoomType);
+				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
+				TrueGameSkill = skill;
+				
+				if (sielsgracecooldown)
+				{
+					sielsgracecooldown--;
+					if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown -= randompick(3,4,4,4,4,5);
+					if (sielsgracecooldown < 0) sielsgracecooldown = 0;
+					Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
+				}
+				else 
+				if (sielsgraceactive) 
+				{
+					sielsgracecooldown = 0;
+					Console.Printf("sielsgraceactive: %d", sielsgraceactive);
+				}
+
+
 				// Check Heiwa's Weapons
 				if (A_CheckForHeiwa()) 
 				{
@@ -325,15 +381,6 @@ class PlayerStatItem : Inventory
 					nm = "PlasmaRifleMarine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
 					nm = "BFG9000Marine"; if (owner.CountInv(nm)) { owner.SetInventory(nm,0); }
 				}
-				// Mode Check
-				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
-				if (ClassicDoomType & 1) { owner.A_SetInventory("PlayingDoom",1); } // Doom
-				if (ClassicDoomType & 2) { owner.A_SetInventory("PlayingHeretic",1); } // Heretic
-				if (ClassicDoomType & 4) { owner.A_SetInventory("PlayingHexen",1); } // HeXen
-				if (ClassicDoomType & 8) { owner.A_SetInventory("PlayingStrife",1); } // Strife
-				if (kcdebug_miscitemdebug) Console.Printf("%d", ClassicDoomType);
-				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
-				TrueGameSkill = skill;
 				
 				if (itemtimer <= 2)
 				{
@@ -1689,7 +1736,25 @@ class PlayerStatItem : Inventory
 			}
 			if (owner.CountInv("GiveTempMortalSurvive")) SurvivalRate = 20000;
 			int SurviveRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
-			if (SurviveRNGVal <= SurvivalRate) owner.player.cheats |= CF_BUDDHA; else owner.player.cheats &= ~CF_BUDDHA;
+			if (SurviveRNGVal <= SurvivalRate)
+			{
+				owner.player.cheats |= CF_BUDDHA;
+			}
+			else
+			{
+				owner.player.cheats &= ~CF_BUDDHA;
+				
+				// Siel's Grace is a rechargable mortal-hit survivability perk Heiwa exclusively
+				// has that is almost always immediately available to allow her to survive death
+				// once in the start of a playthrough, however the more it activates, and the hi-
+				// gher her level gets, the longer the cooldown becomes, to the point it almost
+				// never recharges when past a certain level threshold. If her survivability rolls
+				// positive at the moment of the check first, this is NOT consumed though.
+				if (A_CheckForHeiwa() && sielsgraceactive) 
+				{
+					owner.player.cheats |= CF_BUDDHA;
+				}
+			}
 
 			if (kcdebug_survivalrate)
 			{
@@ -3014,6 +3079,39 @@ class PlayerStatItem : Inventory
 			
 			timefreezedurationinc1 = 0.05;
 			timefreezedurationinc2 = 0.1;
+
+			sielsgracecooldownbase = (240 * 35); // 4 Minutes
+			if (A_CheckForHeiwa()) 
+			{
+				int sielgracestartchancemax = 64;
+				if (TrueGameSkill == SKILL_VERY_EASY) 
+				{
+					sielgracestartchancemax = 256;
+					sielsgracecooldownbase = (180 * TICRATE);
+				}
+				if (TrueGameSkill == SKILL_EASY) 
+				{
+					sielgracestartchancemax = 128;
+					sielsgracecooldownbase = (210 * TICRATE);
+				}
+				if (TrueGameSkill == SKILL_NORMAL)
+				{
+					sielgracestartchancemax = 64;
+					sielsgracecooldownbase = (240 * TICRATE);
+				}
+				if (TrueGameSkill == SKILL_HARD) 
+				{
+					sielgracestartchancemax = 32;
+					sielsgracecooldownbase = (270 * TICRATE);
+				}
+				if (TrueGameSkill == SKILL_VERY_HARD) 
+				{
+					sielgracestartchancemax = 16;
+					sielsgracecooldownbase = (300 * TICRATE);
+				}
+				if (random(1,sielgracestartchancemax) <= 1) A_SielsGraceCooldown();
+																							 else sielsgraceactive = true;
+			}
 		}
 	}
 	

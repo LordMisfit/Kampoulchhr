@@ -1156,9 +1156,24 @@ class KCPlayerPawn : PlayerPawn
 			{
 				MiscItem.MercyInvulnOn = true;
 				MiscItem.MercyInvulnTimer = 1210; // 1.5 Seconds
-				MiscItem.MercyInvulnTimer += int(ActualLevel * 3.65);
+				if (A_CheckForHeiwa()) MiscItem.MercyInvulnTimer += int(ActualLevel * 4.875);
+													else MiscItem.MercyInvulnTimer += int(ActualLevel * 3.65);
 				
-				player.health = player.mo.health = 1;
+				if (MiscItem.sielsgraceactive) 
+				{
+					MiscItem.sielsgraceactivations += 1;
+					MiscItem.sielsgraceactive = 0;
+					MiscItem.MercyInvulnTimer *= 2.5;
+					int sgrestore = (MiscItem.MaxHealthTrue * (frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0)));
+					player.health = player.mo.health = sgrestore;
+					double fadetime = int(TICRATE*frandom(1.1667,1.8334));
+					A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
+					MiscItem.A_SielsGraceCooldown();
+				}
+				else
+				{
+					player.health = player.mo.health = 1;
+				}
 			}
 		}
 		
