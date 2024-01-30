@@ -1888,12 +1888,18 @@ class PlayerStatItem : Inventory
 		if (CritChance <= 1) CritChance = 1;
 		if (A_CheckForHeiwa())
 		{
-			if (CritChance >= 192) CritChance = 192;
+			int maxccance = 192;
 			if (owner.CountInv("KCPowerKampoul"))
 			{
 				CritChance *= 0.25;
-				if (CritChance >= 48) CritChance = 48;
+				maxccance *= 0.25;
 			}
+			if (MercyInvulnOnSiel > 0) 
+			{
+				CritChance *= 0.25;
+				maxccance *= 0.25;
+			}
+			if (CritChance >= maxccance) CritChance = maxccance;
 		}
 		else
 		{
@@ -4994,6 +5000,7 @@ class PlayerStatItem : Inventory
 			
 			double KCFactor = 1.0;
 			if (owner.CountInv("KCPowerKampoul")) KCFactor *= 2.5;
+			if (MercyInvulnOnSiel) KCFactor *= 2.5;
 
 			double TSAFactor = 1.0;
 			if (TimeArmorRelicsUsedBits & 4) TSAFactor *= 1.1667;
@@ -5164,6 +5171,7 @@ class PlayerStatItem : Inventory
 
 			double KCFactor = 1.0;
 			if (owner.CountInv("KCPowerKampoul")) KCFactor *= 0.4;
+			if (MercyInvulnOnSiel) KCFactor *= 0.4;
 
 			double TSAFactor = 1.0;
 			

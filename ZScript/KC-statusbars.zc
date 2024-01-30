@@ -1604,6 +1604,7 @@ class KCStatusBarMain : BaseStatusBar
 		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
 		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
 		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, -2+HPDmgShakeY+ycorrection));
+		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, -2+HPDmgShakeY+ycorrection));
 		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, -20+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
