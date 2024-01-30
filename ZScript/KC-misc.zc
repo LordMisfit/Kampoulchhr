@@ -21,6 +21,7 @@ class PlayerStatItem : Inventory
 	int drowndebuffmaxtimer, drownmaxtimermod;
 	
 	bool MercyInvulnOn;
+	bool MercyInvulnOnSiel;
 	int MercyInvulnTimer;
 	int MercyInvulnMod;
 	bool sielsgraceactive;
@@ -278,6 +279,7 @@ class PlayerStatItem : Inventory
 		sielsgracecooldown *= (1.0 + ((sielsgraceactivations) * activationbasis));
 		
 		if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown *= 0.25;
+		A_SetInventory("sielsgracecooldown",sielsgracecooldown);
 		Console.Printf("sielsgracecooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, levelbasis, activationbasis);
 	}
 	
@@ -352,19 +354,43 @@ class PlayerStatItem : Inventory
 				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
 				TrueGameSkill = skill;
 				
-				if (sielsgracecooldown)
+				sielsgracecooldown = owner.CountInv("sielsgracecooldown");
+				sielsgraceactivations = owner.CountInv("sielsgraceactivations");
+				if (sielsgracecooldown && sielsgraceactivations < 4)
 				{
 					sielsgracecooldown--;
 					if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown -= randompick(3,4,4,4,4,5);
-					if (sielsgracecooldown < 0) sielsgracecooldown = 0;
-					Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
+					owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
+					if (sielsgracecooldown <= 0) 
+					{
+						sielsgracecooldown = 0;
+						if (!sielsgraceactive && sielsgraceactivations < 4) 
+						{
+							sielsgraceactive = 1;
+							double fadetime = int(TICRATE*frandom(0.4167,0.5834));
+							owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
+						}
+					}
+					if (kcdebug_survivalrate) Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
 				}
-				else 
-				if (sielsgraceactive) 
+				else
+				if (sielsgracecooldown <= 0) 
 				{
 					sielsgracecooldown = 0;
-					Console.Printf("sielsgraceactive: %d", sielsgraceactive);
+					owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
+					if (!sielsgraceactive && sielsgraceactivations < 4) 
+					{
+						sielsgraceactive = 1;
+						double fadetime = int(TICRATE*frandom(0.4167,0.5834));
+						owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
+					}
 				}
+				if (sielsgraceactive)
+				{
+					sielsgracecooldown = 0;
+					if (kcdebug_survivalrate) Console.Printf("sielsgraceactive: %d", sielsgraceactive);
+				}
+				owner.A_SetInventory("sielsgraceactivations",sielsgraceactivations);
 
 
 				// Check Heiwa's Weapons
@@ -1750,16 +1776,23 @@ class PlayerStatItem : Inventory
 				// gher her level gets, the longer the cooldown becomes, to the point it almost
 				// never recharges when past a certain level threshold. If her survivability rolls
 				// positive at the moment of the check first, this is NOT consumed though.
-				if (A_CheckForHeiwa() && sielsgraceactive) 
+				if (A_CheckForHeiwa() && sielsgraceactive > 0) 
 				{
-					owner.player.cheats |= CF_BUDDHA;
+					if (sielsgraceactivations < 4) owner.player.cheats |= CF_BUDDHA;
 				}
 			}
 
 			if (kcdebug_survivalrate)
 			{
-				if (SurviveRNGVal <= SurvivalRate) Console.Printf("    \cdSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
-																			else Console.Printf("    \cgSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+				if (A_CheckForHeiwa() && sielsgraceactive > 0)
+				{
+					Console.Printf("    \cdSurvival Rate [Siel's Grace Active: %d] \cx[cheatbits: %d]", sielsgraceactive, owner.player.cheats);
+				}
+				else
+				{
+					if (SurviveRNGVal <= SurvivalRate) Console.Printf("    \cdSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+																				else Console.Printf("    \cgSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+				}
 			}
 		}
 	}
@@ -2661,6 +2694,7 @@ class PlayerStatItem : Inventory
 					}
 					MercyInvulnTimer = MercyInvulnMod = 0;
 					MercyInvulnOn = false;
+					MercyInvulnOnSiel = false;
 				}
 			}
 			else
