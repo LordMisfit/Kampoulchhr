@@ -1068,11 +1068,13 @@ class KCPlayerPawn : PlayerPawn
 				textureid icon = armor.icon;
 				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
 						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
-						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
+						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) 
 				{
 					armortier = 1;
 				}
-				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch))
+				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch))
 				{
 					armortier = 2;
 				}
@@ -2110,11 +2112,13 @@ class KCPlayerPawn : PlayerPawn
 			textureid icon = armor.icon;
 			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
 					icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
-					icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) 
+					icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
+					icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) 
 			{
 				armortier = 1;
 			}
-			if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch))
+			if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
+					icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch))
 			{
 				armortier = 2;
 			}
@@ -2892,8 +2896,10 @@ class KCPlayerPawn : PlayerPawn
 				textureid icon = armor.icon;
 				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
 						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
-						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
-				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
 				if (armmax > 0)
 				{
 					int damagetakefactor = armdmg * 100 / armmax;
