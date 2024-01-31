@@ -1512,10 +1512,10 @@ class KCWeaponBase : Weapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (MiscItem.PlayerLuck >= 50) randpick = randompick[GunShot](1,2,2,2,3);
-			if (MiscItem.PlayerLuck >= 100) randpick = randompick[GunShot](1,2,3,3,3);
-			if (MiscItem.PlayerLuck >= 150) randpick = randompick[GunShot](2,3,3,3,3);
-			if (MiscItem.PlayerLuck >= 200) randpick = randompick[GunShot](3,3,3,3,3,3,3,3,3,4);
+			if (MiscItem.PlayerLUCK >= 50) randpick = randompick[GunShot](1,2,2,2,3);
+			if (MiscItem.PlayerLUCK >= 100) randpick = randompick[GunShot](1,2,3,3,3);
+			if (MiscItem.PlayerLUCK >= 150) randpick = randompick[GunShot](2,3,3,3,3);
+			if (MiscItem.PlayerLUCK >= 200) randpick = randompick[GunShot](3,3,3,3,3,3,3,3,3,4);
 		}
 		
 		damage *= randpick;
@@ -8448,7 +8448,6 @@ class TeslaCannon : MarineWeapon
 		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
 		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
-
 		Weapon.SlotNumber 6;
 		inventory.pickupmessage "Picked up a \cvTesla Cannon\c-! \cx[Slot 6]\c-";
 		radius 20;
@@ -13375,10 +13374,19 @@ class KnifeHeiwa : MarineWeapon
 		Obituary "%o was cut apart by %k's trusty knife.";
 	}
 	
-	action void A_KnifeHit()
+	action void A_KnifeHit(int shockwave = 0)
 	{
-		int dmg = (randompick(1,2,2,2,2,2,3) * random(1,10));
-		if (A_CheckBerserk()) dmg *= 10;
+		int shockwaveroll = 0;
+		if (shockwave > 0) shockwaveroll = 1;
+		else if (shockwave < 0) shockwaveroll = 0;
+		else
+		{
+			if (A_CheckBerserk()) shockwaveroll = randompick(0,0,1);
+											 else shockwaveroll = randompick(0,0,0,0,0,0,0,0,1);
+		}
+		
+		int dmg = A_GetKnifeDamage(0,shockwaveroll,true);
+		if (CountInv("PlayerDashing")) dmg *= frandom(2,3);
 		//Console.Printf("dmg: %d", dmg);
 		A_CustomPunch((dmg),true,0,"KnifePuff",range:random(78,82));
 	}
@@ -13424,6 +13432,7 @@ class KnifeHeiwa : MarineWeapon
 			KNFG E 2
 			{
 				if (A_CheckBerserk()) A_SetTics(1);
+				A_ReFire("FireBackSlash");
 			}
 			KNFG D 2
 			{
@@ -13435,6 +13444,31 @@ class KnifeHeiwa : MarineWeapon
 				A_ReFire();
 			}
 			goto Ready;
+		FireBackSlash:
+			KNFG F 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG E 2
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG D 2
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG C 2 
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG B 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			goto Ready;
 	}
 }
 
@@ -13442,6 +13476,10 @@ class KnifePuff : KCPuff
 {
 	default
 	{
+		Tag "Knife Slash";
+		Species "Players";
+		+MTHRUSPECIES;
+		+THRUSPECIES;
 		+NOBLOCKMAP;
 		+NOGRAVITY;
 		+NOEXTREMEDEATH;
@@ -13451,10 +13489,9 @@ class KnifePuff : KCPuff
 		SeeSound "KnifeHitThing";
 		AttackSound "KnifeHitWall";
 		ActiveSound "KnifeMiss";
+		DamageType "Knife";
+		ProjectileKickBack 0;
 		VSpeed 1;
-		+MTHRUSPECIES;
-		+THRUSPECIES;
-		Species "Players";
 	}
 	
 	void A_SetPainForcedPain(int basechance = 16, double playerlvlfactor = 0.16)

@@ -168,7 +168,7 @@ class CompatVulnItem : PlaceholderItem
 				if (mod == 'Ripsaw') RSawFactor *= 1.5;
 				ActorDefenseIgnoreFactor += (RSawFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
-
+			
 			double BFGFactor = frandom(0.45,0.55);
 			// BFG Ignores roughly half of "normal" damagefactor
 			if (mod == 'BFG' || mod == 'BFGSpray' || mod == 'BFGSplash') 
@@ -275,9 +275,14 @@ class CompatVulnItem : PlaceholderItem
 			if (!FoundPlayer && inflictor) FoundPlayer = KCPlayerPawn(inflictor);
 			if (FoundPlayer)
 			{
-				if (mod == 'Fist' || mod == 'Kick')
+				if (mod == 'Fist' || 
+						mod == 'Kick')
 				{
 					ActorDefenseIgnoreFactor += (frandom(0.001,0.100) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'Knife')
+				{
+					ActorDefenseIgnoreFactor += (frandom(0.0015,0.150) * (1.00 - ActorDefenseIgnoreFactor));
 				}
 				if (mod == 'Chainsaw')
 				{

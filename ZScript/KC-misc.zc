@@ -534,10 +534,15 @@ class PlayerStatItem : Inventory
 					{
 						PlayerLevel = 0;
 						MaxHealthTrue = 100;
+						MaxPsychicPoints = 10;
+						MaxMagicPoints = 10;
 						PlayerATK = 2;
 						PlayerDEF = 2;
 						PlayerSPD = 2;
-						PlayerLuck = 2;
+						PlayerVIT = 2;
+						PlayerIQ = 2;
+						PlayerGUTS = 2;
+						PlayerLUCK = 2;
 
 						atkfct = deffct = spdfct = jmpfct = suvfct = 1.00;
 						double variance = 0.10;
@@ -547,39 +552,51 @@ class PlayerStatItem : Inventory
 							if (TrueGameSkill == SKILL_VERY_EASY)
 							{
 								MaxHealthTrue = 45;
+								MaxPsychicPoints = 15;
+								MaxMagicPoints = 15;
 								variance = 0.05;
 							}
 							if (TrueGameSkill == SKILL_EASY)
 							{
 								MaxHealthTrue = 45; 
+								MaxPsychicPoints = 15;
+								MaxMagicPoints = 15;
 								variance = 0.075;
 							}
 							if (TrueGameSkill == SKILL_NORMAL)
 							{
 								MaxHealthTrue = 30; 
+								MaxPsychicPoints = 10;
+								MaxMagicPoints = 10;
 								variance = 0.10;
 							}
 							if (TrueGameSkill == SKILL_HARD)
 							{
 								MaxHealthTrue = 30; 
+								MaxPsychicPoints = 10;
+								MaxMagicPoints = 10;
 								variance = 0.125;
 							}
 							if (TrueGameSkill == SKILL_VERY_HARD)
 							{
 								if (random(1,8) <= 1) heiwavhardmodifier = true;
 								MaxHealthTrue = 30;
+								MaxPsychicPoints = 10;
+								MaxMagicPoints = 10;
 								variance = 0.15;
 								if (heiwavhardmodifier) 
 								{
 									MaxHealthTrue = 15;
+									MaxPsychicPoints = 5;
+									MaxMagicPoints = 5;
 									variance = 0.30;
 								}
 							}
 						}
 						if (heiwavhardmodifier) 
 						{
-							PlayerLuck *= 2.5;
-							TempLUCK = PlayerLuck;
+							PlayerLUCK *= 2.5;
+							TempLUCK = PlayerLUCK;
 							atkfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							deffct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							spdfct += frandom[statitem](-(variance*0.125),(variance*1.875));
@@ -588,14 +605,14 @@ class PlayerStatItem : Inventory
 						}
 						else
 						{
-							TempLUCK = PlayerLuck;
+							TempLUCK = PlayerLUCK;
 							atkfct += frandom[statitem](-variance,variance);
 							deffct += frandom[statitem](-variance,variance);
 							spdfct += frandom[statitem](-variance,variance);
 							jmpfct += frandom[statitem](-variance,variance);
 							suvfct += frandom[statitem](-variance,variance);
 						}
-						if (kcdebug_startupinfo) Console.Printf("atkfct: %.8f, deffct: %.8f, spdfct: %.8f, jmpfct: %.8f, suvfct: %.8f, Luck: %d", atkfct, deffct, spdfct, jmpfct, suvfct, PlayerLuck);
+						if (kcdebug_startupinfo) Console.Printf("atkfct: %.8f, deffct: %.8f, spdfct: %.8f, jmpfct: %.8f, suvfct: %.8f, Luck: %d", atkfct, deffct, spdfct, jmpfct, suvfct, PlayerLUCK);
 						
 						
 						if (MaxHealthTrue < 1) MaxHealthTrue = 1;
@@ -604,9 +621,12 @@ class PlayerStatItem : Inventory
 						HealthNoRPGAdd2 = 0;
 						owner.player.health = owner.player.mo.health = CurrentHealth = MaxHealthTrue;
 						owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+						owner.A_SetInventory("PlayerMaxPP",MaxPsychicPoints);
+						owner.A_SetInventory("PlayerMaxMP",MaxMagicPoints);
 						owner.A_SetInventory("PlayerATK",PlayerATK);
 						owner.A_SetInventory("PlayerDEF",PlayerDEF);
 						owner.A_SetInventory("PlayerSPD",PlayerSPD);
+						owner.A_SetInventory("PlayerGUTS",PlayerGUTS);
 						owner.A_SetInventory("PlayerLUCK",PlayerLUCK);
 						BaseStartMaxHealth = MaxHealthTrue; // Sets the original Max Health as at the start of a game [for various checks, including Sigil damage]
 						if (kcdebug_startupinfo) Console.Printf("MaxHP: %d", MaxHealthTrue);
@@ -1534,7 +1554,7 @@ class PlayerStatItem : Inventory
 			
 			// Luck
 			double mult = (BaseEVA * 0.1);
-			double LUKEvaAlt = 0.0 + (PlayerLuck * frandompick[statitem](0,0,0,0,0,0,0,0,0,0,0,(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*1),(mult*1),(mult*1),(mult*2)));
+			double LUKEvaAlt = 0.0 + (PlayerLUCK * frandompick[statitem](0,0,0,0,0,0,0,0,0,0,0,(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*1),(mult*1),(mult*1),(mult*2)));
 			SPDEvadeCheck += LUKEvaAlt;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0b - SPD Evade Check (luck check)]: %.4f\c-", SPDEvadeCheck);
 			
@@ -1650,10 +1670,10 @@ class PlayerStatItem : Inventory
 			if (A_CheckForHeiwa()) SurvivalRate += (TruePlayerLevel * 8.75); // +0.0875% per level
 																						else SurvivalRate += (TruePlayerLevel * 5); // +0.05% per level
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Level]: %d", SurvivalRate);
-			if (PlayerLuck) 
+			if (PlayerLUCK) 
 			{
-				if (A_CheckForHeiwa()) SurvivalRate += (PlayerLuck * 1.1875); // +0.011875% per Luck Point
-																							else SurvivalRate += (PlayerLuck * 1.25); // +0.0125% per Luck Point
+				if (A_CheckForHeiwa()) SurvivalRate += (PlayerLUCK * 1.1875); // +0.011875% per Luck Point
+																							else SurvivalRate += (PlayerLUCK * 1.25); // +0.0125% per Luck Point
 			}
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Luck]: %d", SurvivalRate);
 			
@@ -3017,7 +3037,7 @@ class PlayerStatItem : Inventory
 			globalvars.PlayerVIT = PlayerVIT = 0;
 			globalvars.PlayerIQ = PlayerIQ = 0;
 			globalvars.PlayerGUTS = PlayerGUTS = 0;
-			globalvars.PlayerLuck = PlayerLuck = 2;
+			globalvars.PlayerLUCK = PlayerLUCK = 2;
 			globalvars.HealthLevelAdd = HealthLevelAdd = 0;
 			globalvars.HealthNoRPGAdd = HealthNoRPGAdd = 0;
 			globalvars.HealthNoRPGAdd2 = HealthNoRPGAdd2 = 0;
@@ -3053,8 +3073,10 @@ class PlayerStatItem : Inventory
 			PlayerVIT = globalvars.PlayerVIT;
 			PlayerIQ = globalvars.PlayerIQ;
 			PlayerGUTS = globalvars.PlayerGUTS;
-			PlayerLuck = globalvars.PlayerLuck;
+			PlayerLUCK = globalvars.PlayerLUCK;
 			MaxHealthTrue = globalvars.MaxHealthTrue;
+			MaxPsychicPoints = globalvars.MaxPsychicPoints;
+			MaxMagicPoints = globalvars.MaxMagicPoints;
 			HealthLevelAdd = globalvars.HealthLevelAdd;
 			HealthNoRPGAdd = globalvars.HealthNoRPGAdd;
 			HealthNoRPGAdd2 = globalvars.HealthNoRPGAdd2;
@@ -3365,35 +3387,35 @@ class PlayerStatItem : Inventory
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
-		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 		// Luck Boost [2]
 		BaseChance1 *= BaseChance1a;
 		BaseChance2 *= BaseChance2a;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
-		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 		// Luck Boost [3]
 		BaseChance1 *= BaseChance1b;
 		BaseChance2 *= BaseChance2b;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
-		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 		// Luck Boost [4]
 		BaseChance1 *= BaseChance1c;
 		BaseChance2 *= BaseChance2c;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
-		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 		// Luck Boost [5]
 		BaseChance1 *= BaseChance1d;
 		BaseChance2 *= BaseChance2d;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
-		if (RollValue <= BaseChance1) PlayerLuck += LvlSkillMulti;
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 
 		// Speed Boost [1]
 		if (KCPlayer(owner))
@@ -4008,7 +4030,7 @@ class PlayerStatItem : Inventory
 		PlayerVIT = owner.CountInv("PlayerVIT");
 		PlayerIQ = owner.CountInv("PlayerIQ");
 		PlayerGUTS = owner.CountInv("PlayerGUTS");
-		PlayerLuck = owner.CountInv("PlayerLuck");
+		PlayerLUCK = owner.CountInv("PlayerLUCK");
 
 		int levelmodulo, levelbonustype;
 		int leveluptimes = 0;
@@ -4882,6 +4904,8 @@ class PlayerStatItem : Inventory
 		globalvars.AirNoRPGAdd2 = AirNoRPGAdd2;
 		globalvars.AirBonusAdd = AirBonusAdd;
 		globalvars.MaxHealthTrue = MaxHealthTrue;
+		globalvars.MaxPsychicPoints = MaxPsychicPoints;
+		globalvars.MaxMagicPoints = MaxMagicPoints;
 		globalvars.Experience = Experience;
 		globalvars.PlayerLevel = PlayerLevel;
 		globalvars.TruePlayerLevel = TruePlayerLevel;
@@ -4897,7 +4921,7 @@ class PlayerStatItem : Inventory
 		globalvars.PlayerVIT = PlayerVIT;
 		globalvars.PlayerIQ = PlayerIQ;
 		globalvars.PlayerGUTS = PlayerGUTS;
-		globalvars.PlayerLuck = PlayerLuck;
+		globalvars.PlayerLUCK = PlayerLUCK;
 	}
 	
 	bool CheckMeleeDamageTypes(Name damageType)
@@ -4908,6 +4932,7 @@ class PlayerStatItem : Inventory
 				damageType == 'Stomp' || 
 				damageType == 'Fist' || 
 				damageType == 'Kick' || 
+				damageType == 'Knife' || 
 				damageType == 'Chainsaw' ||
 				damageType == 'Bonk' || 
 				damageType == 'Bap' || 
@@ -4953,7 +4978,7 @@ class PlayerStatItem : Inventory
 			
 			// Attack
 			double ATKFactor = 1.00;
-			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * baseatkfct) + (random[statitem](1,PlayerLuck) * frandompick[statitem](0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
+			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * baseatkfct) + (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
 			if (IsMorphed == 1) tempmax = 2.334;
 										 else tempmax = 5.00;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
@@ -5061,7 +5086,7 @@ class PlayerStatItem : Inventory
 			
 			// Defense
 			double DEFFactor = 1.00;
-			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * basedeffct) - (random[statitem](1,PlayerLuck) * frandompick[statitem](0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
+			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * basedeffct) - (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
 			if (IsMorphed == 1) tempmax = 0.60;
 										 else tempmax = 0.20;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;

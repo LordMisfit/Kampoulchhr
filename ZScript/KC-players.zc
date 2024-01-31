@@ -1242,7 +1242,7 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playermove) Console.Printf("\cz WaterLevel: %d (WaterDepth: %.4f)\c-, \cz Angle: %.8f, Pitch: %.8f\c-, \czPosX: %d, PosY: %d, PosZ: %d\c-,\nVelX: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelY: %.8f/\cx%.8f\c- (%d/\cx%d\c-), VelZ: %.8f/\cx%.8f\c- (%d/\cx%d\c-)\c-", waterlevel, WaterDepth, (angle % 360), pitch, pos.x, pos.y, pos.z, vel.x, newspeedvelsxd, (vel.x * 65536), newspeedvelsx, vel.y, newspeedvelsyd, (vel.y * 65536), newspeedvelsy, vel.z, newspeedvelszd, (vel.z * 65536), newspeedvelsz);
 
 		lasthealth = health;
-		if (A_CheckForHeiwa() && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;
+		if (A_CheckForHeiwa() && !bNOTIMEFREEZE) bNOTIMEFREEZE = true;// "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 		super.Tick();
 	}
 	
@@ -1363,7 +1363,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (kcdebug_playerdamagemobj) Console.Printf("(\c[green][A_CheckNeverBleed]\c-  [player], type: %d, damage: %d)", type, damage);
 	}
-
+	
 	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false, Actor inflictor = null, Actor source = null)
 	{
 		A_CheckNeverBleed(0, damage, flags);
@@ -1389,6 +1389,7 @@ class KCPlayerPawn : PlayerPawn
 		if (tsadefbase <= 10) tsadefbase = 10;
 		if (tsadefbase >= 100000) tsadefbase = 100000;
 		if (kcdebug_playerdamagemobj) Console.Printf("tsadefbase: %d", tsadefbase);
+		
 		if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
@@ -1440,6 +1441,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			
 			// Ice/Chill-Based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Ice' || 
 					mod == 'IceWater' || 
@@ -1452,6 +1454,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			
 			// Thunder/Shock-based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Thunder' || 
 					mod == 'Electric' || 
@@ -1466,6 +1469,7 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
+			
 			// Wind based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Wind')
 			{
@@ -1475,7 +1479,6 @@ class KCPlayerPawn : PlayerPawn
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Wind-Type Damage): %d [previous: %d]", damage, prevdmg);
 				tsafullnulldmg = true; // Null all potential future checks and just inflict no damage
 			}
-			
 			
 			// Plasma Based [some elements of heat are involved in 
 			// plasma, but it's not pure heat, so it only halves 
@@ -1808,8 +1811,11 @@ class KCPlayerPawn : PlayerPawn
 				double randarmign;
 				
 				/*
-				// Tier 3 Enemies [i.e. extremely-high armor bypass, usually very powerful/ancient/eldritch named bosses [ol' Nyarly]
-				if (sour == "Nyarlathotep")
+				// Tier 3 Enemies [i.e. extremely-high armor bypass, usually very powerful/ancient/eldritch named bosses [ol' Nyarly in Strange Aeons, etc.]
+				if (sour == "Nyarlathotep" ||
+						sour == "EviternatusAnta" ||
+						sour == "EviternatusBete" ||
+						sour == "EviternatusCeph")
 				{
 					ignoretier = 3;
 					rand1 += 10 + ((source.CountInv("MonsterLevel")) * 1.0);
@@ -1983,8 +1989,13 @@ class KCPlayerPawn : PlayerPawn
 						else // If no source OR inflictor
 						{
 							if (mod == 'Slime') combatlogmsg.AppendFormat(" a damaging surface");
-							else if (mod == 'Lava' || mod == 'Magma' || mod == 'IceWater' || mod == 'ShockFloor') combatlogmsg.AppendFormat(" a damaging surface");
-							else if (mod == 'Crush') combatlogmsg.AppendFormat(" a crushing ceiling");
+							else
+							if (mod == 'Lava' || 
+									mod == 'Magma' || 
+									mod == 'IceWater' || 
+									mod == 'ShockFloor') combatlogmsg.AppendFormat(" a damaging surface");
+							else 
+							if (mod == 'Crush') combatlogmsg.AppendFormat(" a crushing ceiling");
 							combatlogmsg.AppendFormat("!");
 						}
 						combatlogmsg.AppendFormat(" [%s]", mod);
@@ -2089,6 +2100,47 @@ class KCPlayerPawn : PlayerPawn
 			{
 				if (player.cheats & CF_BUDDHA) { } else player.cheats |= CF_BUDDHA;
 			}
+		}
+		
+		// Heiwa has specialized resistances to Plasma/Mauler and BFG [sprays and main shots] :V
+		if (A_CheckForHeiwa())
+		{
+			olddmg = damage;
+			double factor1 = 1; // 1/16 chance [lowest damage]
+			double factor2 = 1; // 3/16 chance [lower damage]
+			double factor3 = 1; // 8/16 chance [average damage]
+			double factor4 = 1; // 3/16 chance [higher damage]
+			double factor5 = 1; // 1/16 chance [highest damage]
+			if (mod == 'BFGSplash') 
+			{
+				factor1 = frandompick(0.00,0.01,0.01,0.01,0.01);
+				factor2 = 0.125;
+				factor3 = 0.25;
+				factor4 = 0.375;
+				factor5 = 0.5;
+			}
+			else 
+			if (mod == 'BFG')
+			{
+				factor1 = 0.25;
+				factor2 = 0.375;
+				factor3 = 0.5;
+				factor4 = 0.625;
+				factor5 = 0.75;
+			}
+			else
+			if (mod == 'Plasma' ||
+					mod == 'Disintegrate')
+			{
+				factor1 = 0.625;
+				factor2 = 0.6875;
+				factor3 = 0.75;
+				factor4 = 0.8125;
+				factor5 = 0.875;
+			}
+			
+			damage *= frandompick(factor1,factor2,factor2,factor2,factor3,factor3,factor3,factor3,factor3,factor3,factor3,factor3,factor4,factor4,factor4,factor5);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Heiwa Damage Checks - damagetype: %s, damage: %d [vs %d]", mod, damage, olddmg);
 		}
 
 		armortier = 0;
@@ -3378,6 +3430,8 @@ class KCPlayer : KCPlayerPawn
 		bNOTIMEFREEZE = false;
 		if (!bNOTIMEFREEZE) 
 		{
+			// DoomGuy requires both the Charm and Pocket Watch to be able to both move in and 
+			// perceive time stops from opposing forces...
 			if (CountInv("TimeSeraphCharm") && 
 					CountInv("TimeSeraphPocketWatch"))
 			{
@@ -3385,6 +3439,7 @@ class KCPlayer : KCPlayerPawn
 			}
 			else
 			{
+				// ...OR be using his variant of the Time Freeze to override theirs if not :V
 				if (A_CheckKCTimeFreeze())
 				{
 					bNOTIMEFREEZE = true;
@@ -3518,7 +3573,7 @@ class HeiwaPlayer : KCPlayerPawn
 		YScale 0.9107142857142857;
 		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
-		+NOTIMEFREEZE;
+		+NOTIMEFREEZE; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 		//Translation "112:127=250:254";
 	}
 	
