@@ -851,9 +851,18 @@ class KCWeaponBase : Weapon
 				
 				movespeed *= bufffactor;
 				
+				if (player.ReadyWeapon is "FistHeiwa") 
+				{
+					if (A_CheckForHeiwa()) weaponfactor += 0.50;
+				}
+				if (player.ReadyWeapon is "KnifeHeiwa") 
+				{
+					if (A_CheckForHeiwa()) weaponfactor += 1.00;
+				}
 				if (player.ReadyWeapon is "Glock21") 
 				{
 					if (A_CheckForHeiwa()) weaponfactor += 0.25;
+														else weaponfactor += 0.75;
 				}
 				if (player.ReadyWeapon is "BlasterPistol") 
 				{
@@ -900,6 +909,11 @@ class KCWeaponBase : Weapon
 					if (A_CheckForHeiwa()) weaponfactor -= 0.25;
 														else weaponfactor = 0.125;
 				}
+				if (player.ReadyWeapon is "Sawthrower") 
+				{
+					if (A_CheckForHeiwa()) weaponfactor = 0.0625;
+														else weaponfactor = 0.1875;
+				}
 				nm = "ImpalerXBow";
 				if (player.ReadyWeapon is nm)  
 				{
@@ -921,10 +935,10 @@ class KCWeaponBase : Weapon
 				nm = "DualScepterOfSouls";
 				if (player.ReadyWeapon is nm) weaponfactor += 0.125;
 				
-				if (player.ReadyWeapon is "FistMarine") weaponfactor += 1.00;
-				if (player.ReadyWeapon is "ChainsawMarine") weaponfactor += 0.50;
-				if (player.ReadyWeapon is "PistolMarine") weaponfactor += 0.50;
-				if (player.ReadyWeapon is "Glock21") weaponfactor += 0.75;
+				if (player.ReadyWeapon is "FistMarine") weaponfactor += 0.50;
+				if (player.ReadyWeapon is "ChainsawMarine") weaponfactor += 0.25;
+				if (player.ReadyWeapon is "PistolMarine") weaponfactor += 0.25;
+				if (player.ReadyWeapon is "BFG9000Marine") weaponfactor -= 0.25;
 				movespeed *= weaponfactor;
 				
 
