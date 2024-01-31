@@ -231,7 +231,8 @@ class KCWeaponBase : Weapon
 			let MiscItem = PlayerStatItem(Player.mo.FindInventory("PlayerStatItem"));
 			if (type >= 2) // If Kicking
 			{
-				if (player.ReadyWeapon is "FistHeiwa")
+				if (player.ReadyWeapon is "FistHeiwa" ||
+						player.ReadyWeapon is "KnifeHeiwa")
 				{
 					output *= (1.0 / frandompick(1.334,1.5,1.5,1.5,1.667));
 				}
@@ -12965,7 +12966,7 @@ class BulletPuffSWCoop : BulletPuffSW
 	{
 		+MTHRUSPECIES;
 		+THRUSPECIES;
-		Species "Player";
+		Species "Players";
 	}
 }
 
@@ -13354,3 +13355,130 @@ class Riotgun : MarineWeapon
 			Stop;
 	}
 }
+
+//
+class KnifeHeiwa : MarineWeapon
+{
+	default
+	{
+		KCWeaponBase.PickUpVoiceHeiwa2 true;
+		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickUpVoice false;
+		Inventory.PickupSound "misc/w_pkup";
+		Inventory.PickupMessage "Picked up a \cfKnife\c-! Better than nothing... \cx[Slot 1]\c-";
+		
+		Weapon.SelectionOrder 3700;
+		Weapon.Kickback 100;
+		+WEAPON.MELEEWEAPON;
+		+WEAPON.NOALERT;
+		+NOEXTREMEDEATH;
+		Obituary "%o was cut apart by %k's trusty knife.";
+	}
+	
+	action void A_KnifeHit()
+	{
+		int dmg = (randompick(1,2,2,2,2,2,3) * random(1,10));
+		if (A_CheckBerserk()) dmg *= 10;
+		//Console.Printf("dmg: %d", dmg);
+		A_CustomPunch((dmg),true,0,"KnifePuff",range:random(78,82));
+	}
+	
+	States
+	{
+		Spawn:
+			KNFE A -1;
+			loop;
+		Ready:
+			KNFG A 1 A_WeaponReady();
+			loop;
+		Deselect:
+			KNFG A 1 A_Lower(12);
+			loop;
+		Select: 
+			KNFG A 1 A_Raise(12);
+			loop;
+		Fire:
+			KNFG B 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG C 2 
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG D 2
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG E 2
+			{
+				A_KnifeHit();
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG F 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG E 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG D 2
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+			}
+			KNFG A 2 
+			{
+				if (A_CheckBerserk()) A_SetTics(1);
+				A_ReFire();
+			}
+			goto Ready;
+	}
+}
+
+class KnifePuff : KCPuff
+{
+	default
+	{
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+NOEXTREMEDEATH;
+		+PUFFONACTORS;
+		RenderStyle "Translucent";
+		Alpha 0.6;
+		SeeSound "KnifeHitThing";
+		AttackSound "KnifeHitWall";
+		ActiveSound "KnifeMiss";
+		VSpeed 1;
+		+MTHRUSPECIES;
+		+THRUSPECIES;
+		Species "Players";
+	}
+	
+	void A_SetPainForcedPain(int basechance = 16, double playerlvlfactor = 0.16)
+	{
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		user_randompain = basechance;
+		if (target)
+		{
+			let MiscItem = PlayerStatItem(target.FindInventory("PlayerStatItem"));
+			if (MiscItem) user_randompain += (TruePlayerLevel * playerlvlfactor);
+		}
+		if (kcdebug_attackstuff) Console.Printf("ForcePain chance: %d / 100", user_randompain);
+		if (random(1,100) <= user_randompain) { bFORCEPAIN = true; }
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				A_SetPainForcedPain(16,0.24);
+			}
+		SpawnSparks:
+			PUFF ABCD 4;
+			Stop;
+	}
+}  

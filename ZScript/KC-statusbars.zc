@@ -2100,6 +2100,7 @@ class KCStatusBarMain : BaseStatusBar
 		x += (baseinc * 2);
 		y += (baseinc * 2);
 		wsname = "ChainsawMarine";
+		if (A_CheckForHeiwa()) wsname = "KnifeHeiwa";
 		if (CPlayerPawn.CountInv(wsname))
 		{
 			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);

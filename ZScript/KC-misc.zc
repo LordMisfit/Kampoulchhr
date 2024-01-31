@@ -1188,7 +1188,9 @@ class PlayerStatItem : Inventory
 							inc *= ssa;
 							if (kcdebug_hpregen) Console.Printf("ssa [Regen]: %.8f", ssa);
 							
-							if ((weapon is "FistMarine" || weapon is "FistHeiwa") && owner.CountInv("FistPlayerBlockItem")) 
+							if ((weapon is "FistMarine" || 
+									 weapon is "FistHeiwa") && 
+									owner.CountInv("FistPlayerBlockItem")) 
 							{
 								if (weapon is "FistHeiwa")
 								{
@@ -1350,7 +1352,9 @@ class PlayerStatItem : Inventory
 							inc *= ssa;
 							if (kcdebug_hpregen) Console.Printf("ssa [Degen]: %.8f", ssa);
 							
-							if ((weapon is "FistMarine" || weapon is "FistHeiwa") && Owner.CountInv("FistPlayerBlockItem")) 
+							if ((weapon is "FistMarine" || 
+									 weapon is "FistHeiwa") && 
+									Owner.CountInv("FistPlayerBlockItem")) 
 							{
 								if (weapon is "FistHeiwa")
 								{
@@ -1998,8 +2002,9 @@ class PlayerStatItem : Inventory
 			if (Owner.CountInv("PowerWeaken")) TotalMass /= 1.5;
 			
 			// Fist Blocks
-			if ((weapon is "FistMarine" || weapon is "FistHeiwa") && 
-					 owner.CountInv("FistPlayerBlockItem"))
+			if ((weapon is "FistMarine" || 
+					 weapon is "FistHeiwa") && 
+					owner.CountInv("FistPlayerBlockItem"))
 			{
 				if (weapon is "FistMarine")
 				{
@@ -2380,7 +2385,8 @@ class PlayerStatItem : Inventory
 			double WeaponJumpZ = 1.00;
 			double WeaponJumpEx = 0.00;
 			if (weapon is "FistMarine" || 
-					weapon is "FistHeiwa")
+					weapon is "FistHeiwa" ||
+					weapon is "KnifeHeiwa")
 			{
 				if (berserked)
 				{
@@ -4559,7 +4565,8 @@ class PlayerStatItem : Inventory
 		
 		string nt;
 		// Hand To Hand
-		if (weapon is "FistMarine" || weapon is "FistHeiwa") 
+		if (weapon is "FistMarine" || 
+				weapon is "FistHeiwa") 
 		{
 		}
 		else
@@ -5563,7 +5570,9 @@ class PlayerStatItem : Inventory
 		double tempfactor1;
 		double tempfactor2;
 		// Weapon Checks
-		if ((weapon is "FistMarine" || weapon is "FistHeiwa"))
+		if (weapon is "FistMarine" || 
+				weapon is "FistHeiwa" ||
+				weapon is "KnifeHeiwa")
 		{
 
 			if (berserked) tempfactor1 = 0.25;
@@ -6142,7 +6151,8 @@ class PlayerDashJump : Inventory
 		if (kcdebug_showdashinformation) Console.Printf("DashCost [post powerup/health checks]: %d", DashCost);
 		
 		if (weapon is "FistMarine" || 
-				weapon is "FistHeiwa")
+				weapon is "FistHeiwa" ||
+				weapon is "KnifeHeiwa")
 		{
 			if (kc_expgains)
 			{
@@ -6150,7 +6160,8 @@ class PlayerDashJump : Inventory
 				{
 					DashCost -= 4;
 					MaxDashCooldown -= randompick[statitem](1,1,2);
-					if (weapon is "FistHeiwa") 
+					if (weapon is "FistHeiwa" ||
+							weapon is "KnifeHeiwa") 
 					{
 						DashCost -= 5;
 						MaxDashCooldown -= randompick[statitem](2,2,3);
@@ -6160,7 +6171,8 @@ class PlayerDashJump : Inventory
 				{
 					DashCost -= 3;
 					MaxDashCooldown -= 1;
-					if (weapon is "FistHeiwa") 
+					if (weapon is "FistHeiwa" ||
+							weapon is "KnifeHeiwa") 
 					{
 						DashCost -= 3;
 						MaxDashCooldown -= randompick[statitem](0,1,1);
@@ -6173,7 +6185,8 @@ class PlayerDashJump : Inventory
 				{
 					DashCost -= 7;
 					MaxDashCooldown -= randompick[statitem](2,2,3);
-					if (weapon is "FistHeiwa") 
+					if (weapon is "FistHeiwa" ||
+							weapon is "KnifeHeiwa") 
 					{
 						DashCost -= 8;
 						MaxDashCooldown -= randompick[statitem](3,4,5);
@@ -6183,7 +6196,8 @@ class PlayerDashJump : Inventory
 				{
 					DashCost -= 5;
 					MaxDashCooldown -= randompick[statitem](1,2,2);
-					if (weapon is "FistHeiwa") 
+					if (weapon is "FistHeiwa" ||
+							weapon is "KnifeHeiwa") 
 					{
 						DashCost -= 5;
 						MaxDashCooldown -= randompick[statitem](1,2,3);

@@ -737,7 +737,8 @@ class KCPlayerPawn : PlayerPawn
 							if (berserked) weaponsinkfactor -= frandom(0.75,0.875);
 												else weaponsinkfactor -= frandom(0.50,0.75);
 						}
-						if (PlayerWeapon is "FistHeiwa") 
+						if (PlayerWeapon is "FistHeiwa" ||
+								PlayerWeapon is "KnifeHeiwa") 
 						{
 							if (berserked) weaponsinkfactor -= frandom(0.75,0.875);
 												else weaponsinkfactor -= frandom(0.50,0.75);
@@ -759,7 +760,8 @@ class KCPlayerPawn : PlayerPawn
 						}
 						*/
 						if (PlayerWeapon is "FistMarine") weaponsinkfactor *= 1.0;
-						if (PlayerWeapon is "FistHeiwa") weaponsinkfactor *= 1.0;
+						if (PlayerWeapon is "FistHeiwa" || 
+								PlayerWeapon is "KnifeHeiwa") weaponsinkfactor *= 1.0;
 						else
 						{
 							weaponsinkfactor *= 1.875;
@@ -3489,7 +3491,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Speed 1;
 		Player.DisplayName "'Heiwa' [IN BETA :V]";
 		Player.SoundClass "HeiwaPlayer";
-		Player.WeaponSlot 1, "FistHeiwa";
+		Player.WeaponSlot 1, "FistHeiwa", "KnifeHeiwa";
 		Player.WeaponSlot 2, "Glock21", "BlasterPistol", "BlasterPistols";
 		Player.WeaponSlot 3, "RiotGun";
 		Player.WeaponSlot 4, "TommyGun";
@@ -3500,6 +3502,7 @@ class HeiwaPlayer : KCPlayerPawn
 		//Player.WeaponSlot 9, "";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		Player.StartItem "FistHeiwa";
+		Player.StartItem "KnifeHeiwa";
 		Player.StartItem "PlayerStatItem";
 		Player.StartItem "PlayerDashJump";
 		Player.ForwardMove 2.125, 1.0625;
