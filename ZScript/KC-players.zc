@@ -79,7 +79,9 @@ class KCPlayerPawn : PlayerPawn
 	
 	default
 	{
-		//Species "Player";
+		+CASTSPRITESHADOW;
+		-NOSPRITESHADOW;
+		Species "Players"; // IMPORTANT FRACKIN' NOTE MISFIT: SET YOUR DAMN PLAYERPAWN'S SPECIES TO THE SAME AS YOUR SHIELDPARTBASE[s], YOU DINGLEPUFFEROO! >:V
 	}
 	
 	bool A_CheckForHeiwa()
@@ -3327,6 +3329,9 @@ class KCPlayer : KCPlayerPawn
 		Player.Colorset 5, "$TXT_COLOR_LIGHTBROWN",	0x38, 0x47,  0x3A;
 		Player.Colorset 6, "$TXT_COLOR_LIGHTRED",	0xB0, 0xBF,  0xB2;
 		Player.Colorset 7, "$TXT_COLOR_LIGHTBLUE",	0xC0, 0xCF,  0xC2;
+		Species "Players";
+		XScale 1.0;
+		YScale 1.0;
 		Tag "Doom Marine";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL
 	}
@@ -3482,8 +3487,6 @@ class HeiwaPlayer : KCPlayerPawn
 		Mass 72; // 72
 		PainChance 255;
 		Speed 1;
-		XScale 0.8125;
-		YScale 0.9107142857142857;
 		Player.DisplayName "'Heiwa' [IN BETA :V]";
 		Player.SoundClass "HeiwaPlayer";
 		Player.WeaponSlot 1, "FistHeiwa";
@@ -3501,6 +3504,9 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.StartItem "PlayerDashJump";
 		Player.ForwardMove 2.125, 1.0625;
 		Player.SideMove 2.125, 1.0625;
+		Species "Players";
+		XScale 0.8125;
+		YScale 0.9107142857142857;
 		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
 		+NOTIMEFREEZE;

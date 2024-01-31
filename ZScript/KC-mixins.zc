@@ -2393,12 +2393,16 @@ mixin class CollisionChecker
 
 		int type;
 		if (BulletPuff(actr) || 
+				BulletPuffSW(actr) || 
+				BulletPuffPlayerSW(actr) || 
 				FistPuff(actr) || 
 				KickPuff(actr) || 
 				HowitzerBase(actr) || 
 				ChainsawPuff(actr) || 
+				ChainsawPlayerPuff(actr) || 
 				KCBulletPuff(actr) || 
 				SawPuff(actr) ||
+				SawPlayerPuff(actr) ||
 				KCBulletPuff2(actr)) type = 1;
 	
 		if (kcdebug_generalcollisions & 2) Console.Printf("[CollisionChecker] \c[brick]A_CheckCollisionProjShieldExemption:\c- %s [type: %d] {gametic: %d}", infl, type, gametic);

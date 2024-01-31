@@ -67,9 +67,9 @@ class KCBulletPuff2 : KCPuff
 		VSpeed 1;
 		Mass 5;
 		DamageType "Bullet";
-		//Species "Player";
-		//+MTHRUSPECIES;
-		//+THRUSPECIES;
+		Species "Players";
+		+MTHRUSPECIES;
+		+THRUSPECIES;
 	}
 
 	States
@@ -605,6 +605,20 @@ class ChainsawPuff : KCPuff
 	}
 }
 
+class ChainsawPlayerPuff : ChainsawPuff
+{
+	default
+	{
+		DamageType "Bullet";
+		Species "Players";
+		+MTHRUSPECIES;
+		+THRUSPECIES;
+		+PUFFGETSOWNER
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+}
+
 class Chainsaw2Puff : ChainsawPuff
 {
 	default
@@ -642,7 +656,6 @@ class Chainsaw2Puff : ChainsawPuff
 			Stop;
 	}
 }
-
 
 class STGrenade : KCProjectile
 {
@@ -1015,6 +1028,20 @@ class SawPuff : KCPuff
 		Melee:
 			PUFF CD 4;
 			Stop;
+	}
+}
+
+
+class SawPlayerPuff : SawPuff
+{
+	default
+	{
+		Species "Players";
+		+MTHRUSPECIES;
+		+THRUSPECIES;
+		+PUFFGETSOWNER
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 }
 

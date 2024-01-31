@@ -452,6 +452,15 @@ class KCProjectile : KCBaseZSC
 				}
 			}
 		}
+		/*
+		KCPuff KCPf;
+		KCPf = KCPuff(target);
+		if (KCPf)
+		{
+			if (target) Console.Printf("target: %p [%s]", target, target.GetClassName());
+						 else Console.Printf("target not found! >:V");
+		}
+		*/
 	}
 	
 	override void Tick()
@@ -2461,7 +2470,6 @@ class KCCreature : KCBaseZSC
 	{
 		bool spawned;
 		actor mo;
-		
 		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
 		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
 	}
@@ -2856,7 +2864,7 @@ class ShieldPartBase : KCBaseZSC
 	actor shieldee;
 	default
 	{
-		Species "Players";
+		Species "Players"; // IMPORTANT FRACKIN' NOTE MISFIT: SET YOUR DAMN PLAYERPAWN'S SPECIES TO THE SAME AS YOUR SHIELDPARTBASE[s], YOU DINGLEPUFFEROO! >:V
 		Health 2147483646;
 		Painchance 256;
 		Radius 16; // out of 32
@@ -2986,10 +2994,14 @@ class ShieldPartBase : KCBaseZSC
 				if (FistPuff(other) && playpawn) return false;
 				if (KickPuff(other) && playpawn) return false;
 				if (KCBulletPuff(other) && playpawn) return false;
+				if (BulletPuffSW(other) && playpawn) return false;
+				if (BulletPuffPlayerSW(other) && playpawn) return false;
 				if (KCBulletPuff2(other) && playpawn) return false;
 				if (ChainsawPuff(other) && playpawn) return false;
+				if (ChainsawPlayerPuff(other) && playpawn) return false;
 				if (Chainsaw2Puff(other) && playpawn) return false;
 				if (SawPuff(other) && playpawn) return false;
+				if (SawPlayerPuff(other) && playpawn) return false;
 				if (other.bMISSILE)
 				{
 					//
