@@ -455,7 +455,8 @@ class CompatVulnItem : PlaceholderItem
 										damageType == 'Pellet' ||
 										damageType == 'Ripsaw' ||
 										damageType == 'SawShot' ||
-										damageType == 'Chainsaw') TOTALFactor *= factor2;
+										damageType == 'Chainsaw' ||
+										damageType == 'Knife') TOTALFactor *= factor2;
 								owner.A_StopSound(14);
 								owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
 							}
@@ -466,7 +467,8 @@ class CompatVulnItem : PlaceholderItem
 										damageType == 'Pellet' ||
 										damageType == 'Ripsaw' ||
 										damageType == 'SawShot' ||
-										damageType == 'Chainsaw') TOTALFactor /= factor2;
+										damageType == 'Chainsaw' ||
+										damageType == 'Knife') TOTALFactor /= factor2;
 								owner.A_StopSound(14);
 								owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
 							}

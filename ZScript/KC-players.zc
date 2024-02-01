@@ -1098,6 +1098,33 @@ class KCPlayerPawn : PlayerPawn
 			isvoodoodoll = false;
 		}
 		
+		// Check AimTarget() for special stuff :P
+		if (AimTarget())
+		{
+			actor speakeetarg;
+			speakeetarg = actor(AimTarget());
+			if (speakeetarg)
+			{
+				if (ShieldPartBase(speakeetarg)) speakeetarg == null;
+				if (ExplosiveBarrel(speakeetarg)) speakeetarg = null;
+				if (ExplosiveBarrel2(speakeetarg)) speakeetarg = null;
+				if (Pod(speakeetarg)) speakeetarg = speakeetarg;
+				if (speakeetarg && !speakeetarg.bISMONSTER) speakeetarg = null;
+			}
+			if (speakeetarg && speakeetarg.health > 0)
+			{
+				if (!speakeetarg.bFRIENDLY)
+				{
+					let speakitem = PlayerTargettedMonster(speakeetarg.FindInventory("PlayerTargettedMonster"));
+					if (!speakitem) 
+					{
+						speakeetarg.A_SetInventory("PlayerTargettedMonster",1);
+						if (kcdebug_speaktoboss) Console.Printf("PlayerTargettedMonster: %s", speakeetarg.GetClassName());
+					}
+				}
+			}
+		}
+		
 		// Recall All
 		if (recalledall)
 		{

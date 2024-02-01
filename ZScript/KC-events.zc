@@ -4680,7 +4680,12 @@ class KC_EventHandler : EventHandler
 							bool voicecheck = false;
 							if (kc_heiwaextravoices && kc_heiwaoneliners && !MiscItem.OneLinerCooldown)
 							{
-								if (MiscItem.OneLinerCooldown <= 0 || waslegendary) voicecheck = true;
+								if (MiscItem.OneLinerCooldown <= 0 || waslegendary) 
+								{
+									voicecheck = true;
+									let speakitem = PlayerTargettedMonster(victim.FindInventory("PlayerTargettedMonster"));
+									if (speakitem && speakitem.spoketoboss) voicecheck = false;
+								}
 							}
 							if (voicecheck)
 							{

@@ -734,7 +734,185 @@ class PoisonCount : PlaceHolderItem
 	}
 }
 
+class PlayerTargettedMonster : PlaceholderItemUndrop
+{
+	int voicetick, voicetick2;
+	bool spoke;
+	bool spoketoboss;
+	string nm;
+	
+	bool IsDoom1()
+	{
+		bool Doom1 = false;
+		if (Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
+		{
+			Doom1 = true;
+			//Console.Printf("Doom1: %d", Doom1);
+		}
+		return Doom1;
+	}
 
+	void A_SpeakToBoss(int type = 0, int voiceset = 0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera))
+		{
+			if (kcdebug_speaktoboss) Console.Printf("Heiwa speaks at or about boss :V [type: %d]", type);
+			double maskpitch = 1.00;
+			if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+			string voicenm;
+			double voicevol = frandom(1.25,1.75);
+			if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+			if (type == 0) // Sight boss
+			{
+				spoketoboss = true;
+				int randvoice = random(1,5);
+				if (randvoice <= 3)
+				{
+					voicenm = "Heiwa/GonnaBeTough"; //
+					Console.Printf("\c[HeiwaDeluge]Thiiis is going to be tough!\c-"); //
+				}
+				else
+				{
+					voicenm = "Heiwa/ThisSuuuucks"; //
+					Console.Printf("\c[HeiwaDeluge]This suuuuucks!\c-"); //
+				}
+			}
+			if (type == 1) // Kill boss
+			{
+				int randvoice = random(1,5);
+				if (randvoice >= 0 && randvoice <= 3)
+				{
+					voicenm = "Heiwa/WatAJerk"; //
+					Console.Printf("\c[HeiwaDeluge]What a jerk!\c-"); //
+				}
+				else
+				if (randvoice >= 4 && randvoice <= 6)
+				{
+					voicenm = "Heiwa/ReflievedSigh"; //
+					Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+				}
+				else
+				if (randvoice >= 7 && randvoice <= 8)
+				{
+					voicenm = "HeiwaLaugh"; //
+					Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+				}
+			}
+			playera.A_StopSound(CHAN_VOICE);
+			playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+			//Heiwa/GonnaBeTough
+		}
+	}
+	
+	override void DoEffect() { }
+	override void Tick() 
+	{ 
+		if (owner.health <= 0) 
+		{
+			if (!voicetick2 && spoketoboss) 
+			{
+				if (kcdebug_speaktoboss) Console.Printf("Speak at dead thing attempt. :V");
+				A_SpeakToBoss(1); 
+			}
+			voicetick2++;
+			if (voicetick2 >= 35) Destroy();
+		}
+		else
+		{
+			if (!spoke)
+			{
+				if (voicetick > random(19,20))
+				{
+					if (kcdebug_speaktoboss) Console.Printf("Speak at attempt. :V");
+					nm = "BaronOfHell";
+					if (owner.GetClassName() == nm) 
+					{
+						if (level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' &&
+								(IsDoom1() && level.mapname == "E1M8"))
+						{
+							if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM E1M8, Baron sighted] :V");
+							A_SpeakToBoss(0); 
+						}
+						else
+						{
+							if (IsDoom1())
+							{
+								if (random(1,16) <= random(1,3)) 
+								{
+									if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM 1, Baron sighted outside of E1M8] :V");
+									A_SpeakToBoss(0); 
+								}
+							}
+							else
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM 2, Baron sighted] :V");
+								if (random(1,16) <= 1) A_SpeakToBoss(0); 
+							}
+						}
+					}
+					nm = "Cyberdemon";
+					if (owner.GetClassName() == nm) 
+					{
+						if (level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
+								(IsDoom1() && level.mapname == "E2M8"))
+						{
+							if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM E2M8, Cyberdemon sighted] :V");
+							A_SpeakToBoss(0); 
+						}
+						else
+						{
+							if (IsDoom1())
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM, Cyberdemon sighted outside of E2M8] :V");
+								if (random(1,8) <= random(5,7)) A_SpeakToBoss(0); 
+							}
+							else
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM 2, Cyberdemon sighted] :V");
+								if (random(1,4) <= 1) A_SpeakToBoss(0); 
+							}
+						}
+					}
+					nm = "SpiderMastermind";
+					if (owner.GetClassName() == nm) 
+					{
+						if (level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
+								(IsDoom1() && 
+								 (level.mapname == "E3M8" ||
+									level.mapname == "E4M8")))
+						{
+							if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM E3M8/E4M8, Spider Mastermind sighted] :V");
+							A_SpeakToBoss(0); 
+						}
+						else
+						{
+							if (IsDoom1())
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM, Spider Mastermind sighted outside of E3M8/E4M8] :V");
+								if (random(1,8) <= random(5,7)) A_SpeakToBoss(0); 
+							}
+							else
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [DooM 2, Spider Mastermind sighted] :V");
+								if (random(1,4) <= 1) A_SpeakToBoss(0); 
+							}
+						}
+					}
+					nm = "CCards_Actor_TheAncientOne";
+					if (owner.GetClassName() == nm) 
+					{
+						if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [CCards, The Ancient One sighted] :V");
+						A_SpeakToBoss(0); 
+					}
+					spoke = true;
+				}
+				else voicetick++;
+			}
+		}
+	}
+}
 
 class PlayerStatPlaceholder : PlaceholderItemUndrop
 { 
