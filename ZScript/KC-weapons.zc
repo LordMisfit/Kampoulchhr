@@ -907,12 +907,12 @@ class KCWeaponBase : Weapon
 				if (player.ReadyWeapon is "Deviation") 
 				{
 					if (A_CheckForHeiwa()) weaponfactor -= 0.25;
-														else weaponfactor = 0.125;
+														else weaponfactor -= 0.125;
 				}
 				if (player.ReadyWeapon is "Sawthrower") 
 				{
-					if (A_CheckForHeiwa()) weaponfactor = 0.0625;
-														else weaponfactor = 0.1875;
+					if (A_CheckForHeiwa()) weaponfactor -= 0.0625;
+														else weaponfactor -= 0.1875;
 				}
 				nm = "ImpalerXBow";
 				if (player.ReadyWeapon is nm)  
@@ -11096,6 +11096,7 @@ Class Translocator : MarineWeapon
 		//Weapon.SelectionOrder 4000;
 		Obituary "%o was telefragged by %k!";
 		+FLOORCLIP;	
+		+WEAPON.NO_AUTO_SWITCH;
 		+WEAPON.NOAUTOSWITCHTO;
 		+WEAPON.NOAUTOAIM;
 		+WEAPON.NOAUTOFIRE;

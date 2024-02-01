@@ -2163,7 +2163,8 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_Bane"; if (victim.GetClassName() == nm) specialtype += 1024;
 				nm = "CCards_Actor_Maestro"; if (victim.GetClassName() == nm) specialtype += 2048;
 				nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) specialtype += 4096;
-				nm = "LostSoulEvit2"; if (victim.GetClassName() == nm) specialtype += 8192;
+				nm = "CCards_Actor_HasRespawned"; if (victim.CountInv(nm)) specialtype += 8192;
+				nm = "LostSoulEvit2"; if (victim.GetClassName() == nm) specialtype += 16384;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -4503,6 +4504,7 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 1024) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_Bane
 						if (specialtype & 2048) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_Maestro
 						if (specialtype & 4096) ExpGain *= frandompick(0.125,0.25); // CCards_Actor_MiniMonsterPowerup
+						if (specialtype & 8192) ExpGain *= frandompick(0.375,0.625); // CCards_Actor_HasRespawned
 						nm = "CCards_Actor_BorrowedTimeBuff";
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);
