@@ -13387,6 +13387,7 @@ class KnifeHeiwa : MarineWeapon
 		+WEAPON.NOALERT;
 		+NOEXTREMEDEATH;
 		Obituary "%o was cut apart by %k's trusty knife.";
+		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_KnifeHit(int shockwave = 0, bool puffsound = false)
@@ -13403,8 +13404,8 @@ class KnifeHeiwa : MarineWeapon
 		int dmg = A_GetKnifeDamage(0,shockwaveroll,false);
 		if (CountInv("PlayerDashing")) dmg *= frandom(2,3);
 		//Console.Printf("dmg: %d", dmg);
-		if (puffsound) A_CustomPunch((dmg),true,0,"KnifePuff",range:random(78,82));
-							else A_CustomPunch((dmg),true,0,"KnifePuffNoSound",range:random(78,82));
+		if (puffsound) A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuff",range:random(78,82));
+							else A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuffNoSound",range:random(78,82));
 	}
 	
 	States
