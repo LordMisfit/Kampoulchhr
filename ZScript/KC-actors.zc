@@ -2429,10 +2429,27 @@ class KCCreature : KCBaseZSC
 			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
 			checkvalfactor *= frandompick(0.875,1,1.125);
 		}
+		if (type == 3) // Knife
+		{
+			if (skill <= SKILL_VERY_EASY) checkvalfactor = frandom(0.09,0.15);
+			if (skill == SKILL_EASY) checkvalfactor = frandom(0.0825,0.1375);
+			if (skill == SKILL_NORMAL) checkvalfactor = frandom(0.075,0.125);
+			if (skill == SKILL_HARD) checkvalfactor = frandom(0.0675,0.1125);
+			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
+			checkvalfactor *= frandompick(1.5,1.75,2);
+		}
 		checkvalfactor *= 1.5;
 		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) checkvalfactor *= frandompick(3,3.5,3.5,4.0,4.0,4.0,4.375,4.375,4.375,4.375,4.375,4.75,4.75,4.75,5.125,5.125,5.5);
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.666675 - (((TruePlayerLevel+1) * checkvalfactor) * 6));
-																														 else MaxCheck = (4 - ((TruePlayerLevel+1) * checkvalfactor));
+		if (type == 3) // Knife
+		{
+			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.33333875 - (((TruePlayerLevel+1) * checkvalfactor) * 5));
+																															 else MaxCheck = (2 -          ((TruePlayerLevel+1) * (checkvalfactor * 0.8334)));
+		}
+		else
+		{
+			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.666675 - (((TruePlayerLevel+1) * checkvalfactor) * 6));
+																															 else MaxCheck = (4 -        ((TruePlayerLevel+1) * checkvalfactor));
+		}
 
 		if (MaxCheck <= 0.01) MaxCheck = 0.01;
 		double randomroll = frandom(0.1,MaxCheck);

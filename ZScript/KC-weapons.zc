@@ -2116,7 +2116,7 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
-	action void A_SW748(int mode = 0)
+	action void A_IncGunKiaiCounter(int mode = 0)
 	{
 		if (!mode)
 		{
@@ -6835,7 +6835,7 @@ class TommyGun : MarineWeapon
 				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
-					A_SW748((randompick(0,1,1,1,1,2) + randompick(0,1,1,1,1,2)) * random(3,5));
+					A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) + randompick(0,1,1,1,1,2)) * random(3,5));
 					A_TommyShot(0,0);
 					A_TommyShot(0,1);
 					return resolvestate(null);
@@ -6843,7 +6843,7 @@ class TommyGun : MarineWeapon
 				else
 				{
 					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
-					A_SW748((randompick(0,1,1,1,1,2) * random(3,5)));
+					A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) * random(3,5)));
 					A_TommyShot(0,0);
 					return resolvestate(null);
 				}
@@ -6880,7 +6880,7 @@ class TommyGun : MarineWeapon
 				if (A_DualTMGCheck())
 				{
 					if (CountInv("TommAmmo") <= 1) return resolvestate("Ready");
-					A_SW748((randompick(1,2,2,2,2,3) + randompick(1,2,2,2,2,3)) * random(3,5));
+					A_IncGunKiaiCounter((randompick(1,2,2,2,2,3) + randompick(1,2,2,2,2,3)) * random(3,5));
 					A_TommyShot(1,0);
 					A_TommyShot(1,1);
 					return resolvestate(null);
@@ -6888,7 +6888,7 @@ class TommyGun : MarineWeapon
 				else
 				{
 					if (CountInv("TommAmmo") <= 0) return resolvestate("Ready");
-					A_SW748((randompick(1,2,2,2,2,3) * random(3,5)));
+					A_IncGunKiaiCounter((randompick(1,2,2,2,2,3) * random(3,5)));
 					A_TommyShot(1,0);
 					return resolvestate(null);
 				}
@@ -7056,6 +7056,7 @@ class Devastator : MarineWeapon
 			pspwnoff = (2.0*mult);
 			pspwnhgt = 2.75;
 			pspwnhgt2 = 3.25;
+			A_IncGunKiaiCounter((4 * random(8,12)));
 			A_StartSound("weapons/devshot",103,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
 			A_StartSound("weapons/devshot",104,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
 			A_StartSound("weapons/devshot",105,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
@@ -7074,6 +7075,7 @@ class Devastator : MarineWeapon
 			pspwnoff = (2.0*mult);
 			pspwnhgt = 2.25;
 			pspwnhgt2 = 2.75;
+			A_IncGunKiaiCounter((randompick(0,0,1) * random(8,12)));
 		}
 		if (type >= 0 && type <= 1)
 		{
@@ -7086,6 +7088,7 @@ class Devastator : MarineWeapon
 			pspwnoff = (2.0*mult);
 			pspwnhgt = 4.5;
 			pspwnhgt2 = 5.5;
+			A_IncGunKiaiCounter((randompick(0,0,1) * random(8,12)));
 		}
 		if (type >= 2 && type <= 3)
 		{
@@ -7098,6 +7101,7 @@ class Devastator : MarineWeapon
 			pspwnoff = (2.0*mult);
 			pspwnhgt = 3.0;
 			pspwnhgt2 = 7.0;
+			A_IncGunKiaiCounter((4 * random(8,12)));
 			A_StartSound("weapons/devshot",103,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
 			A_StartSound("weapons/devshot",104,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
 			A_StartSound("weapons/devshot",105,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
@@ -8499,6 +8503,7 @@ class TeslaCannon : MarineWeapon
 	{
 		if (type >= 1)
 		{
+			A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) + randompick(0,1,1,1,1,2)) * random(3,5));
 			double spread = (randompick(30,35,40,45,50) * 0.125);
 			A_StartSound("Tesla/Fire1",CHAN_WEAPON);
 			A_StartSound("Tesla/Fire1",CHAN_BODY);
@@ -8507,6 +8512,7 @@ class TeslaCannon : MarineWeapon
 		}
 		else
 		{
+			A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) * random(3,5)));
 			double spread = (randompick(32,36,40,44,48) * 0.0625);
 			A_StartSound("Tesla/Fire1",CHAN_WEAPON);
 			A_FireProjectile(proj,0,use1,spread);
@@ -8517,6 +8523,7 @@ class TeslaCannon : MarineWeapon
 	{
 		if (type >= 1)
 		{
+			A_IncGunKiaiCounter((randompick(6,7,7,7,7,8) * random(12,20)));
 			double spread = (randompick(32,36,40,44,48) * 0.015625);
 			A_StartSound("Tesla/AltFire2",CHAN_WEAPON);
 			A_StartSound("Tesla/AltFire2",CHAN_BODY);
@@ -8525,6 +8532,7 @@ class TeslaCannon : MarineWeapon
 		}
 		else
 		{
+			A_IncGunKiaiCounter((randompick(4,5,5,5,5,6) * random(6,10)));
 			A_StartSound("Tesla/AltFire2",CHAN_WEAPON);
 			A_FireProjectile("TeslaShot2",0,1,0,0);
 		}
@@ -12984,7 +12992,6 @@ class BulletPuffSWCoop : BulletPuffSW
 	}
 }
 
-class SamsaraRecoilIsDisabled : Boolean {}
 class Riotgun : MarineWeapon
 { 
 	int RiotClipCounter;
@@ -13116,50 +13123,50 @@ class Riotgun : MarineWeapon
 			RIOT D 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				A_SW748((5 * random(8,12)));
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 4.0);
+				A_IncGunKiaiCounter((5 * random(8,12)));
+				A_SetPitch(pitch - 4.0);
 			}
 			RIOT G 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 A_WeaponReady(invoker.WeapFlagsTemp);
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
 			TNT1 A 0 { invoker.RiotClipCounter += 1; }
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 offset(7, 39) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 offset(15,47) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 offset(7, 39) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT E 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 0.5);
+				A_SetPitch(pitch + 0.5);
 			}
 			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
@@ -13187,23 +13194,23 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748((1 * random(8,12)));
+				A_IncGunKiaiCounter((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 1.5);
+				A_SetPitch(pitch - 1.5);
 			}
 			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 2.0);
+				A_SetPitch(pitch - 2.0);
 			}
 			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 3.5);
+				A_SetPitch(pitch + 3.5);
 			}
 			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0 A_CheckReload();
@@ -13217,23 +13224,23 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				A_SW748((2 * random(8,12)));
+				A_IncGunKiaiCounter((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 1.5);
+				A_SetPitch(pitch - 1.5);
 			}
 			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 2.0);
+				A_SetPitch(pitch - 2.0);
 			}
 			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 3.5);
+				A_SetPitch(pitch + 3.5);
 			}
 			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0 A_CheckReload();
@@ -13247,23 +13254,23 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748((1 * random(8,12)));
+				A_IncGunKiaiCounter((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 1.5);
+				A_SetPitch(pitch - 1.5);
 			}
 			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 2.0);
+				A_SetPitch(pitch - 2.0);
 			}
 			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 3.5);
+				A_SetPitch(pitch + 3.5);
 			}
 			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			TNT1 A 0 A_CheckReload();
@@ -13277,23 +13284,23 @@ class Riotgun : MarineWeapon
 			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				A_SW748((2 * random(8,12)));
+				A_IncGunKiaiCounter((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
 			}
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 1.5);
+				A_SetPitch(pitch - 1.5);
 			}
 			RITO F 1 offset(6, 39) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch - 2.0);
+				A_SetPitch(pitch - 2.0);
 			}
 			RITO B 1 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0
 			{
-				if (!CountInv("SamsaraRecoilIsDisabled")) A_SetPitch(pitch + 3.5);
+				A_SetPitch(pitch + 3.5);
 			}
 			RITO C 1 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			RIOT A 0 A_CheckForReload(4, "Reload2");
@@ -13390,6 +13397,10 @@ class KnifeHeiwa : MarineWeapon
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
+	action void A_KnifeThrow()
+	{
+	}
+	
 	action void A_KnifeHit(int shockwave = 0, bool puffsound = false)
 	{
 		int shockwaveroll = 0;
@@ -13404,8 +13415,28 @@ class KnifeHeiwa : MarineWeapon
 		int dmg = A_GetKnifeDamage(0,shockwaveroll,false);
 		if (CountInv("PlayerDashing")) dmg *= frandom(2,3);
 		//Console.Printf("dmg: %d", dmg);
+		int rangef = random(78,82);
 		if (puffsound) A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuff",range:random(78,82));
 							else A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuffNoSound",range:random(78,82));
+		if (A_CheckMeleeDestroyProj(3) > 0)
+		{
+			double output = 1.0;
+			int mkheight = random(28,30);
+			int mkdist1 = (rangef - 56);
+			int mkdist2 = (rangef - 24);
+			int mkdist3 = (rangef + 8);
+			string mk = "ShieldPartMeleeNoReflect";
+			int TruePlayerLevel = invoker.ActualLevel;
+			if (random(1,8) <= (1 + (TruePlayerLevel * (0.06 * output)))) mk = "ShieldPartMeleeReflect";
+			
+			A_MeleeShieldPiece(mk,mkheight,mkdist3);
+			if (random(1,6) <= 1)
+			{
+				A_MeleeShieldPiece(mk,mkheight,mkdist2);
+				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1);
+			}
+		}
+
 	}
 	
 	States
