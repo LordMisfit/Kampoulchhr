@@ -20,6 +20,8 @@ class KCPlayerPawn : PlayerPawn
 	int playoutputdmg;
 	int playtookdamage;
 	
+	int playerfixeddmg;
+	
 	bool wasongroundprevtic, wasongroundcurrtic;
 	double PlayerDefenseIgnoreFactor, PlayerArmorIgnoreFactor, PlayerArmorIgnoreFactorGeneral;
 	int ActualLevel;
@@ -1403,7 +1405,7 @@ class KCPlayerPawn : PlayerPawn
 		if (kcdebug_playerdamagemobj) Console.Printf("(\c[green][A_CheckNeverBleed]\c-  [player], type: %d, damage: %d)", type, damage);
 	}
 	
-	int, int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int firstdmg = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false, Actor inflictor = null, Actor source = null)
+	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false, Actor inflictor = null, Actor source = null)
 	{
 		A_CheckNeverBleed(0, damage, flags);
 		string nm, nn, no, np;
@@ -1414,7 +1416,8 @@ class KCPlayerPawn : PlayerPawn
 		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
 		if (source == null) sour = "NONE"; else sour = source.GetClassName();
 
-		int prevdmg = damage;
+		int prevdmg = playerfixeddmg;
+		int firstdmg = playerfixeddmg;
 		
 		// Any attack based on temperates, as well as lightning and wind, 
 		// are COMPLETELY blocked by the Time Seraph's armor, without 
@@ -1456,7 +1459,7 @@ class KCPlayerPawn : PlayerPawn
 				{
 					if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion - Normal");
 					damage = 0;
-					return damage, firstdmg, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
+					return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
 				}
 			}
 			
@@ -1759,7 +1762,7 @@ class KCPlayerPawn : PlayerPawn
 				}
 			}
 		}
-		return damage, firstdmg, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
+		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
 	}
 	
 	double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
@@ -2124,7 +2127,11 @@ class KCPlayerPawn : PlayerPawn
 		string nm, nn, no, np;
 
 		int firstdmg = damage;
-		if (flags & DMG_FIXEDDMG) firstdmg = origdmg;
+		if (flags & DMG_FIXEDDMG) 
+		{
+			playerfixeddmg = damage;
+			firstdmg = origdmg;
+		}
 		let globalvars = KCGlobalVariables.Get();
 		
 		Actor AttackingActor;
@@ -2761,7 +2768,7 @@ class KCPlayerPawn : PlayerPawn
 		bool tsafullnulldmg = false;
 		if (!isinvuln)
 		{
-			[damage, firstdmg, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, firstdmg, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg, source, inflictor);
+			[damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg] = CheckTimeSeraphArmor(damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg, source, inflictor);
 			if (TimeSeraphArmor && tsafullnulldmg) damage = 0;
 		}
 		
