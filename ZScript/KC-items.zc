@@ -3923,3 +3923,191 @@ class LuckCapsule : StatCaspuleBase
 			Stop;
 	}
 }
+
+class SpecialBackpack : CustomInventoryExt
+{
+	default
+	{
+		Radius 10;
+		Height 20;
+		Inventory.PickupMessage "Picked up an odd beige and pink backpack...";
+		Scale 0.125;
+		inventory.icon "RSBKA0";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		+INVENTORY.KEEPDEPLETED; 
+	}
+	
+	States
+	{
+		Spawn:
+			RSBK A -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				A_GiveInventory("SpecialBackpackBonus");
+			}
+			Stop;
+	}
+}
+
+class MediBag : CustomInventoryExt
+{
+	default
+	{
+		inventory.icon "MEDBA0";
+		Inventory.MaxAmount 1;
+		+INVENTORY.INVBAR
+		+INVENTORY.HUBPOWER
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
+		if (HeiwaPlayer(playera))
+		{
+			if (MiscItem) MaxAmount = MiscItem.MaxHealthTrue;
+							 else Destroy();
+		}
+		else Destroy();
+		
+		super.Tick();
+	}
+	
+	states
+	{
+		Spawn:
+			TNT1 A -1 BRIGHT;
+			stop;
+		Use:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				Console.Printf("try to use");
+				if (HeiwaPlayer(playera))
+				{
+					if (MiscItem)
+					{
+						int HealAmount;
+						int MaxHealthTrue;
+						if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+						int MaxHealthLimit = MaxHealthTrue;
+						HealAmount = MaxHealthTrue - playera.health;
+						int CurrentHealth = playera.health;
+						if (CurrentHealth < MaxHealthLimit)
+						{
+							int temp = invoker.Amount;
+							if (temp > 0)
+							{
+								if (HealAmount > temp) 
+								{
+									HealAmount = temp;
+									invoker.Amount -= temp;
+									Console.Printf("HealAmount > temp");
+								}
+								else
+								{
+									invoker.Amount -= HealAmount;
+									Console.Printf("temp > HealAmount");
+								}
+								Console.Printf("temp: %d, \c[brick]HealAmount: %d\c-", temp, HealAmount);
+								
+								CurrentHealth += HealAmount;
+								if (CurrentHealth >= MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+								playera.health = CurrentHealth;
+								
+								playera.A_StartSound("gethealthkit",5);
+								
+								// Play a Heiwa voice/sound
+								double healratio = double((HealAmount * 1.0) / (MaxHealthLimit * 1.0));
+								bool playvoice = false;
+								if (healratio >= 0.50) playvoice = true;
+								else
+								{
+									if (healratio >= 0.3334 && random(1,8) <= random(4,6)) playvoice = true;
+									else
+									{
+										if (healratio >= 0.1667 && random(1,8) <= random(1,2)) playvoice = true;
+									}
+								}
+								Console.Printf("healratio: %.8f, playvoice %d", healratio, playvoice);
+
+								if (MiscItem && MiscItem.CanTalkUnderwater && playvoice)
+								{
+									double maskpitch = 1.00;
+									if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+									string voicenm;
+									double voicevol = frandom(1.25,1.75);
+									if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+									int randvoice = random(1,8);
+									if (healratio >= 0.75)
+									{
+										if (randvoice <= 4)
+										{
+											voicenm = "Heiwa/ABigHelp"; //
+											Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
+										}
+										else
+										if (randvoice >= 5 && randvoice <= 7)
+										{
+											voicenm = "HeiwaLaugh"; //
+											Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+										}
+										else
+										if (randvoice >= 8)
+										{
+											voicenm = "Heiwa/ReflievedSigh"; //
+											Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+										}
+									}
+									else
+									{
+										if (randvoice <= 4)
+										{
+											voicenm = "Heiwa/ReflievedSigh"; //
+											Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+										}
+										else
+										if (randvoice >= 5 && randvoice <= 7)
+										{
+											voicenm = "Heiwa/ABigHelp"; //
+											Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
+										}
+										else
+										if (randvoice >= 8)
+										{
+											voicenm = "HeiwaLaugh"; //
+											Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+										}
+									}
+									A_StopSound(CHAN_VOICE);
+									A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+								}
+							}
+							else 
+							{
+								Console.Printf("no energy left");
+								playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+							}
+							Console.Printf("health less than max");
+						}
+						else 
+						{
+							Console.Printf("health more/equal-to max");
+							playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+						}
+					}
+					else Destroy();
+				} 
+				else Destroy();
+			}
+			Fail;
+	}
+}
