@@ -853,11 +853,11 @@ class KCWeaponBase : Weapon
 				
 				if (player.ReadyWeapon is "FistHeiwa") 
 				{
-					if (A_CheckForHeiwa()) weaponfactor += 0.50;
+					if (A_CheckForHeiwa()) weaponfactor += 1.00;
 				}
 				if (player.ReadyWeapon is "KnifeHeiwa") 
 				{
-					if (A_CheckForHeiwa()) weaponfactor += 1.00;
+					if (A_CheckForHeiwa()) weaponfactor += 0.50;
 				}
 				if (player.ReadyWeapon is "Glock21") 
 				{
@@ -878,6 +878,11 @@ class KCWeaponBase : Weapon
 				{
 					if (A_CheckForHeiwa()) weaponfactor += 0.15;
 														else weaponfactor -= 0.10;
+				}
+				if (player.ReadyWeapon is "BlasterRifle") 
+				{
+					if (A_CheckForHeiwa()) weaponfactor -= 0.1875;
+														else weaponfactor -= 0.09375;
 				}
 				if (player.ReadyWeapon is "RiotGun") 
 				{
@@ -935,7 +940,7 @@ class KCWeaponBase : Weapon
 				nm = "DualScepterOfSouls";
 				if (player.ReadyWeapon is nm) weaponfactor += 0.125;
 				
-				if (player.ReadyWeapon is "FistMarine") weaponfactor += 0.50;
+				if (player.ReadyWeapon is "FistMarine") weaponfactor += 1.00;
 				if (player.ReadyWeapon is "ChainsawMarine") weaponfactor += 0.25;
 				if (player.ReadyWeapon is "PistolMarine") weaponfactor += 0.25;
 				if (player.ReadyWeapon is "BFG9000Marine") weaponfactor -= 0.25;
@@ -3949,7 +3954,7 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 		if (type == 1)
 		{
 			droptype = "BackPack";
-			user_type = random(1,8);
+			user_type = random(1,10);
 			spawnweapon = false;
 			if (random(1,8) <= 1) 
 			{
@@ -4028,7 +4033,7 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 				}
 				if (user_type == 4) 
 				{
-					droptype = "BHGen";
+					droptype = "BlasterRifle";
 					if (playera.CountInv(droptype)) 
 					{
 						if (random(1,16) <= 1) droptype = "CombatPack";
@@ -4069,6 +4074,24 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 					}
 				}
 				if (user_type == 8)
+				{
+					droptype = "RiotGun";
+					if (playera.CountInv(droptype)) 
+					{
+						if (random(1,16) <= 1) droptype = "CombatPack";
+															else droptype = "Backpack";
+					}
+				}
+				if (user_type == 9) 
+				{
+					droptype = "BHGen";
+					if (playera.CountInv(droptype)) 
+					{
+						if (random(1,16) <= 1) droptype = "CombatPack";
+															else droptype = "Backpack";
+					}
+				}
+				if (user_type == 10)
 				{
 					if (random(1,16) <= 4) droptype = "CombatPack";
 														else droptype = "Backpack";
@@ -5169,9 +5192,18 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				dropchancemax = 7;
 				dropchance = 4;
 			}
-			droptypespecial = "TommyGun";
-			droptypeammo = "TommAmmo";
-			droptypeammobig = "TommAmmoBig";
+			if (random(1,8) <= 1) 
+			{
+				droptypespecial = "BlasterRifle";
+				droptypeammo = "CellNew";
+				droptypeammobig = "CellPackNew";
+			}
+			else 
+			{
+				droptypespecial = "TommyGun";
+				droptypeammo = "TommAmmo";
+				droptypeammobig = "TommAmmoBig";
+			}
 		}
 		else
 		{
@@ -5195,17 +5227,29 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 		if (random(1,dropchancemax) <= dropchance)
 		{
 			string tempdroptype = droptypespecial;
-			if (playera.CountInv(tempdroptype))
+			if (tempdroptype == "TommyGun")
 			{
-				tempdroptype = "DualTommyGuns";
 				if (playera.CountInv(tempdroptype))
 				{
-					if (random(1,5) <= 1) dropammo = true;
-													 else dropweap = true;
+					tempdroptype = "DualTommyGuns";
+					if (playera.CountInv(tempdroptype))
+					{
+						if (random(1,5) <= 1) dropammo = true;
+														 else dropweap = true;
+					}
+					else dropweap = true;
 				}
 				else dropweap = true;
 			}
-			else dropweap = true;
+			else
+			{
+				if (playera.CountInv(tempdroptype))
+				{
+					if (random(1,5) <= 1) dropammo = true;
+													else dropweap = true;
+				}
+				else dropweap = true;
+			}
 		}
 		else
 		{
@@ -6574,7 +6618,7 @@ class DualTommyGunPickup : CustomInventoryExt
 	default
 	{
 		CustomInventoryExt.PickUpVoiceHeiwa2 true;
-		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
+		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon3";
 		CustomInventoryExt.PickUpVoice false;
 		Inventory.PickupSound "TOMPKP";
 		Inventory.PickupMessage "Picked up an Extra \cuThompson Machine Gun\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 4]\c-";
@@ -6624,7 +6668,7 @@ class TommyGun : MarineWeapon
 	default
 	{
 		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon3";
 		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
 		Inventory.PickupMessage "Picked up a \cuThompson Machine Gun\c-! \cx[Slot 4]\c-";
@@ -13726,12 +13770,17 @@ class KnifePuffNoSound : KnifePuff
 
 class BlasterRifle : MarineWeapon // DoomWeapon 2001
 {
+	int shotcount;
 	default
 	{
 		//SpawnID 27;
+		KCWeaponBase.PickUpVoiceHeiwa2 true;
+		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickUpVoice false;
+		Inventory.PickupSound "misc/w_pkup";
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 1;
-		Weapon.AmmoUse2 1;
+		Weapon.AmmoUse2 0;
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
@@ -13755,24 +13804,49 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 			E11G A 3;
 			E11F A 4 
 			{
-				A_GunFlash();
+				A_GunFlash("Flash");
 				A_FireProjectile("Blaster_RifleShot");
+				A_Recoil(frandom(0.05,0.075));
+				A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) * random(3,5)));
+				A_StartSound("weapons/blasterrifle",CHAN_WEAPON);
 			}
 			E11G A 3 A_ReFire();
 			Goto Ready;
 		AltFire:
+			E11G A 0
+			{
+				invoker.shotcount = randompick(1,2,2,2,2,2,2,2,2,2,2,3);
+				if (CountInv("Cell") >= invoker.shotcount || 
+						A_CheckInfiniteAmmo()) return resolvestate("AltFire2");
+				
+				return resolvestate(null);
+			}
+			goto Ready;
+		AltFire2:
 			E11G A 2;
 			E11F A 3
 			{
-				A_GunFlash();
-				double ang = random(-4,4);
-				double ofs = -ang;
-				A_FireProjectile("Blaster_RifleShot",ang,1,ofs);
+				A_GunFlash("AltFlash");
+				for (int i = 0; i < invoker.shotcount; i++)
+				{
+					double ang = (random(-20,20) * 0.2);
+					double pch = (random(-20,20) * 0.2);
+					double ofs = -ang;
+					double zof = -pch;
+					A_FireProjectile("Blaster_RifleShot",ang,1,ofs,zof,FPF_NOAUTOAIM,pch);
+					A_IncGunKiaiCounter((randompick(0,1,1,1,1,1,1,1,1,2) * random(4,6)));
+				}
+				A_Recoil((frandom(0.075,0.1125)*invoker.shotcount));
+				A_StartSound("weapons/blasterrifle",CHAN_WEAPON);
+				A_TakeInventory("Cell",invoker.shotcount,TIF_NOTAKEINFINITE);
 			}
-			E11G A 0 A_ReFire();
+			E11G A 0 A_ReFire("AltFire");
 			Goto Ready;
 		Flash:
 			E11F A 4 Bright A_Light2();
+			Goto LightDone;
+		AltFlash:
+			E11F A 3 Bright A_Light2();
 			Goto LightDone;
 		Spawn:
 			E11B A -1;
@@ -13785,22 +13859,29 @@ class Blaster_RifleShot : KCFastProjectile
 	default
 	{
 		PROJECTILE;
+		ProjectileKickback 25;
 		Radius 2;
 		Height 4;
+		Scale 1;
 		Speed 104; // 26;
-		DamageFunction (randompick(4,5,5,5,5,6) * random(randompick(1,1,1,2,2,3),8));
+		DamageFunction (randompick(3,4,4,4,5,5,5,5,5,5,5,5,6,6,6,7) * random(randompick(1,1,1,2,2,3),randompick(6,7,7,8,8,8)));
 		Obituary "%o got blasted by %k, like the rebel scum %g is!";
-		SeeSound "weapons/blasterrifle";
+		SeeSound "";
 		Scale 1.0;
 		Decal "BulletChip";
 		DamageType "Plasma";
+		MissileType "Blaster_RifleShot_Trail";
+		MissileHeight 8;
+		//SeeSound "weapons/blstrpst";
+		DeathSound "weapons/blstrhit";
+		RenderStyle "Add";
 	}
+	
 	States
 	{
 		Spawn:
-			TNT1 A 3;
-			BLAS AA 1 BRIGHT A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
-			Goto Spawn+1;
+			BLAS AA 1 BRIGHT; //A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
+			loop;
 		Death:
 			TNT1 AAA 0 A_SpawnItemEx("Blaster_RifleShot_Hit");
 			TNT1 A 35;
@@ -13826,7 +13907,7 @@ class Blaster_RifleShot_Trail : KCBaseZSC
 		+NOCLIP;
 		Speed 1;
 		Translation "112:127=171:191";
-		Scale 0.5;
+		Scale 1.0;
 	}
 	States
 	{

@@ -3683,6 +3683,11 @@ class KC_EventHandler : EventHandler
 								droptype = "RiotGun";
 								if (playera.CountInv(droptype)) droptype = "BackPack2";
 							}
+							if (user_type == 17)
+							{
+								droptype = "BlasterRifle";
+								if (playera.CountInv(droptype)) droptype = "BackPack2";
+							}
 							if (droptype == "BackPack2" && random(1,16) <= 1) droptype = "CombatPack";
 							if (!(droptype == "BackPack2" ||
 									droptype == "CombatPack"))
@@ -3727,7 +3732,7 @@ class KC_EventHandler : EventHandler
 								if (randroll2 <= temp) 
 								{
 									user_type = random(1,13);
-									if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
+									if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
 									if (user_type == 1) droptype = "ClipBoxNew";
 									if (user_type == 2) droptype = "ClipBoxNew";
 									if (user_type == 3) droptype = "ShellBoxNew";
@@ -3743,11 +3748,13 @@ class KC_EventHandler : EventHandler
 									if (user_type == 13) droptype = "CellPackNew";
 									if (user_type == 14) droptype = "RocketBoxNew";
 									if (user_type == 15) droptype = "CellPackNew";
+									if (user_type == 16) droptype = "ShellBoxNew";
+									if (user_type == 17) droptype = "CellPackNew";
 								}
 								else
 								{
 									user_type = random(1,13);
-									if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
+									if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
 									if (user_type == 1) droptype = "ClipNew";
 									if (user_type == 2) droptype = "ClipNew";
 									if (user_type == 3) droptype = "ShellNew";
@@ -3763,6 +3770,8 @@ class KC_EventHandler : EventHandler
 									if (user_type == 13) droptype = "CellNew";
 									if (user_type == 14) droptype = "RocketNew";
 									if (user_type == 15) droptype = "CellNew";
+									if (user_type == 16) droptype = "ShellNew";
+									if (user_type == 17) droptype = "CellNew";
 								}
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);
