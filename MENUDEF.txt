@@ -1,3 +1,9 @@
+OptionValue "MonsterTracers"
+{
+	0, "Bullets"
+	1, "Tracers [DEFAULT]"
+}
+
 OptionValue "StartTSArtifact"
 {
 	0, "No [DEFAULT]"
@@ -93,8 +99,27 @@ OptionMenu "KC-GeneralMenu1"
 	IfGame(Strife) { Position -88 }
 	
 	KCTextfield "Time Freeze Projectile Disperse Range",		"This determines [in map units] the range projectiles will disperse from their origin point before coming to a stop while you have time frozen. This option is not cheaty to alter-mid game, as it is best to change it for better planning of time freeze projectile barrages with certain variants of time freeze. Default: 32 [map units]",		"kc_tfprojdisrange"
+	StaticText " "
+	KCOption "Flight/Swim Dash Directions",		"Allows for vertical direction dashing when flying/swimming. Experimental at the moment. Default: Yes",		"kc_flightswimpitchdash",			"YesNo_DefaultYes"
+	KCOption "Double-tap dashing", 		"If [On], you can double tap movement keys quickly to dash ahead. Turn off if this type of dashing is obstructive/annoying. An alternative method to dash is to press a direction/or strafe and press <Weapon State 3>.",		"kc_doubledash",				"OnOff_DefaultOff"
+	StaticText " "
 	KCOption "Allow MP-Only Monsters in SP",		"Turn on to enable Multiplayer-tagged monsters in Single Player for more challenge. Default: No",		"kc_enablempmonstersinsp",			"YesNo_DefaultNo"
-	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the player's hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
+	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the PLAYER'S hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
+	StaticText " "
+	KCOption "EXP/Kill Logs [Player]",		"When the player gains experience/kills, a message will be printed to the console. Default: On",		"kc_showexpgains",			"OnOff_DefaultOn"
+	KCOption "Combat Logs [non-player]",		"Outputs damage messages to the console when non-player monsters take damage. Default: On",		"kc_combatlog",			"OnOff_DefaultOn"
+	KCOption "Damage Logs [Player]",		"Outputs damage messages to the console the player takes damage [or is hit while invulnerable]. Default: On",		"kc_playerdmglog",			"OnOff_DefaultOn"
+	StaticText " "
+	KCOption "Tracers vs Hitscan",		"Determines if applicable MONSTERS shoot hitscan bullets, or fast-projectile tracers instead. Default: Tracers",		"kc_bulletstracers", 				"MonsterTracers"
+	KCTextField "Tracers Speed Multiplier [x]",		"Default: 1[x]",		"kc_tracervelmulti"
+	StaticText " "
+	KCOption "'Improved' Icon of Sin",		"If this is turned on, a Romero's Head will gain a large Max HP boost, IF any spawn-cube shooters and spawn-cube spawnspots are also detected in the same map. Use this if you want longer IoS fights. Default: Yes",		"exex_improvediconofsin", 				"YesNo_DefaultYes"
+	KCOption "IoS Death Kills Its Minions",		"If this is turned on, killing the Icon of Sin also kills all of its SPAWNS. Default: Yes",		"exex_iconofsindthkillminions", 				"YesNo_DefaultYes"
+	StaticText " "
+	KCTextField "Dead Monsters Fade [secs]",		"If not set to '0', sets a number of tics (positive values) or seconds (negative value * 35 tics) before a slain monster fades away. If set to '0', no fading occurs.",		"kc_deadmonsterfade"
+	StaticText " "
+	KCOption "Allow Dynamic Inventory Limits?",		"Allows your level to affect inventory item limits. Default: Yes",		"kc_dynamicinventorylimits", 				"YesNo_DefaultYes"
+	KCOption "Allow Dynamic Ammo Limits?",		"Allows your level to affect ammo limits. Default: Yes",		"kc_dynamicammolimits", 				"YesNo_DefaultYes"
 }
 
 OptionMenu "KC-GeneralMenu2"
