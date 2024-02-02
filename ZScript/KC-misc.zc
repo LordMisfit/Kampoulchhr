@@ -358,7 +358,10 @@ class PlayerStatItem : Inventory
 						{
 							owner.A_GiveInventory("Medibag",MaxHealthTrue);
 							let medbag2 = MediBag(owner.FindInventory("MediBag",false));
-							if (medbag2) medbag2.Amount = medbag2.MaxAmount = MaxHealthTrue;
+							if (medbag2) 
+							{
+								medbag2.Amount = medbag2.MaxAmount = medbag2.InterHubAmount = MaxHealthTrue;
+							}
 							
 							int tempval = CountInv("TimeSeraphBangle");
 							let tsb = TimeSeraphBangle(owner.FindInventory("TimeSeraphBangle",false));
