@@ -4,6 +4,12 @@ OptionValue "MonsterTracers"
 	1, "Tracers [DEFAULT]"
 }
 
+OptionValue "HPRegenType"
+{
+	0, "Very High Regen @ <10%/High Degen @ >100%"
+	1, "Mod-High Regen @ <10%/Mod Degen @ >100% [DEFAULT]"
+}
+
 OptionValue "StartTSArtifact"
 {
 	0, "No [DEFAULT]"
@@ -113,8 +119,8 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "Tracers vs Hitscan",		"Determines if applicable MONSTERS shoot hitscan bullets, or fast-projectile tracers instead. Default: Tracers",		"kc_bulletstracers", 				"MonsterTracers"
 	KCTextField "Tracers Speed Multiplier [x]",		"Default: 1[x]",		"kc_tracervelmulti"
 	StaticText " "
-	KCOption "'Improved' Icon of Sin",		"If this is turned on, a Romero's Head will gain a large Max HP boost, IF any spawn-cube shooters and spawn-cube spawnspots are also detected in the same map. Use this if you want longer IoS fights. Default: Yes",		"exex_improvediconofsin", 				"YesNo_DefaultYes"
-	KCOption "IoS Death Kills Its Minions",		"If this is turned on, killing the Icon of Sin also kills all of its SPAWNS. Default: Yes",		"exex_iconofsindthkillminions", 				"YesNo_DefaultYes"
+	KCOption "'Improved' Icon of Sin",		"If this is turned on, a Romero's Head will gain a large Max HP boost, IF any spawn-cube shooters and spawn-cube spawnspots are also detected in the same map. Use this if you want longer IoS fights. Default: Yes",		"kc_improvediconofsin", 				"YesNo_DefaultYes"
+	KCOption "IoS Death Kills Its Minions",		"If this is turned on, killing the Icon of Sin also kills all of its SPAWNS. Default: Yes",		"kc_iconofsindthkillminions", 				"YesNo_DefaultYes"
 	StaticText " "
 	KCTextField "Dead Monsters Fade [secs]",		"If not set to '0', sets a number of tics (positive values) or seconds (negative value * 35 tics) before a slain monster fades away. If set to '0', no fading occurs.",		"kc_deadmonsterfade"
 	StaticText " "
@@ -133,6 +139,54 @@ OptionMenu "KC-GeneralMenu2"
 	KCOption "Player BPM",		"Default: On",		"kc_playerbpm",					"OnOff_DefaultOn"
 	KCOption "Player Low Health Tunnel (HUD Effect)",		"Default: On",		"kc_playerbpmhud",					"OnOff_DefaultOn"
 	KCTextfield "Footstep Volume",		"Set to 0.0 to silence footsteps if needed. Default: 1.0[x]",		"kc_footstepvolume"
+}
+
+OptionMenu "KC-RPGOptionsMonsters"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - RPG [Monster] Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCTextField "Enemy Armor Bypass Factor [x]",		"Monsters at higher levels start gaining a minor ability to ignore part of a player's armor. This setting affects how high that multiplier is. Player damagelogs will show how much % of your armor's protection was bypassed. If set to <0.001, armor bypass from enemy attacks is completely DISABLED. Default: 1.0[x]",		"KC_enemyarmorignorefactor"
+	StaticText " "
+	KCOption "Enemy Scaling [Levels]",		"Turning this on allows monsters' health/attack/defense to slightly scale up with the player's level.",		"kc_enemyscalingplevel", 				"YesNo_DefaultYes"
+	KCTextField "Enemy Scale Multiplier [Levels] (#x)",		"Sets the Multiplier for Player-Level Based Enemy Scaling. Default: 1.0[x]",		"kc_enemyscalelevelmultiplier"
+	KCTextField "Enemy Level Difficulty Inflate (PlayerLevel) [#]",		"Monsters have a (possible) flat value of [#] added to their level calculations when spawned. Default: 0",		"kc_leveldifficultyinflation"
+	KCTextField "Enemy Level Difficulty Inflate (PlayerLevel) [%]",		"Monsters have an (possible) percentile value [%] added to their level calculations when spawned. Default: 0[%]",		"kc_leveldifficultyinflation2"
+	KCOption "Enemy Scaling [Maps]",		"Turning this on allows monsters' health/attack/defense to slightly scale up with the # of maps completed.",		"kc_enemyscalingmaps", 				"YesNo_DefaultYes"
+	KCTextField "Enemy Scale Multiplier [Maps] (#x)",		"Sets the Multiplier for Map Based Enemy Scaling. Default: 1.0[x]",		"kc_enemyscalemapmultiplier"
+	KCTextField "Enemy Level Difficulty Inflate (Maps) [#]",		"Monsters stats are further boosted on this (possible) flat amount of maps. Default: 0",		"kc_mapdifficultyinflation"
+	KCTextField "Enemy Level Difficulty Inflate (Maps) [%]",		"Monsters stats are further boosted on this (possible) percentile amount of maps. Default: 0[%]",		"kc_mapdifficultyinflation2"
+	KCOption "Enemy Scaling Levels Can Give Traits?",		"Enemies past certain levels can accquire traits (avoiding melee, avoiding crushers, moving faster, etc.) when exceeding certain thresholds with this on. Default: Yes.",		"kc_monsterlevelenabledflags",				"YesNo_DefaultYes"
+	
+	StaticText ""
+	Command "Restore Default Settings", 			"KC_defaultsrpgmonsters"
+}
+
+OptionMenu "KC-RPGOptions"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - RPG Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Exp Enabled",		"Enables EXP and Levels. Default: Yes",		"kc_expgains",			"YesNo_DefaultYes"
+	KCTextField "Exp Multiplier (#x)",		"Sets the Default Multiplier for EXP Gains. This does NOT apply to Heiwa's unique EXP boosts for low-level ranges, that is its own separate option. Default: 1.0[x]",		"kc_expmultiplier"
+	StaticText " "
+	KCOption "Extra ATK/DEF/SPD on Level Ups",		"If 'Yes', any level up can randomly give an extra boost to either Attack, Defense and/or Speed. If this is set to 'No', the benefits from these are also disabled until turned back on. Default: Yes",		"kc_extraatkdefspd",			"YesNo_DefaultYes"
+	StaticText " "
+	KCOption "Player HP [Re/De]gen Type",		"Affects the Health-based regen/degen system (the calculations based on current health only). Default: Mod-High Regen",		"kc_healthregendegentype", 				"HPRegenType"
+	KCTextField "Player Level Factor [Punch]",		"Determines how many levels are needed per incremented speed of punches. Default: 5",		"kc_punchspdlvlint"
+	KCTextField "Player Level Factor [Uppercut]",		"Determines how many levels are needed per incremented speed of uppercuts. Default: 5",		"kc_upcutspdlvlint"
+	KCTextField "Player Level Factor [Kick]",		"Determines how many levels are needed per incremented speed of kicks. Default: 5",		"kc_kickspdlvlint"
+	KCTextField "Player Level Factor [Impaler XBow]",		"Determines how many levels are needed per incremented speed of the impaler crossbow. Default: 3",		"kc_impalerxbowlvlint"
+	KCTextField "Player Level Factor [Flat Defense]",		"Determines how many levels/defense stat points are needed per +1 point of FLAT defense. Default: 10",		"kc_defenselvlint"
+	StaticText " "
+	KCSubMenu "RPG [Monster] Options",	"Tweak monster related options",		"KC-RPGOptionsMonsters"
+	StaticText " "
 }
 
 OptionMenu "KC-MarineSpecific"
@@ -163,6 +217,8 @@ OptionMenu "KC-HeiwaSpecific"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 
+	KCOption "EXP Boost Perk for <Level 25",		"Determines if Heiwa's unique perk for boosting EXP intake while under level 25 (to counterbalance her low starting HP) is in effect. Unlike other options below, this one can be toggled off/on even after a new game is already started. Default: Yes",		"kcheiwa_lowlevelexpmulti", 				"YesNo_DefaultYes"
+	StaticText " "
 	KCTextfield "Starts w/ # of Def. Time Freeze Uses",		"Determines how many times Heiwa has pre-used her time freeze ability [defensive] at the start of a game. Canonically she has used it once before the mod starts, hence the default is 1 NOT 0. :V Default: 1",		"kcheiwa_timefreeze1times"
 	StaticText " "
 	KCOption "Starts w/ Time Seraph's Charm?",		"Determines if Heiwa starts a new game with the Teme Seraph's Charm [and access to the Level 1 Time Seraph's Armor].",		"kcheiwa_startcharm", 				"StartTSArtifact"
@@ -368,6 +424,7 @@ OptionMenu "KCOptions"
 	}
 	KCSubMenu "Heiwa Specific Options",		"Heiwa Specific Options. V:",		"KC-HeiwaSpecific"
 	StaticText " "
+	KCSubMenu "RPG Options",		"Options for RPG Mechanics.",		"KC-RPGOptions"
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
 	StaticText " "

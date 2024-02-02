@@ -4561,21 +4561,28 @@ class KC_EventHandler : EventHandler
 						{
 							if (A_CheckForHeiwaPlayer())
 							{
-								if (MiscItem && MiscItem.heiwavhardmodifier)
+								if (kcheiwa_lowlevelexpmulti)
 								{
-											 if (PLevel < 5)  BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
-									else if (PLevel < 10) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
-									else if (PLevel < 25) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
-									else if (PLevel < 50) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
-																	 else BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
+									if (MiscItem && MiscItem.heiwavhardmodifier)
+									{
+												 if (PLevel < 5)  BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
+										else if (PLevel < 10) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
+										else if (PLevel < 25) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
+										else if (PLevel < 50) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
+																		 else BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
+									}
+									else
+									{
+												 if (PLevel < 2)  BaseExpMultiBonus = frandompick(5.5,7.334,7.334,7.334,6.772);
+										else if (PLevel < 5)  BaseExpMultiBonus = frandompick(3.75,5.0,5.0,5.0,6.25);
+										else if (PLevel < 10) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
+										else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.5,2.0,2.0,2.0,2.5);
+																		 else BaseExpMultiBonus = frandompick(1.125,1.25,1.25,1.25,1.375);
+									}
 								}
 								else
 								{
-											 if (PLevel < 2)  BaseExpMultiBonus = frandompick(5.5,7.334,7.334,7.334,6.772);
-									else if (PLevel < 5)  BaseExpMultiBonus = frandompick(3.75,5.0,5.0,5.0,6.25);
-									else if (PLevel < 10) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
-									else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.5,2.0,2.0,2.0,2.5);
-																	 else BaseExpMultiBonus = frandompick(1.125,1.25,1.25,1.25,1.375);
+									BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
 								}
 								
 								double BaseExpMultiBonus2 = 1.0;
