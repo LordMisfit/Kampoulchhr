@@ -13438,7 +13438,15 @@ class KnifeHeiwa : MarineWeapon
 				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1);
 			}
 		}
-
+	}
+	
+	action double A_GetKnifeSpd()
+	{
+		double output = 10;
+		double oldoutput = output;
+		if (output <= 1.0) output = 1.0;
+		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
+		return output;
 	}
 	
 	States
@@ -13466,60 +13474,193 @@ class KnifeHeiwa : MarineWeapon
 			}
 			KNFG I 2 
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_KnifeHit(0,0);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG J 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_KnifeHit(0,1);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG K 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_KnifeHit(0,0);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG L 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
+				}
+				A_SetTics(tic);
 				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG K 2
 			{
-				if (A_CheckBerserk()) A_SetTics(1);
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_ReFire("FireBackSlash");
 			}
 			KNFG J 2
 			{
-				if (A_CheckBerserk()) A_SetTics(1);
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 			}
 			KNFG G 2 
 			{
-				if (A_CheckBerserk()) A_SetTics(1);
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_ReFire();
 			}
 			goto Ready;
 		FireBackSlash:
 			KNFG L 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
+				}
+				A_SetTics(tic);
 				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG K 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_KnifeHit(0,0);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG J 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				A_KnifeHit(0,1);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			KNFG I 2 
 			{
 				A_KnifeHit(0,0);
-				if (A_CheckBerserk()) A_SetTics(1);
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
+				}
+				A_SetTics(tic);
 			}
 			KNFG H 2
 			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 2;
+				if (A_CheckBerserk()) 
+				{
+					tic -= 1;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) tic -= 1;
+				}
+				else
+				{
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
+				}
+				A_SetTics(tic);
 				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			goto Ready;
