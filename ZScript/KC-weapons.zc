@@ -7999,10 +7999,11 @@ class ImpalerXBow : MarineWeapon
 		Weapon.AmmoType1 "ImpalerBolts";
 		Weapon.AmmoType2 "ImpalerBolts";
 		Weapon.AmmoUse1 1;
-		Weapon.AmmoUse2 3;
+		Weapon.AmmoUse2 0;
 		Weapon.UpSound "Weapon/XBowLoad";
 		Weapon.KickBack 20;
 		+WEAPON.NOALERT;
+		+WEAPON.ALT_AMMO_OPTIONAL;
 		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
@@ -8255,7 +8256,7 @@ class ImpalerXBow : MarineWeapon
 				if (CountInv("ImpalerBolts") <= 2) 
 				{
 					if (CountInv("ImpalerBolts") <= 0) return resolvestate("FakeReady");
-					else return resolvestate("RealReady");
+																				else return resolvestate("RealReady");
 				}
 				return resolvestate(null);
 			}
@@ -8279,6 +8280,7 @@ class ImpalerXBow : MarineWeapon
 				A_SetSonicNailStats(BombShots,2);
 				
 				A_XBowRecoil(2.1875);
+				A_TakeInventory("ImpalerBolts",3,TIF_NOTAKEINFINITE);
 				
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 9;
@@ -11100,8 +11102,8 @@ Class Translocator : MarineWeapon
 		Weapon.AmmoType1 "TLBeaconAmmo";
 		Weapon.BobSpeed 0.0;
 		Weapon.SlotNumber 8;
-		//Weapon.SlotPriority 0;
-		//Weapon.SelectionOrder 4000;
+		Weapon.SlotPriority 0;
+		Weapon.SelectionOrder 4000;
 		Obituary "%o was telefragged by %k!";
 		+FLOORCLIP;	
 		+WEAPON.NO_AUTO_SWITCH;
