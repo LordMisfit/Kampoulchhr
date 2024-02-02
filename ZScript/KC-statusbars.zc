@@ -2225,6 +2225,7 @@ class KCStatusBarMain : BaseStatusBar
 		x -= baseinc;
 		y -= baseinc;
 		wsname = "ChaingunMarine";
+		if (A_CheckForHeiwa()) wsname = "BlasterRifle";
 		wsammoname = "Clip";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (CPlayerPawn.CountInv(wsname))

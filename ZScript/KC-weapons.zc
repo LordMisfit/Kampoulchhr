@@ -12792,7 +12792,7 @@ Class PistolBlast : PlasmaBallNew
 		Translation "192:207=168:183", "240:247=184:191";
 		Decal "BlasterScorch";
 		Scale 0.8;
-		
+		DamageType "Plasma";
 		+SPAWNSOUNDSOURCE;
 	}
 	
@@ -13721,5 +13721,118 @@ class KnifePuffNoSound : KnifePuff
 		SeeSound "KnifeHitThing";
 		AttackSound "";
 		ActiveSound "";
+	}
+}
+
+class BlasterRifle : MarineWeapon // DoomWeapon 2001
+{
+	default
+	{
+		//SpawnID 27;
+		Weapon.SelectionOrder 1300;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoUse2 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "Cell";
+		Weapon.AmmoType2 "Cell";
+		Weapon.SlotNumber 4;
+		Inventory.PickupMessage "You got the \cxE-11 Blaster Rifle\c-! \cx[Slot 4]\c-";
+		Inventory.RestrictedTo "HeiwaPlayer";
+	}
+	
+	States
+	{
+		Ready:
+			E11G ABCDCB 6 A_WeaponReady();
+			Loop;
+		Deselect:
+			E11G A 1 A_Lower(12);
+			Loop;
+		Select:
+			E11G A 1 A_Raise(12);
+			Loop;
+		Fire:
+			E11G A 3;
+			E11F A 4 
+			{
+				A_GunFlash();
+				A_FireProjectile("Blaster_RifleShot");
+			}
+			E11G A 3 A_ReFire();
+			Goto Ready;
+		AltFire:
+			E11G A 2;
+			E11F A 3
+			{
+				A_GunFlash();
+				double ang = random(-4,4);
+				double ofs = -ang;
+				A_FireProjectile("Blaster_RifleShot",ang,1,ofs);
+			}
+			E11G A 0 A_ReFire();
+			Goto Ready;
+		Flash:
+			E11F A 4 Bright A_Light2();
+			Goto LightDone;
+		Spawn:
+			E11B A -1;
+			Stop;
+	}
+}
+
+class Blaster_RifleShot : KCFastProjectile
+{
+	default
+	{
+		PROJECTILE;
+		Radius 2;
+		Height 4;
+		Speed 104; // 26;
+		DamageFunction (randompick(4,5,5,5,5,6) * random(randompick(1,1,1,2,2,3),8));
+		Obituary "%o got blasted by %k, like the rebel scum %g is!";
+		SeeSound "weapons/blasterrifle";
+		Scale 1.0;
+		Decal "BulletChip";
+		DamageType "Plasma";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 3;
+			BLAS AA 1 BRIGHT A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
+			Goto Spawn+1;
+		Death:
+			TNT1 AAA 0 A_SpawnItemEx("Blaster_RifleShot_Hit");
+			TNT1 A 35;
+			Stop;
+	}
+}
+
+class Blaster_RifleShot_Hit : RedParticleFountain
+{
+	States
+	{
+		Spawn:
+			TNT1 A 16;
+			Stop;
+	}
+}
+
+class Blaster_RifleShot_Trail : KCBaseZSC
+{
+	default
+	{
+		+NOGRAVITY;
+		+NOCLIP;
+		Speed 1;
+		Translation "112:127=171:191";
+		Scale 0.5;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1;
+			BLAS A 2;
+			Stop;
 	}
 }
