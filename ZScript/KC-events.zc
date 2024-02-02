@@ -3574,7 +3574,7 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
-							if (A_CheckForHeiwaPlayer()) user_type = random(1,16);
+							if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
 							droptype = "BackPack2";
 							if (user_type == 1) 
 							{
@@ -5170,10 +5170,10 @@ class KC_EventHandler : EventHandler
 						//playera.A_SetInventory("KCTimeCooldown3",1);
 						MiscItem.timefreeze1cooldownratio2 = 0.0;
 
-						MiscItem.timefreeze1timesused += random(2,3);
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze1timesused += random(2,3); // 1
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze1timesused += random(2,3); // 1
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze1timesused += random(2,3); // 1
+						MiscItem.timefreeze1timesused += MiscItem.timeusemulti;
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
+						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
 						playera.A_StopSound(217); // Cuts Wind-Down Off
 						playera.A_StopSound(218); // Cuts Ticks Off
 						playera.A_StartSound("TimeFreezeOut4a",216,CHANF_DEFAULT,0.875,ATTN_NONE); 

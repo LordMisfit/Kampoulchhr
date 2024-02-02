@@ -233,6 +233,8 @@ class PlayerStatItem : Inventory
 	int timestopcooldown3tics;
 	int timestopcooldown3maxtics;
 	
+	int timeusemulti;
+	
 	double TimeArmorChargeSoundInc;
 	double TimeArmorEnergyTics;
 	double TimeArmorEnergyMaxTics;
@@ -341,6 +343,8 @@ class PlayerStatItem : Inventory
 			{
 				// Initalization Stuff
 				InitStuff();
+				
+				timeusemulti = random(2,3); // random(1,1,1,1,1,1,1,2);
 				
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
 				else berserked = false;
@@ -633,6 +637,67 @@ class PlayerStatItem : Inventory
 						BaseStartMaxHealth = MaxHealthTrue; // Sets the original Max Health as at the start of a game [for various checks, including Sigil damage]
 						if (kcdebug_startupinfo) Console.Printf("MaxHP: %d", MaxHealthTrue);
 					}
+					
+					// Inventory/Weapon Force-Start Options
+					if (A_CheckForHeiwa())
+					{
+						timefreeze1timesused = kcheiwa_timefreeze1times;
+						if (kcheiwa_startcharm) owner.A_SetInventory("TimeSeraphCharm",1);
+						if (kcheiwa_startwatch) owner.A_SetInventory("TimeSeraphPocketWatch",1);
+						if (kcheiwa_startbangle) owner.A_SetInventory("TimeSeraphBangle",1);
+						if (kcheiwa_startknife) owner.A_SetInventory("KnifeHeiwa",1);
+						if (kcheiwa_startglock) owner.A_SetInventory("Glock21",1);
+						if (kcheiwa_startblaster) 
+						{
+							if (kcheiwa_startblaster >= 1) owner.A_SetInventory("BlasterPistol",1);
+							if (kcheiwa_startblaster >= 2) owner.A_SetInventory("BlasterPistols",1);
+						}
+						if (kcheiwa_startriotgun) owner.A_SetInventory("RiotGun",1);
+						if (kcheiwa_starttommygun) 
+						{
+							if (kcheiwa_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
+							if (kcheiwa_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
+						}
+						if (kcheiwa_startblastrifle) owner.A_SetInventory("BlasterRifle",1);
+						if (kcheiwa_startdevastator) 
+						{
+							if (kcheiwa_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
+							if (kcheiwa_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
+						}
+						if (kcheiwa_startdeviation) owner.A_SetInventory("Deviation",1);
+						if (kcheiwa_starttesla) 
+						{
+							if (kcheiwa_starttesla >= 1) owner.A_SetInventory("TeslaCannon",1);
+							if (kcheiwa_starttesla >= 2) owner.A_SetInventory("DualTeslaCannons",1);
+						}
+						if (kcheiwa_startbhgen) owner.A_SetInventory("BHGen",1);
+						if (kcheiwa_starttransloc) owner.A_SetInventory("Translocator",1);
+						if (kcheiwa_startsawthrower) owner.A_SetInventory("SawThrower",1);
+						if (kcheiwa_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
+					}
+					else
+					{
+						if (kcdoomg_startglock) owner.A_SetInventory("Glock21",1);
+						if (kcdoomg_starttommygun) 
+						{
+							if (kcdoomg_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
+							if (kcdoomg_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
+						}
+						if (kcdoomg_startdevastator) 
+						{
+							if (kcdoomg_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
+							if (kcdoomg_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
+						}
+						if (kcdoomg_starttesla) 
+						{
+							if (kcdoomg_starttesla >= 1) owner.A_SetInventory("TeslaCannon",1);
+							if (kcdoomg_starttesla >= 2) owner.A_SetInventory("DualTeslaCannons",1);
+						}
+						if (kcdoomg_startbhgen) owner.A_SetInventory("BHGen",1);
+						if (kcdoomg_starttransloc) owner.A_SetInventory("Translocator",1);
+						if (kcdoomg_startsawthrower) owner.A_SetInventory("SawThrower",1);
+						if (kcdoomg_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
+					}
 				}
 				if (kc_expgains) 
 				{
@@ -647,66 +712,6 @@ class PlayerStatItem : Inventory
 					TruePlayerATK = 0;
 					TruePlayerDEF = 0;
 					TruePlayerSPD = 0;
-				}
-				
-				// Inventory/Weapon Force-Start Options
-				if (A_CheckForHeiwa())
-				{
-					timefreeze1timesused = kcheiwa_timefreeze1times;
-					if (kcheiwa_startcharm) owner.A_SetInventory("TimeSeraphCharm",1);
-					if (kcheiwa_startwatch) owner.A_SetInventory("TimeSeraphPocketWatch",1);
-					if (kcheiwa_startbangle) owner.A_SetInventory("TimeSeraphBangle",1);
-					if (kcheiwa_startglock) owner.A_SetInventory("Glock21",1);
-					if (kcheiwa_startblaster) 
-					{
-						if (kcheiwa_startblaster >= 1) owner.A_SetInventory("BlasterPistol",1);
-						if (kcheiwa_startblaster >= 2) owner.A_SetInventory("BlasterPistols",1);
-					}
-					if (kcheiwa_startriotgun) owner.A_SetInventory("RiotGun",1);
-					if (kcheiwa_starttommygun) 
-					{
-						if (kcheiwa_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
-						if (kcheiwa_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
-					}
-					if (kcheiwa_startblastrifle) owner.A_SetInventory("BlasterRifle",1);
-					if (kcheiwa_startdevastator) 
-					{
-						if (kcheiwa_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
-						if (kcheiwa_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
-					}
-					if (kcheiwa_startdeviation) owner.A_SetInventory("Deviation",1);
-					if (kcheiwa_starttesla) 
-					{
-						if (kcheiwa_starttesla >= 1) owner.A_SetInventory("TeslaCannon",1);
-						if (kcheiwa_starttesla >= 2) owner.A_SetInventory("DualTeslaCannons",1);
-					}
-					if (kcheiwa_startbhgen) owner.A_SetInventory("BHGen",1);
-					if (kcheiwa_starttransloc) owner.A_SetInventory("Translocator",1);
-					if (kcheiwa_startsawthrower) owner.A_SetInventory("SawThrower",1);
-					if (kcheiwa_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
-				}
-				else
-				{
-					if (kcdoomg_startglock) owner.A_SetInventory("Glock21",1);
-					if (kcdoomg_starttommygun) 
-					{
-						if (kcdoomg_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
-						if (kcdoomg_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
-					}
-					if (kcdoomg_startdevastator) 
-					{
-						if (kcdoomg_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
-						if (kcdoomg_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
-					}
-					if (kcdoomg_starttesla) 
-					{
-						if (kcdoomg_starttesla >= 1) owner.A_SetInventory("TeslaCannon",1);
-						if (kcdoomg_starttesla >= 2) owner.A_SetInventory("DualTeslaCannons",1);
-					}
-					if (kcdoomg_startbhgen) owner.A_SetInventory("BHGen",1);
-					if (kcdoomg_starttransloc) owner.A_SetInventory("Translocator",1);
-					if (kcdoomg_startsawthrower) owner.A_SetInventory("SawThrower",1);
-					if (kcdoomg_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
 				}
 				
 				// Misc
@@ -2467,6 +2472,19 @@ class PlayerStatItem : Inventory
 						if (berserked) WeaponJumpEx -= 0.00625;
 											else WeaponJumpEx -= 0.025;
 					}
+				}
+			}
+			if (weapon is "BlasterRifle")
+			{
+				if (A_CheckForHeiwa())
+				{
+					if (berserked) WeaponJumpEx -= 0.0125;
+										else WeaponJumpEx -= 0.05;
+				}
+				else
+				{
+					if (berserked) WeaponJumpEx -= 0.00625;
+										else WeaponJumpEx -= 0.025;
 				}
 			}
 			if (weapon is "Deviation")
@@ -4397,10 +4415,10 @@ class PlayerStatItem : Inventory
 				{
 					if (timestopcooldown1tics == 0) 
 					{
-						timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += random(2,3); // 1
+						timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += timeusemulti; // 1
 					}
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
@@ -4422,10 +4440,10 @@ class PlayerStatItem : Inventory
 				{
 					if (timestopcooldown1tics == 0) 
 					{
-						timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += random(2,3); // 1
-						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += random(2,3); // 1
+						timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timefreeze1timesused += timeusemulti; // 1
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timefreeze1timesused += timeusemulti; // 1
 					}
 					timestopcooldown1tics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
 					timestopcooldown1maxtics = (int(timefreeze1cooldown * TICRATE) * timefreeze1cooldownratio2);
@@ -5675,6 +5693,26 @@ class PlayerStatItem : Inventory
 			tempfactor1 *= tempfactor2;
 			WeaponFactorEx -= tempfactor1;
 		}
+		if (weapon is "BlasterRifle")
+		{
+			if (A_CheckForHeiwa())
+			{
+				if (berserked) tempfactor1 = 0.025;
+									else tempfactor1 = 0.1;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+			}
+			else
+			{
+				if (berserked) tempfactor1 = 0.0125;
+									else tempfactor1 = 0.05;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (MarineWeapLevel * 0.834)) ));
+				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+			WeaponFactorEx -= tempfactor1;
+		}
 		if (weapon is "Deviation")
 		{
 			if (A_CheckForHeiwa())
@@ -6345,6 +6383,35 @@ class PlayerDashJump : Inventory
 						DashCost *= 1.01667;
 						MaxDashCooldown *= 1.00556;
 					}
+				}
+			}
+		}
+		if (weapon is "BlasterRifle")
+		{
+			if (A_CheckForHeiwa())
+			{
+				if (!berserked)
+				{
+					DashCost *= 1.06667;
+					MaxDashCooldown *= 1.02223;
+				}
+				else 
+				{
+					DashCost *= 1.03334;
+					MaxDashCooldown *= 1.01112;
+				}
+			}
+			else
+			{
+				if (!berserked)
+				{
+					DashCost *= 1.03334;
+					MaxDashCooldown *= 1.01112;
+				}
+				else 
+				{
+					DashCost *= 1.01667;
+					MaxDashCooldown *= 1.00556;
 				}
 			}
 		}
