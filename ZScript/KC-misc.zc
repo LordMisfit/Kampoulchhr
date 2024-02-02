@@ -652,6 +652,7 @@ class PlayerStatItem : Inventory
 				// Inventory/Weapon Force-Start Options
 				if (A_CheckForHeiwa())
 				{
+					timefreeze1timesused = kcheiwa_timefreeze1times;
 					if (kcheiwa_startcharm) owner.A_SetInventory("TimeSeraphCharm",1);
 					if (kcheiwa_startwatch) owner.A_SetInventory("TimeSeraphPocketWatch",1);
 					if (kcheiwa_startbangle) owner.A_SetInventory("TimeSeraphBangle",1);
