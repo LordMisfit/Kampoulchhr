@@ -126,11 +126,17 @@ Class KCLevelCompatibility : LevelPostProcessor
 	
 	protected void Apply( Name checksum, String mapname )
 	{
-		/*
 		if (gameinfo.gametype & GAME_Doom)
 		{
 			switch(checksum)
 			{
+				case 'a130224617d892e5023ab43392f4000d': // dbp37_augzen.wad map01
+				{
+					AddThing(25083,(1520,-2032,0),0,SKILLS_ALL,MODES_ALL); 
+					if (kcdebug_showcompatibility) Console.Printf("LOLE MAP01 AUGZEN BLASTPISTOL");
+					break;
+				}
+		/*
 				case 'F1CC189AC134E21D6A663A9C48A582EE': // circus2(-fixed).wad map01
 				case '190FC2E501B21733E4B6A823E114D02C': // circus2-fixed-1.1.pk3 map01
 				case '4743D0AE68F6EB99FA10AC1A1BEE7CBB': // circus2-fixed-1.2.pk3 map01
@@ -277,9 +283,10 @@ Class KCLevelCompatibility : LevelPostProcessor
 				case 'c9150d20269e806a8bcf45dde11f5341':
 				{
 				}
+		*/
 			}
 		}
-
+		/*
 		if (gameinfo.gametype & GAME_Hexen)
 		{
 			// [Hexen] force Mystic Ambit Incants to spawn outside coop [thanks Marisa :V]
