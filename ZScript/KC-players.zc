@@ -1203,8 +1203,8 @@ class KCPlayerPawn : PlayerPawn
 			{
 				MiscItem.MercyInvulnOn = true;
 				MiscItem.MercyInvulnTimer = 1210; // 1.5 Seconds
-				if (A_CheckForHeiwa()) MiscItem.MercyInvulnTimer += int(ActualLevel * 4.875);
-													else MiscItem.MercyInvulnTimer += int(ActualLevel * 3.65);
+				if (A_CheckForHeiwa()) MiscItem.MercyInvulnTimer += int(ActualLevel * 24.375);
+													else MiscItem.MercyInvulnTimer += int(ActualLevel * 18.25);
 				
 				if (MiscItem.sielsgraceactive) 
 				{
@@ -1253,6 +1253,10 @@ class KCPlayerPawn : PlayerPawn
 				else
 				{
 					player.health = player.mo.health = 1;
+				}
+				
+				if (player.cheats & CF_BUDDHA)
+				{
 				}
 			}
 		}

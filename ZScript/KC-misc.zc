@@ -3220,39 +3220,39 @@ class PlayerStatItem : Inventory
 			timefreezedurationinc1 = 0.05;
 			timefreezedurationinc2 = 0.1;
 
-			sielsgracecooldownbase = (240 * 35); // 4 Minutes
+			sielsgracecooldownbase = (700 * 35); // 4 Minutes
 			if (A_CheckForHeiwa()) 
 			{
 				int sielgracestartchancemax = 64;
 				if (TrueGameSkill == SKILL_VERY_EASY) 
 				{
-					sielgracestartchancemax = 256;
-					sielsgracecooldownbase = (180 * TICRATE);
+					sielgracestartchancemax = 16;
+					sielsgracecooldownbase = (540 * TICRATE);
 				}
 				if (TrueGameSkill == SKILL_EASY) 
 				{
-					sielgracestartchancemax = 128;
-					sielsgracecooldownbase = (210 * TICRATE);
+					sielgracestartchancemax = 32;
+					sielsgracecooldownbase = (630 * TICRATE);
 				}
 				if (TrueGameSkill == SKILL_NORMAL)
 				{
 					sielgracestartchancemax = 64;
-					sielsgracecooldownbase = (240 * TICRATE);
+					sielsgracecooldownbase = (700 * TICRATE);
 				}
 				if (TrueGameSkill == SKILL_HARD) 
 				{
-					sielgracestartchancemax = 32;
-					sielsgracecooldownbase = (270 * TICRATE);
+					sielgracestartchancemax = 128;
+					sielsgracecooldownbase = (770 * TICRATE);
 				}
 				if (TrueGameSkill == SKILL_VERY_HARD) 
 				{
-					sielgracestartchancemax = 16;
-					sielsgracecooldownbase = (300 * TICRATE);
+					sielgracestartchancemax = 256;
+					sielsgracecooldownbase = (840 * TICRATE);
 				}
-				sielgracestartchancemax /= random(1,32);
+				sielgracestartchancemax /= randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,4,4,4,4,4,8,8,8,8,16,16,16,32,32,64);
 				if (sielgracestartchancemax < 2) sielgracestartchancemax = 2;
-				if (random(1,sielgracestartchancemax) <= 1) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
-																							 else sielsgraceactive = true;
+				if (random(1,sielgracestartchancemax) <= (sielgracestartchancemax-1)) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
+																																				 else sielsgraceactive = true;
 			}
 		}
 	}
@@ -6185,11 +6185,18 @@ class PlayerDashJump : Inventory
 			{
 				MaxDashTics *= frandompick[statitem](1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
 			}
-			if (kc_allowdashing > 2) MaxDashTics *= 0.5;
 		}
 		MaxDashTics *= dashtimermulti;
 		dashveltimer = DashTimer % 2;
 		dashveltimer2 = DashTimer % 1;
+		
+		int MDTicCeiling = 64;
+		if (kc_allowdashing > 2) 
+		{
+			MaxDashTics *= 0.5;
+			MDTicCeiling *= 0.5;
+		}
+		if (MaxDashTics > MDTicCeiling) MaxDashTics = MDTicCeiling;
 		
 		double DashSpdMul = 1.00;
 		DashSpeed = (25 + (ActualLevel * 0.03125));
@@ -6219,6 +6226,12 @@ class PlayerDashJump : Inventory
 			if (skill == 3) MaxDashCooldown += randompick[statitem](2,3,4);
 			if (skill >= 4) MaxDashCooldown += randompick[statitem](4,4,5);
 			MaxDashCooldown *= (1.0 - (ActualLevel * 0.025));
+			
+			if (MiscItem.MercyInvulnOnSiel)
+			{
+				DashCost *= 0.5;
+				MaxDashCooldown *= 0.5;
+			}
 		}
 		else
 		{
