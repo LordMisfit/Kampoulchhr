@@ -122,6 +122,8 @@ class PlayerStatItem : Inventory
 	int HPMaxGain, MassGain, VitHPMaxGain;
 	int SurvivalRate;
 
+	int spbkpkmaxhealthcarry;
+
 	int PrevHealthRatio;
 	int HealthRatio;
 	int CurrentHealth;
@@ -349,6 +351,12 @@ class PlayerStatItem : Inventory
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
 				else berserked = false;
 				
+				spbkpkmaxhealthcarry = MaxHealthTrue;
+				if (owner.CountInv("BackPackTier1"))
+				{
+					if (owner.CountInv("BackPackTier2")) spbkpkmaxhealthcarry *= 2.5;
+																					else spbkpkmaxhealthcarry *= 1.5;
+				}
 				let medbag = MediBag(owner.FindInventory("MediBag",false));
 				if (A_CheckForHeiwa())
 				{
@@ -356,11 +364,11 @@ class PlayerStatItem : Inventory
 					{
 						if (!medbag) 
 						{
-							owner.A_GiveInventory("Medibag",MaxHealthTrue);
+							owner.A_GiveInventory("Medibag",spbkpkmaxhealthcarry);
 							let medbag2 = MediBag(owner.FindInventory("MediBag",false));
 							if (medbag2) 
 							{
-								medbag2.Amount = medbag2.MaxAmount = medbag2.InterHubAmount = MaxHealthTrue;
+								medbag2.Amount = medbag2.MaxAmount = medbag2.InterHubAmount = spbkpkmaxhealthcarry;
 							}
 							
 							int tempval = CountInv("TimeSeraphBangle");
@@ -5165,8 +5173,8 @@ class PlayerStatItem : Inventory
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseBlockFactor1 = 0.3125;
-						BaseBlockFactor2 = 0.3125;
+						BaseBlockFactor1 = 0.25;
+						BaseBlockFactor2 = 0.25;
 					}
 					else
 					{
@@ -5184,8 +5192,8 @@ class PlayerStatItem : Inventory
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseBlockFactor1 = 0.234375;
-						BaseBlockFactor2 = 0.234375;
+						BaseBlockFactor1 = 0.1875;
+						BaseBlockFactor2 = 0.1875;
 					}
 					else
 					{
@@ -5203,8 +5211,8 @@ class PlayerStatItem : Inventory
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseBlockFactor1 = 0.15625;
-						BaseBlockFactor2 = 0.15625;
+						BaseBlockFactor1 = 0.125;
+						BaseBlockFactor2 = 0.125;
 					}
 					else
 					{
@@ -5222,8 +5230,8 @@ class PlayerStatItem : Inventory
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseBlockFactor1 = 0.078125;
-						BaseBlockFactor2 = 0.078125;
+						BaseBlockFactor1 = 0.06125;
+						BaseBlockFactor2 = 0.06125;
 					}
 					else
 					{
@@ -5238,8 +5246,8 @@ class PlayerStatItem : Inventory
 			{
 				if (A_CheckForHeiwa())
 				{
-					BaseBlockFactor1 = 0.0625;
-					BaseBlockFactor2 = 0.0625;
+					BaseBlockFactor1 = 0.05;
+					BaseBlockFactor2 = 0.05;
 				}
 				else
 				{
