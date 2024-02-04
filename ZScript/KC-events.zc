@@ -4602,26 +4602,16 @@ class KC_EventHandler : EventHandler
 							{
 								if (kcheiwa_lowlevelexpmulti)
 								{
-									if (MiscItem && MiscItem.heiwavhardmodifier)
-									{
-												 if (PLevel < 5)  BaseExpMultiBonus = frandompick(13.5,18.0,18.0,18.0,22.5);
-										else if (PLevel < 10) BaseExpMultiBonus = frandompick(9.0,12.0,12.0,12.0,15.0);
-										else if (PLevel < 25) BaseExpMultiBonus = frandompick(4.5,6.0,6.0,6.0,7.5);
-										else if (PLevel < 50) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
-																		 else BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
-									}
-									else
-									{
-												 if (PLevel < 2)  BaseExpMultiBonus = frandompick(5.5,7.334,7.334,7.334,6.772);
-										else if (PLevel < 5)  BaseExpMultiBonus = frandompick(3.75,5.0,5.0,5.0,6.25);
-										else if (PLevel < 10) BaseExpMultiBonus = frandompick(2.25,3.0,3.0,3.0,3.75);
-										else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.5,2.0,2.0,2.0,2.5);
-																		 else BaseExpMultiBonus = frandompick(1.125,1.25,1.25,1.25,1.375);
-									}
+											 if (PLevel < 2)  BaseExpMultiBonus = frandompick(3.25,3.75,3.75,3.75,4.5);
+									else if (PLevel < 5)  BaseExpMultiBonus = frandompick(2.375,3.0,3.0,3.0,3.625);
+									else if (PLevel < 10) BaseExpMultiBonus = frandompick(1.625,2.0,2.0,2.0,2.375);
+									else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.25,1.5,1.5,1.5,1.75);
+									else if (PLevel < 50) BaseExpMultiBonus = frandompick(1.0625,1.25,1.25,1.25,1.4375);
+																	 else BaseExpMultiBonus = frandompick(1.03125,1.125,1.125,1.125,1.21875);
 								}
 								else
 								{
-									BaseExpMultiBonus = frandompick(1.125,1.5,1.5,1.5,1.875);
+									BaseExpMultiBonus = frandompick(1.03125,1.125,1.125,1.125,1.21875);
 								}
 								
 								double BaseExpMultiBonus2 = 1.0;
