@@ -1,3 +1,21 @@
+OptionValue "OTHER_DeathMusic"
+{
+	0, "None [DEFAULT]"
+	1, "Dynamite Duchess"
+	2, "Carnival of Souls"
+	3, "Sesame Under Watch..."
+	4, "Game Over Yeah!!"
+	5, "Thou Art Dead..."
+	6, "Press 'R' to Try Again"
+	7, "You Are Dead... Dead Dead..."
+	8, "SSSNNNNAAAAAAAKKKKKKEEEEE!!!"
+	9, "It's a sad thing that..."
+	10, "Game Over..."
+	11, "The Chaos Ends in Failure!!"
+	12, "11 Frolicking Bio-Menaces..."
+	13, "MOrtIS"
+}
+
 OptionValue "HUDStatDisplay"
 {
 	0, "Don't Show"
@@ -301,6 +319,45 @@ OptionMenu "KC-HUDOptions"
 	Command "Restore Default Settings", 			"KC_defaultshud"
 }
 
+OptionMenu "KC-Other1"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Misc Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+
+	KCOption "Death Music",		"If this is set to anything specific, an unique theme plays when you die. :V",		"kc_deathmusic",					"OTHER_DeathMusic"
+	StaticText " "
+	KCOption "Armor Damage Sounds",		"If [Yes], sounds play for armor being damaged/broken. Default: Yes.",		"kc_armordmgsounds",      "YesNo_DefaultYes"
+	StaticText " "
+	KCOption "Hit Sounds [Player]",		"If [Yes], sounds are played when an enemy is damaged by the player or one of their allied monsters, Quake 3 Arena/Quake Champions Style. Default: Yes.",		"kc_q3aqchitsounds",      "YesNo_DefaultYes"
+	KCOption "Kill Sounds [Player]",		"If [Yes], sounds are played when an enemy is killed by the player or one of their allied monsters, Quake 3 Arena/Quake Champions Style. Default: Yes.",		"kc_q3aqckillsounds",      "YesNo_DefaultYes"
+	KCOption "Hit Sounds [Allies]",		"If [Yes], sounds are played when an allied monster is hit by a hostile monster, Quake 3 Arena/Quake Champions Style. Default: Yes.",		"kc_q3aqchitsounds2",      "YesNo_DefaultYes"
+	KCOption "Kill Sounds [Allies]",		"If [Yes], sounds are played when an allied monster is killed by a hostile monster, Quake 3 Arena/Quake Champions Style. Default: Yes.",		"kc_q3aqckillsounds2",      "YesNo_DefaultYes"
+	KCOption "Hit Sound Type",		"Set the type of sounds used when Monsters are hit.",		"kc_q3aqchitsoundtype", "OTHER_HitSoundType"
+	KCOption "Kill Sound Type",		"Set the type of sounds used when Monsters are killed.",		"kc_q3aqckillsoundtype", "OTHER_KillSoundType"
+	KCTextfield "Hit Sound Delay [per monster in tics]",		"The value in tics of how long it takes for hit sounds to replay again on the same monster [if applicable]. Higher values reduce noise pollution when a monster is taking a lot of hits in short order. Default: 8 [tics]",		"kc_q3aqchitsounddelay"
+	KCTextfield "Hit Sound Volume [x]",		"The volume factor for Hit Sounds. Default: 1[x]",		"kc_q3aqchitsoundvol"
+	KCTextfield "Kill Sound Volume [x]",		"The volume factor for Kill Sounds. Default: 1[x]",		"kc_q3aqckillsoundvol"
+	StaticText " "
+	KCOption "Hit Sounds [Monsters]",		"If [Yes], sounds are played when an enemy is damaged by another enemy, Quake 3 Arena/Quake Champions Style. Default: Yes.",		"kc_hitsoundsmisc",      "YesNo_DefaultYes"
+	KCTextfield "Hit Sound Volume [Monsters] [x]",		"The volume factor for Hit Sounds between enemies. Default: 1[x]",		"kc_hitsoundsvol"
+	StaticText " "
+	KCOption "Hit Weakness Sounds",		"If set, monsters emit special sounds if you hit them with attacks they are weak or strong against, in order to hint you of what you should or shouldn't use against them.",		"kc_hitweaksounds",		"YesNo_DefaultYes"
+	KCTextfield "Hit Weakness Sound Delay [per monster in tics]",		"The value in tics of how long it takes for Weakness/Resistance Hit sounds to replay again on the same monster [if applicable]. Higher values reduce noise pollution when a monster is taking a lot of hits in short order.. Default: 8 [tics]",		"kc_hitweaksounddelay"
+	KCTextfield "Hit Weakness Sound Volume",		"The volume factor for Weakness/Resistance Hit Sounds. Default: 1[x]",		"kc_hitweaksoundvol"
+	StaticText " "
+	KCTextfield "No Damage Sound Volume (Monster) [x]",		"The volume factor for the 'no damage taken' sound for monsters. Default: 1[x]",		"kc_monsternodmgvol"
+	StaticText " "
+	KCOption "Enable Extra Heiwa Voices",		"Default: Yes",		"kc_heiwaextravoices",			"YesNo_DefaultYes"
+	KCOption "Enable Heiwa One Liners",		"'Enable Extra Heiwa Voices' must also be enabled. Default: Yes",		"kc_heiwaoneliners",			"YesNo_DefaultYes"
+	KCTextfield "Heiwa One-Liner Chance [# of 256]",		"Sets the base chance of Heiwa saying a one-liner. Default: 8",		"kc_heiwaonelinerbasechance"
+	
+	StaticText ""
+	Command "Restore Default Settings", 			"KC_defaultsother1"
+}
+
 OptionMenu "KC-DebugMenu1"
 {
 	Class "KCMenu"
@@ -400,7 +457,7 @@ OptionMenu "KC-DebugMenuMain"
 OptionMenu "KC-CheatyOptions"
 {
 	Class "KCMenu"
-	Title "EXPLOSIVE EXPEDITION - Cheaty Options"
+	Title "KAMPOULCHHR - Cheaty Options"
 	IfGame(Doom, Chex) { Position -64 } 
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
@@ -430,7 +487,7 @@ OptionMenu "KC-CheatyOptions"
 OptionMenu "KC-CheatyOptions2"
 {
 	Class "KCMenu"
-	Title "EXPLOSIVE EXPEDITION - Cheaty Options [2]"
+	Title "KAMPOULCHHR - Cheaty Options [2]"
 	IfGame(Doom, Chex) { Position -64 } 
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
@@ -469,6 +526,8 @@ OptionMenu "KCOptions"
 	KCSubMenu "RPG Options",		"Options for RPG Mechanics.",		"KC-RPGOptions"
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
+	StaticText " "
+	KCSubMenu "Misc Options",		"Misc. Options [Death Music, Hit Sounds, etc].",		"KC-Other1"
 	StaticText " "
 	KCSubMenu "LegenDoomLite Options",		"LegenDoomLite Options.",		"LegenDoomLite"
 	KCSubMenu "Tilt++ v1.65 Options",		"Tilt++ v1.65 Options.",		"TiltPlusPlusMenu"

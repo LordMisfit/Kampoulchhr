@@ -5056,14 +5056,59 @@ class KC_EventHandler : EventHandler
 	
 	override void PlayerDied(PlayerEvent e) 
 	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		PlayerPawn player = PlayerPawn(players[consoleplayer].mo);
+		if (player)
+		{
+			bool check1 = true;
+			let kcplayer = KCPlayerPawn(player);
+			if (kcplayer)
+			
+			if (A_CheckUOHYM())
+			{
+				if (level.mapname == "MAP01" ||
+						level.mapname == "20PAM" ||
+						level.mapname == "MAP02")
+				{
+					check1 = false;
+					int randsong = random(1,2);
+					if (kcplayer) 
+					{
+						kcplayer.deathsongused = randsong;
+						if (kcplayer.deathsongused <= 1) S_ChangeMusic("GAMOVR", 0, false, true);
+						if (kcplayer.deathsongused >= 2) S_ChangeMusic("GAMOVR2", 0, false, true);
+					}
+				}
+			}
+			
+			if (check1)
+			{
+				actor Player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				if (kc_deathmusic)
+				{
+					if (kc_deathmusic == 1) S_ChangeMusic("GAMOVR", 0, false, true);
+					if (kc_deathmusic == 2) S_ChangeMusic("GAMOVR2", 0, false, true);
+					if (kc_deathmusic == 3) S_ChangeMusic("RoReDead", 0, false, true);
+					if (kc_deathmusic == 4) S_ChangeMusic("GaOvYe", 0, false, true);
+					if (kc_deathmusic == 5) S_ChangeMusic("DRQUDEAD", 0, false, true);
+					if (kc_deathmusic == 6) S_ChangeMusic("MiRiBuTi", 0, false, true);
+					if (kc_deathmusic == 7) S_ChangeMusic("ToDiYoAD", 0, false, true);
+					if (kc_deathmusic == 8) S_ChangeMusic("MGS2GMOV", 0, false, true);
+					if (kc_deathmusic == 9) S_ChangeMusic("ShGYaheh", 0, false, true);
+					if (kc_deathmusic == 10) S_ChangeMusic("AH3GMOVR", 0, false, true);
+					if (kc_deathmusic == 11) S_ChangeMusic("JURPRKP2", 0, false, true);
+					if (kc_deathmusic == 12) S_ChangeMusic("CUYOENTH", 0, false, true);
+					if (kc_deathmusic == 13) S_ChangeMusic("", 0, false, true);
+				}
+			}
+		}
 		
 		Super.PlayerDied(e);
 	}
 	
 	override void PlayerRespawned(PlayerEvent e) 
 	{
+		S_ChangeMusic("*", 0, true, true);
 		Super.PlayerRespawned(e);
 	}
 	

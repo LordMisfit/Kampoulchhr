@@ -79,6 +79,33 @@ class KCPlayerPawn : PlayerPawn
 	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 	string nm, nn, no, np;
 	
+	
+	bool hasDied;
+	bool clinicstart;
+	
+	Vector3 spot;
+	Double lastAngle;
+	
+	int deathsongused;
+	int deathtimerthres1;
+	int deathtimerthres2;
+	int deathtimerthres3;
+	int deathtimerthres4;
+	int deathfadetimebase;
+	int deathtimer;
+	int deathtimer_b;
+	int revivebeattimer;
+	
+	Array<Name> weapons;
+	Array<Name> ammos;
+	Array<int> ammosamt;
+	Array<Name> invitems;
+	Array<Int> invitemsamt;
+	
+	bool revived;
+	
+	int whitehot;
+	
 	default
 	{
 		+CASTSPRITESHADOW;
