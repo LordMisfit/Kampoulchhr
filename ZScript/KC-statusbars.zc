@@ -1724,6 +1724,73 @@ class KCStatusBarMain : BaseStatusBar
 		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, -17+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 	}
 	
+	//double, Vector2, int, int, int, int, int, int, int, int, int, double, string, int
+	void DrawFSStatDisplays(double FontAlpha, Vector2 FontScale, int FontWrapWidth, int FontLineSpace, int DigX, int DigY, int Spacing, int VisiblePlayerLevel, int VisiblePlayerATK, int VisiblePlayerDEF, int VisiblePlayerSPD, double HUDHitAlpha, string HUDStringHit, int Digits)
+	{
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		
+		FontScale = (1.0, 1.0);
+		int sepery = 6;
+		DigX = 256; // 68 + (Digits * Spacing); // 176
+		DigY = -28; // -90; // -90
+		string hudstat;
+		if (MiscItem && kc_expgains)
+		{
+			if (kchud_showextraatkdefspd)
+			{
+				if (kchud_showextraatkdefspd >= 3)
+				{
+					hudstat = "ATK: ";
+					hudstat.AppendFormat("%d", (VisiblePlayerATK + VisiblePlayerLevel));
+				}
+				else
+				{
+					hudstat = "ATK+: ";
+					hudstat.AppendFormat("%d", VisiblePlayerATK);
+					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+				}
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_red, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				if (kchud_showextraatkdefspd >= 3)
+				{
+					hudstat = "DEF: ";
+					hudstat.AppendFormat("%d", (VisiblePlayerDEF + VisiblePlayerLevel));
+				}
+				else
+				{
+					hudstat = "DEF+: ";
+					hudstat.AppendFormat("%d", VisiblePlayerDEF);
+					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+				}
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_olive, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				if (kchud_showextraatkdefspd >= 3)
+				{
+					hudstat = "SPD: ";
+					hudstat.AppendFormat("%d", (VisiblePlayerSPD + VisiblePlayerLevel));
+				}
+				else
+				{
+					hudstat = "SPD+: ";
+					hudstat.AppendFormat("%d", VisiblePlayerSPD);
+					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+				}
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+			}
+			if (kchud_showluck)
+			{
+				hudstat = "LUCK: ";
+				hudstat.AppendFormat("%d", MiscItem.PlayerLuck);
+				if (kchud_showextraatkdefspd) DigY += sepery;
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_gold, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+			}
+		}
+		FontScale = (1.25, 1.25);
+		//return FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, Spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, Digits;
+	}
+
 	void DrawFSHUDKeys()
 	{
 		//********
@@ -3041,23 +3108,37 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Primary Fires
 			LegendStr = "";
-			if (PlayerWeapon is "BlasterPistols")
+			if (PlayerWeapon is "BlasterPistols" ||
+					PlayerWeapon is "Translocator" ||
+					PlayerWeapon is "SawThrower")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+attack", true, false));
 				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]FIRE LEFT BLASTER\c-");
-				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
-			}
-			if (PlayerWeapon is "SawThrower")
-			{
-				let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
-				if (SawT && SawT.revtimes >= 20)
+				if (PlayerWeapon is "SawThrower") 
 				{
-					LY += LYInc;
-					LegendStr.AppendFormat(ReturnKeyBind1("+attack", true, false));
-					LegendStr.AppendFormat(" = \c[blue]LAUNCH SUPER-REVVED SAW BLADE\c-");
-					if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+					let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
+					if (SawT && SawT.revtimes >= 20)
+					{
+						LegendStr.AppendFormat(" = \c[blue]LAUNCH SUPER-REVVED SAW BLADE\c-");
+					}
 				}
+				if (PlayerWeapon is "Translocator") 
+				{
+					let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
+					if (TrsLoc)
+					{
+						if (TrsLoc.beacon != null) 
+						{
+							LegendStr.AppendFormat(" = \c[green]TELEPORT TO BEACON\c-");
+						}
+						else 
+						{
+							LegendStr.AppendFormat(" = \c[blue]LAUNCH A BEACON\c-");
+						}
+					}
+				}
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
 			// Alt-Fires
@@ -3070,6 +3151,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "SuperShotgunMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "TommyGun" ||
+					PlayerWeapon is "BlasterRifle" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					PlayerWeapon is "Deviation" ||
 					PlayerWeapon is "Devastator" ||
@@ -3077,6 +3159,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "TeslaCannon" ||
 					PlayerWeapon is "BFG9000Marine" ||
 					PlayerWeapon is "BHGen" ||
+					PlayerWeapon is "Translocator" ||
 					PlayerWeapon is "ImpalerXBow" ||
 					PlayerWeapon is "SawThrower")
 			{
@@ -3091,6 +3174,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
+				if (PlayerWeapon is "BlasterRifle") LegendStr.AppendFormat(" = \c[blue]LASER SHOTBURST [~1-3 CELLS/SHOT]\c-");
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "Deviation") LegendStr.AppendFormat(" = \c[blue]DRUNKEN ROCKET [FASTER FIRE]\c-");
@@ -3104,6 +3188,15 @@ class KCStatusBarMain : BaseStatusBar
 					{
 						if (BHGn.altshottype >= 1) LegendStr.AppendFormat(" = \c[blue]MINI BLACK-HOLE [~25 CELLS]\c-");
 																	else LegendStr.AppendFormat(" = \c[blue]MEGA BLACK-HOLE [~125 CELLS]\c-");
+					}
+				}
+				if (PlayerWeapon is "Translocator") 
+				{
+					let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
+					if (TrsLoc)
+					{
+						if (TrsLoc.beacon != null) LegendStr.AppendFormat(" = \c[orange]RECALL TELEBEACON\c-");
+																	else LegendStr.AppendFormat(" = \c[red]N/A\c-");
 					}
 				}
 				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT [~3 ARROWS]\c-");
@@ -3148,6 +3241,12 @@ class KCStatusBarMain : BaseStatusBar
 		if (CPlayer) CurrHealth = CPlayer.health;
 		int PlayerMaxHP = 100; // MaxHealthTrue;
 		if (MiscItem && MiscItem.MaxHealthTrue > 0) PlayerMaxHP = MiscItem.MaxHealthTrue;
+		Vector2 FontScale = (1.25, 1.25);
+		int FontLineSpace = 4;
+		int FontWrapWidth = -1;
+		double FontAlpha = 0.9;
+		int DigX, DigY, Spacing;
+		int Digits;
 		
 		//*****************
 		//* Damage Border *
@@ -3190,6 +3289,12 @@ class KCStatusBarMain : BaseStatusBar
 		int dashcost = CPlayerPawn.CountInv("DashCost");
 		
 		// Draw health
+		int ValueAmt = CurrHealth;
+		string ValueAmtS = FormatNumber(ValueAmt);
+		double HUDHitAlpha = 1.00;
+		string HUDStringHit;
+		int HUDNumHitValue;
+		int SlashUnit;
 		A_DrawFSHealth(1.0);
 		
 		// Draw Armor [and Time Seraph Armor info]
@@ -3219,6 +3324,10 @@ class KCStatusBarMain : BaseStatusBar
 		// Inventory [Selected]
 		invY = A_DrawFSInvSelected(invY);
 		
+		// Stat Displays
+		//[FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, Spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, Digits] = DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
+		DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
+
 		// Draw Keys
 		DrawFSHUDKeys();
 		
@@ -3232,7 +3341,6 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		
 		// Level Stats
-		int DigY;
 		DigY = DrawFSHUDLevelStats(DigY, 8, kchud_stattextscale);
 		
 		int numboxes = kc_inventorybarboxes;

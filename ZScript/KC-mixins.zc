@@ -524,8 +524,8 @@ mixin class DmgCalc
 		int strengthcounter;
 		String nm, nn, no, np;
 		// Character Check [base damage]
-		damage = random(6,10);
-		if (HeiwaPlayer(playera)) damage = random(randompick(5,6,6),8);
+		damage = random(randompick(5,6,6),9);
+		if (HeiwaPlayer(playera)) damage = random(randompick(4,5,5),7);
 		if (kcdebug_meleedmg) Console.Printf("BaseDmg: %.8f [%s, %s]", damage, weaponname, actorname);
 		// [STRIFE] Stamina Upgrades
 		int stamdamagefactor = playera.Stamina;
@@ -547,13 +547,13 @@ mixin class DmgCalc
 			int rngroll;
 			if (random(1,basechance) <= ((basechance-1) - (TruePlayerLevel * levelfactor)))
 			{
-				if (HeiwaPlayer(playera)) adddmg = randompick(1,1,1,2,2,3);
-														 else adddmg = randompick(2,2,2,3,3,4);
+				if (HeiwaPlayer(playera)) adddmg = randompick(0,1,1,1,2,2);
+														 else adddmg = randompick(1,2,2,2,3,3);
 			}
 			else
 			{
-				if (HeiwaPlayer(playera)) adddmg = randompick(3,3,4,4,5,5); // randompick(4,5,6);
-														 else adddmg = randompick(4,4,5,5,6,7); // randompick(4,5,6);
+				if (HeiwaPlayer(playera)) adddmg = randompick(2,2,3,3,4,4); // randompick(4,5,6);
+														 else adddmg = randompick(3,3,4,4,5,5); // randompick(4,5,6);
 				rngroll = 1;
 			}
 			adddmg *= kc_strmeleescale;
