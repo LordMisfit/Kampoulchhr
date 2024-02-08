@@ -3480,3 +3480,156 @@ class TimeFreezeSource : KCBaseZSC
 			stop;
 	}
 }
+
+
+class KCFOVTriggerObject : KCBaseZSC
+{
+	bool seen;
+	double pFOV;
+	string pACSstr;
+	int pACSnum;
+	int pACSmap;
+	int pACSarg0;
+	int pACSarg1;
+	int pACSarg2;
+	int pACSarg3;
+	int pACSarg4;
+	property ACSstr: pACSstr;
+	property ACSnum: pACSnum;
+	property ACSmap: pACSmap;
+	property ACSarg0: pACSarg0;
+	property ACSarg1: pACSarg1;
+	property ACSarg2: pACSarg2;
+	property FOV: pFOV;
+	default
+	{
+		//$Sprite "EEFVA0"
+		//$Color 8
+		//$Category EE FOV Triggers
+		KCFOVTriggerObject.FOV 90;
+		KCFOVTriggerObject.ACSnum -1;
+		KCFOVTriggerObject.ACSstr "";
+		KCFOVTriggerObject.ACSmap 0;
+		KCFOVTriggerObject.ACSarg0 0;
+		KCFOVTriggerObject.ACSarg1 0;
+		KCFOVTriggerObject.ACSarg2 0;
+		Alpha 0.0;
+		RenderStyle "None";
+	}
+	
+	override void tick()
+	{
+		super.Tick();
+		if (kcdebug_FOVTriggerObject) Console.Printf("\c[sapphire]TID: %d\c-, \c[brick]seen: %d\c-, \c[orange]pFOV: %.8f\c-, \c[gold]pACSnum: %d, pACSstr: '%s'\c-, \c[green]pACSmap: %d\c-, \c[blue]pACSarg0: %d, pACSarg1: %d, pACSarg2: %d\c- [gametic: %d]", TID, seen, pFOV, pACSnum, pACSstr, pACSmap, pACSarg0, pACSarg1, pACSarg2, gametic);
+		if (!seen)
+		{
+			actor player = players[0].mo;
+			target = player;
+			if (CheckIfInTargetLOS(pFOV,0,0,0))
+			{
+				if (pACSnum > -1) ACS_Execute(pACSnum,pACSmap,pACSarg0,pACSarg1,pACSarg2);
+				else if (pACSstr != "") ACS_NamedExecute(pACSstr,pACSmap,pACSarg0,pACSarg1,pACSarg2);
+				seen = true;
+				Destroy();
+			}
+		}
+	}
+	
+	states
+	{
+		Spawn:
+			TNT1 A -1;
+			stop;
+	}
+}
+
+class KCFOVTriggerObject2 : KCBaseZSC
+{
+	bool seen;
+	bool user_pRepeat;
+	double user_pFOV;
+	double user_pDistance;
+	string user_pACSstr;
+	int user_pACSnum;
+	int user_pACSmap;
+	int user_pACSarg0;
+	int user_pACSarg1;
+	int user_pACSarg2;
+	int user_pACSarg3;
+	int user_pACSarg4;
+	bool user_pDestroySelf;
+	default
+	{
+		radius 1;
+		height 1;
+		+NOGRAVITY;
+		+NOCLIP;
+		Alpha 0.0;
+		RenderStyle "None";
+		//$Sprite "EEFVA0"
+		//$Color 8
+		//$Category FOV Triggers
+	}
+	override void tick()
+	{
+		super.Tick();
+		if (kcdebug_FOVTriggerObject) Console.Printf("\c[sapphire]TID: %d\c-, posx: %d, posy: %d, posz: %d, \c[brick]seen: %d\c-, \c[orange]pFOV: %.8f, pDistance: %.8f\c-, \c[gold]pACSnum: %d, pACSstr: '%s'\c-, \c[green]pACSmap: %d\c-, \c[blue]pACSarg0: %d, pACSarg1: %d, pACSarg2: %d\c-, \c[orange]user_pRepeat: %d, user_pDestroySelf: %d\c-, [gametic: %d]", TID, pos.x, pos.y, pos.z, seen, user_pFOV, user_pDistance, user_pACSnum, user_pACSstr, user_pACSmap, user_pACSarg0, user_pACSarg1, user_pACSarg2, user_pRepeat, user_pDestroySelf, gametic);
+		if (!seen || user_pRepeat)
+		{
+			if (user_pDistance == 0) user_pDistance = 16384;
+			actor player = players[0].mo;
+			target = player;
+			if ((user_pDistance > 0 && Distance3D(target) <= user_pDistance) ||
+					(user_pDistance < 0 && Distance2D(target) <= (-user_pDistance)))
+			{
+				if (CheckIfInTargetLOS(user_pFOV,0,0,0))
+				{
+					if (user_pACSnum > -1) ACS_Execute(user_pACSnum,user_pACSmap,user_pACSarg0,user_pACSarg1,user_pACSarg2);
+					else if (user_pACSstr != "") ACS_NamedExecute(user_pACSstr,user_pACSmap,user_pACSarg0,user_pACSarg1,user_pACSarg2);
+					if (!user_pRepeat) seen = true;
+					if (user_pDestroySelf) Destroy();
+				}
+			}
+		}
+	}
+	
+	states
+	{
+		Spawn:
+			EEFV A -1;
+			stop;
+	}
+}
+
+class KCSwitchableDecoration : SwitchableDecoration
+{
+	mixin PlayerCheckGFX;
+	mixin HUDRecovery;
+}
+
+class KCHealthBoostItem : KCSwitchableDecoration
+{
+	mixin HUDRecovery;
+	double healamt;
+	string foodquote;
+	string sound1;
+	string sound2;
+	property healpercent: healamt;
+	property healstring: foodquote;
+	property healsound1: sound1;
+	property healsound2: sound2;
+}
+
+class SingleTickDecoration : KCBaseZSC abstract
+{
+	bool ticked;
+	
+	override void Tick()
+	{
+		if (!ticked)
+		{
+			super.Tick();
+			ticked = true;
+		}
+	}
+}

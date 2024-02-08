@@ -3862,6 +3862,11 @@ class EVP_Footsteps : Actor
 			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
 			Console.Printf("Epic2 Footsteps TXT Loaded");
 		}
+		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
+			Console.Printf("Unfamiliar Footsteps TXT Loaded");
+		}
 		
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)
 		{
