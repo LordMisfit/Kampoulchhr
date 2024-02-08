@@ -236,14 +236,12 @@ class KCWeaponBase : Weapon
 				{
 					output *= (1.0 / frandompick(1.334,1.5,1.5,1.5,1.667));
 				}
-				/*
 				if (player.ReadyWeapon is "EvilWarriorShield")
 				{
 					if (CountInv("EWShieldDefendMode")) output *= (1.0 / frandompick(0.50,0.65,0.65,0.65,0.80));
 																				 else output *= (1.0 / frandompick(0.875,0.9,0.9,0.9,0.925));
 					if (MiscItem.HellWarriorShieldLevel) output *= (1.0 / (1.0 - (MiscItem.HellWarriorShieldLevel * 0.05)));
 				}
-				*/
 			}
 		}
 		if (CountInv("PowerHaste")) output *= (1.0 / 1.334);
@@ -13920,8 +13918,32 @@ class Blaster_RifleShot_Trail : KCBaseZSC
 	}
 }
 
-/*
 // EVIL WARRIOR'S SHIELD
+class PikeAmmo : Ammo
+{
+	default
+	{
+		//$Category EE Ammo
+		Inventory.Amount 1; // 2
+		Inventory.MaxAmount 12; // 10
+		Ammo.BackpackAmount 1; // 2
+		Ammo.BackpackMaxAmount 18;
+		Scale 1;
+		Inventory.Icon "SCPAI0";
+		Inventory.PickupMessage "A strange pint of Devil's Food";
+		Inventory.PickupSound "pickup/pikeammo";
+		+FLOATBOB
+		+DONTGIB
+	}
+	
+	States
+	{
+		Spawn:
+			SCPA ABC 6 Bright;
+			Loop;
+	}
+}
+
 class EvilWarriorShield : MarineWeapon
 {
 	int shieldenergy;
@@ -13935,10 +13957,11 @@ class EvilWarriorShield : MarineWeapon
 		Radius 16;
 		Height 16;
 		Speed 6;
-		Inventory.Pickupsound "Dinah/GetWeapon";
-		DDWeapon.PickupVoice true;
-		DDWeapon.PickupSound2 "misc/w_pkup";
-		DDWeapon.PickupVoice2 false;
+		KCWeaponBase.PickUpVoiceHeiwa2 true;
+		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickUpVoice false;
+		KCWeaponBase.PickupSound2 "misc/w_pkup";
+		KCWeaponBase.PickupVoice2 false;
 		Weapon.AmmoType "PikeAmmo";
 		Weapon.AmmoGive 3;
 		Weapon.AmmoUse 0;
@@ -13979,7 +14002,7 @@ class EvilWarriorShield : MarineWeapon
 		actor player = players[0].mo;
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let globalvars = DDGlobalVariables.Get();
+		let globalvars = KCGlobalVariables.Get();
 		
 		if (A_CheckBerserk()) A_SetTics(1);
 		A_PHellWarShieldOn();
@@ -14002,35 +14025,13 @@ class EvilWarriorShield : MarineWeapon
 		int maxshots = 1;
 		int bounces = (randompick(2,2,2,2,2,2,2,3) + randompick(0,1,1,2) + randompick(0,0,0,0,1));
 		string shottype = "EvilWarriorShieldBall";
-		if (invoker.IPAttackCheck) 
-		{
-			shotangle = -45.0;
-			shotangleend = 45.0;
-			shotangleinc = 3.0;
-			maxshots = 29;
-			shottype = "EvilWarriorShieldBallIP";
-		}
-		if (invoker.IPAttackCheck) A_SetAngle(angle+shotangle);
 		actor BombShotsB, BombShots;
 		KCProjectile IPCompat;
 		for (int i = 0; i < maxshots; i++)
 		{
-			if (i && invoker.IPAttackCheck) A_SetAngle(angle+shotangleinc);
 			[BombShotsB, BombShots] = A_FireProjectile(shottype, 0, 0, 0, 3); 
-			if (BombShots && invoker.IPAttackCheck)
-			{
-				IPCompat = KCProjectile(BombShots);
-				if (IPCompat)
-				{
-					IPCompat.IPattack = true;
-					IPCompat.Speed *= frandompick(0.75,0.875);
-					IPCompat.BounceCount = bounces;
-				}
-			}
 		}
-		if (invoker.IPAttackCheck) A_SetAngle(origangle);
-		invoker.A_CheckIPModeOnUse();
-		if (random(1,8) <= 1) { invoker.A_EEAlertMonsters(); }
+		if (random(1,8) <= 1) { invoker.A_KCAlertMonsters(); }
 
 		double baserecoil = 0.875;
 		if (waterlevel >= 3) baserecoil *= 0.25;
@@ -14042,7 +14043,7 @@ class EvilWarriorShield : MarineWeapon
 		actor player = players[0].mo;
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let globalvars = DDGlobalVariables.Get();
+		let globalvars = KCGlobalVariables.Get();
 		int tic;
 		if (invoker.shieldrefire)
 		{
@@ -14079,7 +14080,7 @@ class EvilWarriorShield : MarineWeapon
 		actor player = players[0].mo;
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		let globalvars = DDGlobalVariables.Get();
+		let globalvars = KCGlobalVariables.Get();
 		double temp = invoker.default.BobSpeed;
 		if (MiscItem)
 		{
@@ -14140,19 +14141,17 @@ class EvilWarriorShield : MarineWeapon
 			EWS4 A 0
 			{
 				A_GetBobSpeed();
-				A_CheckIPState1();
-				A_ConfirmIPAttack(191,0,2,15,true);
 
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 
 				//HellWarriorMaxCharge
 				if (!A_CheckInfiniteAmmo())
 				{
 					invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
-					if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
+					//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
 					if (invoker.shieldenergy < invoker.shieldenergycost)
 					{
 						if (CountInv("PikeAmmo") > 0)
@@ -14176,36 +14175,36 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 			}
 			EWS4 C 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 			}
 			EWS4 B 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 			}
 		FireShot:
 			EWS4 A 6 Bright
@@ -14213,31 +14212,31 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				A_CheckShieldRefire();
 				A_SetPitch(pitch + 0.875);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard2");
+				//A_ForcePlayState4("ShieldGuard2");
 			}
 			EWS4 A 2 Bright
 			{
 				A_PHellWarShot();
-				A_ForcePlayState4("ShieldFire");
+				//A_ForcePlayState4("ShieldFire");
 			}
 			EWS4 A 6 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				A_CheckShieldRefire();
 				A_SetPitch(pitch - 0.875);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard2");
+				//A_ForcePlayState4("ShieldGuard2");
 			}
 			EWS4 A 0 Bright
 			{
@@ -14249,14 +14248,12 @@ class EvilWarriorShield : MarineWeapon
 				if (buttons & BT_ATTACK)
 				{
 					invoker.shieldrefire = 1;
-					A_CheckIPState1();
-					A_ConfirmIPAttack(191,0,2,15,true);
 					
 					//HellWarriorMaxCharge
 					if (!A_CheckInfiniteAmmo())
 					{
 						invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
-						if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
+						//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
 						if (invoker.shieldenergy < invoker.shieldenergycost)
 						{
 							if (CountInv("PikeAmmo") > 0)
@@ -14284,7 +14281,7 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOn();
@@ -14295,7 +14292,7 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOn();
@@ -14306,7 +14303,7 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOff();
@@ -14320,10 +14317,10 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
 			}
@@ -14333,10 +14330,10 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 				A_SetInventory("HWShieldBlockHold",1);
 				A_WeaponReady(WRF_NOFIRE|WRF_DISABLESWITCH);
 				A_PHellWarShieldOn();
@@ -14345,8 +14342,8 @@ class EvilWarriorShield : MarineWeapon
 			EWS4 G 0 
 			{
 				A_GetBobSpeed();
-				A_ForcePlayState4("ShieldGuard");
-				if (exex_hwshieldaltfirekeytype == 0)
+				//A_ForcePlayState4("ShieldGuard");
+				if (kc_hwshieldaltfirekeytype == 0)
 				{
 					If (A_HoldInWeapon(0) == 0) { return resolvestate("AltEnd"); }
 					If (A_HoldInWeapon(0) == 1) { return resolvestate("AltHold"); }
@@ -14369,10 +14366,10 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
-				A_ForcePlayState4("ShieldGuard");
+				//A_ForcePlayState4("ShieldGuard");
 				A_SetInventory("HWShieldBlockHold",0);
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
@@ -14382,7 +14379,7 @@ class EvilWarriorShield : MarineWeapon
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-				let globalvars = DDGlobalVariables.Get();
+				let globalvars = KCGlobalVariables.Get();
 				
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_PHellWarShieldOff();
@@ -14414,7 +14411,6 @@ class EvilWarriorShield : MarineWeapon
 			loop;
 	}
 }
-*/
 
 class EvilWarriorShieldExtraPickup : CustomInventoryExt
 {

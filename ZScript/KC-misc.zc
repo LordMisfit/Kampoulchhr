@@ -2106,7 +2106,6 @@ class PlayerStatItem : Inventory
 					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 17.5;
 				}
 			}
-			/*
 			If (owner.player.ReadyWeapon is "EvilWarriorShield")
 			{
 				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
@@ -2114,7 +2113,6 @@ class PlayerStatItem : Inventory
 				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (1.75 + (HellWarriorShieldLevel * 0.0875));
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) TotalMass *= 2.5;
 			}
-			*/
 			// Armor
 
 			name armorclasstype = "KCArmor";
@@ -2633,7 +2631,6 @@ class PlayerStatItem : Inventory
 										else WeaponJumpEx -= 0.1875;
 				}
 			}
-			/*
 			If (weapon is "EvilWarriorShield")
 			{
 				if (berserked)
@@ -2647,7 +2644,6 @@ class PlayerStatItem : Inventory
 																							else WeaponJumpEx -= (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
 				}
 			}
-			*/
 			
 			WeaponJumpEx *= kc_weaponencumbrance;
 			WeaponJumpZ += WeaponJumpEx;
@@ -6691,7 +6687,6 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
-		/*
 		if (weapon is "EvilWarriorShield")
 		{
 			if (A_CheckForHeiwa())
@@ -6753,7 +6748,6 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
-		*/
 		
 		if (berserked) 
 		{

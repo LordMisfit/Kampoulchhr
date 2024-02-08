@@ -784,7 +784,6 @@ class KCPlayerPawn : PlayerPawn
 							if (berserked) weaponsinkfactor -= frandom(0.75,0.875);
 												else weaponsinkfactor -= frandom(0.50,0.75);
 						}
-						/*
 						If (PlayerWeapon is "EvilWarriorShield")
 						{
 							int HellWarriorShieldLevel = CountInv("HellWarriorShieldLevel");
@@ -799,7 +798,6 @@ class KCPlayerPawn : PlayerPawn
 																							else weaponsinkfactor = (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
 							}
 						}
-						*/
 						if (PlayerWeapon is "FistMarine") weaponsinkfactor *= 1.0;
 						if (PlayerWeapon is "FistHeiwa" || 
 								PlayerWeapon is "KnifeHeiwa") weaponsinkfactor *= 1.0;
@@ -1843,10 +1841,8 @@ class KCPlayerPawn : PlayerPawn
 				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
 				double HWShieldFactor = 0.125;
-				/*
 				if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
 						HellWarriorBall2(inflictor) || HellWarriorBall2(source)) PlayerDefenseIgnoreFactor += (HWShieldFactor * (1.00 - PlayerDefenseIgnoreFactor));
-				*/
 				
 				if ((inflictor && inflictor.CountInv("LDLegendaryMonsterTransformed")) || 
 						(source && source.CountInv("LDLegendaryMonsterTransformed"))) 
@@ -3523,7 +3519,7 @@ class KCPlayer : KCPlayerPawn
 		Player.WeaponSlot 6, "PlasmaRifleMarine", "TeslaCannon";
 		Player.WeaponSlot 7, "BFG9000Marine";
 		Player.WeaponSlot 8, "Translocator";
-		//Player.WeaponSlot 9, "EvilWarriorShield";
+		Player.WeaponSlot 9, "EvilWarriorShield";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		
 		Player.ColorRange 112, 127;
@@ -3707,7 +3703,7 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.WeaponSlot 6, "TeslaCannon";
 		Player.WeaponSlot 7, "BHGen";
 		Player.WeaponSlot 8, "Translocator";
-		//Player.WeaponSlot 9, "EvilWarriorShield";
+		Player.WeaponSlot 9, "EvilWarriorShield";
 		Player.WeaponSlot 0, "ImpalerXBow", "SawThrower";
 		Player.StartItem "FistHeiwa";
 		Player.StartItem "PlayerStatItem";
