@@ -130,6 +130,39 @@ Class KCLevelCompatibility : LevelPostProcessor
 		{
 			switch(checksum)
 			{
+				case '058fb092ea1b70da1e3cbf501c4a91a1': // doom.wad e1m8
+				{
+					uint n = GetThingCount();
+					
+					for (uint i = 0; i < n; i++)
+					{
+						if (IsThingMonster(GetThingEdNum(i)))
+						{
+							if (i == 106 ||
+									i == 107 ||
+									i == 108 ||
+									i == 109 ||
+									i == 110 ||
+									i == 111 ||
+									i == 112 ||
+									i == 118 ||
+									i == 119 ||
+									i == 120 ||
+									i == 121 ||
+									i == 122 ||
+									i == 123 ||
+									i == 124 ||
+									i == 125)
+							{
+								//i.A_GiveInventory("E1M8ExitRoomMonster",1);
+								SetThingFlags(i, GetThingFlags(i) | MTF_NOCOUNT);
+							}
+						}
+					}
+					if (kcdebug_showcompatibility) Console.Printf("LOLE E1M8 DOOM 1 EXIT ROOM");
+					break;
+				}
+				
 				case 'a130224617d892e5023ab43392f4000d': // dbp37_augzen.wad map01
 				{
 					AddThing(25083,(1520,-2032,0),0,SKILLS_ALL,MODES_ALL); 

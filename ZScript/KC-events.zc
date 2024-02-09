@@ -1578,7 +1578,18 @@ class KC_EventHandler : EventHandler
 					Medikit(spawnee) ||
 					Stimpack(spawnee) ||
 					Berserk(spawnee)) spawnee.bDONTGIB = true;
-
+			
+			if (level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' &&
+					level.mapname == "E1M8")
+			{
+				if (spawnee.bISMONSTER && 
+						!spawnee.bCOUNTKILL)
+				{
+					Console.Printf("spawnee: %s", spawnee.GetClassName());
+					spawnee.A_GiveInventory("E1M8ExitRoomMonster",1);
+				}
+			}
+			
 			bool exception = CheckExceptions(spawnee);
 			if (!KCBaseZSC(spawnee) && 
 					(spawnee.bISMONSTER || 
@@ -2744,13 +2755,17 @@ class KC_EventHandler : EventHandler
 					ZShrub1(victim) ||
 					ZShrub2(victim) ||
 					ZXmasTree(victim) ||
-					ZPoisonShroom(victim)) candropitems = false;
+					ZPoisonShroom(victim) ||
+					victim.CountInv("E1M8ExitRoomMonster")) candropitems = false;
 			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
 			
 			if (!playerkill || !allykill)
 			{
-				if (random(1,256) <= 1) candropitems = true;
-													 else candropitems = false;
+				if (!victim.CountInv("E1M8ExitRoomMonster"))
+				{
+					if (random(1,256) <= 1) candropitems = true;
+														 else candropitems = false;
+				}
 			}
 			
 			if (candropitems)
@@ -4422,6 +4437,7 @@ class KC_EventHandler : EventHandler
 			
 			
 			if (victim && 
+					!victim.CountInv("E1M8ExitRoomMonster") && 
 					!isCCardsIllusion &&
 					!exception)
 			{
