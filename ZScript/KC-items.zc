@@ -304,10 +304,15 @@ class CustomInventoryExt : CustomInventory
 				string voicenm;
 				double voicevol = frandom(1.25,1.75);
 				if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
-				voicenm = "Heiwa/ReflievedSigh"; //
-				Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
-				playera.A_StopSound(CHAN_VOICE);
-				playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+				
+				if (MiscItem.OneLinerTimerCool <= 0)
+				{
+					MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+					voicenm = "Heiwa/ReflievedSigh"; //
+					Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+					playera.A_StopSound(CHAN_VOICE);
+					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+				}
 			}
 		}
 	}
@@ -1170,18 +1175,23 @@ class MiniBerserk : CustomInventoryExt
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = random(1,10);
 					int randv1 = random(6,9);
-					if (randvoice >= 1 && randvoice <= randv1)
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "HeiwaLaugh"; //
-						Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						if (randvoice >= 1 && randvoice <= randv1)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+							voicenm = "HeiwaLaugh"; //
+							Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						}
+						if (randvoice >= (randv1+1))
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(2.097 * TICRATE));
+							voicenm = "Heiwa/WantSomethingSweet"; //
+							Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
+						}
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 					}
-					if (randvoice >= (randv1+1))
-					{
-						voicenm = "Heiwa/WantSomethingSweet"; //
-						Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
-					}
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 				
 				if (HeiwaPlayer(playera)) A_GiveBerserk(int(22.5 * TICRATE),false);
@@ -1307,18 +1317,23 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = random(1,8);
 					int randv1 = random(4,7);
-					if (randvoice >= 1 && randvoice <= randv1)
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "HeiwaLaugh"; //
-						Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						if (randvoice >= 1 && randvoice <= randv1)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+							voicenm = "HeiwaLaugh"; //
+							Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						}
+						if (randvoice >= (randv1+1))
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(2.097 * TICRATE));
+							voicenm = "Heiwa/WantSomethingSweet"; //
+							Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
+						}
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 					}
-					if (randvoice >= (randv1+1))
-					{
-						voicenm = "Heiwa/WantSomethingSweet"; //
-						Console.Printf("\c[HeiwaDeluge]*groans hungrily* 'I waaaant somethiing sweeet!'\c-"); //
-					}
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 				
 				if (HeiwaPlayer(playera)) A_GiveBerserk(int(90 * TICRATE),false);
@@ -1515,20 +1530,24 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 
-					if (oldhealthratio >= 3 || 
-						  (oldhealthratio == 2 && random(1,25) <= 21) || 
-						  (oldhealthratio == 1 && random(1,25) <= 9))
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "Heiwa/ReflievedSigh"; //
-						Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						if (oldhealthratio >= 3 || 
+								(oldhealthratio == 2 && random(1,25) <= 21) || 
+								(oldhealthratio == 1 && random(1,25) <= 9))
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+							voicenm = "Heiwa/ReflievedSigh"; //
+							Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						}
+						else
+						{
+							voicenm = "Heiwa/OohNice"; //
+							Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
+						}
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 					}
-					else
-					{
-						voicenm = "Heiwa/OohNice"; //
-						Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
-					}
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 			}
 			Stop;
@@ -1593,20 +1612,24 @@ class MiniSoulsphere : CustomInventoryExt
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 
-					if (oldhealthratio >= 3 || 
-							(oldhealthratio == 2 && random(1,25) <= 21) || 
-							(oldhealthratio == 1 && random(1,25) <= 9))
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "Heiwa/ReflievedSigh"; //
-						Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						if (oldhealthratio >= 3 || 
+								(oldhealthratio == 2 && random(1,25) <= 21) || 
+								(oldhealthratio == 1 && random(1,25) <= 9))
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+							voicenm = "Heiwa/ReflievedSigh"; //
+							Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						}
+						else
+						{
+							voicenm = "Heiwa/OohNice"; //
+							Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
+						}
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 					}
-					else
-					{
-						voicenm = "Heiwa/OohNice"; //
-						Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
-					}
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 			}
 			Stop;
@@ -1667,34 +1690,38 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 
-					if (oldhealthratio >= 3 || 
-							(oldhealthratio == 2 && random(1,25) <= 21) || 
-							(oldhealthratio == 1 && random(1,25) <= 9))
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "Heiwa/ReflievedSigh"; //
-						Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						if (oldhealthratio >= 3 || 
+								(oldhealthratio == 2 && random(1,25) <= 21) || 
+								(oldhealthratio == 1 && random(1,25) <= 9))
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+							voicenm = "Heiwa/ReflievedSigh"; //
+							Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+						}
+						else
+						{
+							int randvoice = random(1,3);
+							if (randvoice == 1)
+							{
+								voicenm = "Heiwa/OohNice"; //
+								Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
+							}
+							if (randvoice == 2)
+							{
+								voicenm = "Heiwa/Awwwsome"; //
+								Console.Printf("\c[HeiwaDeluge]'Awwwsome!'\c-"); //
+							}
+							if (randvoice == 3)
+							{
+								voicenm = "Heiwa/ThisIsAmazing"; //
+								Console.Printf("\c[HeiwaDeluge]'This is amaaazing!'\c-"); //
+							}
+						}
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 					}
-					else
-					{
-						int randvoice = random(1,3);
-						if (randvoice == 1)
-						{
-							voicenm = "Heiwa/OohNice"; //
-							Console.Printf("\c[HeiwaDeluge]'Ooooh, nice!'\c-"); //
-						}
-						if (randvoice == 2)
-						{
-							voicenm = "Heiwa/Awwwsome"; //
-							Console.Printf("\c[HeiwaDeluge]'Awwwsome!'\c-"); //
-						}
-						if (randvoice == 3)
-						{
-							voicenm = "Heiwa/ThisIsAmazing"; //
-							Console.Printf("\c[HeiwaDeluge]'This is amaaazing!'\c-"); //
-						}
-					}
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
 			}
 			Stop;
@@ -1758,12 +1785,16 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = random(1,5);
-					if (randvoice >= 4)
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "Heiwa/ThatsSus"; //
-						Console.Printf("\c[HeiwaDeluge]That's suspicious...\c-"); //
-						playera.A_StopSound(CHAN_VOICE);
-						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+						if (randvoice >= 4)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.541 * TICRATE));
+							voicenm = "Heiwa/ThatsSus"; //
+							Console.Printf("\c[HeiwaDeluge]That's suspicious...\c-"); //
+							playera.A_StopSound(CHAN_VOICE);
+							playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+						}
 					}
 				}
 
@@ -1844,25 +1875,31 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = random(1,8);
-					if (randvoice <= 3)
+					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						voicenm = "Heiwa/ABigHelp";
-						Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
+						if (randvoice <= 3)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.383 * TICRATE));
+							voicenm = "Heiwa/ABigHelp";
+							Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-"); //
+						}
+						else
+						if (randvoice >= 4 && randvoice <= 6)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.032 * TICRATE));
+							voicenm = "Heiwa/TimesLikeThis";
+							Console.Printf("\c[HeiwaDeluge]'At times like this...'\c-"); //
+						}
+						else
+						if (randvoice >= 7)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.117 * TICRATE));
+							voicenm = "Heiwa/WontHoldBack";
+							Console.Printf("\c[HeiwaDeluge]'I WON'T HOLD BACK!!'\c-"); //
+						}
+						A_StopSound(CHAN_VOICE);
+						A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 					}
-					else
-					if (randvoice >= 4 && randvoice <= 6)
-					{
-						voicenm = "Heiwa/TimesLikeThis";
-						Console.Printf("\c[HeiwaDeluge]'At times like this...'\c-"); //
-					}
-					else
-					if (randvoice >= 7)
-					{
-						voicenm = "Heiwa/WontHoldBack";
-						Console.Printf("\c[HeiwaDeluge]'I WON'T HOLD BACK!!'\c-"); //
-					}
-					A_StopSound(CHAN_VOICE);
-					A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
 				
 				int basesecs = 30;
@@ -4207,10 +4244,15 @@ class SpecialBackpack : CustomInventoryExt
 					string voicenm;
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
-					voicenm = "HeiwaLaugh"; //
-					Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
-					playera.A_StopSound(CHAN_VOICE);
-					playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+
+					if (MiscItem.OneLinerTimerCool <= 0)
+					{
+						MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+						voicenm = "HeiwaLaugh"; //
+						Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+					}
 				}
 			}
 			Stop;
@@ -4316,48 +4358,55 @@ class MediBag : CustomInventoryExt
 									double voicevol = frandom(1.25,1.75);
 									if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 									int randvoice = random(1,8);
-									if (healratio >= 0.75)
+									if (MiscItem.OneLinerTimerCool <= 0)
 									{
-										if (randvoice <= 4)
+										if (healratio >= 0.75)
 										{
-											voicenm = "Heiwa/ABigHelp"; //
-											Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
+											if (randvoice <= 4)
+											{
+												voicenm = "Heiwa/ABigHelp"; //
+												Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
+											}
+											else
+											if (randvoice >= 5 && randvoice <= 7)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+												voicenm = "HeiwaLaugh"; //
+												Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+											}
+											else
+											if (randvoice >= 8)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+												voicenm = "Heiwa/ReflievedSigh"; //
+												Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+											}
 										}
 										else
-										if (randvoice >= 5 && randvoice <= 7)
 										{
-											voicenm = "HeiwaLaugh"; //
-											Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+											if (randvoice <= 4)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
+												voicenm = "Heiwa/ReflievedSigh"; //
+												Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
+											}
+											else
+											if (randvoice >= 5 && randvoice <= 7)
+											{
+												voicenm = "Heiwa/ABigHelp"; //
+												Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
+											}
+											else
+											if (randvoice >= 8)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+												voicenm = "HeiwaLaugh"; //
+												Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+											}
 										}
-										else
-										if (randvoice >= 8)
-										{
-											voicenm = "Heiwa/ReflievedSigh"; //
-											Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
-										}
+										A_StopSound(CHAN_VOICE);
+										A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 									}
-									else
-									{
-										if (randvoice <= 4)
-										{
-											voicenm = "Heiwa/ReflievedSigh"; //
-											Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
-										}
-										else
-										if (randvoice >= 5 && randvoice <= 7)
-										{
-											voicenm = "Heiwa/ABigHelp"; //
-											Console.Printf("\c[HeiwaDeluge]'That's a -BIG- help!'\c-");
-										}
-										else
-										if (randvoice >= 8)
-										{
-											voicenm = "HeiwaLaugh"; //
-											Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
-										}
-									}
-									A_StopSound(CHAN_VOICE);
-									A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 								}
 							}
 							else 

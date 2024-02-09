@@ -112,6 +112,7 @@ class PlayerStatItem : Inventory
 	int ArmorResistance;
 	int ClassicDoomType;
 	int ModType;
+	int OneLinerTimerCool;
 	int OneLinerCooldown;
 	int CanTalkUnderwater;
 	int PlayerLevel, TruePlayerLevel, ActualLevel;
@@ -1010,6 +1011,8 @@ class PlayerStatItem : Inventory
 		if (!A_CheckNoTimer())
 		{
 			if (OneLinerCooldown > 0) OneLinerCooldown--;
+			if (OneLinerTimerCool > 0) OneLinerTimerCool--;
+			if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
 			
 			if (HPDmgHUDTimer > 0) HPDmgHUDTimer--;
 			else

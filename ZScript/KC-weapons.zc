@@ -701,6 +701,7 @@ class KCWeaponBase : Weapon
 						if (pufftype == 'FistPuff') t.linetarget.A_SetInventory("JustPunched",1);
 						if (pufftype == 'UppercutPuff') t.linetarget.A_SetInventory("JustUppercutted",1);
 						if (pufftype == "KickPuff" || pufftype == "KickPuffNoThrust") t.linetarget.A_SetInventory("JustKicked",1);
+						if (pufftype == "KnifePuff" || pufftype == "KnifePuffNoSound") t.linetarget.A_SetInventory("JustKnifed",1);
 					}
 				}
 			}
@@ -2069,7 +2070,9 @@ class KCWeaponBase : Weapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		bool voicecheck = false;
-		if (A_CheckForHeiwa() && MiscItem.OneLinerCooldown <= 0)
+		if (A_CheckForHeiwa() && 
+				MiscItem.OneLinerCooldown <= 0 &&
+				MiscItem.OneLinerTimerCool <= 0)
 		{
 			if (basechance <= 0) basechance = kc_heiwaonelinerbasechance;
 			if (basechance > 0)
@@ -2093,26 +2096,33 @@ class KCWeaponBase : Weapon
 					double voicevol = frandom(1.25,1.75);
 					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = random(1,2);
-					if (randvoice == 1) 
+					if (kc_heiwaextravoices && 
+							MiscItem.OneLinerTimerCool <= 0 &&
+							randvoice > 0)
 					{
-						voicenm = "Heiwa/BangBangBang"; //
-						Console.Printf("\c[HeiwaDeluge]'Bangbangbang-bang!!'\c-"); //
-					}
-					if (randvoice == 2) 
-					{
-						voicenm = "Heiwa/DanceForMe"; //
-						Console.Printf("\c[HeiwaDeluge]'DANCE!!!'\c-"); //
-					}
-					
-					//Console.Printf("One-Liner: %d", randvoice);
-					//
-					//
-					//
-					if (randvoice > 0)
-					{
-						playera.A_StopSound(CHAN_VOICE);
-						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
-						MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
+						if (randvoice == 1) 
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.127 * TICRATE));
+							voicenm = "Heiwa/BangBangBang"; //
+							Console.Printf("\c[HeiwaDeluge]'Bangbangbang-bang!!'\c-"); //
+						}
+						if (randvoice == 2) 
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(0.735 * TICRATE));
+							voicenm = "Heiwa/DanceForMe"; //
+							Console.Printf("\c[HeiwaDeluge]'DANCE!!!'\c-"); //
+						}
+						
+						//Console.Printf("One-Liner: %d", randvoice);
+						//
+						//
+						//
+						if (randvoice > 0)
+						{
+							playera.A_StopSound(CHAN_VOICE);
+							playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+							MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
+						}
 					}
 				}
 			}
@@ -2222,6 +2232,22 @@ class MarineWeapon : KCWeaponBase
 		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
 	}
 	
+	
+	action void A_KickKiais(int basechance = 128)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.OneLinerTimerCool <= 0)
+		{
+			//if (A_CheckBerserk()) basechance *= frandom(0.7,0.8);
+			if (random(1,256) >= basechance) 
+			{
+				if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
+													else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
+			}
+		}
+	}
+	
 	states
 	{
 		User1:
@@ -2251,11 +2277,7 @@ class MarineWeapon : KCWeaponBase
 			LEG2 C 1
 			{
 				A_SetInventory("IsKicking",1);
-				if (random(1,256) >= 128) 
-				{
-					if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
-														else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
-				}
+				A_KickKiais(128);
 			}
 			LEG2 D 1
 			{
@@ -2629,7 +2651,9 @@ class HeiwaWeapon : KCWeaponBase
 					if (A_CheckBerserk()) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 					int randvoice = 0;
 					//if (randvoice == 1) voicenm = "heiwa/Jump";
-					if (kc_heiwaextravoices && randvoice > 0)
+					if (kc_heiwaextravoices && 
+							MiscItem.OneLinerTimerCool <= 0 &&
+							randvoice > 0)
 					{
 						A_StopSound(CHAN_VOICE);
 						A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
@@ -3074,6 +3098,20 @@ class FistMarine : MarineWeapon replaces Fist
 		Inventory.RestrictedTo "KCPlayer";
 	}
 	
+	action void A_PunchKiais(int basechance = 75)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.OneLinerTimerCool <= 0)
+		{
+			if (random(1,256) >= basechance) 
+			{
+				if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
+													else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
+			}
+		}
+	}
+	
 	States
 	{
 		Ready:
@@ -3466,11 +3504,8 @@ class FistMarine : MarineWeapon replaces Fist
 						} // Sometimes a swing will be enough to wake up all monsters in the area.
 					}
 				}
-				if (random(1,256) <= 75) 
-				{
-					if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
-														else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
-				}
+				A_PunchKiais(75);
+				
 				A_StartSound("fistswingheavy",1); // D [Left] or B [Right] 
 			}
 			MPU1 B 1 
@@ -11372,7 +11407,9 @@ class FistHeiwa : MarineWeapon // replaces Fist
 			if (randvoice >= 9 && randvoice <= 12) voicenm = "HeiwaKiai3";
 			if (randvoice >= 13 && randvoice <= 16) voicenm = "HeiwaKiai4";
 			if (randvoice >= 17 && randvoice <= 20) voicenm = "HeiwaKiai5";
-			if (kc_heiwaextravoices && randvoice > 0)
+			if (kc_heiwaextravoices && 
+					MiscItem.OneLinerTimerCool <= 0 &&
+					randvoice > 0)
 			{
 				A_StopSound(CHAN_VOICE);
 				A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
@@ -11393,7 +11430,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 			if ((TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14))) basechance = random(161,162);
 			if ((TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17))) basechance = 217;
 
-			Console.Printf("@#S#");
+			//Console.Printf("@#S#");
 			if (A_CheckBerserk()) basechance *= frandompick(2.25,2.25,2.25,2.4375,2.4375,2.625);
 			if (random(1,256) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 			{
@@ -11408,11 +11445,27 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (randvoice >= 9 && randvoice <= 12) voicenm = "HeiwaKiai3";
 				if (randvoice >= 13 && randvoice <= 16) voicenm = "HeiwaKiai4";
 				if (randvoice >= 17 && randvoice <= 20) voicenm = "HeiwaKiai5";
-				if (kc_heiwaextravoices && randvoice > 0)
+				if (kc_heiwaextravoices && 
+						MiscItem.OneLinerTimerCool <= 0 &&
+						randvoice > 0)
 				{
 					A_StopSound(CHAN_VOICE);
 					A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
 				}
+			}
+		}
+	}
+	
+	action void A_PunchKiais(int basechance = 75)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.OneLinerTimerCool <= 0)
+		{
+			if (random(1,256) >= basechance) 
+			{
+				if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
+													else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
 			}
 		}
 	}
@@ -11814,12 +11867,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 						} // Sometimes a swing will be enough to wake up all monsters in the area.
 					}
 				}
-				if (random(1,256) <= 75) 
-				{
-					actor playera = players[0].mo;
-					if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
-														else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
-				}
+				A_PunchKiais(100);
 				A_StartSound("fistswingheavy",1); // D [Left] or B [Right] 
 			}
 			MPU1 B 1 
@@ -13485,14 +13533,18 @@ class KnifeHeiwa : MarineWeapon
 		}
 	}
 	
-	action void A_KnifeKiais()
+	action void A_KnifeKiais(int basechance = 240)
 	{
-		int basechance = 240;
-		if (A_CheckBerserk()) basechance *= frandom(0.7,0.8);
-		if (random(1,256) >= basechance) 
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.OneLinerTimerCool <= 0)
 		{
-			if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
-												else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
+			if (A_CheckBerserk()) basechance *= frandom(0.7,0.8);
+			if (random(1,256) >= basechance) 
+			{
+				if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
+													else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
+			}
 		}
 	}
 	
@@ -13546,7 +13598,7 @@ class KnifeHeiwa : MarineWeapon
 			}
 			KNFG J 2
 			{
-				A_KnifeKiais();
+				A_KnifeKiais(240);
 
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 2;
@@ -13676,7 +13728,7 @@ class KnifeHeiwa : MarineWeapon
 			}
 			KNFG J 2
 			{
-				A_KnifeKiais();
+				A_KnifeKiais(240);
 
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 2;

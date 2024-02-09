@@ -772,11 +772,13 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 				int randvoice = random(1,5);
 				if (randvoice <= 3)
 				{
+					MiscItem.OneLinerTimerCool = ceil(int(2.038 * TICRATE));
 					voicenm = "Heiwa/GonnaBeTough"; //
 					Console.Printf("\c[HeiwaDeluge]Thiiis is going to be tough!\c-"); //
 				}
 				else
 				{
+					MiscItem.OneLinerTimerCool = ceil(int(1.669 * TICRATE));
 					voicenm = "Heiwa/ThisSuuuucks"; //
 					Console.Printf("\c[HeiwaDeluge]This suuuuucks!\c-"); //
 				}
@@ -786,18 +788,21 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 				int randvoice = random(1,8);
 				if (randvoice >= 0 && randvoice <= 3)
 				{
+					MiscItem.OneLinerTimerCool = ceil(int(0.996 * TICRATE));
 					voicenm = "Heiwa/WatAJerk"; //
 					Console.Printf("\c[HeiwaDeluge]What a jerk!\c-"); //
 				}
 				else
 				if (randvoice >= 4 && randvoice <= 6)
 				{
+					MiscItem.OneLinerTimerCool = ceil(int(0.334 * TICRATE));
 					voicenm = "Heiwa/ReflievedSigh"; //
 					Console.Printf("\c[HeiwaDeluge]-sighs in relief-\c-"); //
 				}
 				else
 				if (randvoice >= 7 && randvoice <= 8)
 				{
+					MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
 					voicenm = "HeiwaLaugh"; //
 					Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
 				}
@@ -2193,6 +2198,33 @@ class HitByMorphProj : PlaceholderItem
 		if (Owner == NULL) Destroy();
 		else if (timer >= 3) Destroy();
 		
+		Super.Tick();
+	}
+}
+
+class JustKnifed : PlaceholderItem 
+{
+	mixin StunItems;
+	int timer;
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (timer < 35) 
+			{
+				timer++;
+				if (A_PainStateChecker()) A_StunInduce((randompick(2,3,3,3,3,4)*randompick(2,3,3,3,3,4)),0.0334,true,frandom(1.125,1.25),true);
+			}
+			else Destroy();
+		}
+		
+		if (Owner == NULL) Destroy();
+
 		Super.Tick();
 	}
 }

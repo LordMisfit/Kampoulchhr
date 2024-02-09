@@ -663,6 +663,7 @@ class CompatVulnItem : PlaceholderItem
 				//
 				if (inflictor)
 				{
+					if ((KnifePuff(inflictor) || KnifePuffNoSound(inflictor) || damageType == 'Knife') && newdamage > 0) owner.A_SetInventory("JustKnifed",1);
 					if ((KickPuff(inflictor) || KickPuffNoThrust(inflictor) || damageType == 'Kick') && newdamage > 0) owner.A_SetInventory("JustKicked",1);
 					if ((UppercutPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustUppercutted",1);
 					if ((FistPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustPunched",1);
