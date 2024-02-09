@@ -710,6 +710,9 @@ class KC_EventHandler : EventHandler
 			
 			// Monster "Scaling"
 			bool e1m8exitroommon = false;
+			bool e1m8baron = false;
+			bool e2m8cyber = false;
+			bool e34m8spider = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
 			{
@@ -717,6 +720,17 @@ class KC_EventHandler : EventHandler
 				if (spawnee.CountInv("E1M8ExitRoomMonster") && 
 						level.mapname == "E1M8" &&
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1') e1m8exitroommon = true;
+				if (level.mapname == "E1M8" &&
+						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' && 
+						spawnname == "BaronOfHell") e1m8baron = true;
+				if (level.mapname == "E2M8" &&
+						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' && 
+						spawnname == "Cyberdemon") e2m8cyber = true;
+				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
+						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
+						 (level.mapname == "E3M8" ||
+							level.mapname == "E4M8") &&
+						spawnname == "SpiderMastermind") e34m8spider = true;
 				
 				if (A_CheckUOHYM() && level.mapname == "MAP01") 
 				{
@@ -755,6 +769,8 @@ class KC_EventHandler : EventHandler
 				nm = "EviternatusBete"; if (spawnname == nm) baselinelevel += random(15,25);
 				nm = "EviternatusCeph"; if (spawnname == nm) baselinelevel += random(15,25);
 				if (e1m8exitroommon) baselinelevel += random(10,15);
+				if (e1m8baron) baselinelevel += random(20,30);
+				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
 				
 				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
 				int LevelErrorRange;
@@ -795,6 +811,8 @@ class KC_EventHandler : EventHandler
 					if (skill == 3) basedivfactor = 11;
 					if (skill >= 4) basedivfactor = 6;
 					if (e1m8exitroommon) basedivfactor *= 0.334;
+					if (e1m8baron) basedivfactor *= 0.334;
+					if (e2m8cyber || e34m8spider) basedivfactor *= 0.1667;
 
 					if (random(1,basedivfactor) <= 8)
 					{
@@ -840,6 +858,9 @@ class KC_EventHandler : EventHandler
 					baseadd *= frandompick(0.4375,0.5,0.5,0.5,0.5,0.5,0.5,0.5625);
 					multbase += baseadd;
 					if (e1m8exitroommon) multbase *= 2.5;
+					if (e1m8baron) basedivfactor *= 3.25;
+					if (e2m8cyber || e34m8spider) basedivfactor *= 4.0;
+					
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
 					
 					if (random(1,128) <= (monsterrating * 0.25))
