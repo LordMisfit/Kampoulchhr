@@ -1207,7 +1207,27 @@ class KCStatusBarMain : BaseStatusBar
 		return invY, wsammoname;
 	}
 	
-	void A_DrawFSArmor(double masterscale = 1.0)
+	int A_DrawFSMystical(double masterscale = 1.0, int yinc = -21)
+	{
+		int fontclr = font.CR_UNTRANSLATED;
+		double fontalpha = 1.0;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int MaxMagicPoints;
+		if (MiscItem) MaxMagicPoints = MiscItem.MaxMagicPoints;
+		int MaxPsychicPoints;
+		if (MiscItem) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+		int ivx = 20; // 20;
+		int ivy = -2; // -22;
+		int svx = 44; // 44;
+		int svy = -20; //-40;
+		int ycorrection = -3;
+		
+		return yinc;
+	}
+
+	int A_DrawFSArmor(double masterscale = 1.0, int yinc = -21)
 	{
 		int fontclr = font.CR_UNTRANSLATED;
 		double fontalpha = 1.0;
@@ -1226,7 +1246,7 @@ class KCStatusBarMain : BaseStatusBar
 		if (armor != null && armor.Amount > 0)
 		{
 			// Meters
-			vector2 mpos = (94+APDmgShakeX, -21+APDmgShakeY+ycorrection);
+			vector2 mpos = (94+APDmgShakeX, (yinc)+APDmgShakeY+ycorrection);
 			int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
 			double malpha = 0.875;
@@ -1267,8 +1287,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			
 			//DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0+APDmgShakeX, svy-20+APDmgShakeY+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
-			DrawInventoryIcon(armor, (ivx+0+APDmgShakeX, ivy-20+APDmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (1.0, 1.0));
+			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0+APDmgShakeX, svy-(yinc+41)+APDmgShakeY+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+			DrawInventoryIcon(armor, (ivx+0+APDmgShakeX, ivy-(yinc+41)+APDmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			
 			// Show Max Armor
 			if (hudarmortype > 0)
@@ -1287,7 +1307,7 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				//MaxAPS.AppendFormat("%d", armor.maxamount);
 				//DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, font.cr_black, fontalpha, -1, 4, (1.25, 1.25));
-				DrawString(mKCMFont, MaxAPS, (svx+50+APDmgShakeX, svy-17+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (svx+50+APDmgShakeX, svy-(yinc+38)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
 			
 			ivx += 0;
@@ -1348,7 +1368,7 @@ class KCStatusBarMain : BaseStatusBar
 				
 				if (MiscItem.TimeArmorEnergyMaxTics > 0)
 				{
-					vector2 tsapos = (ivx+2+TSADmgShakeX, ivy-15+TSADmgShakeY+ycorrection);
+					vector2 tsapos = (ivx+2+TSADmgShakeX, ivy-(yinc+34)+TSADmgShakeY+ycorrection);
 					let armor2 = CPlayer.mo.FindInventory("TSArtifactsInUse");
 					if (armor2)
 					{
@@ -1424,7 +1444,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (energystat != 0) showarrow = true;
 														else showarrow = false;
 					}
-					if (showarrow) DrawImage(energyimg, (ivx-3+TSADmgShakeX, ivy-15+TSADmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					if (showarrow) DrawImage(energyimg, (ivx-3+TSADmgShakeX, ivy-(yinc+36)+TSADmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 					
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
@@ -1437,15 +1457,16 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
 					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
-					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50+TSADmgShakeX, svy-1+TSADmgShakeY+ycorrection), 1, 1, 0, alpha:malpha);
+					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50+TSADmgShakeX, svy-(yinc+22)+TSADmgShakeY+ycorrection), 1, 1, 0, alpha:malpha);
 					
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
-					DrawString(mKCLFont, perstr, (svx+60+TSADmgShakeX, svy-20+TSADmgShakeY+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+					DrawString(mKCLFont, perstr, (svx+60+TSADmgShakeX, svy-(yinc+41)+TSADmgShakeY+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
+		return yinc;
 	}
 	
 	void BlindnessEffectHUD()
@@ -1650,7 +1671,7 @@ class KCStatusBarMain : BaseStatusBar
 		}
 	}
 	
-	void A_DrawFSHealth(double masterscale = 1.0)
+	int A_DrawFSHealth(double masterscale = 1.0, int yinc = -1)
 	{
 		int ycorrection = -3;
 		KCPlayerPawn CPlayerPawn;
@@ -1670,7 +1691,7 @@ class KCStatusBarMain : BaseStatusBar
 		if (IsInvuln) HealthColor = font.CR_Gold;
 		
 		// Meters
-		vector2 mpos = (94+HPDmgShakeX, -1+HPDmgShakeY+ycorrection);
+		vector2 mpos = (94+HPDmgShakeX, yinc+HPDmgShakeY+ycorrection);
 		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
@@ -1679,10 +1700,10 @@ class KCStatusBarMain : BaseStatusBar
 		// Show Current Health
 		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
 		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
-		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, -2+HPDmgShakeY+ycorrection));
-		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, -2+HPDmgShakeY+ycorrection));
+		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
+		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
 		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
-		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, -20+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
+		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, (yinc-19)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		
 		// Shows a Special Icon for a specific 'mode'
 		if (A_CheckForHeiwa() && 
@@ -1714,14 +1735,16 @@ class KCStatusBarMain : BaseStatusBar
 			cloverAlphaPulse *= 2;
 			double cloveralpha = 1.0;
 			cloveralpha = 0.9 + cloverAlphaPulse;
-			DrawImage("CACLOVER", (20+HPDmgShakeX, -4+HPDmgShakeY+ycorrection), 0, cloveralpha, (-1, -1), (0.5, 0.5));
+			DrawImage("CACLOVER", (20+HPDmgShakeX, (yinc-3)+HPDmgShakeY+ycorrection), 0, cloveralpha, (-1, -1), (0.5, 0.5));
 		}
 		
 		// Show Max Health
 		string MaxHPS = "\c[brick] / ";
 		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
 		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
-		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, -17+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
+		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, (yinc-16)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
+		
+		return yinc;
 	}
 	
 	//double, Vector2, int, int, int, int, int, int, int, int, int, double, string, int
@@ -3295,10 +3318,23 @@ class KCStatusBarMain : BaseStatusBar
 		string HUDStringHit;
 		int HUDNumHitValue;
 		int SlashUnit;
-		A_DrawFSHealth(1.0);
+		int yinc = -1;
+		yinc = A_DrawFSHealth(1.0, yinc);
 		
+		/*
+		// Draw PP/MP/HCLR
+		if (MiscItem && 
+				(MiscItem.MaxPsychicPoints > 0 || 
+				 MiscItem.MaxMagicPoints > 0))
+		{
+			yinc -= 20;
+			yinc = A_DrawFSMystical(1.0, yinc);
+		}
+		*/
+
+		yinc -= 20;
 		// Draw Armor [and Time Seraph Armor info]
-		A_DrawFSArmor(1.0);
+		yinc = A_DrawFSArmor(1.0, yinc);
 		
 		// Draw Level
 		A_DrawFSLevel(1.0);
