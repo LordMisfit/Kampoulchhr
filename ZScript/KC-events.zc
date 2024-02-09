@@ -709,10 +709,15 @@ class KC_EventHandler : EventHandler
 			double hpmulti2, atkmulti2, defmulti2, spdmulti2, massmulti2;
 			
 			// Monster "Scaling"
+			bool e1m8exitroommon = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
 			{
 				double baselinelevel = 0;
+				if (spawnee.CountInv("E1M8ExitRoomMonster") && 
+						level.mapname == "E1M8" &&
+						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1') e1m8exitroommon = true;
+				
 				if (A_CheckUOHYM() && level.mapname == "MAP01") 
 				{
 					baselinelevel += randompick(0,1,1,1,2,2,2,2,2,2,2,2,3,3,3,4);
@@ -749,7 +754,7 @@ class KC_EventHandler : EventHandler
 				nm = "EviternatusAnta"; if (spawnname == nm) baselinelevel += random(15,25);
 				nm = "EviternatusBete"; if (spawnname == nm) baselinelevel += random(15,25);
 				nm = "EviternatusCeph"; if (spawnname == nm) baselinelevel += random(15,25);
-				
+				if (e1m8exitroommon) baselinelevel += random(10,15);
 				
 				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
 				int LevelErrorRange;
@@ -789,6 +794,7 @@ class KC_EventHandler : EventHandler
 					if (skill == 2) basedivfactor = 16;
 					if (skill == 3) basedivfactor = 11;
 					if (skill >= 4) basedivfactor = 6;
+					if (e1m8exitroommon) basedivfactor *= 0.334;
 
 					if (random(1,basedivfactor) <= 8)
 					{
@@ -833,6 +839,7 @@ class KC_EventHandler : EventHandler
 					if (monsterrating >= 8) baseadd = 7.75; // <SSS>
 					baseadd *= frandompick(0.4375,0.5,0.5,0.5,0.5,0.5,0.5,0.5625);
 					multbase += baseadd;
+					if (e1m8exitroommon) multbase *= 2.5;
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
 					
 					if (random(1,128) <= (monsterrating * 0.25))

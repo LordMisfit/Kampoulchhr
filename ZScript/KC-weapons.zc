@@ -13439,6 +13439,7 @@ class KnifeHeiwa : MarineWeapon
 		+WEAPON.MELEEWEAPON;
 		+WEAPON.NOALERT;
 		+NOEXTREMEDEATH;
+		Tag "Heiwa's Knife";
 		Obituary "%o was cut apart by %k's trusty knife.";
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
@@ -13481,6 +13482,17 @@ class KnifeHeiwa : MarineWeapon
 				A_MeleeShieldPiece(mk,mkheight,mkdist2);
 				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1);
 			}
+		}
+	}
+	
+	action void A_KnifeKiais()
+	{
+		int basechance = 240;
+		if (A_CheckBerserk()) basechance *= frandom(0.7,0.8);
+		if (random(1,256) >= basechance) 
+		{
+			if (A_CheckForHeiwa()) A_StartSound("HeiwaKiais",CHAN_VOICE,CHANF_DEFAULT,10.0);
+												else A_StartSound("*grunt",CHAN_VOICE,CHANF_DEFAULT,10.0);
 		}
 	}
 	
@@ -13534,6 +13546,8 @@ class KnifeHeiwa : MarineWeapon
 			}
 			KNFG J 2
 			{
+				A_KnifeKiais();
+
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 2;
 				if (A_CheckBerserk()) 
@@ -13662,6 +13676,8 @@ class KnifeHeiwa : MarineWeapon
 			}
 			KNFG J 2
 			{
+				A_KnifeKiais();
+
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 2;
 				if (A_CheckBerserk()) 
