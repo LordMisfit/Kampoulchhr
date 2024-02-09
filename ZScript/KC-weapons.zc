@@ -62,6 +62,8 @@ class KCWeaponBase : Weapon
 		double atten;
 		int chan;
 		int flags = 0;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 
 		if (bNoAttenPickupSound)
 		{
@@ -79,22 +81,23 @@ class KCWeaponBase : Weapon
 			atten = ATTN_NORM;
 		}
 
-		if (toucher != NULL && toucher.CheckLocalView())
+		if (PickupSound != "")
 		{
-			if (PickupUseVoice) chan = CHAN_VOICE;
-										 else chan = CHAN_ITEM;
-			flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				if (PickupUseVoice) chan = CHAN_VOICE;
+											 else chan = CHAN_ITEM;
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				if (PickupUseVoice) chan = CHAN_VOICE;
+											 else chan = CHAN_ITEM;
+				flags = CHANF_MAYBE_LOCAL;
+			}
+			if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
 		}
-		else
-		{
-			if (PickupUseVoice) chan = CHAN_VOICE;
-										 else chan = CHAN_ITEM;
-			flags = CHANF_MAYBE_LOCAL;
-		}
-		if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
 
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		double maskpitch = 1.00;
 		if (PickupUseVoice) 
 		{
@@ -205,16 +208,6 @@ class KCWeaponBase : Weapon
 		if (playera)
 		{
 			if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
-		}
-		return result;
-	}
-	
-	action bool A_CheckForHeiwa()
-	{
-		bool result = false;
-		if (player && player.mo)
-		{
-			if (player.mo.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(player.mo)) result = true;
 		}
 		return result;
 	}
@@ -7088,6 +7081,7 @@ class Devastator : MarineWeapon
 		KCWeaponBase.PickUpVoiceHeiwa2 true;
 		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
 		KCWeaponBase.PickUpVoice false;
+		Inventory.Pickupsound "misc/w_pkup";
 		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 		Weapon.UpSound "weapons/devup";
 		Weapon.AmmoType1 "MiniRockets";
@@ -11171,8 +11165,9 @@ Class Translocator : MarineWeapon
 		//$Title "Translocator"
 
 		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/ThatsSus";
 		KCWeaponBase.PickUpVoice false;
+		KCWeaponBase.PickUpVoice2 false;
 		Inventory.PickupSound "misc/w_pkup";
 		Inventory.PickupMessage "You got the \c[fire]Translocator Telebeacon System\c-! \cx[Slot 8]\c-";
 

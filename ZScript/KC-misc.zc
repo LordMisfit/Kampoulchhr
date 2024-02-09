@@ -433,6 +433,12 @@ class PlayerStatItem : Inventory
 							sielsgraceactive = 1;
 							double fadetime = int(TICRATE*frandom(0.4167,0.5834));
 							owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
+							owner.A_StopSound(1280);
+							owner.A_StopSound(1281);
+							owner.A_StopSound(1282);
+							owner.A_StopSound(1283);
+							owner.A_StopSound(1284);
+							owner.A_StartSound("sielsgracea",1280,CHANF_DEFAULT,0.25,ATTN_NORM,1.0);
 						}
 					}
 					if (kcdebug_survivalrate) Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
@@ -3416,26 +3422,26 @@ class PlayerStatItem : Inventory
 		if (kcdebug_levelupdisplays) Console.Printf("\cyRNDSCSubtractor\c-: %.8f, \cxRandomizedStatChance\c-: %.8f", RNDSCSubtractor, RandomizedStatChance);
 
 		RandomizedStatChance2 = 1.00000000;
+		double d11 = 0.05208333375;
+		double d21 = 0.1041666675;
 		if (HeiwaPlayer(owner)) 
 		{
-			if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.05208333375; // 23
-			if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.05208333375; // 22
-			if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.05208333375; // 21
-			if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.05208333375; // 20
-			if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.1041666675; // 18
-			if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.1041666675; // 16
-			if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.1041666675; // 14
+			d11 = 0.025;
+			d21 = 0.05;
 		}
 		else
 		{
-			if (PlayerLevel >= 25) RandomizedStatChance2 -= 0.041666667; // 23
-			if (PlayerLevel >= 50) RandomizedStatChance2 -= 0.041666667; // 22
-			if (PlayerLevel >= 75) RandomizedStatChance2 -= 0.041666667; // 21
-			if (PlayerLevel >= 100) RandomizedStatChance2 -= 0.041666667; // 20
-			if (PlayerLevel >= 125) RandomizedStatChance2 -= 0.083333334; // 18
-			if (PlayerLevel >= 150) RandomizedStatChance2 -= 0.083333334; // 16
-			if (PlayerLevel >= 175) RandomizedStatChance2 -= 0.083333334; // 14
+			d11 = 0.02;
+			d21 = 0.04;
 		}
+		if (PlayerLevel >= 25) RandomizedStatChance2 -= d11; // 23
+		if (PlayerLevel >= 50) RandomizedStatChance2 -= d11; // 22
+		if (PlayerLevel >= 75) RandomizedStatChance2 -= d11; // 21
+		if (PlayerLevel >= 100) RandomizedStatChance2 -= d11; // 20
+		if (PlayerLevel >= 125) RandomizedStatChance2 -= d21; // 18
+		if (PlayerLevel >= 150) RandomizedStatChance2 -= d21; // 16
+		if (PlayerLevel >= 175) RandomizedStatChance2 -= d21; // 14
+		
 		if (kcdebug_levelupdisplays) Console.Printf("\cyStat Chance 1\c-: %.8f, \cxStat Chance 2\c-: %.8f", RandomizedStatChance, RandomizedStatChance2);
 		
 		//********************************
@@ -3470,16 +3476,16 @@ class PlayerStatItem : Inventory
 		if (KCPlayer(owner))
 		{
 			BaseChance1 = 0.125;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
 			BaseChance1 = 0.375;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
 				BaseChance1 = 0.625;
-				BaseChance2 = 0.25;
+				BaseChance2 = 0.1875;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3519,16 +3525,16 @@ class PlayerStatItem : Inventory
 		if (KCPlayer(owner))
 		{
 			BaseChance1 = 0.25;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
 			BaseChance1 = 0.5625;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
 				BaseChance1 = 1.125;
-				BaseChance2 = 0.25;
+				BaseChance2 = 0.1875;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3568,16 +3574,16 @@ class PlayerStatItem : Inventory
 		if (KCPlayer(owner))
 		{
 			BaseChance1 = 0.1875;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
 			BaseChance1 = 0.375;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
 				BaseChance1 = 0.925;
-				BaseChance2 = 0.25;
+				BaseChance2 = 0.1875;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3617,16 +3623,16 @@ class PlayerStatItem : Inventory
 		if (KCPlayer(owner))
 		{
 			BaseChance1 = 0.375;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
 			BaseChance1 = 0.1875;
-			BaseChance2 = 0.083333334;
+			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
 				BaseChance1 = 0.5875;
-				BaseChance2 = 0.25;
+				BaseChance2 = 0.1875;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -5063,11 +5069,14 @@ class PlayerStatItem : Inventory
 		double tempmax;
 		if (!passive && damage > 0) // If the owner [usually the player] of the item is the ATTACKER
 		{
+			double tempatkfactor = baseatkfct;
 			if (kcdebug_actordmgdisplays) Console.Printf("    (\czPlayerStatItem input [STEP 5 (\cwsuper.DamageMobj\cz)]\c-: \cydmg = %d\c-)", damage);
 			
 			// Level
 			double LVLFactor = 1.00;
-			if (kc_expgains) LVLFactor = (1.00 + (TruePlayerLevel * baseatkfct));
+			tempatkfactor = baseatkfct;
+			if (A_CheckForHeiwa()) tempatkfactor *= 0.334;
+			if (kc_expgains) LVLFactor = (1.00 + (TruePlayerLevel * tempatkfactor));
 			if (IsMorphed == 1) tempmax = 2.334;
 										 else tempmax = 5.00;
 			if (kc_expgains) tempmax *= 1.0;
@@ -5076,7 +5085,9 @@ class PlayerStatItem : Inventory
 			
 			// Attack
 			double ATKFactor = 1.00;
-			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * baseatkfct) + (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
+			tempatkfactor = baseatkfct;
+			if (A_CheckForHeiwa()) tempatkfactor *= frandom(0.875,1.125);
+			if (kc_extraatkdefspd && kc_expgains) ATKFactor = (1.00 + (TruePlayerATK * tempatkfactor) + (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.125),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.25),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*0.5),(baseatkfct*1),(baseatkfct*1),(baseatkfct*2))));
 			if (IsMorphed == 1) tempmax = 2.334;
 										 else tempmax = 5.00;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
@@ -5173,9 +5184,13 @@ class PlayerStatItem : Inventory
 		basedeffct *= kc_pdeffactor;
 		if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
 		{
+			double tempdeffactor = basedeffct;
+			
 			// Level
 			double LVLFactor = 1.00;
-			if (kc_expgains) LVLFactor = (1.00 - (TruePlayerLevel * basedeffct));
+			tempdeffactor = basedeffct;
+			if (A_CheckForHeiwa()) tempdeffactor *= 0.334;
+			if (kc_expgains) LVLFactor = (1.00 - (TruePlayerLevel * tempdeffactor));
 			if (IsMorphed == 1) tempmax = 0.60;
 										 else tempmax = 0.20;
 			if (kc_expgains) tempmax *= 1.0;
@@ -5184,7 +5199,9 @@ class PlayerStatItem : Inventory
 			
 			// Defense
 			double DEFFactor = 1.00;
-			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * basedeffct) - (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
+			tempdeffactor = basedeffct;
+			if (A_CheckForHeiwa()) tempdeffactor *= frandom(0.875,1.125);
+			if (kc_extraatkdefspd && kc_expgains) DEFFactor = (1.00 - (TruePlayerDEF * tempdeffactor) - (random[statitem](1,PlayerLUCK) * frandompick[statitem](0,0,0,0,0,0,(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.125),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.25),(basedeffct*0.5),(basedeffct*0.5),(basedeffct*0.5),(basedeffct),(basedeffct),(basedeffct*2))));
 			if (IsMorphed == 1) tempmax = 0.60;
 										 else tempmax = 0.20;
 			if (kc_extraatkdefspd && kc_expgains) tempmax *= 1.0;
@@ -6034,6 +6051,9 @@ class PlayerDashJump : Inventory
 			TruePlayerATK = MiscItem.PlayerATK;
 			TruePlayerDEF = MiscItem.PlayerDEF;
 			TruePlayerSPD = MiscItem.PlayerSPD;
+			TruePlayerVIT = MiscItem.PlayerVIT;
+			TruePlayerIQ = MiscItem.PlayerIQ;
+			TruePlayerGUTS = MiscItem.PlayerGUTS;
 			TruePlayerLUCK = MiscItem.PlayerLUCK;
 		}
 		MaxDashTics = randompick[statitem](6,6,7,7,7) + (TruePlayerLevel / 20);

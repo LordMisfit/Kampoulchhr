@@ -128,6 +128,13 @@ class KC_EventHandler : EventHandler
 					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
 				}
 				
+				nm = "CCards_Actor_MiasmaEffect";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+				}
+				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -150,6 +157,13 @@ class KC_EventHandler : EventHandler
 						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
 						mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
 					}
+				}
+				
+				nm = "CCards_Actor_MiasmaEffect";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
 				}
 			}
 			
@@ -1209,6 +1223,15 @@ class KC_EventHandler : EventHandler
 					if (kcdebug_monsterscaling) Console.Printf("Actor's Level: %d [%d], Actor's Rating: %d [%d]", LevelCheck, spawnee.CountInv("MonsterLevel"), monsterrating, spawnee.CountInv("MonsterRating"));
 				}
 				string montag = spawnee.GetTag();
+				if (e1m8baron || 
+						e2m8cyber ||
+						e34m8spider)
+				{
+					if (e1m8baron) montag.AppendFormat(" Ascendant", monsterlevel);
+					if (e2m8cyber) montag.AppendFormat(" Lord", monsterlevel);
+					if (e34m8spider) montag.AppendFormat(" Queen", monsterlevel);
+				}
+				montag = spawnee.GetTag();
 				montag.AppendFormat(" \c[gold](L%d)\c-", monsterlevel);
 				spawnee.SetTag(montag);
 				
@@ -1558,6 +1581,12 @@ class KC_EventHandler : EventHandler
 		if (spawnname == "BaronBall")
 		{
 			spawnee.SetTag("HellNoble Plasma");
+			if (spawnee.target && HellKnight(spawnee.target))
+			{
+				spawnee.SetDamage((spawnee.Damage * 0.5));
+				spawnee.scale.x *= 0.75;
+				spawnee.scale.y *= 0.75;
+			}
 			ProjSetSpeed(spawnee);
 		}
 		if (spawnname == "FatShot")
@@ -4763,7 +4792,10 @@ class KC_EventHandler : EventHandler
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
 						
-						if (playoneliner && A_CheckForHeiwaPlayer() && MiscItem)
+						if (playoneliner && 
+								A_CheckForHeiwaPlayer() && 
+								MiscItem && 
+								playera.health > 0)
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							bool voicecheck = false;
@@ -5358,6 +5390,11 @@ class KC_StaticEventHandler : StaticEventHandler
 		{
 			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
 			Console.Printf("Epic2 Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-HELLG", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSHELLG").Split(allSF,":");
+			Console.Printf("Hell Ground Footsteps TXT Loaded");
 		}
 		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
 		{

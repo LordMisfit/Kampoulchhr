@@ -2021,12 +2021,21 @@ class KCPlayerPawn : PlayerPawn
 	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
+		if (((inflictor && HellKnight(inflictor)) || 
+				(source && HellKnight(source))) &&
+				Mod == 'melee') damage *= 0.5;
+		bool miasmaeffect = false;
+		if (mod == "CardPoison" && 
+				((inflictor && inflictor.GetClassName() == "CCards_Actor_MiasmaEffect") || 
+				(source && source.GetClassName() == "CCards_Actor_MiasmaEffect"))) miasmaeffect = true;
+		
 		int prev_health = health;
 		int origdmg, olddmg, prevdmg;
 		origdmg = olddmg = prevdmg = damage;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		let weapon = player.ReadyWeapon;
 		if (inflictor && MorphProjectile(inflictor) || source && MorphProjectile(source)) A_GiveInventory("HitByMorphProj",1);
+
 		
 		// Buffing the "Followed by your shadow" effect from CCards to remain threatening V:
 		if (mod == 'CCShadow' && 
@@ -2110,7 +2119,17 @@ class KCPlayerPawn : PlayerPawn
 			{
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Evasion - no damage [attempt]");
 				if (!(((source == null && inflictor == null) &&
-						(mod == 'Slime' || mod == 'Lava' || mod == 'Magma' || mod == 'IceWater' || mod == 'ShockFloor' || mod == 'Crush' || mod == 'Drowning' || mod == 'SigilDrain' || mod == 'Falling')) || mod == 'SigilDrain'))
+						(mod == 'Slime' || 
+						 mod == 'Lava' || 
+						 mod == 'Magma' || 
+						 mod == 'IceWater' || 
+						 mod == 'ShockFloor' ||
+						 miasmaeffect || 
+						 mod == 'Crush' || 
+						 mod == 'Drowning' || 
+						 mod == 'SigilDrain' || 
+						 mod == 'Falling')) || 
+						 mod == 'SigilDrain'))
 				{
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Evasion - no damage [success]");
 					A_StartSound("player/dodge",305,CHANF_OVERLAP|CHANF_LOCAL,frandom(0.75,1.25),ATTN_NORM,frandom(0.75,1.25));
@@ -2429,6 +2448,7 @@ class KCPlayerPawn : PlayerPawn
 				mod == 'Magma' || 
 				mod == 'IceWater' || 
 				mod == 'ShockFloor' || 
+				miasmaeffect || 
 				mod == 'Crush' || 
 				mod == 'Falling')
 		{
@@ -2568,7 +2588,14 @@ class KCPlayerPawn : PlayerPawn
 		else
 		{
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- useflatdefense: %d", useflatdefense);
-			if (!(mod == 'Slime' || mod == 'Lava' || mod == 'Magma' || mod == 'IceWater' || mod == 'ShockFloor' || mod == 'Drowning' || mod == 'Falling'))
+			if (!(mod == 'Slime' || 
+						mod == 'Lava' || 
+						mod == 'Magma' || 
+						mod == 'IceWater' || 
+						mod == 'ShockFloor' || 
+						miasmaeffect || 
+						mod == 'Drowning' || 
+						mod == 'Falling'))
 			{
 				olddmg = damage;
 				if (mod == 'Drowning') useflatdefense = false;
@@ -2715,7 +2742,12 @@ class KCPlayerPawn : PlayerPawn
 				(CountInv("DebugTimeFreezer") && kcdebug_timeslowinterval > 1) || 
 				CountInv("DashTimeFreezer"))
 		{
-			if (mod == 'Slime' || mod == 'Lava' || mod == 'Magma' || mod == 'IceWater' || mod == 'ShockFloor')
+			if (mod == 'Slime' || 
+					mod == 'Lava' || 
+					mod == 'Magma' || 
+					mod == 'IceWater' || 
+					mod == 'ShockFloor' ||
+					miasmaeffect)
 			{
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [TimeFreeze on Slime abort]");
 				return 0;
@@ -3874,6 +3906,11 @@ class EVP_Footsteps : Actor
 		{
 			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
 			Console.Printf("Epic2 Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-HELLG", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSHELLG").Split(allSF,":");
+			Console.Printf("Hell Ground Footsteps TXT Loaded");
 		}
 		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
 		{

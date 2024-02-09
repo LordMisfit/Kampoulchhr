@@ -481,6 +481,14 @@ mixin class StunItems
 
 mixin class DmgCalc
 {
+	action bool A_CheckForHeiwa()
+	{
+		bool result = false;
+		actor playera = players[0].mo;
+		if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
+		return result;
+	}
+	
 	action int A_GetPlayerLvl(int type = 0)
 	{
 		actor playera = players[0].mo;
@@ -512,7 +520,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
+												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
 			PlayerLevel = TruePlayerLevel;
 		}
 		
@@ -611,7 +620,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
+												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
 			PlayerLevel = TruePlayerLevel;
 		}
 		
@@ -726,7 +736,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
+												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
 			PlayerLevel = TruePlayerLevel;
 		}
 
