@@ -1755,7 +1755,7 @@ class PlayerStatItem : Inventory
 			if (PlayerLUCK) 
 			{
 				if (A_CheckForHeiwa()) SurvivalRate += (PlayerLUCK * 1.1875); // +0.011875% per Luck Point
-																							else SurvivalRate += (PlayerLUCK * 1.25); // +0.0125% per Luck Point
+													else SurvivalRate += (PlayerLUCK * 1.25); // +0.0125% per Luck Point
 			}
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Luck]: %d", SurvivalRate);
 			
@@ -3488,11 +3488,11 @@ class PlayerStatItem : Inventory
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.375;
+			BaseChance1 = 0.25;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.625;
+				BaseChance1 = 0.375;
 				BaseChance2 = 0.1875;
 			}
 		}
@@ -3586,11 +3586,11 @@ class PlayerStatItem : Inventory
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.375;
+			BaseChance1 = 0.5;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.925;
+				BaseChance1 = 1.0625;
 				BaseChance2 = 0.1875;
 			}
 		}
@@ -3635,11 +3635,11 @@ class PlayerStatItem : Inventory
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.1875;
+			BaseChance1 = 0.25;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.5875;
+				BaseChance1 = 0.625;
 				BaseChance2 = 0.1875;
 			}
 		}
@@ -6069,45 +6069,55 @@ class PlayerDashJump : Inventory
 		MaxDashTics = randompick[statitem](6,6,7,7,7) + (TruePlayerLevel / 20);
 		if (A_CheckForHeiwa())
 		{
-			if (heiwavhardmodifier) MaxDashTics = randompick[statitem](5,5,6,6,6) + (TruePlayerLevel / 8);
-												 else MaxDashTics = randompick[statitem](4,4,5,5,5) + (TruePlayerLevel / 10);
+			if (heiwavhardmodifier) MaxDashTics = (randompick[statitem](8,8,9,9,10) + (TruePlayerSPD / 24));
+												 else MaxDashTics = (randompick[statitem](7,7,8,8,9) + (TruePlayerSPD / 32));
+		}
+		else
+		{
+			MaxDashTics = randompick[statitem](9,9,10,10,10) + (TruePlayerSPD / 48);
 		}
 		
 		if (berserked) 
 		{
-			if (A_CheckForHeiwa())
-			{
-				MaxDashTics *= (1.125 + (TruePlayerLevel * 0.0125));
-			}
-			else
-			{
-				MaxDashTics *= (1.34 + (TruePlayerLevel * 0.004));
-			}
+			if (A_CheckForHeiwa()) MaxDashTics *= (1.125 + (TruePlayerLevel * 0.00625));
+												else MaxDashTics *= (1.34 + (TruePlayerLevel * 0.002));
 		}
-		int DashLvlTier1Thresh = 25;
-		int DashLvlTier2Thresh = 50;
-		int DashLvlTier3Thresh = 75;
-		int DashLvlTier4Thresh = 100;
 
 		double baseAddDashLevel = 1.25;
+		double baseAddDashSpeed = 0;
 		int AddDashLevel = (TruePlayerLevel * baseAddDashLevel);
+		int AddDashSpeed = (TruePlayerSPD * baseAddDashSpeed);
 		double ADashFactor = 1.5;
-		if (skill <= SKILL_VERY_EASY) baseAddDashLevel = 1.625;
-		if (skill == SKILL_EASY) baseAddDashLevel = 1.5;
-		if (skill == SKILL_NORMAL) baseAddDashLevel = 1.375;
-		if (skill == SKILL_HARD) baseAddDashLevel = 1.25;
-		if (skill >= SKILL_VERY_HARD) baseAddDashLevel = 1.125;
+		baseAddDashLevel = 1.0;
+		if (skill <= SKILL_VERY_EASY) baseAddDashLevel += 0.625;
+		if (skill == SKILL_EASY) baseAddDashLevel += 0.5;
+		if (skill == SKILL_NORMAL) baseAddDashLevel += 0.375;
+		if (skill == SKILL_HARD) baseAddDashLevel += 0.25;
+		if (skill >= SKILL_VERY_HARD) baseAddDashLevel += 0.125;
 		if (A_CheckForHeiwa()) 
 		{
-			if (heiwavhardmodifier) baseAddDashLevel *= 3.25;
-												 else baseAddDashLevel *= 2.0;
+			baseAddDashLevel *= 0.334;
+
+			baseAddDashSpeed = 1.0;
+			if (skill <= SKILL_VERY_EASY) baseAddDashSpeed += 0.625;
+			if (skill == SKILL_EASY) baseAddDashSpeed += 0.5;
+			if (skill == SKILL_NORMAL) baseAddDashSpeed += 0.375;
+			if (skill == SKILL_HARD) baseAddDashSpeed += 0.25;
+			if (skill >= SKILL_VERY_HARD) baseAddDashSpeed += 0.125;
+			if (heiwavhardmodifier) 
+			{
+				baseAddDashLevel *= 2.125;
+				baseAddDashSpeed *= 2.125;
+			}
+			else 
+			{
+				baseAddDashLevel *= 1.5;
+				baseAddDashSpeed *= 1.5;
+			}
 		}
 
 		AddDashLevel = (TruePlayerLevel * (baseAddDashLevel * ADashFactor));
-		if (TruePlayerLevel >= DashLvlTier1Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier1Thresh) * ((baseAddDashLevel * 0.25) * ADashFactor));
-		if (TruePlayerLevel >= DashLvlTier2Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier2Thresh) * ((baseAddDashLevel * 0.0625) * ADashFactor));
-		if (TruePlayerLevel >= DashLvlTier3Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier3Thresh) * ((baseAddDashLevel * 0.015625) * ADashFactor));
-		if (TruePlayerLevel >= DashLvlTier4Thresh) AddDashLevel += ((TruePlayerLevel - DashLvlTier4Thresh) * ((baseAddDashLevel * 0.00390625) * ADashFactor));
+		AddDashSpeed = (TruePlayerSPD * (baseAddDashSpeed * ADashFactor));
 		
 		if (itemtimer <= 2)
 		{
@@ -6197,14 +6207,16 @@ class PlayerDashJump : Inventory
 				if (berserked) AddDashLevel2 *= 1.25;
 			}
 		}
-		DashMaxCharge = BaseDashChargeMax + AddDashLevel2 + ExDashCharge2 + PerkFactor2;
-		if (kcdebug_showdashinformation) Console.Printf("DashMaxCharge: %d (BaseDashChargeMax: %d, AddDashLevel2: %d (%d), ExtraDashCharge2: %d (%d), PerkFactor2: %d", DashMaxCharge, BaseDashChargeMax, AddDashLevel2, AddDashLevel, ExDashCharge2, ExtraDashCharge, PerkFactor2);
+		DashMaxCharge = BaseDashChargeMax + AddDashLevel2 + AddDashSpeed + ExDashCharge2 + PerkFactor2;
+		if (kcdebug_showdashinformation) Console.Printf("DashMaxCharge: %d (BaseDashChargeMax: %d, AddDashLevel2: %d (%d), AddDashSpeed: %d, ExtraDashCharge2: %d (%d), PerkFactor2: %d", DashMaxCharge, BaseDashChargeMax, AddDashLevel2, AddDashLevel, AddDashSpeed, ExDashCharge2, ExtraDashCharge, PerkFactor2);
 		
 		if (berserked) 
 		{
 			if (A_CheckForHeiwa())
 			{
-				DashMaxCharge *= (1.0325 + (TruePlayerLevel * 0.004625)); // Stars Less, But reaches/exceeds 1.125x by Level 20+ :V
+				double extchargemult = (1.0325 + (TruePlayerLevel * 0.004625));
+				if (extchargemult > 1.25) extchargemult = 1.25;
+				DashMaxCharge *= extchargemult; // Stars Less, But reaches/exceeds 1.125x by Level 20+ :V
 			}
 			else
 			{
@@ -6228,34 +6240,33 @@ class PlayerDashJump : Inventory
 		if (kcdebug_showdashinformation) Console.Printf("[angle] cos: %.8f, sin: %.8f", trueanglecos, trueanglesin);
 		
 		MaxDashTics = 9;
+		double shldmdtmult = frandompick[statitem](1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);;
 		if (kc_allowdashing > 0)
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (heiwavhardmodifier) MaxDashTics = (randompick[statitem](8,8,9,9,10) + (TruePlayerSPD / 12) + ((TruePlayerLevel * 2) / 3));
-													 else MaxDashTics = (randompick[statitem](7,7,8,8,9) + (TruePlayerSPD / 16) + ((TruePlayerLevel * 2) / 4));
-				if (berserked) MaxDashTics *= (1.125 + (TruePlayerLevel * 0.0125));
+				if (heiwavhardmodifier) MaxDashTics = (randompick[statitem](8,8,9,9,10) + (TruePlayerSPD / 24));
+													 else MaxDashTics = (randompick[statitem](7,7,8,8,9) + (TruePlayerSPD / 32));
+				if (berserked) MaxDashTics *= (1.125 + (TruePlayerLevel * 0.06125));
 			}
 			else
 			{
-				MaxDashTics = randompick[statitem](9,9,10,10,10) + (TruePlayerSPD / 24);
-				if (berserked) MaxDashTics *= (1.34 + (TruePlayerLevel * 0.004));
+				MaxDashTics = randompick[statitem](9,9,10,10,10) + (TruePlayerSPD / 48);
+				if (berserked) MaxDashTics *= (1.34 + (TruePlayerLevel * 0.002));
 			}
-			if (CountInv("HWShieldBlockHold"))
-			{
-				MaxDashTics *= frandompick[statitem](1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
-			}
+			if (CountInv("HWShieldBlockHold")) MaxDashTics *= shldmdtmult;
 		}
 		MaxDashTics *= dashtimermulti;
 		dashveltimer = DashTimer % 2;
 		dashveltimer2 = DashTimer % 1;
 		
-		int MDTicCeiling = 64;
+		int MDTicCeiling = 24;
 		if (kc_allowdashing > 2) 
 		{
 			MaxDashTics *= 0.5;
 			MDTicCeiling *= 0.5;
 		}
+		MDTicCeiling *= shldmdtmult;
 		if (MaxDashTics > MDTicCeiling) MaxDashTics = MDTicCeiling;
 		
 		double DashSpdMul = 1.00;

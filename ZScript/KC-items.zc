@@ -4088,10 +4088,13 @@ class VitalCapsule : StatCaspuleBase
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				if (MiscItem)
+				if (MiscItem && 
+						playera && 
+						globalvars)
 				{
 					MiscItem.VitalityPieces++;
 					globalvars.VitalityPieces++;
+					//playera.A_GiveInventory("PlayerVIT",1);
 				}
 			}
 			Stop;
@@ -4116,10 +4119,13 @@ class IQCapsule : StatCaspuleBase
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				if (MiscItem)
+				if (MiscItem && 
+						playera && 
+						globalvars)
 				{
 					MiscItem.PlayerIQ++;
 					globalvars.PlayerIQ++;
+					playera.A_GiveInventory("PlayerIQ",1);
 				}
 			}
 			Stop;
@@ -4144,10 +4150,13 @@ class GutsCapsule : StatCaspuleBase
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				if (MiscItem)
+				if (MiscItem && 
+						playera && 
+						globalvars)
 				{
 					MiscItem.PlayerGUTS++;
 					globalvars.PlayerGUTS++;
+					playera.A_GiveInventory("PlayerGUTS",1);
 				}
 			}
 			Stop;
@@ -4172,10 +4181,13 @@ class SpeedCapsule : StatCaspuleBase
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				if (MiscItem)
+				if (MiscItem && 
+						playera && 
+						globalvars)
 				{
 					MiscItem.PlayerSPD++;
 					globalvars.PlayerSPD++;
+					playera.A_GiveInventory("PlayerSPD",1);
 				}
 			}
 			Stop;
@@ -4200,10 +4212,13 @@ class LuckCapsule : StatCaspuleBase
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				let globalvars = KCGlobalVariables.Get();
-				if (MiscItem)
+				if (MiscItem && 
+						playera && 
+						globalvars)
 				{
 					MiscItem.PlayerLUCK++;
 					globalvars.PlayerLUCK++;
+					playera.A_GiveInventory("PlayerLUCK",1);
 				}
 			}
 			Stop;
