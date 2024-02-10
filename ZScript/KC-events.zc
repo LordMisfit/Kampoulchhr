@@ -2792,7 +2792,8 @@ class KC_EventHandler : EventHandler
 				bossdropmulti *= 0.25;
 				skillmult *= 4;
 			}
-			if (waslegendary) skillmult *= frandom(0.334,0.4585);
+			if (waslegendary || 
+					victim.CountInv("CCards_Actor_AssassinBuff")) skillmult *= frandom(0.334,0.4585);
 			bool candropitems = false;
 			if (specialtype) candropitems = true;
 			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
@@ -4566,10 +4567,12 @@ class KC_EventHandler : EventHandler
 						}
 
 						int ExpGain = (victim.SpawnHealth() + victim.Stamina);
-						if (waslegendary) ExpGain *= 1.25;
+						if (waslegendary ||
+								victim.CountInv("CCards_Actor_AssassinBuff")) ExpGain *= 1.25;
 						if (monsterrating)
 						{
-							if (waslegendary)
+							if (waslegendary ||
+									victim.CountInv("CCards_Actor_AssassinBuff"))
 							{
 								if (monsterrating == 1) ExpGain *= 1.05;
 								if (monsterrating == 2) ExpGain *= 1.1;
@@ -4801,7 +4804,9 @@ class KC_EventHandler : EventHandler
 							bool voicecheck = false;
 							if (kc_heiwaextravoices && kc_heiwaoneliners && !MiscItem.OneLinerCooldown)
 							{
-								if (MiscItem.OneLinerCooldown <= 0 || waslegendary) 
+								if (MiscItem.OneLinerCooldown <= 0 || 
+										waslegendary ||
+										victim.CountInv("CCards_Actor_AssassinBuff"))
 								{
 									voicecheck = true;
 									let speakitem = PlayerTargettedMonster(victim.FindInventory("PlayerTargettedMonster"));

@@ -926,6 +926,12 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 								}
 							}
 						}
+						nm = "CCards_Actor_AssassinBuff";
+						if (owner.CountInv(nm)) 
+						{
+							if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [CCards, Assassin sighted] :V");
+							A_SpeakToBoss(0); 
+						}
 						nm = "CCards_Actor_TheAncientOne";
 						if (owner.GetClassName() == nm) 
 						{
