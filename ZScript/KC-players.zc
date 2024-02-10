@@ -1659,7 +1659,8 @@ class KCPlayerPawn : PlayerPawn
 							double basedmul = 0.25;
 
 							double basevol = 0.667;
-							double extravol = (0.334 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
+							double extravol = 0.334;
+							if (MiscItem.TimeArmorEnergyMaxTics) extravol = (0.334 * ((TSTicDmg * 1.0) / (MiscItem.TimeArmorEnergyMaxTics * basedmul)));
 							basevol += extravol;
 							if (basevol > 1.0) basevol = 1.0;
 

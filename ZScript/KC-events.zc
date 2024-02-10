@@ -3629,6 +3629,7 @@ class KC_EventHandler : EventHandler
 					maxchance = basechance;
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1) // Main Drop Chance
 					{
@@ -3894,6 +3895,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					
 					if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
@@ -3941,6 +3943,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
@@ -4033,6 +4036,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					int randroll = random(1,maxchance);
 					if (randroll <= 1)
 					{
@@ -4060,6 +4064,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
@@ -4080,6 +4085,7 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					rollrand = random(1,maxchance);
+					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (rollrand <= 1)
 					{
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Rare Drop [success]");

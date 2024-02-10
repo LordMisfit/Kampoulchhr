@@ -388,7 +388,7 @@ class PlayerStatItem : Inventory
 							{
 								medbag2.Amount = medbag2.MaxAmount = medbag2.InterHubAmount = spbkpkmaxhealthcarry;
 							}
-							
+							/*
 							int tempval = CountInv("TimeSeraphBangle");
 							let tsb = TimeSeraphBangle(owner.FindInventory("TimeSeraphBangle",false));
 							if (tsb) tsb.Destroy();
@@ -406,6 +406,7 @@ class PlayerStatItem : Inventory
 							if (tsc) tsc.Destroy();
 							owner.A_SetInventory("TimeSeraphCharm",1);
 							if (tempval <= 0) owner.A_SetInventory("TimeSeraphCharm",0);
+							*/
 						}
 					}
 					else if (medbag) medbag.Destroy();
@@ -5375,13 +5376,15 @@ class PlayerStatItem : Inventory
 		
 		double BaseFactor = 1.0;
 		double BaseMul = 0.004375;
+		double tempspdfactor = BaseMul;
+		if (A_CheckForHeiwa()) tempspdfactor *= 0.334;
 		BaseMul *= 1.0;
 		if (IsMorphed == 1) BaseMul *= 3;
 		BaseMul *= kc_pspdfactor;
 		if (kc_expgains)
 		{
-			if (kc_extraatkdefspd) BaseFactor *= (1.00 + (TruePlayerLevel * BaseMul) + (TruePlayerSPD * BaseMul));
-												else BaseFactor *= (1.00 + (TruePlayerLevel * BaseMul));
+			if (kc_extraatkdefspd) BaseFactor *= (1.00 + (TruePlayerLevel * tempspdfactor) + (TruePlayerSPD * BaseMul));
+												else BaseFactor *= (1.00 + (TruePlayerLevel * tempspdfactor));
 		}
 		double tempmax;
 		if (IsMorphed == 1) tempmax = 7.5;
@@ -5389,7 +5392,7 @@ class PlayerStatItem : Inventory
 		if (kc_expgains) tempmax *= 1.0;
 		if (BaseFactor >= tempmax) BaseFactor = tempmax;
 		Speed *= BaseFactor;
-		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base (level+extra)]: %.8f, BaseMul: %.8f, kc_pspdfactor: %.8f, TPLBase: %.8f, TPLBaseS: %.8f", BaseFactor, BaseMul, kc_pspdfactor, (TruePlayerLevel * BaseMul), (TruePlayerSPD * BaseMul));
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [base (level+extra)]: %.8f, BaseMul: %.8f (tempspdfactor: %.8f), kc_pspdfactor: %.8f, TPLBase: %.8f, TPLBaseS: %.8f", BaseFactor, BaseMul, tempspdfactor, kc_pspdfactor, (TruePlayerLevel * tempspdfactor), (TruePlayerSPD * BaseMul));
 		
 		double HealthFactor = 1.0;
 		if (CurrentHealth >= (MaxHealthTrue * 3)) 
@@ -6229,8 +6232,8 @@ class PlayerDashJump : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (heiwavhardmodifier) MaxDashTics = randompick[statitem](8,8,9,9,10) + (TruePlayerSPD / 12);
-													 else MaxDashTics = randompick[statitem](7,7,8,8,9) + (TruePlayerSPD / 16);
+				if (heiwavhardmodifier) MaxDashTics = (randompick[statitem](8,8,9,9,10) + (TruePlayerSPD / 12) + ((TruePlayerLevel * 2) / 3));
+													 else MaxDashTics = (randompick[statitem](7,7,8,8,9) + (TruePlayerSPD / 16) + ((TruePlayerLevel * 2) / 4));
 				if (berserked) MaxDashTics *= (1.125 + (TruePlayerLevel * 0.0125));
 			}
 			else
