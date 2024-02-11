@@ -6298,6 +6298,7 @@ class BFG9000Marine : MarineWeapon //replaces BFG9000
 class Glock21 : MarineWeapon
 {
 	int ammomode;
+	int clipamt;
 	default
 	{
 		KCWeaponBase.PickUpVoiceHeiwa2 true;
@@ -6382,6 +6383,7 @@ class Glock21 : MarineWeapon
 		{
 			A_FireBullets(2,3,1,(randdmg),"KCBulletPuff2",FBF_USEAMMO|FBF_NORANDOM, defenseignorefactor: frandom(defignore1,defignore2));
 		}
+		invoker.clipamt++;
 	}
 	
 	States
@@ -6416,14 +6418,29 @@ class Glock21 : MarineWeapon
 			LIBG A 1 A_Raise(12);
 			Loop;
 		Fire:
+			LIBF A 0
+			{
+				if (invoker.clipamt >= 12) return resolvestate("DryFire");
+				return resolvestate(null);
+			}
 			LIBF A 0 A_GunFlash;
 			LIBF A 0 A_GlockAtk(0);
 			LIBF A 1 BRIGHT;
 			LIBG DCBA 1;
 			LIBG A 4;
-			LIBF A 0 A_CheckforReload(12,"Ready");
+			LIBF A 0 //A_CheckforReload(12,"Ready");
+			{
+				if (invoker.clipamt < 12) return resolvestate("Ready");
+				else if (CountInv("Clip") <= 0) return resolvestate("Ready");
+				return resolvestate(null);
+			}
 			Goto DryFire;
 		AltFire:
+			LIBF A 0
+			{
+				if (invoker.clipamt >= 12) return resolvestate("DryFire");
+				return resolvestate(null);
+			}
 			LIBF A 0 A_GunFlash;
 			LIBF A 0 A_GlockAtk(1);
 			LIBF A 1 BRIGHT;
@@ -6447,7 +6464,12 @@ class Glock21 : MarineWeapon
 			{
 				A_SetTics(randompick(1,1,1,2,2));
 			}
-			LIBF A 0 A_CheckforReload(12,"Ready");
+			LIBF A 0 //A_CheckforReload(12,"Ready");
+			{
+				if (invoker.clipamt < 12) return resolvestate("Ready");
+				else if (CountInv("Clip") <= 0) return resolvestate("Ready");
+				return resolvestate(null);
+			}
 			Goto DryFire;
 		DryFire:
 			LIBG A 12 
@@ -6483,7 +6505,12 @@ class Glock21 : MarineWeapon
 			}
 			Goto Reload+1;
 		Reload:
-			TNT1 A 0 A_CheckforReload(1,"Ready",true);
+			TNT1 A 0 // A_CheckforReload(1,"Ready",true);
+			{
+				if (invoker.clipamt <= 0 || 
+						CountInv("Clip") <= 0) return resolvestate("Ready");
+				return resolvestate(null);
+			}
 			LIBG A 1 
 			{
 				A_StartSound("weapons/glockout");
@@ -6579,6 +6606,9 @@ class Glock21 : MarineWeapon
 				}
 				A_StartSound("weapons/glockin");
 				A_ResetReloadCounter();
+				int clipleft = CountInv("Clip");
+				if (clipleft < 12) invoker.clipamt -= clipleft;
+											else invoker.clipamt -= 12;
 			}
 			LIBR E 1
 			{
