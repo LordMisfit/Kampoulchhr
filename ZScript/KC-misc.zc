@@ -46,6 +46,8 @@ class PlayerStatItem : Inventory
 	int sielsgracecooldown;
 	int sielsgracecooldownbase;
 	
+	int TSArtifactSpawnCooldown;
+	
 	int BaseFlatDefValue, BaseFlatDefValueCrush, BaseFlatDefValueDmgFlr, BaseFlatDefValueHUD;
 	int ArmorDefValue, ArmorDefValueCrush, ArmorDefValueDmgFlr, ArmorDefValueHUD;
 	
@@ -370,11 +372,17 @@ class PlayerStatItem : Inventory
 				else berserked = false;
 				
 				spbkpkmaxhealthcarry = MaxHealthTrue;
+				if (TrueGameSkill <= SKILL_VERY_EASY) spbkpkmaxhealthcarry = MaxHealthTrue * (1.375);
+				if (TrueGameSkill == SKILL_EASY) spbkpkmaxhealthcarry = MaxHealthTrue * (1.1875);
+				if (TrueGameSkill == SKILL_HARD) spbkpkmaxhealthcarry = MaxHealthTrue * (0.8125);
+				if (TrueGameSkill >= SKILL_VERY_HARD) spbkpkmaxhealthcarry = MaxHealthTrue * (0.625);
 				if (owner.CountInv("BackPackTier1"))
 				{
-					if (owner.CountInv("BackPackTier2")) spbkpkmaxhealthcarry *= 2.5;
-																					else spbkpkmaxhealthcarry *= 1.5;
+					if (owner.CountInv("BackPackTier2")) spbkpkmaxhealthcarry *= 1.75;
+																					else spbkpkmaxhealthcarry *= 1.25;
 				}
+				double fact = ((owner.CountInv("SpecialBackpackBonus") - 1) * 0.25);
+				spbkpkmaxhealthcarry *= (1.0 + fact);
 				let medbag = MediBag(owner.FindInventory("MediBag",false));
 				if (A_CheckForHeiwa())
 				{
@@ -413,7 +421,6 @@ class PlayerStatItem : Inventory
 				}
 				else if (medbag) medbag.Destroy();
 				
-				if (whistlecooldown) whistlecooldown--;
 				
 				// Mode Check
 				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
@@ -425,52 +432,6 @@ class PlayerStatItem : Inventory
 				buttons = owner.GetPlayerInput(INPUT_BUTTONS);
 				TrueGameSkill = skill;
 				
-				sielsgracecooldown = owner.CountInv("sielsgracecooldown");
-				sielsgraceactivations = owner.CountInv("sielsgraceactivations");
-				if (sielsgracecooldown && sielsgraceactivations < 4)
-				{
-					sielsgraceactive = 0;
-					sielsgracecooldown--;
-					if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown -= randompick(3,4,4,4,4,5);
-					owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
-					if (sielsgracecooldown <= 0) 
-					{
-						sielsgracecooldown = 0;
-						if (!sielsgraceactive && sielsgraceactivations < 4) 
-						{
-							sielsgraceactive = 1;
-							double fadetime = int(TICRATE*frandom(0.4167,0.5834));
-							owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
-							owner.A_StopSound(1280);
-							owner.A_StopSound(1281);
-							owner.A_StopSound(1282);
-							owner.A_StopSound(1283);
-							owner.A_StopSound(1284);
-							owner.A_StartSound("sielsgracea",1280,CHANF_DEFAULT,0.25,ATTN_NORM,1.0);
-						}
-					}
-					if (kcdebug_survivalrate) Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
-				}
-				else
-				if (sielsgracecooldown <= 0) 
-				{
-					sielsgracecooldown = 0;
-					owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
-					if (!sielsgraceactive && sielsgraceactivations < 4) 
-					{
-						sielsgraceactive = 1;
-						double fadetime = int(TICRATE*frandom(0.4167,0.5834));
-						owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
-					}
-				}
-				if (sielsgraceactive)
-				{
-					sielsgracecooldown = 0;
-					if (kcdebug_survivalrate) Console.Printf("sielsgraceactive: %d", sielsgraceactive);
-				}
-				owner.A_SetInventory("sielsgraceactivations",sielsgraceactivations);
-
-
 				// Check Heiwa's Weapons
 				if (A_CheckForHeiwa()) 
 				{
@@ -834,6 +795,11 @@ class PlayerStatItem : Inventory
 				//****************************
 				MaxHealthStuff();
 				
+				//*********************
+				//* Cooldown Handling *
+				//*********************
+				CoolDownHandling();
+				
 				//*******************
 				//* Misc HUD Timers *
 				//*******************
@@ -1016,6 +982,114 @@ class PlayerStatItem : Inventory
 		}
 	}
 	
+	void CoolDownHandling()
+	{
+		let globalvars = KCGlobalVariables.Get();
+		let playeractor = KCPlayerPawn(owner);
+		if (!A_CheckNoTimer())
+		{
+			sielsgracecooldown = owner.CountInv("sielsgracecooldown");
+			sielsgraceactivations = owner.CountInv("sielsgraceactivations");
+			if (sielsgracecooldown && sielsgraceactivations < 4)
+			{
+				sielsgraceactive = 0;
+				sielsgracecooldown--;
+				if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown -= randompick(3,4,4,4,4,5);
+				owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
+				if (sielsgracecooldown <= 0) 
+				{
+					sielsgracecooldown = 0;
+					if (!sielsgraceactive && sielsgraceactivations < 4) 
+					{
+						sielsgraceactive = 1;
+						double fadetime = int(TICRATE*frandom(0.4167,0.5834));
+						owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
+						owner.A_StopSound(1280);
+						owner.A_StopSound(1281);
+						owner.A_StopSound(1282);
+						owner.A_StopSound(1283);
+						owner.A_StopSound(1284);
+						owner.A_StartSound("sielsgracea",1280,CHANF_DEFAULT,0.25,ATTN_NORM,1.0);
+					}
+				}
+				if (kcdebug_survivalrate) Console.Printf("sielsgracecooldown: %d", sielsgracecooldown);
+			}
+			else
+			if (sielsgracecooldown <= 0) 
+			{
+				sielsgracecooldown = 0;
+				owner.A_SetInventory("sielsgracecooldown",sielsgracecooldown);
+				if (!sielsgraceactive && sielsgraceactivations < 4) 
+				{
+					sielsgraceactive = 1;
+					double fadetime = int(TICRATE*frandom(0.4167,0.5834));
+					owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
+				}
+			}
+			if (sielsgraceactive)
+			{
+				sielsgracecooldown = 0;
+				if (kcdebug_survivalrate) Console.Printf("sielsgraceactive: %d", sielsgraceactive);
+			}
+			owner.A_SetInventory("sielsgraceactivations",sielsgraceactivations);
+
+			if (whistlecooldown) whistlecooldown--;
+			if (OneLinerCooldown > 0) OneLinerCooldown--;
+			if (OneLinerTimerCool > 0) OneLinerTimerCool--;
+			if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
+			if (TSArtifactSpawnCooldown > 0) TSArtifactSpawnCooldown--;
+			
+			if (drowndebufflevel > 0)
+			{
+				owner.A_SetInventory("DrownDebuffBase",1);
+				if (kcdebug_airmeter) Console.Printf("drowndebufflevel: %d, drowndebufftimer: %d", drowndebufflevel ,drowndebufftimer);
+				if (owner.CountInv("AirMeter") > 0)
+				{
+					if (drowndebuginit)
+					{
+						drowndebuffmaxtimer = drowndebufftimer;
+						drownmaxtimermod = (drowndebuffmaxtimer / drowndebufflevel);
+						drowndebuginit = false;
+					}
+					if (drowndebufftimer) 
+					{
+						drowndebufftimer--;
+						if (drowndebufftimer % drownmaxtimermod == 1)
+						{
+							drowndebufflevel--;
+							if (drowndebufflevel <= 0) 
+							{
+								drowndebufflevel = 0;
+								drowndebufftimer = 0;
+								owner.A_SetInventory("DrownDebuffBase",0);
+							}
+						}
+					}
+					else 
+					{
+						drowndebufflevel = 0;
+						owner.A_SetInventory("DrownDebuffBase",0);
+					}
+				}
+			}
+			else
+			{
+				drowndebufftimer = 0;
+				owner.A_SetInventory("DrownDebuffBase",0);
+			}
+			
+			if (kcdebug_misccooldowntimers)
+			{
+				Console.Printf("\c[HeiwaDeluge]sielsgracecooldown: %d\c-, whistlecooldown: %d, OneLinerCooldown: %d, OneLinerTimerCool: %d, \c[HeiwaDeluge]TSArtifactSpawnCooldown: %d\c-, drowndebufftimer: %d", 
+												sielsgracecooldown, 
+												whistlecooldown,
+												OneLinerCooldown,
+												OneLinerTimerCool, 
+												TSArtifactSpawnCooldown,
+												drowndebufftimer);
+			}
+		}
+	}
 	
 	void HUDStuff()
 	{
@@ -1024,10 +1098,6 @@ class PlayerStatItem : Inventory
 		
 		if (!A_CheckNoTimer())
 		{
-			if (OneLinerCooldown > 0) OneLinerCooldown--;
-			if (OneLinerTimerCool > 0) OneLinerTimerCool--;
-			if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
-			
 			if (HPDmgHUDTimer > 0) HPDmgHUDTimer--;
 			else
 			{
@@ -1079,43 +1149,21 @@ class PlayerStatItem : Inventory
 			if (APHUDShakeTime > 0) APHUDShakeTime--;
 			if (TSAHUDShakeTime > 0) TSAHUDShakeTime--;
 			
-			if (drowndebufflevel > 0)
+			if (kcdebug_misccooldowntimers)
 			{
-				owner.A_SetInventory("DrownDebuffBase",1);
-				if (kcdebug_airmeter) Console.Printf("drowndebufflevel: %d, drowndebufftimer: %d", drowndebufflevel ,drowndebufftimer);
-				if (owner.CountInv("AirMeter") > 0)
-				{
-					if (drowndebuginit)
-					{
-						drowndebuffmaxtimer = drowndebufftimer;
-						drownmaxtimermod = (drowndebuffmaxtimer / drowndebufflevel);
-						drowndebuginit = false;
-					}
-					if (drowndebufftimer) 
-					{
-						drowndebufftimer--;
-						if (drowndebufftimer % drownmaxtimermod == 1)
-						{
-							drowndebufflevel--;
-							if (drowndebufflevel <= 0) 
-							{
-								drowndebufflevel = 0;
-								drowndebufftimer = 0;
-								owner.A_SetInventory("DrownDebuffBase",0);
-							}
-						}
-					}
-					else 
-					{
-						drowndebufflevel = 0;
-						owner.A_SetInventory("DrownDebuffBase",0);
-					}
-				}
-			}
-			else
-			{
-				drowndebufftimer = 0;
-				owner.A_SetInventory("DrownDebuffBase",0);
+				Console.Printf("HPDmgHUDTimer: %d, APDmgHUDTimer: %d, TSADmgHUDTimer: %d, HPRecHUDTimer: %d, APRecHUDTimer: %d, TSARecHUDTimer: %d, EXPGainHUDTimer: %d, MaxHPIncTimer: %d, MaxDashIncTimer: %d, HPHUDShakeTime: %d, APHUDShakeTime: %d, TSAHUDShakeTime: %d", 
+												HPDmgHUDTimer, 
+												APDmgHUDTimer,
+												TSADmgHUDTimer,
+												HPRecHUDTimer, 
+												APRecHUDTimer,
+												TSARecHUDTimer,
+												EXPGainHUDTimer,
+												MaxHPIncTimer,
+												MaxDashIncTimer,
+												HPHUDShakeTime,
+												APHUDShakeTime,
+												TSAHUDShakeTime);
 			}
 		}
 	}
@@ -1796,6 +1844,48 @@ class PlayerStatItem : Inventory
 				}
 			}
 			
+			if (KillComboCount)
+			{
+				double based = 10;
+				if (KillComboCount >= 2) based = 15;
+				if (KillComboCount >= 4) based = 20;
+				if (KillComboCount >= 6) based = 25;
+				if (KillComboCount >= 11) based = 30;
+				if (KillComboCount >= 16) based = 35;
+				if (KillComboCount >= 21) based = 40;
+				if (KillComboCount >= 29) based = 45;
+				if (KillComboCount >= 36) based = 50;
+				if (KillComboCount >= 44) based = 55;
+				if (KillComboCount >= 52) based = 60;
+				if (KillComboCount >= 61) based = 65;
+				if (KillComboCount >= 74) based = 70;
+				if (KillComboCount >= 87) based = 75;
+				if (KillComboCount >= 101) based = 80;
+				if (KillComboCount >= 126) based = 85;
+				if (KillComboCount >= 151) based = 90;
+				if (KillComboCount >= 176) based = 95;
+				if (KillComboCount >= 201) based = 100;
+				if (KillComboCount >= 231) based = 105;
+				if (KillComboCount >= 261) based = 110;
+				if (KillComboCount >= 291) based = 115;
+				if (KillComboCount >= 321) based = 120;
+				if (KillComboCount >= 351) based = 125;
+				if (KillComboCount >= 386) based = 130;
+				if (KillComboCount >= 421) based = 135;
+				if (KillComboCount >= 456) based = 140;
+				if (KillComboCount >= 491) based = 145;
+				if (KillComboCount >= 526) based = 150;
+				if (A_CheckForHeiwa()) based *= 0.25;
+													else based *= 0.0625;
+				int flat = (KillComboCount *= based);
+				if (flat >= 9875) flat = 9875;
+				SurviveRateCap += flat;
+				SurvivalRate += flat;
+				if (SurviveRateCap > 9875) SurviveRateCap = 9875;
+				if (SurvivalRate > 9875) SurvivalRate = 9875;
+				if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Kill Combo]: %d (SurviveRateCap: %d), flat: %d, based: %.4f, KillComboCount: %d", SurvivalRate, SurviveRateCap, flat, based, KillComboCount);
+			}
+
 			if (Owner.CountInv("FistPlayerBlockItem"))
 			{
 				if (Owner.CountInv("FistPlayerBlock4"))
@@ -1877,13 +1967,6 @@ class PlayerStatItem : Inventory
 			else
 			{
 				owner.player.cheats &= ~CF_BUDDHA;
-				
-				// Siel's Grace is a rechargable mortal-hit survivability perk Heiwa exclusively
-				// has that is almost always immediately available to allow her to survive death
-				// once in the start of a playthrough, however the more it activates, and the hi-
-				// gher her level gets, the longer the cooldown becomes, to the point it almost
-				// never recharges when past a certain level threshold. If her survivability rolls
-				// positive at the moment of the check first, this is NOT consumed though.
 				if (A_CheckForHeiwa() && sielsgraceactive > 0) 
 				{
 					if (sielsgraceactivations < 4) owner.player.cheats |= CF_BUDDHA;
@@ -3186,6 +3269,10 @@ class PlayerStatItem : Inventory
 			BaseStartMaxHealth = globalvars.BaseStartMaxHealth;
 			if (itemtimer == 0) 
 			{
+				TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
+						 if (random(1,8) <= 5 && !A_CheckForHeiwa()) TSArtifactSpawnCooldown *= 1.5;
+				else if (random(1,8) <= 1 && A_CheckForHeiwa()) TSArtifactSpawnCooldown *= 1.5;
+				
 				if (MaxHealthTrue) owner.player.mo.health = MaxHealthTrue;
 				if (kcdebug_deathexitdebug)
 				{

@@ -1701,7 +1701,32 @@ class KCStatusBarMain : BaseStatusBar
 		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
 		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
 		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
-		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
+		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) 
+		{
+			double BaseSGAlpha = 2.0;
+			double SGAlpha = -2.0;
+			int SGpulsetimerMod = 100;
+			if (MiscItem.sielsgraceactivations % 4 == 0) SGpulsetimerMod = 80;
+			if (MiscItem.sielsgraceactivations % 4 == 1) SGpulsetimerMod = 65;
+			if (MiscItem.sielsgraceactivations % 4 == 2) SGpulsetimerMod = 55;
+			if (MiscItem.sielsgraceactivations % 4 == 3) SGpulsetimerMod = 50;
+			if (berserk)
+			{
+				BaseSGAlpha *= 0.75;
+				SGAlpha *= 0.75;
+				SGpulsetimerMod *= 0.5;
+			}
+			if (SGpulsetimerMod)
+			{
+				double BaseSGAlphaframe = BaseSGAlpha / (SGpulsetimerMod * 0.5);
+				int SGpulsetimer = level.time % SGpulsetimerMod;
+				int SGPulseFrame = (SGpulsetimerMod * 0.5);
+				SGPulseFrame = abs(SGPulseFrame - SGpulsetimer);
+				SGAlpha += BaseSGAlpha + (SGPulseFrame * BaseSGAlphaframe);
+				Console.Printf("\c[brick]SGAlpha: %.3f, BaseSGAlphaframe: %.3f SGPulseFrame: %d, (timer: %d / %d)", SGAlpha, BaseSGAlphaframe, SGPulseFrame, SGpulsetimer, SGpulsetimerMod);
+			}
+			DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection), 0, SGAlpha);
+		}
 		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
 		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, (yinc-19)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
 		

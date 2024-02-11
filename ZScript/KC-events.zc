@@ -2792,8 +2792,9 @@ class KC_EventHandler : EventHandler
 				bossdropmulti *= 0.25;
 				skillmult *= 4;
 			}
+			nm = "CCards_Actor_AssassinBuff";
 			if (waslegendary || 
-					victim.CountInv("CCards_Actor_AssassinBuff")) skillmult *= frandom(0.334,0.4585);
+					victim.CountInv(nm)) skillmult *= frandom(0.334,0.4585);
 			bool candropitems = false;
 			if (specialtype) candropitems = true;
 			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
@@ -2898,6 +2899,9 @@ class KC_EventHandler : EventHandler
 					if (vict == "HellKnight" ||
 							vict == "BaronOfHell")
 					{
+						int itemdropbase = basedropdiv;
+						if (vict == "HellKnight") basedropdiv *= 3;
+						if (A_CheckForHeiwaPlayer()) basedropdiv *= 4;
 						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					
@@ -3895,10 +3899,11 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
-					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 1.75;
 					
 					if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					if (A_CheckForHeiwaPlayer()) maxchance *= 4;
 					if (random(1,(maxchance*9)) == 1) 
 					{
 						string bname = "Berserk";
@@ -4121,137 +4126,154 @@ class KC_EventHandler : EventHandler
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [tritaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
 					
 					// Extremely Rare Drops [Type 5]
-					int timefreezes;
-					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
-					basechance = kc_inventorydroprate5;
-					basechance *= kc_inventorydropratemulti;
-					if (A_CheckForHeiwaPlayer()) basechance *= 0.875;
-					basechance *= skillmult;
-					if (timefreezes)
+					if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 					{
-						double basediv = 0.5;
-						double basediv2 = 0.125;
-						if (A_CheckKCTimeFreeze())
+						int timefreezes;
+						if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+						basechance = kc_inventorydroprate5;
+						basechance *= kc_inventorydropratemulti;
+						if (A_CheckForHeiwaPlayer()) basechance *= 0.875;
+						basechance *= skillmult;
+						if (timefreezes)
 						{
-							basediv = 0.5;
-							basediv2 = 0.125;
+							double basediv = 0.5;
+							double basediv2 = 0.125;
+							if (A_CheckKCTimeFreeze())
+							{
+								basediv = 0.5;
+								basediv2 = 0.125;
+							}
+							else
+							{
+								basediv = 0.9375;
+								basediv2 = 0.25;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 1) 
+							{
+								basediv *= 1.334;
+								basediv2 *= 0.67;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 2) 
+							{
+								basediv *= 1.334;
+								basediv2 *= 0.67;
+							}
+							if (timefreezes >= 20)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 40)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 80)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 160)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 320)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 640)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 1280)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 2560)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 5120)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 10240)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 20480)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
 						}
-						else
-						{
-							basediv = 0.9375;
-							basediv2 = 0.25;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 1) 
-						{
-							basediv *= 1.334;
-							basediv2 *= 0.67;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 2) 
-						{
-							basediv *= 1.334;
-							basediv2 *= 0.67;
-						}
-						if (timefreezes >= 20)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 40)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 80)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 160)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 320)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 640)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 1280)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 2560)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 5120)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 10240)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 20480)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-					}
-					luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
-					if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
-					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
-					luckbase *= kc_tsaluckfactor;
-					if (MiscItem)
-					{
-						if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
-						if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
-						if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
+						luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_tsaluckfactor;
-						
-						if (MiscItem.TimeArmorRelicsOwned <= 2)
+						if (MiscItem)
 						{
-							int TSATrueLuck;
-							int PLevel = TruePlayerLevel;
-							if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
-							if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
-							if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
-							if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
-							if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
-							TSATrueLuck *= kc_pluckfactor;
-							if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-							if (basechance < 1) basechance = 1;
-							maxchance = basechance;
-							if (i > 0) maxchance *= 16;
-							rollrand = random(1,maxchance);
-							if (rollrand <= 1)
+							if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
+							if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
+							if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
+							luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+							luckbase *= kc_tsaluckfactor;
+							
+							if (MiscItem.TimeArmorRelicsOwned <= 2)
 							{
-								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
-								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-								double raredropsndvol = frandom(1.75,2.25);
-								int raredropsndchannel = randompick(193,194,224,225,266,267);
-								string raredropsndname = "ultrarareitem/spawn";
-								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								int TSATrueLuck;
+								int PLevel = TruePlayerLevel;
+								if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
+								if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
+								if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
+								if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
+								if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
+								TSATrueLuck *= kc_pluckfactor;
+								if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+								if (basechance < 1) basechance = 1;
+								maxchance = basechance;
+								if (i > 0) maxchance *= 16;
+								rollrand = random(1,maxchance);
+								if (rollrand <= 1)
+								{
+									if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
+									double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+									double raredropsndvol = frandom(1.75,2.25);
+									int raredropsndchannel = randompick(193,194,224,225,266,267);
+									string raredropsndname = "ultrarareitem/spawn";
+									victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 
-								raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-								raredropsndvol = frandom(1.75,2.25);
-								raredropsndchannel = randompick(293,294,324,325,366,367);
-								raredropsndname = "tsarmor/spawn";
-								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-								
-								victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+									raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+									raredropsndvol = frandom(1.75,2.25);
+									raredropsndchannel = randompick(293,294,324,325,366,367);
+									raredropsndname = "tsarmor/spawn";
+									victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+									
+									bool spawned;
+									actor TSArtifact;
+									[spawned, TSArtifact] = victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+									if (spawned && 
+											TSArtifact && 
+											MiscItem)
+									{
+										if (A_CheckForHeiwaPlayer() || 
+												random(1,8) <= 7)
+										{
+											MiscItem.TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
+													 if (random(1,8) <= 5 && !A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
+											else if (random(1,8) <= 1 && A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
+										}
+									}
+								}
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 							}
-							if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 						}
 					}
 					
@@ -4343,7 +4365,7 @@ class KC_EventHandler : EventHandler
 					
 					// ???????? [Type 13] (Heiwa Only)
 					if (A_CheckForHeiwaPlayer() && 
-							!playera.CountInv("SpecialBackpackBonus"))
+							playera.CountInv("SpecialBackpackBonus") < 5)
 					{
 						basechance = kc_inventorydroprate13;
 						basechance *= kc_inventorydropratemulti;
@@ -4577,12 +4599,13 @@ class KC_EventHandler : EventHandler
 						}
 
 						int ExpGain = (victim.SpawnHealth() + victim.Stamina);
+						nm = "CCards_Actor_AssassinBuff";
 						if (waslegendary ||
-								victim.CountInv("CCards_Actor_AssassinBuff")) ExpGain *= 1.25;
+								victim.CountInv(nm)) ExpGain *= 1.25;
 						if (monsterrating)
 						{
 							if (waslegendary ||
-									victim.CountInv("CCards_Actor_AssassinBuff"))
+									victim.CountInv(nm))
 							{
 								if (monsterrating == 1) ExpGain *= 1.05;
 								if (monsterrating == 2) ExpGain *= 1.1;
@@ -4643,13 +4666,13 @@ class KC_EventHandler : EventHandler
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);
 						nm = "CCards_Actor_FleaCurse"; if (victim.CountInv(nm)) ExpGain *= frandom(2.25,2.5);
-						ExpGain *= frandom(0.05,0.125);
 						if (MiscItem && MiscItem.PlayerIQ > 0) 
 						{
 							double IQBonus = (1.0 + double(MiscItem.PlayerIQ / 256.0));
 							ExpGain *= IQBonus;
 							if (kcdebug_worlddied) Console.Printf("[PlayerIQ] %d, [bonus: %.8f]", MiscItem.PlayerIQ, IQBonus);
 						}
+						ExpGain *= frandom(0.05,0.125);
 
 						
 						if ((source && source.bFRIENDLY) || (inflicter && inflicter.bFRIENDLY) || (mastor && mastor.bFRIENDLY)) ExpGain *= frandom(0.65,0.90);
@@ -4688,11 +4711,10 @@ class KC_EventHandler : EventHandler
 							{
 								if (kcheiwa_lowlevelexpmulti)
 								{
-											 if (PLevel < 2)  BaseExpMultiBonus = frandompick(3.25,3.75,3.75,3.75,4.5);
-									else if (PLevel < 5)  BaseExpMultiBonus = frandompick(2.375,3.0,3.0,3.0,3.625);
-									else if (PLevel < 10) BaseExpMultiBonus = frandompick(1.625,2.0,2.0,2.0,2.375);
-									else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.25,1.5,1.5,1.5,1.75);
-									else if (PLevel < 50) BaseExpMultiBonus = frandompick(1.0625,1.25,1.25,1.25,1.4375);
+											 if (PLevel < 2)  BaseExpMultiBonus = frandompick(2.375,3.0,3.0,3.0,3.625);
+									else if (PLevel < 5)  BaseExpMultiBonus = frandompick(1.625,2.0,2.0,2.0,2.375);
+									else if (PLevel < 10) BaseExpMultiBonus = frandompick(1.25,1.5,1.5,1.5,1.75);
+									else if (PLevel < 25) BaseExpMultiBonus = frandompick(1.0625,1.25,1.25,1.25,1.4375);
 																	 else BaseExpMultiBonus = frandompick(1.03125,1.125,1.125,1.125,1.21875);
 								}
 								else
@@ -4734,7 +4756,8 @@ class KC_EventHandler : EventHandler
 								if (tallyextra > 100 && tallyextra < 201) based = 0.0034;
 								if (tallyextra > 200 && tallyextra < 501) based = 0.0040;
 								if (tallyextra > 500) based = 0.0052;
-								based *= 1.334;
+								if (A_CheckForHeiwaPlayer()) based *= 0.667;
+																				else based *= 1.334;
 								combomultiplieramt = (tallyextra * based);
 								combomultiplieramt += 1.00;
 								OExpGain = ExpGain;
@@ -4761,7 +4784,8 @@ class KC_EventHandler : EventHandler
 							if (ExpGain < ExpLowCap) ExpGain = ExpLowCap;
 							
 							Actor playera = players[0].mo;
-							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
+							if (playera.health > 0 || 
+									!playera.CountInv("PlayerIsDead"))
 							{
 								int EXPPrevReq = 0;
 								if (MiscItem.PlayerLevel > 0) EXPPrevReq = MiscItem.LevelExpRequirement[(MiscItem.PlayerLevel-1)];
@@ -4794,7 +4818,8 @@ class KC_EventHandler : EventHandler
 						else
 						{
 							Actor playera = players[0].mo;
-							if (playera.health > 0 || !playera.CountInv("PlayerIsDead"))
+							if (playera.health > 0 || 
+									!playera.CountInv("PlayerIsDead"))
 							{
 								playera.A_GiveInventory("KillsCount",1);
 								int Kills = playera.CountInv("KillsCount");
@@ -4808,7 +4833,8 @@ class KC_EventHandler : EventHandler
 						if (playoneliner && 
 								A_CheckForHeiwaPlayer() && 
 								MiscItem && 
-								playera.health > 0)
+								playera.health > 0 || 
+								!playera.CountInv("PlayerIsDead"))
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							bool voicecheck = false;
@@ -4816,7 +4842,7 @@ class KC_EventHandler : EventHandler
 							{
 								if (MiscItem.OneLinerCooldown <= 0 || 
 										waslegendary ||
-										victim.CountInv("CCards_Actor_AssassinBuff"))
+										victim.CountInv(nm))
 								{
 									voicecheck = true;
 									let speakitem = PlayerTargettedMonster(victim.FindInventory("PlayerTargettedMonster"));
@@ -5290,7 +5316,9 @@ class KC_EventHandler : EventHandler
 			{
 				if (MiscItem)
 				{
-					if (playera.health > 0 && MiscItem.whistlecooldown == 0)
+					if ((playera.health > 0 &&
+							!playera.CountInv("PlayerIsDead")) 
+							&& MiscItem.whistlecooldown == 0)
 					{
 						playera.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
 						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
@@ -5301,7 +5329,10 @@ class KC_EventHandler : EventHandler
 			[key1, key2] = Bindings.GetKeysForCommand("KC_TimeStop");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
-				if (KCPlayerPawn(playera) && playera.health > 0 && MiscItem)
+				if (KCPlayerPawn(playera) && 
+						playera.health > 0 && 
+						!playera.CountInv("PlayerIsDead") && 
+						MiscItem)
 				{
 					if (MiscItem.timestopstate <= 0)
 					{

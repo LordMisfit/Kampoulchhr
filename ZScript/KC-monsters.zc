@@ -94,10 +94,16 @@ class KCDeadMarine : DeadMarine replaces DeadMarine
 			PLAY N 0;
 			PLAY N 0
 			{
-				if (random(1,65536) <= 1)
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 				{
-					A_TSASpawnMessage();
-					return resolvestate("Idle");
+					if (random(1,65536) <= 1)
+					{
+						A_TSASpawnMessage();
+						return resolvestate("Idle");
+					}
+					return resolvestate(null);
 				}
 				return resolvestate(null);
 			}
@@ -203,10 +209,16 @@ class KCGibbedMarine : GibbedMarine replaces GibbedMarine
 			PLAY W 0;
 			PLAY W 0
 			{
-				if (random(1,262144) <= 1)
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 				{
-					A_TSASpawnMessage();
-					return resolvestate("Idle");
+					if (random(1,262144) <= 1)
+					{
+						A_TSASpawnMessage();
+						return resolvestate("Idle");
+					}
+					return resolvestate(null);
 				}
 				return resolvestate(null);
 			}

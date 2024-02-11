@@ -166,7 +166,9 @@ class KCPlayerPawn : PlayerPawn
 		bool grunted;
 
 		// [RH] only make noise if alive
-		if (self.health > 0 && !self.player.morphTics)
+		if (self.health > 0  && 
+				!self.CountInv("PlayerIsDead") 
+				&& !self.player.morphTics)
 		{
 			grunted = false;
 			// Why should this number vary by gravity?
@@ -454,6 +456,9 @@ class KCPlayerPawn : PlayerPawn
 
 	override void CalcHeight()
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		
 		let player = self.player;
 		double angle;
 		double bob;
@@ -506,7 +511,8 @@ class KCPlayerPawn : PlayerPawn
 
 		if (still)
 		{
-			if (player.health > 0)
+			if (player.health > 0 || 
+					!playera.CountInv("PlayerIsDead"))
 			{
 				angle = Level.maptime / (120 * TICRATE / 35.) * 360.;
 				bob = player.GetStillBob() * sin(angle);
@@ -839,6 +845,9 @@ class KCPlayerPawn : PlayerPawn
 	
 	override void CheckCrouch(bool totallyfrozen)
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		
 		let player = self.player;
 		UserCmd cmd = player.cmd;
 
@@ -846,7 +855,10 @@ class KCPlayerPawn : PlayerPawn
 		{
 			cmd.buttons &= ~BT_CROUCH;
 		}
-		if (CanCrouch() && player.health > 0 && level.IsCrouchingAllowed())
+		if (CanCrouch() && 
+				(player.health > 0 || 
+				 !playera.CountInv("PlayerIsDead"))
+				&& level.IsCrouchingAllowed())
 		{
 			if (kcdebug_crouchdisplays) Console.Printf("Can Crouch");
 			if (!totallyfrozen)

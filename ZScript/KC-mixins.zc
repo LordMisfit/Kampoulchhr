@@ -2792,11 +2792,36 @@ mixin class ActorStateReplace
 
 mixin class TSASpawnCheck
 {
+	bool A_CheckForHeiwaPlayer()
+	{
+		bool isHeiwa = false;
+		actor playera = players[0].mo;
+		if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") isHeiwa = true;
+		return isHeiwa;
+	}
+	
 	void A_TSASpawnMessage()
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+
+		bool spawned;
+		actor TSArtifact;
 		A_PrintBold(String.Format("\c[HeiwaDeluge]Something mysterious awaits...\c-"), frandom[statitem](1.37,1.6));
 		A_StartSound("tsarmor/spawn",566,CHANF_OVERLAP|CHANF_NOPAUSE,frandom(1.75,2.25),ATTN_NONE,frandompick(0.75,0.875,1.0,1.125,1.25));
-		A_SpawnItemEx("TSArtifactSpawner");
+		[spawned, TSArtifact] = A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+		if (spawned && 
+				TSArtifact && 
+				MiscItem)
+		{
+			if (A_CheckForHeiwaPlayer() || 
+					random(1,8) <= 7)
+			{
+				MiscItem.TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
+						 if (random(1,8) <= 5 && !A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
+				else if (random(1,8) <= 1 && A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
+			}
+		}
 	}
 }
 
