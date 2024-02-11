@@ -1755,7 +1755,7 @@ class KCStatusBarMain : BaseStatusBar
 				int SGPulseFrame = (SGpulsetimerMod * 0.5);
 				SGPulseFrame = abs(SGPulseFrame - SGpulsetimer);
 				SGAlpha += BaseSGAlpha + (SGPulseFrame * BaseSGAlphaframe);
-				Console.Printf("\c[brick]SGAlpha: %.3f, BaseSGAlphaframe: %.3f SGPulseFrame: %d, (timer: %d / %d)", SGAlpha, BaseSGAlphaframe, SGPulseFrame, SGpulsetimer, SGpulsetimerMod);
+				//Console.Printf("\c[brick]SGAlpha: %.3f, BaseSGAlphaframe: %.3f SGPulseFrame: %d, (timer: %d / %d)", SGAlpha, BaseSGAlphaframe, SGPulseFrame, SGpulsetimer, SGpulsetimerMod);
 			}
 			DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection), 0, SGAlpha);
 		}
