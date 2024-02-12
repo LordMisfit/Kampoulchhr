@@ -1135,10 +1135,12 @@ class KCStatusBarMain : BaseStatusBar
 					jx = -13; // -20;
 					jy = -24;
 					int clipsize = 12;
+					if (MiscItem) clipsize = MiscItem.glockclipsize1;
 					int clipleft = (clipsize - Glock.clipamt);
 					if (Glock.ammomode == 0) 
 					{
 						clipsize = 20;
+						if (MiscItem) clipsize = MiscItem.glockclipsize2;
 						clipleft = (clipsize - Glock.clipamt2);
 					}
 					int ClipRatio;
@@ -1156,7 +1158,40 @@ class KCStatusBarMain : BaseStatusBar
 						else if (ClipRatio >= 70 && ClipRatio <= 79) wsfontclr = font.cr_darkgreen;
 						else if (ClipRatio >= 80 && ClipRatio <= 89) wsfontclr = font.cr_green;
 						else if (ClipRatio >= 90 && ClipRatio <= 99) wsfontclr = font.cr_cyan;
-						else if (clipleft >= 12) wsfontclr = font.cr_sapphire;
+						else if (clipleft >= clipsize) wsfontclr = font.cr_sapphire;
+						else wsfontclr = font.cr_gray;
+						
+						DrawString(mKCSFont, FormatNumber(clipleft, 2), (jx, jy), DI_TEXT_ALIGN_CENTER, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+					}
+				}
+			}
+			temp = "RiotGun";
+			if (PlayerWeapon is temp)
+			{
+				let RitGn = RiotGun(CPlayerPawn.FindInventory("RiotGun"));
+				if (RitGn)
+				{
+					int jx, jy;
+					jx = -13; // -20;
+					jy = -24;
+					int clipsize = 4;
+					int clipleft = (clipsize - RitGn.RiotClipCounter);
+					int ClipRatio;
+					if (clipsize > 0) 
+					{
+						ClipRatio = clipleft * 100 / clipsize;
+						if (ClipRatio <= 0) wsfontclr = font.cr_black;
+						else if (ClipRatio >= 0 && ClipRatio <= 9) wsfontclr = font.cr_darkred;
+						else if (ClipRatio >= 10 && ClipRatio <= 19) wsfontclr = font.cr_red;
+						else if (ClipRatio >= 20 && ClipRatio <= 29) wsfontclr = font.cr_brick;
+						else if (ClipRatio >= 30 && ClipRatio <= 39) wsfontclr = font.cr_orange;
+						else if (ClipRatio >= 40 && ClipRatio <= 49) wsfontclr = font.cr_yellow;
+						else if (ClipRatio >= 50 && ClipRatio <= 59) wsfontclr = font.cr_gold;
+						else if (ClipRatio >= 60 && ClipRatio <= 69) wsfontclr = font.cr_olive;
+						else if (ClipRatio >= 70 && ClipRatio <= 79) wsfontclr = font.cr_darkgreen;
+						else if (ClipRatio >= 80 && ClipRatio <= 89) wsfontclr = font.cr_green;
+						else if (ClipRatio >= 90 && ClipRatio <= 99) wsfontclr = font.cr_cyan;
+						else if (clipleft >= clipsize) wsfontclr = font.cr_sapphire;
 						else wsfontclr = font.cr_gray;
 						
 						DrawString(mKCSFont, FormatNumber(clipleft, 2), (jx, jy), DI_TEXT_ALIGN_CENTER, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));

@@ -54,7 +54,8 @@ class PlayerStatItem : Inventory
 	int CritChance;
 	int CritRoll;
 	int MortalBlowCritBoostTimer;
-
+	
+	int glockclipsize1, glockclipsize2;
 	int actualjumpheight;
 	double actualjumpheight2;
 	int TrueJumpHeight;
@@ -3269,6 +3270,8 @@ class PlayerStatItem : Inventory
 			BaseStartMaxHealth = globalvars.BaseStartMaxHealth;
 			if (itemtimer == 0) 
 			{
+				glockclipsize1 = 12;
+				glockclipsize2 = 20;
 				TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
 						 if (random(1,8) <= 5 && !A_CheckForHeiwa()) TSArtifactSpawnCooldown *= 1.5;
 				else if (random(1,8) <= 1 && A_CheckForHeiwa()) TSArtifactSpawnCooldown *= 1.5;
