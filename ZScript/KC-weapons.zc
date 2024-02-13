@@ -6632,9 +6632,19 @@ class Glock21 : MarineWeapon
 				{
 					if (A_CheckForHeiwa())
 					{
-						if (TruePlayerLevel >= 15) A_SetTics(3);
-						if (TruePlayerLevel >= 30) A_SetTics(2);
-						if (TruePlayerLevel >= 45) A_SetTics(1);
+						if (A_CheckBerserk())
+						{
+							if (TruePlayerLevel >= random(7,8)) A_SetTics(3);
+							if (TruePlayerLevel >= 15) A_SetTics(2);
+							if (TruePlayerLevel >= random(22,23)) A_SetTics(1);
+							if (TruePlayerLevel >= 30 && random(1,4) <= 1) A_SetTics(0);
+						}
+						else
+						{
+							if (TruePlayerLevel >= 15) A_SetTics(3);
+							if (TruePlayerLevel >= 30) A_SetTics(2);
+							if (TruePlayerLevel >= 45) A_SetTics(1);
+						}
 					}
 					else
 					{
@@ -6651,7 +6661,14 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 25) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= random(12,13)) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 25) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6665,7 +6682,14 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 35) A_SetTics(1);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= random(17,18)) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 35) A_SetTics(1);
+					}
 				}
 				else
 				{
@@ -6679,8 +6703,16 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 10) A_SetTics(1);
-					if (TruePlayerLevel >= 35) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= 5) A_SetTics(1);
+						if (TruePlayerLevel >= random(17,18)) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 10) A_SetTics(1);
+						if (TruePlayerLevel >= 35) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6695,8 +6727,16 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 5) A_SetTics(1);
-					if (TruePlayerLevel >= 45) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= random(2,3)) A_SetTics(1);
+						if (TruePlayerLevel >= random(22,23)) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 5) A_SetTics(1);
+						if (TruePlayerLevel >= 45) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6711,8 +6751,16 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 15) A_SetTics(1);
-					if (TruePlayerLevel >= 50) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= random(7,8)) A_SetTics(1);
+						if (TruePlayerLevel >= 25) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 15) A_SetTics(1);
+						if (TruePlayerLevel >= 50) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6727,7 +6775,15 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 20) A_SetTics(1);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= 10) A_SetTics(1);
+						if (TruePlayerLevel >= 25) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 20) A_SetTics(1);
+					}
 				}
 				else
 				{
@@ -6775,7 +6831,14 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 45) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= random(22,23)) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 45) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6789,7 +6852,14 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 30) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= 15) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 30) A_SetTics(0);
+					}
 				}
 				else
 				{
@@ -6806,9 +6876,19 @@ class Glock21 : MarineWeapon
 				{
 					if (A_CheckForHeiwa())
 					{
-						if (TruePlayerLevel >= 15) A_SetTics(3);
-						if (TruePlayerLevel >= 30) A_SetTics(2);
-						if (TruePlayerLevel >= 45) A_SetTics(1);
+						if (A_CheckBerserk())
+						{
+							if (TruePlayerLevel >= random(7,8)) A_SetTics(3);
+							if (TruePlayerLevel >= 15) A_SetTics(2);
+							if (TruePlayerLevel >= random(22,23)) A_SetTics(1);
+							if (TruePlayerLevel >= 30 && random(1,4) <= 1) A_SetTics(0);
+						}
+						else
+						{
+							if (TruePlayerLevel >= 15) A_SetTics(3);
+							if (TruePlayerLevel >= 30) A_SetTics(2);
+							if (TruePlayerLevel >= 45) A_SetTics(1);
+						}
 					}
 					else
 					{
@@ -6825,9 +6905,18 @@ class Glock21 : MarineWeapon
 				int TruePlayerLevel = A_GetMeleeSPDLvl(1);
 				if (A_CheckForHeiwa())
 				{
-					if (TruePlayerLevel >= 10) A_SetTics(2);
-					if (TruePlayerLevel >= 25) A_SetTics(1);
-					if (TruePlayerLevel >= 40) A_SetTics(0);
+					if (A_CheckBerserk())
+					{
+						if (TruePlayerLevel >= 5) A_SetTics(2);
+						if (TruePlayerLevel >= random(12,13)) A_SetTics(1);
+						if (TruePlayerLevel >= 20) A_SetTics(0);
+					}
+					else
+					{
+						if (TruePlayerLevel >= 10) A_SetTics(2);
+						if (TruePlayerLevel >= 25) A_SetTics(1);
+						if (TruePlayerLevel >= 40) A_SetTics(0);
+					}
 				}
 				else
 				{
