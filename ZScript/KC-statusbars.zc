@@ -1364,8 +1364,13 @@ class KCStatusBarMain : BaseStatusBar
 				string MaxAPS = " / ";
 				if (MiscItem)
 				{
-					if (hudarmortype == 1) MaxAPS.AppendFormat("%d", (MiscItem.MaxHealthTrue));
-					if (hudarmortype == 2) MaxAPS.AppendFormat("%d", (MiscItem.MaxHealthTrue * 2));
+					int MaxArmor;
+					if (hudarmortype == 1) MaxArmor = MiscItem.MaxHealthTrue;
+					if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * 2);
+					double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
+					MaxArmor *= (1.0 + fact);
+
+					MaxAPS.AppendFormat("%d", MaxArmor);
 				}
 				else
 				{

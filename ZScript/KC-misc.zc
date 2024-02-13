@@ -17,6 +17,7 @@ class PlayerStatItem : Inventory
 	// 4 - ??????
 	
 	bool heiwavhardmodifier;
+	double spbkpkarmorbonus, spbkpkmedibigbonus;
 	double tracerheight;
 	int darmortype;
 	int IsMorphed, WasMorphed, WasMorphProj;
@@ -342,7 +343,9 @@ class PlayerStatItem : Inventory
 		no = "KCTimeFreezer3";
 		if (owner)
 		{
-			if (owner.CountInv(nm) || owner.CountInv(nn) || owner.CountInv(no)) 
+			if (owner.CountInv(nm) || 
+					owner.CountInv(nn) || 
+					owner.CountInv(no)) 
 			{
 				check = true;
 			}
@@ -382,7 +385,9 @@ class PlayerStatItem : Inventory
 					if (owner.CountInv("BackPackTier2")) spbkpkmaxhealthcarry *= 1.75;
 																					else spbkpkmaxhealthcarry *= 1.25;
 				}
-				double fact = ((owner.CountInv("SpecialBackpackBonus") - 1) * 0.25);
+				spbkpkarmorbonus = 0.10;
+				spbkpkmedibigbonus = 0.25;
+				double fact = ((owner.CountInv("SpecialBackpackBonus") - 1) * spbkpkmedibigbonus);
 				spbkpkmaxhealthcarry *= (1.0 + fact);
 				let medbag = MediBag(owner.FindInventory("MediBag",false));
 				if (A_CheckForHeiwa())
@@ -2469,7 +2474,10 @@ class PlayerStatItem : Inventory
 			double armordiffmod = 1.00;
 			int ArmorAmt = owner.CountInv(armorclasstype);
 			double ArmorRatio = 0.0;
-			if (MaxHealthTrue > 0) ArmorRatio = double((ArmorAmt * 1.0) / (MaxHealthTrue * 1.0));
+			int BMaxArmor = MaxHealthTrue;
+			double fact = (owner.CountInv("SpecialBackpackBonus") * spbkpkarmorbonus);
+			BMaxArmor *= (1.0 + fact);
+			if (BMaxArmor > 0) ArmorRatio = double((ArmorAmt * 1.0) / (BMaxArmor * 1.0));
 			double ArmorEnc = 0.00;
 			double ArmorWeight;
 			if (owner.CountInv("TSArmorTier2"))
@@ -2534,7 +2542,7 @@ class PlayerStatItem : Inventory
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
-			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, MaxHealthTrue);
+			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
 			ArmorEnc *= kc_armorencumbrance;
 			if (owner.waterlevel >= 3) ArmorEnc *= 1.25;
 			
@@ -5712,7 +5720,10 @@ class PlayerStatItem : Inventory
 		let MiscItem = PlayerStatItem(Owner.FindInventory("PlayerStatItem"));
 		int ArmorAmt = owner.CountInv(armorclasstype);
 		double ArmorRatio = 0.0;
-		if (MaxHealthTrue > 0) ArmorRatio = double((ArmorAmt * 1.0) / (MaxHealthTrue * 1.0));
+		int BMaxArmor = MaxHealthTrue;
+		double fact = (owner.CountInv("SpecialBackpackBonus") * spbkpkarmorbonus);
+		BMaxArmor *= (1.0 + fact);
+		if (BMaxArmor > 0) ArmorRatio = double((ArmorAmt * 1.0) / (BMaxArmor * 1.0));
 		double armordiffmod = 1.00;
 		double ArmorFactor = 1.0;
 		double ArmorWeight;
@@ -5779,7 +5790,7 @@ class PlayerStatItem : Inventory
 			ArmorWeight *= armordiffmod;
 			ArmorM = (ArmorWeight * ArmorRatio);
 		}
-		if (kcdebug_speedcalcs) Console.Printf("ArmorM: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorM, ArmorWeight, ArmorRatio, ArmorAmt, MaxHealthTrue);
+		if (kcdebug_speedcalcs) Console.Printf("ArmorM: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorM, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
 
 		ArmorM *= kc_armorencumbrance;
 		ArmorML = ArmorM;

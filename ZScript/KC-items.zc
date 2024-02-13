@@ -2190,6 +2190,18 @@ class KCArmor : BasicArmor
 
 class KCArmorBonus : BasicArmorBonus
 {
+	int A_CheckMaxArmor(int SaveAmount)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			double fact = (playera.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
+			SaveAmount *= (1.0 + fact);
+		}
+		return SaveAmount;
+	}
+	
 	override Inventory CreateCopy (Actor other)
 	{
 		let copy = KCArmorBonus(Super.CreateCopy(other));
@@ -2295,6 +2307,18 @@ class KCArmorBonus : BasicArmorBonus
 
 class KCArmorPickup : BasicArmorPickup
 {
+	int A_CheckMaxArmor(int SaveAmount)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			double fact = (playera.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
+			SaveAmount *= (1.0 + fact);
+		}
+		return SaveAmount;
+	}
+	
 	override Inventory CreateCopy (Actor other)
 	{
 		let copy = KCArmorPickup(Super.CreateCopy (other));
@@ -2396,8 +2420,16 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.01);
 			if (SaveAmount < 1) SaveAmount = 1;
-			if (MiscItem.darmortype <= 1) MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
-			if (MiscItem.darmortype >= 2) MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+			if (MiscItem.darmortype <= 1) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
+			if (MiscItem.darmortype >= 2) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
 		}
 		else
 		{
@@ -2763,8 +2795,16 @@ class ArmorBonusBig : ArmorBonus2
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 0.10);
 			if (SaveAmount < 10) SaveAmount = 10;
-			if (MiscItem.darmortype <= 1) MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
-			if (MiscItem.darmortype >= 2) MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+			if (MiscItem.darmortype <= 1) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
+			if (MiscItem.darmortype >= 2) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
 		}
 		else
 		{
@@ -2812,6 +2852,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue);
+			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
@@ -3009,6 +3050,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
@@ -3024,6 +3066,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
@@ -3055,6 +3098,7 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
