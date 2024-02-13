@@ -1223,6 +1223,7 @@ mixin class MonsterCollider
 	int initdmg;
 	double, double, double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, bool wasblastedimpact, bool surprisehit, int angvstype)
 	{
+		string nm, nn, no, np, nq, nr, ns;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
@@ -1231,7 +1232,10 @@ mixin class MonsterCollider
 		double prevDamageFactor;
 		double basedmgfactor = DamageFactor;
 		double ActorDefenseIgnoreFactor = 0.00;
-		if (inflictor == null && source == null) 
+		string infl, sour;
+		if (inflictor) infl = inflictor.GetClassName();
+		if (source) sour = source.GetClassName();
+		if (inflictor == null && source == null)
 		{
 			// BLASTED Impact Damage
 			if (wasblastedimpact) ActorDefenseIgnoreFactor += (frandom(0.45,0.55) * (1.00 - ActorDefenseIgnoreFactor));
@@ -1257,10 +1261,107 @@ mixin class MonsterCollider
 				ActorDefenseIgnoreFactor += (ProjFactor * (1.00 - ActorDefenseIgnoreFactor));
 				//Console.Printf("ProjFactor: %.8f", ProjFactor);
 			}
-		
-			double WhistleFactor = 0.75;
-			if (inflictor && PlayerWhistle(inflictor) || source && PlayerWhistle(source)) ActorDefenseIgnoreFactor += (WhistleFactor * (1.00 - ActorDefenseIgnoreFactor));
 			
+			KCPlayerPawn FoundPlayer;
+			FoundPlayer = KCPlayerPawn(source);
+			if (FoundPlayer)
+			{
+				FoundPlayer = KCPlayerPawn(inflictor);
+				if (FoundPlayer)
+				{
+					double TimeSeraphBangleFactor = 1.0;
+					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
+					{
+						if (FoundPlayer.CountInv("TSArmorTier2"))
+						{
+							TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
+						}
+						else
+						if (FoundPlayer.CountInv("TSArmorTier1"))
+						{
+							TimeSeraphBangleFactor = frandompick(0.334,0.375,0.375,0.4167,0.4167,0.4167,0.4167,0.4167,0.4167,0.4445,0.4445,0.5);
+						}
+						else
+						{
+							TimeSeraphBangleFactor = frandompick(0.4167,0.4445,0.4445,0.5,0.5,0.5,0.5,0.5,0.5,0.5556,0.5556,0.625);
+						}
+						ActorDefenseIgnoreFactor += (TimeSeraphBangleFactor * (1.00 - ActorDefenseIgnoreFactor));
+					}
+				}
+				else
+				{
+					KCCreature OtherA;
+					OtherA = KCCreature(source);
+					if (!OtherA) OtherA = KCCreature(inflictor);
+					if (OtherA)
+					{
+						//
+						//
+						//
+					}
+				}
+			}
+			
+			double PlushFactor = 1.00;
+			nm = "CCards_Actor_ThrownPlushEx";
+			nn = "CCards_Actor_ThrownPlushExB";
+			no = "CCards_Actor_ThrownPlush";
+			if (infl == nm ||
+					infl == nn ||
+					infl == no )
+			{
+				ActorDefenseIgnoreFactor += (PlushFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			
+			double ExplosivesFactor = frandompick(0.625,0.6667,0.75);
+			// Suicide Bombers/Kamikaze Enemy Attacks/RockBomb Shards
+			nm = "SuicideBomber";
+			nn = "SuicideBomb";
+			no = "SuicideBombStrong";
+			np = "SuicideBombUltra";
+			nq = "HSBoom";
+			nr = "HadesSphere";
+			ns = "HSOverlord";
+			if (infl == nm || 
+					infl == nm || 
+					infl == no || 
+					infl == np || 
+					infl == nq || 
+					infl == nr || 
+					infl == ns || 
+					mod == 'Explosive' || 
+					mod == 'ExplosiveImpact' ||
+					mod == 'CC_Firecracker' || 
+					flags & DMG_EXPLOSION) 
+			{
+				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			double RSawFactor = frandom(0.225,0.275);
+			if (mod == 'Ripsaw' || mod == 'SawShot')
+			{
+				if (mod == 'Ripsaw') RSawFactor *= 1.5;
+				ActorDefenseIgnoreFactor += (RSawFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			
+			double BFGFactor = frandom(0.45,0.55);
+			// BFG Ignores roughly half of "normal" damagefactor
+			if (mod == 'BFG' || mod == 'BFGSpray' || mod == 'BFGSplash') 
+			{ 
+				ActorDefenseIgnoreFactor += (BFGFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			double PlasmaFactor = frandom(0.225,0.275);
+			// Plasma Ignores 1/4th of "normal" damagefactor
+			if (mod == 'Plasma') 
+			{ 
+				ActorDefenseIgnoreFactor += (PlasmaFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+			double BulletFactor = frandom(0.1125,0.1375);
+			// Bullet/Pellet
+			if (mod == 'Bullet') 
+			{ 
+				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+
 			double BarrelFactor = 0.50;
 			if (skill <= 0) BarrelFactor = 1.0;
 			if (skill == 1) BarrelFactor = 0.75;
@@ -1304,31 +1405,30 @@ mixin class MonsterCollider
 					else
 					{
 						if (!CountInv("BlackHoleSpeedPenalty1b")) A_SetInventory("BlackHoleSpeedPenalty1b",1);
-						if (random(1,bhlvl2chance) <= 1) 
+					}
+					if (random(1,bhlvl2chance) <= 1) 
+					{
+						if (!CountInv("BlackHoleSpeedPenalty2")) A_SetInventory("BlackHoleSpeedPenalty2",1);
+						else
 						{
-							if (!CountInv("BlackHoleSpeedPenalty2")) A_SetInventory("BlackHoleSpeedPenalty2",1);
+							if (!CountInv("BlackHoleSpeedPenalty2b")) A_SetInventory("BlackHoleSpeedPenalty2b",1);
+						}
+						if (random(1,bhlvl3chance) <= 1) 
+						{
+							if (!CountInv("BlackHoleSpeedPenalty3")) A_SetInventory("BlackHoleSpeedPenalty3",1);
 							else
 							{
-								if (!CountInv("BlackHoleSpeedPenalty2b")) A_SetInventory("BlackHoleSpeedPenalty2b",1);
-							}
-							if (random(1,bhlvl3chance) <= 1) 
-							{
-								if (!CountInv("BlackHoleSpeedPenalty3")) A_SetInventory("BlackHoleSpeedPenalty3",1);
-								else
-								{
-									if (!CountInv("BlackHoleSpeedPenalty3b")) A_SetInventory("BlackHoleSpeedPenalty3b",1);
-								}
+								if (!CountInv("BlackHoleSpeedPenalty3b")) A_SetInventory("BlackHoleSpeedPenalty3b",1);
 							}
 						}
 					}
-
 				}
+
 				ActorDefenseIgnoreFactor += (BHoleFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			
 			double RailFactor = frandom(0.3,0.334);
 			if (mod == 'Railgun') ActorDefenseIgnoreFactor += (RailFactor * (1.00 - ActorDefenseIgnoreFactor));
-			
 			/*
 			if (inflictor && 
 					(inflictor.GetClassName() == "SoulScepterPuff" ||
@@ -1345,45 +1445,36 @@ mixin class MonsterCollider
 			if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
 					HellWarriorBall2(inflictor) || HellWarriorBall2(source)) ActorDefenseIgnoreFactor += (HWShieldFactor * (1.00 - ActorDefenseIgnoreFactor));
 			
-			KCPlayerPawn FoundPlayer;
-			FoundPlayer = KCPlayerPawn(source);
-			if (!FoundPlayer) FoundPlayer = KCPlayerPawn(inflictor);
+			if (source) FoundPlayer = KCPlayerPawn(source);
+			if (!FoundPlayer && inflictor) FoundPlayer = KCPlayerPawn(inflictor);
 			if (FoundPlayer)
 			{
-				double TimeSeraphBangleFactor = 1.0;
-				if (FoundPlayer.CountInv("TimeSeraphVisor")) 
+				if (mod == 'Fist' || 
+						mod == 'Kick')
 				{
-					if (FoundPlayer.CountInv("TSArmorTier2"))
-					{
-						TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
-					}
-					else
-					if (FoundPlayer.CountInv("TSArmorTier1"))
-					{
-						TimeSeraphBangleFactor = frandompick(0.334,0.375,0.375,0.4167,0.4167,0.4167,0.4167,0.4167,0.4167,0.4445,0.4445,0.5);
-					}
-					else
-					{
-						TimeSeraphBangleFactor = frandompick(0.4167,0.4445,0.4445,0.5,0.5,0.5,0.5,0.5,0.5,0.5556,0.5556,0.625);
-					}
-					ActorDefenseIgnoreFactor += (TimeSeraphBangleFactor * (1.00 - ActorDefenseIgnoreFactor));
+					ActorDefenseIgnoreFactor += (frandom(0.001,0.100) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'Knife')
+				{
+					ActorDefenseIgnoreFactor += (frandom(0.0015,0.150) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'Chainsaw')
+				{
+					ActorDefenseIgnoreFactor += ((random(10,25) * 0.01) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'Dashing') 
+				{
+					ActorDefenseIgnoreFactor += (0.2 * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'DashingBG')
+				{
+					ActorDefenseIgnoreFactor += (0.375 * (1.00 - ActorDefenseIgnoreFactor));
+				}
+				if (mod == 'DashingSD') 
+				{
+					ActorDefenseIgnoreFactor += (0.375 * (1.00 - ActorDefenseIgnoreFactor));
 				}
 			}
-			else
-			{
-				KCCreature OtherA;
-				OtherA = KCCreature(source);
-				if (!OtherA) OtherA = KCCreature(inflictor);
-				if (OtherA)
-				{
-					//
-					//
-					//
-				}
-			}
-			
-			if (mod == 'Dashing') ActorDefenseIgnoreFactor += (0.2 * (1.00 - ActorDefenseIgnoreFactor));
-			if (mod == 'DashingSD') ActorDefenseIgnoreFactor += (0.375 * (1.00 - ActorDefenseIgnoreFactor));
 			
 			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			
@@ -1402,12 +1493,23 @@ mixin class MonsterCollider
 				{
 					ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
 				}
-				ActorDefenseIgnoreFactor += ((random(6,8) * 0.125) * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			
 			//if (CountInv("PWDefenseBuff") > 0) ActorDefenseIgnoreFactor *= 0.25;
 		}
-
+		
+		double temp1;
+		if (playera.CountInv("KCTimeFreezer1"))
+		{
+			temp1 = (ActorDefenseIgnoreFactor * 0.75);
+			ActorDefenseIgnoreFactor -= temp1;
+		}
+		if (playera.CountInv("KCTimeFreezer2"))
+		{
+			temp1 = ((1.0 - ActorDefenseIgnoreFactor) * 0.75);
+			ActorDefenseIgnoreFactor += temp1;
+		}
+		
 		return prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
 	}
 	
