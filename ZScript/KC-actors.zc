@@ -128,14 +128,14 @@ class KCBaseZSC : Actor
 			if (TargLevel >= lvlthreshold1) damage += ((basedmg * factor2) * baserand) + (TargLevel * ((basedmg * (factor1 * factor2)) * baserand));
 			if (TargLevel >= lvlthreshold2) damage += ((basedmg * factor3) * baserand) + (TargLevel * ((basedmg * (factor1 * factor3)) * baserand));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = (basedmg * baserand);
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - EEProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - KCProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		
 		return damage;
@@ -166,14 +166,14 @@ class KCBaseZSC : Actor
 			if (CountInv("MonsterLevel") >= lvlthreshold1) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
 			if (CountInv("MonsterLevel") >= lvlthreshold2) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = basedmg;
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - EEProjectile] (\c[ice]%s\c[fire]): %d [%d]\c- [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s\c[fire]): %d [%d]\c- [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		return damage;
 	}
@@ -203,14 +203,14 @@ class KCBaseZSC : Actor
 			if (TargLevel >= lvlthreshold1) damage += ((basedmg * factor2) * baserand) + (TargLevel * ((basedmg * (factor1 * factor2)) * baserand));
 			if (TargLevel >= lvlthreshold2) damage += ((basedmg * factor3) * baserand) + (TargLevel * ((basedmg * (factor1 * factor3)) * baserand));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = (basedmg * baserand);
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - EEProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - KCProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		
 		return damage;
@@ -220,6 +220,21 @@ class KCBaseZSC : Actor
 	{
 		self.Destroy();
 	}
+}
+
+class KCAfterimageZSC : KCBaseZSC abstract
+{
+	override void Tick()
+	{
+		//This space for rent.
+		super.Tick(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+	}
+}
+
+class KCVaccableObject : KCBaseZSC 
+{
+	bool canleechHP;
+	property leechHP: canleechHP;
 }
 
 class KCTimeFreezeHitscanTracker : KCBaseZSC
@@ -2466,14 +2481,14 @@ class KCCreature : KCBaseZSC
 			if (TargLevel >= lvlthreshold1) damage += ((basedmg * factor2) * baserand) + (TargLevel * ((basedmg * (factor1 * factor2)) * baserand));
 			if (TargLevel >= lvlthreshold2) damage += ((basedmg * factor3) * baserand) + (TargLevel * ((basedmg * (factor1 * factor3)) * baserand));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = (basedmg * baserand);
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - EEProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula - KCProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		
 		return damage;
@@ -2504,14 +2519,14 @@ class KCCreature : KCBaseZSC
 			if (CountInv("MonsterLevel") >= lvlthreshold1) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
 			if (CountInv("MonsterLevel") >= lvlthreshold2) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = basedmg;
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - EEProjectile] (\c[ice]%s\c[fire]): %d [%d]\c- [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s\c[fire]): %d [%d]\c- [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		return damage;
 	}
@@ -2541,14 +2556,14 @@ class KCCreature : KCBaseZSC
 			if (TargLevel >= lvlthreshold1) damage += ((basedmg * factor2) * baserand) + (TargLevel * ((basedmg * (factor1 * factor2)) * baserand));
 			if (TargLevel >= lvlthreshold2) damage += ((basedmg * factor3) * baserand) + (TargLevel * ((basedmg * (factor1 * factor3)) * baserand));
 			damage *= (1.0 + (TargLevel * levelfactor));
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - EEProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c-, basedmg: %d, baserand: 1 to %d [gametic: %d]", GetClassName(), target.GetClassName(), damage, basedmg, baserand, gametic);
 			projprevdmg = damage;
 		}
 		else
 		{
 			if (damage != 0) damage = projprevdmg;
 			if (damage == 0) damage = (basedmg * baserand);
-			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - EEProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
+			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormulaEx - KCProjectile] (\c[ice]%s\c[fire]): %d\c-, projprevdmg: %d, [gametic: %d]", GetClassName(), damage, projprevdmg, gametic);
 		}
 		
 		return damage;

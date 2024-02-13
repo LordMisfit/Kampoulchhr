@@ -1883,7 +1883,7 @@ class PlayerStatItem : Inventory
 				if (KillComboCount >= 526) based = 150;
 				if (A_CheckForHeiwa()) based *= 0.25;
 													else based *= 0.0625;
-				int flat = (KillComboCount *= based);
+				int flat = (KillComboCount * based);
 				if (flat >= 9875) flat = 9875;
 				SurviveRateCap += flat;
 				SurvivalRate += flat;
