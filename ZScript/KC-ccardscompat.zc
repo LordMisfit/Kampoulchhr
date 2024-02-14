@@ -104,7 +104,7 @@ class KC_CCards_Actor_PriestPorridge : CustomInventoryExt // Health
 			let medbag = MediBag(playera.FindInventory("MediBag",false));
 			if (medbag)
 			{
-				if (medbag.Amount < medbag.MaxAmount) msg = sbpmsg;
+				if (medbag.Amount <= medbag.MaxAmount) msg = sbpmsg;
 			}
 		}
 		return msg;
@@ -201,7 +201,7 @@ class KC_CCards_Actor_HotPriestPorridge : KC_CCards_Actor_PriestPorridge
 			let medbag = MediBag(playera.FindInventory("MediBag",false));
 			if (medbag)
 			{
-				if (medbag.Amount < medbag.MaxAmount) msg = sbpmsg;
+				if (medbag.Amount <= medbag.MaxAmount) msg = sbpmsg;
 			}
 		}
 		return msg;

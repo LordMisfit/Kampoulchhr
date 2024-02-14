@@ -1312,13 +1312,6 @@ class KCStatusBarMain : BaseStatusBar
 		int ycorrection = -3;
 		if (armor != null && armor.Amount > 0)
 		{
-			// Meters
-			vector2 mpos = (94+APDmgShakeX, (yinc)+APDmgShakeY+ycorrection);
-			int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
-			int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxHealthTrue);
-			double malpha = 0.875;
-			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
-
 			//Console.Printf("armortype: %s", armor.GetClassName());
 			textureid icon = armor.icon;
 			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
@@ -1341,15 +1334,31 @@ class KCStatusBarMain : BaseStatusBar
 				fontclr = font.cr_darkgray;
 			}
 			
-			if (hudarmortype <= 1)
+			int MaxArmor;
+			if (hudarmortype == 1) MaxArmor = MiscItem.MaxHealthTrue;
+			if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * 2);
+			double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
+			MaxArmor *= (1.0 + fact);
+
+			// Meters
+			vector2 mpos = (94+APDmgShakeX, (yinc)+APDmgShakeY+ycorrection);
+			if (MaxArmor > 0)
 			{
-				if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
-												else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
-			}
-			else
-			{
-				if (lgpiece2 >= 101) DrawBar("APNOTCH4", "APNOTCH3", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
-												else DrawBar("APNOTCH3", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
+				int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
+				double malpha = 0.875;
+				if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
+				
+				if (hudarmortype <= 1)
+				{
+					if (lgpiece2 >= 101) DrawBar("APNOTCH2", "APNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+													else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				}
+				else
+				{
+					if (lgpiece2 >= 101) DrawBar("APNOTCH4", "APNOTCH3", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+													else DrawBar("APNOTCH3", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				}
 			}
 			
 			
@@ -1364,12 +1373,6 @@ class KCStatusBarMain : BaseStatusBar
 				string MaxAPS = " / ";
 				if (MiscItem)
 				{
-					int MaxArmor;
-					if (hudarmortype == 1) MaxArmor = MiscItem.MaxHealthTrue;
-					if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * 2);
-					double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
-					MaxArmor *= (1.0 + fact);
-
 					MaxAPS.AppendFormat("%d", MaxArmor);
 				}
 				else

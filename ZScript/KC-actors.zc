@@ -346,6 +346,39 @@ class KCTimeFreezeProjTracker : KCBaseZSC
 	}
 }
 
+// Custom Powerups/Items that obey the effect of "KCTimeFreezer" that might be used for monsters [buffs/debuffs/cooldowns]
+class KCPowerup : Powerup
+{
+	override void Tick()
+	{
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL)
+		{
+			Destroy();
+		}
+
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (player.CountInv("PowerTimeFreezer") ||
+				player.CountInv("KCMiscTimeFreezer") ||
+				player.CountInv("DebugTimeFreezer") ||
+				player.CountInv("KCTimeFreezer") ||
+				player.CountInv("KCTimeFreezer1") ||
+				player.CountInv("KCTimeFreezer2") ||
+				player.CountInv("KCTimeFreezer3") ||
+				player.CountInv("DashTimeFreezer") ||
+				!player.player.timefreezer)
+		{
+			//Console.Printf("EffectTics: %d", EffectTics);
+			EffectTics--;
+		}
+		if (EffectTics <= 0)
+		{
+			Destroy();
+		}
+	}
+}
+
 class KCProjectile : KCBaseZSC
 {
 	int ishellcoreproj;
@@ -2996,6 +3029,25 @@ class KCCreature : KCBaseZSC
 			else
 			{
 				if ((vel.x >= -0.125 && vel.x <= 0.125) && (vel.y >= -0.125 && vel.y <= 0.125)) bBLASTED = false;
+			}
+		}
+	}
+	
+	
+	void A_CheckIfTargetDead(statelabel statel = null)
+	{
+		if (!target)
+		{
+			if (kcdebug_monsterspecialai) Console.Printf("NoTarget");
+			SetStateLabel(statel);
+		}
+		else
+		{
+			if (target.health <= 0)
+			{
+				if (kcdebug_monsterspecialai) Console.Printf("TargetDead");
+				target = null;
+				SetStateLabel(statel);
 			}
 		}
 	}

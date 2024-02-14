@@ -1495,7 +1495,8 @@ mixin class MonsterCollider
 				}
 			}
 			
-			//if (CountInv("PWDefenseBuff") > 0) ActorDefenseIgnoreFactor *= 0.25;
+			no = "PWDefenseBuff";
+			if (CountInv(no) > 0) ActorDefenseIgnoreFactor *= 0.25;
 		}
 		
 		double temp1;
@@ -1543,11 +1544,11 @@ mixin class MonsterCollider
 		//if (SuperShotgunGuy(input)) type = 2; // Zombie/Undead
 		//if (FemaleRailZombie(input)) type = 2; // Zombie/Undead
 		if (ChaingunGuy(input) || ChaingunGuyNew(input)) type = 2; // Zombie/Undead
-		//if (Minigunner(input)) type = 2; // Zombie/Undead
+		if (Minigunner(input)) type = 2; // Zombie/Undead
 		//if (BFGGuy(input)) type = 2; // Zombie/Undead
 		//if (SuicideBomber(input)) type = 2; // Zombie/Undead
 		if (DoomImp(input) || DoomImpNew(input)) type = 1; // Demonic
-		//if (DarkImp(input) || STDarkImp(input) || VoidDarkImp(input) || NetherDarkImp(input)) type = 1; // Demonic
+		if (DarkImp(input) || STDarkImp(input) || VoidDarkImp(input) || NetherDarkImp(input)) type = 1; // Demonic
 		if (Demon(input) || DemonNew(input)) type = 1; // Demonic
 		//if (BloodDemon(input)) type = 1; // Demonic
 		if (LostSoul(input) || LostSoulNew(input) || LostSoulAnnoying(input) || BetaLostSoul(input)) type = 1; // Demonic
@@ -1764,9 +1765,11 @@ mixin class MonsterCollider
 	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
+		let globalvars = KCGlobalVariables.Get();
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double firstdmgfactor = DamageFactor;
+
 		if (kcdebug_actordmgdisplays) Console.Printf("firstdmgfactor: %.8f, DamageFactor: %.8f", firstdmgfactor, DamageFactor);
 		/*
 		if (DeathIncarnate(self))
@@ -1966,7 +1969,7 @@ mixin class MonsterCollider
 			int crittype = 1;
 			if (!(ExplosiveBarrel(self) ||
 						ExplosiveBarrel2(self) ||
-						//ExplosiveBarrelNew(self) ||
+						ExplosiveBarrelNew(self) ||
 						Pod(self)))
 			{
 				A_SetInventory("TookCriticalHit",1);
@@ -1987,6 +1990,20 @@ mixin class MonsterCollider
 						A_StartSound("misc/critsnd2", 216, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.625,0.9375));
 						A_StartSound("misc/critsnd2", 217, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.9375,1.0625));
 						crittype = 2;
+					}
+					nm = "CCards_Actor_FirebluTotemDefBuff";
+					if (CountInv(nm))
+					{
+						if (FoundPlayer.CountInv("TimeSeraphVisor"))
+						{
+							if (supercrit) critdmgmulti *= 100;
+												else critdmgmulti *= 25;
+						}
+						else
+						{
+							if (supercrit) critdmgmulti *= 20;
+												else critdmgmulti *= 5;
+						}
 					}
 				}
 				damage *= critdmgmulti;
@@ -2041,7 +2058,6 @@ mixin class MonsterCollider
 		if (source != null) lastattacker = source;
 		if (source == null) sour = "NONE"; else sour = source.GetClassName();
 		
-		/*
 		if (sour == "BlackBearNew" || infl == "BlackBearNew")
 		{
 			mod = 'Melee';
@@ -2056,7 +2072,8 @@ mixin class MonsterCollider
 			flags &= ~DMG_NO_PROTECT;
 		}
 		
-		if (CountInv("PWDefenseBuff") > 0) damage *= 0.25;
+		no = "PWDefenseBuff";
+		if (CountInv(no) > 0) damage *= 0.25;
 		nm = "PennywiseBoss";
 		if (vict == nm)
 		{
@@ -2080,7 +2097,7 @@ mixin class MonsterCollider
 				}
 				if (mod == 'Deadlight') damage *= 1;
 			}
-			if (CountInv("PWDefenseBuff"))
+			if (CountInv(no))
 			{
 				if (mod == 'Deadlight') 
 				{
@@ -2089,7 +2106,6 @@ mixin class MonsterCollider
 			}
 			if (kcdebug_actordmgdisplays) Console.Printf("Pennywise Boss Check: %d (%d)", damage, initdmg);
 		}
-		*/
 
 		if (score & 16)
 		{
@@ -2104,7 +2120,7 @@ mixin class MonsterCollider
 		
 		if (ExplosiveBarrel(self) ||
 				ExplosiveBarrel2(self) ||
-//				ExplosiveBarrelNew(self) ||
+				ExplosiveBarrelNew(self) ||
 				Pod(self))
 		{
 			//
@@ -2241,7 +2257,16 @@ mixin class MonsterCollider
 		prevDamageFactor = DamageFactor;
 		if (DamageFactor < 1.00) 
 		{
-			if (criticalhit) ActorDefenseIgnoreFactor = 1.00;
+			if (criticalhit) 
+			{
+				double temp1;
+				ActorDefenseIgnoreFactor = 1.00;
+				if (playera.CountInv("KCTimeFreezer1"))
+				{
+					temp1 = (ActorDefenseIgnoreFactor * 0.75);
+					ActorDefenseIgnoreFactor -= temp1;
+				}
+			}
 			DamageFactor += ((1.00 - DamageFactor) * ActorDefenseIgnoreFactor); 
 		}
 		if (kcdebug_actordmgdisplays && damage > 0)
@@ -2276,7 +2301,7 @@ mixin class MonsterCollider
 						{
 							phealmax = MiscItem.MaxHealthTrue;
 							phealmax *= (1.0 + (TruePlayerLevel * 0.005));
-							if (phealmax > MiscItem.MaxHealthTrue * 3.0) phealmax = (MiscItem.MaxHealthTrue * 3.0);
+							if (phealmax > MiscItem.MaxHealthTrue * 2.0) phealmax = (MiscItem.MaxHealthTrue * 2.0);
 						}
 						if ((prehealth < phealmax) && random(1,16) <= random(7,9))
 						{

@@ -1,3 +1,75 @@
+// Bullet Tracers
+class ZombieBulletTracer : KCBulletTracer
+{
+	default
+	{
+		Tag "shot";
+		DamageFunction (finaldamagedealt);
+		Damagetype "Hitscan";
+		Radius 2;
+		Height 2;
+		Mass 5;
+		Speed 160; // 80
+		PROJECTILE;
+		+DONTREFLECT;
+		+BLOODSPLATTER;
+		+NODAMAGETHRUST;
+		Renderstyle "Add";
+		Alpha 1.0;
+		Scale 0.5;
+		decal "BulletChip";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCFastProjectile.PostBeginPlay();
+		A_ScaleVelocity(kc_tracervelmulti);
+		
+		if (finaldamagedealt <= 0) finaldamagedealt = (5 * random(1,3));
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay bright;
+		Idle:
+			TNT1 A 1 bright A_SpawnTracerTrail("ZombieBulletTracerTrail",6,-2.5);
+			loop;
+		XDeath:
+			TNT1 A 1; //A_SpawnItem("BulletPuff");
+			stop;
+		Death:
+		Crash:
+			TNT1 A 1 A_SpawnItem("BulletPuff");
+			stop;
+	}
+}
+
+class ZombieBulletTracerTrail : KCBaseZSC
+{
+	default
+	{
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Damage 0;
+		Projectile;
+		+CLIENTSIDEONLY;
+		+NOINTERACTION;
+		+NOCLIP;
+		+DONTSPLASH;
+		Scale 0.5;
+		Renderstyle "Add";
+	}
+	
+	States
+	{
+		Spawn:
+			CTAC A 2 bright;
+			stop;
+	}
+}
+
 class KCHowitzerPuff : KCPuff replaces BulletPuff
 {
 	default

@@ -1080,7 +1080,7 @@ class Stimpack2 : CustomInventoryExt replaces Stimpack
 			let medbag = MediBag(playera.FindInventory("MediBag",false));
 			if (medbag)
 			{
-				if (medbag.Amount < medbag.MaxAmount) msg = sbpmsg;
+				if (medbag.Amount <= medbag.MaxAmount) msg = sbpmsg;
 			}
 		}
 		return msg;
@@ -1220,7 +1220,7 @@ class Medikit2 : CustomInventoryExt replaces Medikit
 			let medbag = MediBag(playera.FindInventory("MediBag",false));
 			if (medbag)
 			{
-				if (medbag.Amount < medbag.MaxAmount) msg = sbpmsg;
+				if (medbag.Amount <= medbag.MaxAmount) msg = sbpmsg;
 			}
 		}
 		return msg;
@@ -4335,6 +4335,7 @@ class MediBag : CustomInventoryExt
 		+INVENTORY.PERSISTENTPOWER
 		+INVENTORY.UNDROPPABLE
 		+INVENTORY.KEEPDEPLETED
+		Tag "Special Backpack's Portable Medikit: Stores Medikits and Stimpacks in raw HP energy units up to a certain limit.";
 	}
 	
 	override void Tick()
