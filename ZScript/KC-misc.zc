@@ -1392,7 +1392,11 @@ class PlayerStatItem : Inventory
 								}
 							}
 
-							if (berserked) inc = floor(inc * frandom[statitem](1.5,2.0));
+							if (berserked) 
+							{
+								if (A_CheckForHeiwa()) inc = floor(inc * frandom[statitem](2.5,4.0));
+																	else inc = floor(inc * frandom[statitem](1.5,2.0));
+							}
 
 							if (!timestoptype)
 							{
@@ -1462,7 +1466,15 @@ class PlayerStatItem : Inventory
 								if (CurrentHealth < MaxHealthTrue)
 								{
 									int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.4) / 100;
-									if (berserked) rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.8) / 100;
+									if (berserked) 
+									{
+										rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.8) / 100;
+										if (A_CheckForHeiwa() && random(1,4) <= 1)
+										{
+											if (random(1,4) <= 1) rec *= 2.5;
+																			 else rec *= 1.75;
+										}
+									}
 									if (rec < 1) rec = 1;
 
 									if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
@@ -1556,7 +1568,11 @@ class PlayerStatItem : Inventory
 								}
 							}
 							
-							if (berserked) inc = ceil(inc * frandom[statitem](0.5,0.667));
+							if (berserked) 
+							{
+								if (A_CheckForHeiwa()) inc = ceil(inc * frandom[statitem](0.25,0.4));
+																	else inc = ceil(inc * frandom[statitem](0.5,0.667));
+							}
 							
 							if (!timestoptype)
 							{
@@ -1627,7 +1643,15 @@ class PlayerStatItem : Inventory
 								if (CurrentHealth > MaxHealthTrue)
 								{
 									int loss = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.4) / 100;
-									if (berserked) loss = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.2) / 100;
+									if (berserked) 
+									{
+										loss = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.2) / 100;
+										if (A_CheckForHeiwa() && random(1,4) <= 1)
+										{
+											if (random(1,4) <= 1) loss *= 0.4;
+																			 else loss *= 0.5714285714285714;
+										}
+									}
 									if (loss < 1) loss = 1;
 									
 									//if (loss && kchud_showhpapdmgrecregen > 1) A_LossHUD(loss, 0, false);

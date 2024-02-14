@@ -11402,7 +11402,10 @@ class Boomy : KCBaseZSC
 		RenderStyle "Add";
 		+NOCLIP;
 		+NOGRAVITY;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
+	
 	States
 	{
 		Spawn:
@@ -11425,6 +11428,8 @@ class LargeBoomy : Boomy
 		RenderStyle "Add";
 		+NOCLIP;
 		+NOGRAVITY;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 }
 
@@ -11434,6 +11439,8 @@ class DumbTrail : Smoke
 	{
 		Scale 0.175;
 		Alpha 0.3;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 }
 

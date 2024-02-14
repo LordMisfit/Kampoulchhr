@@ -1382,6 +1382,7 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				//MaxAPS.AppendFormat("%d", armor.maxamount);
 				//DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, font.cr_black, fontalpha, -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (svx+1+50+APDmgShakeX, svy+1-(yinc+38)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
 				DrawString(mKCMFont, MaxAPS, (svx+50+APDmgShakeX, svy-(yinc+38)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
 			
@@ -1842,6 +1843,7 @@ class KCStatusBarMain : BaseStatusBar
 		string MaxHPS = "\c[brick] / ";
 		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
 		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
+		DrawString(mKCMFont, MaxHPS, (94+1+HPDmgShakeX, (yinc-16)+1+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, 0.75, -1, 4, (1.25, 1.25));
 		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, (yinc-16)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 		
 		return yinc;
