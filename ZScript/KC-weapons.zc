@@ -13874,17 +13874,47 @@ class KnifeHeiwa : MarineWeapon
 	{
 	}
 	
-	action void A_KnifeHit(bool shieldpiece, bool puffsound, double angoffset, double ptcoffset)
+	action void A_KnifeHit(int rangef, bool shieldpiece, bool puffsound, double angoffset, double ptcoffset)
 	{
-		int dmg = A_GetKnifeDamage(randompick(7,6,6,6,6,6,6,6,6,5),false);
-		if (CountInv("PlayerDashing")) dmg *= frandom(2,3);
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvl(1);
+		
+		int basedivisor = randompick(7,6,6,6,6,6,6,6,6,5);
+		int divisiorfloor = basedivisor;
+		if (TruePlayerLevel >= 10) 
+		{
+			basedivisor -= randompick(0,0,1,1,1,1,1,1);
+			divisiorfloor -= 1;
+		}
+		if (TruePlayerLevel >= 55) 
+		{
+			basedivisor -= randompick(0,1,1,1,1,1,1,1);
+			divisiorfloor -= 1;
+		}
+		if (TruePlayerLevel >= 100) 
+		{
+			basedivisor -= randompick(0,1,1,1,1,1,1,1);
+			divisiorfloor -= 1;
+		}
+		if (divisiorfloor <= 2) divisiorfloor = 2;
+		if (basedivisor < divisiorfloor) basedivisor = divisiorfloor;
+		
+		int dmg = A_GetKnifeDamage(basedivisor,false);
+		if (CountInv("PlayerDashing")) 
+		{
+					if (TruePlayerLevel >= 100) dmg *= frandom(2.25,2.875);
+			else if (TruePlayerLevel >= 55) dmg *= frandom(2,3);
+			else if (TruePlayerLevel >= 10) dmg *= frandom(1.67,2.34);
+																 else dmg *= frandom(1.34,1.67);
+		}
 		//Console.Printf("dmg: %d", dmg);
-		int rangef = random(78,82);
 		if (puffsound) A_CustomPunch((dmg),true,CPF_NOTURN|CPF_NORANDOMPUFFZ,"KnifePuff",range:random(78,82));
 							else A_CustomPunch((dmg),true,CPF_NOTURN|CPF_NORANDOMPUFFZ,"KnifePuffNoSound",range:random(78,82));
 		if (shieldpiece)
 		{
 			double output = 1.0;
+			if (A_CheckBerserk()) output *= frandompick(1.375,1.5,1.5,1.5,1.5,1.5,1.5,1.625);
 			int mkheight = random(28,30);
 			int mkdist1 = (rangef - 56);
 			int mkdist2 = (rangef - 24);
@@ -13893,11 +13923,14 @@ class KnifeHeiwa : MarineWeapon
 			int TruePlayerLevel = invoker.ActualLevel;
 			if (random(1,8) <= (1 + (TruePlayerLevel * (0.06 * output)))) mk = "ShieldPartMeleeReflect";
 			
+			int piecechance = 1;
+			if (A_CheckBerserk()) piecechance = randompick(2,2,3,3,3,3,4,4);
 			A_MeleeShieldPiece(mk,mkheight,mkdist3,angoffset,ptcoffset);
-			if (random(1,6) <= 1)
+			if (random(1,6) <= piecechance)
 			{
+				if (A_CheckBerserk()) piecechance = randompick(2,2,3,3,3,3,4,4);
 				A_MeleeShieldPiece(mk,mkheight,mkdist2,angoffset,ptcoffset);
-				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1,angoffset,ptcoffset);
+				if (random(1,6) <= piecechance) A_MeleeShieldPiece(mk,mkheight,mkdist1,angoffset,ptcoffset);
 			}
 		}
 	}
@@ -13917,7 +13950,7 @@ class KnifeHeiwa : MarineWeapon
 		}
 	}
 	
-	action void A_KnifeAttackFull(int numhits = 3, double pangoffset = 5.0, double pptcoffset = 5.0)
+	action void A_KnifeAttackFull(int rangef = 80, double pangoffset = 5.0, double pptcoffset = 5.0)
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
@@ -13928,19 +13961,19 @@ class KnifeHeiwa : MarineWeapon
 		double pptc = pitch;
 		A_SetAngle(pang+(pangoffset*2));
 		A_SetPitch(pptc+(pptcoffset*2));
-		A_KnifeHit(shieldpiece,0,(pangoffset*2),(pptcoffset*2)); // Upper Right
+		A_KnifeHit(rangef,shieldpiece,0,(pangoffset*2),(pptcoffset*2)); // Upper Right
 		A_SetAngle(pang+pangoffset);
 		A_SetPitch(pptc+pptcoffset);
-		A_KnifeHit(shieldpiece,0,pangoffset,pptcoffset); // Upper Right
+		A_KnifeHit(rangef,shieldpiece,0,pangoffset,pptcoffset); // Upper Right
 		A_SetAngle(pang);
 		A_SetPitch(pptc);
-		A_KnifeHit(shieldpiece,1,0,0); // Middle
+		A_KnifeHit(rangef,shieldpiece,1,0,0); // Middle
 		A_SetAngle(pang-pangoffset);
 		A_SetPitch(pptc-pptcoffset);
-		A_KnifeHit(shieldpiece,0,-pangoffset,-pptcoffset); // Lower Left
+		A_KnifeHit(rangef,shieldpiece,0,-pangoffset,-pptcoffset); // Lower Left
 		A_SetAngle(pang-(pangoffset*2));
 		A_SetPitch(pptc-(pptcoffset*2));
-		A_KnifeHit(shieldpiece,0,(-pangoffset*2),(-pptcoffset*2)); // Lower Left
+		A_KnifeHit(rangef,shieldpiece,0,(-pangoffset*2),(-pptcoffset*2)); // Lower Left
 		A_SetAngle(pang);
 		A_SetPitch(pptc);
 	}
@@ -14019,7 +14052,7 @@ class KnifeHeiwa : MarineWeapon
 				}
 				A_SetTics(tic);
 				A_KnifeKiais(240);
-				A_KnifeAttackFull(3,4.625,6.25);
+				A_KnifeAttackFull(random(78,82),4.625,6.25);
 			}
 			KNFG K 2
 			{
@@ -14236,7 +14269,7 @@ class KnifeHeiwa : MarineWeapon
 				}
 				A_SetTics(tic);
 				A_KnifeKiais(240);
-				A_KnifeAttackFull(3,4.625,6.25);
+				A_KnifeAttackFull(random(78,82),4.625,6.25);
 			}
 			KNFG I 2 
 			{

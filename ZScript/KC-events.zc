@@ -89,6 +89,16 @@ class KC_EventHandler : EventHandler
 			
 			if (A_CheckKCTimeFreeze())
 			{
+				nm = "CCards_Actor_Shockwave";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo) 
+					{
+						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+					}
+				}
+
 				nm = "CCards_Actor_AttentionDebuff";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -1689,6 +1699,19 @@ class KC_EventHandler : EventHandler
 				spawnee.DamageType = 'Explosive';
 				spawnee.ProjectilePassHeight = 32;
 			}
+			nm = "CCards_Actor_EscapePortal"; 
+			if (spawnname == nm) 
+			{
+				bool spawned;
+				actor escapeportal;
+				[spawned, escapeportal] = spawnee.A_SpawnItemEx("KC_CCards_Actor_EscapePortal",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				if (escapeportal)
+				{
+					escapeportal.target = spawnee.target;
+					spawnee.Destroy();
+				}
+			}
+			
 			nm = "CCards_Actor_CardExplosiveBarrel"; 
 			if (spawnname == nm) 
 			{
@@ -1713,6 +1736,10 @@ class KC_EventHandler : EventHandler
 
 			if (A_CheckKCTimeFreeze())
 			{
+				nm = "CCards_Actor_Shockwave"; 
+				{
+					if (spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+				}
 				nm = "CCards_Actor_AttentionDebuff";
 				if (spawnname == nm) 
 				{

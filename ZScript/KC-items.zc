@@ -2406,7 +2406,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		string msg = PickupMsg;
 		return msg;
 	}
-
+	
 	override void PostBeginPlay()
 	{
 		super.PostBeginPlay();
@@ -2629,7 +2629,16 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				}
 			}
 		Idle:
-			BON2 ABCDCB 6;
+			BON2 ABCDCB 6
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (MiscItem.darmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.darmortype >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+				}
+			}
 			Loop;
 	}
 }
@@ -2823,7 +2832,16 @@ class ArmorBonusBig : ArmorBonus2
 			}
 			goto Idle;
 		Idle:
-			BON4 AABBCCDDCCBB 3;
+			BON4 AABBCCDDCCBB 3
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					if (MiscItem.darmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.darmortype >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+				}
+			}
 			Loop;
 
 	}
@@ -4335,7 +4353,7 @@ class MediBag : CustomInventoryExt
 		+INVENTORY.PERSISTENTPOWER
 		+INVENTORY.UNDROPPABLE
 		+INVENTORY.KEEPDEPLETED
-		Tag "Special Backpack's Portable Medikit: Stores Medikits and Stimpacks in raw HP energy units up to a certain limit.";
+		Tag "\c[cream]Special Backpack's Portable Medikit\c-: Stores Medikits and Stimpacks in raw HP energy units up to a certain limit.";
 	}
 	
 	override void Tick()

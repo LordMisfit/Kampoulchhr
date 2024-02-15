@@ -27,6 +27,46 @@ class KC_CCards_Actor_FX : KCBaseZSC
 //***********
 //* Effects *
 //***********
+// Altered Escape Portal Effect because I cannot condone CCards stealing the opportunity to
+// get 100% kills on a map if I can do something about it. Apologies to Mike about that, but
+// I -HATE- when things like that rob me of 100% completion. This actor just adds a thing to
+// deduct the monster that escapes from the kill-count. I don't know if the normal behavior
+// is intentional or a bug, but in the off-case it IS intentional, I figure I'd just have my
+// own version with the tweak.
+class KC_CCards_Actor_EscapePortal : KC_CCards_Actor_FX
+{
+	Default
+	{
+		+MISSILE;
+	}
+	states
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0
+			{
+				A_StartSound("corruptioncards/lastbreath");
+				if(target)
+				{
+					target.A_SpawnItemEx("CCards_Actor_EscapePortalFX", 12, flags:SXF_NOCHECKPOSITION|SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE|SXF_TRANSFERTRANSLATION);
+					if (target.bCOUNTKILL) level.total_monsters -= 1; // The only change from the base CCards effect is this :V
+					target.A_Remove(AAPTR_DEFAULT);
+				}
+			}
+			TNT1 AAAAAAAAAAAAAAAAAAA 3
+			{
+				let v = Spawn("CCards_Actor_VoidStepFX", pos + (0,0,48));
+				if(v)
+				{
+					v.A_SetTranslation("CCards_Shield");
+					v.reactiontime = 10;
+				}
+			}
+			stop;
+	}
+
+}
+
 class KC_CCards_Actor_Smoke : KC_CCards_Actor_FX
 {
 	Default
