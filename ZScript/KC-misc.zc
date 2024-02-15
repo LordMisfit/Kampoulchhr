@@ -1713,7 +1713,7 @@ class PlayerStatItem : Inventory
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0a - SPD Evade Check (base)]: %.4f\c-", SPDEvadeCheck);
 			
 			// Luck
-			double mult = (BaseEVA * 0.1);
+			double mult = (BaseEVA * 0.025);
 			double LUKEvaAlt = 0.0 + (PlayerLUCK * frandompick[statitem](0,0,0,0,0,0,0,0,0,0,0,(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.25),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*0.5),(mult*1),(mult*1),(mult*1),(mult*2)));
 			SPDEvadeCheck += LUKEvaAlt;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0b - SPD Evade Check (luck check)]: %.4f\c-", SPDEvadeCheck);
@@ -2333,6 +2333,7 @@ class PlayerStatItem : Inventory
 			double LevelJumpZ = 1.00;
 			double baseval = 0.004375;
 			if (A_CheckForHeiwa()) baseval = 0.004773;
+			baseval *= 0.3334;
 			baseval *= kc_pjumpfactor;
 			if (kc_expgains) 
 			{
@@ -2350,14 +2351,15 @@ class PlayerStatItem : Inventory
 			
 			// Speed
 			double SpeedJumpZ = 1.00;
-			baseval = 0.004375;
+			baseval = 0.004375; // 0.004375;
 			if (A_CheckForHeiwa()) baseval = 0.004773;
+			baseval *= 0.3334;
 			baseval *= kc_pjumpfactor;
 			if (kc_expgains && kc_extraatkdefspd) 
 			{
 				if (IsMorphed == 1)
 				{
-					SpeedJumpZ += (TruePlayerSPD * (baseval * 0.334));
+					SpeedJumpZ += (TruePlayerSPD * (baseval * 0.3334));
 				}
 				else
 				{
@@ -6231,13 +6233,13 @@ class PlayerDashJump : Inventory
 			if (skill >= SKILL_VERY_HARD) baseAddDashSpeed += 0.125;
 			if (heiwavhardmodifier) 
 			{
-				baseAddDashLevel *= 2.125;
-				baseAddDashSpeed *= 2.125;
+				baseAddDashLevel *= 1.125;
+				baseAddDashSpeed *= 1.125;
 			}
 			else 
 			{
-				baseAddDashLevel *= 1.5;
-				baseAddDashSpeed *= 1.5;
+				baseAddDashLevel *= 1.0625;
+				baseAddDashSpeed *= 1.0625;
 			}
 		}
 

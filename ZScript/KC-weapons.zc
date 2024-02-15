@@ -13796,24 +13796,15 @@ class KnifeHeiwa : MarineWeapon
 	{
 	}
 	
-	action void A_KnifeHit(int shockwave = 0, bool puffsound = false)
+	action void A_KnifeHit(bool shieldpiece, bool puffsound, double angoffset, double ptcoffset)
 	{
-		int shockwaveroll = 0;
-		if (shockwave > 0) shockwaveroll = 1;
-		else if (shockwave < 0) shockwaveroll = 0;
-		else
-		{
-			if (A_CheckBerserk()) shockwaveroll = randompick(0,0,1);
-											 else shockwaveroll = randompick(0,0,0,0,0,0,0,0,1);
-		}
-		
-		int dmg = A_GetKnifeDamage(0,shockwaveroll,false);
+		int dmg = A_GetKnifeDamage(randompick(7,6,6,6,6,6,6,6,6,5),false);
 		if (CountInv("PlayerDashing")) dmg *= frandom(2,3);
 		//Console.Printf("dmg: %d", dmg);
 		int rangef = random(78,82);
-		if (puffsound) A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuff",range:random(78,82));
-							else A_CustomPunch((dmg),true,CPF_NOTURN,"KnifePuffNoSound",range:random(78,82));
-		if (A_CheckMeleeDestroyProj(3) > 0)
+		if (puffsound) A_CustomPunch((dmg),true,CPF_NOTURN|CPF_NORANDOMPUFFZ,"KnifePuff",range:random(78,82));
+							else A_CustomPunch((dmg),true,CPF_NOTURN|CPF_NORANDOMPUFFZ,"KnifePuffNoSound",range:random(78,82));
+		if (shieldpiece)
 		{
 			double output = 1.0;
 			int mkheight = random(28,30);
@@ -13824,11 +13815,11 @@ class KnifeHeiwa : MarineWeapon
 			int TruePlayerLevel = invoker.ActualLevel;
 			if (random(1,8) <= (1 + (TruePlayerLevel * (0.06 * output)))) mk = "ShieldPartMeleeReflect";
 			
-			A_MeleeShieldPiece(mk,mkheight,mkdist3);
+			A_MeleeShieldPiece(mk,mkheight,mkdist3,angoffset,ptcoffset);
 			if (random(1,6) <= 1)
 			{
-				A_MeleeShieldPiece(mk,mkheight,mkdist2);
-				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1);
+				A_MeleeShieldPiece(mk,mkheight,mkdist2,angoffset,ptcoffset);
+				if (random(1,6) <= 1) A_MeleeShieldPiece(mk,mkheight,mkdist1,angoffset,ptcoffset);
 			}
 		}
 	}
@@ -13848,9 +13839,37 @@ class KnifeHeiwa : MarineWeapon
 		}
 	}
 	
+	action void A_KnifeAttackFull(int numhits = 3, double pangoffset = 5.0, double pptcoffset = 5.0)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
+		bool shieldpiece = false;
+		if (A_CheckMeleeDestroyProj(3) > 0) shieldpiece = true;
+		double pang = angle;
+		double pptc = pitch;
+		A_SetAngle(pang+(pangoffset*2));
+		A_SetPitch(pptc+(pptcoffset*2));
+		A_KnifeHit(shieldpiece,0,(pangoffset*2),(pptcoffset*2)); // Upper Right
+		A_SetAngle(pang+pangoffset);
+		A_SetPitch(pptc+pptcoffset);
+		A_KnifeHit(shieldpiece,0,pangoffset,pptcoffset); // Upper Right
+		A_SetAngle(pang);
+		A_SetPitch(pptc);
+		A_KnifeHit(shieldpiece,1,0,0); // Middle
+		A_SetAngle(pang-pangoffset);
+		A_SetPitch(pptc-pptcoffset);
+		A_KnifeHit(shieldpiece,0,-pangoffset,-pptcoffset); // Lower Left
+		A_SetAngle(pang-(pangoffset*2));
+		A_SetPitch(pptc-(pptcoffset*2));
+		A_KnifeHit(shieldpiece,0,(-pangoffset*2),(-pptcoffset*2)); // Lower Left
+		A_SetAngle(pang);
+		A_SetPitch(pptc);
+	}
+	
 	action double A_GetKnifeSpd()
 	{
-		double output = 10;
+		double output = 20;
 		double oldoutput = output;
 		if (output <= 1.0) output = 1.0;
 		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
@@ -13894,7 +13913,6 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
 				}
 				A_SetTics(tic);
-				A_KnifeHit(0,0);
 			}
 			KNFG J 2
 			{
@@ -13911,7 +13929,8 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 				}
 				A_SetTics(tic);
-				A_KnifeHit(0,1);
+				
+				A_KnifeAttackFull(3,4.625,6.25);
 			}
 			KNFG K 2
 			{
@@ -13927,7 +13946,6 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 				}
 				A_SetTics(tic);
-				A_KnifeHit(0,0);
 			}
 			KNFG L 2
 			{
@@ -14024,7 +14042,6 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 				}
 				A_SetTics(tic);
-				A_KnifeHit(0,0);
 			}
 			KNFG J 2
 			{
@@ -14041,11 +14058,10 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 				}
 				A_SetTics(tic);
-				A_KnifeHit(0,1);
+				A_KnifeAttackFull(3,4.625,6.25);
 			}
 			KNFG I 2 
 			{
-				A_KnifeHit(0,0);
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 2;
 				if (A_CheckBerserk()) 
