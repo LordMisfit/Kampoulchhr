@@ -14345,8 +14345,11 @@ class KnifePuff : KCPuff
 	{
 		Spawn:
 			TNT1 A 0 NoDelay A_SetPainForcedPain(16,0.24);
-		SpawnSparks:
-			PUFF ABCD 4;
+		Spawn2:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
 			Stop;
 		Melee:
 			TNT1 A 0 A_SetPainForcedPain(16,0.24);
@@ -14359,10 +14362,7 @@ class KnifePuff : KCPuff
 		Crash:
 			PUFF C 0 A_SetPainForcedPain(16,0.24);
 		Crash2:
-			TNT1 A 2;
-			TNT1 A 2;
-			TNT1 A 2;
-			TNT1 A 2;
+			PUFF ABCD 2;
 			Stop;
 	}
 }  
@@ -14379,8 +14379,11 @@ class KnifePuffNoSound : KnifePuff
 	{
 		Spawn:
 			TNT1 A 0 NoDelay A_SetPainForcedPain(8,0.12);
-		SpawnSparks:
-			PUFF ABCD 4;
+		Spawn2:
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
+			TNT1 A 2;
 			Stop;
 		Melee:
 			TNT1 A 0 A_SetPainForcedPain(8,0.12);
@@ -14393,10 +14396,7 @@ class KnifePuffNoSound : KnifePuff
 		Crash:
 			PUFF C 0 A_SetPainForcedPain(8,0.12);
 		Crash2:
-			TNT1 A 2;
-			TNT1 A 2;
-			TNT1 A 2;
-			TNT1 A 2;
+			PUFF ABCD 2;
 			Stop;
 	}
 }
