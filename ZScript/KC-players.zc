@@ -3801,18 +3801,20 @@ class HeiwaPlayer : KCPlayerPawn
 		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
 		+NOTIMEFREEZE; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
-		//Translation "112:127=250:254";
+		Translation "112:127=#[196,179,206]:[68,51,77]";
 	}
 	
 	override void PostBeginPlay()
 	{
 		super.PostBeginPlay(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+		A_SetTranslation("HeiwaDeluge");
 		bNOTIMEFREEZE = true; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 	}
 
 	override void Tick()
 	{
 		super.Tick(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+		A_SetTranslation("HeiwaDeluge");
 		bNOTIMEFREEZE = true; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 		
 		if (InStateSequence(curstate,ResolveState("Death")) ||
