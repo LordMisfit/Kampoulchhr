@@ -1218,6 +1218,104 @@ class KCProjectile : KCBaseZSC
 	}
 	//
 	//
+	void A_HadesSphereExplode(int basedmg = 112, int baserad = 112)
+	{
+		int newdmg = basedmg;
+		int newrad = baserad;
+		if (target)
+		{
+			int maxhp;
+			if ((target.SpawnHealth() + target.Stamina) > 0) maxhp = (target.SpawnHealth() + target.Stamina);
+			else maxhp = target.SpawnHealth();
+			maxhp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0111111112)); // +100% damage every ~90 levels
+			if (target.CountInv("MonsterLevel") > 30) 
+			{
+				int temp;
+				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
+				else temp = target.SpawnHealth();
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0037037037333333)); // +33.4% damage every ~90 levels
+				maxhp += temp;
+			}
+			if (target.CountInv("MonsterLevel") > 60) 
+			{
+				int temp;
+				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
+				else temp = target.SpawnHealth();
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0018518518666667)); // +16.67% damage every ~90 levels
+				maxhp += temp;
+			}
+			maxhp *= 0.25; // +100% damage every ~180 levels
+			newdmg += maxhp;
+			KCCreature HSFound;
+			HSFound = KCCreature(target);
+			int healthleft;
+			if (HSFound) healthleft = HSFound.hsexphealth;
+			healthleft *= (1.0 + (target.CountInv("MonsterLevel") * 0.0222222223)); // +100% damage every ~45 levels
+			if (target.CountInv("MonsterLevel") > 30) 
+			{
+				int temp;
+				if (HSFound) temp = HSFound.hsexphealth;
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0074074074333333)); // +33.4% damage every ~45 levels
+				healthleft += temp;
+			}
+			if (target.CountInv("MonsterLevel") > 60) 
+			{
+				int temp;
+				if (HSFound) temp = HSFound.hsexphealth;
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0037037037166667)); // +16.7% damage every ~45 levels
+				healthleft += temp;
+			}
+			healthleft *= 0.5;
+			newdmg += healthleft;
+
+			int maxhp2;
+			if ((target.SpawnHealth() + target.Stamina) > 0) maxhp2 = (target.SpawnHealth() + target.Stamina);
+			else maxhp2 = target.SpawnHealth();
+			maxhp2 *= (1.0 + (target.CountInv("MonsterLevel") * 0.005555556)); // +100% radius every ~180 levels
+			if (target.CountInv("MonsterLevel") > 30) 
+			{
+				int temp;
+				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
+				else temp = target.SpawnHealth();
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.001851852)); // +33.4% radius every ~180 levels
+				maxhp2 += temp;
+			}
+			if (target.CountInv("MonsterLevel") > 60) 
+			{
+				int temp;
+				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
+				else temp = target.SpawnHealth();
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.000925926)); // +16.7% radius every ~180 levels
+				maxhp2 += temp;
+			}
+			maxhp2 *= 0.125;
+			newrad += maxhp2;
+			HSFound = KCCreature(target);
+			int healthleft2;
+			if (HSFound) healthleft2 = HSFound.hsexphealth;
+			healthleft2 *= (1.0 + (target.CountInv("MonsterLevel") * 0.011111112)); // +100% radius every ~90 levels
+			if (target.CountInv("MonsterLevel") > 30) 
+			{
+				int temp;
+				if (HSFound) temp = HSFound.hsexphealth;
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.003703704)); // +33.4% radius every ~90 levels
+				healthleft2 += temp;
+			}
+			if (target.CountInv("MonsterLevel") > 60) 
+			{
+				int temp;
+				if (HSFound) temp = HSFound.hsexphealth;
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.001851852)); // +16.7% radius every ~90 levels
+				healthleft2 += temp;
+			}
+			healthleft2 *= 0.25;
+			newrad += healthleft2;
+			
+			//if (kcdebug_showmiscdmginformation) Console.Printf("NewDmg: %d (%d), NewRad: %d (%d), MaxHP: %d, HealthLeft: %d, MaxHP2: %d, HealthLeft2: %d", newdmg, basedmg, newrad, baserad, maxhp, healthleft, maxhp2, healthleft2);
+		}
+		A_Explode(newdmg,newrad,0,(newrad*0.334));
+	}
+	
 	// A_SeekerMissile that will clear its tracer pointer if the tracer is friendly.
 	void A_NFSeekerMissile(int threshold, int maxturnangle, int flags = 0, int chance = 50, int distance = 10)
 	{
@@ -3528,6 +3626,93 @@ class KCCreature : KCBaseZSC
 			if (user_fastchasetimer == time1 || user_fastchasetimer == time2 || user_fastchasetimer == time3 || user_fastchasetimer == time4) Console.Printf("Class: %s - \cwFloatChase-fastchasetimer: %d\c-", GetClassName(), user_fastchasetimer);
 		}
 	}
+	
+	void A_HadesTeleport(int minlevel = 45, int minchance = 64)
+	{
+		int user_monsterlevel = CountInv("MonsterLevel");
+		int splittype = 0; // 0;
+		int splittype2 = 0; // 0;
+		if (CountInv("LDLegendaryMonsterTransformed")) minchance *= frandompick(1.25,1.5,1.75,2.0);
+
+		int RandRoll = random(1,1024);
+		if (kc_monsterlevelenabledflags)
+		{
+			A_StopSound (CHAN_WEAPON);
+			if (!CountInv("HadesTeleportCooldown")) 
+			{
+				if (user_monsterlevel >= (minlevel*9))
+				{
+					if (RandRoll <= (minchance*4)) splittype2 = 2;
+				}
+				else
+				if (user_monsterlevel >= (minlevel*4))
+				{
+					if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
+				}
+				else
+				if (user_monsterlevel >= minlevel)
+				{
+					if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
+				}
+				else
+				if (user_monsterlevel >= (minlevel/2))
+				{
+					if (RandRoll <= minchance) splittype2 = 1;
+				}
+			}
+		}
+		
+		if (splittype2 == 1)
+		{
+			SetStateLabel("Teleport");
+		}
+		else
+		if (splittype2 == 2)
+		{
+			SetStateLabel("Teleport2");
+		}
+	}
+	void A_HadesTeleportChoose(int minlevel = 90)
+	{
+		int splittype = 0; // 0;
+		int splittype2 = 0; // 0;
+
+		if (kc_monsterlevelenabledflags)
+		{
+			if (!CountInv("HadesTeleportCooldown")) 
+			{
+				if (CountInv("MonsterLevel") >= (minlevel*9))
+				{
+					splittype2 = 2;
+				}
+				else
+				if (CountInv("MonsterLevel") >= (minlevel*4))
+				{
+					splittype2 = random(1,2);
+				}
+				else
+				if (CountInv("MonsterLevel") >= minlevel)
+				{
+					randompick(1,1,1,1,1,1,1,2);
+				}
+				else
+				if (CountInv("MonsterLevel") >= (minlevel/2))
+				{
+					splittype2 = 1;
+				}
+			}
+		}
+		
+		if (splittype2 == 1)
+		{
+			SetStateLabel("Teleport");
+		}
+		else
+		if (splittype2 == 2)
+		{
+			SetStateLabel("Teleport2");
+		}
+	}
 
 	void A_AllySparkle()
 	{
@@ -4185,6 +4370,74 @@ class KCCreature : KCBaseZSC
 				target = null;
 				SetStateLabel(statel);
 			}
+		}
+	}
+	// Nightmare Stuff
+	void A_NightmarePhaseOut()
+	{
+		bSHOOTABLE = false;
+		bNORADIUSDMG = true;
+		bNOPAIN = true;
+		bNOBLOOD = true; 
+		A_UnSetShootable();
+	}
+	
+	void A_NightmarePhaseIn()
+	{
+		bSHOOTABLE = true;
+		bNORADIUSDMG = false;
+		bNOPAIN = false;
+		bNOBLOOD = false;
+		A_SetShootable();
+	}
+	
+	void A_GDTeleport(statelabel tele = "Blur")
+	{
+		if (target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		{
+			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { if (random(1,1024) <= 640) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { if (random(1,1024) <= randompick(533,533,534)) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,1024) <= randompick(426,426,427)) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 60) { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+			else { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+		}
+	}
+	
+	void A_GetHSHealthPreExp()
+	{
+		hsexphealth = health;
+	}
+
+	void A_HETeleport(statelabel tele = "TeleportChoose")
+	{
+		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		{
+			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { if (random(1,256) <= 144) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { if (random(1,256) <= 120) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,256) <= 96) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 60) { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+			else { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+		}
+	}
+
+	void A_HOTeleport(statelabel tele = "TeleportChoose")
+	{
+		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		{
+			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { if (random(1,256) <= 68) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,256) <= 56) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { if (random(1,256) <= 44) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 30) { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+			else { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+		}
+	}
+
+	void A_HadesSphereTeleport(statelabel tele = "Teleport", int chance = 128, int chancemax = 1024)
+	{
+		if (!CountInv("HSphereTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		{
+			if (random(1,chancemax) <= chance) { SetStateLabel(tele); }
+			if (kcdebug_monsterspecialai) Console.Printf("HSTele: Target - %s (%d / %d)", target.GetClassName(), chance, chancemax);
 		}
 	}
 }
