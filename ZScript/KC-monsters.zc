@@ -2775,6 +2775,211 @@ class BFGGuy : KCCreature
 			goto See;
 	}
 }
+// Suicide Bomber Explosions
+class SuicideBomb : KCProjectile
+{
+	default
+	{
+		Tag "Suicide Bomb";
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Damage 0;
+		Alpha 0.90;
+		Scale 0.75;
+		PROJECTILE;
+		RenderStyle "Add";
+		DontHurtShooter;
+		Obituary "%o was exploded by a crazy suicide bomber.";
+		SeeSound "weapons/rocklx";
+		DamageType "Explosion";
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 Bright;
+			Goto Death;
+		Death:
+			TNT1 A 0 Bright 
+			{
+				int dmg = A_CalcDamageFormulaEx((64+random(-16,16)),1,0.005,0.3334,0.1667,0.005);
+				A_Explode(dmg, (96+random(-24,24)), 1, false, 0, 0, 10, "BulletPuff", "Explosive");
+			}
+			Stop;
+	}
+}
+class SuicideBombStrong : SuicideBomb
+{
+	default
+	{
+		Tag "Suicide Bomb [Strong]";
+		Alpha 0.925;
+		Scale 1.10;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 Bright;
+			Goto Death;
+		Death:
+			TNT1 A 0 Bright 
+			{
+				int dmg = A_CalcDamageFormulaEx((128+random(-64,64)),1,0.005,0.3334,0.1667,0.005);
+				A_Explode(dmg, (128+random(-64,64)), 1, false, 0, 0, 10, "BulletPuff", "Explosive");
+			}
+			Stop;
+	}
+}
+class SuicideBombUltra : SuicideBomb
+{
+	default
+	{
+		Tag "Suicide Bomb [Ultra]";
+		Alpha 0.95;
+		Scale 1.75;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 Bright;
+			Goto Death;
+		Death:
+			TNT1 A 0 Bright
+			{
+				int dmg = A_CalcDamageFormulaEx((256+random(-128,128)),1,0.005,0.3334,0.1667,0.005);
+				A_Explode(dmg, (224+random(-112,112)), 1, false, 0, 0, 10, "BulletPuff", "Explosive");
+			}
+			Stop;
+	}
+}
+class SuicideBomber : KCCreature 
+{
+	default
+	{
+		Tag "Suicide Bomber";
+		
+		Health 80;
+		Radius 20;
+		Height 56;
+		Mass 100;
+		Speed 16;
+		PainChance 20;
+		Painchance "Fist", 30; // Fist attacks have a +50% chance of stunning an enemy
+		Painchance "Kick", 50; // Kick attacks have a +150% chance of stunning an enemy
+
+		Damagefactor "Fire", 0.25;
+		Damagefactor "Ice", 1.5;
+		
+		MONSTER;
+		+FLOORCLIP;
+		+JUMPDOWN;
+		+NOFEAR;
+		-NOTARGET;
+		-NOTARGETSWITCH;
+		-NEVERTARGET;
+		-NOINFIGHTING;
+		seesound "suicide/sit";
+		attacksound "shotguy/death";
+		painsound "shotguy/pain";
+		deathsound "shotguy/death";
+		obituary "%o was exploded by a crazy suicide bomber.";
+		DamageType "Explosive";
+		MeleeRange 64.0;
+	}
+	
+	states
+	{
+		Spawn:
+			BMBE AB 10 A_Look();
+			Loop;
+		See:
+			BMBE AAABBBCCCDDD 2
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(1); }
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+			}
+			BMBE A 0 
+			{
+				actor player = players[0].mo;
+				if (target == player) A_DynamicMusic(matktype:11);
+				A_StartSound("suicide/scream",CHAN_VOICE);
+				if (kc_monsterlevelenabledflags) MeleeRange = (64.0 + (CountInv("MonsterLevel") * 0.25));
+			}
+			Loop;
+		Melee:
+			#### # 0 
+			{
+				if (A_CheckIfCCIllusion() == false)
+				{
+					actor player = players[0].mo;
+					if (target == player) A_DynamicMusic();
+					A_Die();
+				}
+				else
+				{
+					A_Die("Illus");
+				}
+			}
+			Goto Death;
+		Illus:
+			#### # 1 A_CCIllusionDisperse();
+			stop;
+		Pain:
+			BMBE A 3;
+			BMBE A 3 A_KCPain();
+			goto See;
+		
+		Death:
+			BMBE M 0 bright 
+			{
+				actor player = players[0].mo;
+				if (target == player) A_DynamicMusic();
+			}
+			BMBE M 5 bright 
+			{
+				if (CountInv("MonsterLevel") > 270)
+				{
+					if (random(1,2) <= 1) 
+					{
+						if (random(1,4) <= 1) { A_SpawnProjectile("SuicideBombUltra",0,0,0,0); }
+						else { A_SpawnProjectile("SuicideBombStrong",0,0,0,0); }
+					}
+					else 
+					{ 
+						if (random(1,4) <= 3) { A_SpawnProjectile("SuicideBombStrong",0,0,0,0); }
+						else { A_SpawnProjectile("SuicideBomb",0,0,0,0); }
+					}
+				}
+				else
+				if (CountInv("MonsterLevel") > random(67,68))
+				{
+					if (random(1,4) <= 3) { A_SpawnProjectile("SuicideBombStrong",0,0,0,0); }
+					else { A_SpawnProjectile("SuicideBomb",0,0,0,0); }
+				}
+				else
+				{
+					if (random(1,16) <= 1) { A_SpawnProjectile("SuicideBombStrong",0,0,0,0); }
+					else { A_SpawnProjectile("SuicideBomb",0,0,0,0); }
+				}
+			}
+			BMBE N 5 bright A_XScream();
+			BMBE O 5 A_NoBlocking();
+			BMBE PQRST 5;
+			TNT1 A 0 CCCardDeathCheck();
+			BMBE U -1;
+			stop;
+		Ice:
+			BMBE D 5 A_GenericFreezeDeath();
+			BMBE D 1 A_FreezeDeathChunks();
+			Wait;
+		Raise:
+			BMBE T 5;
+			BMBE SRQPONM 5;
+			Goto See;
+	}
+}
 class WolfensteinSSNew : KCCreature replaces WolfensteinSS
 {
 	default
@@ -16086,4 +16291,68 @@ class HellClericSpectral : HellClericDVDS
 		HitObituary "%o had %p head bashed in by a Spectral Hell Cleric.";
 	}
 }
-class UltraMastermind : KCCreature { } // Filler for later implementation
+// Going Down's Ultra Mastermind [MAP29]
+class UltraMastermind : SpiderMastermindNew
+{
+	default
+	{
+		Tag "Ultra Mastermind";
+		Health 12000;
+		Speed 16;
+		Radius 64;
+		Height 100;
+		PainChance 40;
+		Mass 1000;
+		+FLOORCLIP;
+		Monster;
+		SeeSound "spider/sight";
+		AttackSound "weapons/shotgf";
+		PainSound "brain/pain";
+		DeathSound "brain/death";
+		ActiveSound "demon/active";
+		Obituary "%o failed to destroy the Ultra Mastermind.";
+	}
+	States
+	{
+		Spawn:
+			SSWV AB 10 A_Look();
+			Loop;
+		See:
+			SPID A 0 { user_walksound = 0; }
+			SSWV AABBCCDD 3
+			{
+				user_walksound++;
+				if (user_walksound == 1)
+				{ 
+					if (A_CheckWalkSnd()) A_StartSound("spider/walk",CHAN_BODY); 
+				}
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+				if (user_walksound >= 4) { user_walksound = 0; }
+			}
+			goto See;
+		Pain:
+			SSWV E 3;
+			SSWV H 3 A_BrainPain();
+			SSWV E 10 A_FaceTarget();
+			SSWV G 4 A_FatAttack1();
+			SSWV F 4 A_FaceTarget();
+			SSWV G 4 A_FatAttack2();
+			SSWV F 4 A_FaceTarget();
+			SSWV G 4 A_SkelMissile();
+			SSWV F 4 A_FaceTarget();
+			SSWV G 4 A_SkelMissile();
+			goto See;
+		Missile:
+			SSWV EE 10 A_FaceTarget();
+			SSWV GE 4 Bright A_CPosAttack();
+			SSWV G 1 A_SpidRefire();
+			goto Missile+2;
+		Death:
+			SSWV I 5;
+			SSWV N 10 A_BrainScream();
+			SSWV O 10 A_Fall();
+			SSWV PQRSTU 10;
+			SSWV V -1 A_BrainDie();
+			stop;
+	}
+}
