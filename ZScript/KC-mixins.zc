@@ -1574,11 +1574,21 @@ mixin class MonsterCollider
 		// Heretic/Hexen [tbc]
 		if (HereticImp(input) || HereticImpNew(input)) type = 5; // Creature
 		if (HereticImpLeader(input) || HereticImpLeaderNew(input)) type = 5; // Creature
+		if (PlagueImp(input)) type = 5; // Creature
+		if (WatcherImp(input)) type = 5; // Creature
 		if (Mummy(input) || MummyNew(input) || MummyGhost(input) || MummyGhostNew(input)) type = 6; // Inanimate/Creature
 		if (MummyLeader(input) || MummyLeaderNew(input) || MummyLeaderGhost(input) || MummyLeaderGhostNew(input)) type = 6; // Inanimate/Creature
+		if (IceGolem(input) || IceGolemGhost(input) || FrostGolem(input) || FrostGolemGhost(input)) type = 6; // Inanimate/Creature
 		if (Knight(input) || KnightNew(input) || KnightGhost(input) || KnightGhostNew(input)) type = 2; // Zombie/Undead
+		if (DeathKnight(input) || DeathKnightGhost(input)) type = 2; // Zombie/Undead
 		if (Wizard(input) || WizardNew(input)) type = 1; // Demonic
+		if (GreaterDisciple(input)) type = 1; // Demonic
+		if (HereticApprenticeNew(input)) type = 1; // Demonic
+		if (Banshee(input)) type = 1; // Demonic
 		if (Ironlich(input) || IronlichNew(input)) type = 6; // Inanimate/Creature
+		if (IceLich(input)) type = 6; // Inanimate/Creature
+		if (Goldlich(input) || FakeGoldLich(input)) type = 6; // Inanimate/Creature
+		if (BloodLich(input)) type = 6; // Inanimate/Creature
 		if (Beast(input) || BeastNew(input)) type = 5; // Creature
 		if (Clink(input) || ClinkNew(input)) type = 5; // Creature
 		if (Minotaur(input) || MaulotaurNew(input) || MaulotaurFriendNew(input)) type = 5; // Creature
@@ -1732,7 +1742,7 @@ mixin class MonsterCollider
 		if (CountInv("MaulotaurChargeDefense")) shieldfactor *= 0.25;
 		if (CountInv("HeresiarchShieldDefense")) shieldfactor *= 0.125;
 		if (CountInv("NightmarePhaseOutDefense")) shieldfactor *= 0.0625;
-		//String nm = "ThamuzApocalypseDefendMode"; MiscCheck = nm; if (CountInv(MiscCheck)) shieldfactor *= 0.20;
+		String nm = "ThamuzApocalypseDefendMode"; if (CountInv(nm)) shieldfactor *= 0.20;
 		shieldfactor *= -1;
 		shieldfactor += 1.0;
 
@@ -1762,15 +1772,13 @@ mixin class MonsterCollider
 		double firstdmgfactor = DamageFactor;
 
 		if (kcdebug_actordmgdisplays) Console.Printf("firstdmgfactor: %.8f, DamageFactor: %.8f", firstdmgfactor, DamageFactor);
-		/*
 		if (DeathIncarnate(self))
 		{
-			if (Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1)
+			if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 			{
 				if (mod == 'Zap' || mod == 'Ice') damage *= 2;
 			}
 		}
-		*/
 		KCPlayerPawn playpawn;
 		KCCreature KCActor;
 		KCCreature KCVictim;

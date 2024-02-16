@@ -44,6 +44,12 @@ OptionValue "ShowLevelTallies"
 	4, "Show TOTAL Game Tallies"
 }
 
+OptionValue "AlteredMonsters"
+{
+	0, "Originals"
+	1, "Altered [DEFAULT]"
+}
+
 OptionValue "MonsterTracers"
 {
 	0, "Bullets"
@@ -168,6 +174,7 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "'Improved' Icon of Sin",		"If this is turned on, a Romero's Head will gain a large Max HP boost, IF any spawn-cube shooters and spawn-cube spawnspots are also detected in the same map. Use this if you want longer IoS fights. Default: Yes",		"kc_improvediconofsin", 				"YesNo_DefaultYes"
 	KCOption "IoS Death Kills Its Minions",		"If this is turned on, killing the Icon of Sin also kills all of its SPAWNS. Default: Yes",		"kc_iconofsindthkillminions", 				"YesNo_DefaultYes"
 	StaticText " "
+	KCOption "Alternate Versions of Monsters",		"Determines if Kampoulchhr uses the default versions of the game mode's monsters, or their alternate variations. Alternate variations are subject to AI changes based on their levels, hitscanners can fire tracers when the option is enabled, and these monsters can evolve at spawn-in into stronger variants. Default: Altered",		"kc_usealteredmonsters", 				"AlteredMonsters"
 	KCTextField "Dead Monsters Fade [secs]",		"If not set to '0', sets a number of tics (positive values) or seconds (negative value * 35 tics) before a slain monster fades away. If set to '0', no fading occurs.",		"kc_deadmonsterfade"
 	StaticText " "
 	KCOption "Allow Dynamic Inventory Limits?",		"Allows your level to affect inventory item limits. Default: Yes",		"kc_dynamicinventorylimits", 				"YesNo_DefaultYes"
@@ -195,6 +202,8 @@ OptionMenu "KC-RPGOptionsMonsters"
 	IfGame(Heretic, Hexen) { Position -88 } 
 	IfGame(Strife) { Position -88 }
 	
+	KCOption "Alternate Versions of Monsters",		"Determines if Kampoulchhr uses the default versions of the game mode's monsters, or their alternate variations. Alternate variations are subject to AI changes based on their levels, hitscanners can fire tracers when the option is enabled, and these monsters can evolve at spawn-in into stronger variants. Default: Altered",		"kc_usealteredmonsters", 				"AlteredMonsters"
+	StaticText " "
 	KCTextField "Enemy Armor Bypass Factor [x]",		"Monsters at higher levels start gaining a minor ability to ignore part of a player's armor. This setting affects how high that multiplier is. Player damagelogs will show how much % of your armor's protection was bypassed. If set to <0.001, armor bypass from enemy attacks is completely DISABLED. Default: 1.0[x]",		"KC_enemyarmorignorefactor"
 	StaticText " "
 	KCOption "Enemy Scaling [Levels]",		"Turning this on allows monsters' health/attack/defense to slightly scale up with the player's level.",		"kc_enemyscalingplevel", 				"YesNo_DefaultYes"

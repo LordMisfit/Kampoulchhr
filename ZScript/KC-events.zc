@@ -2293,9 +2293,31 @@ class KC_EventHandler : EventHandler
 				// Monster "Scaling"
 				MonsterStatsSet(spawnee, basemonsterrating, practicetarget, specialenemy, ispeasant);
 			}
-
+			
+			//
 			if (kc_usealteredmonsters)
 			{
+				/*
+				if (BossBrain(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("BossBrainNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (BossEye(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("BossEyeNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (SpawnShot(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("SpawnShotNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				*/
+				
 				if (Zombieman(spawnee))
 				{
 					spawnee.bSOLID = false;
@@ -2664,11 +2686,13 @@ class KC_EventHandler : EventHandler
 					practicetarget = true;
 					showdmglog = true;
 				}
+				if (BossBrainNew(victim)) showdmglog = true;
 				if (KCPlayerPawn(victim)) showdmglog = false;
+				nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) showdmglog = false;
 				if (mod == 'SilentMassacre') showdmglog = false;
+				if (isCCardsIllusion) showdmglog = false;
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) showdmglog = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) showdmglog = false;
-				if (isCCardsIllusion) showdmglog = false;
 				if (showdmglog)
 				{
 					if (kcdebug_worlddamaged) Console.Printf("showdmglog");
@@ -2767,7 +2791,9 @@ class KC_EventHandler : EventHandler
 				showdmglog = false;
 				if (victim.bCOUNTKILL || specialtype || specialtype2) showdmglog = true;
 				if (PracticeTarget(victim) || PracticeTarget2(victim)) showdmglog = true;
+				if (BossBrainNew(victim)) showdmglog = true;
 				if (KCPlayerPawn(victim)) showdmglog = false;
+				nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) showdmglog = false;
 				if (mod == 'SilentMassacre') showdmglog = false;
 				if (isCCardsIllusion) showdmglog = false;
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) showdmglog = false;
@@ -2893,6 +2919,8 @@ class KC_EventHandler : EventHandler
 				
 				bool playdthsounds = false;
 				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdthsounds = true;
+				if (BossBrainNew(victim)) playdthsounds = true;
+				nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) playdthsounds = false;
 				if (mod == 'SilentMassacre') playdthsounds = false;
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdthsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdthsounds = false;
@@ -3012,6 +3040,8 @@ class KC_EventHandler : EventHandler
 				
 				bool playdmgsounds = false;
 				if (vict != "PracticeTarget" || vict != "PracticeTarget2") playdmgsounds = true;
+				if (BossBrainNew(victim)) playdmgsounds = true;
+				nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) playdmgsounds = false;
 				if (mod == 'SilentMassacre') playdmgsounds = false;
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdmgsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdmgsounds = false;
@@ -3019,7 +3049,7 @@ class KC_EventHandler : EventHandler
 				
 				if (playdmgsounds)
 				{
-					if (kc_q3aqchitsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2) && victim.CountInv("TempNoHitSound") <= 0)
+					if (kc_q3aqchitsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2 || BossBrainNew(victim)) && victim.CountInv("TempNoHitSound") <= 0)
 					{
 						victim.A_SetInventory("TempNoHitSound",1);
 						
