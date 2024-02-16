@@ -177,7 +177,121 @@ class KCBaseZSC : Actor
 		}
 		return damage;
 	}
+	
+	bool A_CheckIfCCIllusion()
+	{
+		if (bNOBLOOD == true && 
+				bNOPAIN == true &&
+				bNOTARGETSWITCH == true &&
+				bNOINFIGHTING == true &&
+				bFULLVOLACTIVE == false && 
+				bFULLVOLDEATH == false &&
+				bBOSS == false) return true;
+		
+		return false;
+	}
+	
+	// A recreation of how the dispersal of CCard's illusions work. Added for suicide-bomber enemies so they don't actually go into their explosion states and forces their dispersal
+	void A_CCIllusionDisperse()
+	{
+		string nm, nn, no, np;
+		nm = "CCards_Actor_IllusionBreak";
+		nn = "CCards_Actor_Smoke";
+		for (int i = 0; i < 4 + radius / 10; i++)
+		{
+			A_SpawnItemEx(nm);
+			A_SpawnItemEx(nn, random(0, radius/2), 0, random(8, height+8), 1, 0, frandom(1, 3), random(0,360));
+		}
+		
+		ThinkerIterator ti = ThinkerIterator.Create("Actor");
+		
+		Actor t;
+		
+		while (t = Actor(ti.Next()))
+		{
+			if (t && t.bMISSILE && t.target && t.target == self)
+			{
+				t.A_SpawnItemEx(nn, 0);
+				t.A_Remove(AAPTR_DEFAULT, RMVF_MISSILES);
+			}
+		}
 
+		A_Remove(AAPTR_DEFAULT);
+	}
+	
+	bool A_CheckCCInvertGrav()
+	{
+		string nm;
+		nm = "CCards_Actor_ReverseGravityBuff";
+		if (CountInv(nm) >= 1 && bYFLIP == true) return true;
+		
+		return false;
+	}
+	
+	actor A_SpawnProjectile(class<Actor> missiletype, double spawnheight = 32, double spawnofs_xy = 0, double angle = 0, int flags = 0, double pitch = 0, int ptr = AAPTR_TARGET)
+	{
+		double newspawnheight = spawnheight;
+		double newangle = angle;
+		if (A_CheckCCInvertGrav()) 
+		{
+			newspawnheight = (default.height - spawnheight);
+			newangle = (angle * -1);
+			Console.Printf("newspawnheight: %d [%d], newangle: %.4f [%.4f]", newspawnheight, spawnheight, newangle, angle);
+		}
+		return Super.A_SpawnProjectile(missiletype, newspawnheight, spawnofs_xy, angle, flags, pitch, ptr);
+	}
+	
+	const ADI_FULLAMMO = 1;
+	Actor A_DropItem(class<Actor> item, int dropamount = -1, int chance = 256, int flags = 0)
+	{
+		if (item != NULL && random[DropItem]() <= chance)
+		{
+			Actor mo;
+			double spawnz = 0;
+
+			if (!(Level.compatflags & COMPATF_NOTOSSDROPS))
+			{
+				int style = sv_dropstyle;
+				if (style == 0)
+				{
+					style = gameinfo.defaultdropstyle;
+				}
+				if (style == 2)
+				{
+					spawnz = 24;
+				}
+				else
+				{
+					spawnz = Height / 2;
+				}
+			}
+			mo = Spawn(item, pos + (0, 0, spawnz), ALLOW_REPLACE);
+			if (mo != NULL)
+			{
+				mo.bDropped = true;
+				mo.bNoGravity = false;	// [RH] Make sure it is affected by gravity
+				if (!(Level.compatflags & COMPATF_NOTOSSDROPS))
+				{
+					mo.TossItem ();
+				}
+				let inv = Inventory(mo);
+				if (inv)
+				{
+					if (!(flags & ADI_FULLAMMO)) inv.ModifyDropAmount(dropamount);
+					inv.bTossed = true;
+					if (inv.SpecialDropAction(self))
+					{
+						// The special action indicates that the item should not spawn
+						inv.Destroy();
+						return null;
+					}
+				}
+				return mo;
+			}
+		}
+		return NULL;
+	}
+	
 	int A_CalcDamageFormulaEx(int basedmg,
 														int baserand,
 														double factor1 = 0.005,
