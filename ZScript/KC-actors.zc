@@ -338,6 +338,22 @@ class KCBaseZSC : Actor
 		return true;
 	}
 	
+	void A_ShadowSplitImage1(string type = "")
+	{
+		actor image;
+		bool success;
+		[success, image] = A_SpawnItemEx(type, 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
+		if (success && image)
+		{
+			if (master)
+			{
+				image.scale.x = master.scale.x;
+				image.scale.y = master.scale.y;
+				//Console.Printf("%.8f, %.8f", image.scale.x, image.scale.y);
+			}
+		}
+	}
+	
 	void A_Destroy()
 	{
 		self.Destroy();
@@ -2700,7 +2716,7 @@ class BaseLensflare : KCBaseZSC
 
 class KCCreature : KCBaseZSC
 {
-	//mixin EvolveMonsters;
+	mixin EvolveMonsters;
 	mixin MonsterCollider;
 
 	// Gargoyle
@@ -3707,6 +3723,437 @@ class KCCreature : KCBaseZSC
 		}
 	}
 	
+	// Cacodemons' Shadow Split
+	void A_ActorStartShadowSplit()
+	{
+		A_Stop();
+		A_StartSound("caco/shadowsplit", CHAN_7, CHANF_DEFAULT, 1, ATTN_NONE, frandom(1.2,1.4));
+		A_FaceTarget();
+		bSHOOTABLE = 0;
+		int user_monsterlevel = CountInv("MonsterLevel");
+		
+		int nonsolidchance = 1;
+		if (GetClassName() == "CacodemonNew") nonsolidchance += (user_monsterlevel / 90);
+		if (GetClassName() == "Cacolantern") nonsolidchance += (user_monsterlevel / random(67,68));
+		if (GetClassName() == "Abaddon") nonsolidchance += (user_monsterlevel / 45);
+		if (GetClassName() == "PainElemental") nonsolidchance += (user_monsterlevel / 45);
+		if (random(1,4) <= nonsolidchance) bSOLID = 0;
+	}
+	void A_ActorEndShadowSplit()
+	{
+		A_GiveInventory("ShadowSplitCooldown", 1);
+		A_Stop();
+		bSHOOTABLE = 1;
+		if (!bSOLID) bSOLID = 1;
+	}
+
+	void A_ActorShadowSplit(int minlevel = 30, int minchance = 256)
+	{
+		int user_monsterlevel = CountInv("MonsterLevel");
+		int splittype = 0; // 0;
+		int splittype2 = 0; // 0;
+		int RandRoll = random(1,1024);
+		if (kc_monsterlevelenabledflags)
+		{
+			A_StopSound(CHAN_WEAPON);
+			if (!CountInv("ShadowSplitCooldown")) 
+			{
+				if (user_monsterlevel >= (minlevel*9))
+				{
+					if (RandRoll <= (minchance*4)) splittype2 = 2;
+				}
+				else
+				if (user_monsterlevel >= (minlevel*4))
+				{
+					if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
+				}
+				else
+				if (user_monsterlevel >= minlevel)
+				{
+					if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
+				}
+				else
+				if (user_monsterlevel >= (minlevel/2))
+				{
+					if (RandRoll <= (minchance/4)) splittype2 = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+				}
+			}
+		}
+
+		if (splittype2 == 0)
+		{
+		}
+		else
+		if (splittype2 == 1)
+		{
+			splittype = random(1,4);
+			if (splittype == 1) { SetStateLabel("Shadowsplit1"); }
+			if (splittype == 2) { SetStateLabel("Shadowsplit2"); }
+			if (splittype == 3) { SetStateLabel("Shadowsplit3"); }
+			if (splittype == 4) { SetStateLabel("Shadowsplit4"); }
+		}
+		else
+		if (splittype2 == 2)
+		{
+			splittype = random(1,4);
+			if (splittype == 1) { SetStateLabel("Shadowsplit1a"); }
+			if (splittype == 2) { SetStateLabel("Shadowsplit2a"); }
+			if (splittype == 3) { SetStateLabel("Shadowsplit3a"); }
+			if (splittype == 4) { SetStateLabel("Shadowsplit4a"); }
+		}
+		if (kcdebug_monsterspecialai) Console.Printf("Class: %s - \cuCacos' ShadowSplit --- (Level / RequiredLvl: %d / %d) splittype2: %d, splittype: %d\c-", GetClassName(), user_monsterlevel, minlevel, splittype2, splittype);
+	}
+
+	const DEFSKULLSPEED = 20;
+	
+	void A_SkullAttack(double skullspeed = DEFSKULLSPEED)
+	{
+		if (target == null) return;
+
+		if (skullspeed <= 0) skullspeed = DEFSKULLSPEED;
+
+		bSkullfly = true;
+		A_StartSound(AttackSound, CHAN_VOICE);
+		A_FaceTarget();
+		VelFromAngle(skullspeed);
+		Vel.Z = (target.pos.Z + target.Height/2 - pos.Z) / DistanceBySpeed(target, skullspeed);
+	}
+
+	void A_BetaSkullAttack(int basedmg = 1, int randmin = 1, int randmax = 8)
+	{
+		if (target == null || target.GetSpecies() == self.GetSpecies()) return;
+		A_StartSound(AttackSound, CHAN_WEAPON);
+		A_FaceTarget();
+		
+		int damage = 0;
+		double dmgfct = 1.0;
+		if (CheckIfTargetInLOS(90.0, JLOSF_DEADNOJUMP, 1024))
+		{
+			//Console.Printf("BetaSoul [1024 Unit Attack]");
+			if (random(1,16) <= 15) dmgfct = 1.0;
+												 else dmgfct = frandom(0.25,0.5);
+		}
+		else
+		{
+			if (CheckIfTargetInLOS(90.0, JLOSF_DEADNOJUMP, 4096))
+			{
+				//Console.Printf("BetaSoul [4096 Unit Attack]");
+				if (random(1,4) <= 1) dmgfct = frandom(0.25,0.5);
+												 else dmgfct = 0.0;
+			}
+		}
+
+		if (kc_monsterlevelenabledflags)
+		{
+			double inits = frandompick(0.05,0.0625,0.0625,0.075,0.075,0.075,0.075,0.075,0.0875,0.0875,0.10);
+			damage += (CountInv("MonsterLevel") * ((inits * 0.875) * random(randmin,randmax)));
+			if (kc_monsterlevelenabledflags)
+			{
+				if (CountInv("MonsterLevel") >= 40) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
+				if (CountInv("MonsterLevel") >= 80) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
+				if (CountInv("MonsterLevel") >= 120) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
+				if (CountInv("MonsterLevel") >= 160) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
+			}
+			damage *= (1.0 + (CountInv("MonsterLevel") * frandom(0.00625,0.009375)));
+		}
+		damage *= dmgfct;
+		
+		if (damage > 0) 
+		{
+			target.DamageMobj(self, self, damage, 'PSI');
+		}
+		else
+		{
+			string comblog;
+			comblog.AppendFormat("\c[red]*\c- ");
+			if (kc_combatlog && target)
+			{
+				if (PlayerPawn(target))
+				{
+					target.A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
+				}
+				else
+				{
+					target.A_StopSound(14);
+					target.A_StartSound("misc/hitnodmg", 14, CHANF_DEFAULT, (kc_monsternodmgvol * frandom(0.875,1.375)), ATTN_NONE, frandompick(1.1,1.375,1.71875));
+				}
+				comblog.AppendFormat("\c[red]%s\c- took \c[purple]no damage\c- from", target.GetTag());
+				comblog.AppendFormat(" \c[purple]%s's", GetTag());
+				comblog.AppendFormat(" \c[red]psychic attack!\c-!");
+				comblog.AppendFormat(" [\c[lightblue]PSI\c-]");
+				if (kcdebug_showgametic) comblog.AppendFormat(" [%d]", gametic);
+				Console.Printf(comblog);
+			}
+		}
+	}
+	
+	const PAF_INDIVIDUALLIMIT = 256;
+	const PAF_LIMITCOUNTALLTYPES = 512;
+	void A_PainShootSkull(Class<Actor> spawntype, double angle, int flags = 0, int limit = -1)
+	{
+		// Don't spawn if we get massacred.
+		if (DamageType == 'Massacre') return;
+
+		if (spawntype == null) spawntype = "LostSoul";
+
+		// [RH] check to make sure it's not too close to the ceiling
+		if (pos.z + height + 8 > ceilingz)
+		{
+			if (bFloat)
+			{
+				Vel.Z -= 2;
+				bInFloat = true;
+				bVFriction = true;
+			}
+			return;
+		}
+
+		// [RH] make this optional
+		if (limit < 0 && (Level.compatflags & COMPATF_LIMITPAIN))
+		{
+			if (!flags & PAF_INDIVIDUALLIMIT) limit = 21;
+			else limit = 10;
+		}
+
+		if (limit > 0)
+		{
+			// count total number of skulls currently on the level
+			// if there are already 21 skulls on the level, don't spit another one
+			int count = limit;
+			if (flags & PAF_LIMITCOUNTALLTYPES && flags & PAF_INDIVIDUALLIMIT)
+			{
+				ThinkerIterator it = ThinkerIterator.Create("LostSoulNew");
+				Thinker othink;
+				while ( (othink = it.Next ()) )
+				{
+					if (flags & PAF_INDIVIDUALLIMIT)
+					{
+						actor othink2;
+						othink2 = actor(othink);
+						if (othink2 && othink2.master == self)
+						{
+							if (--count == 0)
+								return;
+						}
+					}
+					else
+					{
+						if (--count == 0)
+							return;
+					}
+				}
+
+				it = ThinkerIterator.Create("LostSoulAnnoying");
+				while ( (othink = it.Next ()) )
+				{
+					if (flags & PAF_INDIVIDUALLIMIT)
+					{
+						actor othink2;
+						othink2 = actor(othink);
+						if (othink2 && othink2.master == self)
+						{
+							if (--count == 0)
+								return;
+						}
+					}
+					else
+					{
+						if (--count == 0)
+							return;
+					}
+				}
+				
+				it = ThinkerIterator.Create("BetaLostSoul");
+				while ( (othink = it.Next ()) )
+				{
+					if (flags & PAF_INDIVIDUALLIMIT)
+					{
+						actor othink2;
+						othink2 = actor(othink);
+						if (othink2 && othink2.master == self)
+						{
+							if (--count == 0)
+								return;
+						}
+					}
+					else
+					{
+						if (--count == 0)
+							return;
+					}
+				}
+				if (kcdebug_monsterspecialai) Console.Printf("[A_PainShootSkull %p (PAF_LIMITCOUNTALLTYPES)] count: %d / %d", self, count, limit);
+			}
+			else
+			{
+				ThinkerIterator it = ThinkerIterator.Create(spawntype);
+				Thinker othink;
+
+				while ( (othink = it.Next ()) )
+				{
+					if (flags & PAF_INDIVIDUALLIMIT)
+					{
+						actor othink2;
+						othink2 = actor(othink);
+						if (othink2 && othink2.master == self)
+						{
+							if (--count == 0)
+								return;
+						}
+					}
+					else
+					{
+						if (--count == 0)
+							return;
+					}
+				}
+				//if (kcdebug_monsterspecialai)
+				Console.Printf("[A_PainShootSkull (%s) - %p] count: %d / %d", spawntype.GetClassName(), self, count, limit);
+			}
+		}
+
+		// okay, there's room for another one
+		double otherradius = GetDefaultByType(spawntype).radius;
+		double prestep = 4 + (radius + otherradius) * 1.5;
+
+		Vector2 move = AngleToVector(angle, prestep);
+		Vector3 spawnpos = pos + (0,0,8);
+		Vector3 destpos = spawnpos + move;
+
+		Actor other = Spawn(spawntype, spawnpos, ALLOW_REPLACE);
+
+		// Now check if the spawn is legal. Unlike Boom's hopeless attempt at fixing it, let's do it the same way
+		// P_XYMovement solves the line skipping: Spawn the Lost Soul near the PE's center and then use multiple
+		// smaller steps to get it to its intended position. This will also result in proper clipping, but
+		// it will avoid all the problems of the Boom method, which checked too many lines that weren't even touched
+		// and despite some adjustments never worked with portals.
+
+		if (other != null)
+		{
+			KCCreature SpawnedSoul;
+			SpawnedSoul = KCCreature(other);
+			if (SpawnedSoul != null) 
+			{
+				if (LostSoulNew(SpawnedSoul) ||
+						LostSoulAnnoying(SpawnedSoul) ||
+						ForgottenOne(SpawnedSoul) ||
+						BetaLostSoul(SpawnedSoul)) SpawnedSoul.isPEspawned = true;
+				
+				if (HadesSphere(SpawnedSoul)) SpawnedSoul.isHEspawned = true;
+				if (HSOverlord(SpawnedSoul)) SpawnedSoul.isHOspawned = true;
+			}
+
+			double maxmove = other.radius - 1;
+
+			if (maxmove <= 0) maxmove = 16;
+
+			double xspeed = abs(move.X);
+			double yspeed = abs(move.Y);
+
+			int steps = 1;
+
+			if (xspeed > yspeed)
+			{
+				if (xspeed > maxmove)
+				{
+					steps = int(1 + xspeed / maxmove);
+				}
+			}
+			else
+			{
+				if (yspeed > maxmove)
+				{
+					steps = int(1 + yspeed / maxmove);
+				}
+			}
+
+			Vector2 stepmove = move / steps;
+			bool savedsolid = bSolid;
+			bool savednoteleport = other.bNoTeleport;
+			
+			// make the PE nonsolid for the check and the LS non-teleporting so that P_TryMove doesn't do unwanted things.
+			bSolid = false;
+			other.bNoTeleport = true;
+			for (int i = 0; i < steps; i++)
+			{
+				Vector2 ptry = other.pos.xy + stepmove;
+				double oldangle = other.angle;
+				if (!other.TryMove(ptry, 0))
+				{
+					// kill it immediately
+					other.ClearCounters();
+					other.DamageMobj(self, self, TELEFRAG_DAMAGE, 'None');
+					bSolid = savedsolid;
+					other.bNoTeleport = savednoteleport;
+					return;
+				}
+
+				if (other.pos.xy != ptry)
+				{
+					// If the new position does not match the desired position, the player
+					// must have gone through a portal.
+					// For that we need to adjust the movement vector for the following steps.
+					double anglediff = deltaangle(oldangle, other.angle);
+
+					if (anglediff != 0)
+					{
+						stepmove = RotateVector(stepmove, anglediff);
+					}
+				}
+
+			}
+			bSolid = savedsolid;
+			other.bNoTeleport = savednoteleport;
+
+			// [RH] Lost souls hate the same things as their pain elementals
+			other.CopyFriendliness (self, !(flags & PAF_NOTARGET));
+			
+			// Inherit the PE's Master if they have a IoS master
+			if (master && BossBrainNew(master)) other.master = master;
+			else other.master = self; // otherwise set the Lost Soul's master to be the PE [to help enforce individual PE limits].
+
+			if (kcdebug_bossbraininfo2 && other.master)
+			{
+				Console.Printf("%s Master: \c[gold]%p\c-", other.GetClassName(), other.master);
+			}
+
+			if (!(flags & PAF_NOSKULLATTACK))
+			{
+				other.A_SkullAttack();
+			}
+		}
+	}
+	
+	void A_PainAttack(class<Actor> spawntype = "LostSoul", double addangle = 0, int flags = 0, int limit = -1)
+	{
+		if (target)
+		{
+			A_FaceTarget();
+			A_PainShootSkull(spawntype, angle + addangle, flags, limit);
+		}
+	}
+	
+	void A_DualPainAttack(class<Actor> spawntype = "LostSoul", double addangle = 45, int flags = 0, int limit = -1)
+	{
+		if (target)
+		{
+			A_FaceTarget();
+			A_PainShootSkull(spawntype, angle + addangle, flags, limit);
+			A_PainShootSkull(spawntype, angle - addangle, flags, limit);
+		}
+	}
+	
+	void A_PainDie(class<Actor> spawntype = "LostSoul")
+	{
+		if (target && IsFriend(target))
+		{ // And I thought you were my friend!
+			bFriendly = false;
+		}
+		A_NoBlocking();
+		A_PainShootSkull(spawntype, angle + 90);
+		A_PainShootSkull(spawntype, angle + 180);
+		A_PainShootSkull(spawntype, angle + 270);
+	}
 	
 	void A_CheckIfTargetDead(statelabel statel = null)
 	{

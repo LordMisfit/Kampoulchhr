@@ -2482,7 +2482,6 @@ class PlasmaBallBase : KCProjectile
 			Stop;
 	}
 }
-
 class PlasmaBall1Base : PlasmaBallBase
 {
 	default
@@ -2501,7 +2500,6 @@ class PlasmaBall1Base : PlasmaBallBase
 			Stop;
 	}
 }
-
 class PlasmaBall2Base : PlasmaBall1Base
 {
 	default
@@ -2523,7 +2521,6 @@ class PlasmaBall2Base : PlasmaBall1Base
 			Stop;
 	}
 }
-
 class PlasmaBall1Monster : PlasmaBall1Base
 {
 	default
@@ -2544,7 +2541,6 @@ class PlasmaBall1Monster : PlasmaBall1Base
 			Stop;
 	}
 }
-
 class PlasmaBall2Monster : PlasmaBall2Base
 {
 	default
@@ -4200,7 +4196,7 @@ class NightmareSpectreFire : DemonFire
 			if (nightmarephasetimer == 16 || nightmarephasetimer == 19) alphavar = (alphavarbase * 16);
 			if (nightmarephasetimer == 17 || nightmarephasetimer == 18) alphavar = (alphavarbase * 17);
 			A_SetRenderStyle((0.7-alphavar),STYLE_Subtract);
-			if (dydudebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
+			if (kcdebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
 		} 
 	}
 }
@@ -4261,7 +4257,7 @@ class NightmareBloodSpectreFire : BloodDemonFire
 			if (nightmarephasetimer == 16 || nightmarephasetimer == 19) alphavar = (alphavarbase * 16);
 			if (nightmarephasetimer == 17 || nightmarephasetimer == 18) alphavar = (alphavarbase * 17);
 			A_SetRenderStyle((0.7-alphavar),STYLE_Subtract);
-			if (dydudebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
+			if (kcdebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
 		} 
 	}
 }
@@ -4511,7 +4507,7 @@ class NightmareSpectre : DemonNew
 			if (nightmarephasetimer == 16 || nightmarephasetimer == 19) alphavar = (alphavarbase * 16);
 			if (nightmarephasetimer == 17 || nightmarephasetimer == 18) alphavar = (alphavarbase * 17);
 			A_SetRenderStyle((0.7-alphavar),STYLE_Subtract);
-			if (dydudebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
+			if (kcdebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
 		} 
 	}
 	
@@ -5012,7 +5008,7 @@ class NightmareBloodSpectre : BloodDemon
 			if (nightmarephasetimer == 16 || nightmarephasetimer == 19) alphavar = (alphavarbase * 16);
 			if (nightmarephasetimer == 17 || nightmarephasetimer == 18) alphavar = (alphavarbase * 17);
 			A_SetRenderStyle((0.7-alphavar),STYLE_Subtract);
-			if (dydudebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
+			if (kcdebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
 		} 
 	}
 	
@@ -5548,7 +5544,7 @@ class NBloodSpectreArm : KCCustomGib
 			if (nightmarephasetimer == 16 || nightmarephasetimer == 19) alphavar = (alphavarbase * 16);
 			if (nightmarephasetimer == 17 || nightmarephasetimer == 18) alphavar = (alphavarbase * 17);
 			A_SetRenderStyle((0.7-alphavar),STYLE_Subtract);
-			if (dydudebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
+			if (kcdebug_nightmarevisuals) Console.Printf("[%s] alphavar: %.2f (%.2f), nightmarephasetimer: %d", GetClassName(), alpha, alphavar, nightmarephasetimer);
 		} 
 	}
 	
@@ -5568,13 +5564,1865 @@ class NBloodSpectreArm : KCCustomGib
 			Loop;
 	}
 }
-class CacodemonNew : KCCreature { } // Filler for later implementation
-class Cacolantern : KCCreature { } // Filler for later implementation
-class Abaddon : KCCreature { } // Filler for later implementation
-class PainElementalNew : KCCreature { } // Filler for later implementation
+class CacodemonNew : KCCreature
+{
+	default
+	{
+		Health 400;
+		Radius 31;
+		Height 56;
+		Mass 400;
+		Speed 8;
+		Tag "Cacodemon";
+		MeleeRange 80;
+		PainChance 128;
+		DamageFactor "Fire", 0.25;
+		Painchance "Fire", 32;
+		DamageFactor "Ice", 2.5;
+		Painchance "Ice", 256;
+		DamageFactor "Breakfast", 5;
+		Painchance "Breakfast", 256;
+		DamageFactor "Suck", 0.25;
+		Painchance "Suck", 32;
+		DamageFactor "CherryBomb", 0.5;
+		Painchance "CherryBomb", 64;
+		DamageFactor "BRocket", 2.5;
+		Painchance "BRocket", 40;
+		DamageFactor "Spinner", 3.75;
+		Painchance "Spinner", 256;
+		DamageFactor "Dust", 5;
+		Painchance "Dust", 256;
+		DamageFactor "Popper", 0.25;
+		Painchance "Popper", 32;
+		Painchance "Fist", 192; // Fist attacks have a +50% chance of stunning an enemy
+		Painchance "Kick", 256; // Kick attacks have a +150% chance of stunning an enemy
+		BloodColor "00 00 CD";
+		Monster;
+		+FLOAT;
+		+NOGRAVITY;
+		SeeSound "caco/sight";
+		PainSound "cacodemon/pain";
+		DeathSound "caco/death";
+		ActiveSound "caco/active";
+		Obituary "$OB_CACO";
+		HitObituary "$OB_CACOHIT";
+		Species "Cacodemon";
+		+DONTHARMSPECIES;
+	}
+	
+	States
+	{
+		Spawn:
+			HEAD A 10 A_FloatLook(16);
+			Loop;
+		See:
+			HEAD A 3 
+			{
+				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				
+				A_FastChaseCalc(4,16);
+				if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); A_FloatSetFChaseT(randompick(0,4)); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+				user_painfastchase = 0;
+			}
+			Loop;
+		Melee:
+		Missile:
+			TNT1 A 0
+			{
+				A_DynamicMusic();
+				user_painfastchase = 0; 
+			}
+			HEAD BC 5
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			HEAD D 5 BRIGHT 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+				
+				user_tempvar1 = 32; // attack height
+				user_tempvar2 = frandompick(7.5,10.25,10.25,10.25,15,15,15,15,15,15,15,18.75,18.75,18.75,22.5); // base angle
+				
+				int mldmg = A_CalcDamageFormula(6,random(1,10),0.005,0.3334,0.1667,0.005);
+				A_CustomComboAttack("CacodemonBallNew", user_tempvar1, (mldmg), "caco/melee");
+				if (kc_monsterlevelenabledflags)
+				{
+					if (CountInv("MonsterLevel") >= random(37,38))
+					{
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*-1));
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*1));
+					}
+					if (CountInv("MonsterLevel") >= 75)
+					{
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*-2));
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*2));
+					}
+					if (CountInv("MonsterLevel") >= random(112,113))
+					{
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*-1.5));
+						A_SpawnProjectile("CacodemonBallNew",user_tempvar1,0,(user_tempvar2*1.5));
+					}
+				}
+			}
+			Goto See;
+		Pain:
+			HEAD E 0;
+			HEAD E 0 A_ActorShadowSplit(60,256);
+			HEAD E 3;
+			HEAD E 3 
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 4 * random(1,8);
+			}
+			HEAD F 6;
+			Goto See;
+		Pain.Fist:
+			TNT1 A 0 A_ActorShadowSplit(60,64);
+			HEAD E 3;
+			HEAD E 3 
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 5 * random(1,8);
+			}
+			HEAD F 6;
+			Goto See;
+		Pain.Kick:
+			TNT1 A 0 A_ActorShadowSplit(60,192);
+			HEAD E 3;
+			HEAD E 3 
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 7 * random(1,8);
+			}
+			HEAD F 6;
+			Goto See;
+		
+		Shadowsplit1:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit1a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacodemonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacodemonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		FinishShadowSplit:
+			HDSS AAAAAAAAAAAAAAA 1 Bright 
+			{
+				A_SpawnItemEx("CacodemonShadowSplitAfterImage", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+			}
+			TNT1 A 0 A_ActorEndShadowSplit();
+			Goto See;
+
+		Death:
+			HEAD G 8;
+			HEAD H 8 A_Scream();
+			HEAD I 8;
+			HEAD J 8;
+			HEAD K 8 A_NoBlocking();
+			HEAD L -1 A_SetFloorClip();
+			Stop;
+		Ice:
+			HEAD F 5 A_GenericFreezeDeath();
+			HEAD F 1 A_FreezeDeathChunks();
+			wait;
+		Raise:
+			HEAD L 8 A_UnSetFloorClip();
+			HEAD KJIHG 8;
+			Goto See;
+	}
+}
+class CacodemonBallNew : KCProjectile // replaces CacodemonBall
+{
+	Default
+	{
+		Tag "Lightning Ball";
+		Radius 6;
+		Height 8;
+		Speed 10;
+		FastSpeed 20;
+		DamageFunction (finaldamagedealt);
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 1;
+		SeeSound "caco/attack";
+		DeathSound "caco/shotx";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCProjectile.PostBeginPlay();
+		finaldamagedealt = A_CalcDamageFormula(5,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	override void Tick()
+	{
+		KCProjectile.Tick();
+		finaldamagedealt = A_CalcDamageFormula(5,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	States
+	{
+		Spawn:
+			BAL2 AB 4 BRIGHT;
+			Loop;
+		Death:
+			BAL2 CDE 6 BRIGHT;
+			Stop;
+	}
+}
+class CacodemonShadowSplitAfterImage : KCBaseZSC
+{
+	default
+	{
+		Radius 31;
+		Height 56;
+		+NOGRAVITY;
+		+FLOORCLIP;
+		+NOLIFTDROP;
+		Alpha 0.4;
+		RenderStyle "Translucent";
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	
+	States
+	{
+		Spawn:
+			HDSS B 1 A_FadeTo (0, 0.04, 1);
+			Loop;
+	}
+}
+
+class CacodemonShadowSplit1 : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+64, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacodemonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacodemonShadowSplit2 : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+192, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacodemonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacodemonShadowSplit3 : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+128, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacodemonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacodemonShadowSplit4 : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+0, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacodemonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class Cacolantern : CacodemonNew
+{
+	default
+	{
+		//$Angled;
+		//$Color 12;
+		//$Category "Monsters/Cacodemon Type";
+		Tag "Cacolantern";
+
+		Health 800;
+		Painchance 112;
+
+		DamageFactor "Fire", 0.125;
+		Painchance "Fire", 14;
+		DamageFactor "Ice", 2.5;
+		Painchance "Ice", 256;
+		DamageFactor "Breakfast", 3.5;
+		Painchance "Breakfast", 256;
+		DamageFactor "Suck", 0.25;
+		Painchance "Suck", 28;
+		DamageFactor "CherryBomb", 0.25;
+		Painchance "CherryBomb", 28;
+		DamageFactor "BRocket", 1.75;
+		Painchance "BRocket", 196;
+		DamageFactor "Spinner", 2.5;
+		Painchance "Spinner", 256;
+		DamageFactor "Dust", 3.5;
+		Painchance "Dust", 256;
+		DamageFactor "Popper", 0.125;
+		Painchance "Popper", 14;
+
+		bloodcolor "blue";
+		Species "Cacodemon";
+		+DONTHARMSPECIES;
+		+AVOIDMELEE;
+		Obituary "%o was smitten by a cacolantern.";
+		HitObituary "%o got too close to a cacolantern.";
+		PainSound "cacodemon/pain";
+	}
+
+	States
+	{
+		Spawn:
+			HED2 A 0 NoDelay;
+			HED2 A 10 A_FloatLook(16);
+			goto Spawn+1;
+		See:
+			HED2 A 3
+			{
+				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+
+				A_FastChaseCalc(6,12);
+				if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); A_FloatSetFChaseT(randompick(0,4)); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+				user_painfastchase = 0;
+			}
+			loop;
+
+		Melee:
+		Missile:
+			TNT1 A 0 
+			{
+				user_painfastchase = 0;
+				A_DynamicMusic();
+			}
+			HED2 BC 5
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			HED2 D 5 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+
+				user_tempvar1 = 32; // attack height
+				user_tempvar2 = frandompick(7.5,10.25,10.25,10.25,15,15,15,15,15,15,15,18.75,18.75,18.75,22.5); // base angle
+				int mldmg = A_CalcDamageFormula(8,random(1,10),0.005,0.3334,0.1667,0.005);
+				A_CustomComboAttack("CacolanternBall", user_tempvar1, (mldmg), "caco/melee");
+				if (kc_monsterlevelenabledflags)
+				{
+					if (CountInv("MonsterLevel") >= randompick(33,33,34))
+					{
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*-1));
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*1));
+					}
+					if (CountInv("MonsterLevel") >= randompick(66,67,67))
+					{
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*-2));
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*2));
+					}
+					if (CountInv("MonsterLevel") >= 100)
+					{
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*-1.5));
+						A_SpawnProjectile("CacolanternBall",user_tempvar1,0,(user_tempvar2*1.5));
+					}
+				}
+			}
+			goto See;
+
+		Pain:
+			TNT1 A 0 A_ActorShadowSplit(45,256);
+			HED2 E 3;
+			HED2 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 4 * random(1,8);
+			}
+			HED2 F 6;
+			Goto See;
+		Pain.Fist:
+			TNT1 A 0 A_ActorShadowSplit(45,64);
+			HED2 E 3;
+			HED2 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 5 * random(1,8);
+			}
+			HED2 F 6;
+			Goto See;
+		Pain.Kick:
+			TNT1 A 0 A_ActorShadowSplit(45,192);
+			HED2 E 3;
+			HED2 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 7 * random(1,8);
+			}
+			HED2 F 6;
+			Goto See;
+		Shadowsplit1:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit1a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("CacolanternShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("CacolanternShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		FinishShadowSplit:
+			HDSS AAAAAAAAAAAAAAA 1 Bright A_SpawnItemEx ("CacolanternShadowSplitAfterImage", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+			TNT1 A 0 A_ActorEndShadowSplit();
+			Goto See;
+		Death:
+			HED2 G 8 A_NoBlocking();
+			HED2 H 8 A_Scream();
+			HED2 IJK 8;
+			HED2 L -1 A_SetFloorClip();
+			Stop;
+		Ice:
+			HED2 F 5 A_GenericFreezeDeath();
+			HED2 F 1 A_FreezeDeathChunks();
+			wait;
+		Raise:
+			HED2 L 8 A_UnsetFloorClip();
+			HED2 KJIHG 8;
+			Goto See;
+	}
+}
+
+class CacolanternShadowSplitAfterImage : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	default
+	{
+		Radius 31;
+		Height 56;
+		+NOGRAVITY;
+		+FLOORCLIP;
+		+NOLIFTDROP;
+		Alpha 0.4;
+		RenderStyle "Translucent";
+	}
+	
+	States
+	{
+		Spawn:
+			HDSS B 1 A_FadeTo (0, 0.04, 1);
+			Loop;
+	}
+}
+
+class CacolanternShadowSplit1 : CacolanternShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+64, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacolanternShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacolanternShadowSplit2 : CacolanternShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+192, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacolanternShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacolanternShadowSplit3 : CacolanternShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+128, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacolanternShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacolanternShadowSplit4 : CacolanternShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+0, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("CacolanternShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class CacolanternBall : KCEffectProjectile
+{
+	default
+	{
+		Tag "Lightning Shot";
+		decal "CacoScorch";
+		Radius 6;
+		Height 8;
+		Speed 20;
+		DamageFunction (finaldamagedealt);
+		Projectile;
+		+RANDOMIZE;
+		RenderStyle "Add";
+		SeeSound "caco/attack";
+		DeathSound "caco/shotx";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCEffectProjectile.PostBeginPlay();
+		finaldamagedealt = A_CalcDamageFormula(6,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	override void Tick()
+	{
+		KCEffectProjectile.Tick();
+		finaldamagedealt = A_CalcDamageFormula(6,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	States
+	{
+		Spawn:
+			BAL8 AB 4 Bright;
+			Loop;
+		Death:
+			TNT1 A 0 Bright
+			{
+				actor player = players[0].mo;
+				if (master == player)
+				{
+					A_StatusEffectChecker(8);
+					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
+					{
+						user_random = random(1,12);
+						if (user_random >= 1 && user_random <= 4)
+						{
+							A_InflictWeaken(random(105,175),401);
+						}
+						if (user_random >= 5 && user_random <= 8)
+						{
+							A_InflictHalve(random(105,175),401);
+						}
+						if (user_random >= 9 && user_random <= 12)
+						{
+							A_InflictSlow(random(105,175),401);
+						}
+					}
+				}
+			}
+		Death2:
+			BAL8 CDE 6 Bright;
+			Stop;
+	}
+}
+
+class Abaddon : Cacolantern
+{
+	default
+	{
+		//$Angled;
+		//$Color 12;
+		//$Category "Monsters/Cacodemon Type";
+		Tag "Abaddon";
+		Health 1200;
+		Speed 12;
+		Painchance 80;
+		DamageFactor "Fire", 0.167;
+		Painchance "Fire", 13; 
+		DamageFactor "Ice", 2.5;
+		Painchance "Ice", 200;
+		DamageFactor "Breakfast", 4;
+		Painchance "Breakfast", 256;
+		DamageFactor "Suck", 0.125;
+		Painchance "Suck", 10;
+		DamageFactor "CherryBomb", 0.334;
+		Painchance "CherryBomb", 27;
+		DamageFactor "BRocket", 1.75;
+		Painchance "BRocket", 140;
+		DamageFactor "Spinner", 2.5;
+		Painchance "Spinner", 200;
+		DamageFactor "Dust", 2.5;
+		Painchance "Dust", 200;
+		DamageFactor "Popper", 1.00;
+		Painchance "Popper", 80;
+		Species "Cacodemon";
+		+DONTHARMSPECIES;
+		+AVOIDMELEE;
+		PainSound "cacodemon/pain";
+		Obituary "%o was smitten by an Abaddon.";
+		HitObituary "%o became food for an Abaddon.";
+		bloodcolor "red";
+	}
+
+	States
+	{
+		Spawn:
+			HED3 A 0 NoDelay;
+			HED3 A 10 A_FloatLook(16);
+			goto Spawn+1;
+		See:
+			HED3 A 0;
+			HED3 A 3
+			{
+				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+
+				A_FastChaseCalc(8,8);
+				if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); A_FloatSetFChaseT(randompick(0,4)); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+				user_painfastchase = 0;
+			}
+			loop;
+
+		Melee:
+		Missile:
+			TNT1 A 0 
+			{
+				user_painfastchase = 0;
+				A_DynamicMusic();
+			}
+			HED3 BC 5
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			HED3 D 5 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+
+				user_tempvar1 = 32; // attack height
+				user_tempvar2 = frandompick(7.5,10.25,10.25,10.25,15,15,15,15,15,15,15,18.75,18.75,18.75,22.5); // base angle
+				int mldmg = A_CalcDamageFormula(10,random(1,10),0.005,0.3334,0.1667,0.005);
+				A_CustomComboAttack("AbaddonBall", user_tempvar1, (mldmg), "caco/melee"); // See CacodemonBall
+				if (kc_monsterlevelenabledflags)
+				{
+					if (CountInv("MonsterLevel") >= 30)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-1));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*1));
+					}
+					if (CountInv("MonsterLevel") >= 60)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-2));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*2));
+					}
+					if (CountInv("MonsterLevel") >= 90)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-1.5));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*1.5));
+					}
+				}
+			}
+			HED3 CBC 5
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			HED3 D 5 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+
+				user_tempvar1 = 32; // attack height
+				user_tempvar2 = frandompick(7.5,10.25,10.25,10.25,15,15,15,15,15,15,15,18.75,18.75,18.75,22.5); // base angle
+				int mldmg = A_CalcDamageFormula(10,random(1,10),0.005,0.3334,0.1667,0.005);
+				A_CustomComboAttack("AbaddonBall", user_tempvar1, (mldmg), "caco/melee"); // See CacodemonBall
+				if (kc_monsterlevelenabledflags)
+				{
+					if (CountInv("MonsterLevel") >= 30)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-1));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*1));
+					}
+					if (CountInv("MonsterLevel") >= 60)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-2));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*2));
+					}
+					if (CountInv("MonsterLevel") >= 90)
+					{
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*-1.5));
+						A_SpawnProjectile("AbaddonBall",user_tempvar1,0,(user_tempvar2*1.5));
+					}
+				}
+			}
+			goto See;
+		Pain:
+			TNT1 A 0 A_ActorShadowSplit(30,256);
+			HED3 E 3;
+			HED3 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 4 * random(1,8);
+			}
+			HED3 F 6;
+			Goto See;
+		Pain.Fist:
+			TNT1 A 0 A_ActorShadowSplit(30,64);
+			HED3 E 3;
+			HED3 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 5 * random(1,8);
+			}
+			HED3 F 6;
+			Goto See;
+		Pain.Kick:
+			TNT1 A 0 A_ActorShadowSplit(30,192);
+			HED3 E 3;
+			HED3 E 3
+			{
+				A_FloatPain(0,8,64);
+				user_painfastchase = 7 * random(1,8);
+			}
+			HED3 F 6;
+			Goto See;
+		Shadowsplit1:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit1a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("AbaddonShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("AbaddonShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		FinishShadowSplit:
+			HDSS AAAAAAAAAAAAAAA 1 Bright A_SpawnItemEx ("AbaddonShadowSplitAfterImage", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+			TNT1 A 0 A_ActorEndShadowSplit();
+			Goto See;
+		Death:
+			HED3 G 8 A_NoBlocking();
+			HED3 H 8 A_Scream();
+			HED3 IJK 8;
+			HED3 L -1 A_SetFloorClip();
+			Stop;
+		Ice:
+			HED3 F 5 A_GenericFreezeDeath();
+			HED3 F 1 A_FreezeDeathChunks();
+			wait;
+		Raise:
+			HED3 L 8 A_UnsetFloorClip();
+			HED3 KJIHG 8;
+			Goto See;
+	}
+}
+
+class AbaddonShadowSplitAfterImage : CacodemonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	default
+	{
+		Radius 31;
+		Height 56;
+		+NOGRAVITY;
+		+FLOORCLIP;
+		+NOLIFTDROP;
+		Alpha 0.4;
+		RenderStyle "Translucent";
+	}
+	
+	States
+	{
+		Spawn:
+			HDSS B 1 A_FadeTo (0, 0.04, 1);
+			Loop;
+	}
+}
+
+class AbaddonShadowSplit1 : AbaddonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+64, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("AbaddonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class AbaddonShadowSplit2 : AbaddonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+192, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("AbaddonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class AbaddonShadowSplit3 : AbaddonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+128, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("AbaddonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class AbaddonShadowSplit4 : AbaddonShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+0, 20, 0, 0);
+			HDSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("AbaddonShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class AbaddonBall : KCProjectile
+{
+	default
+	{
+		Tag "Scorching Shot";
+		decal "CacoScorch";
+		Radius 6;
+		Height 8;
+		Speed 20;
+		DamageFunction (finaldamagedealt);
+		Projectile;
+		+RANDOMIZE;
+		RenderStyle "Add";
+		SeeSound "caco/attack";
+		DeathSound "caco/shotx";
+		DamageType "Fire";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCProjectile.PostBeginPlay();
+		finaldamagedealt = A_CalcDamageFormula(10,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	override void Tick()
+	{
+		KCProjectile.Tick();
+		finaldamagedealt = A_CalcDamageFormula(10,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	States
+	{
+		Spawn:
+			BAL3 AB 4 Bright;
+			Loop;
+		Death:
+			BAL3 CDE 6 Bright;
+			Stop;
+	}
+}
+class PainElementalNew : KCCreature
+{
+	default
+	{
+		Tag "Pain Elemental";
+		Health 400;
+		Radius 31;
+		Height 56;
+		Mass 400;
+		Speed 8;
+		MeleeRange 80;
+		PainChance 16;
+		DamageFactor "Fire", 0.5;
+		Painchance "Fire", 8;
+		DamageFactor "Ice", 1.75;
+		Painchance "Ice", 28;
+		DamageFactor "Breakfast", 5;
+		Painchance "Breakfast", 80;
+		DamageFactor "Suck", 7.5;
+		Painchance "Suck", 120;
+		DamageFactor "BRocket", 2.5;
+		Painchance "BRocket", 40;
+		DamageFactor "Dust", 5;
+		Painchance "Dust", 80;
+		Painchance "Fist", 24; // Fist attacks have a +50% chance of stunning an enemy
+		Painchance "Kick", 40; // Kick attacks have a +150% chance of stunning an enemy
+		Monster;
+		+FLOAT 
+		+NOGRAVITY
+		SeeSound "pain/sight";
+		PainSound "pain/pain";
+		DeathSound "pain/death";
+		ActiveSound "pain/active";
+		HitObituary "%o got too close to a Pain Elemental.";
+		//-RETARGEAFTERNSLAM
+	}
+	
+	States
+	{
+		Spawn:
+			PAIN A 10 A_FloatLook(16);
+			Loop;
+		See:
+			PAIN AABBC 3
+			{
+				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				
+				A_FastChaseCalc(6,12);
+				if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); A_FloatSetFChaseT(randompick(0,4)); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+				user_painfastchase = 0;
+			}
+			PAIN C 3
+			{
+				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+
+				A_FastChaseCalc(6,12);
+				if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); A_FloatSetFChaseT(randompick(0,4)); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+				user_painfastchase = 0;
+
+				if (A_JumpIfCloser(1024,"IdleMissile"))
+				{
+					if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { if (random(1,1000) <= 350) { return resolvestate("IdleMissile"); } return resolvestate(null); }
+					else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { if (random(1,1000) <= 275) { return resolvestate("IdleMissile"); } return resolvestate(null); }
+					else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,1000) <= 200) { return resolvestate("IdleMissile"); } return resolvestate(null); }
+					else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { if (random(1,1000) <= 100) { return resolvestate("IdleMissile"); } return resolvestate(null); }
+					return resolvestate(null);
+				}
+				else { return resolvestate(null); }
+				return resolvestate(null);
+			}
+			Loop;
+			
+		IdleMissile:
+			#### # 0 A_DynamicMusic();
+			PAIN DE 5
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			PAIN F 5 bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+				
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				int MapsFinished;
+				if (globalvars) MapsFinished = globalvars.MapsFinished;
+				
+				string classname = "LostSoulNew";
+				int flags = PAF_AIMFACING|PAF_INDIVIDUALLIMIT|PAF_LIMITCOUNTALLTYPES;
+				if (kc_monsterevolutions)
+				{
+					if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished))
+					{
+						if (random(1,384) <= A_GetEvolveChance(player,MiscItem,MapsFinished))
+						{
+							if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished)) classname = "BetaLostSoul";
+																									 else classname = "ForgottenOne";
+						}
+						else
+						{
+							if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished)) classname = "BetaLostSoul";
+																									 else classname = "LostSoulAnnoying";
+						}
+					}
+					else
+					{
+						if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished)) classname = "BetaLostSoul";
+																								 else classname = "LostSoulNew";
+					}
+				}
+				if (classname == "BetaLostSoul") flags |= PAF_NOSKULLATTACK;
+				A_PainAttack(classname,0,flags,10);
+			}
+			goto See;
+
+		Melee:
+		Missile:
+			TNT1 A 0
+			{
+				A_DynamicMusic();
+				user_painfastchase = 0;
+			}
+			PAIN D 5 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			PAIN E 5 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			PAIN F 5 BRIGHT 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(4); }
+				A_FaceTarget();
+			}
+			PAIN F 0 BRIGHT 
+			{
+				if (CheckMeleeRange()) 
+				{ 
+					int mldmg = A_CalcDamageFormula(6,random(1,10),0.005,0.3334,0.1667,0.005);
+					A_CustomMeleeAttack(mldmg,"caco/melee","none","Melee",true);
+				}
+				else
+				{
+					actor player = players[0].mo;
+					let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+					let globalvars = KCGlobalVariables.Get();
+					int MapsFinished;
+					if (globalvars) MapsFinished = globalvars.MapsFinished;
+					
+					string classname = "LostSoulNew";
+					int flags = PAF_AIMFACING|PAF_INDIVIDUALLIMIT|PAF_LIMITCOUNTALLTYPES;
+					if (kc_monsterevolutions)
+					{
+						if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished))
+						{
+							if (random(1,384) <= A_GetEvolveChance(player,MiscItem,MapsFinished))
+							{
+								classname = "ForgottenOne";
+							}
+							else
+							{
+								if (random(1,256) <= A_GetEvolveChance(player,MiscItem,MapsFinished)) classname = "BetaLostSoul";
+																										else classname = "LostSoulAnnoying";
+							}
+						}
+						else
+						{
+							classname = "LostSoulNew";
+						}
+					}
+					if (classname == "BetaLostSoul") flags |= PAF_NOSKULLATTACK;
+					A_PainAttack(classname,0,flags,10);
+				}
+			}
+			Goto See;
+		Pain:
+			PAIN G 0;
+			PAIN G 0 A_ActorShadowSplit(30,64);
+			PAIN G 6;
+			PAIN G 6 A_FloatPain(0,8,64);
+			Goto See;
+		Pain.Fist:
+			TNT1 A 0 A_ActorShadowSplit(30,4);
+			PAIN G 6;
+			PAIN G 6 A_FloatPain(0,8,64);
+			PAIN G 6;
+			Goto See;
+		Pain.Kick:
+			TNT1 A 0 A_ActorShadowSplit(30,12);
+			PAIN G 6;
+			PAIN G 6 A_FloatPain(0,8,64);
+			PAIN G 6;
+			Goto See;
+		Pain.Suck:
+			PAIN G 0 A_ActorShadowSplit(30,8);
+			PAIN G 6;
+			PAIN G 6 A_FloatPain(0,8,64);
+			PAIN G 6;
+			PAIN GG 3
+			{
+				A_SetTics(randompick(0,3,6));
+			}
+			Goto See;
+		Shadowsplit1:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit1a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+192, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit2a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+64, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit3a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit3", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+0, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		Shadowsplit4a:
+			TNT1 A 0
+			{
+				A_ActorStartShadowSplit();
+				A_SpawnItemEx("PElementalShadowSplit1", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit2", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				A_SpawnItemEx("PElementalShadowSplit4", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+				ThrustThing(angle*256/360+128, 20, 0, 0);
+			}
+			Goto FinishShadowSplit;
+		FinishShadowSplit:
+			PNSS AAAAAAAAAAAAAAA 1 Bright A_SpawnItemEx ("PElementalShadowSplitAfterImage", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION|SXF_SETMASTER);
+			TNT1 A 0 A_ActorEndShadowSplit();
+			TNT1 A 0
+			{
+				if (random(1,4) <= 3) { return resolvestate("Missile"); }
+				return resolvestate(null);
+			}
+			Goto See;
+		Death:
+			PAIN H 8 BRIGHT;
+			PAIN I 8 BRIGHT A_Scream();
+			PAIN JK 8 BRIGHT;
+			PAIN L 8 BRIGHT 
+			{
+				if (target && IsFriend(target))
+				{ // And I thought you were my friend!
+					bFriendly = false;
+				}
+				A_NoBlocking();
+
+				string classname = "LostSoulNew";
+				int flags = PAF_NOSKULLATTACK|PAF_AIMFACING|PAF_INDIVIDUALLIMIT|PAF_LIMITCOUNTALLTYPES;
+				if (kc_monsterevolutions)
+				{
+					if (random(1,6) <= 1)
+					{
+						if (random(1,9) <= 1)
+						{
+							classname = "ForgottenOne";
+						}
+						else
+						{
+							if (random(1,16) <= 1) classname = "BetaLostSoul"; 
+																else classname = "LostSoulAnnoying";
+						}
+					}
+				}
+				if (classname == "BetaLostSoul") flags |= PAF_NOSKULLATTACK;
+				A_PainShootSkull(classname, angle + 90, flags, 10);
+				classname = "LostSoulNew";
+				flags = PAF_AIMFACING|PAF_INDIVIDUALLIMIT|PAF_LIMITCOUNTALLTYPES;
+				if (kc_monsterevolutions)
+				{
+					if (random(1,6) <= 1)
+					{
+						if (random(1,9) <= 1)
+						{
+							classname = "ForgottenOne";
+						}
+						else
+						{
+							if (random(1,16) <= 1) classname = "BetaLostSoul"; 
+																else classname = "LostSoulAnnoying";
+						}
+					}
+				}
+				if (classname == "BetaLostSoul") flags |= PAF_NOSKULLATTACK;
+				A_PainShootSkull(classname, angle + 180, flags, 10);
+				classname = "LostSoulNew";
+				flags = PAF_AIMFACING|PAF_INDIVIDUALLIMIT|PAF_LIMITCOUNTALLTYPES;
+				if (kc_monsterevolutions)
+				{
+					if (random(1,6) <= 1)
+					{
+						if (random(1,9) <= 1)
+						{
+							classname = "ForgottenOne";
+						}
+						else
+						{
+							if (random(1,16) <= 1) classname = "BetaLostSoul"; 
+																else classname = "LostSoulAnnoying";
+						}
+					}
+				}
+				if (classname == "BetaLostSoul") flags |= PAF_NOSKULLATTACK;
+				A_PainShootSkull(classname, angle + 270, flags, 10);
+			}
+			PAIN M 8 BRIGHT;
+			TNT1 A 0 CCCardDeathCheck();
+			Stop;
+		Raise:
+			PAIN MLKJIH 8;
+			Goto See;
+	}
+}
+class PElementalShadowSplitAfterImage : KCBaseZSC
+{
+	default
+	{
+		Radius 31;
+		Height 56;
+		+NOGRAVITY;
+		+FLOORCLIP;
+		+NOLIFTDROP;
+		Alpha 0.4;
+		RenderStyle "Translucent";
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			PNSS B 1 A_FadeTo (0, 0.04, 1);
+			Loop;
+	}
+}
+
+class PElementalShadowSplit1 : PElementalShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+64, 20, 0, 0);
+			PNSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("PElementalShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class PElementalShadowSplit2 : PElementalShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+192, 20, 0, 0);
+			PNSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("PElementalShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class PElementalShadowSplit3 : PElementalShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+128, 20, 0, 0);
+			PNSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("PElementalShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
+
+class PElementalShadowSplit4 : PElementalShadowSplitAfterImage
+{
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			scale.x = master.scale.x;
+			scale.y = master.scale.y;
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 0 ThrustThing(angle*256/360+0, 20, 0, 0);
+			PNSS AAAAAAAAAAAAAAA 1 
+			{
+				A_ShadowSplitImage1("PElementalShadowSplitAfterImage");
+			}
+			Stop;
+	}
+}
 class LostSoulNew : KCCreature { } // Filler for later implementation
 class LostSoulAnnoying : KCCreature { } // Filler for later implementation
+class ForgottenOne : KCCreature { } // Filler for later implementation
 class BetaLostSoul : KCCreature { } // Filler for later implementation
+class RevenantTracerNew : KCProjectile replaces RevenantTracer
+{
+	Default
+	{
+		Tag "Tracer Missile";
+		Radius 11;
+		Height 8;
+		Speed 10;
+		DamageFunction (finaldamagedealt);
+		Projectile;
+		+SEEKERMISSILE 
+		+RANDOMIZE
+		+ZDOOMTRANS
+		SeeSound "skeleton/attack";
+		DeathSound "skeleton/tracex";
+		RenderStyle "Add";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCProjectile.PostBeginPlay();
+		finaldamagedealt = A_CalcDamageFormula(10,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	override void Tick()
+	{
+		KCProjectile.Tick();
+		finaldamagedealt = A_CalcDamageFormula(10,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	void A_Tracer(double tang = 16.875)
+	{
+		// killough 1/18/98: this is why some missiles do not have smoke
+		// and some do. Also, internal demos start at random gametics, thus
+		// the bug in which revenants cause internal demos to go out of sync.
+
+		if (level.maptime & 3)	return;
+	
+		// spawn a puff of smoke behind the rocket
+		SpawnPuff ("BulletPuff", pos, angle, angle, 3);
+		Actor smoke = Spawn ("RevenantTracerSmoke", Vec3Offset(-Vel.X, -Vel.Y, 0.), ALLOW_REPLACE);
+	
+		if (smoke != null)
+		{
+			smoke.Vel.Z = 1.;
+			smoke.tics -= random[Tracer](0, 3);
+			if (smoke.tics < 1)
+				smoke.tics = 1;
+		}
+
+		// The rest of this function was identical with Strife's version, except for the angle being used.
+		A_Tracer2(tang);
+	}
+	
+	States
+	{
+		Spawn:
+			FATB AB 2 BRIGHT 
+			{
+				double s1 = 16.875;
+				double s2 = 16.875;
+				if (target && kc_monsterlevelenabledflags)
+				{
+					s1 *= 1.0 + (target.CountInv("MonsterLevel") * 0.0025);
+					s2 *= 1.0 + (target.CountInv("MonsterLevel") * 0.0025);
+					if (target.CountInv("MonsterLevel") > 30)
+					{
+						s1 *= 1.0 + (target.CountInv("MonsterLevel") * 0.00125);
+						s2 *= 1.0 + (target.CountInv("MonsterLevel") * 0.00125);
+					}
+					if (target.CountInv("MonsterLevel") > 60)
+					{
+						s1 *= 1.0 + (target.CountInv("MonsterLevel") * 0.000625);
+						s2 *= 1.0 + (target.CountInv("MonsterLevel") * 0.000625);
+					}
+				}
+				A_Tracer(s1);
+			}
+			Loop;
+		Death:
+			FBXP A 8 BRIGHT;
+			FBXP B 6 BRIGHT;
+			FBXP C 4 BRIGHT;
+			Stop;
+		}
+}
 class RevenantNew : KCCreature { } // Filler for later implementation
 class DeathIncarnate : KCCreature { } // Filler for later implementation
 class HellWarrior : KCCreature 
@@ -6838,6 +8686,49 @@ class ArachnotronNew : KCCreature { } // Filler for later implementation
 class RailArachnotron : KCCreature { } // Filler for later implementation
 class FusionArachnotron : KCCreature { } // Filler for later implementation
 class ArachnotronMK2 : KCCreature { } // Filler for later implementation
+class FatShotNew : KCProjectile replaces FatShot
+{
+	Default
+	{
+		Tag "Flamer Shot";
+		Radius 6;
+		Height 8;
+		Speed 20;
+		DamageFunction (finaldamagedealt);
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
+		DamageType "Fire";
+		RenderStyle "Add";
+		Alpha 1;
+		SeeSound "fatso/attack";
+		DeathSound "fatso/shotx";
+	}
+	
+	override void PostBeginPlay()
+	{
+		KCProjectile.PostBeginPlay();
+		finaldamagedealt = A_CalcDamageFormula(8,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	override void Tick()
+	{
+		KCProjectile.Tick();
+		finaldamagedealt = A_CalcDamageFormula(8,random(1,8),0.005,0.3334,0.1667,0.005);
+	}
+	
+	States
+	{
+		Spawn:
+			MANF AB 4 BRIGHT;
+			Loop;
+		Death:
+			MISL B 8 BRIGHT;
+			MISL C 6 BRIGHT;
+			MISL D 4 BRIGHT;
+			Stop;
+	}
+}
 class MancubusNew : KCCreature { } // Filler for later implementation
 class Hectebus : KCCreature { } // Filler for later implementation
 class Daedabus : KCCreature { } // Filler for later implementation
@@ -9816,6 +11707,445 @@ class HSOverlord : KCCreature { } // Filler for later implementation
 class HadesElemental : KCCreature { } // Filler for later implementation
 class HadesOverlord : KCCreature { } // Filler for later implementation
 
+class BossBrainNew : BossBrain // replaces BossBrain
+{
+	mixin MonsterCollider;
+	default
+	{
+		Tag "Icon of Sin"; // Tag "John Romero"
+		Health 250;
+		Mass 10000000;
+		PainChance 255;
+		Height 80;
+		Radius 20;
+		//MONSTER;
+		//+ISMONSTER
+
+		+SHOOTABLE
+		+SOLID
+		+NOICEDEATH
+		+OLDRADIUSDMG
+		PainSound "brain/pain";
+		DeathSound "brain/death";
+	}
+	
+	States
+	{
+		BrainExplode:
+			MISL BC 10 Bright;
+			MISL D 10 A_BrainExplode();
+			Stop;
+		Spawn:
+			BBRN A -1;
+			Stop;
+		Pain:
+			BBRN B 36 A_BrainPain();
+			Goto Spawn;
+		Death:
+			BBRN B 10 
+			{
+				if (kc_iconofsindthkillminions) A_KillChildren("Massacre");
+				A_BrainScream();
+			}
+			BBRN B 0 
+			{
+				if (kc_iconofsindthkillminions) A_ExplodMinions();
+			}
+			BBRN BBBBBBBBB 10;
+			BBRN BB 10;
+			BBRN B -1 A_BrainDie();
+			Stop;
+	}
+	
+	void A_ExplodMinions()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor");
+		Actor mo;
+		
+		while (mo = Actor(it.Next()))
+		{
+			if (mo.master == self)
+			{
+				double xpos = mo.pos.x;
+				double ypos = mo.pos.y;
+				double zpos = mo.pos.z;
+				double mradius = mo.radius;
+				double mheight = mo.height;
+				bool success;
+				actor explod;
+				[success, explod] = mo.A_SpawnItemEx("IoSDeathExplosionEffect",0.0,0.0,(mo.height*0.5), 0.0,0.0,frandom(0.01,1.00), 0.0,SXF_NOCHECKPOSITION);
+				if (explod && success)
+				{
+					explod.target = mo;
+					let ndf = IoSDeathExplosionEffect(explod);
+					if (ndf)
+					{
+						ndf.target = mo;
+						ndf.mradius = mradius;
+						ndf.mheight = mheight;
+					}
+				}
+			}
+		}
+	}
+}
+
+class BossEyeNew : BossEye // replaces BossEye
+{
+	mixin MonsterCollider;
+	int user_bosseyetype;
+	default
+	{
+		Height 32;
+		+NOBLOCKMAP;
+		+NOSECTOR;
+		+BOSS;
+	}
+	
+	States
+	{
+		Spawn:
+			SSWV A 10 A_Look();
+			Loop;
+		See:
+			SSWV A 181 
+			{
+				A_BrainAwake();
+				if (user_bosseyetype > 0) 
+				{
+					A_SetTics(tics*frandom(0.45,0.55));
+				}
+				else
+				{
+					A_SetTics(tics*frandom(0.9,1.1));
+				}
+			}
+		Shoot:
+			SSWV A 150 
+			{
+				if (user_bosseyetype > 0) 
+				{
+					double timefactor = 1.00;
+					if (master)
+					{
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.95)) timefactor = frandom(0.925,0.95);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.667)) timefactor = frandom(0.625,0.667);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.4)) timefactor = frandom(0.375,0.4);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.25)) timefactor = frandom(0.3,0.334);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.125)) timefactor = frandom(0.2,0.25);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05)) timefactor = frandom(0.1,0.125);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactor = frandom(0.025,0.0375);
+					}
+					A_SetTics(tics*(frandom(0.675,0.825) * timefactor));
+				}
+				else { A_SetTics(tics*frandom(0.9,1.1)); }
+				
+				if (master) 
+				{
+					if (master.health >= 1) A_BrainSpit("SpawnShotNew");
+				}
+				else
+				{
+					A_BrainSpit("SpawnShotNew");
+				}
+			}
+			loop;
+	}
+	
+	void A_BrainSpit(class<Actor> spawntype = null)
+	{
+		SpotState spstate = Level.GetSpotState();
+		Actor targ;
+		Actor spit;
+		bool isdefault = false;
+
+		// shoot a cube at current target
+		targ = spstate.GetNextInList("BossTarget", G_SkillPropertyInt(SKILLP_EasyBossBrain));
+
+		if (targ)
+		{
+			if (spawntype == null) 
+			{
+				spawntype = "SpawnShotNew";
+				isdefault = true;
+			}
+
+			// spawn brain missile
+			spit = SpawnMissile (targ, spawntype);
+
+			if (spit)
+			{
+				// Assign [try to] the BossBrain as the shot's master
+				if (master) spit.tracer = master;
+				if (dydudebug_bossbraininfo2 && spit.tracer) Console.Printf("SpawnShot (\c[green]%p\c-) Tracer: \c[gold]%p\c-", spit, spit.tracer);
+
+				// Boss cubes should move freely to their destination so it's
+				// probably best to disable all collision detection for them.
+				spit.bNoInteraction = spit.bNoClip;
+		
+				spit.target = targ;
+				spit.master = self;
+				// [RH] Do this correctly for any trajectory. Doom would divide by 0
+				// if the target had the same y coordinate as the spitter.
+				if (spit.Vel.xy == (0, 0))
+				{
+					spit.special2 = 0;
+				}
+				else if (abs(spit.Vel.y) > abs(spit.Vel.x))
+				{
+					spit.special2 = int((targ.pos.y - pos.y) / spit.Vel.y);
+				}
+				else
+				{
+					spit.special2 = int((targ.pos.x - pos.x) / spit.Vel.x);
+				}
+				// [GZ] Calculates when the projectile will have reached destination
+				spit.special2 += level.maptime;
+				spit.bBossCube = true;
+			}
+
+			if (!isdefault)
+			{
+				A_StartSound(self.AttackSound, CHAN_WEAPON, CHANF_DEFAULT, 1., ATTN_NONE);
+			}
+			else
+			{
+				// compatibility fallback
+				A_StartSound("brain/spit", CHAN_WEAPON, CHANF_DEFAULT, 1., ATTN_NONE);
+			}
+		}
+	}
+}
+
+class SpawnShotNew : SpawnShot
+{
+	Default
+	{
+		Radius 6;
+		Height 32;
+		Speed 10;
+		Damage 3;
+		Projectile;
+		+NOCLIP
+		-ACTIVATEPCROSS
+		+RANDOMIZE
+		SeeSound "brain/spit";
+		DeathSound "brain/cubeboom";
+		
+		DropItem "DoomImpNew",							255,	50;
+		DropItem "DemonNew",								255,	40;
+		DropItem "SpectreNew",							255,	30;
+		DropItem "PainElementalNew",				255,	10;
+		DropItem "CacodemonNew",						255,	30;
+		DropItem "ArchvileNew",							255,	4;
+		DropItem "RevenantNew",							255,	10;
+		DropItem "ArachnotronNew",					255,	20;
+		DropItem "MancubusNew",							255,	30;
+		DropItem "HellKnightNew",						255,	20;
+		DropItem "BaronOfHellNew",					255,	10;
+		DropItem "CyberdemonNew",						255,	2;
+	}
+	
+	States
+	{
+		Spawn:
+			BOSF A 3 BRIGHT A_SpawnSound;
+			BOSF BCD 3 BRIGHT A_SpawnFly;
+			Loop;
+	}
+	
+	void A_SpawnFly(class<Actor> spawntype = null)
+	{
+		sound snd; 
+		if (spawntype != null) 
+		{
+			snd = GetDefaultByType(spawntype).SeeSound;
+		}
+		else
+		{
+			spawntype = "SpawnFire";
+			snd = "brain/spawn";
+		}
+		SpawnFly(spawntype, snd);
+	}
+	
+	void A_SpawnSound()
+	{
+		// travelling cube sound
+		A_StartSound("brain/cube", CHAN_BODY);
+		SpawnFly("SpawnFire", "brain/spawn");
+	}
+
+	void SpawnFly(class<Actor> spawntype, sound snd)
+	{
+		Actor newmobj;
+		Actor fog;
+		Actor eye = master; // The eye is the spawnshot's master, not the target!
+		Actor targ = target; // Unlike other projectiles, the target is the intended destination.
+		int r;
+		
+		if (tracer == null || (tracer && tracer.health <= 0))
+		{
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: \c[red]Destroyed (Tracer)\c-", self);
+			Destroy();
+			return;
+		}
+		
+		if (targ == null)
+		{
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: \c[red]Destroyed (Targ)\c-", self);
+			Destroy();
+			return;
+		}
+			
+		// [GZ] Should be more viable than a countdown...
+		if (special2 != 0)
+		{
+			if (special2 > level.maptime)
+				return;		// still flying
+		}
+		else
+		{
+			if (reactiontime == 0 || --reactiontime != 0)
+				return;		// still flying
+		}
+		
+		if (spawntype)
+		{
+			fog = Spawn (spawntype, targ.pos, ALLOW_REPLACE);
+			if (fog) A_StartSound(snd, CHAN_BODY);
+		}
+
+		class<Actor> SpawnName = null;
+
+		DropItem di;   // di will be our drop item list iterator
+		DropItem drop; // while drop stays as the reference point.
+		int n = 0;
+
+		// First see if this cube has its own actor list
+		drop = GetDropItems();
+
+		// If not, then default back to its master's list
+		if (drop == null)
+		{
+			if (eye != null)
+			{
+				drop = eye.GetDropItems();
+				if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: \c[green]Getting Eye DropTable\c-", self);
+			}
+			else
+			{
+				if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: \c[RED]NO DROP TABLE INFO\c-", self);
+			}
+		}
+		else
+		{
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: \c[green]Getting SpawnShot DropTable\c-", self);
+		}
+
+		if (drop != null)
+		{
+			for (di = drop; di != null; di = di.Next)
+			{
+				if (di.Name != 'None')
+				{
+					int amt = di.Amount;
+					if (amt < 0)
+					{
+						amt = 1; // default value is -1, we need a positive value.
+					}
+					n += amt; // this is how we can weight the list.
+				}
+			}
+			di = drop;
+			n = random[pr_spawnfly](0, n);
+			while (n >= 0)
+			{
+				if (di.Name != 'none')
+				{
+					int amt = di.Amount;
+					if (amt < 0)
+					{
+						amt = 1;
+					}
+					n -= amt;
+				}
+				if ((di.Next != null) && (n >= 0))
+				{
+					di = di.Next;
+				}
+				else
+				{
+					n = -1;
+				}
+			}
+			SpawnName = di.Name;
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: spawnname: \c[blue]%s\c-", self, di.Name);
+		}
+		if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: spawnname (post droptable)", self);
+		if (SpawnName == null)
+		{
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: spawnname was: \c[yellow]null\c-", self);
+			// Randomly select monster to spawn.
+			r = random[pr_spawnfly](0, 255);
+
+			// Probability distribution (kind of :),
+			// decreasing likelihood.
+				 if (r < 50)  SpawnName = "DoomImp";
+			else if (r < 90)  SpawnName = "Demon";
+			else if (r < 120) SpawnName = "Spectre";
+			else if (r < 130) SpawnName = "PainElemental";
+			else if (r < 160) SpawnName = "Cacodemon";
+			else if (r < 162) SpawnName = "Archvile";
+			else if (r < 172) SpawnName = "Revenant";
+			else if (r < 192) SpawnName = "Arachnotron";
+			else if (r < 222) SpawnName = "Fatso";
+			else if (r < 246) SpawnName = "HellKnight";
+			else			  SpawnName = "BaronOfHell";
+		}
+
+		if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: spawnname (post list)", self);
+		if (spawnname != null)
+		{
+			if (dydudebug_bossbraininfo2) Console.Printf("\c[green]%p\c-: spawnname: \c[sapphire]%s\c-", self, spawnname.GetClassName());
+			newmobj = Spawn(spawnname, targ.pos, ALLOW_REPLACE);
+			if (newmobj != null)
+			{
+				if (tracer) 
+				{
+					newmobj.master = tracer;
+					newmobj.A_SetInventory("IoSMinion",1);
+				}
+				if (dydudebug_bossbraininfo2 && newmobj.master) 
+				{
+					Console.Printf("\c[green]%p\c-: Spawned Monster (\c[blue]%s\c-) Master: \c[gold]%p\c-", self, newmobj.GetClassName(), newmobj.master);
+				}
+				// Make the new monster hate what the boss eye hates
+				if (eye != null)
+				{
+					newmobj.CopyFriendliness (eye, false);
+				}
+				// Make it act as if it was around when the player first made noise
+				// (if the player has made noise).
+				newmobj.LastHeard = newmobj.CurSector.SoundTarget;
+
+				if (newmobj.SeeState != null && newmobj.LookForPlayers (true))
+				{
+					newmobj.SetState (newmobj.SeeState);
+				}
+				if (!newmobj.bDestroyed)
+				{
+					// telefrag anything in this spot
+					newmobj.TeleportMove (newmobj.pos, true);
+				}
+				newmobj.bBossSpawned = true;
+			}
+		}
+
+		// remove self (i.e., cube).
+		Destroy ();
+	}
+}
 class ExplosiveBarrelNew : ExplosiveBarrel replaces ExplosiveBarrel
 {
 	mixin MonsterCollider;
