@@ -3540,11 +3540,29 @@ class E1M8ExitRoomMonster : PlaceholderItem
 	}
 }
 
+class ChaingunCooldown : KCPowerup
+{
+	default
+	{
+		Powerup.Duration -4;
+		+INVENTORY.UNTOSSABLE;
+	}
+}
+
 class MinigunCooldown : KCPowerup
 {
 	default
 	{
 		Powerup.Duration -4;
+		+INVENTORY.UNTOSSABLE;
+	}
+}
+
+class SpidMastChaingunCooldown : KCPowerup
+{
+	default
+	{
+		Powerup.Duration -2;
 		+INVENTORY.UNTOSSABLE;
 	}
 }

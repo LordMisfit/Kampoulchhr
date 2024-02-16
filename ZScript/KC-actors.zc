@@ -216,6 +216,14 @@ class KCBaseZSC : Actor
 		return damage;
 	}
 	
+	bool A_CheckWalkSnd()
+	{
+		string nm = "CCards_Actor_Ghost";
+		if (CountInv(nm)) return false;
+		
+		return true;
+	}
+	
 	void A_Destroy()
 	{
 		self.Destroy();
@@ -2600,6 +2608,14 @@ class KCCreature : KCBaseZSC
 		}
 		
 		return damage;
+	}
+	
+	bool A_CheckWalkSnd()
+	{
+		string nm = "CCards_Actor_Ghost";
+		if (CountInv(nm)) return false;
+		
+		return true;
 	}
 	
 	// int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0
