@@ -1637,6 +1637,7 @@ class KC_EventHandler : EventHandler
 		if (spawnee)
 		{
 			string targname;
+			
 			if (spawnee.target) targname = spawnee.target.GetClassName();
 			
 			if (spawnee.bCOUNTITEM ||
@@ -2085,6 +2086,118 @@ class KC_EventHandler : EventHandler
 				
 				// Monster "Scaling"
 				MonsterStatsSet(spawnee, basemonsterrating, practicetarget, specialenemy, ispeasant);
+			}
+
+			if (kc_usealteredmonsters)
+			{
+				if (Zombieman(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("ZombiemanSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (ShotgunGuy(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("ShotgunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (ChaingunGuy(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("ChaingunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (WolfensteinSS(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("WolfensteinSSSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (DoomImp(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("DoomImpSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Demon(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("DemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Spectre(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("SpectreSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Cacodemon(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("CacodemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (LostSoul(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("LostSoulSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (PainElemental(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("PainElementalSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (HellKnight(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("HellKnightSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (BaronOfHell(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("BaronOfHellSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Revenant(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("RevenantSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Arachnotron(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("ArachnotronSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Fatso(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("MancubusSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Archvile(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("ArchvileSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (Cyberdemon(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("CyberdemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
+				if (SpiderMastermind(spawnee))
+				{
+					spawnee.bSOLID = false;
+					spawnee.Destroy();
+					spawnee.A_SpawnItemEx("SpiderMastermindSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+				}
 			}
 		}
 		

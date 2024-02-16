@@ -1524,53 +1524,53 @@ mixin class MonsterCollider
 	int A_CheckTargType(actor input)
 	{
 		int type = 0;
-		/*
 		// Doom-type
 		if (Zombieman(input) || ZombiemanNew(input)) type = 2; // Zombie/Undead
-		//if (PlasmaGuy(input)) type = 2; // Zombie/Undead
-		//if (RepeaterZombie(input)) type = 2; // Zombie/Undead
-		//if (KarasawaGuy(input)) type = 2; // Zombie/Undead
-		//if (RocketLauncherGuy(input)) type = 2; // Zombie/Undead
+		if (PlasmaGuy(input)) type = 2; // Zombie/Undead
+		if (RepeaterZombie(input)) type = 2; // Zombie/Undead
+		if (KarasawaGuy(input)) type = 2; // Zombie/Undead
+		if (RocketLauncherGuy(input)) type = 2; // Zombie/Undead
 		if (ShotgunGuy(input) || ShotgunGuyNew(input)) type = 2; // Zombie/Undead
-		//if (SuperShotgunGuy(input)) type = 2; // Zombie/Undead
-		//if (FemaleRailZombie(input)) type = 2; // Zombie/Undead
+		if (SuperShotgunGuy(input)) type = 2; // Zombie/Undead
+		if (FemaleRailZombie(input)) type = 2; // Zombie/Undead
 		if (ChaingunGuy(input) || ChaingunGuyNew(input)) type = 2; // Zombie/Undead
 		if (Minigunner(input)) type = 2; // Zombie/Undead
-		//if (BFGGuy(input)) type = 2; // Zombie/Undead
-		//if (SuicideBomber(input)) type = 2; // Zombie/Undead
+		if (BFGGuy(input)) type = 2; // Zombie/Undead
+		if (SuicideBomber(input)) type = 2; // Zombie/Undead
 		if (DoomImp(input) || DoomImpNew(input)) type = 1; // Demonic
 		if (DarkImp(input) || STDarkImp(input) || VoidDarkImp(input) || NetherDarkImp(input)) type = 1; // Demonic
 		if (Demon(input) || DemonNew(input)) type = 1; // Demonic
-		//if (BloodDemon(input)) type = 1; // Demonic
+		if (BloodDemon(input)) type = 1; // Demonic
 		if (LostSoul(input) || LostSoulNew(input) || LostSoulAnnoying(input) || BetaLostSoul(input)) type = 1; // Demonic
 		if (Cacodemon(input) || CacodemonNew(input)) type = 1; // Demonic
-		//if (Cacolantern(input)) type = 1; // Demonic
-		//if (Abaddon(input)) type = 1; // Demonic
-		//if (PainElemental(input) || PainElementalNew(input)) type = 1; // Demonic
+		if (Cacolantern(input)) type = 1; // Demonic
+		if (Abaddon(input)) type = 1; // Demonic
+		if (PainElemental(input) || PainElementalNew(input)) type = 1; // Demonic
 		if (Arachnotron(input) || ArachnotronNew(input) || RailArachnotron(input) || FusionArachnotron(input) || ArachnotronMK2(input)) type = 1; // Demonic
 		if (Revenant(input) || RevenantNew(input)) type = 2; // Zombie/Undead
-		//if (DeathIncarnate(input)) type = 2; // Zombie/Undead
+		if (DeathIncarnate(input)) type = 2; // Zombie/Undead
 		if (Fatso(input) || MancubusNew(input)) type = 1; // Demonic
-		//if (Hectebus(input)) type = 1; // Demonic
-		//if (Daedabus(input)) type = 1; // Demonic
+		if (Hectebus(input)) type = 1; // Demonic
+		if (Daedabus(input)) type = 1; // Demonic
 		if (HellKnight(input) || HellKnightNew(input)) type = 1; // Demonic
 		if (BaronOfHell(input) || BaronOfHellNew(input)) type = 1; // Demonic
-		//if (Belphegor(input)) type = 1; // Demonic
-		//if (HellWarrior(input)) type = 1; // Demonic
-		//if (BruiserDemon(input)) type = 1; // Demonic
-		//if (Cybruiser(input)) type = 1; // Demonic
-		//if (ArchonOfHell(input)) type = 1; // Demonic
-		//if (PyroDemon(input)) type = 1; // Demonic
+		if (Belphegor(input)) type = 1; // Demonic
+		if (HellWarrior(input)) type = 1; // Demonic
+		if (BruiserDemon(input)) type = 1; // Demonic
+		if (Cybruiser(input)) type = 1; // Demonic
+		if (ArchonOfHell(input)) type = 1; // Demonic
+		if (PyroDemon(input)) type = 1; // Demonic
 		if (Archvile(input) || ArchvileNew(input)) type = 1; // Demonic
-		//if (Diabloist(input)) type = 1; // Demonic
+		if (Diabloist(input)) type = 1; // Demonic
 		if (Cyberdemon(input) || CyberdemonNew(input) || Annihilator(input)) type = 1; // Demonic
 		if (SpiderMastermind(input) || SpiderMastermindNew(input) || Demolisher(input)) type = 1; // Demonic
-		//if (FlyingBalrog(input) || FlyingBalrogDVDS(input)) type = 1; // Demonic
-		//if (HellCleric(input) || HellClericDVDS(input)) type = 3; // Human/Demon
-		//if (HadesSphere(input)) type = 4; // Hades Scion
-		//if (HSOverlord(input)) type = 4; // Hades Scion
-		//if (HadesElemental(input)) type = 4; // Hades Scion
-		//if (HadesOverlord(input)) type = 4; // Hades Scion
+		if (FlyingBalrog(input) || FlyingBalrogDVDS(input)) type = 1; // Demonic
+		if (HellCleric(input) || HellClericDVDS(input)) type = 3; // Human/Demon
+		if (HadesSphere(input)) type = 4; // Hades Scion
+		if (HSOverlord(input)) type = 4; // Hades Scion
+		if (HadesElemental(input)) type = 4; // Hades Scion
+		if (HadesOverlord(input)) type = 4; // Hades Scion
+		/*
 		// Heretic/Hexen [tbc]
 		if (HereticImp(input) || HereticImpNew(input)) type = 5; // Creature
 		if (HereticImpLeader(input) || HereticImpLeaderNew(input)) type = 5; // Creature
@@ -2957,7 +2957,7 @@ mixin class EvolveMonsters
 		int SpawnChance, TempSpawnChance, ChanceFactor, LevelCheck, MapCheck;
 		int mapcalcfactorexact = 0;
 		int mapcalcfactorpercent = 100;
-		int debugevolvestealth = false;
+		int debugevolvestealth = true;
 		
 		SpawnChance = kc_rnd_evolve;
 		if (SpawnChance <= 0) return SpawnChance;
