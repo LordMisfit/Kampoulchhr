@@ -45,18 +45,22 @@ class KC_CCards_Actor_EscapePortal : KC_CCards_Actor_FX
 			TNT1 A 0;
 			TNT1 A 0
 			{
+				string nm;
 				A_StartSound("corruptioncards/lastbreath");
-				if(target)
+				if (target)
 				{
-					target.A_SpawnItemEx("CCards_Actor_EscapePortalFX", 12, flags:SXF_NOCHECKPOSITION|SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE|SXF_TRANSFERTRANSLATION);
+					nm = "CCards_Actor_EscapePortalFX";
+					target.A_SpawnItemEx(nm, 12, flags:SXF_NOCHECKPOSITION|SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE|SXF_TRANSFERTRANSLATION);
 					if (target.bCOUNTKILL) level.total_monsters -= 1; // The only change from the base CCards effect is this :V
 					target.A_Remove(AAPTR_DEFAULT);
 				}
 			}
 			TNT1 AAAAAAAAAAAAAAAAAAA 3
 			{
-				let v = Spawn("CCards_Actor_VoidStepFX", pos + (0,0,48));
-				if(v)
+				string nm;
+				nm = "CCards_Actor_VoidStepFX";
+				let v = Spawn(nm, pos + (0,0,48));
+				if (v)
 				{
 					v.A_SetTranslation("CCards_Shield");
 					v.reactiontime = 10;
