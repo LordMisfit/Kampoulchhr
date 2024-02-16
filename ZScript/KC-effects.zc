@@ -3558,6 +3558,24 @@ class MinigunCooldown : KCPowerup
 	}
 }
 
+class RailgunCharge : PlaceholderItem 
+{ 
+	default
+	{
+		+INVENTORY.KEEPDEPLETED;
+		Inventory.MaxAmount 100;
+	}
+}
+
+class PyroDemonTeleportCooldown : KCPowerup
+{
+	default
+	{
+		Powerup.Duration -4;
+		+INVENTORY.UNTOSSABLE;
+	}
+}
+
 class SpidMastChaingunCooldown : KCPowerup
 {
 	default

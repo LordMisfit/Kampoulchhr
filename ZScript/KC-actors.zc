@@ -2787,6 +2787,40 @@ class KCCreature : KCBaseZSC
 		return UOHYM;
 	}
 	
+	int A_EnemyRailgunDamage(int base = 0)
+	{
+		int damage = base;
+		int charge = CountInv("RailgunCharge");
+		double chargefactor = (((charge * 2) + (charge * 0.3334)) * (0.10 + (charge * 0.01)));
+		damage *= chargefactor;
+		if (damage < (base * 0.5)) damage = (base * 0.5);
+
+		// if () Console.Printf("Damage: %d, [Base: %d], [Charge: %d% / ChargeFactor: %d%", damage, base, charge, chargefactor);
+		return damage;
+	}
+	
+	void A_KCCustomMeleeAttack(int damage = 0, sound meleesound = "", sound misssound = "", name damagetype = "none", bool bleed = true, bool facetarg = true)
+	{
+		if (damagetype == 'None') damagetype == 'Melee';
+
+		if (!target) return;
+		else
+		{
+			if (facetarg) A_FaceTarget();
+			if (CheckMeleeRange())
+			{
+				if (meleesound) A_StartSound(meleesound,CHAN_WEAPON,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				int newdam = target.DamageMobj(self, self, damage, damagetype);
+				if (bleed && newdam > 0) target.TraceBleed (newdam > 0 ? newdam : damage, self);
+			}
+			else
+			{
+				if (misssound) A_StartSound(misssound,CHAN_WEAPON,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+			}
+		}
+		return;
+	}
+	
 	int A_CalcDamageFormula(int basedmg,
 													int baserand,
 													double factor1 = 0.005,

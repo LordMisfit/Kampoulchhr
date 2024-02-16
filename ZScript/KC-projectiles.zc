@@ -1934,3 +1934,132 @@ class BFGExtraNew : KCProjectile
 			Stop;
 	}
 }
+
+class DBTPuff : KCPuff //replaces BulletPuff
+{
+	default
+	{
+		Tag "shot";
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+ALLOWPARTICLES;
+		+RANDOMIZE;
+		+NOINTERACTION;
+		RenderStyle "Translucent";
+		Alpha 0.5;
+		VSpeed 1;
+		Mass 1;
+		DamageType "Bullet";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_Jump(128,2);
+			TNT1 A 0 A_StartSound("puff/ric",CHAN_7);
+			TNT1 A 0 A_SpawnItemEx("DBTYellowSpark",0,0,0,0,0,0,0,32);
+			TNT1 AA 0 A_SpawnItemEx("DBTPuffSmoke",0,0,0,0,0,frandom(0.1,0.3),0,32);
+			TNT1 AAAAAAAAAA 0 A_SpawnItemEx("DBTSparkExtra",0,0,0,frandom(0.1,0.5),0,0,random(1,360));
+			TNT1 A 1;
+			Stop;
+	}
+}
+
+class DBTPuffSmoke : KCBaseZSC
+{
+	default
+	{
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+		Scale 0.03;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_Jump(128,"T2");
+		T1:
+			X143 J 1 A_FadeOut(0.03);
+			Wait;
+		T2:
+			X143 K 1 A_FadeOut(0.03);
+			Wait;
+	}
+}
+
+class DBTYellowSpark : KCBaseZSC
+{
+	default
+	{
+		+NOINTERACTION;
+		Scale 0.16;
+		RenderStyle "Add";
+		+FORCEXYBILLBOARD;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay A_Jump(255,"Type1","Type2");
+		Type1:
+			FX26 A 2 Bright;
+			FX26 BCD 2 Bright;
+			FX26 EFGHI 2 Bright;
+			FX26 J 1 Bright A_FadeOut();
+			Wait;
+		Type2:
+			FX26 P 2 Bright;
+			FX26 QRS 2 Bright;
+			FX26 TUVWX 2 Bright;
+			FX26 Y 1 Bright A_FadeOut();
+			Wait;
+	}
+}
+
+class DBTSparkExtra : KCProjectile
+{
+	default
+	{
+		Height 1;
+		Radius 1;
+		Speed 3;
+		Scale 0.15;
+		+NOCLIP;
+		PROJECTILE;
+		-NOGRAVITY;
+		Gravity 0.09;
+		+DONTSPLASH;
+		+DONTBLAST;
+		+THRUACTORS;
+		RenderStyle "Add";
+		+FORCEXYBILLBOARD;
+	}
+	
+	States
+	{
+		Spawn:
+			FX26 K 1 Bright ThrustThingZ(0,frandom(0.8,3.5),0,1);
+			FX26 KKKLMNO 3 Bright A_FadeOut(0.05);
+			Stop;
+	}
+}
+
+class DBTRailPuff : DBTPuff
+{
+	default
+	{
+		Tag "Railgun Blast";
+		DamageType "Railgun";
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_Jump(128,2);
+			TNT1 A 0 A_StartSound("puff/ric",CHAN_7);
+			TNT1 A 0 A_SpawnItemEx("DBTYellowSpark",0,0,0,0,0,0,0,32);
+			TNT1 AA 0 A_SpawnItemEx("DBTPuffSmoke",0,0,0,0,0,frandom(0.1,0.3),0,32);
+			TNT1 AAAAAAAAAA 0 A_SpawnItemEx("DBTSparkExtra",0,0,0,frandom(0.1,0.5),0,0,random(1,360));
+			TNT1 A 1;
+			Stop;
+	}
+}
