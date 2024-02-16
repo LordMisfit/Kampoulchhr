@@ -1590,9 +1590,13 @@ mixin class MonsterCollider
 		if (Goldlich(input) || FakeGoldLich(input)) type = 6; // Inanimate/Creature
 		if (BloodLich(input)) type = 6; // Inanimate/Creature
 		if (Beast(input) || BeastNew(input)) type = 5; // Creature
+		if (ShadowBeast(input) || BeastNew(input)) type = 5; // Creature
 		if (Clink(input) || ClinkNew(input)) type = 5; // Creature
+		if (DarkClink(input)) type = 5; // Creature
 		if (Minotaur(input) || MaulotaurNew(input) || MaulotaurFriendNew(input)) type = 5; // Creature
 		if (Snake(input) || SnakeNew(input)) type = 5; // Creature
+		if (HellGuard(input)) type = 5; // Creature
+		if (Serpathor(input)) type = 5; // Creature
 		if (Sorcerer1(input) || DSparilMountedNew(input)) type = 5; // Creature
 		if (Sorcerer2(input) || DSparilUnmountedNew(input)) type = 1; // Demonic
 		if (FireDemon(input) || FireDemonNew(input)) type = 5; // Creature
