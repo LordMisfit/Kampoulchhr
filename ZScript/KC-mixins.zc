@@ -1604,9 +1604,18 @@ mixin class MonsterCollider
 		if (FireDemonCommander(input)) type = 5; // Creature
 		if (FireDemonQueen(input) || FireDemonQueenClone(input)) type = 5; // Creature
 		if (Ettin(input) || EttinNew(input)) type = 5; // Creature
+		if (EttinMash(input) || EttinGhostNew(input)) type = 5; // Creature
+		if (EttinCommander(input)) type = 5; // Creature
+		if (Bormereth(input)) type = 5; // Creature
 		if (Centaur(input) || CentaurNew(input)) type = 5; // Creature
+		if (CentaurLeader(input) || SlaughtaurNew(input)) type = 5; // Creature
 		if (Demon1(input) || Demon2(input) || GreenChaosSerpentNew(input) || BrownChaosSerpentNew(input)) type = 5; // Creature
+		if (MagmaChaosSerpentNew(input) || BlackChaosSerpentNew(input) || EtherealChaosSerpentNew(input)) type = 5; // Creature
+		if (IceGuy(input) || IceGuyNew(input)) type = 6; // Inanimate/Creature
 		if (Serpent(input) || StalkerNew(input)) type = 5; // Creature
+		if (SerpentLeader(input) || StalkerLeaderNew(input)) type = 5; // Creature
+		if (IceStalker(input)) type = 5; // Creature
+		if (IceStalkerLeader(input)) type = 5; // Creature
 		if (Dragon(input) || DragonNew(input)) type = 2; // Zombie/Undead
 		if (Wraith(input) || WraithNew(input)) type = 2; // Zombie/Undead
 		if (Korax(input) || KoraxNew(input)) type = 1; // Demonic
@@ -2500,12 +2509,114 @@ mixin class MonsterCollider
 	
 	override void PostBeginPlay()
 	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = A_GetPlayerLvl2(1);
+
+		BossEyeNew actcheck;
+		actcheck = BossEyeNew(self);
+		if (actcheck)
+		{
+			if (kc_improvediconofsin) { actcheck.user_bosseyetype = 1; }
+													 else { actcheck.user_bosseyetype = 0; }
+		}
+		Actor bsbrn;
+		if (BossBrainNew(self))
+		{
+			bsbrn = self;
+			if (kcdebug_bossbraininfo)
+			{
+				if (bsbrn) Console.Printf("bsbrn: \c[green]%p\c-", bsbrn);
+							else Console.Printf("bsbrn: \c[red]NOT FOUND\c-");
+			}
+			if (kc_improvediconofsin) 
+			{
+				int foundspawners;
+				int foundspawnspots;
+				ThinkerIterator SpawnFinder = ThinkerIterator.Create("BossEye");
+				Actor mo;
+				while (mo = BossEye(SpawnFinder.Next()))
+				{
+					foundspawners++;
+					mo.master = bsbrn;
+					if (kcdebug_bossbraininfo) 
+					{
+						Console.Printf("%s #%d Found!", mo.GetClassName(), foundspawners);
+						if (mo.master) Console.Printf("BossEye (\c[green]%p\c-) Master: \c[gold]%p\c-", mo, mo.master);
+											else Console.Printf("BossEye (\c[green]%p\c-) Master: \c[red]NOT FOUND\c-", mo);
+					}
+				}
+				SpawnFinder = ThinkerIterator.Create("BossTarget");
+				while (mo = BossTarget(SpawnFinder.Next()))
+				{
+					foundspawnspots++;
+					if (bsbrn) mo.master = bsbrn;
+					if (kcdebug_bossbraininfo) 
+					{
+						Console.Printf("%s #%d Found!", mo.GetClassName(), foundspawnspots);
+						if (mo.master) Console.Printf("BossTarget (\c[green]%p\c-) Master: \c[gold]%p\c-", mo, mo.master);
+											else Console.Printf("BossTarget (\c[green]%p\c-) Master: \c[red]NOT FOUND\c-", mo);
+					}
+				}
+				if (foundspawners && foundspawnspots)
+				{
+					if (!player.CountInv("PlayingAugerZenith"))
+					{
+						double levelhpmultfactor = 0.025;
+						double leveldmgmultfactor = 0.001667;
+						double dmgfactbase = 0.5;
+						if (skill <= 0) 
+						{
+							health *= 4.00;
+							levelhpmultfactor = 0.015;
+							leveldmgmultfactor = 0.000500;
+							dmgfactbase = 0.7;
+						}
+						if (skill == 1) 
+						{
+							health *= 4.50;
+							levelhpmultfactor = 0.020;
+							leveldmgmultfactor = 0.000667;
+							dmgfactbase = 0.65;
+						}
+						if (skill == 2) 
+						{
+							health *= 5.00;
+							levelhpmultfactor = 0.025;
+							leveldmgmultfactor = 0.0008334;
+							dmgfactbase = 0.6;
+						}
+						if (skill == 3)
+						{
+							health *= 5.50;
+							levelhpmultfactor = 0.030;
+							leveldmgmultfactor = 0.001000;
+							dmgfactbase = 0.55;
+						}
+						if (skill >= 4)
+						{
+							health *= 6.00;
+							levelhpmultfactor = 0.035;
+							leveldmgmultfactor = 0.0011667;
+							dmgfactbase = 0.5;
+						}
+						A_SetInventory("BossBrainHolder",1);
+						actor player = players[0].mo;
+						let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+						if (MiscItem)
+						{
+							health *= (1.0 + (TruePlayerLevel * levelhpmultfactor));
+							damagefactor *= (dmgfactbase - (TruePlayerLevel * leveldmgmultfactor));
+							if (kcdebug_bossbraininfo) Console.Printf("Icon of Sin is now stronger!");
+						}
+					}
+				}
+			}
+		}
+		
 		//
-		//
-		//
+		if (!(GetRenderStyle() == STYLE_Fuzzy && bSHADOW)) score += 16;
+		super.PostBeginPlay();
 	}
 	
 	void A_KCHealThing(int healvalue = 0, int healtarget = 0, int silentheal = 0)

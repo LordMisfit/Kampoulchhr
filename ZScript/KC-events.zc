@@ -1880,7 +1880,11 @@ class KC_EventHandler : EventHandler
 						 ExplosiveBarrel2(spawnee) ||
 						 ShieldPartBase(spawnee) ||
 						 ShieldPartBase(spawnee) ||
-						 Pod(spawnee))) spawnee.A_SetInventory("CompatVulnItem",1);
+						 Pod(spawnee) ||
+						 BossBrainNew(spawnee))) 
+					{
+						spawnee.A_SetInventory("CompatVulnItem",1);
+					}
 			}
 			
 			if (ExplosiveBarrel(spawnee) ||
@@ -1891,6 +1895,18 @@ class KC_EventHandler : EventHandler
 			{
 				KCC = KCCreature(spawnee);
 				if (KCC && KCC.bISMONSTER) KCC.ActorRandomBits = random();
+			}
+			
+			if (HellCleric(spawnee))
+			{
+				spawnee.A_SpawnItemEx("HellClericDVDS",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,spawnee.tid);
+				spawnee.Destroy();
+			}
+			
+			if (FlyingBalrog(spawnee))
+			{
+				spawnee.A_SpawnItemEx("FlyingBalrogDVDS",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,spawnee.tid);
+				spawnee.Destroy();
 			}
 			
 			if (DoomImpBall(spawnee) || 
@@ -2262,7 +2278,7 @@ class KC_EventHandler : EventHandler
 				if (basehealth <= 0) Console.Printf("\c[red]POST-WARNING: %s has 0 base health!\c-", spawnname);
 
 				// Keeps the Romero Heads in AUGER ZENITH, which can't be attacked directly by the player, from being able to gain extra HP/Stats so they can be killed properly on MAP21
-				if (playera.CountInv("PlayingAugerZenith") && (BossBrain(spawnee))) specialenemy = true;
+				if (playera.CountInv("PlayingAugerZenith") && (BossBrain(spawnee) || BossBrainNew(spawnee))) specialenemy = true;
 				// Keeps the Romero Heads in Hell Ground MAP07 from being too strong. :P
 				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && (BossBrain(spawnee))) specialenemy = true;
 
