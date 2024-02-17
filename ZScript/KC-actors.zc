@@ -1518,6 +1518,92 @@ class KCProjectile : KCBaseZSC
 		Vel3DFromAngle(curSpeed, Angle, Pitch);
 	}
 	
+	
+	// D'Sparil Bolt
+	void A_BlueSpark()
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			Actor mo = Spawn("Sorcerer2FXSpark", pos, ALLOW_REPLACE);
+			if (mo != null)
+			{
+				mo.Vel.X = Random2[BlueSpark]() / 128.;
+				mo.Vel.Y = Random2[BlueSpark]() / 128.;
+				mo.Vel.Z = 1. + Random[BlueSpark]() / 256.;
+			}
+		}
+	}
+
+	void A_GenWizard()
+	{
+		Actor mo = Spawn("Wizard", pos, ALLOW_REPLACE);
+		if (mo != null)
+		{
+			mo.AddZ(-mo.Default.Height / 2, false);
+			if (!mo.TestMobjLocation ())
+			{ // Didn't fit
+				mo.ClearCounters();
+				mo.Destroy ();
+			}
+			else
+			{ // [RH] Make the new wizards inherit D'Sparil's target
+				if (self.target != null)
+				{
+					mo.CopyFriendliness (self.target, true);
+				}
+
+				Vel = (0,0,0);
+				SetStateLabel('Death');
+				bMissile = false;
+				mo.master = target;
+				SpawnTeleportFog(pos, false, true);
+			}
+		}
+	}
+
+	// Red Axe [Heretic]
+	void A_DripBlood (string missiletype = "Blood")
+	{
+		double xo = random2[DripBlood]() / 32.0;
+		double yo = random2[DripBlood]() / 32.0;
+		Actor mo = Spawn (missiletype, Vec3Offset(xo, yo, 0.), ALLOW_REPLACE);
+		if (mo != null)
+		{
+			mo.Vel.X = random2[DripBlood]() / 64.0;
+			mo.Vel.Y = random2[DripBlood]() / 64.0;
+			mo.Gravity = 1./8;
+		}
+	}
+	
+	// Ice Ball Splits
+	void A_LichIceImpact(string missiletype = "HeadFX2", int numshots = 8, double zvel = -0.6)
+	{
+		for (int i = 0; i < numshots; i++)
+		{
+			Actor shard = Spawn(missiletype, Pos, ALLOW_REPLACE);
+			if (shard != null)
+			{
+				shard.target = target;
+				shard.angle = i*(360.0/numshots);
+				shard.VelFromAngle();
+				shard.Vel.Z = zvel;
+				shard.CheckMissileSpawn(radius);
+			}
+		}
+	}
+
+	// Lich Fire Pillar
+	void A_LichFireGrow ()
+	{
+		health--;
+		AddZ(9.);
+		if (health == 0)
+		{
+			RestoreDamage();
+			SetStateLabel("NoGrow");
+		}
+	}
+	
 	void A_MntrFloorFire(string missiletype = "MinotaurFX3")
 	{
 		SetZ(floorz);
@@ -1541,6 +1627,115 @@ class KCProjectile : KCBaseZSC
 			Actor mo = SpawnMissileAngleZ (pos.z+3, missiletype, i*45., pitch);
 			if (mo)
 			{
+				mo.target = target;
+			}
+		}
+	}
+	
+	void A_WraithFX2()
+	{
+		for (int i = 2; i; --i)
+		{
+			Actor mo = Spawn ("WraithFX2", Pos, ALLOW_REPLACE);
+			if (mo)
+			{
+				double newangle = random[WraithFX2]() * (360 / 1024.f);
+				if (random[WraithFX2]() >= 128)
+				{
+					newangle = -newangle;
+				}
+				newangle += angle;
+				mo.Vel.X = ((random[WraithFX2]() / 512.) + 1) * cos(newangle);
+				mo.Vel.Y = ((random[WraithFX2]() / 512.) + 1) * sin(newangle);
+				mo.Vel.Z = 0;
+				mo.target = self;
+				mo.Floorclip = 10;
+			}
+		}
+	}
+	
+	// WraithVerge
+	void A_CHolyAttack2(string missiletype = "HolySpirit", int spiritnums = 4, int spiritfuse = 105, int spiritfusedm = 85)
+	{
+		for (int j = 0; j < spiritnums; j++)
+		{
+			Actor mo = Spawn(missiletype, Pos, ALLOW_REPLACE);
+			if (!mo)
+			{
+				continue;
+			}
+			switch (j)
+			{
+				// float bob index
+
+				case 0:
+					mo.WeaveIndexZ = random[HolyAtk2]() & 7; // upper-left
+					break;
+				case 1:
+					mo.WeaveIndexZ = 32 + (random[HolyAtk2]() & 7); // upper-right
+					break;
+				case 2:
+					mo.WeaveIndexXY = 32 + (random[HolyAtk2]() & 7); // lower-left
+					break;
+				case 3:
+					mo.WeaveIndexXY = 32 + (random[HolyAtk2]() & 7);
+					mo.WeaveIndexZ = 32 + (random[HolyAtk2]() & 7);
+					break;
+			}
+			mo.SetZ(pos.z);
+			mo.angle = angle + 67.5 - 45.*j;
+			mo.Thrust();
+			mo.target = target;
+			mo.args[0] = 10; // initial turn value
+			mo.args[1] = 0; // initial look angle
+			if (deathmatch)
+			{
+				// Ghosts last slightly less longer in DeathMatch
+				mo.health = spiritfusedm;
+				if (spiritfusedm <= 0) mo.health = 85;
+			}
+			else
+			{
+				mo.health = spiritfuse;
+				if (spiritfuse <= 0) mo.health = 105;
+			}
+			if (tracer)
+			{
+				mo.tracer = tracer;
+				mo.bNoClip = true;
+				mo.bSkullFly = true;
+				mo.bMissile = false;
+			}
+			HolyTail.SpawnSpiritTail (mo);
+		}
+	}
+	
+	// Quietus Sword Flames
+	void A_FSwordFlames()
+	{
+		for (int i = random[FSwordFlame](1, 4); i; i--)
+		{
+			double xo = (random[FSwordFlame]() - 128) / 16.;
+			double yo = (random[FSwordFlame]() - 128) / 16.;
+			double zo = (random[FSwordFlame]() - 128) / 8.;
+			Spawn ("FSwordFlame", Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+		}
+	}
+	
+	// DragonFX2
+	void A_DragonFX2(string missiletype = "DragonExplosion")
+	{
+		int delay = 16+(random[DragonFX2]()>>3);
+		for (int i = random[DragonFX2](1, 4); i; i--)
+		{
+			double xo = (random[DragonFX2]() - 128) / 4.;
+			double yo = (random[DragonFX2]() - 128) / 4.;
+			double zo = (random[DragonFX2]() - 128) / 16.;
+
+			Actor mo = Spawn (missiletype, Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+			if (mo)
+			{
+				mo.tics = delay + (random[DragonFX2](0, 3)) * i*2;
 				mo.target = target;
 			}
 		}
@@ -4469,6 +4664,943 @@ class KCCreature : KCBaseZSC
 		}
 	}
 	
+	// Shielding Centaur
+	void A_CentaurShieldOff()
+	{
+		user_defendtimer = 0;
+		user_defendcycles = 0;
+		bNOBLOOD = 0;
+		bNOPAIN = 0;
+		bREFLECTIVE = 0;
+		A_SetInventory("CentaurShieldDefend",0); // A_UnSetInvulnerable
+		A_SetInventory("CentaurShieldDefendExtra",0);
+	}
+
+	void A_CentaurShieldOn()
+	{
+		bNOBLOOD = 1;
+		bNOPAIN = 1;
+		bREFLECTIVE = 1;
+		A_SetInventory("CentaurShieldDefend",1); // A_SetInvulnerable
+		A_SetInventory("CentaurShieldDefendExtra",0);
+		A_ShieldBlastVelFactor(0.5,0.5,16,1);
+
+		if (random(1,4) == 1) 
+		{
+			A_SetInventory("CentaurShieldDefendExtra",1); 
+			A_ShieldBlastVelFactor(0.5,0.5,4,1);
+		} 
+	}
+
+	// Shielding Slaughtaur
+	void A_SlaughtaurShieldOff()
+	{
+		user_defendtimer = 0;
+		user_defendcycles = 0;
+		bNOBLOOD = false;
+		bNOPAIN = false;
+		bREFLECTIVE = false;
+		A_SetInventory("SlaughtaurShieldDefend",0); // A_UnSetInvulnerable
+		A_SetInventory("SlaughtaurShieldDefendExtra",0);
+	}
+
+	void A_SlaughtaurShieldOn()
+	{
+		bNOBLOOD = true;
+		bNOPAIN = true;
+		bREFLECTIVE = true;
+		A_SetInventory("SlaughtaurShieldDefend",1); // A_SetInvulnerable
+		A_SetInventory("SlaughtaurShieldDefendExtra",0);
+		A_ShieldBlastVelFactor(0.5,0.5,16,1);
+
+		if (random(1,4) == 1) 
+		{
+			A_SetInventory("SlaughtaurShieldDefendExtra",1); 
+			A_ShieldBlastVelFactor(0.5,0.5,4,1);
+		}
+	}
+	
+	void A_GargDashCheck()
+	{
+		if (!target) { SetStateLabel("See"); }
+	}
+	
+	void A_GargDashCheck2()
+	{
+		if (!target) 
+		{ 
+			SetStateLabel("See"); 
+		}
+		else
+		{
+			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) 
+			{
+				if (!A_JumpIfTargetInLOS("See", frandom(77.5,82.5)))
+				{
+					A_Stop();
+					SetStateLabel("See"); 
+				}
+			}
+			else
+			{
+				if (random(1,8) <= 1)
+				{
+					if (!A_JumpIfTargetInLOS("See", frandom(77.5,82.5)))
+					{
+						A_Stop();
+						SetStateLabel("See"); 
+					}
+				}
+			}
+		}
+	}
+
+	//**************************
+	//*HERETIC-UNIQUE FUNCTIONS*
+	//**************************
+	// Gargoyle
+	void A_ImpMsAttack()
+	{
+		if (!target || random[ImpMSAtk]() > 64)
+		{
+			SetState (SeeState);
+			return;
+		}
+		A_SkullAttack(12);
+	}
+
+	void A_ImpExplode()
+	{
+		Actor chunk;
+
+		bNoGravity = false;
+
+		chunk = Spawn("HereticImpChunk1", pos, ALLOW_REPLACE);
+		if (chunk != null)
+		{
+			chunk.vel.x = random2[ImpExplode]() / 64.;
+			chunk.vel.y = random2[ImpExplode]() / 64.;
+			chunk.vel.z = 9;
+		}
+
+		chunk = Spawn("HereticImpChunk2", pos, ALLOW_REPLACE);
+		if (chunk != null)
+		{
+			chunk.vel.x = random2[ImpExplode]() / 64.;
+			chunk.vel.y = random2[ImpExplode]() / 64.;
+			chunk.vel.z = 9;
+		}
+		
+		if (extremecrash)
+		{
+			SetStateLabel ("XCrash");
+		}
+	}
+
+ 	void A_ImpDeath()
+	{
+		bSolid = false;
+		bFloorClip = true;
+	}
+
+	void A_ImpXDeath1()
+	{
+		bSolid = false;
+		bFloorClip = true;
+		bNoGravity = true;
+		extremecrash = true;
+	}
+	
+	//************************
+	//*HEXEN-UNIQUE FUNCTIONS*
+	//************************
+	
+	// Centaur
+	void A_CentaurDefend()
+	{
+		A_FaceTarget ();
+		if (CheckMeleeRange() && random[CentaurDefend]() < 32)
+		{
+			// This should unset REFLECTIVE as well
+			// (unless you want the Centaur to reflect projectiles forever!)
+			bReflective = false;
+			bInvulnerable = false;
+			SetState(MeleeState);
+		}
+	}
+
+    // Afrit
+	private void A_FiredSpawnRock ()
+	{
+		Actor mo;
+		class<Actor> rtype;
+
+		switch (random[FireDemonRock](0, 4))
+		{
+			case 0:
+				rtype = "FireDemonRock1";
+				break;
+			case 1:
+				rtype = "FireDemonRock2";
+				break;
+			case 2:
+				rtype = "FireDemonRock3";
+				break;
+			case 3:
+				rtype = "FireDemonRock4";
+				break;
+			case 4:
+			default:
+				rtype = "FireDemonRock5";
+				break;
+		}
+
+		double xo = (random[FireDemonRock]() - 128) / 16.;
+		double yo = (random[FireDemonRock]() - 128) / 16.;
+		double zo = random[FireDemonRock]() / 32.;
+		mo = Spawn (rtype, Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.target = self;
+			mo.Vel.X = (random[FireDemonRock]() - 128) / 64.;
+			mo.Vel.Y = (random[FireDemonRock]() - 128) / 64.;
+			mo.Vel.Z = (random[FireDemonRock]() / 64.);
+			mo.special1 = 2;		// Number bounces
+		}
+
+		// Initialize fire demon
+		fdstrafecount = 0;
+		bJustAttacked = false;
+	}
+
+	void A_FiredRocks()
+	{
+		A_FiredSpawnRock ();
+		A_FiredSpawnRock ();
+		A_FiredSpawnRock ();
+		A_FiredSpawnRock ();
+		A_FiredSpawnRock ();
+	}
+
+	void A_FiredAttack()
+	{
+		if (target == null)	return;
+		Actor mo = SpawnMissile (target, "FireDemonMissile");
+		if (mo) A_StartSound("FireDemonAttack", CHAN_BODY);
+	}
+
+	void A_FireDChase(int minheight = 64, int strafecnt = 3, int strafechance = 30, int atkchance = 20, int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0, int value6 = 0)
+	{
+		if (type == 0)
+		{
+			if (value1) value1 = 0;
+			if (value2) value2 = 0;
+			if (value3) value3 = 0;
+			if (value4) value4 = 0;
+			if (value5) value5 = 0;
+			if (value6) value6 = 0;
+		}
+		if (type == 1)
+		{
+			if (value1 <= 0) value1 = 3; // ticdecrement
+			if (value2 <= 0) value2 = 1; // speedtimerdecrement
+			if (value3 <= 0) value3 = 1; // lowcap
+			if (value6 <= 0) value6 = 8; // move/thrust strength
+
+			if (specialspeed1)
+			{
+				specialspeed1 -= value2;
+				tics -= value1;
+				if (tics < value3) tics = value3;
+				if (dydudebug_showactormoveinfo) Console.Printf("\cx(%s) (gametic: %d) [A_FireDChase]\c- specialspeed1: %d, ticdecrement: %d, speedtimerdecrement: %d, lowcap: %d \cytics: %d\c-", GetClassName(), gametic, specialspeed1, value1, value2, value3, tics);
+			}
+		}
+		
+		int weaveindex = special1;
+		double ang;
+		double dist;
+
+		if (reactiontime) reactiontime--;
+		if (threshold) threshold--;
+
+		// Float up and down
+		AddZ(BobSin(weaveindex));
+		special1 = (weaveindex + 2) & 63;
+
+		// Ensure it stays above certain height
+		if (pos.Z < floorz + minheight)
+		{
+			AddZ(2);
+		}
+
+		if (!target || !target.bShootable)
+		{
+			// Invalid target
+			LookForPlayers (true);
+			return;
+		}
+
+		// Strafe
+		if (fdstrafecount > 0)
+		{
+			fdstrafecount--;
+		}
+		else
+		{
+			fdstrafecount = 0;
+			Vel.X = Vel.Y = 0;
+			dist = Distance2D(target);
+			if (dist < FIREDEMON_ATTACK_RANGE)
+			{
+				if (random[FiredChase]() < strafechance)
+				{
+					ang = AngleTo(target);
+					if (random[FiredChase]() < 128)
+						ang += 90;
+					else
+						ang -= 90;
+					Thrust(value6, ang); // value6 = thrust [8]
+					fdstrafecount = strafecnt;	// strafe time
+				}
+			}
+		}
+
+		FaceMovementDirection ();
+
+		// Normal movement
+		if (!fdstrafecount)
+		{
+			if ((movecount -= 1) < 0 || !MonsterMove ())
+			{
+				NewChaseDir ();
+			}
+		}
+
+		// Do missile attack
+		if (!bJustAttacked)
+		{
+			if (CheckMissileRange () && (random[FiredChase]() < 20))
+			{
+				if (!target || !target.bShootable || target.health < 1)
+				{
+					// Invalid target
+					LookForPlayers (true);
+					return;
+				}
+				else
+				{
+					SetState (MissileState);
+					bJustAttacked = true;
+					return;
+				}
+			}
+		}
+		else
+		{
+			bJustAttacked = false;
+		}
+
+		// make active sound
+		if (random[FiredChase]() < 3)
+		{
+			PlayActiveSound ();
+		}
+	}
+
+	void A_FiredSplotch()
+	{
+		Actor mo;
+
+		mo = Spawn ("FireDemonSplotch1", Pos, ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.Vel.X = (random[FireDemonSplotch]() - 128) / 32.;
+			mo.Vel.Y = (random[FireDemonSplotch]() - 128) / 32.;
+			mo.Vel.Z = (random[FireDemonSplotch]() / 64.) + 3;
+		}
+		mo = Spawn ("FireDemonSplotch2", Pos, ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.Vel.X = (random[FireDemonSplotch]() - 128) / 32.;
+			mo.Vel.Y = (random[FireDemonSplotch]() - 128) / 32.;
+			mo.Vel.Z = (random[FireDemonSplotch]() / 64.) + 3;
+		}
+	}
+	
+	// Bishop
+	void A_BishopAttack(int meleedmg = 4, int missilenum = 5)
+	{
+		if (!target)
+		{
+			return;
+		}
+		A_StartSound(AttackSound, CHAN_BODY);
+		if (CheckMeleeRange())
+		{
+			int damage = meleedmg;
+			int newdam = target.DamageMobj (self, self, damage, 'Melee');
+			target.TraceBleed (newdam > 0 ? newdam : damage, self);
+			return;
+		}
+		missilecount = missilenum;
+	}
+
+	void A_BishopAttack2(string missiletype = "BishopFX")
+	{
+		string atktype = missiletype;
+
+		if (!target || !missilecount)
+		{
+			missilecount = 0;
+			SetState (SeeState);
+			return;
+		}
+		Actor mo = SpawnMissile (target, atktype);
+		if (mo != null)
+		{
+			mo.tracer = target;
+		}
+		missilecount--;
+		return;
+	}
+	
+	void A_BishopDecide()
+	{
+		if (!target) { return; }
+
+		if (random[BishopDecide]() >= 220)
+		{
+			SetStateLabel ("Blur");
+		}
+	}
+
+	void A_BishopDoBlur(int blurrand = 3, int blurnum = 3, double thrustamt = 11.0)
+	{
+		if (!target) { return; }
+
+		missilecount = (random[BishopDoBlur]() & blurrand) + blurnum; // Random number of blurs
+		if (random[BishopDoBlur]() <= 224)
+		{
+			if (random(1,2) == 1)
+			{
+				Thrust(thrustamt, Angle + 90);
+			}
+			else
+			{
+				Thrust(thrustamt, Angle - 90);
+			}
+		}
+		else
+		{
+			if (random(1,2) == 1)
+			{
+				// Thrust Backwards
+				Thrust(thrustamt, Angle - 180);
+			}
+			else
+			{
+				// Thrust forward
+				Thrust(thrustamt, Angle + 0);
+			}
+		}
+		A_StartSound("BishopBlur", CHAN_BODY);
+	}
+
+	void A_BishopSpawnBlur(int seestatechance = 96)
+	{
+		if (!--missilecount)
+		{
+			Vel.XY = (0,0);// = Vel.Y = 0;
+			if (random[BishopSpawnBlur]() > seestatechance)
+			{
+				SetState (SeeState);
+			}
+			else
+			{
+				SetState (MissileState);
+			}
+		}
+		Actor mo = Spawn ("BishopBlur", Pos, ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.angle = angle;
+		}
+	}
+
+	void A_BishopChase(int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0, int value6 = 0)
+	{
+		if (type == 0)
+		{
+			if (value1) value1 = 0;
+			if (value2) value2 = 0;
+			if (value3) value3 = 0;
+			if (value4) value4 = 0;
+			if (value5) value5 = 0;
+			if (value6) value6 = 0;
+		}
+		if (type == 1)
+		{
+			if (value1 <= 0) value1 = 3; // ticdecrement
+			if (value2 <= 0) value2 = 1; // speedtimerdecrement
+			if (value3 <= 0) value3 = 1; // lowcap
+
+			if (specialspeed1)
+			{
+				specialspeed1 -= value2;
+				tics -= value1;
+				if (tics < value3) tics = value3;
+				if (dydudebug_showactormoveinfo) Console.Printf("\cx(%s) (gametic: %d) [A_BishopChase]\c- specialspeed1: %d, ticdecrement: %d, speedtimerdecrement: %d, lowcap: %d \cytics: %d\c-", GetClassName(), gametic, specialspeed1, value1, value2, value3, tics);
+			}
+		}
+
+		double newz = pos.z - BobSin(bobstate) / 2.;
+		bobstate = (bobstate + 4) & 63;
+		newz += BobSin(bobstate) / 2.;
+		SetZ(newz);
+	}
+
+	void A_BishopPainBlur(int chance = 64, double xveldiv = 16.0, double yveldiv = 16.0, double zveldiv = 32.0)
+	{
+		if (random[BishopPainBlur]() <= chance)
+		{
+			SetStateLabel ("Blur");
+			return;
+		}
+		double xo = random2[BishopPainBlur]() / xveldiv;
+		double yo = random2[BishopPainBlur]() / yveldiv;
+		double zo = random2[BishopPainBlur]() / zveldiv;
+		Actor mo = Spawn ("BishopPainBlur", Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.angle = angle;
+		}
+	}
+
+	// Stalker
+	void A_SerpentUnHide()
+	{
+		bInvisible = false;
+		Floorclip = 24;
+	}
+	void A_SerpentHide()
+	{
+		bInvisible = true;
+		Floorclip = 0;
+	}
+
+	void A_SerpentRaiseHump()
+	{
+		Floorclip -= 4;
+	}
+	void A_SerpentLowerHump()
+	{
+		Floorclip += 4;
+	}
+	void A_SerpentHumpDecide()
+	{
+		if (MissileState != NULL)
+		{
+			if (random[SerpentHump]() > 30)
+			{
+				return;
+			}
+			else if (random[SerpentHump]() < 40)
+			{
+				// Missile attack
+				SetState (MeleeState);
+				return;
+			}
+		}
+		else if (random[SerpentHump]() > 3)
+		{
+			return;
+		}
+		if (!CheckMeleeRange ())
+		{
+			// The hump shouldn't occur when within melee range
+			if (MissileState != NULL && random[SerpentHump]() < 128)
+			{
+				SetState (MeleeState);
+			}
+			else
+			{
+				SetStateLabel("Hump");
+				A_StartSound("SerpentActive", CHAN_BODY);
+			}
+		}
+	}
+	
+	void A_SerpentCheckForAttack()
+	{
+		if (!target)
+		{
+			return;
+		}
+		if (MissileState != NULL)
+		{
+			if (!CheckMeleeRange ())
+			{
+				SetStateLabel ("Attack");
+				return;
+			}
+		}
+		if (CheckMeleeRange2 ())
+		{
+			SetStateLabel ("Walk");
+		}
+		else if (CheckMeleeRange ())
+		{
+			if (random[SerpentAttack]() < 32)
+			{
+				SetStateLabel ("Walk");
+			}
+			else
+			{
+				SetStateLabel ("Attack");
+			}
+		}
+	}
+
+	void A_SerpentChooseAttack()
+	{
+		if (!target || CheckMeleeRange())
+		{
+			return;
+		}
+		if (MissileState != NULL)
+		{
+			SetState (MissileState);
+		}
+	}
+
+	void A_SerpentMeleeAttack()
+	{
+		if (!target)
+		{
+			return;
+		}
+		if (CheckMeleeRange ())
+		{
+			int damage = random[SerpentAttack](1, 8) * 5;
+			int newdam = target.DamageMobj (self, self, damage, 'Melee');
+			target.TraceBleed (newdam > 0 ? newdam : damage, self);
+			A_StartSound("SerpentMeleeHit", CHAN_BODY);
+		}
+		if (random[SerpentAttack]() < 96)
+		{
+			A_SerpentCheckForAttack();
+		}
+	}
+
+	void A_SerpentSpawnGibs()
+	{
+		static const class<Actor> GibTypes[] =
+		{
+			"SerpentGib3",
+			"SerpentGib2",
+			"SerpentGib1"
+		};
+
+		for (int i = 2; i >= 0; --i)
+		{
+			double x = (random[SerpentGibs]() - 128) / 16.;
+			double y = (random[SerpentGibs]() - 128) / 16.;
+
+			Actor mo = Spawn (GibTypes[i], Vec2OffsetZ(x, y, floorz + 1), ALLOW_REPLACE);
+			if (mo)
+			{
+				mo.Vel.X = (random[SerpentGibs]() - 128) / 1024.f;
+				mo.Vel.Y = (random[SerpentGibs]() - 128) / 1024.f;
+				mo.Floorclip = 6;
+			}
+		}
+	}
+	
+	// Disciple
+	void A_GhostOff()
+	{
+		A_SetRenderStyle(1.0, STYLE_Normal);
+		bGhost = false;
+	}
+
+	void A_WizAtk1()
+	{
+		A_FaceTarget();
+		A_GhostOff();
+	}
+
+	void A_WizAtk2()
+	{
+		A_FaceTarget();
+		A_SetRenderStyle(HR_SHADOW, STYLE_Translucent);
+		bGHOST = true;
+	}
+
+	// Disciple Shot [Heretic]
+	void A_WizAtk3(string missiletype = "WizardFX1New", int meleedamage = 4)
+	{
+		A_GhostOff();
+		if (!target) return;
+		A_StartSound(AttackSound, CHAN_WEAPON);
+		if (CheckMeleeRange())
+		{
+			int damage = meleedamage;
+			int newdam = target.DamageMobj (self, self, damage, 'Melee');
+			target.TraceBleed (newdam > 0 ? newdam : damage, self);
+			return;
+		}
+		
+		Actor mo = SpawnMissile (target, missiletype);
+		if (mo != null)
+		{
+			SpawnMissileAngle(missiletype, mo.Angle - 45. / 8, mo.Vel.Z);
+			SpawnMissileAngle(missiletype, mo.Angle + 45. / 8, mo.Vel.Z);
+		}
+	}
+	
+	// Iron Lich
+	void A_LichAttack (int fireshots = 5, int tornados = 1, int meleedamage = 6, string icemissile = "HeadFX1New", string firemissile = "HeadFX3New", string twistermissile = "WhirlwindNew")
+	{
+		static const int atkResolve1[] = { 50, 150 };
+		static const int atkResolve2[] = { 150, 200 };
+
+		// Ice ball		(close 20% : far 60%)
+		// Fire column	(close 40% : far 20%)
+		// Whirlwind	(close 40% : far 20%)
+		// Distance threshold = 8 cells
+
+		if (target == null)
+		{
+			return;
+		}
+		A_FaceTarget();
+		if (CheckMeleeRange())
+		{
+			int damage = meleedamage;
+			int newdam = target.DamageMobj (self, self, damage, 'Melee');
+			target.TraceBleed (newdam > 0 ? newdam : damage, self);
+			return;
+		}
+		int dist = Distance2D(target) > 8 * 64;
+		int randAttack = random[LichAttack]();
+		if (randAttack < atkResolve1[dist])
+		{
+			// Ice ball
+			SpawnMissile (target, icemissile); 
+			A_StartSound("ironlich/attack2", CHAN_BODY);
+		}
+		else if (randAttack < atkResolve2[dist])
+		{
+			// Fire column
+			string firetype = firemissile;
+			Actor baseFire = SpawnMissile (target, firetype);
+			if (baseFire != null)
+			{
+				baseFire.SetStateLabel("NoGrow");
+				for (int i = 0; i < fireshots; i++)
+				{
+					Actor fire = Spawn(firetype, baseFire.Pos, ALLOW_REPLACE);
+					if (i == 0)
+					{
+						A_StartSound("ironlich/attack1", CHAN_BODY);
+					}
+					if (fire != null)
+					{
+						fire.target = baseFire.target;
+						fire.angle = baseFire.angle;
+						fire.Vel = baseFire.Vel;
+						fire.SetDamage(0);
+						fire.health = (i+1) * 2;
+						fire.CheckMissileSpawn (radius);
+					}
+				}
+			}
+		}
+		else
+		{
+			// Whirlwind
+			for (int i = 0; i < tornados; i++)
+			{
+				string twistertype = twistermissile;
+				Actor mo = SpawnMissile (target, twistertype);
+				if (mo != null)
+				{
+					mo.AddZ(-32+(i*16));
+					mo.tracer = target;
+					mo.health = 20*TICRATE; // Duration
+					A_StartSound("ironlich/attack3", CHAN_BODY);
+				}
+			}
+		}
+	}
+	
+	// Reiver
+	void A_WraithInit()
+	{
+		AddZ(48);
+
+		// [RH] Make sure the wraith didn't go into the ceiling
+		if (pos.z + height > ceilingz)
+		{
+			SetZ(ceilingz - Height);
+		}
+
+		WeaveIndexZ = 0;			// index into floatbob
+	}
+
+	void A_WraithChase(statelabel melee = '_a_chase_default', statelabel missile = '_a_chase_default', int flags = 0, int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0, int value6 = 0)
+	{
+		if (type == 0)
+		{
+			if (value1) value1 = 0;
+			if (value2) value2 = 0;
+			if (value3) value3 = 0;
+			if (value4) value4 = 0;
+			if (value5) value5 = 0;
+		}
+		if (type == 1)
+		{
+			if (value1 <= 0) value1 = 3; // ticdecrement
+			if (value2 <= 0) value2 = 1; // speedtimerdecrement
+			if (value3 <= 0) value3 = 1; // lowcap
+
+			if (specialspeed1)
+			{
+				specialspeed1 -= value2;
+				tics -= value1;
+				if (tics < value3) tics = value3;
+				if (dydudebug_showactormoveinfo) Console.Printf("\cx(%s) (gametic: %d) [A_WraithChase]\c- specialspeed1: %d, ticdecrement: %d, speedtimerdecrement: %d, lowcap: %d \cytics: %d\c-", GetClassName(), gametic, specialspeed1, value1, value2, value3, tics);
+			}
+		}
+		
+		int weaveindex = WeaveIndexZ;
+		AddZ(BobSin(weaveindex));
+		WeaveIndexZ = (weaveindex + 2) & 63;
+		A_Chase(melee,missile,flags);
+		A_WraithFX4 ();
+	}
+
+	void A_WraithFX3()
+	{
+		int numdropped = random[WraithFX3](0,14);
+
+		while (numdropped-- > 0)
+		{
+			double xo = (random[WraithFX3]() - 128) / 32.;
+			double yo = (random[WraithFX3]() - 128) / 32.;
+			double zo = random[WraithFX3]() / 64.;
+
+			Actor mo = Spawn("WraithFX3", Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+			if (mo)
+			{
+				mo.floorz = floorz;
+				mo.ceilingz = ceilingz;
+				mo.target = self;
+			}
+		}
+	}
+
+	void A_WraithFX4 ()
+	{
+		int chance = random[WraithFX4]();
+		bool spawn4, spawn5;
+
+		if (chance < 10)
+		{
+			spawn4 = true;
+			spawn5 = false;
+		}
+		else if (chance < 20)
+		{
+			spawn4 = false;
+			spawn5 = true;
+		}
+		else if (chance < 25)
+		{
+			spawn4 = true;
+			spawn5 = true;
+		}
+		else
+		{
+			spawn4 = false;
+			spawn5 = false;
+		}
+
+		if (spawn4)
+		{
+			double xo = (random[WraithFX4]() - 128) / 16.;
+			double yo = (random[WraithFX4]() - 128) / 16.;
+			double zo = (random[WraithFX4]() / 64.);
+
+			Actor mo = Spawn ("WraithFX4", Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+			if (mo)
+			{
+				mo.floorz = floorz;
+				mo.ceilingz = ceilingz;
+				mo.target = self;
+			}
+		}
+		if (spawn5)
+		{
+			double xo = (random[WraithFX4]() - 128) / 32.;
+			double yo = (random[WraithFX4]() - 128) / 32.;
+			double zo = (random[WraithFX4]() / 64.);
+
+			Actor mo = Spawn ("WraithFX5", Vec3Offset(xo, yo, zo), ALLOW_REPLACE);
+			if (mo)
+			{
+				mo.floorz = floorz;
+				mo.ceilingz = ceilingz;
+				mo.target = self;
+			}
+		}
+	}
+	
+	void A_WraithMelee(int drainamount)
+	{
+		int maxdrain;
+		if (drainamount == 0) drainamount = random[StealHealth](1,8)*2;
+
+		if (user_MaxHP <= 0) maxdrain = spawnhealth(); else maxdrain = user_MaxHP;
+		// Steal health from target and give to self
+		if (CheckMeleeRange() && (random[StealHealth]() < maxdrain))
+		{
+			int amount = drainamount;
+			amount = target.DamageMobj (self, self, amount, 'Melee');
+			if (health < maxdrain && target.bINVULNERABLE == 0)
+			{
+				health += (amount * frandom(0.45,0.65));
+				health = clamp(health, health, maxdrain);
+			}
+		}
+	}
+
+	void A_WraithRaiseInit()
+	{
+		bInvisible = false;
+		bNonShootable = false;
+		bDontBlast = false;
+		bShootable = true;
+		bSolid = true;
+		Floorclip = Height;
+	}
+
+	void A_WraithRaise()
+	{
+		if (RaiseMobj (2))
+		{
+			// Reached it's target height
+			// [RH] Once a buried wraith is fully raised, it should be
+			// morphable, right?
+			bDontMorph = false;
+			bSpecialFloorClip = false;
+			SetStateLabel ("Chase");
+			// [RH] Reset PainChance to a normal wraith's.
+			PainChance = GetDefaultByType("Wraith").PainChance;
+		}
+
+		SpawnDirt (radius);
+	}
 
 	// Wendigo
 	private void SpawnWisp()
@@ -4531,6 +5663,277 @@ class KCCreature : KCBaseZSC
 		SpawnMissileXYZ(Vec3Angle(radius / 2, angle + 90, 40.), target, specialmissile);
 		SpawnMissileXYZ(Vec3Angle(radius / 2, angle - 90, 40.), target, specialmissile);
 		A_StartSound(AttackSound, CHAN_WEAPON);
+	}
+	
+	// Death Wyvern
+	private void DragonSeek (double thresh, double turnMax, int meleedamage, string missiletype = "DragonFireball")
+	{
+		double dist;
+		double delta;
+		Actor targ;
+		int i;
+		double bestAngle;
+		double angleToSpot, angleToTarget;
+		Actor mo;
+
+		targ = tracer;
+		if (targ == null)
+		{
+			return;
+		}
+
+		double diff = deltaangle(angle, AngleTo(targ));
+		delta = abs(diff);
+
+		if (delta > thresh)
+		{
+			delta /= 2;
+			if (delta > turnMax)
+			{
+				delta = turnMax;
+			}
+		}
+		if (diff > 0)
+		{
+			// Turn clockwise
+			angle = angle + delta;
+		}
+		else
+		{
+			// Turn counter clockwise
+			angle = angle - delta;
+		}
+		VelFromAngle();
+
+		dist = DistanceBySpeed(targ, Speed);
+		if (pos.z + height < targ.pos.z || targ.pos.z + targ.height < pos.z)
+		{
+			Vel.Z = (targ.pos.z - pos.z) / dist;
+		}
+		if (targ.bShootable && random[DragonSeek]() < 64)
+		{
+			// attack the destination mobj if it's attackable
+			Actor oldTarget;
+			
+			if (absangle(angle, AngleTo(targ)) < 22.5)
+			{
+				oldTarget = target;
+				target = targ;
+				if (CheckMeleeRange ())
+				{
+					int basedmg = meleedamage;
+
+					int damage = basedmg;
+					int newdam = target.DamageMobj (self, self, damage, 'Melee');
+					target.TraceBleed (newdam > 0 ? newdam : damage, self);
+					A_StartSound(AttackSound, CHAN_WEAPON);
+				}
+				else if (random[DragonSeek]() < 128 && CheckMissileRange())
+				{
+					string atktype = missiletype;
+					SpawnMissile(targ, atktype);		
+					A_StartSound(AttackSound, CHAN_WEAPON);
+				}
+				target = oldTarget;
+			}
+		}
+		if (dist < 4)
+		{
+			// Hit the target thing
+			if (target && random[DragonSeek]() < 200)
+			{
+				Actor bestActor = null;
+				bestAngle = 360.;
+				angleToTarget = AngleTo(target);
+				for (i = 0; i < 5; i++)
+				{
+					if (!targ.args[i])
+					{
+						continue;
+					}
+					ActorIterator iter = Level.CreateActorIterator(targ.args[i]);
+					mo = iter.Next ();
+					if (mo == null)
+					{
+						continue;
+					}
+					angleToSpot = AngleTo(mo);
+					double diff = absangle(angleToSpot, angleToTarget);
+					if (diff < bestAngle)
+					{
+						bestAngle = diff;
+						bestActor = mo;
+					}
+				}
+				if (bestActor != null)
+				{
+					tracer = bestActor;
+				}
+			}
+			else
+			{
+				// [RH] Don't lock up if the dragon doesn't have any
+				// targs defined
+				for (i = 0; i < 5; ++i)
+				{
+					if (targ.args[i] != 0)
+					{
+						break;
+					}
+				}
+				if (i < 5)
+				{
+					do
+					{
+						i = (random[DragonSeek]() >> 2) % 5;
+					} while(!targ.args[i]);
+					ActorIterator iter = Level.CreateActorIterator(targ.args[i]);
+					tracer = iter.Next ();
+				}
+			}
+		}
+	}
+	
+	void A_DragonInitFlight()
+	{
+		ActorIterator iter = Level.CreateActorIterator(tid);
+		
+		do
+		{
+			// find the first tid identical to the dragon's tid
+			tracer = iter.Next();
+			if (tracer == null)
+			{
+				SetState (SpawnState);
+				return;
+			}
+		} while (tracer == self);
+		RemoveFromHash();
+	}
+
+	void A_DragonFlight(double thresh = 4., double turnMax = 8., int meleedamage = 10, string missiletype = "DragonFireball")
+	{
+		double ang;
+
+		DragonSeek (thresh, turnMax, meleedamage, missiletype);
+		if (target)
+		{
+			if (!target.bShootable)
+			{
+				// target died
+				target = null;
+				return;
+			}
+			ang = absangle(angle, AngleTo(target));
+			if (ang < 22.5 && CheckMeleeRange())
+			{
+				int basedmg = meleedamage;
+
+				int damage = basedmg;
+				int newdam = target.DamageMobj (self, self, damage, 'Melee');
+				target.TraceBleed (newdam > 0 ? newdam : damage, self);
+				A_StartSound(AttackSound, CHAN_WEAPON);
+			}
+			else if (ang <= 20)
+			{
+				SetState(MissileState);
+				A_StartSound(AttackSound, CHAN_WEAPON);
+			}
+		}
+		else
+		{
+			LookForPlayers(true);
+		}
+	}
+
+	void A_DragonFlap(double thresh = 4., double turnMax = 8., int meleedamage = 10, string missiletype = "DragonFireball")
+	{
+		A_DragonFlight(thresh,turnMax,meleedamage,missiletype);
+		if (random[DragonFlight]() < 240)
+		{
+			A_StartSound("DragonWingflap", CHAN_BODY);
+		}
+		else
+		{
+			PlayActiveSound ();
+		}
+	}
+
+	void A_DragonAttack(string missiletype = "DragonFireball", double angle = 0.0)
+	{
+		string atktype = missiletype;
+		Actor mo = SpawnMissile (target, atktype);
+		if (mo != null && kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90)
+		{
+			SpawnMissileAngle(atktype, mo.Angle - 45. / 8, mo.Vel.Z);
+			SpawnMissileAngle(atktype, mo.Angle + 45. / 8, mo.Vel.Z);
+		}
+	}
+
+	void A_DragonPain()
+	{
+		A_Pain();
+		if (!tracer)
+		{
+			// no destination spot yet
+			SetState (SeeState);
+		}
+	}
+
+	void A_DragonCheckCrash()
+	{
+		if (pos.z <= floorz)
+		{
+			SetStateLabel ("Crash");
+		}
+	}
+	
+	// Traductus
+	void A_ClericAttack(string missiletype = "HolyMissile")
+	{
+		string atktype = missiletype;
+		if (!target) return;
+		
+		Actor missile = SpawnMissileZ (pos.z + 40., target, atktype);
+		if (missile != null) missile.tracer = null;	// No initial target
+		A_StartSound("HolySymbolFire", CHAN_WEAPON);
+	}
+	
+	// Menelkir	
+	void MStaffSpawn2 (double angle, string missiletype = "MageStaffFX2")
+	{
+		string atktype = missiletype;
+
+		Actor mo = SpawnMissileAngleZ (pos.z + 40, atktype, angle, 0.);
+		if (mo)
+		{
+			mo.target = self;
+			mo.tracer = RoughMonsterSearch(10, true, true);
+		}
+	}
+	void A_MageAttack(string missiletype = "MageStaffFX2")
+	{
+		if (!target) return;
+		
+		MStaffSpawn2(angle,missiletype);
+		MStaffSpawn2(angle-5,missiletype);
+		MStaffSpawn2(angle+5,missiletype);
+		A_StartSound("MageStaffFire", CHAN_WEAPON);
+	}
+
+	// Zedek
+	void A_FighterAttack(string missiletype = "FSwordMissile")
+	{
+		string atktype = missiletype;
+
+		if (!target) return;
+
+		SpawnMissileAngle(atktype, Angle + (45. / 4), 0);
+		SpawnMissileAngle(atktype, Angle + (45. / 8), 0);
+		SpawnMissileAngle(atktype, Angle, 0);
+		SpawnMissileAngle(atktype, Angle - (45. / 8), 0);
+		SpawnMissileAngle(atktype, Angle - (45. / 4), 0);
+		A_StartSound("FighterSwordFire", CHAN_WEAPON);
 	}
 }
 
