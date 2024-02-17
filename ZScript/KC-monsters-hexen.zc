@@ -1,5 +1,5 @@
 // Hexen
-class PigNew : KCCreature replaces Pig
+class PigNew : KCCreature // replaces Pig
 {
 	default
 	{
@@ -175,7 +175,7 @@ class FireDemonNew : KCCreature // replaces FireDemon
 				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
 
 				A_StartSound("FireDemonAttack");
-				A_SpawnProjectile("FireDemonMissile",32);
+				A_SpawnProjectile("FireDemonMissileNew",32);
 			}
 			Goto Chase;
 		Crash:
@@ -778,7 +778,7 @@ class FireDemonQueenSplotch2 : FireDemonQueenSplotch1
 			Stop;
 	}
 }
-class FireDemonMissileNew : KCProjectile replaces FireDemonMissile
+class FireDemonMissileNew : KCProjectile // replaces FireDemonMissile
 {
 	default
 	{
@@ -1237,7 +1237,7 @@ class EttinNew : KCCreature // replaces Ettin
 			Goto See;
 	}
 }
-class EttinGhostNew : EttinNew replaces EttinMash
+class EttinGhostNew : EttinNew // replaces EttinMash
 {
 	default
 	{
@@ -2217,7 +2217,7 @@ class FirePillarShot2 : FirePillarShot	//this one wont have light definition
 		Alpha 0.6;
 	}
 }
-class CentaurNew : KCCreature replaces Centaur
+class CentaurNew : KCCreature // replaces Centaur
 {
 	default
 	{
@@ -2403,7 +2403,7 @@ class CentaurNew : KCCreature replaces Centaur
 			Goto See;
 	}
 }
-class CentaurGhostNew : CentaurNew replaces CentaurMash
+class CentaurGhostNew : CentaurNew // replaces CentaurMash
 {
 	default
 	{
@@ -2429,7 +2429,7 @@ class CentaurGhostNew : CentaurNew replaces CentaurMash
 			Stop;
 	}
 }
-class SlaughtaurNew : CentaurNew replaces CentaurLeader
+class SlaughtaurNew : CentaurNew //replaces CentaurLeader
 {
 	default
 	{
@@ -2628,7 +2628,7 @@ class SlaughtaurNew : CentaurNew replaces CentaurLeader
 			Goto See;
 	}
 }
-class CentaurFXNew : KCProjectile replaces CentaurFX
+class CentaurFXNew : KCProjectile // replaces CentaurFX
 {
 	default
 	{
@@ -4379,7 +4379,7 @@ class StalkerLeaderNew : StalkerNew // replaces SerpentLeader
 			Goto Dive;
 	}
 }
-class SerpentFXNew : KCProjectile replaces SerpentFX
+class SerpentFXNew : KCProjectile // replaces SerpentFX
 {
 	default
 	{
@@ -4946,7 +4946,7 @@ class EtherealBloodRedParticle : EtherealBloodPurpleParticle
 			Loop;
 	}
 }
-class BishopNew : KCCreature replaces Bishop
+class BishopNew : KCCreature // replaces Bishop
 {
 	default
 	{
@@ -5128,7 +5128,7 @@ class BishopFXNew : KCProjectile
 			Stop;
 	}
 }
-class BishopFXNew2 : BishopFXNew replaces BishopFX
+class BishopFXNew2 : BishopFXNew // replaces BishopFX
 {
 	default
 	{
@@ -6711,7 +6711,7 @@ class DPFX1 : KCBaseZSC
 			Loop; 
 	}
 }
-class WraithNew : KCCreature replaces Wraith
+class WraithNew : KCCreature // replaces Wraith
 {
 	default
 	{
@@ -6848,7 +6848,7 @@ class WraithNew : KCCreature replaces Wraith
 			goto See;
 	}
 }
-class WraithBuriedNew : WraithNew replaces WraithBuried
+class WraithBuriedNew : WraithNew // replaces WraithBuried
 {
 	default
 	{
@@ -6888,7 +6888,7 @@ class WraithBuriedNew : WraithNew replaces WraithBuried
 			Loop;
 	}
 }
-class WraithFX1New : KCProjectile replaces WraithFX1
+class WraithFX1New : KCProjectile // replaces WraithFX1
 {
 	default
 	{
@@ -6928,7 +6928,7 @@ class WraithFX1New : KCProjectile replaces WraithFX1
 			Stop;
 	}
 }
-class DragonNew : KCCreature replaces Dragon
+class DragonNew : KCCreature // replaces Dragon
 {
 	default
 	{
@@ -7025,7 +7025,7 @@ class DragonNew : KCCreature replaces Dragon
 			Stop;
 	}
 }
-class DragonFireballNew : KCProjectile replaces DragonFireball
+class DragonFireballNew : KCProjectile // replaces DragonFireball
 {
 	default
 	{
@@ -7057,7 +7057,7 @@ class DragonFireballNew : KCProjectile replaces DragonFireball
 			Stop;
   }
 }
-class DragonExplosionNew : KCProjectile replaces DragonExplosion
+class DragonExplosionNew : KCProjectile // replaces DragonExplosion
 {
 	default
 	{
@@ -8420,7 +8420,7 @@ class HeresiarchNew : KCUniqueBoss // replaces Heresiarch
 		}
 	}
 }
-class ClericBossNew : KCCreature replaces ClericBoss
+class ClericBossNew : KCCreature // replaces ClericBoss
 {
 	default
 	{
@@ -8552,7 +8552,7 @@ class ClericBossNew : KCCreature replaces ClericBoss
 			Stop;
 	}
 }
-class HolyMissileNew : KCProjectile replaces HolyMissile
+class HolyMissileNew : KCProjectile // replaces HolyMissile
 {
 	default
 	{
@@ -8854,7 +8854,7 @@ class HolySpiritNew : KCProjectile // replaces HolySpirit
 		}
 	}
 }
-class FighterBossNew : KCCreature replaces FighterBoss
+class FighterBossNew : KCCreature // replaces FighterBoss
 {
 	default
 	{
@@ -8985,7 +8985,7 @@ class FighterBossNew : KCCreature replaces FighterBoss
 			Stop;
 	}
 }
-class FSwordMissileNew : KCProjectile replaces FSwordMissile
+class FSwordMissileNew : KCProjectile // replaces FSwordMissile
 {
 	default
 	{
@@ -9019,7 +9019,7 @@ class FSwordMissileNew : KCProjectile replaces FSwordMissile
 			Stop;
 	}
 }
-class MageBossNew : KCCreature replaces MageBoss
+class MageBossNew : KCCreature // replaces MageBoss
 {
 	default
 	{
@@ -9154,7 +9154,7 @@ class MageBossNew : KCCreature replaces MageBoss
 			Stop;
 	}
 }
-class MageStaffFX2New : KCProjectile replaces MageStaffFX2
+class MageStaffFX2New : KCProjectile // replaces MageStaffFX2
 {
 	default
 	{
