@@ -1,4 +1,4 @@
-class KCScriptedMarine : KCCreature replaces ScriptedMarine
+class KCScriptedMarine : KCCreature // replaces ScriptedMarine
 {
 	const MARINE_PAIN_CHANCE = 160;
 
@@ -656,8 +656,7 @@ class KCScriptedMarine : KCCreature replaces ScriptedMarine
 		}
 	}
 }
-
-class KCMarineFist : KCScriptedMarine replaces MarineFist
+class KCMarineFist : KCScriptedMarine // replaces MarineFist
 {
 	default
 	{
@@ -672,8 +671,7 @@ class KCMarineFist : KCScriptedMarine replaces MarineFist
 			Stop;
 	}
 }
-
-class KCMarineBerserk : KCMarineFist replaces MarineBerserk
+class KCMarineBerserk : KCMarineFist // replaces MarineBerserk
 {
 	default
 	{
@@ -688,8 +686,7 @@ class KCMarineBerserk : KCMarineFist replaces MarineBerserk
 			Stop;
 	}
 }
-
-class KCMarineChainsaw : KCScriptedMarine replaces MarineChainsaw
+class KCMarineChainsaw : KCScriptedMarine // replaces MarineChainsaw
 {
 	default
 	{
@@ -704,8 +701,7 @@ class KCMarineChainsaw : KCScriptedMarine replaces MarineChainsaw
 			Stop;
 	}
 }
-
-class KCMarinePistol : KCScriptedMarine replaces MarinePistol
+class KCMarinePistol : KCScriptedMarine // replaces MarinePistol
 {
 	default
 	{
@@ -718,8 +714,7 @@ class KCMarinePistol : KCScriptedMarine replaces MarinePistol
 			Goto Super::Missile.Pistol;
 	}
 }
-
-class KCMarineShotgun : KCScriptedMarine replaces MarineShotgun
+class KCMarineShotgun : KCScriptedMarine // replaces MarineShotgun
 {
 	default
 	{
@@ -732,8 +727,7 @@ class KCMarineShotgun : KCScriptedMarine replaces MarineShotgun
 			Goto Super::Missile.Shotgun;
 	}
 }
-
-class KCMarineSSG : KCScriptedMarine replaces MarineSSG
+class KCMarineSSG : KCScriptedMarine // replaces MarineSSG
 {
 	default
 	{
@@ -746,8 +740,7 @@ class KCMarineSSG : KCScriptedMarine replaces MarineSSG
 			Goto Super::Missile.SSG;
 	}
 }
-
-class KCMarineChaingun : KCScriptedMarine replaces MarineChaingun
+class KCMarineChaingun : KCScriptedMarine // replaces MarineChaingun
 {
 	default
 	{
@@ -760,8 +753,7 @@ class KCMarineChaingun : KCScriptedMarine replaces MarineChaingun
 			Goto Super::Missile.Chaingun;
 	}
 }
-
-class KCMarineRocket : KCMarineFist replaces MarineRocket
+class KCMarineRocket : KCMarineFist // replaces MarineRocket
 {
 	default
 	{
@@ -774,8 +766,7 @@ class KCMarineRocket : KCMarineFist replaces MarineRocket
 			Goto Super::Missile.Rocket;
 	}
 }
-
-class KCMarinePlasma : KCScriptedMarine replaces MarinePlasma
+class KCMarinePlasma : KCScriptedMarine // replaces MarinePlasma
 {
 	default
 	{
@@ -788,8 +779,7 @@ class KCMarinePlasma : KCScriptedMarine replaces MarinePlasma
 			Goto Super::Missile.Plasma;
 	}
 }
-
-class KCMarineRailgun : KCScriptedMarine replaces MarineRailgun
+class KCMarineRailgun : KCScriptedMarine // replaces MarineRailgun
 {
 	default
 	{
@@ -802,8 +792,7 @@ class KCMarineRailgun : KCScriptedMarine replaces MarineRailgun
 			Goto Super::Missile.Railgun;
 	}
 }
-
-class KCMarineBFG : KCScriptedMarine replaces MarineBFG
+class KCMarineBFG : KCScriptedMarine // replaces MarineBFG
 {
 	default
 	{
@@ -814,6 +803,14 @@ class KCMarineBFG : KCScriptedMarine replaces MarineBFG
 	{
 		Missile:
 			Goto Super::Missile.BFG;
+	}
+}
+class BulletPuffNew : BulletPuff // replaces BulletPuff
+{
+	default
+	{
+		Tag "Shot";
+		+PUFFGETSOWNER
 	}
 }
 

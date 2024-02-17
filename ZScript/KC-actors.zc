@@ -361,6 +361,18 @@ class KCBaseZSC : Actor
 	}
 }
 
+class KCSpawnedItem : KCBaseZSC abstract
+{
+	override void PostBeginPlay()
+	{
+		basealpha = alpha;
+		if (GetClassName() == "DSFX3") basealpha *= 0.90;
+
+		//This space for rent.
+		super.PostBeginPlay(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
+	}
+}
+
 class KCAfterimageZSC : KCBaseZSC abstract
 {
 	override void Tick()
