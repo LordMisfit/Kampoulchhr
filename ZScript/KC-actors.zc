@@ -1517,6 +1517,34 @@ class KCProjectile : KCBaseZSC
 		Pitch = clamp(Pitch + random(-maxPitch, maxPitch), -90., 90.);
 		Vel3DFromAngle(curSpeed, Angle, Pitch);
 	}
+	
+	void A_MntrFloorFire(string missiletype = "MinotaurFX3")
+	{
+		SetZ(floorz);
+		double x = Random2[MntrFloorFire]() / 64.;
+		double y = Random2[MntrFloorFire]() / 64.;
+		
+		Actor mo = Spawn(missiletype, Vec2OffsetZ(x, y, floorz), ALLOW_REPLACE);
+		if (mo != null)
+		{
+			mo.target = target;
+			mo.Vel.X = MinVel; // Force block checking
+			mo.CheckMissileSpawn (radius);
+		}
+	}
+	
+	// Wendigo/IceLich Balls
+	void A_IceGuyMissileExplode(string missiletype = "IceGuyFX2", int numshots = 8, double pitch = -0.3)
+	{
+		for (int i = 0; i < numshots; i++)
+		{
+			Actor mo = SpawnMissileAngleZ (pos.z+3, missiletype, i*45., pitch);
+			if (mo)
+			{
+				mo.target = target;
+			}
+		}
+	}
 	//
 	//
 	//
@@ -4439,6 +4467,70 @@ class KCCreature : KCBaseZSC
 			if (random(1,chancemax) <= chance) { SetStateLabel(tele); }
 			if (kcdebug_monsterspecialai) Console.Printf("HSTele: Target - %s (%d / %d)", target.GetClassName(), chance, chancemax);
 		}
+	}
+	
+
+	// Wendigo
+	private void SpawnWisp()
+	{
+		static const class<Actor> WispTypes[] = { "IceGuyWisp1", "IceGuyWisp2" };
+
+		double dist = (random[IceGuyLook]() - 128) * radius / 128.;
+		double an = angle + 90;
+		Actor mo = Spawn(WispTypes[random[IceGuyLook]() & 1], Vec3Angle(dist, an, 60.), ALLOW_REPLACE);
+		if (mo)
+		{
+			mo.Vel = Vel;
+			mo.target = self;
+		}
+	}
+
+	void A_IceGuyLook()
+	{
+		A_Look();
+		if (random[IceGuyLook]() < 64) SpawnWisp();
+	}
+
+	void A_IceGuyChase(statelabel melee = '_a_chase_default', statelabel missile = '_a_chase_default', int flags = 0, int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0, int value6 = 0)
+	{
+		if (type == 0)
+		{
+			if (value1) value1 = 0;
+			if (value2) value2 = 0;
+			if (value3) value3 = 0;
+			if (value4) value4 = 0;
+			if (value5) value5 = 0;
+		}
+		if (type == 1)
+		{
+			if (value1 <= 0) value1 = 3; // ticdecrement
+			if (value2 <= 0) value2 = 1; // speedtimerdecrement
+			if (value3 <= 0) value3 = 1; // lowcap
+
+			if (specialspeed1)
+			{
+				specialspeed1 -= value2;
+				tics -= value1;
+				if (tics < value3) tics = value3;
+				if (dydudebug_showactormoveinfo) Console.Printf("\cx(%s) (gametic: %d) [A_IceGuyChase]\c- specialspeed1: %d, ticdecrement: %d, speedtimerdecrement: %d, lowcap: %d \cytics: %d\c-", GetClassName(), gametic, specialspeed1, value1, value2, value3, tics);
+			}
+		}
+		
+		A_Chase(melee,missile,flags);
+		if (random[IceGuyLook]() < 128) SpawnWisp();
+	}
+
+	void A_IceGuyAttack(string missiletype = "IceGuyFXNew")
+	{
+		if (!target) 
+		{
+			return;
+		}
+		string specialmissile = missiletype;
+
+		SpawnMissileXYZ(Vec3Angle(radius / 2, angle + 90, 40.), target, specialmissile);
+		SpawnMissileXYZ(Vec3Angle(radius / 2, angle - 90, 40.), target, specialmissile);
+		A_StartSound(AttackSound, CHAN_WEAPON);
 	}
 }
 
