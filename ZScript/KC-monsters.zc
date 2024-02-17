@@ -1442,12 +1442,1142 @@ class Sorcerer2FX2New : KCProjectile replaces Sorcerer2FX2
 	}
 }
 // Hexen
-class PigNew : KCCreature { } // Filler for later implementation
-class FireDemonNew : KCCreature { } // Filler for later implementation
-class FireDemonLeader : KCCreature { } // Filler for later implementation
-class FireDemonCommander : KCCreature { } // Filler for later implementation
-class FireDemonQueen : KCCreature { } // Filler for later implementation
-class FireDemonQueenClone : KCCreature { } // Filler for later implementation
+class PigNew : KCCreature replaces Pig
+{
+	default
+	{
+		Tag "Pig";
+		Health 25;
+		Painchance 128;
+		Painchance "Fist", 192; // Fist attacks have a +50% chance of stunning an enemy
+		Painchance "Kick", 255; // Kick attacks have a +150% chance of stunning an enemy
+		DamageFactor 0.5;
+		RadiusDamageFactor 0.5;
+		DamageFactor "Explosion", 0.5;
+		Speed 10;
+		Radius 12;
+		Height 22;
+		Mass 60;
+		Monster;
+		-COUNTKILL;
+		+WINDTHRUST;
+		+DONTMORPH;
+		SeeSound "PigActive1";
+		PainSound "PigPain";
+		DeathSound "PigDeath";
+		ActiveSound "PigActive1";
+	}
+	
+	States
+	{
+		Spawn:
+			PIGY B 0 NoDelay;
+			PIGY B 10 A_Look();
+			goto Spawn+1;
+		See:
+			PIGY A 0;
+			PIGY ABCD 3
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+			}
+			Loop;
+		Melee:
+			TNT1 A 0;
+			PIGY A 5 A_FaceTarget();
+			PIGY A 10 
+			{
+				A_FaceTarget();
+				
+				A_CustomMeleeAttack(random[PigAttack](2, 3), "PigAttack");
+			}
+			Goto See;
+		Pain:
+			PIGY D 4 A_PigPain();
+			Goto See;
+		Death:
+			PIGY E 4 A_Scream();
+			PIGY F 3 A_NoBlocking();
+			PIGY G 4 A_QueueCorpse();
+			PIGY H 3;
+			PIGY IJK 4; 
+			PIGY L -1;
+			Stop;
+		Ice:
+			PIGY M 5 A_FreezeDeath();
+			PIGY M 1 A_FreezeDeathChunks();
+			Wait;
+	}
+}
+
+class FireDemonNew : KCCreature // replaces FireDemon
+{
+	int user_firedemonchase;
+	default
+	{
+		Tag "Afrit";
+		Health 80;
+		ReactionTime 8;
+		PainChance 1;
+		Painchance "Fist", 32;
+		Painchance "Kick", 80; // Kick attacks have a +150% chance of stunning an enemy
+		Tag "Afrit";
+		PainChance 1;
+		DamageFactor "Fire", 0.1;
+		Painchance "Fire", 0;
+		DamageFactor "CherryBomb", 0.55;
+		Painchance "CherryBomb", 0;
+		DamageFactor "Bonk", 1.25;
+		Painchance "Bonk", 1;
+		DamageFactor "Cricket", 1.5;
+		Painchance "Cricket", 2;
+		DamageFactor "Lead", 2.0;
+		Painchance "Lead", 2;
+		DamageFactor "Chop", 1.75;
+		Painchance "Chop", 2;
+		DamageFactor "Breakfast", 0.125;
+		Painchance "Breakfast", 0;
+		DamageFactor "Suck", 2.50;
+		Painchance "Suck", 3;
+		DamageFactor "Dust", 0.25;
+		Painchance "Dust", 0;
+		DamageFactor "BRocket", 2;
+		Painchance "BRocket", 2;
+		DamageFactor "Popper", 1;
+		Painchance "Popper", 1;
+		DamageFactor "Spinner", 2;
+		Painchance "Spinner", 2;
+		DamageFactor "Beats", 1.5;
+		Painchance "Beats", 24;
+		Speed 13;
+		Radius 20;
+		Height 68;
+		Mass 75;
+		Damage 1;
+		Monster;
+		+DROPOFF;
+		+NOGRAVITY;
+		+FLOAT;
+		+FLOORCLIP;
+		+INVULNERABLE;
+		+TELESTOMP;
+		+LOOKALLAROUND;
+		+DONTHARMSPECIES;
+		Species "Afrit";
+		SeeSound "FireDemonSpawn";
+		PainSound "FireDemonPain";
+		DeathSound "FireDemonDeath";
+		ActiveSound "FireDemonActive";
+		Obituary "$OB_FIREDEMON"; // "%o tasted an Afrit's fire.";
+	}
+	
+	States
+	{
+		Spawn:
+			FDMN X 0 NoDelay;
+			FDMN X 5 Bright;
+			FDMN EFG 10 Bright A_FloatLook(16);
+			Goto Spawn+3;
+		See:
+			FDMN E 0;
+			FDMN E 8 Bright;
+			FDMN F 6 Bright;
+			FDMN G 5 Bright;
+			FDMN F 8 Bright;
+			FDMN E 6 Bright;
+			FDMN G 7 Bright A_FiredRocks();
+			FDMN HI 5 Bright;
+			FDMN J 5 Bright A_UnSetInvulnerable();
+		Chase:
+			FDMN ABC 5 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				A_FireDChase(32,4,20,13,1,1,3,1);
+			}
+			Loop;
+		Pain:
+			FDMN D 0 Bright A_UnSetInvulnerable();
+			FDMN D 6 Bright A_KCPain();
+			Goto Chase;
+		Missile:
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			FDMN K 3 Bright 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				A_FaceTarget();
+			}
+			FDMN KKK 5 Bright 
+			{
+				A_CheckIfTargetDead("Chase");
+
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+
+				A_StartSound("FireDemonAttack");
+				A_SpawnProjectile("FireDemonMissile",32);
+			}
+			Goto Chase;
+		Crash:
+			FDMN M 5 A_FaceTarget();
+			FDMN N 5 A_NoBlocking();
+			FDMN O 5 A_FiredSplotch();
+			Stop;
+		XDeath:
+			FDMN M 5 A_FaceTarget();
+			FDMN N 5 A_NoBlocking();
+			FDMN O 5 A_FiredSplotch();
+			Stop;
+
+		Death:
+			FDMN D 4 Bright A_FaceTarget();
+			FDMN L 4 Bright A_Scream();
+			FDMN L 4 Bright A_NoBlocking();
+			FDMN L 200 Bright;
+			Stop;
+		Ice:
+			FDMN R 5 A_FreezeDeath();
+			FDMN R 1 A_FreezeDeathChunks();
+			Wait;
+		Raise:
+			FDMN L 4;
+			FDMN LD 4;
+			Goto Chase;
+	}
+}
+class FireDemonLeader : FireDemonNew
+{
+	default
+	{
+		Tag "Afrit Leader";
+		Health 160;
+		ReactionTime 8;
+		PainChance 1;
+		Painchance "Fist", 32;
+		Painchance "Kick", 80; // Kick attacks have a +150% chance of stunning an enemy
+		DamageFactor "Fire", 0.20;
+		DamageFactor "Ice", 5;
+		Speed 7;
+		Radius 20;
+		Height 56;
+		Mass 100;
+		Damage 1;
+		Monster;
+		+DROPOFF;
+		+NOGRAVITY;
+		+FLOAT;
+		+FLOORCLIP;
+		+INVULNERABLE;
+		+TELESTOMP;
+		+LOOKALLAROUND;
+		MinMissileChance 400;
+		Species "Afrit";
+		SeeSound "FireDemonSpawn";
+		PainSound "FireDemonPain";
+		DeathSound "FireDemonDeath";
+		ActiveSound "FireDemonActive";
+		Obituary "%o tasted an Afrit Leader's fire.";
+	}
+	
+	States
+	{
+		Spawn:
+			FDNL X 0 NoDelay;
+			FDNL X 5 Bright;
+			FDNL EFG 10 Bright A_Look();
+			Goto Spawn+3;
+		See:
+			FDNL E 8 Bright;
+			FDNL F 6 Bright;
+			FDNL G 5 Bright;
+			FDNL F 8 Bright;
+			FDNL E 6 Bright;
+			FDNL G 7 Bright A_FiredRocks();
+			FDNL HI 5 Bright;
+			FDNL J 5 Bright A_UnSetInvulnerable();
+		Chase:
+			FDNL A 0 Bright A_UnSetInvulnerable();
+			FDNL AABBCC 3 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				A_FireDChase(40,8,15,10,1,1,3,1);
+			}
+			Loop;
+		Pain:
+			FDNL D 0 Bright A_UnSetInvulnerable();
+			FDNL D 3 Bright A_KCPain();
+			Goto Chase;
+		Pain.Fist:
+			FDNL D 0 Bright A_UnSetInvulnerable();
+			FDNL D 3 Bright A_KCPain();
+			FDNL DD 3 Bright;
+			Goto Chase;
+		Pain.Kick:
+			FDNL D 0 Bright A_UnSetInvulnerable();
+			FDNL D 3 Bright A_KCPain();
+			FDNL DDDD 3 Bright;
+			Goto Chase;
+		Missile:
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			FDNL K 3 Bright 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				A_FaceTarget();
+			}
+			FDNL KKKKK 5 Bright 
+			{
+				A_CheckIfTargetDead("Chase");
+
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				A_FaceTarget();
+				A_StartSound("FireDemonAttack");
+				A_SpawnProjectile("FireDemonLeaderMissile",32);
+			}
+			Goto Chase;
+		Crash:
+			FDNL M 5 A_FaceTarget();
+			FDNL N 5 A_NoBlocking();
+			FDNL O 0 
+			{
+				A_SpawnItemEx("FireDemonLeaderSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonLeaderSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNL O 5;
+			Stop;
+		XDeath:
+			FDNL M 5 A_FaceTarget();
+			FDNL N 5 A_NoBlocking();
+			FDNL O 0 
+			{
+				A_SpawnItemEx("FireDemonLeaderSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonLeaderSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNL O 5;
+			Stop;
+
+		Death:
+			FDNL D 4 Bright A_FaceTarget();
+			FDNL L 4 Bright A_Scream();
+			FDNL L 4 Bright A_NoBlocking();
+			FDNL L 200 Bright;
+			Stop;
+		Ice:
+			FDNL R 5 A_FreezeDeath();
+			FDNL R 1 A_FreezeDeathChunks();
+			Wait;
+		Raise:
+			FDNL L 4;
+			FDNL LD 4;
+			Goto Chase;
+	}
+}
+class FireDemonLeaderSplotch1 : KCBaseZSC
+{
+	default
+	{
+		Health 1000;
+		ReactionTime 8;
+		Radius 3;
+		Height 16;
+		Mass 100;
+		+DROPOFF;
+		+CORPSE;
+		+NOTELEPORT;
+		+FLOORCLIP;
+	}
+	
+	States
+	{
+		Spawn:
+			FDNL P 3;
+			FDNL P 6 A_QueueCorpse();
+			FDNL Y -1;
+			Stop;
+	}
+}
+class FireDemonLeaderSplotch2 : FireDemonLeaderSplotch1
+{
+	States
+	{
+		Spawn:
+			FDNL Q 3;
+			FDNL Q 6 A_QueueCorpse();
+			FDNL Z -1;
+			Stop;
+	}
+}
+class FireDemonCommander : FireDemonNew
+{
+	default
+	{
+		Tag "Afrit Commander";
+		Health 240;
+		ReactionTime 8;
+		PainChance 1;
+		Painchance "Fist", 32;
+		Painchance "Kick", 80; // Kick attacks have a +150% chance of stunning an enemy
+		DamageFactor "Fire", 0.20;
+		DamageFactor "Ice", 5;
+		Speed 8; // 7
+		Radius 20;
+		Height 56;
+		Mass 133;
+		Damage 1;
+		Species "Afrit";
+		Monster;
+		+DROPOFF;
+		+NOGRAVITY;
+		+FLOAT;
+		+FLOORCLIP;
+		+INVULNERABLE;
+		+TELESTOMP;
+		+LOOKALLAROUND;
+		MinMissileChance 400;
+		SeeSound "FireDemonSpawn";
+		PainSound "FireDemonPain";
+		DeathSound "FireDemonDeath";
+		ActiveSound "FireDemonActive";
+		Obituary "%o tasted an Afrit Commander's fire.";
+	}
+	
+	States
+	{
+		Spawn:
+			FDNC X 0 NoDelay ;
+			FDNC X 5 Bright;
+			FDNC EFG 10 Bright A_Look();
+			Goto Spawn+3;
+		See:
+			FDNC E 8 Bright;
+			FDNC F 6 Bright;
+			FDNC G 5 Bright;
+			FDNC F 8 Bright;
+			FDNC E 6 Bright;
+			FDNC G 7 Bright A_FiredRocks();
+			FDNC HI 5 Bright;
+			FDNC J 5 Bright A_UnSetInvulnerable();
+		Chase:
+			FDNC A 0 Bright A_UnSetInvulnerable();
+			FDNC AABBCC 3 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				A_FireDChase(48,6,18,12,1,1,3,1);
+			}
+			Loop;
+		Pain:
+			FDNC D 0 Bright A_UnSetInvulnerable();
+			FDNC D 3 Bright A_KCPain();
+			Goto Chase;
+		Pain.Fist:
+			FDNC D 0 Bright A_UnSetInvulnerable();
+			FDNC D 3 Bright A_KCPain();
+			FDNC DD 3 Bright;
+			Goto Chase;
+		Pain.Kick:
+			FDNC D 0 Bright A_UnSetInvulnerable();
+			FDNC D 3 Bright A_KCPain();
+			FDNC DDDD 3 Bright;
+			Goto Chase;
+		Missile:
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			FDNC K 3 Bright 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				A_FaceTarget();
+			}
+			FDNC KKKKKKK 5 Bright 
+			{
+				A_CheckIfTargetDead("Chase");
+
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				A_FaceTarget();
+				A_StartSound("FireDemonAttack");
+				A_SpawnProjectile("FireDemonCommanderMissile",32);
+			}
+			Goto Chase;
+		Crash:
+			FDNC M 5 A_FaceTarget();
+			FDNC N 5 A_NoBlocking();
+			FDNC O 0 
+			{
+				A_SpawnItemEx("FireDemonCommanderSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonCommanderSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNC O 5;
+			Stop;
+		XDeath:
+			FDNC M 5 A_FaceTarget();
+			FDNC N 5 A_NoBlocking();
+			FDNC O 0 
+			{
+				A_SpawnItemEx("FireDemonCommanderSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonCommanderSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNC O 5;
+			Stop;
+		Death:
+			FDNC D 4 Bright A_FaceTarget();
+			FDNC L 4 Bright A_Scream();
+			FDNC L 4 Bright A_NoBlocking();
+			FDNC L 200 Bright;
+			Stop;
+		Ice:
+			FDNC R 5 A_FreezeDeath();
+			FDNC R 1 A_FreezeDeathChunks();
+			Wait;
+		Raise:
+			FDNC L 4;
+			FDNC LD 4;
+			Goto Chase;
+	}
+}
+class FireDemonCommanderSplotch1 : KCBaseZSC
+{
+	default
+	{
+		Health 1000;
+		ReactionTime 8;
+		Radius 3;
+		Height 16;
+		Mass 100;
+		+DROPOFF;
+		+CORPSE;
+		+NOTELEPORT;
+		+FLOORCLIP;
+	}
+	
+	States
+	{
+		Spawn:
+			FDNC P 3;
+			FDNC P 6 A_QueueCorpse();
+			FDNC Y -1;
+			Stop;
+	}
+}
+class FireDemonCommanderSplotch2 : FireDemonCommanderSplotch1
+{
+	States
+	{
+		Spawn:
+			FDNC Q 3;
+			FDNC Q 6 A_QueueCorpse();
+			FDNC Z -1;
+			Stop;
+	}
+}
+class FireDemonQueen : FireDemonNew
+{
+	default
+	{
+		Tag "Afrit Queen";
+		Health 960;
+		ReactionTime 8;
+		Speed 8;
+		Radius 20;
+		Height 56;
+		Mass 250;
+		Damage 1;
+		Painchance "Fist", 16;
+		Painchance "Kick", 40; // Kick attacks have a +150% chance of stunning an enemy
+		DamageFactor "Fire", 0.2;
+		DamageFactor "Ice", 2.5;
+		Monster;
+		+BOSS;
+		+DROPOFF;
+		+NOGRAVITY;
+		+FLOAT;
+		+FLOORCLIP;
+		+INVULNERABLE;
+		+TELESTOMP;
+		+NEVERRESPAWN;
+		+LOOKALLAROUND;
+		+DONTMORPH;
+		+NOFEAR;
+		+NOPAIN;
+		MinMissileChance 400;
+		Species "Afrit";
+		SeeSound "FireDemonSpawn";
+		PainSound "FireDemonPain";
+		DeathSound "FireDemonDeath";
+		ActiveSound "FireDemonActive";
+		Obituary "%o tasted an Afrit Queen's fire.";
+	}
+	
+	States
+	{
+		Spawn:
+			FDNQ X 0 NoDelay;
+			FDNQ X 5 Bright;
+			FDNQ EFG 10 Bright A_Look();
+			Goto Spawn+3;
+		See:
+			FDNQ E 8 Bright;
+			FDNQ F 6 Bright;
+			FDNQ G 5 Bright;
+			FDNQ F 8 Bright;
+			FDNQ E 6 Bright;
+			FDNQ G 7 Bright A_FiredRocks();
+			FDNQ HI 5 Bright;
+			FDNQ J 5 Bright A_UnSetInvulnerable();
+		Chase:
+			FDNQ A 0 Bright A_UnSetInvulnerable();
+			FDNQ AABBCC 3 Bright
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				A_FireDChase(64,3,36,24,1,1,3,1);
+			}
+			Loop;
+		Pain:
+			FDNQ D 0 Bright A_UnSetInvulnerable();
+			FDNQ D 3 Bright A_KCPain();
+			Goto Chase;
+		Pain.Fist:
+			FDNQ D 0 Bright A_UnSetInvulnerable();
+			FDNQ D 3 Bright A_KCPain();
+			FDNQ DD 3 Bright;
+			Goto Chase;
+		Pain.Kick:
+			FDNQ D 0 Bright A_UnSetInvulnerable();
+			FDNQ D 3 Bright A_KCPain();
+			FDNQ DDDD 3 Bright;
+			Goto Chase;
+		Missile:
+			TNT1 A 0 A_Jump(48,"Clone");
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			FDNQ K 3 Bright 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				A_FaceTarget();
+			}
+			FDNQ KKKKKKKKK 4 Bright 
+			{
+				A_CheckIfTargetDead("Chase");
+
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				A_FaceTarget();
+				A_StartSound("FireDemonAttack");
+				A_SpawnProjectile("FireDemonQueenMissile",32);
+			}
+			Goto Chase;
+		Clone:
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			TNT1 A 0 Thing_Stop(0);
+			TNT1 A 0 A_KillChildren();
+			TNT1 A 0 A_UnSetShootable();
+			FDNQ AAAAAAAAA 1 Bright A_FadeOut(0.10);
+			FDNQ A 1 Bright
+			{
+				A_SetTranslucent(0.0);
+				A_SpawnItemEx("FireDemonQueenClone",-50,100,0,0,0,0,0,16);
+				A_SpawnItemEx("FireDemonQueenClone",50,-100,0,0,0,0,0,16);
+				A_SpawnItemEx("FireDemonQueenClone",100,100,0,0,0,0,0,16);
+				A_SpawnItemEx("FireDemonQueenClone",-100,-50,0,0,0,0,0,16);
+			}
+			FDNQ AAAAAAAAAA 1 Bright A_FadeIn(0.10);
+			TNT1 A 0 A_SetShootable();
+			Goto Chase;
+		Crash:
+			TNT1 A 0 A_KillChildren();
+			FDNQ D 0 Bright A_NoBlocking();
+			FDNQ M 5 A_FaceTarget();
+			FDNQ N 5;
+			FDNQ O 0 
+			{
+				A_SpawnItemEx("FireDemonQueenSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonQueenSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNQ O 5;
+			Stop;
+		XDeath:
+			TNT1 A 0 A_KillChildren();
+			FDNQ D 0 Bright A_NoBlocking();
+			FDNQ M 5 A_FaceTarget();
+			FDNQ N 5;
+			FDNQ O 0
+			{
+				A_SpawnItemEx("FireDemonQueenSplotch1",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+				A_SpawnItemEx("FireDemonQueenSplotch2",0,0,0,Random(1,2),Random(1,2),Random(3,5),Random(1,360));
+			}
+			FDNQ O 5;
+			Stop;
+		Death:
+			TNT1 A 0 A_KillChildren();
+			FDNQ D 0 Bright A_NoBlocking();
+			FDNQ D 0 Bright A_NoBlocking();
+			FDNQ D 4 Bright A_FaceTarget();
+			FDNQ L 4 Bright A_Scream();
+			FDNQ L 4 Bright;
+			FDNQ L 200 Bright;
+			Stop;
+		Ice:
+			FDNQ R 5 A_FreezeDeath();
+			FDNQ R 1 A_FreezeDeathChunks();
+			Wait;
+		Raise:
+			FDNQ L 4;
+			FDNQ LD 4;
+			Goto Chase; 
+	}
+}
+class FireDemonQueenClone : FireDemonQueen
+{
+	default
+	{
+		Tag "Afrit Queen?";
+		Health 5;
+		+NOBLOOD;
+		-COUNTKILL;
+		-TELESTOMP;
+		-INVULNERABLE;
+		-BOSS;
+		+GHOST;
+		RenderStyle "Translucent";
+		Alpha 0.0;
+	}
+	
+	States
+	{
+		Spawn:
+			FDNQ X 0 NoDelay;
+			FNDQ A 0;
+			FDNQ AAAAAAA 1 Bright A_FadeIn(0.10);
+			Goto Chase;
+		Missile:
+			TNT1 A 0 A_CheckIfTargetDead("Chase");
+			TNT1 A 0 A_DynamicMusic();
+			FDNQ K 4 Bright 
+			{
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				A_FaceTarget();
+			}
+			FDNQ KKK 5 Bright 
+			{
+				A_CheckIfTargetDead("Chase");
+
+				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				A_FaceTarget();
+				A_StartSound("FireDemonAttack");
+
+				A_SpawnProjectile("FireDemonQueenCloneMissile",32);
+			}
+			Goto Chase;
+		Crash:
+		XDeath:
+		Death:
+			FDNQ A 1 Bright A_FadeOut(0.10);
+			Loop;
+	}
+}
+class FireDemonQueenSplotch1 : KCBaseZSC
+{
+	default
+	{
+		Health 1000;
+		ReactionTime 8;
+		Radius 3;
+		Height 16;
+		Mass 100;
+		+DROPOFF;
+		+CORPSE;
+		+NOTELEPORT;
+		+FLOORCLIP;
+	}
+	States
+	{
+		Spawn:
+			FDNQ P 3;
+			FDNQ P 6 A_QueueCorpse();
+			FDMN Y -1;
+			Stop;
+	}
+}
+class FireDemonQueenSplotch2 : FireDemonQueenSplotch1
+{
+	States
+	{
+		Spawn:
+			FDNQ Q 3;
+			FDNQ Q 6 A_QueueCorpse();
+			FDMN Z -1;
+			Stop;
+	}
+}
+class FireDemonMissileNew : KCProjectile replaces FireDemonMissile
+{
+	default
+	{
+		Tag "Fire Missile";
+		Health 1000;
+		ReactionTime 8;
+		Speed 10;
+		Radius 10;
+		Height 6;
+		Mass 5;
+		DamageFunction (1 * random(1,6)); // 1
+		DamageType "Fire";
+		Projectile;
+		RenderStyle "Add";
+		DeathSound "FireDemonMissileHit";
+	}
+	
+	States
+	{
+		Spawn:
+			FDMB A 5 Bright;
+			Loop;
+		Death:
+			FDMB BCDE 5 Bright;
+			Stop;
+	}
+}
+class FireDemonLeaderMissile : FireDemonMissileNew
+{
+	default
+	{
+		Tag "Fire Missile";
+		DamageFunction (random(1,2) * random(1,6));
+		DamageType "Fire";
+		Speed 15;
+		FastSpeed 20;
+		+NODAMAGETHRUST;
+		Projectile;
+		+FLOORCLIP;
+		+SEEKERMISSILE;
+		RenderStyle "Add";
+		DeathSound "FireDemonMissileHit";
+	}
+	
+	States
+	{
+		Spawn:
+			FDLB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonLeaderTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDLB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonLeaderTrail2",0,0,0,0);
+			}
+			Loop;
+		Death:
+			FDLB BCDE 5 Bright;
+			Stop;
+	}
+}
+class FireDemonLeaderTrail1 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 1;
+		ReactionTime 60;
+		PROJECTILE;
+		RenderStyle "Add";
+		Alpha 0.75;
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOGRAVITY;
+		+DOOMBOUNCE;
+		+EXPLODEONWATER;
+		-CANBOUNCEWATER;
+		-SOLID;
+		+DONTSPLASH;
+		+NOINTERACTION;
+	}
+	
+	States
+	{
+		Spawn:
+			FLSP AB 3 BRIGHT A_FadeOut(0.1);
+			Loop;
+		Death:
+			FLSP CDE 3 BRIGHT;
+			Stop;
+	}
+}
+class FireDemonLeaderTrail2 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 0;
+		Scale 1.0;
+		PROJECTILE;
+		RenderStyle "Add";
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOINTERACTION;
+		Alpha 0.67;
+	}
+	
+	States
+	{
+		Spawn:
+			NULL A 3 Bright;
+			FLFX ABCDE 3 BRIGHT;
+			Stop;
+	}
+}
+class FireDemonCommanderMissile : FireDemonMissileNew
+{
+	default
+	{
+		Tag "Fire Missile";
+		DamageFunction ((random(1,2) * random(1,6)) + random(3,9));
+		Speed 15;
+		FastSpeed 20;
+		+NODAMAGETHRUST;
+		+FLOORCLIP;
+		DeathSound "FireDemonMissileHit";
+	}
+	
+	States
+	{
+		Spawn:
+			FDCB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonCommanderTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDCB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonCommanderTrail2",0,0,0,0);
+			}
+			Loop;
+		Death:
+			FDCB BCDE 5 Bright;
+			Stop;
+	}
+}
+class FireDemonCommanderTrail1 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 1;
+		ReactionTime 60;
+		PROJECTILE;
+		RenderStyle "Add";
+		Alpha 0.75;
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOGRAVITY;
+		+DOOMBOUNCE;
+		+EXPLODEONWATER;
+		-CANBOUNCEWATER;
+		-SOLID;
+		+DONTSPLASH;
+		+NOINTERACTION;
+	}
+	
+	States
+	{
+		Spawn:
+			FCSP AB 3 BRIGHT A_FadeOut(0.1);
+			Loop;
+		Death:
+			FCSP CDE 3 BRIGHT;
+			Stop;
+	}
+}
+class FireDemonCommanderTrail2 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 0;
+		Scale 1.0;
+		PROJECTILE;
+		RenderStyle "Add";
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOINTERACTION;
+		Alpha 0.67;
+	}
+	
+	States
+	{
+		Spawn:
+			NULL A 3 Bright;
+			FCFX ABCDE 3 BRIGHT;
+			Stop;
+	}
+}
+class FireDemonQueenMissile : FireDemonMissileNew
+{
+	default
+	{
+		Tag "Fire Missile";
+		DamageFunction ((random(2,3) * random(1,6)) + random(1,4));
+		Speed 15;
+		FastSpeed 20;
+		+NODAMAGETHRUST;
+		+FLOORCLIP;
+		+SEEKERMISSILE;
+		DeathSound "FireDemonMissileHit";
+	}
+	
+	States
+	{
+		Spawn:
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 0 Bright A_SeekerMissile(14,14,SMF_PRECISE);
+			Loop;
+		Death:
+			FDQB BCDE 5 Bright;
+			Stop;
+	}
+}
+class FireDemonQueenCloneMissile : FireDemonQueenMissile
+{
+	default
+	{
+		Tag "Fire Missile";
+		DamageFunction (((random(2,3) * random(1,6)) + random(1,4)) / 4);
+		Speed 15;
+		FastSpeed 20;
+		Scale 0.5;
+		+NODAMAGETHRUST;
+		+FLOORCLIP;
+		+SEEKERMISSILE;
+		DeathSound "FireDemonMissileHit";
+	}
+	
+	States
+	{
+		Spawn:
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail1",0,0,Random(-200,200),50,Random(-200,200));
+			}
+			FDQB A 1 Bright 
+			{
+				A_SpawnProjectile("FireDemonQueenTrail2",0,0,0,0);
+			}
+			FDQB A 0 Bright A_SeekerMissile(14,14,SMF_PRECISE);
+			Loop;
+		Death:
+			FDQB BCDE 5 Bright;
+			Stop;
+	}
+}
+class FireDemonQueenTrail1 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 1;
+		ReactionTime 60;
+		PROJECTILE;
+		RenderStyle "Add";
+		Alpha 0.75;
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOGRAVITY;
+		+DOOMBOUNCE;
+		+EXPLODEONWATER;
+		-CANBOUNCEWATER;
+		-SOLID;
+		+DONTSPLASH;
+		+NOINTERACTION;
+	}
+	
+	States
+	{
+		Spawn:
+			FQSP AB 3 BRIGHT A_FadeOut(0.1);
+			Loop;
+		Death:
+			FQSP CDE 3 BRIGHT;
+			Stop;
+	}
+}
+class FireDemonQueenTrail2 : KCBaseZSC
+{
+	default
+	{
+		Radius 2;
+		Height 2;
+		Speed 0;
+		Scale 1.0;
+		PROJECTILE;
+		RenderStyle "Add";
+		+CLIENTSIDEONLY;
+		+DONTBLAST;
+		+NOINTERACTION;
+		Alpha 0.67;
+	}
+	
+	States
+	{
+		Spawn:
+			NULL A 3 Bright;
+			FQFX ABCDE 3 BRIGHT;
+			Stop;
+	}
+}
 class EttinNew : KCCreature { } // Filler for later implementation
 class EttinGhostNew : KCCreature { } // Filler for later implementation
 class EttinCommander : KCCreature { } // Filler for later implementation
