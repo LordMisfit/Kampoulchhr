@@ -2202,6 +2202,128 @@ mixin class MonsterCollider
 			if (vel.y != 0.0) vel.y *= 0.1;
 			if (kcdebug_actordmgdisplays && wasblastedimpact) Console.Printf("(\c[green]%s\c-) (\czwasblastedimpact?: %d", GetClassName(), wasblastedimpact);
 		}
+		
+		// Time Stop
+		double TOTALFactor = 1.00;
+		if (FoundPlayer) 
+		{
+			if (CountInv("LDLegendaryMonsterTransformed"))
+			{
+				nm = "SonicNail";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						inflictor.GetClassName() == "ImpalerMissile" ||
+						inflictor.GetClassName() == "ImpalerMissile2" ||
+						inflictor.GetClassName() == "ImpalerMissile3"))
+				{
+					TOTALFactor *= 5.0;
+				}
+				nm = "DeviationRocket";
+				nn = "DumbRocket";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						inflictor.GetClassName() == nn))
+				{
+					TOTALFactor *= 2.0;
+				}
+			}
+			
+			if (bNORADIUSDMG)
+			{
+				nm = "DevastatorShot";
+				nn = "DevastatorShot2";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						inflictor.GetClassName() == nn) && 
+						inflictor.bFORCERADIUSDMG &&
+						flags & DMG_EXPLOSION)
+				{
+					TOTALFactor *= 0.25;
+				}
+				nm = "DeviationRocket";
+				nn = "DumbRocket";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						inflictor.GetClassName() == nn) && 
+						inflictor.bFORCERADIUSDMG &&
+						flags & DMG_EXPLOSION)
+				{
+					TOTALFactor *= 0.5;
+				}
+				nm = "TeslaBallBig";
+				nn = "TeslaBallBigDual";
+				no = "TeslaProjectile";
+				np = "TeslaProjectile2";
+				if (inflictor && 
+						(inflictor.GetClassName() == nm ||
+						 inflictor.GetClassName() == nn ||
+						 inflictor.GetClassName() == no ||
+						 inflictor.GetClassName() == np) && 
+						inflictor.bFORCERADIUSDMG &&
+						flags & DMG_EXPLOSION)
+				{
+					if (vict == "EviternatusAnta" ||
+							vict == "EviternatusBete" ||
+							vict == "EviternatusCeph")
+					{
+						TOTALFactor *= 1.5;
+					}
+				}
+			}
+			
+			if (LostSoul(self) || 
+					GetClassName() == "LostSoul")
+			{
+				bONLYSLAMSOLID = true;
+				if (InStateSequence(curstate,ResolveState("Missile"))) TOTALFactor *= 2.0;
+			}
+			
+			bool isaghost;
+			nm = "CCards_Actor_Ghost"; 
+			nn = "CCards_Actor_AchillesCurse"; 
+			if (!(CountInv(nm) || 
+						CountInv(nn)))
+			{
+				if (MiscItem && MiscItem.timestopactivetics > 0)
+				{
+					double factor1 = frandompick(0.2,0.25);
+					double factor2 = frandompick(0.6,0.75);
+					if (MiscItem.timestoptype == 1) // Defensive
+					{
+						TOTALFactor *= factor1;
+						if (damageType == 'Bullet' || 
+								damageType == 'Pellet' ||
+								damageType == 'Ripsaw' ||
+								damageType == 'SawShot' ||
+								damageType == 'Chainsaw' ||
+								damageType == 'Knife') TOTALFactor *= factor2;
+						A_StopSound(14);
+						A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+					}
+					if (MiscItem.timestoptype == 2) // Offensive
+					{
+						TOTALFactor /= factor1;
+						if (mod == 'Bullet' || 
+								mod == 'Pellet' ||
+								mod == 'Ripsaw' ||
+								mod == 'SawShot' ||
+								mod == 'Chainsaw' ||
+								mod == 'Knife') TOTALFactor /= factor2;
+						A_StopSound(14);
+						A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+					}
+				}
+			}
+			
+			if (FoundPlayer.CountInv("TimeSeraphVisor"))
+			{
+				if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
+				else if (FoundPlayer.CountInv("TSArmorTier1")) TOTALFactor *= 1.2625;
+				else TOTALFactor *= 1.125;
+			}
+		}
+		damage *= TOTALFactor;
+		
 		if (PracticeTarget(self) || PracticeTarget2(self))
 		{
 			if (targetdummyhitcooldown <= 0) targetdummyhitcooldown = 35;

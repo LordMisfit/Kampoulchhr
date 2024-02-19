@@ -354,6 +354,7 @@ class ZombiemanNew : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Clip",1,256);
 	}
 	
 	void A_PosAttack()
@@ -562,6 +563,9 @@ class PlasmaGuy : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("PlasmaRifle",1,256);
+		A_DropItem("Cell",1,64);
+		A_DropItem("Cell",1,16);
 	}
 	
 	States
@@ -724,6 +728,10 @@ class RocketLauncherGuy : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("RocketLauncher",1,256);
+		A_DropItem("RocketAmmo",1,256);
+		A_DropItem("RocketAmmo",1,64);
+		A_DropItem("RocketAmmo",1,16);
 	}
 
 	States 
@@ -1150,6 +1158,9 @@ class RepeaterZombie : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Cell",1,256);
+		A_DropItem("Cell",1,64);
+		A_DropItem("Cell",1,16);
 	}
 	
 	States 
@@ -1413,6 +1424,9 @@ class KarasawaGuy : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Cell",1,256);
+		A_DropItem("Cell",1,64);
+		A_DropItem("Cell",1,16);
 	}
 	
 	States
@@ -1611,6 +1625,9 @@ class ShotgunGuyNew : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Shotgun",1,256);
+		A_DropItem("Shell",1,64);
+		A_DropItem("Shell",1,16);
 	}
 	
 	States
@@ -1736,6 +1753,9 @@ class FemaleRailZombie : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Cell",1,256);
+		A_DropItem("Cell",1,64);
+		A_DropItem("Cell",1,16);
 	}
 	
 	States 
@@ -1956,6 +1976,9 @@ class SuperShotgunGuy : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("SuperShotgun",1,256);
+		A_DropItem("Shell",1,64);
+		A_DropItem("Shell",1,16);
 	}
 	
 	States
@@ -2089,6 +2112,9 @@ class ChaingunGuyNew : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Chaingun",1,256);
+		A_DropItem("Clip",1,64);
+		A_DropItem("Clip",1,16);
 	}
 
 	void A_CPosAttack()
@@ -2313,9 +2339,8 @@ class Minigunner : KCCreature
 		actor player = players[0].mo;
 		bool check1 = true;
 		
-		if (check1)
-		{
-		}
+		A_DropItem("Chaingun",1,256);
+		A_DropItem("Chaingun",1,32);
 	}
 	
 	States
@@ -2600,6 +2625,9 @@ class BFGGuy : KCCreature
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("BFG9000",1,256);
+		A_DropItem("Cell",1,64);
+		A_DropItem("Cell",1,16);
 	}
 	
 	states
@@ -3008,6 +3036,9 @@ class WolfensteinSSNew : KCCreature replaces WolfensteinSS
 		if (user_dontdropnormaldrops) return;
 		
 		actor player = players[0].mo;
+		A_DropItem("Clip",1,256);
+		A_DropItem("Clip",1,64);
+		A_DropItem("Clip",1,16);
 	}
 	
 	void A_CPosAttack()
