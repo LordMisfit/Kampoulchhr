@@ -27,44 +27,57 @@ class KCWeaponBase : Weapon
 	int PlayerLevel;
 
 	// Misc
-	bool PickupUseVoice;
-	bool PickupUseVoice2;
-	bool PickupUseVoiceHeiwa;
-	bool PickupUseVoiceHeiwa2;
-	string PickupSnd2;
-	string PickupSndHeiwa;
-	string PickupSndHeiwa2;
 	double DmgIgnoreFctr1;
 	double DmgIgnoreFctr2;
 	double DmgIgnoreFctr3;
 	double DmgIgnoreFctr4;
 	double DmgIgnoreFctr5;
-	property PickUpVoice: PickupUseVoice;
-	property PickUpVoice2: PickupUseVoice2;
-	property PickUpVoiceHeiwa: PickupUseVoiceHeiwa;
-	property PickUpVoiceHeiwa2: PickupUseVoiceHeiwa2;
-	property PickupSound2: PickupSnd2;
-	property PickupSoundHeiwa: PickupSndHeiwa;
-	property PickupSoundHeiwa2: PickupSndHeiwa2;
 	property DamageIgnoreFactor1: DmgIgnoreFctr1;
 	property DamageIgnoreFactor2: DmgIgnoreFctr2;
 	property DamageIgnoreFactor3: DmgIgnoreFctr3;
 	property DamageIgnoreFactor4: DmgIgnoreFctr4;
 	property DamageIgnoreFactor5: DmgIgnoreFctr5;
+
+	int PickupChannel;
+	int PickupChannel2;
+	int PickupChannel3;
+	string PickupSndHeiwa;
+	string PickupSnd2;
+	string PickupSnd2Heiwa;
+	string PickupSnd3;
+	string PickupSnd3Heiwa;
+	property PickupChan1: PickupChannel;
+	property PickUpChan2: PickupChannel2;
+	property PickUpChan3: PickupChannel3;
+	property PickupSound2: PickupSnd2;
+	property PickupSound3: PickupSnd3;
+	property PickupSound1Heiwa: PickupSndHeiwa;
+	property PickupSound2Heiwa: PickupSnd2Heiwa;
+	property PickupSound3Heiwa: PickupSnd3Heiwa;
 	
 	default
 	{
 		+WEAPON.NOAUTOAIM;
 		+DONTGIB;
 	}
-	override void PlayPickupSound (Actor toucher)
+	override void PlayPickupSound(Actor toucher)
 	{
 		double atten;
 		int chan;
 		int flags = 0;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
-
+		double maskpitch = 1.00;
+		
+		if (kcdebug_pickupsounds) 
+		{
+			Console.Printf("PickupSound: %s", PickupSound);
+			Console.Printf("PickupSndHeiwa: %s", PickupSndHeiwa);
+			Console.Printf("PickupSnd2: %s", PickupSnd2);
+			Console.Printf("PickupSnd2Heiwa: %s", PickupSnd2Heiwa);
+			Console.Printf("PickupSnd3: %s", PickupSnd3);
+			Console.Printf("PickupSnd3Heiwa: %s", PickupSnd3Heiwa);
+		}
 		if (bNoAttenPickupSound)
 		{
 			atten = ATTN_NONE;
@@ -80,123 +93,137 @@ class KCWeaponBase : Weapon
 		{
 			atten = ATTN_NORM;
 		}
-
-		if (PickupSound != "")
-		{
-			if (toucher != NULL && toucher.CheckLocalView())
-			{
-				if (PickupUseVoice) chan = CHAN_VOICE;
-											 else chan = CHAN_ITEM;
-				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-			}
-			else
-			{
-				if (PickupUseVoice) chan = CHAN_VOICE;
-											 else chan = CHAN_ITEM;
-				flags = CHANF_MAYBE_LOCAL;
-			}
-			if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
-		}
-
-		double maskpitch = 1.00;
-		if (PickupUseVoice) 
-		{
-			if (MiscItem && MiscItem.CanTalkUnderwater)
-			{
-				if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-			}
-		}
-		toucher.A_StopSound(chan);
-		toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
 		
-		if (PickupSnd2 != "")
+		maskpitch = 1.00;
+		if (PickupSound != "" ||
+				PickupSndHeiwa != "")
 		{
+			chan = CHAN_ITEM;
+			if (PickupChannel != CHAN_ITEM) chan = PickupChannel;
 			if (toucher != NULL && toucher.CheckLocalView())
 			{
-				if (PickupUseVoice2) chan = CHAN_VOICE;
-												else chan = CHAN_ITEM;
 				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
 			}
 			else
 			{
-				if (PickupUseVoice2) chan = CHAN_VOICE;
-												else chan = CHAN_ITEM;
 				flags = CHANF_MAYBE_LOCAL;
 			}
-			if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
 			
-			double maskpitch = 1.00;
-			if (PickupUseVoice2) 
+			if (A_CheckForHeiwaSnds() && 
+					chan == CHAN_VOICE && 
+					PickupSndHeiwa != "")
 			{
-				if (MiscItem && MiscItem.CanTalkUnderwater)
-				{
-					if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-				}
-			}
-			toucher.A_StopSound(chan);
-			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
-		}
-		
-		// Plays Heiwa-Unique Lines for weapon drops
-		if (A_CheckForHeiwaSnds())
-		{
-			if (kcdebug_pickupsounds) Console.Printf("PickupSounds: A_CheckForHeiwaSnds() found");
-			if (PickupSndHeiwa != "")
-			{
-				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa: %s", PickupSndHeiwa);
-				if (toucher != NULL && toucher.CheckLocalView())
-				{
-					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
-															else chan = CHAN_ITEM;
-					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-				}
-				else
-				{
-					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
-															else chan = CHAN_ITEM;
-					flags = CHANF_MAYBE_LOCAL;
-				}
-				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH: %d]", chan, PickupUseVoiceHeiwa);
-				
-				double maskpitch = 1.00;
-				if (PickupUseVoiceHeiwa) 
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound: %s", PickupSndHeiwa);
+				if (chan == CHAN_VOICE) 
 				{
 					if (MiscItem && MiscItem.CanTalkUnderwater)
 					{
 						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 					}
+					toucher.A_StopSound(chan);
 				}
-				toucher.A_StopSound(chan);
 				toucher.A_StartSound(PickupSndHeiwa, chan, flags, 1.0, atten, maskpitch);
 			}
-			
-			if (PickupSndHeiwa2 != "")
+			else
 			{
-				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa2: %s", PickupSndHeiwa2);
-				if (toucher != NULL && toucher.CheckLocalView())
-				{
-					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
-															 else chan = CHAN_ITEM;
-					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-				}
-				else
-				{
-					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
-															 else chan = CHAN_ITEM;
-					flags = CHANF_MAYBE_LOCAL;
-				}
-				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH2: %d]", chan, PickupUseVoiceHeiwa2);
-				
-				double maskpitch = 1.00;
-				if (PickupUseVoiceHeiwa2) 
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound: %s", PickupSound);
+				if (chan == CHAN_VOICE) 
 				{
 					if (MiscItem && MiscItem.CanTalkUnderwater)
 					{
 						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 					}
+					toucher.A_StopSound(chan);
 				}
-				toucher.A_StopSound(chan);
-				toucher.A_StartSound(PickupSndHeiwa2, chan, flags, 1.0, atten, maskpitch);
+				toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
+			}
+		}
+		
+		maskpitch = 1.00;
+		if (PickupSnd2 != "" ||
+				PickupSnd2Heiwa != "")
+		{
+			chan = CHAN_ITEM;
+			if (PickupChannel2 != CHAN_ITEM) chan = PickupChannel2;
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				flags = CHANF_MAYBE_LOCAL;
+			}
+
+			if (A_CheckForHeiwaSnds() && 
+					chan == CHAN_VOICE && 
+					PickupSnd2Heiwa != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound2: %s", PickupSnd2Heiwa);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd2Heiwa, chan, flags, 1.0, atten, maskpitch);
+			}
+			else
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound2: %s", PickupSnd2);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
+			}
+		}
+		
+		maskpitch = 1.00;
+		if (PickupSnd3 != "" ||
+				PickupSnd3Heiwa != "")
+		{
+			chan = CHAN_ITEM;
+			if (PickupChannel3 != CHAN_ITEM) chan = PickupChannel3;
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				flags = CHANF_MAYBE_LOCAL;
+			}
+
+			if (A_CheckForHeiwaSnds() && chan == CHAN_VOICE && PickupSnd3Heiwa != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound3: %s", PickupSnd3Heiwa);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd3Heiwa, chan, flags, 1.0, atten, maskpitch);
+			}
+			else
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound3: %s", PickupSnd3);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd3, chan, flags, 1.0, atten, maskpitch);
 			}
 		}
 	}
@@ -2188,7 +2215,6 @@ class MarineWeapon : KCWeaponBase
 {
 	default
 	{
-		KCWeaponBase.PickUpVoice true;
 	}
 
 	action void A_WeaponReady(int flags = 0)
@@ -2467,7 +2493,6 @@ class HeiwaWeapon : KCWeaponBase
 {
 	default
 	{
-		KCWeaponBase.PickUpVoice true;
 	}
 
 	action void A_WeaponReady(int flags = 0)
@@ -6383,10 +6408,15 @@ class Glock21 : MarineWeapon
 
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "Picked up a \cuGlock 21\c-! \cx[Slot 2]\c-";
 		
 		Obituary "%o was capped by %k's Glock.";
@@ -7020,9 +7050,15 @@ class DualTommyGunPickup : CustomInventoryExt
 {
 	default
 	{
-		CustomInventoryExt.PickUpVoiceHeiwa2 true;
-		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon3";
-		CustomInventoryExt.PickUpVoice false;
+		Inventory.PickupSound "misc/w_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon3";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		Inventory.PickupSound "TOMPKP";
 		Inventory.PickupMessage "Picked up an Extra \cuThompson Machine Gun\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 4]\c-";
 		+DONTGIB
@@ -7070,10 +7106,16 @@ class TommyGun : MarineWeapon
 {
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon3";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon3";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "Picked up a \cuThompson Machine Gun\c-! \cx[Slot 4]\c-";
 		Weapon.AmmoType1 "TommAmmo";
 		Weapon.AmmoType2 "TommAmmo";
@@ -7455,10 +7497,15 @@ class Devastator : MarineWeapon
 	default
 	{
 		Scale 0.75;
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
-		Inventory.Pickupsound "misc/w_pkup";
+		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 		Weapon.UpSound "weapons/devup";
 		Weapon.AmmoType1 "MiniRockets";
@@ -8003,14 +8050,19 @@ class DevastatorGenerator : CustomInventoryExt
 {
 	default
 	{
+		Inventory.PickupSound "misc/w_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		+FLOORCLIP;
 		+INVENTORY.AUTOACTIVATE;
 		Scale 0.75;
 		Inventory.MaxAmount 2;
-		CustomInventoryExt.PickUpVoiceHeiwa2 true;
-		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		CustomInventoryExt.PickUpVoice false;
-		Inventory.PickupSound "misc/w_pkup";
 		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 	}
 	
@@ -8052,10 +8104,15 @@ class SawThrower : MarineWeapon
 	double meleerecoil;
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		
 		Weapon.SelectionOrder 120;
 		Inventory.PickupMessage "Picked up a \cfSaw Thrower\c-! \cx[Slot 0]\c-";
@@ -8437,12 +8494,17 @@ class ImpalerXBow : MarineWeapon
 {
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "Picked up a \cfImpaler Crossbow\c-! \cx[Slot 0]\c-";
-		
 		Weapon.AmmoGive 15;
 		Weapon.AmmoType1 "ImpalerBolts";
 		Weapon.AmmoType2 "ImpalerBolts";
@@ -8912,10 +8974,16 @@ class TeslaCannon : MarineWeapon
 {
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Weapon.SlotNumber 6;
 		inventory.pickupmessage "Picked up a \cvTesla Cannon\c-! \cx[Slot 6]\c-";
 		radius 20;
@@ -9295,6 +9363,15 @@ class DualTeslaCannonPickup : CustomInventoryExt
 {
 	default
 	{
+		Inventory.PickupSound "misc/w_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "Picked up an Extra \cvTesla Cannon\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 6]\c-";
 		//Inventory.PickupSound "TOMPKP";
 		+DONTGIB
@@ -10161,10 +10238,15 @@ class BHGen : MarineWeapon
 	int altshottype;
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 
 		Weapon.SelectionOrder 2900;
 		Weapon.AmmoUse1 50;
@@ -11229,10 +11311,16 @@ class Deviation : MarineWeapon // replaces RocketLauncher
 {
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "You got the \ca''Deviation'' Dumb Missile Launcher\c-! \cx[Slot 5]\c-";
 		Weapon.UpSound "weapons/gemiup";
 		Weapon.AmmoType "RocketAmmo";
@@ -11548,11 +11636,16 @@ Class Translocator : MarineWeapon
 		//$Sprite VTLPA0
 		//$Title "Translocator"
 
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/ThatsSus";
-		KCWeaponBase.PickUpVoice false;
-		KCWeaponBase.PickUpVoice2 false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/ThatsSus";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "You got the \c[fire]Translocator Telebeacon System\c-! \cx[Slot 8]\c-";
 
 		Weapon.AmmoGive 1;
@@ -12841,10 +12934,15 @@ Class BlasterPickup : CustomInventoryExt
 
 	Default
 	{
-		CustomInventoryExt.PickUpVoiceHeiwa2 true;
-		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		CustomInventoryExt.PickUpVoice false;
-		Inventory.Pickupsound "misc/w_pkup";
+		Inventory.PickupSound "misc/w_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "You got a \cuBlaster Pistol\c-! \cx[Slot 2]\c-";
 		Tag "Blaster Pistol";
 		Scale 0.5;
@@ -12881,10 +12979,15 @@ Class BlasterPistol : MarineWeapon
 	
 	Default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
-		Inventory.Pickupsound "misc/w_pkup";
+		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "You got a \cuBlaster Pistol\c-! \cx[Slot 2]\c-";
 		Weapon.AmmoGive 50;
 		Weapon.AmmoType "Cell";
@@ -13037,10 +13140,16 @@ Class BlasterPistols : MarineWeapon
 
 	Default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
-		Inventory.Pickupsound "misc/w_pkup";
+		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "You got a \cupair of Blaster Pistols\c-!";
 		Weapon.AmmoGive 50;
 		Weapon.AmmoType "Cell";
@@ -13473,10 +13582,16 @@ class Riotgun : MarineWeapon
 	
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		inventory.pickupmessage "Picked up a \cuRiot Gun\c-! \cx[Slot 3]\c-";
 		
 		weapon.selectionorder 300;
@@ -13855,10 +13970,16 @@ class KnifeHeiwa : MarineWeapon
 {
 	default
 	{
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Inventory.PickupMessage "Picked up a \cfKnife\c-! Better than nothing... \cx[Slot 1]\c-";
 		Weapon.SelectionOrder 3700;
 		Weapon.Kickback 4;
@@ -14406,11 +14527,15 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 	int shotcount;
 	default
 	{
-		//SpawnID 27;
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon2";
-		KCWeaponBase.PickUpVoice false;
 		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon2";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoUse2 0;
@@ -14587,14 +14712,19 @@ class EvilWarriorShield : MarineWeapon
 	{
 		//$Category KC KDIZD Weapons
 		//$Sprite "EWSHF0"
+		Inventory.PickupSound "misc/w_pkup";
+		KCWeaponBase.PickupSound1Heiwa "";
+		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		KCWeaponBase.PickupSound3 "";
+		KCWeaponBase.PickupSound3Heiwa "";
+		KCWeaponBase.PickupChan1 CHAN_ITEM;
+		KCWeaponBase.PickupChan2 CHAN_VOICE;
+		KCWeaponBase.PickupChan3 CHAN_ITEM;
+
 		Radius 16;
 		Height 16;
 		Speed 6;
-		KCWeaponBase.PickUpVoiceHeiwa2 true;
-		KCWeaponBase.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickUpVoice false;
-		KCWeaponBase.PickupSound2 "misc/w_pkup";
-		KCWeaponBase.PickupVoice2 false;
 		Weapon.AmmoType "PikeAmmo";
 		Weapon.AmmoGive 3;
 		Weapon.AmmoUse 0;
@@ -15049,13 +15179,17 @@ class EvilWarriorShieldExtraPickup : CustomInventoryExt
 {
 	default
 	{
+		Inventory.PickupSound "misc/w_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		+DONTGIB;
 		+INVENTORY.ALWAYSPICKUP;
-		CustomInventoryExt.PickUpVoiceHeiwa2 true;
-		CustomInventoryExt.PickupSoundHeiwa2 "Heiwa/GrabWeapon1";
-		CustomInventoryExt.PickUpVoice false;
-		CustomInventoryExt.PickupSound2 "misc/w_pkup";
-		CustomInventoryExt.PickupVoice2 false;
 		Inventory.PickupMessage "Grabbed a damaged Hell Warrior's shield! (\cy+20% damage\c-) \cx[Slot 9]\c-";
 	}
 	

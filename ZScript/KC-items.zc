@@ -13,20 +13,22 @@ class CustomInventoryExt : CustomInventory
 	string texname;
 	int user_type;
 	
-	bool PickupUseVoice;
-	bool PickupUseVoice2;
-	bool PickupUseVoiceHeiwa;
-	bool PickupUseVoiceHeiwa2;
-	string PickupSnd2;
+	int PickupChannel;
+	int PickupChannel2;
+	int PickupChannel3;
 	string PickupSndHeiwa;
-	string PickupSndHeiwa2;
-	property PickUpVoice: PickupUseVoice;
-	property PickUpVoice2: PickupUseVoice2;
-	property PickUpVoiceHeiwa: PickupUseVoiceHeiwa;
-	property PickUpVoiceHeiwa2: PickupUseVoiceHeiwa2;
+	string PickupSnd2;
+	string PickupSnd2Heiwa;
+	string PickupSnd3;
+	string PickupSnd3Heiwa;
+	property PickupChan1: PickupChannel;
+	property PickUpChan2: PickupChannel2;
+	property PickUpChan3: PickupChannel3;
 	property PickupSound2: PickupSnd2;
-	property PickupSoundHeiwa: PickupSndHeiwa;
-	property PickupSoundHeiwa2: PickupSndHeiwa2;
+	property PickupSound3: PickupSnd3;
+	property PickupSound1Heiwa: PickupSndHeiwa;
+	property PickupSound2Heiwa: PickupSnd2Heiwa;
+	property PickupSound3Heiwa: PickupSnd3Heiwa;
 	
 	override String PickupMessage()
 	{
@@ -34,12 +36,24 @@ class CustomInventoryExt : CustomInventory
 		return PickupMsg;
 	}
 	
-	override void PlayPickupSound (Actor toucher)
+	override void PlayPickupSound(Actor toucher)
 	{
 		double atten;
 		int chan;
 		int flags = 0;
-
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+		double maskpitch = 1.00;
+		
+		if (kcdebug_pickupsounds) 
+		{
+			Console.Printf("PickupSound: %s", PickupSound);
+			Console.Printf("PickupSndHeiwa: %s", PickupSndHeiwa);
+			Console.Printf("PickupSnd2: %s", PickupSnd2);
+			Console.Printf("PickupSnd2Heiwa: %s", PickupSnd2Heiwa);
+			Console.Printf("PickupSnd3: %s", PickupSnd3);
+			Console.Printf("PickupSnd3Heiwa: %s", PickupSnd3Heiwa);
+		}
 		if (bNoAttenPickupSound)
 		{
 			atten = ATTN_NONE;
@@ -55,124 +69,137 @@ class CustomInventoryExt : CustomInventory
 		{
 			atten = ATTN_NORM;
 		}
-
-		if (toucher != NULL && toucher.CheckLocalView())
-		{
-			if (PickupUseVoice) chan = CHAN_VOICE;
-										 else chan = CHAN_ITEM;
-			flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-		}
-		else
-		{
-			if (PickupUseVoice) chan = CHAN_VOICE;
-										 else chan = CHAN_ITEM;
-			flags = CHANF_MAYBE_LOCAL;
-		}
-		//Console.Printf("Channel: %d [PUV: %d]", chan, PickupUseVoice);
-
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		double maskpitch = 1.00;
-		if (PickupUseVoice) 
-		{
-			if (MiscItem && MiscItem.CanTalkUnderwater)
-			{
-				if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-			}
-		}
-		toucher.A_StopSound(chan);
-		toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
 		
-		if (PickupSnd2 != "")
+		maskpitch = 1.00;
+		if (PickupSound != "" ||
+				PickupSndHeiwa != "")
 		{
+			chan = CHAN_ITEM;
+			if (PickupChannel != CHAN_ITEM) chan = PickupChannel;
 			if (toucher != NULL && toucher.CheckLocalView())
 			{
-				if (PickupUseVoice2) chan = CHAN_VOICE;
-												else chan = CHAN_ITEM;
 				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
 			}
 			else
 			{
-				if (PickupUseVoice2) chan = CHAN_VOICE;
-												else chan = CHAN_ITEM;
 				flags = CHANF_MAYBE_LOCAL;
 			}
-			//Console.Printf("Channel: %d [PUV2: %d]", chan, PickupUseVoice2);
 			
-			actor playera = players[0].mo;
-			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-			double maskpitch = 1.00;
-			if (PickupUseVoice2) 
+			if (A_CheckForHeiwaSnds() && 
+					chan == CHAN_VOICE && 
+					PickupSndHeiwa != "")
 			{
-				if (MiscItem && MiscItem.CanTalkUnderwater)
-				{
-					if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-				}
-			}
-			toucher.A_StopSound(chan);
-			toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
-		}
-		
-		// Plays Heiwa-Unique Lines for weapon drops
-		if (A_CheckForHeiwaSnds())
-		{
-			if (kcdebug_pickupsounds) Console.Printf("PickupSounds: A_CheckForHeiwaSnds() found");
-			if (PickupSndHeiwa != "")
-			{
-				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa: %s", PickupSndHeiwa);
-				if (toucher != NULL && toucher.CheckLocalView())
-				{
-					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
-															else chan = CHAN_ITEM;
-					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-				}
-				else
-				{
-					if (PickupUseVoiceHeiwa) chan = CHAN_VOICE;
-															else chan = CHAN_ITEM;
-					flags = CHANF_MAYBE_LOCAL;
-				}
-				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH: %d]", chan, PickupUseVoiceHeiwa);
-				
-				double maskpitch = 1.00;
-				if (PickupUseVoiceHeiwa) 
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound: %s", PickupSndHeiwa);
+				if (chan == CHAN_VOICE) 
 				{
 					if (MiscItem && MiscItem.CanTalkUnderwater)
 					{
 						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 					}
+					toucher.A_StopSound(chan);
 				}
-				toucher.A_StopSound(chan);
 				toucher.A_StartSound(PickupSndHeiwa, chan, flags, 1.0, atten, maskpitch);
 			}
-			
-			if (PickupSndHeiwa2 != "")
+			else
 			{
-				if (kcdebug_pickupsounds) Console.Printf("PickupSndHeiwa2: %s", PickupSndHeiwa2);
-				if (toucher != NULL && toucher.CheckLocalView())
-				{
-					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
-															 else chan = CHAN_ITEM;
-					flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
-				}
-				else
-				{
-					if (PickupUseVoiceHeiwa2) chan = CHAN_VOICE;
-															 else chan = CHAN_ITEM;
-					flags = CHANF_MAYBE_LOCAL;
-				}
-				if (kcdebug_pickupsounds) Console.Printf("Channel: %d [PUVH2: %d]", chan, PickupUseVoiceHeiwa2);
-				
-				double maskpitch = 1.00;
-				if (PickupUseVoiceHeiwa2) 
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound: %s", PickupSound);
+				if (chan == CHAN_VOICE) 
 				{
 					if (MiscItem && MiscItem.CanTalkUnderwater)
 					{
 						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 					}
+					toucher.A_StopSound(chan);
 				}
-				toucher.A_StopSound(chan);
-				toucher.A_StartSound(PickupSndHeiwa2, chan, flags, 1.0, atten, maskpitch);
+				toucher.A_StartSound(PickupSound, chan, flags, 1.0, atten, maskpitch);
+			}
+		}
+		
+		maskpitch = 1.00;
+		if (PickupSnd2 != "" ||
+				PickupSnd2Heiwa != "")
+		{
+			chan = CHAN_ITEM;
+			if (PickupChannel2 != CHAN_ITEM) chan = PickupChannel2;
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				flags = CHANF_MAYBE_LOCAL;
+			}
+
+			if (A_CheckForHeiwaSnds() && 
+					chan == CHAN_VOICE && 
+					PickupSnd2Heiwa != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound2: %s", PickupSnd2Heiwa);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd2Heiwa, chan, flags, 1.0, atten, maskpitch);
+			}
+			else
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound2: %s", PickupSnd2);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd2, chan, flags, 1.0, atten, maskpitch);
+			}
+		}
+		
+		maskpitch = 1.00;
+		if (PickupSnd3 != "" ||
+				PickupSnd3Heiwa != "")
+		{
+			chan = CHAN_ITEM;
+			if (PickupChannel3 != CHAN_ITEM) chan = PickupChannel3;
+			if (toucher != NULL && toucher.CheckLocalView())
+			{
+				flags = CHANF_NOPAUSE | CHANF_MAYBE_LOCAL;
+			}
+			else
+			{
+				flags = CHANF_MAYBE_LOCAL;
+			}
+
+			if (A_CheckForHeiwaSnds() && chan == CHAN_VOICE && PickupSnd3Heiwa != "")
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound3: %s", PickupSnd3Heiwa);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd3Heiwa, chan, flags, 1.0, atten, maskpitch);
+			}
+			else
+			{
+				if (kcdebug_pickupsounds) Console.Printf("PickupSound3: %s", PickupSnd3);
+				if (chan == CHAN_VOICE) 
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						if (toucher.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					}
+					toucher.A_StopSound(chan);
+				}
+				toucher.A_StartSound(PickupSnd3, chan, flags, 1.0, atten, maskpitch);
 			}
 		}
 	}

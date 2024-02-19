@@ -3593,8 +3593,15 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "HellKnight" ||
 							vict == "HellKnightNew" ||
-							vict == "BaronOfHell"|| 
-							vict == "BaronOfHellNew")
+							vict == "BaronOfHell" || 
+							vict == "BaronOfHellNew" || 
+							vict == "Belphegor" || 
+							vict == "BruiserDemon" || 
+							vict == "Cybruiser" || 
+							vict == "ArchonOfHell" || 
+							vict == "PyroDemon" || 
+							vict == "FlyingBalrogDVDS" || 
+							vict == "Hierophant")
 					{
 						int itemdropbase = basedropdiv;
 						if (vict == "HellKnight" || vict == "HellKnightNew") basedropdiv *= 3;
@@ -4123,11 +4130,18 @@ class KC_EventHandler : EventHandler
 					if (HellKnight(victim) ||
 							HellKnightNew(victim) ||
 							BaronOfHell(victim) ||
-							BaronOfHellNew(victim))
+							BaronOfHellNew(victim) ||
+							Belphegor(victim) ||
+							BruiserDemon(victim) ||
+							CyBruiser(victim) ||
+							ArchonOfHell(victim) ||
+							PyroDemon(victim) ||
+							FlyingBalrogDVDS(victim) ||
+							Hierophant(victim))
 					{
 						int dropdiv = 64;
-						if (BaronOfHell(victim)) dropdiv = 16;
-						if (random(1,(basedropdiv*0.125)) <= random(2,3) && BaronOfHell(victim)) 
+						if (BaronOfHell(victim) || BaronOfHellNew(victim)) dropdiv = 16;
+						if (random(1,(basedropdiv*0.125)) <= random(2,3) && (BaronOfHell(victim) || BaronOfHellNew(victim))) 
 						{
 							droptype = "BackPack2";
 							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
