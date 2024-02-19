@@ -1817,6 +1817,17 @@ class KC_EventHandler : EventHandler
 		}
 	}
 	
+	void A_SpawnerSetUp(actor spawnee, string spawnertype)
+	{
+		if (spawnee)
+		{
+			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
+			spawnee.bSOLID = false;
+			spawnee.Destroy();
+			spawnee.A_SpawnItemEx(spawnertype,flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+		}
+	}
+	
 	override void WorldThingSpawned(WorldEvent e)
 	{
 		let globalvars = KCGlobalVariables.Get();
@@ -2314,418 +2325,79 @@ class KC_EventHandler : EventHandler
 			if (kc_usealteredmonsters)
 			{
 				/*
-				if (BossBrain(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("BossBrainNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (BossEye(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("BossEyeNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (SpawnShot(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("SpawnShotNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
+				if (BossBrain(spawnee)) A_SpawnerSetUp(spawnee,"BossBrainNew");
+				if (BossEye(spawnee)) A_SpawnerSetUp(spawnee,"BossEyeNew");
+				if (SpawnShot(spawnee)) A_SpawnerSetUp(spawnee,"SpawnShotNew");
 				*/
 				
-				if (Zombieman(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ZombiemanSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthZombieman(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthZombiemanSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (ShotgunGuy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ShotgunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthShotgunGuy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthShotgunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (ChaingunGuy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ChaingunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthChaingunGuy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthChaingunGuySpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (WolfensteinSS(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("WolfensteinSSSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (DoomImp(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("DoomImpSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthDoomImp(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthDoomImpSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Demon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("DemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Spectre(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("SpectreSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthDemon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthDemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Cacodemon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("CacodemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthCacodemon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthCacodemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (LostSoul(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("LostSoulSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (PainElemental(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("PainElementalSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (HellKnight(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("HellKnightSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthHellKnight(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthHellKnightSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (BaronOfHell(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("BaronOfHellSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthBaron(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthBaronSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Revenant(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("RevenantSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthRevenant(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthRevenantSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Arachnotron(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ArachnotronSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthArachnotron(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthArachnotronSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Fatso(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("MancubusSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (StealthFatso(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StealthMancubusSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Archvile(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ArchvileSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Cyberdemon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("CyberdemonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (SpiderMastermind(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("SpiderMastermindSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				
-				if (Chicken(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ChickenNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (HereticImp(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("GargoyleSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (HereticImpLeader(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("GargoyleLeaderSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Mummy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("GolemSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (MummyGhost(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("GolemGhostSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (MummyLeader(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("NitroGolemSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (MummyLeaderGhost(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("NitroGolemGhostSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Knight(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("KnightSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (KnightGhost(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("KnightGhostSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Wizard(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("WizardSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (IronLich(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("LichSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Clink(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ClinkSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Beast(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("WeredragonSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Minotaur(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("MaulotaurNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Snake(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("SnakeSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Sorcerer1(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("DSparilMountedNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Sorcerer2(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("DSparilUnmountedNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
+				// Doom
+				if (Zombieman(spawnee)) A_SpawnerSetUp(spawnee,"ZombiemanSpawner");
+				if (StealthZombieman(spawnee)) A_SpawnerSetUp(spawnee,"StealthZombiemanSpawner");
+				if (ShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ShotgunGuySpawner");
+				if (StealthShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthShotgunGuySpawner");
+				if (ChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ChaingunGuySpawner");
+				if (StealthChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthChaingunGuySpawner");
+				if (WolfensteinSS(spawnee)) A_SpawnerSetUp(spawnee,"WolfensteinSSSpawner");
+				if (DoomImp(spawnee)) A_SpawnerSetUp(spawnee,"DoomImpSpawner");
+				if (StealthDoomImp(spawnee)) A_SpawnerSetUp(spawnee,"StealthDoomImpSpawner");
+				if (Demon(spawnee)) A_SpawnerSetUp(spawnee,"DemonSpawner");
+				if (Spectre(spawnee)) A_SpawnerSetUp(spawnee,"SpectreSpawner");
+				if (StealthDemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthDemonSpawner");
+				if (Cacodemon(spawnee)) A_SpawnerSetUp(spawnee,"CacodemonSpawner");
+				if (StealthCacodemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthCacodemonSpawner");
+				if (LostSoul(spawnee)) A_SpawnerSetUp(spawnee,"LostSoulSpawner");
+				if (PainElemental(spawnee)) A_SpawnerSetUp(spawnee,"PainElementalSpawner");
+				if (HellKnight(spawnee)) A_SpawnerSetUp(spawnee,"HellKnightSpawner");
+				if (StealthHellKnight(spawnee)) A_SpawnerSetUp(spawnee,"StealthHellKnightSpawner");
+				if (BaronOfHell(spawnee)) A_SpawnerSetUp(spawnee,"BaronOfHellSpawner");
+				if (StealthBaron(spawnee)) A_SpawnerSetUp(spawnee,"StealthBaronSpawner");
+				if (Revenant(spawnee)) A_SpawnerSetUp(spawnee,"RevenantSpawner");
+				if (StealthRevenant(spawnee)) A_SpawnerSetUp(spawnee,"StealthRevenantSpawner");
+				if (Arachnotron(spawnee)) A_SpawnerSetUp(spawnee,"ArachnotronSpawner");
+				if (StealthArachnotron(spawnee)) A_SpawnerSetUp(spawnee,"StealthArachnotronSpawner");
+				if (Fatso(spawnee)) A_SpawnerSetUp(spawnee,"MancubusSpawner");
+				if (StealthFatso(spawnee)) A_SpawnerSetUp(spawnee,"StealthMancubusSpawner");
+				if (Archvile(spawnee)) A_SpawnerSetUp(spawnee,"ArchvileSpawner");
+				if (Cyberdemon(spawnee)) A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
+				if (SpiderMastermind(spawnee)) A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
+				// Heretic
+				if (Chicken(spawnee)) A_SpawnerSetUp(spawnee,"ChickenNew");
+				if (HereticImp(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleSpawner");
+				if (HereticImpLeader(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleLeaderSpawner");
+				if (Mummy(spawnee)) A_SpawnerSetUp(spawnee,"GolemSpawner");
+				if (MummyGhost(spawnee)) A_SpawnerSetUp(spawnee,"GolemGhostSpawner");
+				if (MummyLeader(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemSpawner");
+				if (MummyLeaderGhost(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemGhostSpawner");
+				if (Knight(spawnee)) A_SpawnerSetUp(spawnee,"KnightSpawner");
+				if (KnightGhost(spawnee)) A_SpawnerSetUp(spawnee,"KnightGhostSpawner");
+				if (Wizard(spawnee)) A_SpawnerSetUp(spawnee,"WizardSpawner");
+				if (IronLich(spawnee)) A_SpawnerSetUp(spawnee,"LichSpawner");
+				if (Clink(spawnee)) A_SpawnerSetUp(spawnee,"ClinkSpawner");
+				if (Beast(spawnee)) A_SpawnerSetUp(spawnee,"WeredragonSpawner");
+				if (Minotaur(spawnee)) A_SpawnerSetUp(spawnee,"MaulotaurNew");
+				if (Snake(spawnee)) A_SpawnerSetUp(spawnee,"SnakeSpawner");
+				if (Sorcerer1(spawnee)) A_SpawnerSetUp(spawnee,"DSparilMountedNew");
+				if (Sorcerer2(spawnee)) A_SpawnerSetUp(spawnee,"DSparilUnmountedNew");
 
-				if (Pig(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("PigNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Ettin(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("EttinSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (FireDemon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("AfritSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Bishop(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("BishopSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Serpent(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StalkerSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (SerpentLeader(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("StalkerLeaderSpawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Demon1(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("Demon1Spawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Demon2(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("Demon2Spawner",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Centaur(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("CentaurNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (CentaurLeader(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("SlaughtaurNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (IceGuy(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("IceGuyNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Wraith(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("WraithNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (WraithBuried(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("WraithBuriedNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Dragon(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("DragonNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Heresiarch(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("HeresiarchNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (ClericBoss(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("ClericBossNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (FighterBoss(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("FighterBossNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (MageBoss(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("MageBossNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
-				if (Korax(spawnee))
-				{
-					spawnee.bSOLID = false;
-					spawnee.Destroy();
-					spawnee.A_SpawnItemEx("KoraxNew",flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
-				}
+				if (Pig(spawnee)) A_SpawnerSetUp(spawnee,"PigNew");
+				if (Ettin(spawnee)) A_SpawnerSetUp(spawnee,"EttinSpawner");
+				if (FireDemon(spawnee)) A_SpawnerSetUp(spawnee,"AfritSpawner");
+				if (Bishop(spawnee)) A_SpawnerSetUp(spawnee,"BishopSpawner");
+				if (Serpent(spawnee)) A_SpawnerSetUp(spawnee,"StalkerSpawner");
+				if (SerpentLeader(spawnee)) A_SpawnerSetUp(spawnee,"StalkerLeaderSpawner");
+				if (Demon1(spawnee)) A_SpawnerSetUp(spawnee,"Demon1Spawner");
+				if (Demon2(spawnee)) A_SpawnerSetUp(spawnee,"Demon2Spawner");
+				if (Centaur(spawnee)) A_SpawnerSetUp(spawnee,"CentaurNew");
+				if (CentaurLeader(spawnee)) A_SpawnerSetUp(spawnee,"SlaughtaurNew");
+				if (IceGuy(spawnee)) A_SpawnerSetUp(spawnee,"IceGuyNew");
+				if (Wraith(spawnee)) A_SpawnerSetUp(spawnee,"WraithNew");
+				if (WraithBuried(spawnee)) A_SpawnerSetUp(spawnee,"WraithBuriedNew");
+				if (Dragon(spawnee)) A_SpawnerSetUp(spawnee,"DragonNew");
+				if (Heresiarch(spawnee)) A_SpawnerSetUp(spawnee,"HeresiarchNew");
+				if (ClericBoss(spawnee)) A_SpawnerSetUp(spawnee,"ClericBossNew");
+				if (FighterBoss(spawnee)) A_SpawnerSetUp(spawnee,"FighterBossNew");
+				if (MageBoss(spawnee)) A_SpawnerSetUp(spawnee,"MageBossNew");
+				if (Korax(spawnee)) A_SpawnerSetUp(spawnee,"KoraxNew");
 			}
 		}
 		
@@ -5300,8 +4972,8 @@ class KC_EventHandler : EventHandler
 						if (inflicter) 
 						{
 							if (PlayerPawn(inflicter)) playerkill = true;
-							if (inflicter.bFRIENDLY) allykill = true;
-							if (inflicter.bFRIENDLY || KCPlayerPawn(inflicter))
+							else if (inflicter.bFRIENDLY) allykill = true;
+							if (inflicter.bFRIENDLY || PlayerPawn(inflicter))
 							{
 								giveexp = true;
 							}
@@ -5311,8 +4983,8 @@ class KC_EventHandler : EventHandler
 						if (source) 
 						{
 							if (PlayerPawn(source)) playerkill = true;
-							if (source.bFRIENDLY) allykill = true;
-							if (source.bFRIENDLY || KCPlayerPawn(source)) 
+							else if (source.bFRIENDLY) allykill = true;
+							if (source.bFRIENDLY || PlayerPawn(source)) 
 							{
 								giveexp = true;
 							}
@@ -5321,10 +4993,11 @@ class KC_EventHandler : EventHandler
 						if (mastor) 
 						{
 							if (PlayerPawn(mastor)) playerkill = true;
-							if (mastor.bFRIENDLY) allykill = true;
-							if (mastor.bFRIENDLY || KCPlayerPawn(mastor)) giveexp = true;
+							else if (mastor.bFRIENDLY) allykill = true;
+							if (mastor.bFRIENDLY || PlayerPawn(mastor)) giveexp = true;
 							if (kcdebug_worlddied) Console.Printf("mastor: %s [%d]", mast, mastor.bFRIENDLY);
 						}
+						if (kcdebug_worlddied) Console.Printf("playerkill: %d, allykill: %d", playerkill, allykill);
 						
 						if ((playerkill || allykill) && MiscItem)
 						{
@@ -5406,7 +5079,6 @@ class KC_EventHandler : EventHandler
 						}
 						ExpGain *= frandom(0.05,0.125);
 
-						
 						if ((source && source.bFRIENDLY) || (inflicter && inflicter.bFRIENDLY) || (mastor && mastor.bFRIENDLY)) ExpGain *= frandom(0.65,0.90);
 						if (KCPlayerPawn(source) && infl == "PlayerWhistle") ExpGain *= frandom(1.1875,1.3125);
 						
@@ -5561,6 +5233,7 @@ class KC_EventHandler : EventHandler
 						// BUILD-style oneliner for kills [optional]
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
+						if (!playerkill) playoneliner = false;
 						
 						if (playoneliner && 
 								A_CheckForHeiwaPlayer() && 
