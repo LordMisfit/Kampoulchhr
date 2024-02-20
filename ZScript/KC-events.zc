@@ -1833,10 +1833,12 @@ class KC_EventHandler : EventHandler
 	{
 		if (spawnee)
 		{
+			Console.Printf("[pre] spawnee [%p]: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
 			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.bSOLID = false;
 			spawnee.Destroy();
 			spawnee.A_SpawnItemEx(spawnertype,flags:SXF_CLEARCALLERTID|SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
+			Console.Printf("[post] spawnee [%p]: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
 		}
 	}
 	
@@ -2336,80 +2338,79 @@ class KC_EventHandler : EventHandler
 			//
 			if (kc_usealteredmonsters)
 			{
-				/*
-				if (BossBrain(spawnee)) A_SpawnerSetUp(spawnee,"BossBrainNew");
-				if (BossEye(spawnee)) A_SpawnerSetUp(spawnee,"BossEyeNew");
-				if (SpawnShot(spawnee)) A_SpawnerSetUp(spawnee,"SpawnShotNew");
-				*/
-				
 				// Doom
 				if (Zombieman(spawnee)) A_SpawnerSetUp(spawnee,"ZombiemanSpawner");
-				if (StealthZombieman(spawnee)) A_SpawnerSetUp(spawnee,"StealthZombiemanSpawner");
-				if (ShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ShotgunGuySpawner");
-				if (StealthShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthShotgunGuySpawner");
-				if (ChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ChaingunGuySpawner");
-				if (StealthChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthChaingunGuySpawner");
-				if (WolfensteinSS(spawnee)) A_SpawnerSetUp(spawnee,"WolfensteinSSSpawner");
-				if (DoomImp(spawnee)) A_SpawnerSetUp(spawnee,"DoomImpSpawner");
-				if (StealthDoomImp(spawnee)) A_SpawnerSetUp(spawnee,"StealthDoomImpSpawner");
-				if (Demon(spawnee)) A_SpawnerSetUp(spawnee,"DemonSpawner");
-				if (Spectre(spawnee)) A_SpawnerSetUp(spawnee,"SpectreSpawner");
-				if (StealthDemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthDemonSpawner");
-				if (Cacodemon(spawnee)) A_SpawnerSetUp(spawnee,"CacodemonSpawner");
-				if (StealthCacodemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthCacodemonSpawner");
-				if (LostSoul(spawnee)) A_SpawnerSetUp(spawnee,"LostSoulSpawner");
-				if (PainElemental(spawnee)) A_SpawnerSetUp(spawnee,"PainElementalSpawner");
-				if (HellKnight(spawnee)) A_SpawnerSetUp(spawnee,"HellKnightSpawner");
-				if (StealthHellKnight(spawnee)) A_SpawnerSetUp(spawnee,"StealthHellKnightSpawner");
-				if (BaronOfHell(spawnee)) A_SpawnerSetUp(spawnee,"BaronOfHellSpawner");
-				if (StealthBaron(spawnee)) A_SpawnerSetUp(spawnee,"StealthBaronSpawner");
-				if (Revenant(spawnee)) A_SpawnerSetUp(spawnee,"RevenantSpawner");
-				if (StealthRevenant(spawnee)) A_SpawnerSetUp(spawnee,"StealthRevenantSpawner");
-				if (Arachnotron(spawnee)) A_SpawnerSetUp(spawnee,"ArachnotronSpawner");
-				if (StealthArachnotron(spawnee)) A_SpawnerSetUp(spawnee,"StealthArachnotronSpawner");
-				if (Fatso(spawnee)) A_SpawnerSetUp(spawnee,"MancubusSpawner");
-				if (StealthFatso(spawnee)) A_SpawnerSetUp(spawnee,"StealthMancubusSpawner");
-				if (Archvile(spawnee)) A_SpawnerSetUp(spawnee,"ArchvileSpawner");
-				if (Cyberdemon(spawnee)) A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
-				if (SpiderMastermind(spawnee)) A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
+				else if (StealthZombieman(spawnee)) A_SpawnerSetUp(spawnee,"StealthZombiemanSpawner");
+				else if (ShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ShotgunGuySpawner");
+				else if (StealthShotgunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthShotgunGuySpawner");
+				else if (ChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"ChaingunGuySpawner");
+				else if (StealthChaingunGuy(spawnee)) A_SpawnerSetUp(spawnee,"StealthChaingunGuySpawner");
+				else if (WolfensteinSS(spawnee)) A_SpawnerSetUp(spawnee,"WolfensteinSSSpawner");
+				else if (DoomImp(spawnee)) A_SpawnerSetUp(spawnee,"DoomImpSpawner");
+				else if (StealthDoomImp(spawnee)) A_SpawnerSetUp(spawnee,"StealthDoomImpSpawner");
+				else if (Demon(spawnee)) A_SpawnerSetUp(spawnee,"DemonSpawner");
+				else if (Spectre(spawnee)) A_SpawnerSetUp(spawnee,"SpectreSpawner");
+				else if (StealthDemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthDemonSpawner");
+				else if (Cacodemon(spawnee)) A_SpawnerSetUp(spawnee,"CacodemonSpawner");
+				else if (StealthCacodemon(spawnee)) A_SpawnerSetUp(spawnee,"StealthCacodemonSpawner");
+				else if (LostSoul(spawnee)) A_SpawnerSetUp(spawnee,"LostSoulSpawner");
+				else if (PainElemental(spawnee)) A_SpawnerSetUp(spawnee,"PainElementalSpawner");
+				else if (HellKnight(spawnee)) A_SpawnerSetUp(spawnee,"HellKnightSpawner");
+				else if (StealthHellKnight(spawnee)) A_SpawnerSetUp(spawnee,"StealthHellKnightSpawner");
+				else if (BaronOfHell(spawnee)) A_SpawnerSetUp(spawnee,"BaronOfHellSpawner");
+				else if (StealthBaron(spawnee)) A_SpawnerSetUp(spawnee,"StealthBaronSpawner");
+				else if (Revenant(spawnee)) A_SpawnerSetUp(spawnee,"RevenantSpawner");
+				else if (StealthRevenant(spawnee)) A_SpawnerSetUp(spawnee,"StealthRevenantSpawner");
+				else if (Arachnotron(spawnee)) A_SpawnerSetUp(spawnee,"ArachnotronSpawner");
+				else if (StealthArachnotron(spawnee)) A_SpawnerSetUp(spawnee,"StealthArachnotronSpawner");
+				else if (Fatso(spawnee)) A_SpawnerSetUp(spawnee,"MancubusSpawner");
+				else if (StealthFatso(spawnee)) A_SpawnerSetUp(spawnee,"StealthMancubusSpawner");
+				else if (Archvile(spawnee)) A_SpawnerSetUp(spawnee,"ArchvileSpawner");
+				else if (Cyberdemon(spawnee)) A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
+				else if (SpiderMastermind(spawnee)) A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
+				/*
+				else if (BossBrain(spawnee)) A_SpawnerSetUp(spawnee,"BossBrainNew");
+				else if (BossEye(spawnee)) A_SpawnerSetUp(spawnee,"BossEyeNew");
+				else if (SpawnShot(spawnee)) A_SpawnerSetUp(spawnee,"SpawnShotNew");
+				*/
 				// Heretic
-				if (Chicken(spawnee)) A_SpawnerSetUp(spawnee,"ChickenNew");
-				if (HereticImp(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleSpawner");
-				if (HereticImpLeader(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleLeaderSpawner");
-				if (Mummy(spawnee)) A_SpawnerSetUp(spawnee,"GolemSpawner");
-				if (MummyGhost(spawnee)) A_SpawnerSetUp(spawnee,"GolemGhostSpawner");
-				if (MummyLeader(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemSpawner");
-				if (MummyLeaderGhost(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemGhostSpawner");
-				if (Knight(spawnee)) A_SpawnerSetUp(spawnee,"KnightSpawner");
-				if (KnightGhost(spawnee)) A_SpawnerSetUp(spawnee,"KnightGhostSpawner");
-				if (Wizard(spawnee)) A_SpawnerSetUp(spawnee,"WizardSpawner");
-				if (IronLich(spawnee)) A_SpawnerSetUp(spawnee,"LichSpawner");
-				if (Clink(spawnee)) A_SpawnerSetUp(spawnee,"ClinkSpawner");
-				if (Beast(spawnee)) A_SpawnerSetUp(spawnee,"WeredragonSpawner");
-				if (Minotaur(spawnee)) A_SpawnerSetUp(spawnee,"MaulotaurNew");
-				if (Snake(spawnee)) A_SpawnerSetUp(spawnee,"SnakeSpawner");
-				if (Sorcerer1(spawnee)) A_SpawnerSetUp(spawnee,"DSparilMountedNew");
-				if (Sorcerer2(spawnee)) A_SpawnerSetUp(spawnee,"DSparilUnmountedNew");
-
-				if (Pig(spawnee)) A_SpawnerSetUp(spawnee,"PigNew");
-				if (Ettin(spawnee)) A_SpawnerSetUp(spawnee,"EttinSpawner");
-				if (FireDemon(spawnee)) A_SpawnerSetUp(spawnee,"AfritSpawner");
-				if (Bishop(spawnee)) A_SpawnerSetUp(spawnee,"BishopSpawner");
-				if (Serpent(spawnee)) A_SpawnerSetUp(spawnee,"StalkerSpawner");
-				if (SerpentLeader(spawnee)) A_SpawnerSetUp(spawnee,"StalkerLeaderSpawner");
-				if (Demon1(spawnee)) A_SpawnerSetUp(spawnee,"Demon1Spawner");
-				if (Demon2(spawnee)) A_SpawnerSetUp(spawnee,"Demon2Spawner");
-				if (Centaur(spawnee)) A_SpawnerSetUp(spawnee,"CentaurNew");
-				if (CentaurLeader(spawnee)) A_SpawnerSetUp(spawnee,"SlaughtaurNew");
-				if (IceGuy(spawnee)) A_SpawnerSetUp(spawnee,"IceGuyNew");
-				if (Wraith(spawnee)) A_SpawnerSetUp(spawnee,"WraithNew");
-				if (WraithBuried(spawnee)) A_SpawnerSetUp(spawnee,"WraithBuriedNew");
-				if (Dragon(spawnee)) A_SpawnerSetUp(spawnee,"DragonNew");
-				if (Heresiarch(spawnee)) A_SpawnerSetUp(spawnee,"HeresiarchNew");
-				if (ClericBoss(spawnee)) A_SpawnerSetUp(spawnee,"ClericBossNew");
-				if (FighterBoss(spawnee)) A_SpawnerSetUp(spawnee,"FighterBossNew");
-				if (MageBoss(spawnee)) A_SpawnerSetUp(spawnee,"MageBossNew");
-				if (Korax(spawnee)) A_SpawnerSetUp(spawnee,"KoraxNew");
+				else if (Chicken(spawnee)) A_SpawnerSetUp(spawnee,"ChickenNew");
+				else if (HereticImp(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleSpawner");
+				else if (HereticImpLeader(spawnee)) A_SpawnerSetUp(spawnee,"GargoyleLeaderSpawner");
+				else if (Mummy(spawnee)) A_SpawnerSetUp(spawnee,"GolemSpawner");
+				else if (MummyGhost(spawnee)) A_SpawnerSetUp(spawnee,"GolemGhostSpawner");
+				else if (MummyLeader(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemSpawner");
+				else if (MummyLeaderGhost(spawnee)) A_SpawnerSetUp(spawnee,"NitroGolemGhostSpawner");
+				else if (Knight(spawnee)) A_SpawnerSetUp(spawnee,"KnightSpawner");
+				else if (KnightGhost(spawnee)) A_SpawnerSetUp(spawnee,"KnightGhostSpawner");
+				else if (Wizard(spawnee)) A_SpawnerSetUp(spawnee,"WizardSpawner");
+				else if (IronLich(spawnee)) A_SpawnerSetUp(spawnee,"LichSpawner");
+				else if (Clink(spawnee)) A_SpawnerSetUp(spawnee,"ClinkSpawner");
+				else if (Beast(spawnee)) A_SpawnerSetUp(spawnee,"WeredragonSpawner");
+				else if (Minotaur(spawnee)) A_SpawnerSetUp(spawnee,"MaulotaurNew");
+				else if (Snake(spawnee)) A_SpawnerSetUp(spawnee,"SnakeSpawner");
+				else if (Sorcerer1(spawnee)) A_SpawnerSetUp(spawnee,"DSparilMountedNew");
+				else if (Sorcerer2(spawnee)) A_SpawnerSetUp(spawnee,"DSparilUnmountedNew");
+				// Hexen
+				else if (Pig(spawnee)) A_SpawnerSetUp(spawnee,"PigNew");
+				else if (Ettin(spawnee)) A_SpawnerSetUp(spawnee,"EttinSpawner");
+				else if (FireDemon(spawnee)) A_SpawnerSetUp(spawnee,"AfritSpawner");
+				else if (Bishop(spawnee)) A_SpawnerSetUp(spawnee,"BishopSpawner");
+				else if (Serpent(spawnee)) A_SpawnerSetUp(spawnee,"StalkerSpawner");
+				else if (SerpentLeader(spawnee)) A_SpawnerSetUp(spawnee,"StalkerLeaderSpawner");
+				else if (Demon1(spawnee)) A_SpawnerSetUp(spawnee,"Demon1Spawner");
+				else if (Demon2(spawnee)) A_SpawnerSetUp(spawnee,"Demon2Spawner");
+				else if (Centaur(spawnee)) A_SpawnerSetUp(spawnee,"CentaurNew");
+				else if (CentaurLeader(spawnee)) A_SpawnerSetUp(spawnee,"SlaughtaurNew");
+				else if (IceGuy(spawnee)) A_SpawnerSetUp(spawnee,"IceGuyNew");
+				else if (Wraith(spawnee)) A_SpawnerSetUp(spawnee,"WraithNew");
+				else if (WraithBuried(spawnee)) A_SpawnerSetUp(spawnee,"WraithBuriedNew");
+				else if (Dragon(spawnee)) A_SpawnerSetUp(spawnee,"DragonNew");
+				else if (Heresiarch(spawnee)) A_SpawnerSetUp(spawnee,"HeresiarchNew");
+				else if (ClericBoss(spawnee)) A_SpawnerSetUp(spawnee,"ClericBossNew");
+				else if (FighterBoss(spawnee)) A_SpawnerSetUp(spawnee,"FighterBossNew");
+				else if (MageBoss(spawnee)) A_SpawnerSetUp(spawnee,"MageBossNew");
+				else if (Korax(spawnee)) A_SpawnerSetUp(spawnee,"KoraxNew");
 			}
 		}
 		
