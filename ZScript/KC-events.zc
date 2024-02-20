@@ -1836,7 +1836,7 @@ class KC_EventHandler : EventHandler
 			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.bSOLID = false;
 			spawnee.Destroy();
-			spawnee.A_SpawnItemEx(spawnertype,flags:SXF_NOCHECKPOSITION,tid:spawnee.tid);
+			spawnee.A_SpawnItemEx(spawnertype,flags:SXF_CLEARCALLERTID|SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
 		}
 	}
 	
@@ -2651,6 +2651,11 @@ class KC_EventHandler : EventHandler
 								if (source)
 								{
 									if (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength")) force *= frandompick(1.125,1.25,1.375);
+									if (PlayerPawn(source))
+									{
+										if (source.CountInv("KCTimeFreezer1")) force *= frandompick(0.2,0.25);
+										else if (source.CountInv("KCTimeFreezer2")) force *= frandompick(4,5);
+									}
 								}
 
 								if (random(1,8) <= 1) force *= 1.5;
