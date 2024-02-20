@@ -1833,11 +1833,20 @@ class KC_EventHandler : EventHandler
 	{
 		if (spawnee)
 		{
+			bool spawned;
+			actor mo;
 			if (kcdebug_monsterspawns) Console.Printf("\c[gold][pre] spawnee [%p]\c-: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
-			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.bSOLID = false;
+			[spawned, mo] = spawnee.A_SpawnItemEx(spawnertype,flags:SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
+			if (mo)
+			{
+				mo.bAMBUSH = spawnee.bAMBUSH;
+				mo.spawnflags = spawnee.spawnflags;
+				//Console.Printf("bAMBUSH: %d, spawnee.bAMBUSH: %d", mo.bAMBUSH, spawnee.bAMBUSH);
+				//Console.Printf("spawnflags: %d, spawnee.spawnflags: %d", mo.spawnflags, spawnee.spawnflags);
+			}
+			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.Destroy();
-			spawnee.A_SpawnItemEx(spawnertype,flags:SXF_CLEARCALLERTID|SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
 			if (kcdebug_monsterspawns) Console.Printf("\c[fire][post] spawnee [%p]\c-: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
 		}
 	}
