@@ -1840,10 +1840,12 @@ class KC_EventHandler : EventHandler
 			[spawned, mo] = spawnee.A_SpawnItemEx(spawnertype,flags:SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
 			if (mo)
 			{
-				mo.bAMBUSH = spawnee.bAMBUSH;
 				mo.spawnflags = spawnee.spawnflags;
-				//Console.Printf("bAMBUSH: %d, spawnee.bAMBUSH: %d", mo.bAMBUSH, spawnee.bAMBUSH);
-				//Console.Printf("spawnflags: %d, spawnee.spawnflags: %d", mo.spawnflags, spawnee.spawnflags);
+				if (kcdebug_monsterspawns) 
+				{
+					Console.Printf("spawnflags: %d, spawnee.spawnflags: %d", mo.spawnflags, spawnee.spawnflags);
+					Console.Printf("tid: %d, spawnee.tid: %d", mo.tid, spawnee.tid);
+				}
 			}
 			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.Destroy();
