@@ -14538,7 +14538,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 1;
-		Weapon.AmmoUse2 0;
+		Weapon.AmmoUse2 1;
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
@@ -14575,7 +14575,16 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 			{
 				invoker.shotcount = randompick(1,2,2,2,2,2,2,2,2,2,2,3);
 				if (CountInv("Cell") >= invoker.shotcount || 
-						A_CheckInfiniteAmmo()) return resolvestate("AltFire2");
+						A_CheckInfiniteAmmo()) 
+				{
+					return resolvestate("AltFire2");
+				}
+				else
+				if (CountInv("Cell") > 0)
+				{
+					invoker.shotcount = CountInv("Cell");
+					return resolvestate("AltFire2");
+				}
 				
 				return resolvestate(null);
 			}

@@ -746,15 +746,27 @@ class KC_EventHandler : EventHandler
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1') e1m8exitroommon = true;
 				if (level.mapname == "E1M8" &&
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' && 
-						spawnname == "BaronOfHell") e1m8baron = true;
+						(spawnname == "BaronOfHell" ||
+						 spawnname == "BaronOfHellNew" ||
+						 spawnname == "Belphegor" ||
+						 spawnname == "BruiserDemon" ||
+						 spawnname == "CyBruiser" ||
+						 spawnname == "ArchonOfHell" ||
+						 spawnname == "PyroDemon" ||
+						 spawnname == "FlyingBalrogDVDS" ||
+						 spawnname == "Hierophant")) e1m8baron = true;
 				if (level.mapname == "E2M8" &&
 						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' && 
-						spawnname == "Cyberdemon") e2m8cyber = true;
+						(spawnname == "Cyberdemon" || 
+						 spawnname == "CyberdemonNew" || 
+						 spawnname == "Annihilator")) e2m8cyber = true;
 				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
 						 (level.mapname == "E3M8" ||
 							level.mapname == "E4M8") &&
-						spawnname == "SpiderMastermind") e34m8spider = true;
+						(spawnname == "SpiderMastermind" || 
+						 spawnname == "SpiderMastermindNew" || 
+						 spawnname == "Demolisher")) e34m8spider = true;
 				
 				if (A_CheckUOHYM() && level.mapname == "MAP01") 
 				{
@@ -3166,9 +3178,7 @@ class KC_EventHandler : EventHandler
 					victim.CountInv("E1M8ExitRoomMonster")) candropitems = false;
 			nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) candropitems = false;
 			nm = "ClayDevilNew"; extracheck = nm; if (vict == extracheck) candropitems = false;
-			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
-			
-			if (!playerkill || !allykill)
+			if (!(playerkill || allykill))
 			{
 				if (!victim.CountInv("E1M8ExitRoomMonster"))
 				{
@@ -3176,9 +3186,11 @@ class KC_EventHandler : EventHandler
 														 else candropitems = false;
 				}
 			}
+			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
 			
 			if (candropitems)
 			{
+				if (kcdebug_worlddied) Console.Printf("candropitems [post]: %d", candropitems);
 				droptimes = 1;
 				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
 				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
@@ -4881,9 +4893,9 @@ class KC_EventHandler : EventHandler
 			int TruePlayerLevel = 0;
 			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
 			int user_type;
-			bool giveexp;
-			bool playerkill;
-			bool allykill;
+			bool giveexp = false;
+			bool playerkill = false;
+			bool allykill = false;
 			bool waslegendary = false;
 			KCCreature KCC;
 			KCC = KCCreature(victim);
@@ -4961,7 +4973,8 @@ class KC_EventHandler : EventHandler
 				}
 				if (kcdebug_worlddied) Console.Printf("[%s] SpecialType [WorldDied]: %d, %d", vict, specialtype, specialtype2);
 
-				if (!(KCPlayerPawn(victim)) || (victim.bCOUNTKILL || specialtype || specialtype2))
+				if (!(KCPlayerPawn(victim)) || 
+						 (victim.bCOUNTKILL || specialtype || specialtype2))
 				{
 					int monsterrating = victim.CountInv("MonsterRating");
 					if (!victim.CountInv("DedMonsterFlag") && !sv_monsterrespawn) victim.A_SetInventory("DedMonsterFlag",1);
@@ -4973,21 +4986,14 @@ class KC_EventHandler : EventHandler
 						{
 							if (PlayerPawn(inflicter)) playerkill = true;
 							else if (inflicter.bFRIENDLY) allykill = true;
-							if (inflicter.bFRIENDLY || PlayerPawn(inflicter))
-							{
-								giveexp = true;
-							}
+							if (inflicter.bFRIENDLY || PlayerPawn(inflicter)) giveexp = true;
 							if (kcdebug_worlddied) Console.Printf("inflictor: %s [%d]", infl, inflicter.bFRIENDLY);
 						}
-						else
 						if (source) 
 						{
 							if (PlayerPawn(source)) playerkill = true;
 							else if (source.bFRIENDLY) allykill = true;
-							if (source.bFRIENDLY || PlayerPawn(source)) 
-							{
-								giveexp = true;
-							}
+							if (source.bFRIENDLY || PlayerPawn(source)) giveexp = true;
 							if (kcdebug_worlddied) Console.Printf("source: %s [%d]", sour, source.bFRIENDLY);
 						}
 						if (mastor) 
@@ -5235,11 +5241,12 @@ class KC_EventHandler : EventHandler
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
 						if (!playerkill) playoneliner = false;
 						
+						if (kcdebug_worlddied) Console.Printf("playoneliner: %d", playoneliner);
 						if (playoneliner && 
 								A_CheckForHeiwaPlayer() && 
 								MiscItem && 
-								playera.health > 0 || 
-								!playera.CountInv("PlayerIsDead"))
+								(playera.health > 0 || 
+								 !playera.CountInv("PlayerIsDead")))
 						{
 							if (kcdebug_worlddied) Console.Printf("Voice Check");
 							bool voicecheck = false;
