@@ -849,7 +849,7 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 	int voicetick, voicetick2;
 	bool spoke;
 	bool spoketoboss;
-	string nm, nn, no, np, nq, nr, ns, nt;
+	string nm, nn, no, np, nq, nr, ns, nt, nu, nv, nw, nx, ny, nz;
 	
 	bool IsDoom1()
 	{
@@ -949,7 +949,23 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 						{
 							if (kcdebug_speaktoboss) Console.Printf("Speak at attempt. :V");
 							nm = "BaronOfHell";
-							if (owner.GetClassName() == nm) 
+							nn = "BaronOfHellNew";
+							no = "Belphegor";
+							np = "BruiserDemon";
+							nq = "CyBruiser";
+							nr = "ArchonOfHell";
+							ns = "PyroDemon";
+							nt = "FlyingBalrogDVDS";
+							nu = "Hierophant";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn ||
+									owner.GetClassName() == no ||
+									owner.GetClassName() == np ||
+									owner.GetClassName() == nq ||
+									owner.GetClassName() == nr ||
+									owner.GetClassName() == ns ||
+									owner.GetClassName() == nt ||
+									owner.GetClassName() == nu) 
 							{
 								if (level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' &&
 										(IsDoom1() && level.mapname == "E1M8"))
@@ -989,7 +1005,11 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 								}
 							}
 							nm = "Cyberdemon";
-							if (owner.GetClassName() == nm) 
+							nn = "CyberdemonNew";
+							no = "Annihilator";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn ||
+									owner.GetClassName() == no) 
 							{
 								if (level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
 										(IsDoom1() && level.mapname == "E2M8"))
@@ -1012,7 +1032,11 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 								}
 							}
 							nm = "SpiderMastermind";
-							if (owner.GetClassName() == nm) 
+							nn = "SpiderMastermindNew";
+							no = "Demolisher";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn ||
+									owner.GetClassName() == no) 
 							{
 								if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 										 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
@@ -1042,6 +1066,44 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 							{
 								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [CCards, Assassin sighted] :V");
 								A_SpeakToBoss(0); 
+							}
+							nm = "HadesElemental";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn ||
+									owner.GetClassName() == no) 
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [Hades Elemental] :V");
+								if (random(1,5) <= randompick(1,2,2,2,3)) A_SpeakToBoss(0); 
+							}
+							nm = "HadesOverlord";
+							if (owner.GetClassName() == nm) 
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [Hades Overlord] :V");
+								if (random(1,2) <= randompick(1,2,2,2,3)) A_SpeakToBoss(0); 
+							}
+							nm = "BruiserDemon";
+							nn = "CyBruiser";
+							no = "ArchonOfHell";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn ||
+									owner.GetClassName() == no) 
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [Bruisers/Archons] :V");
+								if (random(1,6) <= randompick(1,2,2,2,3)) A_SpeakToBoss(0); 
+							}
+							nm = "FlyingBalrogDVDS";
+							nn = "Hierophant";
+							if (owner.GetClassName() == nm ||
+									owner.GetClassName() == nn) 
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [Balrog/Hierophant] :V");
+								if (random(1,4) <= randompick(1,2,2,2,3)) A_SpeakToBoss(0); 
+							}
+							nm = "PyroDemon";
+							if (owner.GetClassName() == nm) 
+							{
+								if (kcdebug_speaktoboss) Console.Printf("Speak at attempt [PyroDemon] :V");
+								if (random(1,2) <= randompick(1,2,2,2,3)) A_SpeakToBoss(0); 
 							}
 							nm = "CCards_Actor_TheAncientOne";
 							if (owner.GetClassName() == nm) 
@@ -3514,7 +3576,7 @@ class LostSoulAtkWeakness : PowerProtectionTimeCheck
 		{
 			if (hittaken)
 			{
-				if (GetAge() > (hittakentime+random(0,1))) 
+				if (owner.GetAge() > (hittakentime+random(0,1))) 
 				{
 					hittaken = false;
 					timeshit++;
@@ -3529,7 +3591,8 @@ class LostSoulAtkWeakness : PowerProtectionTimeCheck
 				}
 			}
 			
-			tempfactor = 2.00;
+			tempfactor = 1.00;
+			maxtimeshit = randompick(4,5,5,5,5,6);
 			if (owner.GetClassName() == "LostSoulNew" || 
 					LostSoul(owner)) 
 			{
@@ -3562,11 +3625,12 @@ class LostSoulAtkWeakness : PowerProtectionTimeCheck
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 		if (passive && damage > 0)
 		{
+			hittaken = true;
+			hittakentime = owner.GetAge();
+			Console.Printf("tempfactor: %.8f, hittaken: %d / %d, time: %d / %d", tempfactor, timeshit, maxtimeshit, owner.GetAge() / hittakentime);
 			double TOTALFactor = tempfactor;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
-			hittaken = true;
-			hittakentime = GetAge();
 		}
 	}
 }

@@ -1840,14 +1840,29 @@ class KC_EventHandler : EventHandler
 			[spawned, mo] = spawnee.A_SpawnItemEx(spawnertype,flags:SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
 			if (mo)
 			{
+				mo.ChangeTID(spawnee.tid);
+				if (spawnee.tid) spawnee.ChangeTID(0);
 				mo.spawnflags = spawnee.spawnflags;
+				mo.special = spawnee.special;
+				mo.args[0] = spawnee.args[0];
+				mo.args[1] = spawnee.args[1];
+				mo.args[2] = spawnee.args[2];
+				mo.args[3] = spawnee.args[3];
+				mo.args[4] = spawnee.args[4];
+				mo.bCOUNTSECRET = spawnee.bCOUNTSECRET;
+				if (spawnee.bCOUNTSECRET) level.total_secrets -= 1;
+				mo.bCOUNTKILL = spawnee.bCOUNTKILL;
+				if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
+				mo.bCOUNTITEM = spawnee.bCOUNTITEM;
+				if (spawnee.bCOUNTITEM) level.total_items -= 1;
 				if (kcdebug_monsterspawns) 
 				{
 					Console.Printf("spawnflags: %d, spawnee.spawnflags: %d", mo.spawnflags, spawnee.spawnflags);
+					Console.Printf("special: %d, spawnee.special: %d", mo.special, spawnee.special);
 					Console.Printf("tid: %d, spawnee.tid: %d", mo.tid, spawnee.tid);
+					Console.Printf("args[0/1/2/3/4]: %d/%d/%d/%d/%d, spawnee.args[0/1/2/3/4]: %d/%d/%d/%d/%d", mo.args[0],mo.args[1],mo.args[2],mo.args[3],mo.args[4], spawnee.args[0],spawnee.args[1],spawnee.args[2],spawnee.args[3],spawnee.args[4]);
 				}
 			}
-			if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 			spawnee.Destroy();
 			if (kcdebug_monsterspawns) Console.Printf("\c[fire][post] spawnee [%p]\c-: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
 		}

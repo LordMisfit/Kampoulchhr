@@ -887,7 +887,9 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			if (MiscItem.TimeArmorRelicsOwned == 2) tagg = "\c[green]";
 			if (MiscItem.TimeArmorRelicsOwned == 3) tagg = "\c[HeiwaDeluge]";
 			tagg.AppendFormat("Time Seraph's Pocket Watch\c-");
-			tagg.AppendFormat(": Said to allow its holder the Perception of Frozen Time. Upgrades \c[HeiwaDeluge]Time Seraph's Armor\c- to \c[green]Level 2\c- potency if used as an item and you possess the charm.");
+			tagg.AppendFormat(": Said to allow its holder the Perception of Frozen Time.");
+			if (playera.CountInv("TimeSeraphCharm")) tagg.AppendFormat(" Upgrades \c[HeiwaDeluge]Time Seraph's Armor\c- to \c[green]Level 2\c- potency if used as an item and you possess the charm.");
+																					else tagg.AppendFormat(" It also has one other effect which is \c[orange]currently unknown\c-, and its power is currently \c[red]sealed away...\c-");
 		}
 		SetTag(tagg);
 		super.Tick();
@@ -963,6 +965,11 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 						playera.A_StopSound(555);
 						playera.A_StartSound("tsarmor1/start",555,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
+				}
+				else
+				{
+					playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+					A_PrintBold("\c[HeiwaDeluge]Unfortunately, the Pocket Watch is sealed and fails to function as it currently is...\c-");
 				}
 			}
 			Fail;
