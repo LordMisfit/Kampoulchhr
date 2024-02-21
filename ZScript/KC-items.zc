@@ -2061,6 +2061,53 @@ class SpreadSphere2 : CustomInventoryExt
 	}
 }
 
+class TerrorSphere : CustomInventoryExt
+{
+	default
+	{
+		+FLOATBOB
+		+DONTGIB
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.MaxAmount 0;
+		Inventory.PickupMessage "The Terrorsphere!";
+		Inventory.PickupSound "powerup/fear";
+	}
+	
+	States
+	{
+		Spawn:
+			TERR ABCDE 6 Bright;
+			Loop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					string voicenm;
+					double voicevol = frandom(1.25,1.75);
+					if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+					if (MiscItem.OneLinerTimerCool <= 0)
+					{
+						MiscItem.OneLinerTimerCool = ceil(int(0.75 * TICRATE));
+						voicenm = "HeiwaLaugh"; //
+						Console.Printf("\c[HeiwaDeluge]-Laughs in Triumph-\c-"); //
+						playera.A_StopSound(CHAN_VOICE);
+						playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+					}
+				}
+				A_GiveInventory("PowerTerror");
+			}
+			Stop;
+	}
+}
+
 //***********
 //** Armor **
 //***********

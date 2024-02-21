@@ -3415,6 +3415,50 @@ class PowerSlow : PowerSpeedTimeCheck
 	}
 }
 
+class PowerTerror : PowerFrightener
+{
+	mixin TimerCheck;
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	string texname;
+	
+	default
+	{
+		inventory.icon "TERRA0";
+		Powerup.Duration -60;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void Tick ()
+	{
+		timer++;
+		if (timer % 30 >= 0 && timer % 30 <= 5) texname = "TERRA0";
+		if (timer % 30 >= 6 && timer % 30 <= 11) texname = "TERRB0";
+		if (timer % 30 >= 12 && timer % 30 <= 17) texname = "TERRC0";
+		if (timer % 30 >= 18 && timer % 30 <= 23) texname = "TERRD0";
+		if (timer % 30 >= 24 && timer % 30 <= 29) texname = "TERRE0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
 // Forces resurrected monsters to reset their health to include their bonus HP from stat calculations :V
 class JustRevived : PlaceHolderItem 
 {
