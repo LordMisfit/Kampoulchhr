@@ -1603,6 +1603,15 @@ class KCPlayerPawn : PlayerPawn
 				damage *= 0.5;
 			}
 			
+			// Hades Thunder is half Thunder, half dark, so it's 
+			// not fully covered either, but deals half damage to
+			// the armor's energy :P
+			if (mod == 'HadesThunder')
+			{
+				if (random(1,2) <= 1) flags |= DMG_THRUSTLESS;
+				damage *= 0.5;
+			}
+			
 			TSArmor1DmgChance = double((damage * 1.0) / (TSArmorDmgDivisor * 1.0));
 			damage /= TSArmorDmgDivisor; 
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TimeSeraphArmor: %d, TSArmorDmgDivisor: %d, TSArmor1DmgChance: %.8f", TimeSeraphArmor, TSArmorDmgDivisor, TSArmor1DmgChance);
