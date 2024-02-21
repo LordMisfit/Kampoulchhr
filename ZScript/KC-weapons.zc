@@ -2076,6 +2076,7 @@ class KCWeaponBase : Weapon
 					if (ExplosiveBarrel2(dmtarget)) dmtarget = null;
 					if (Pod(dmtarget)) dmtarget = null;
 					if (dmtarget && !dmtarget.bISMONSTER) dmtarget = null;
+					if (dmtarget && dmtarget.bFRIENDLY) dmtarget = null;
 				}
 				if (dmtarget != null) check = true;
 			}
