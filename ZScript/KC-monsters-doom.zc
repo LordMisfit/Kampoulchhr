@@ -8769,7 +8769,7 @@ class DeathIncarnate : KCCreature
 			{
 				if (health <= ((SpawnHealth() + Stamina) * -1)) return resolvestate("XDeath");
 				int chance = (192 - (user_deathcounter * 24));
-				if (Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1) chance = (96 - (user_deathcounter * 24));
+				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1) chance = (96 - (user_deathcounter * 24));
 				
 				if (random(1,256) <= chance) return resolvestate("FakeDeath");
 				return resolvestate(null);
@@ -8780,7 +8780,7 @@ class DeathIncarnate : KCCreature
 			{
 				if (health <= ((SpawnHealth() + Stamina) * -1)) return resolvestate("XDeath");
 				int chance = (96 - (user_deathcounter * 24));
-				if (Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1) chance = (48 - (user_deathcounter * 24));
+				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1) chance = (48 - (user_deathcounter * 24));
 
 				if (random(1,256) <= chance) return resolvestate("FakeDeath");
 				return resolvestate(null);

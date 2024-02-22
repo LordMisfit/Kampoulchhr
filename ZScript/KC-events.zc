@@ -2047,7 +2047,7 @@ class KC_EventHandler : EventHandler
 			invspawnee = Inventory(spawnee);
 			if (invspawnee)
 			{
-				if (Wads.CheckNumForName("EE-BLOOM", Wads.ns_global, -1, true) != -1)
+				if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
 				{
 					if (YellowCard(invspawnee) || BlueCard(invspawnee) || RedCard(invspawnee)) invspawnee.PickupSound = "getkeycard";
 					if (YellowSkull(invspawnee) || BlueSkull(invspawnee) || RedSkull(invspawnee)) invspawnee.PickupSound = "getskullkey";
@@ -5442,7 +5442,26 @@ class KC_EventHandler : EventHandler
 		let globalvars = KCGlobalVariables.Get();
 		
 		int levelnums = level.levelnum;
-
+		
+		// DynMus Reset
+		if (MiscItem)
+		{
+			int tempdynmusictype = kc_dynamicmusic;
+			int tutlevelmin = 1801;
+			int tutlevelmax = 1804;
+			if (level.levelnum >= tutlevelmin && level.levelnum <= tutlevelmax) tempdynmusictype = 3;
+			
+			if (tempdynmusictype == 3 && !e.IsReopen && !e.IsSaveGame) MiscItem.DynMusSetUsed = randompick(random(0,23),random(101,122),random(1001,1005));
+			if (MiscItem.DynMusFightTimer > 0 || MiscItem.DynMusCalmTimer > 0 || MiscItem.DynMusActCall || MiscItem.randmusroll > -1) 
+			{
+				MiscItem.DynMusActCall = false;
+				MiscItem.DynMusFightTimer = -1;
+				MiscItem.DynMusCalmTimer = -1;
+				MiscItem.randmusroll = -1;
+				MiscItem.playeractiontimer = 0;
+				MiscItem.playeractiontimerfrag = 0;
+			}
+		}
 		
 		if (!e.IsReopen)
 		{

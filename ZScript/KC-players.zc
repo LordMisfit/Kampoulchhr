@@ -1936,7 +1936,6 @@ class KCPlayerPawn : PlayerPawn
 				int rand1;
 				double randarmign;
 				
-				/*
 				// Tier 3 Enemies [i.e. extremely-high armor bypass, usually very powerful/ancient/eldritch named bosses [ol' Nyarly in Strange Aeons, etc.]
 				if (sour == "Nyarlathotep" ||
 						sour == "EviternatusAnta" ||
@@ -1967,7 +1966,7 @@ class KCPlayerPawn : PlayerPawn
 				else // Tier 1 Enemies [i.e. medium-high armor bypass, usually standard boss/mini-bosses, and BlackBears V:]
 				if (sour == "BlackBearNew" ||
 						sour == "Dhole" ||
-						(sour == "ShadowBeast" && Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1) ||
+						(sour == "ShadowBeast" && Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1) ||
 						sour == "SpiderGodling" ||
 						RailArachnotron(KCSource) ||
 						ArchvileNew(KCSource) ||
@@ -2005,7 +2004,6 @@ class KCPlayerPawn : PlayerPawn
 					rand1 += randompick(1,1,1,2) + ((source.CountInv("MonsterLevel")) * 0.125);
 					randarmign += (frandompick(0.00375,0.004375,0.005,0.0056125,0.00625) * kc_enemyarmorignorefactor);
 				}
-				*/
 				
 				if (source.bBOSS)
 				{
@@ -2022,9 +2020,8 @@ class KCPlayerPawn : PlayerPawn
 		
 		if (inflictor)
 		{
-			//if (infl == 'HellWarriorBall2') PlayerArmorIgnoreFactor += (frandom(0.1125,0.1375) * (1.00 - PlayerArmorIgnoreFactor));
+			if (infl == 'HellWarriorBall2') PlayerArmorIgnoreFactor += (frandom(0.1125,0.1375) * (1.00 - PlayerArmorIgnoreFactor));
 		}
-		/*
 		if (mod == 'Deadlight') 
 		{
 			if ((inflictor && infl == "PennywiseBoss") || 
@@ -2033,7 +2030,6 @@ class KCPlayerPawn : PlayerPawn
 			if ((inflictor && infl == "BeefyNew") || 
 					(source && sour == "BeefyNew")) PlayerArmorIgnoreFactor += (frandom(0.225,0.275) * (1.00 - PlayerArmorIgnoreFactor));
 		}
-		*/
 		
 		if (PlayerArmorIgnoreFactor <= 0.0) PlayerArmorIgnoreFactor = 0.0;
 		if (PlayerArmorIgnoreFactor > 1.0) PlayerArmorIgnoreFactor = 1.0;

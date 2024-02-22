@@ -1153,10 +1153,15 @@ mixin class MonsterCollider
 		return true;
 	}
 	
+	bool A_CheckUOHYM1()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
 	
 	void A_DynamicMusic(int timerset = 200, int matktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
 	{
-	/*
 		timerset *= kc_dynmustimescale;
 		bool changemusic;
 		actor dmtarget;
@@ -1207,7 +1212,6 @@ mixin class MonsterCollider
 				}
 			}
 		}
-	*/
 	}
 
 	// Damage Tracking

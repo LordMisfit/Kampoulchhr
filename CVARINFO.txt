@@ -107,6 +107,8 @@ server nosave int kc_flightswimpitchdash = 1;
 server nosave int kc_berserkweaponswitch = 0;
 server nosave int kc_playerbpm = 1;
 server nosave int kc_playerbpmhud = 1;
+server nosave int kc_dynamicmusic = 0;
+server nosave float kc_dynmustimescale = 1.0;
 
 // Special vars
 server int kc_vilesressurectviles = 1;
@@ -326,6 +328,7 @@ server nosave int kcdebug_practicetargetsdebuff = 0;
 server nosave int kcdebug_monsterspawns = 0;
 server nosave int kcdebug_weaponspawners = 0;
 server nosave int kcdebug_onelinertimers = 0;
+server nosave int kcdebug_dynmusdisplays = 0;
 
 server nosave int kcdebug_monsterscaling = 0;
 server nosave int kcdebug_scriptdisplays = 0;
@@ -402,14 +405,14 @@ server nosave float sv_deathtiltangleerror = 15.0;
 server bool kcLDL_newldlchances = false;
 server int LD_legendaryhealth = 200;
 server float LD_legendarydamage = 2.0;
-server float LD_legendarydefense = 0.5;	// EE-Specific
-server float LD_legendaryspeed = 1.5;	// EE-Specific
-server int LD_legendarymass = 150;		// EE-Specific
+server float LD_legendarydefense = 0.5;	// KC-Specific
+server float LD_legendaryspeed = 1.5;	// KC-Specific
+server int LD_legendarymass = 150;		// KC-Specific
 server int LD_legendaryhealthboss = 200;
 server float LD_legendarydamageboss = 2.0;
-server float LD_legendarydefenseboss = 0.5;	// EE-Specific
-server float LD_legendaryspeedboss = 1.5;	// EE-Specific
-server int LD_legendarymassboss = 150;		// EE-Specific
+server float LD_legendarydefenseboss = 0.5;	// KC-Specific
+server float LD_legendaryspeedboss = 1.5;	// KC-Specific
+server int LD_legendarymassboss = 150;		// KC-Specific
 server int LD_legendarychance = 0;
 server bool LD_diemode = false;
 server bool LD_nomonsters = false;
