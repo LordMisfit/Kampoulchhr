@@ -3007,7 +3007,7 @@ class KCPlayerPawn : PlayerPawn
 					}
 					else
 					{
-						if (health > 0) A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,frandom(0.5,0.75),ATTN_NORM);
+						if (health > 0) A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,(frandom(0.5,0.75) * kc_playernodmgvol),ATTN_NORM);
 						combatlogmsg.AppendFormat("\c[white]No Damage \c-");
 					}
 					if (kcdebug_dmgdiffdebug)
