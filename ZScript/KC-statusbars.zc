@@ -3416,95 +3416,95 @@ class KCStatusBarMain : BaseStatusBar
 
 			// HP/AP Pulse Control
 			[HPPulseScale, APPulseScale, TSAPulseScale] = DrawFSHUDHPAPPulsing(HPPulseScale, APPulseScale, TSAPulseScale);
-		}
 		
-		//********
-		//* Dash *
-		//********
-		int candash = CPlayerPawn.CountInv("DashReady");
-		if (candash && CPlayerPawn.CountInv("NoDashing")) candash = 0;
-		int dash = CPlayerPawn.CountInv("DashGauge");
-		int dashcooldown = CPlayerPawn.CountInv("DashCooldown");
-		int dashcharge = CPlayerPawn.CountInv("DashCharge");
-		int dashtics = CPlayerPawn.CountInv("DashTics");
-		int dashmaxcharge = CPlayerPawn.CountInv("DashMaxCharge");
-		int dashcost = CPlayerPawn.CountInv("DashCost");
-		
-		// Draw health
-		int ValueAmt = CurrHealth;
-		string ValueAmtS = FormatNumber(ValueAmt);
-		double HUDHitAlpha = 1.00;
-		string HUDStringHit;
-		int HUDNumHitValue;
-		int SlashUnit;
-		int yinc = -1;
-		yinc = A_DrawFSHealth(1.0, yinc);
-		
-		/*
-		// Draw PP/MP/HCLR
-		if (MiscItem && 
-				(MiscItem.MaxPsychicPoints > 0 || 
-				 MiscItem.MaxMagicPoints > 0))
-		{
+			//********
+			//* Dash *
+			//********
+			int candash = CPlayerPawn.CountInv("DashReady");
+			if (candash && CPlayerPawn.CountInv("NoDashing")) candash = 0;
+			int dash = CPlayerPawn.CountInv("DashGauge");
+			int dashcooldown = CPlayerPawn.CountInv("DashCooldown");
+			int dashcharge = CPlayerPawn.CountInv("DashCharge");
+			int dashtics = CPlayerPawn.CountInv("DashTics");
+			int dashmaxcharge = CPlayerPawn.CountInv("DashMaxCharge");
+			int dashcost = CPlayerPawn.CountInv("DashCost");
+			
+			// Draw health
+			int ValueAmt = CurrHealth;
+			string ValueAmtS = FormatNumber(ValueAmt);
+			double HUDHitAlpha = 1.00;
+			string HUDStringHit;
+			int HUDNumHitValue;
+			int SlashUnit;
+			int yinc = -1;
+			yinc = A_DrawFSHealth(1.0, yinc);
+			
+			/*
+			// Draw PP/MP/HCLR
+			if (MiscItem && 
+					(MiscItem.MaxPsychicPoints > 0 || 
+					 MiscItem.MaxMagicPoints > 0))
+			{
+				yinc -= 20;
+				yinc = A_DrawFSMystical(1.0, yinc);
+			}
+			*/
+
 			yinc -= 20;
-			yinc = A_DrawFSMystical(1.0, yinc);
-		}
-		*/
+			// Draw Armor [and Time Seraph Armor info]
+			yinc = A_DrawFSArmor(1.0, yinc);
+			
+			// Draw Level
+			A_DrawFSLevel(1.0);
+			
+			// Draw Dash
+			A_DrawFSDash(1.0);
+			
+			//Key Legend
+			[VisiblePlayerLevel, candash, dashcost, dashmaxcharge] = DrawFSHUDKeyLegend(VisiblePlayerLevel, candash, dashcost, dashmaxcharge);
+			
+			// Draw Weapon Slots
+			int x;
+			int y;
+			string wsname;
+			string wsammoname;
+			int AmmoRatio;
+			[x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname] = DrawFSHUDWeaponSlots(x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname);
+			let ammotype = CPlayerPawn.FindInventory(wsammoname);
+			
+			// Draw Ammo
+			int invY = A_DrawFSAmmo(-20, wsammoname);
+			
+			// Inventory [Selected]
+			invY = A_DrawFSInvSelected(invY);
+			
+			// Stat Displays
+			//[FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, Spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, Digits] = DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
+			DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
 
-		yinc -= 20;
-		// Draw Armor [and Time Seraph Armor info]
-		yinc = A_DrawFSArmor(1.0, yinc);
-		
-		// Draw Level
-		A_DrawFSLevel(1.0);
-		
-		// Draw Dash
-		A_DrawFSDash(1.0);
-		
-		//Key Legend
-		[VisiblePlayerLevel, candash, dashcost, dashmaxcharge] = DrawFSHUDKeyLegend(VisiblePlayerLevel, candash, dashcost, dashmaxcharge);
-		
-		// Draw Weapon Slots
-		int x;
-		int y;
-		string wsname;
-		string wsammoname;
-		int AmmoRatio;
-		[x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname] = DrawFSHUDWeaponSlots(x, y, VisiblePlayerLevel, CurrHealth, PlayerMaxHP, AmmoRatio, wsname, wsammoname);
-		let ammotype = CPlayerPawn.FindInventory(wsammoname);
-		
-		// Draw Ammo
-		int invY = A_DrawFSAmmo(-20, wsammoname);
-		
-		// Inventory [Selected]
-		invY = A_DrawFSInvSelected(invY);
-		
-		// Stat Displays
-		//[FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, Spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, Digits] = DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
-		DrawFSStatDisplays(FontAlpha, FontScale, FontWrapWidth, FontLineSpace, DigX, DigY, spacing, VisiblePlayerLevel, VisiblePlayerATK, VisiblePlayerDEF, VisiblePlayerSPD, HUDHitAlpha, HUDStringHit, digits);
-
-		// Draw Keys
-		DrawFSHUDKeys();
-		
-		if (deathmatch)
-		{
-			DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 4), (-3, 1), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
+			// Draw Keys
+			DrawFSHUDKeys();
+			
+			if (deathmatch)
+			{
+				DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 4), (-3, 1), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD);
+			}
+			else
+			{
+				//DrawFullscreenKeys();
+			}
+			
+			// Level Stats
+			DigY = DrawFSHUDLevelStats(DigY, 8, kchud_stattextscale);
+			
+			int numboxes = kc_inventorybarboxes;
+			if (numboxes <= 1) numboxes = 1;
+			if (numboxes >= 20) numboxes = 20;
+			numboxes = 3;
+			if (CPlayerPawn.CountInv("SpecialBackpackBonus")) numboxes += 1;
+			DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
+			//Console.Printf("End Of ScreenBlocks Check");
 		}
-		else
-		{
-			//DrawFullscreenKeys();
-		}
-		
-		// Level Stats
-		DigY = DrawFSHUDLevelStats(DigY, 8, kchud_stattextscale);
-		
-		int numboxes = kc_inventorybarboxes;
-		if (numboxes <= 1) numboxes = 1;
-		if (numboxes >= 20) numboxes = 20;
-		numboxes = 3;
-		if (CPlayerPawn.CountInv("SpecialBackpackBonus")) numboxes += 1;
-		DrawInventoryBar(diparms, (0,0), numboxes, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW);
-		//Console.Printf("End Of ScreenBlocks Check");
 		
 		SetSize(0, 1920, 1080);
 		if (CPlayerPawn.CountInv("BlackScreenHUD")) DrawTexture(TexMan.CheckForTexture("BLAKSCRN", TexMan.TYPE_MiscPatch), (0, 540), DI_SCREEN_CENTER); // -46, -1
