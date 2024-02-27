@@ -4242,59 +4242,66 @@ class KCCreature : KCBaseZSC
 
 	void A_ActorShadowSplit(int minlevel = 30, int minchance = 256)
 	{
-		int user_monsterlevel = CountInv("MonsterLevel");
-		int splittype = 0; // 0;
-		int splittype2 = 0; // 0;
-		int RandRoll = random(1,1024);
-		if (kc_monsterlevelenabledflags)
+		if (!CheckTimeFreeze())
 		{
-			A_StopSound(CHAN_WEAPON);
-			if (!CountInv("ShadowSplitCooldown")) 
+			int user_monsterlevel = CountInv("MonsterLevel");
+			int splittype = 0; // 0;
+			int splittype2 = 0; // 0;
+			int RandRoll = random(1,1024);
+			if (kc_monsterlevelenabledflags)
 			{
-				if (user_monsterlevel >= (minlevel*9))
+				A_StopSound(CHAN_WEAPON);
+				if (!CountInv("ShadowSplitCooldown")) 
 				{
-					if (RandRoll <= (minchance*4)) splittype2 = 2;
-				}
-				else
-				if (user_monsterlevel >= (minlevel*4))
-				{
-					if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
-				}
-				else
-				if (user_monsterlevel >= minlevel)
-				{
-					if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
-				}
-				else
-				if (user_monsterlevel >= (minlevel/2))
-				{
-					if (RandRoll <= (minchance/4)) splittype2 = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+					if (user_monsterlevel >= (minlevel*9))
+					{
+						if (RandRoll <= (minchance*4)) splittype2 = 2;
+					}
+					else
+					if (user_monsterlevel >= (minlevel*4))
+					{
+						if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
+					}
+					else
+					if (user_monsterlevel >= minlevel)
+					{
+						if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
+					}
+					else
+					if (user_monsterlevel >= (minlevel/2))
+					{
+						if (RandRoll <= (minchance/4)) splittype2 = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+					}
 				}
 			}
-		}
 
-		if (splittype2 == 0)
-		{
+			if (splittype2 == 0)
+			{
+			}
+			else
+			if (splittype2 == 1)
+			{
+				splittype = random(1,4);
+				if (splittype == 1) { SetStateLabel("Shadowsplit1"); }
+				if (splittype == 2) { SetStateLabel("Shadowsplit2"); }
+				if (splittype == 3) { SetStateLabel("Shadowsplit3"); }
+				if (splittype == 4) { SetStateLabel("Shadowsplit4"); }
+			}
+			else
+			if (splittype2 == 2)
+			{
+				splittype = random(1,4);
+				if (splittype == 1) { SetStateLabel("Shadowsplit1a"); }
+				if (splittype == 2) { SetStateLabel("Shadowsplit2a"); }
+				if (splittype == 3) { SetStateLabel("Shadowsplit3a"); }
+				if (splittype == 4) { SetStateLabel("Shadowsplit4a"); }
+			}
+			if (kcdebug_monsterspecialai) Console.Printf("Class: %s - \cuCacos' ShadowSplit --- (Level / RequiredLvl: %d / %d) splittype2: %d, splittype: %d\c-", GetClassName(), user_monsterlevel, minlevel, splittype2, splittype);
 		}
 		else
-		if (splittype2 == 1)
 		{
-			splittype = random(1,4);
-			if (splittype == 1) { SetStateLabel("Shadowsplit1"); }
-			if (splittype == 2) { SetStateLabel("Shadowsplit2"); }
-			if (splittype == 3) { SetStateLabel("Shadowsplit3"); }
-			if (splittype == 4) { SetStateLabel("Shadowsplit4"); }
+			if (kcdebug_monsterspecialai) Console.Printf("Class: %s - \cuCacos' ShadowSplit --- Failed Due to Time Freeze :V", GetClassName());
 		}
-		else
-		if (splittype2 == 2)
-		{
-			splittype = random(1,4);
-			if (splittype == 1) { SetStateLabel("Shadowsplit1a"); }
-			if (splittype == 2) { SetStateLabel("Shadowsplit2a"); }
-			if (splittype == 3) { SetStateLabel("Shadowsplit3a"); }
-			if (splittype == 4) { SetStateLabel("Shadowsplit4a"); }
-		}
-		if (kcdebug_monsterspecialai) Console.Printf("Class: %s - \cuCacos' ShadowSplit --- (Level / RequiredLvl: %d / %d) splittype2: %d, splittype: %d\c-", GetClassName(), user_monsterlevel, minlevel, splittype2, splittype);
 	}
 
 	const DEFSKULLSPEED = 20;

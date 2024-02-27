@@ -804,6 +804,7 @@ class KC_EventHandler : EventHandler
 				nm = "EviternatusAnta"; if (spawnname == nm) baselinelevel += random(15,25);
 				nm = "EviternatusBete"; if (spawnname == nm) baselinelevel += random(15,25);
 				nm = "EviternatusCeph"; if (spawnname == nm) baselinelevel += random(15,25);
+				nm = "IconOfSinBoss"; if (spawnname == nm) baselinelevel += random(30,50);
 				if (e1m8exitroommon) baselinelevel += random(10,15);
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
@@ -2264,6 +2265,23 @@ class KC_EventHandler : EventHandler
 				// Strife Peasants
 				if (Peasant(spawnee)) ispeasant = true;
 				
+				nm = "IconOfSinBoss"; extracheck = nm;
+				if (spawnname == extracheck) 
+				{
+					if (Skill <= 0) healthmulfactor = 0.0075;
+					if (Skill == 1) healthmulfactor = 0.00875;
+					if (Skill == 2) healthmulfactor = 0.01;
+					if (Skill == 3) healthmulfactor = 0.01125;
+					if (Skill >= 4) healthmulfactor = 0.0125;
+					basehealth *= (1.0 + (TruePlayerLevel * healthmulfactor));
+					if (Skill <= 0) basehealth *= 0.8;
+					if (Skill == 1) basehealth *= 0.9;
+					if (Skill == 2) basehealth *= 1;
+					if (Skill == 3) basehealth *= 1.2;
+					if (Skill >= 4) basehealth *= 1.4;
+					//spawnee.health = basehealth;
+				}
+
 				// Eviternity's Archangelus Boss
 				nm = "ArchangelusA"; extracheck = nm;
 				if (spawnname == extracheck) 
