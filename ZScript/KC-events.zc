@@ -35,6 +35,13 @@ class KC_EventHandler : EventHandler
 		return UOHYM;
 	}
 	
+	bool A_CheckBlooM()
+	{
+		bool BlooM = false;
+		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1) BlooM = true;
+		return BlooM;
+	}
+	
 	int A_GetPlayerLevel(int type = 0)
 	{
 		actor player = players[0].mo;
@@ -1576,7 +1583,7 @@ class KC_EventHandler : EventHandler
 		string spawnname = spawnee.GetClassName();
 
 		//Console.Printf("@!# [%s]", spawnname);
-		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+		if (A_CheckBlooM())
 		{
 			if (spawnname ~== "PlayerBurner") spawnee.SetTag("Being Lit On Fire");
 
@@ -1657,7 +1664,7 @@ class KC_EventHandler : EventHandler
 		string spawnname = spawnee.GetClassName();
 
 		//Console.Printf("@!# [%s]", spawnname);
-		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+		if (A_CheckBlooM())
 		{
 			//Console.Printf("bn24 [%s]", spawnname);
 			if (spawnname ~== "PossessedZombieMan") spawnee.SetTag("Possessed Zombieman");
@@ -2048,7 +2055,7 @@ class KC_EventHandler : EventHandler
 			invspawnee = Inventory(spawnee);
 			if (invspawnee)
 			{
-				if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+				if (A_CheckBlooM())
 				{
 					if (YellowCard(invspawnee) || BlueCard(invspawnee) || RedCard(invspawnee)) invspawnee.PickupSound = "getkeycard";
 					if (YellowSkull(invspawnee) || BlueSkull(invspawnee) || RedSkull(invspawnee)) invspawnee.PickupSound = "getskullkey";
@@ -2649,7 +2656,7 @@ class KC_EventHandler : EventHandler
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
 					nm = "Skeleton"; if (victim.GetClassName() == nm) specialtype2 += 8;
 				}
-				if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1)
+				if (A_CheckUOHYM())
 				{
 					nm = "Mite"; if (victim.GetClassName() == nm) specialtype2 += 16;
 					nm = "SkinStealer"; if (victim.GetClassName() == nm) specialtype2 += 32;
@@ -5029,7 +5036,7 @@ class KC_EventHandler : EventHandler
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
 					nm = "Skeleton"; if (victim.GetClassName() == nm) specialtype2 += 8;
 				}
-				if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1)
+				if (A_CheckUOHYM())
 				{
 					nm = "Mite"; if (victim.GetClassName() == nm) specialtype2 += 16;
 					nm = "SkinStealer"; if (victim.GetClassName() == nm) specialtype2 += 32;
@@ -5903,9 +5910,671 @@ class KC_EventHandler : EventHandler
 	
 }
 
+class ItemData
+{
+	Inventory savedItem;
+	bool wasUndroppable;
+	bool wasUntossable;
+	int hadAmount;
+}
+
 class KC_StaticEventHandler : StaticEventHandler
 {
+	// So I don't forget, a lot of the code in this for keeping things on Resets is from DevilBlackDeath's "Inventory Keeper" minimod. A lot of the comments below are his on the effects. :V
+	struct PlayerInvData
+	{
+		Inventory invFirst;
+		Inventory invSel;
+		Inventory ReadyWeapon;
+	}
 
+	private bool isNewGame; // This is a new game, nothing should be done in this situation !
+	private PlayerInvData[MAXPLAYERS] savedInventory; // Inventory backup for players
+	// Items set to undroppable and untossable, once the world is loaded they should go back to their original state
+	private Array<ItemData> dropBlockers;
+	private int[MAXPLAYERS] playerNeedsRestore; // List of players to restore (players in game)
+	private Array<int> playersToResurrect; // List of players to resurrect from a death exit
+	private int prevhealthval; // added by Misfit V:
+
+	private void ResurrectPlayers()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- ResurrectPlayers() activated");
+		for (int i = 0; i < playersToResurrect.Size(); i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ResurrectPlayers [2], i: %d", i);
+			PlayerInfo pi = players[playersToResurrect[i]];
+			PlayerPawn p = PlayerPawn(pi.mo);
+
+			/* Resurrect the player, this is the only way to keep their inventory intact
+			   during intermission - DBD*/
+			if (playeringame[playersToResurrect[i]] && p != null)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ResurrectPlayers [3], i: %d", i);
+				pi.Resurrect();
+			}
+		}
+	}
+
+	private void ManageKeys()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- ManageKeys() activated");
+		bool keepKeys = false; // Defaulting to false if no value is found 
+						
+		if (CVar.FindCVar("kc_deathexitkeepkeys") != null)
+			keepKeys = CVar.FindCVar("kc_deathexitkeepkeys").GetBool();
+		
+		if (!keepKeys)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageKeys [2 - KeepKeys is off]");
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageKeys [3 - Player#]:\c- %d", i);
+				PlayerInfo pi = players[i];
+				PlayerPawn p = PlayerPawn(pi.mo);
+
+				if (playeringame[i] && p != null && playersToResurrect.Find(i) < playersToResurrect.Size())
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageKeys [4 - playersToResurrect]");
+					Inventory item = p.Inv;
+
+					while (item != null) 
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageKeys [5 - Item Check]:\c- %s", item.GetClassName());
+						// Not checking for level-specific stuff like keys as this
+						// seems to be automatically invalidated
+						if (item is 'Key') 
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageKeys [6a - Key Type Found]:\c- %s", item.GetClassName());
+							p.RemoveInventory(item);
+							item = p.Inv;
+						}
+						else
+							item = item.Inv;
+					}
+				}
+			}
+		}
+	}
+
+	/* ManageHealth is my own personal addition to the ResetInventory check stuff for the mod, 
+	for future purposes, so no code yet - Misfit :V */
+	private void ManageHealth()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- ManageHealth() activated");
+		bool keepHealth = true; // Defaulting to false if no value is found 
+						
+		if (CVar.FindCVar("kc_deathexitkeephealth") != null)
+			keepHealth = CVar.FindCVar("kc_deathexitkeephealth").GetBool();
+		
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageHealth [2 - Player#], i: %d", i);
+			PlayerInfo pi = players[i];
+			PlayerPawn p = PlayerPawn(pi.mo);
+			
+			if (playeringame[i] && p != null)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageHealth [3 - playeringame]:\c- i: %d", i);
+				if (keepHealth)
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageHealth [4a - keepHealth is \c[gold]ON\c[green]]");
+					if (p.health > 0)
+					{
+						prevhealthval = p.health;
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageHealth [5a - playeringame], i: %d, prevhealthval: %d", i, prevhealthval);
+					}
+					else
+					{
+						prevhealthval = 1;
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageHealth [5b - playeringame], i: %d, prevhealthval: %d", i, prevhealthval);
+					}
+				}
+				else
+				{
+					prevhealthval = p.health;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageHealth [4b - keepHealth is \c[red]OFF\c[green]\c]");
+				}
+			}
+		}
+	}
+
+	private void ManageWeapons()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- ManageWeapons() activated");
+		bool keepWeapons = true; // Defaulting to true if no value is found 
+		bool keepBackpacks = true; // Defaulting to true if no value is found 
+		bool keepWeaponupgrades = true; // Defaulting to true if no value is found 
+		bool keepSigil = true; // Defaulting to true if no value is found 
+
+		if (CVar.FindCVar("kc_deathexitkeepweapons") != null)
+			keepWeapons = CVar.FindCVar("kc_deathexitkeepweapons").GetBool();
+
+		if (CVar.FindCVar("kc_deathexitkeepbackpacks") != null)
+			keepBackpacks = CVar.FindCVar("kc_deathexitkeepbackpacks").GetBool();
+
+		if (CVar.FindCVar("kc_deathexitkeepweaponupgrades") != null)
+			keepWeaponupgrades = CVar.FindCVar("kc_deathexitkeepweaponupgrades").GetBool();
+
+		if (CVar.FindCVar("kc_deathexitkeepsigil") != null)
+			keepSigil = CVar.FindCVar("kc_deathexitkeepsigil").GetBool();
+
+		if (!keepWeapons)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageWeapons [2 - KeepWeapons is off]");
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [3 - Player#], i: %d", i);
+				PlayerInfo pi = players[i];
+				PlayerPawn p = PlayerPawn(pi.mo);
+
+				if (playeringame[i] && p != null && playersToResurrect.Find(i) < playersToResurrect.Size())
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [4 - playersToResurrect], i: %d", i);
+					Inventory item = p.Inv;
+
+					while (item != null) 
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [5 - Item Check]:\c- i: %d, %s", i, item.GetClassName());
+						// Not checking for level-specific stuff like keys as this
+						// seems to be automatically invalidated
+						if (item is 'Weapon' ||
+								item is 'BasicArmor' ||
+								item is 'KCArmor' ||
+								item is 'HexenArmor' ||
+								item is 'Ammo')
+						{
+							if (keepSigil && 
+									(Item is 'SigilKC' ||
+									 Item is 'SigilPieces' ||
+									 Item is 'SigilModeType'))
+							{
+								if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [6ba - Sigil Found and Kept]: i: %d, %s", i, item.GetClassName());
+								item = item.Inv;
+							}
+							else
+							{
+								if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [6a - 'Weapon' Type Found]: i: %d, %s", i, item.GetClassName());
+								p.RemoveInventory(item);
+								item = p.Inv;
+							}
+						}
+						else
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [6bb - Weapon Found and Kept]: i: %d, %s", i, item.GetClassName());
+							item = item.Inv;
+						}
+					}
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [7 - GiveDefaultInventory]: i: %d", i);
+					p.GiveDefaultInventory(); // Give the default inventory 
+				}
+			}
+		}
+		
+		if (!keepBackpacks)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageWeapons [2 - keepBackpacks is off]");
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [3 - Player#], i: %d", i);
+				PlayerInfo pi = players[i];
+				PlayerPawn p = PlayerPawn(pi.mo);
+
+				if (playeringame[i] && p != null && playersToResurrect.Find(i) < playersToResurrect.Size())
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [4 - playersToResurrect], i: %d", i);
+					Inventory item = p.Inv;
+
+					while (item != null) 
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [5 - Item Check]:\c- i: %d, %s", i, item.GetClassName());
+						// Not checking for level-specific stuff like keys as this
+						// seems to be automatically invalidated
+						if (item is 'Backpack' ||
+								item is 'BackpackTier1' ||
+								item is 'BackpackTier2')
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [6a - 'Backpack' Type Found]: i: %d, %s", i, item.GetClassName());
+							p.RemoveInventory(item);
+							item = p.Inv;
+						}
+						else
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [6bb - Weapon Found and Kept]: i: %d, %s", i, item.GetClassName());
+							item = item.Inv;
+						}
+					}
+				}
+			}
+		}
+
+		if (!KeepWeaponUpgrades)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageWeapons [8 - KeepWeaponsUpgrades is off]");
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [9 - Player#], i: %d", i);
+				PlayerInfo pi = players[i];
+				PlayerPawn p = PlayerPawn(pi.mo);
+
+				if (playeringame[i] && p != null && playersToResurrect.Find(i) < playersToResurrect.Size())
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [10 - playersToResurrect], i: %d", i);
+					Inventory item = p.Inv;
+
+					while (item != null) 
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [11 - Item Check]:\c- i: %d, %s", i, item.GetClassName());
+						// Not checking for level-specific stuff like keys as this
+						// seems to be automatically invalidated
+						if (item is 'HellWarriorShieldLevel')
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [12a - 'Weapon' Type Found]: i: %d, %s", i, item.GetClassName());
+							p.RemoveInventory(item);
+							item = p.Inv;
+						}
+						else
+							item = item.Inv;
+					}
+					//if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [13 - GiveDefaultInventory]: i: %d", i);
+					//p.GiveDefaultInventory(); // Give the default inventory 
+				}
+			}
+		}
+
+		if (!keepSigil)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ManageWeapons [13 - KeepSigil is off]");
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [14 - Player#], i: %d", i);
+				PlayerInfo pi = players[i];
+				PlayerPawn p = PlayerPawn(pi.mo);
+
+				if (playeringame[i] && p != null && playersToResurrect.Find(i) < playersToResurrect.Size())
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [15 - playersToResurrect], i: %d", i);
+					Inventory item = p.Inv;
+
+					while (item != null) 
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [16 - Item Check]:\c- i: %d, %s", i, item.GetClassName());
+						// Not checking for level-specific stuff like keys as this
+						// seems to be automatically invalidated
+						if (item is 'SigilKC' ||
+								item is 'SigilPieces' ||
+								item is 'SigilModeType')
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [17a - 'Weapon' Type Found]: i: %d, %s", i, item.GetClassName());
+							p.RemoveInventory(item);
+							item = p.Inv;
+						}
+						else
+							item = item.Inv;
+					}
+				}
+			}
+		}
+	}
+
+	private void RestorePlayerInvState(int pNum)
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- RestorePlayerInvState() activated");
+		PlayerInfo pi = players[pNum];
+		PlayerPawn p = PlayerPawn(pi.mo);
+
+		if (playeringame[pNum] && p != null && playerNeedsRestore[pNum])
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]RestorePlayerInvState [2 - playeringame]:\c- pnum: %d", pnum);
+			bool keepWeapons = true; // Defaulting to true if no value is found 
+
+			if (CVar.FindCVar("kc_deathexitkeepweapons") != null)
+				keepWeapons = CVar.FindCVar("kc_deathexitkeepweapons").GetBool();
+
+			if (p.CountInv("ResetInventory") || p.CountInv("PlayerIsDead"))
+			{
+				if (prevhealthval > 0)
+				{
+					p.health = prevhealthval;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestorePlayerInvState [3a - resetting health to previous]:\c- pNum: %d, %d", pNum, p.health);
+				}
+				else
+				{
+					let MiscItem = PlayerStatItem(p.FindInventory("PlayerStatItem"));
+					if (MiscItem) p.health = MiscItem.MaxHealthTrue;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestorePlayerInvState [3b - resetting health to current max:\c- pNum: %d, %d", pNum, p.health);
+				}
+			}
+
+			/* We restore the player's inventory state
+			   This is not to give the player back their inventory, they technically
+			   still have it after the resurrection, this is mostly to make sure
+			   the selected inventory item and equipped weapons remain the same
+			   (from tests, these seem to reset on death+resurrect) */
+			p.InvFirst = savedInventory[pNum].invFirst;
+			p.InvSel = savedInventory[pNum].invSel;
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]RestorePlayerInvState [4 - savedinventory]:\c- pNum: %d", pNum);
+
+			/* We restore the readied weapon only if weapons are kept, otherwise,
+			   the game changing the readied weapons is the effect of losing them on purpose ! */
+			if (keepWeapons)
+			{
+				pi.PendingWeapon = Weapon(savedInventory[pNum].readyWeapon);
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[green]RestorePlayerInvState [5 - keepWeapons on]:\c- pNum: %d", pNum);
+			}
+		}
+	}
+
+	void BackupInventories()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- BackupInventories() activated");
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]BackupInventories [2 - player#]:\c- i: %d", i);
+			PlayerInfo pi = players[i];
+			PlayerPawn p = PlayerPawn(pi.mo);
+
+			if (playeringame[i] && p != null)
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]BackupInventories [3 - playeringame]: i: %d", i);
+				// This player needs to be restored
+				playerNeedsRestore[i] = true;
+
+				/* Save all important inventory informations (what item was
+				   selected, and what weapon was equipped, these may get unequipped on death) */
+				savedInventory[i].invFirst = p.InvFirst;
+				savedInventory[i].invSel = p.InvSel;
+				savedInventory[i].readyWeapon = pi.ReadyWeapon;
+			}
+		}
+	}
+
+	private void RestoreItemsState() 
+	{
+		bool keepWeapons = true; // Defaulting to true if no value is found
+		bool keepBackpacks = true; // Defaulting to true if no value is found
+		bool keepWeaponUpgrades = true; // Defaulting to true if no value is found
+		bool keepSigil = true; // Defaulting to true if no value is found 
+		bool keepInvBarItems = true; // Defaulting to true if no value is found
+		bool keepKeys = false; // Defaulting to false if no value is found
+
+		if (CVar.FindCVar("kc_deathexitkeepweapons") != null)
+			keepWeapons = CVar.FindCVar("kc_deathexitkeepweapons").GetBool();
+		
+		if (CVar.FindCVar("kc_deathexitkeepbackpacks") != null)
+			keepBackpacks = CVar.FindCVar("kc_deathexitkeepbackpacks").GetBool();
+		
+		if (CVar.FindCVar("kc_deathexitkeepweaponupgrades") != null)
+			keepWeaponUpgrades = CVar.FindCVar("kc_deathexitkeepweaponupgrades").GetBool();
+
+		if (CVar.FindCVar("kc_deathexitkeepsigil") != null)
+			keepSigil = CVar.FindCVar("kc_deathexitkeepsigil").GetBool();
+			
+		if (CVar.FindCVar("kc_deathexitkeepinventoryitems") != null)
+			keepInvBarItems = CVar.FindCVar("kc_deathexitkeepinventoryitems").GetBool();
+			
+		if (CVar.FindCVar("kc_deathexitkeepkeys") != null)
+			keepKeys = CVar.FindCVar("kc_deathexitkeepkeys").GetBool();
+
+		ResetInventory ResetItem;
+		PlayerIsDead DeadItem;
+		int ResetItemAmt;
+		int DeadItemAmt;
+		for (int i = 0; i < dropBlockers.Size(); i++)
+		{
+			ResetItem = ResetInventory(dropBlockers[i].savedItem);
+			DeadItem = PlayerIsDead(dropBlockers[i].savedItem);
+			if (ResetItem) ResetItemAmt = ResetItem.Amount;
+			if (DeadItem) DeadItemAmt = DeadItem.Amount;
+			if ((ResetItem && ResetItemAmt) || (DeadItem && DeadItemAmt)) break;
+		}
+		if (kcdebug_resetinventorydebug) 
+		{
+					if (ResetItem && ResetItemAmt) Console.Printf("\c[green]ResetInventory:\c- Found ResetInventory Item!");
+			else if (DeadItem && DeadItemAmt) Console.Printf("\c[green]ResetInventory:\c- Found PlayerIsDead Item!");
+										else Console.Printf("\c[green]ResetInventory:\c- Did NOT find ResetInventory or PlayerIsDead Items!");
+		}
+
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- RestoreItemsState() activated");
+		for (int i = 0; i < dropBlockers.Size(); i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [2 - dropblockers]:\c- i: %d / %d", i, dropBlockers.Size());
+			Inventory item = dropBlockers[i].savedItem;
+			if (item != null) 
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [3 - item check]:\c- i: %d, %s", i, item.GetClassName());
+				item.bUndroppable = dropBlockers[i].wasUndroppable;
+				item.bUntossable = dropBlockers[i].wasUntossable;
+
+				/* We don't restore weapons, armors and ammos amount, otherwise on an
+				   inventory reset, the player won't be actually in a pistol start state */
+				bool keepinv = true;
+				if (!keepWeapons &&
+						(item is 'Weapon' || 
+						 item is 'BasicArmor' || 
+						 item is 'KCArmor' || 
+						 item is 'HexenArmor' || 
+						 item is 'Ammo'))
+				{
+					if (keepSigil &&
+							(item is 'SigilKC' || item is 'SigilPieces' || item is 'SigilModeType'))
+					{
+						keepinv = true;
+					}
+					else
+					{
+						keepinv = false;
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Weapon Check [!keepWeapons]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
+					}
+				}
+				if (!keepBackpacks &&
+						(item is 'Backpack' ||
+						 item is 'BackpackTier1' ||
+						 item is 'BackpackTier2'))
+				{
+					keepinv = false;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Weapon Check [!keepBackpacks]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
+				}
+				if (!keepWeaponUpgrades &&
+						(item is 'HellWarriorShieldLevel'))
+				{
+					keepinv = false;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Weapon Upgrade Check  [!keepWeaponUpgrades]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
+				}
+				if (!keepSigil &&
+					  (item is 'SigilKC' || item is 'SigilPieces' || item is 'SigilModeType'))
+				{
+					keepinv = false;
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Sigil Check  [!keepSigil]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
+				}
+				if (!keepInvBarItems && 
+						(item is 'KCInvBarItem'))
+				{
+					if ((ResetItem && ResetItemAmt) || (DeadItem && DeadItemAmt))
+					{
+						item.Amount = 0;
+						keepinv = false;
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4ca - EEInvItem Check: \c[red]not saved (death/reset)\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
+					}
+					else
+					{
+						keepinv = true;
+					}
+				}
+				//
+				//
+				if (keepinv)
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [5 - \c[gold]Item Saved\c[blue]]:\c- i: %d, %s (hadamount: %d)", i, item.GetClassName(), dropBlockers[i].hadAmount);
+					item.Amount = dropBlockers[i].hadAmount;
+				}
+			}
+		}
+
+		dropBlockers.Clear();
+	}
+
+	private void MakeInventoryUndroppable() 
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- MakeInventoryUndroppable() activated");
+		for (int i = 0; i < MAXPLAYERS; i++) 
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [2 - player#]: i: %d", i);
+			if (playeringame[i] && players[i].mo != null) 
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [3 - playeringame]: i: %d", i);
+				for (Inventory item = players[i].mo.Inv; item != null; item = item.Inv) 
+				{
+					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [4 - item check]: i: %d, %s", i, item.GetClassName());
+					bool keepWeapons = true; // Defaulting to true if no value is found
+					bool keepBackpacks = true; // Defaulting to true if no value is found
+					bool keepWeaponupgrades = true; // Defaulting to true if no value is found 
+					bool keepSigil = true; // Defaulting to true if no value is found 
+					bool keepInvBarItems = true; // Defaulting to true if no value is found
+					bool keepKeys = false; // Defaulting to false if no value is found
+
+					if (CVar.FindCVar("kc_deathexitkeepweapons") != null)
+						keepWeapons = CVar.FindCVar("kc_deathexitkeepweapons").GetBool();
+					
+					if (CVar.FindCVar("kc_deathexitkeepbackpacks") != null)
+						keepBackpacks = CVar.FindCVar("kc_deathexitkeepbackpacks").GetBool();
+					
+					if (CVar.FindCVar("kc_deathexitkeepweaponupgrades") != null)
+						keepWeaponUpgrades = CVar.FindCVar("kc_deathexitkeepweaponupgrades").GetBool();
+					
+					if (CVar.FindCVar("kc_deathexitkeepsigil") != null)
+						keepSigil = CVar.FindCVar("kc_deathexitkeepsigil").GetBool();
+					
+					if (CVar.FindCVar("kc_deathexitkeepinventoryitems") != null)
+						keepInvBarItems = CVar.FindCVar("kc_deathexitkeepinventoryitems").GetBool();
+						
+					if (CVar.FindCVar("kc_deathexitkeepkeys") != null)
+						keepKeys = CVar.FindCVar("kc_deathexitkeepkeys").GetBool();
+					
+					// Save the item's actual UNDROPPABLE and UNTOSSABLE tags
+					ItemData id = new('ItemData');
+					id.savedItem = item;
+					id.wasUndroppable = item.bUndroppable;
+					id.wasUntossable = item.bUntossable;
+					id.hadAmount = item.Amount;
+					dropBlockers.Push(id);
+
+					if (!keepWeapons && 
+							(item is 'Weapon' ||
+							 item is 'BasicArmor' ||
+							 item is 'KCArmor' ||
+							 item is 'HexenArmor' ||
+							 item is 'Ammo'))
+					{
+						// Make the weapon/armor/ammo droppable so it will be removed during a map-initiated
+						// inventory reset, we'll restore their actual values at the beginning of the next level
+						// This is done so you actually do a Pistol Start when intended if you decided to not keep weapons !
+						if (keepSigil &&
+								(item is 'SigilKC' || 
+								item is 'SigilPieces' || 
+								item is 'SigilModeType'))
+						{
+							// Make the items undroppable so it won't be removed during a map-initiated
+							// inventory reset, we'll restore their actual values at the beginning of the next level
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5g - make item undroppable/untossable (Sigil Found)]: \c-%s", item.GetClassName());
+							item.bUndroppable = true;
+							item.bUntossable = true;
+						}
+						else
+						{
+							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5a - KeepWeapons off]: \c-%s", item.GetClassName());
+							item.bUndroppable = false;
+							item.bUntossable = false;
+						}
+					}
+					else
+					if (!keepBackPacks &&
+							(item is 'Backpack' ||
+							 item is 'BackpackTier1' ||
+							 item is 'BackpackTier2'))
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5b - keepBackPacks off]: \c-%s", item.GetClassName());
+						item.bUndroppable = false;
+						item.bUntossable = false;
+					}
+					else
+					if (!keepWeaponUpgrades &&
+							(item is 'HellWarriorShieldLevel'))
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5c - keepWeaponUpgrades off]: \c-%s", item.GetClassName());
+						item.bUndroppable = false;
+						item.bUntossable = false;
+					}
+					else
+					if (!keepSigil &&
+							(item is 'SigilKC' || 
+							 item is 'SigilPieces' || 
+							 item is 'SigilModeType'))
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5d - KeepSigil off]: \c-%s", item.GetClassName());
+						item.bUndroppable = false;
+						item.bUntossable = false;
+					}
+					else 
+					if (!keepInvBarItems && 
+							(item is 'KCInvBarItem'))
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5e - KeepInvBarItems off]: \c-%s", item.GetClassName());
+						item.bUndroppable = false;
+						item.bUntossable = false;
+					}
+					else 
+					if (!KeepKeys &&
+							(item is 'Key'))
+					{
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5f - KeepKeys off]: \c-%s", item.GetClassName());
+						item.bUndroppable = false;
+						item.bUntossable = false;
+					}
+					else
+					{
+						// Make the items undroppable so it won't be removed during a map-initiated
+						// inventory reset, we'll restore their actual values at the beginning of the next level
+						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5g - make item undroppable/untossable]: \c-%s", item.GetClassName());
+						item.bUndroppable = true;
+						item.bUntossable = true;
+					}
+				}
+			}
+		}
+	}
+    
+	private void ResetResurrectionQueue(int i) 
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- ResetResurrectionQueue(%d) activated", i);
+		if (playeringame[i] && players[i].mo != null)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetResurrectionQueue (clear resurrect queue) [2 - playeringame]\c-: %d", i);
+			int delIndex = playersToResurrect.Find(i);
+
+			if (delIndex < playersToResurrect.Size())
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetResurrectionQueue (clear resurrect queue) [3 - delIndex (\c-i: %d\c[green])\c-: %d", i, delindex);
+				playersToResurrect.Delete(delIndex);
+				playersToResurrect.ShrinkToFit();
+			}
+		}
+	}
+
+	// Event functions override
+	override void OnRegister()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- OnRegister() activated");
+		isNewGame=true;
+		dropBlockers.Clear();
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]OnRegister [1 - isNewGame]:\c- : %d", isNewGame);
+ 
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]OnRegister [2 - playerNeedsRestore to false]\c-: i: %d", i);
+			playerNeedsRestore[i] = false;
+		}
+	}
+	
 	//If any world has loaded, then we're done handling new games case
 	override void WorldLoaded(WorldEvent e) 
 	{
