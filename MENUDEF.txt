@@ -162,6 +162,9 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "Double-tap dashing", 		"If [On], you can double tap movement keys quickly to dash ahead. Turn off if this type of dashing is obstructive/annoying. An alternative method to dash is to press a direction/or strafe and press <Weapon State 3>.",		"kc_doubledash",				"OnOff_DefaultOff"
 	StaticText " "
 	KCOption "Allow MP-Only Monsters in SP",		"Turn on to enable Multiplayer-tagged monsters in Single Player for more challenge. Default: No",		"kc_enablempmonstersinsp",			"YesNo_DefaultNo"
+	KCOption "Aetherius-Style Monster Evolutions",		"If enabled, the default Doom monsters can evolve into some of their Aetherius variants. Default: Yes",		"kc_monsterevolutions",			"YesNo_DefaultYes"
+	KCOption "Doom 2 Monsters in Doom 1 Mode",		"If enabled, Doom 2 monsters can occasionally spawn from Doom 1 monster types in Doom 1 gamemodes. Default: Yes",		"kc_doommodeothermonsters",			"YesNo_DefaultYes"
+
 	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the PLAYER'S hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
 	StaticText " "
 	KCOption "EXP/Kill Logs [Player]",		"When the player gains experience/kills, a message will be printed to the console. Default: On",		"kc_showexpgains",			"OnOff_DefaultOn"
@@ -300,6 +303,29 @@ OptionMenu "KC-HeiwaSpecific"
 	Command "Restore Default Settings", 			"KC_defaultsHeiwa"
 }
 
+
+OptionMenu "KC-DeathExitOptions"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Death-Exit/Reset-Inventory Options"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	KCOption "Death Exit/Reset Resets Level/Health/Stats",		"Determines if a Death-Exit Resets Level/MaxHP/Stat Gains/etc. Default: No",		"kc_deathexitaffectsstats",			"YesNo_DefaultNo"
+	StaticText " "
+	KCOption "Keep Weapons After Death Exit/Reset",		"Determines if you keep weapons after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepweapons",			"YesNo_DefaultNo"
+	KCOption "Keep Backpack Upgrades After Death Exit/Reset",		"Determines if you keep backpack upgrades after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepbackpacks",			"YesNo_DefaultNo"
+	KCOption "Keep Weapon Upgrades After Death Exit/Reset",		"Determines if you keep weapon upgrade items after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepweaponupgrades",			"YesNo_DefaultNo"
+	KCOption "Keep Sigil and Pieces After Death Exit/Reset",		"Determines if you keep the Sigil and it's progression after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepsigil",			"YesNo_DefaultNo"
+	KCOption "Keep Health After Reset",		"Determines if you keep your health after a use of 'ResetInventory' If a death exit occurs, it'll set health to 1. Default: No",		"kc_deathexitkeephealth",			"YesNo_DefaultNo"
+	KCOption "Keep Inventory Items After Death Exit/Reset",		"Determines if you keep the items in your inventory bar after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepinventoryitems",			"YesNo_DefaultNo"
+	KCOption "Keep Keys After Death Exit/Reset",		"Determines if you keep the keys in your inventory bar after a death exit or use of 'ResetInventory'. Default: No",		"kc_deathexitkeepkeys",			"YesNo_DefaultNo"
+	
+	StaticText ""
+	Command "Restore Default Settings", 			"KC_defaultsdeathexit"
+}
+
 OptionMenu "KC-HUDOptions"
 {
 	Class "KCMenu"
@@ -412,6 +438,7 @@ OptionMenu "KC-DebugMenu2"
 	KCOption "Actor's Damage Displays",		"When a monster/NPC is hit, this displays the multiple steps in the process of calculation the damage (if any) received.",		"kcdebug_actordmgdisplays",			"OnOff_DefaultOff"
 	KCOption "Time Freeze Misc 1",		"",		"kcdebug_timefreezedebug1",			"OnOff_DefaultOff"
 	KCOption "KC Time Freeze Checks",		"",		"kcdebug_timefreezechecks",			"OnOff_DefaultOff"
+	KCOption "ResetInventory Displays",		"Shows resetinventory information.",		"kcdebug_resetinventorydebug",				"OnOff_DefaultOff"
 }
 OptionMenu "KC-DebugMenu3"
 {
@@ -539,6 +566,8 @@ OptionMenu "KCOptions"
 	KCSubMenu "RPG Options",		"Options for RPG Mechanics.",		"KC-RPGOptions"
 	KCSubMenu "Cheaty Options",		"Options for Cheat/Tweaks.",		"KC-CheatyOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
+	StaticText " "
+	KCSubMenu "Death-Exit Options",		"Options for Death Exit Control.",		"KC-DeathExitOptions"
 	StaticText " "
 	KCSubMenu "Misc Options",		"Misc. Options [Death Music, Hit Sounds, etc].",		"KC-Other1"
 	StaticText " "

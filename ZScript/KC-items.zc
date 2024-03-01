@@ -3961,6 +3961,17 @@ class RocketAmmoNew : RocketAmmo // replaces RocketAmmo
 				actor playera = players[0].mo;
 				if (playera.CountInv("Devastator"))
 				{
+					double droprate = (256.0*0.67);
+					if (bDROPPED) droprate *= frandompick(0.1,0.125,0.125,0.125,0.14287,0.14287,0.14287,0.14287,0.14287,0.1667,0.1667,0.1667,0.2);
+					if (frandom(0.001,256.0) <= droprate) 
+					{
+						A_SpawnItemEx("MiniRockets",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						return resolvestate("KillObject");
+					}
+					return resolvestate(null);
+				}
+				else
+				{
 					double droprate = (256.0*0.34);
 					if (bDROPPED) droprate *= frandompick(0.1,0.125,0.125,0.125,0.14287,0.14287,0.14287,0.14287,0.14287,0.1667,0.1667,0.1667,0.2);
 					if (frandom(0.001,256.0) <= droprate) 
@@ -4028,6 +4039,17 @@ class RocketBoxNew : RocketBox // replaces RocketBox
 			{
 				actor playera = players[0].mo;
 				if (playera.CountInv("Devastator"))
+				{
+					double droprate = (256.0*0.67);
+					if (bDROPPED) droprate *= frandompick(0.1,0.125,0.125,0.125,0.14287,0.14287,0.14287,0.14287,0.14287,0.1667,0.1667,0.1667,0.2);
+					if (frandom(0.001,256.0) <= droprate) 
+					{
+						A_SpawnItemEx("MiniRocketBox",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						return resolvestate("KillObject");
+					}
+					return resolvestate(null);
+				}
+				else
 				{
 					double droprate = (256.0*0.34);
 					if (bDROPPED) droprate *= frandompick(0.1,0.125,0.125,0.125,0.14287,0.14287,0.14287,0.14287,0.14287,0.1667,0.1667,0.1667,0.2);

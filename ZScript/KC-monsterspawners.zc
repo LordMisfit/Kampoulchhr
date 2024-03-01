@@ -155,7 +155,7 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 	bool IsDoom1()
 	{
 		bool Doom1 = false;
-		if (Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
+		if (kc_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
 		{
 			Doom1 = true;
 			if (kcdebug_monsterspawns) Console.Printf("Doom1: %d", Doom1);
@@ -166,7 +166,7 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 	bool IsDoom2()
 	{
 		bool Doom2 = false;
-		//if (kc_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
+		if (kc_doommodeothermonsters && Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
 		{
 			Doom2 = true;
 			if (kcdebug_monsterspawns) Console.Printf("Doom2: %d", Doom2);
