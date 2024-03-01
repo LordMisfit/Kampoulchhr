@@ -545,6 +545,19 @@ OptionMenu "KC-CheatyOptions2"
 	Command "Restore Default Settings", 			"kc_defaultscheaty2"
 }
 
+OptionMenu "KC-DHIOptions"
+{
+	Class "KCMenu"
+	Title "KAMPOULCHHR - Damage Hud Indicators"
+	IfGame(Doom, Chex) { Position -64 } 
+	IfGame(Heretic, Hexen) { Position -88 } 
+	IfGame(Strife) { Position -88 }
+	
+	Option 			"Active",						"kc_DHI_Active",		"OnOff"
+	DHISliderRange	"Indicator Scale [HP Damage]", 				"kc_DHI_Scale",		0.05, 1.0, 0.05, 1, kc_DHI_Active, 1, 1
+	DHISliderRange	"Indicator Visibility [HP Damage]", 		"kc_DHI_Alpha",	 	0.05, 1.0, 0.05, 1, kc_DHI_Active, 1, 1
+}
+
 OptionMenu "KCOptions"
 {
 	Class "KCMenu"
@@ -568,6 +581,7 @@ OptionMenu "KCOptions"
 	KCSubMenu "Cheaty Options 2",		"Options for Cheat/Tweaks [2].",		"KC-CheatyOptions2"
 	StaticText " "
 	KCSubMenu "Death-Exit Options",		"Options for Death Exit Control.",		"KC-DeathExitOptions"
+	KCSubMenu "Damage Indicators",		"Options related to directional damage indicators on the HUD.",			"KC-DHIOptions"
 	StaticText " "
 	KCSubMenu "Misc Options",		"Misc. Options [Death Music, Hit Sounds, etc].",		"KC-Other1"
 	StaticText " "
