@@ -2338,7 +2338,7 @@ class JustShieldDashed : PlaceholderItem
 			if (timer < 35) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(6,7,7,7,7,8)*random(5,6)),0.1334,true,frandom(1.334,1.667),false);
+				if (A_PainStateChecker("DashingSD")) A_StunInduce((randompick(6,7,7,7,7,8)*random(5,6)),0.1334,true,frandom(1.334,1.667),false);
 			}
 			else Destroy();
 		}
@@ -2365,7 +2365,7 @@ class JustSurprised : PlaceholderItem
 			if (timer < 1) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*3),0.0834,true,frandom(1.334,1.667),false);
+				if (A_PainStateChecker("Surprise")) A_StunInduce((randompick(5,6,6,6,6,7)*3),0.0834,true,frandom(1.334,1.667),false);
 			}
 			else Destroy();
 		}
@@ -2410,7 +2410,7 @@ class JustKnifed : PlaceholderItem
 			if (timer < 35) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(2,3,3,3,3,4)*randompick(2,3,3,3,3,4)),0.0334,true,frandom(1.125,1.25),true);
+				if (A_PainStateChecker("Knife")) A_StunInduce((randompick(2,3,3,3,3,4)*randompick(2,3,3,3,3,4)),0.0334,true,frandom(1.125,1.25),true);
 			}
 			else Destroy();
 		}
@@ -2437,7 +2437,7 @@ class JustKicked : PlaceholderItem
 			if (timer < 35) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(3,4,4,4,4,5)),0.0834,true,frandom(1.334,1.667),true);
+				if (A_PainStateChecker("Kick")) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(3,4,4,4,4,5)),0.0834,true,frandom(1.334,1.667),true);
 			}
 			else Destroy();
 		}
@@ -2464,7 +2464,7 @@ class JustPunched : PlaceholderItem
 			if (timer < 35) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(1,1,1,2)),0.0667,true,frandom(1.334,1.667),true);
+				if (A_PainStateChecker("Fist")) A_StunInduce((randompick(5,6,6,6,6,7)*randompick(1,1,1,2)),0.0667,true,frandom(1.334,1.667),true);
 			}
 			else Destroy();
 		}
@@ -2491,7 +2491,7 @@ class JustUppercutted : PlaceholderItem
 			if (timer < 35) 
 			{
 				timer++;
-				if (A_PainStateChecker()) A_StunInduce((randompick(5,6,6,6,6,7)*3),0.10,true,frandom(1.334,1.667),true);
+				if (A_PainStateChecker("Fist")) A_StunInduce((randompick(5,6,6,6,6,7)*3),0.10,true,frandom(1.334,1.667),true);
 			}
 			else Destroy();
 		}

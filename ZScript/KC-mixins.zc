@@ -415,7 +415,7 @@ mixin class StunItems
 		}
 	}
 	
-	bool A_PainStateChecker()
+	bool A_PainStateChecker(string dtype)
 	{
 		bool isit = false;
 		if (
@@ -474,6 +474,22 @@ mixin class StunItems
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Gauntlets"))
 			 )
 			isit = true;
+		if (isit)
+		{
+			if (KCCreature(owner))
+			{
+				if (dtype ~== "Fist" && 
+						owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Fist")))
+				{
+					isit = false;
+				}
+				if (dtype ~== "Kick" && 
+						owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Kick")))
+				{
+					isit = false;
+				}
+			}
+		}
 			
 		return isit;
 	}

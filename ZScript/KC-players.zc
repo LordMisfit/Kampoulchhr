@@ -19,7 +19,7 @@ class KCPlayerPawn : PlayerPawn
 	int mobjdmg;
 	int playoutputdmg;
 	int playtookdamage;
-	int playtooktsadamage;
+	int playtooktsadamage, playabsorbtsadamage;
 	
 	int playerfixeddmg;
 	
@@ -1465,6 +1465,7 @@ class KCPlayerPawn : PlayerPawn
 	int, int, name, int, double, int, int, bool CheckTimeSeraphArmor(int damage = 0, int olddmg = 0, Name mod = '', int flags = 0, double TSArmor1DmgChance = 0.0, int TimeSeraphArmor = 0, int TSArmorDmgDivisor = 1, bool tsafullnulldmg = false, Actor inflictor = null, Actor source = null)
 	{
 		playtooktsadamage = 0;
+		playabsorbtsadamage = 0;
 		
 		A_CheckNeverBleed(0, damage, flags);
 		string nm, nn, no, np;
@@ -1831,9 +1832,16 @@ class KCPlayerPawn : PlayerPawn
 					A_LossHUD(TSADmgFinal, 2, true);
 				}
 			}
-			if (damage < 1 && !playtooktsadamage)
+			if (temperateshield)
 			{
-				playtooktsadamage = TSADmgFinal;
+				playabsorbtsadamage = 1;
+			}
+			else
+			{
+				if (damage < 1)
+				{
+					playtooktsadamage = TSADmgFinal;
+				}
 			}
 		}
 		return damage, olddmg, mod, flags, TSArmor1DmgChance, TimeSeraphArmor, TSArmorDmgDivisor, tsafullnulldmg;
@@ -3195,6 +3203,12 @@ class KCPlayerPawn : PlayerPawn
 			{
 				dmgindtype = 1;
 				playtooktsadamage = 0;
+			}
+			else
+			if (playabsorbtsadamage) 
+			{
+				dmgindtype = 4;
+				playabsorbtsadamage = 0;
 			}
 			else if (ret <= 0)
 			{
