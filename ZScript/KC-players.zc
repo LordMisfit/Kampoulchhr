@@ -133,6 +133,13 @@ class KCPlayerPawn : PlayerPawn
 		return result;
 	}
 	
+	bool A_CheckVoodooDoll()
+	{
+		bool result = false;
+		if (!player || !player.mo || player.mo != self) result = true;
+		return result;
+	}
+	
 	bool A_CheckForHeiwa()
 	{
 		bool result = false;
@@ -238,10 +245,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	override void MovePlayer()
 	{
-		if (!player || !player.mo || player.mo != self)
-		{
-		}
-		else
+		if (!A_CheckVoodooDoll())
 		{
 			UserCmd cmd = player.cmd;
 			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
@@ -427,7 +431,7 @@ class KCPlayerPawn : PlayerPawn
 	override void PostBeginPlay()
 	{
 		// VOODOO Doll Protection
-		if (!player || !player.mo || player.mo != self)
+		if (A_CheckVoodooDoll())
 		{
 			A_SetSize(16,56,false);
 			scale.x = 1.0;
@@ -960,7 +964,7 @@ class KCPlayerPawn : PlayerPawn
 	override void Tick()
 	{
 		// VOODOO Doll Protection
-		if ((!player || !player.mo || player.mo != self)) 
+		if (A_CheckVoodooDoll()) 
 		{
 			if (kcdebug_showvoodoodoll) Console.Printf("VoodooDoll [Tick] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
 			isvoodoodoll = true;
@@ -2499,7 +2503,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		
 		// VOODOO Doll Protection
-		if (!player || !player.mo || player.mo != self)  
+		if (A_CheckVoodooDoll())  
 		{
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- \cyIS A VOODOO DOLL\c-)", damage);
 			//*********************************************************************
@@ -3473,7 +3477,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	override bool CanCollideWith(Actor other, bool passive) // KCPlayerPawn
 	{
-		if (!player || !player.mo || player.mo != self)
+		if (A_CheckVoodooDoll())
 		{
 			if (!passive)
 			{
@@ -3515,7 +3519,7 @@ class KCPlayerPawn : PlayerPawn
 		if (A_CheckForHeiwa())
 		{
 			double MaxHealthTrue = CountInv("PlayerMaxHP");
-			if ((!player || !player.mo || player.mo != self) || !MaxHealthTrue) MaxHealthTrue = SpawnHealth();
+			if ((A_CheckVoodooDoll()) || !MaxHealthTrue) MaxHealthTrue = SpawnHealth();
 			double HealthRatio = health / MaxHealthTrue;
 			// Console.Printf("%.8f", HealthRatio);
 			
