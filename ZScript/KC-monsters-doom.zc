@@ -9682,8 +9682,8 @@ class HellKnightNew : KCCreature
 		Painchance "Kick", 250; // Kick attacks have a +150% chance of stunning an enemy
 		Monster;
 		+FLOORCLIP
-		-BOSSDEATH
-		+E1M8BOSS
+		+BOSSDEATH;
+		+E1M8BOSS;
 		BloodColor "00 64 00";
 		SeeSound "knight/sight";
 		ActiveSound "knight/active";
@@ -9856,8 +9856,8 @@ class BaronOfHellNew : KCCreature
 		Species "HellNoble";
 		+DONTHARMSPECIES
 		+FLOORCLIP
-		+BOSSDEATH
-		+E1M8BOSS
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SeeSound "baron/sight";
 		PainSound "baron/pain";
 		DeathSound "baron/death";
@@ -10495,6 +10495,8 @@ class FusionArachnotron : ArachnotronNew
 		Species "Arachnotron";
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
+		+BOSSDEATH;
+		+MAP07BOSS2;
 	}
 
 	states
@@ -10623,6 +10625,8 @@ class ArachnotronMK2 : ArachnotronNew
 		PainSound "arachnotron/pain";
 		DeathSound "baby/death";
 		ActiveSound "baby/active";
+		+BOSSDEATH;
+		+MAP07BOSS2;
 	}
 
 	States
@@ -10762,7 +10766,7 @@ class MancubusNew : KCCreature
 		+DONTHARMSPECIES
 		+FLOORCLIP
 		+BOSSDEATH
-		+MAP07BOSS1
+		+MAP07BOSS1;
 		SeeSound "fatso/sight";
 		PainSound "fatso/pain";
 		DeathSound "fatso/death";
@@ -10920,6 +10924,8 @@ class Hectebus : MancubusNew
 		Species "Mancubi";
 		+DONTHARMSPECIES
 		+AVOIDMELEE;
+		+BOSSDEATH;
+		+MAP07BOSS2;
 		SEESOUND "hect/see";
 		PAINSOUND "hect/pain";
 		ACTIVESOUND "hect/active";
@@ -12733,6 +12739,8 @@ class Cybruiser : KCCreature
 		+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SeeSound "monster/cbrusit";
 		PainSound "monster/cbrupn";
 		DeathSound "monster/cbrudth";
@@ -13243,6 +13251,8 @@ class BruiserDemon : BaronOfHellNew
 		+MISSILEEVENMORE;
 		+DONTHARMCLASS;
 		+AVOIDMELEE;
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SeeSound "superbaron/scream";
 		PainSound "superbaron/pain";
 		DeathSound "superbaron/death";
@@ -13640,6 +13650,8 @@ class ArchonOfHell : BaronOfHellNew
 		+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SeeSound "monster/ar2sit";
 		PainSound "archon/pain";
 		DeathSound "monster/ar2dth";
@@ -14137,6 +14149,8 @@ class PyroDemon : BaronofHellNew
 		+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SEESOUND "pyro/see";
 		PAINSOUND "pyro/pain";
 		DEATHSOUND "pyro/death";
@@ -14801,7 +14815,6 @@ class PyroBlast : KCProjectile
 }
 class RainCometNull : KCProjectile
 {
-	int user_theta;
 	default
 	{
 		Radius 0;
@@ -14999,6 +15012,8 @@ class Hierophant : KCCreature
 		+FLOAT;
 		+NOGRAVITY;
 		+DONTHARMSPECIES;
+		+BOSSDEATH;
+		+E1M8BOSS;
 		SeeSound "monster/Hiesit";
 		PainSound "monster/Hiepai";
 		DeathSound "monster/Hiedth";
@@ -16297,6 +16312,8 @@ class Annihilator : CyberdemonNew
 		+MISSILEEVENMORE;
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
+		+BOSSDEATH;
+		+E2M8BOSS;
 		SeeSound "monster/annsit";
 		DeathSound "monster/anndth";
 		ActiveSound "cyber/active";
@@ -16873,6 +16890,9 @@ class Demolisher : SpiderMastermindNew
 		+NORADIUSDMG;
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
+		+BOSSDEATH;
+		+E3M8BOSS;
+		+E4M8BOSS;
 		SeeSound "monster/demsit";
 		AttackSound "spider2/attack";
 		PainSound "demolisher/pain";

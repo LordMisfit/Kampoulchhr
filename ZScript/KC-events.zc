@@ -755,6 +755,7 @@ class KC_EventHandler : EventHandler
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' && 
 						(spawnname == "BaronOfHell" ||
 						 spawnname == "BaronOfHellNew" ||
+						 spawnname == "BaronOfHellClassic" ||
 						 spawnname == "Belphegor" ||
 						 spawnname == "BruiserDemon" ||
 						 spawnname == "CyBruiser" ||
@@ -766,6 +767,7 @@ class KC_EventHandler : EventHandler
 						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' && 
 						(spawnname == "Cyberdemon" || 
 						 spawnname == "CyberdemonNew" || 
+						 spawnname == "CyberdemonClassic" || 
 						 spawnname == "Annihilator")) e2m8cyber = true;
 				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
@@ -773,6 +775,7 @@ class KC_EventHandler : EventHandler
 							level.mapname == "E4M8") &&
 						(spawnname == "SpiderMastermind" || 
 						 spawnname == "SpiderMastermindNew" || 
+						 spawnname == "SpiderMastermindClassic" || 
 						 spawnname == "Demolisher")) e34m8spider = true;
 				
 				if (A_CheckUOHYM() && level.mapname == "MAP01") 
@@ -1844,7 +1847,7 @@ class KC_EventHandler : EventHandler
 			bool spawned;
 			actor mo;
 			if (kcdebug_monsterspawns) Console.Printf("\c[gold][pre] spawnee [%p]\c-: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
-			spawnee.bSOLID = false;
+			if (spawnee.bSOLID) spawnee.bSOLID = false;
 			[spawned, mo] = spawnee.A_SpawnItemEx(spawnertype,flags:SXF_TRANSFERAMBUSHFLAG|SXF_NOCHECKPOSITION|SXF_TRANSFERSPECIAL,tid:spawnee.tid);
 			if (mo)
 			{
@@ -1863,6 +1866,41 @@ class KC_EventHandler : EventHandler
 				if (spawnee.bCOUNTKILL) level.total_monsters -= 1;
 				mo.bCOUNTITEM = spawnee.bCOUNTITEM;
 				if (spawnee.bCOUNTITEM) level.total_items -= 1;
+				if (spawnee.bBOSSDEATH) 
+				{
+					mo.bBOSSDEATH = spawnee.bBOSSDEATH;
+					spawnee.bBOSSDEATH = false;
+				}
+				if (spawnee.bE1M8BOSS) 
+				{
+					mo.bE1M8BOSS = spawnee.bE1M8BOSS;
+					spawnee.bE1M8BOSS = false;
+				}
+				if (spawnee.bE2M8BOSS) 
+				{
+					mo.bE2M8BOSS = spawnee.bE2M8BOSS;
+					spawnee.bE2M8BOSS = false;
+				}
+				if (spawnee.bE3M8BOSS) 
+				{
+					mo.bE3M8BOSS = spawnee.bE3M8BOSS;
+					spawnee.bE3M8BOSS = false;
+				}
+				if (spawnee.bE4M8BOSS) 
+				{
+					mo.bE4M8BOSS = spawnee.bE4M8BOSS;
+					spawnee.bE4M8BOSS = false;
+				}
+				if (spawnee.bMAP07BOSS1) 
+				{
+					mo.bMAP07BOSS1 = spawnee.bMAP07BOSS1;
+					spawnee.bMAP07BOSS1 = false;
+				}
+				if (spawnee.bMAP07BOSS2) 
+				{
+					mo.bMAP07BOSS2 = spawnee.bMAP07BOSS2;
+					spawnee.bMAP07BOSS2 = false;
+				}
 				if (kcdebug_monsterspawns) 
 				{
 					Console.Printf("spawnflags: %d, spawnee.spawnflags: %d", mo.spawnflags, spawnee.spawnflags);
@@ -1871,6 +1909,7 @@ class KC_EventHandler : EventHandler
 					Console.Printf("args[0/1/2/3/4]: %d/%d/%d/%d/%d, spawnee.args[0/1/2/3/4]: %d/%d/%d/%d/%d", mo.args[0],mo.args[1],mo.args[2],mo.args[3],mo.args[4], spawnee.args[0],spawnee.args[1],spawnee.args[2],spawnee.args[3],spawnee.args[4]);
 				}
 			}
+			//spawnee.A_BossDeath();
 			spawnee.Destroy();
 			if (kcdebug_monsterspawns) Console.Printf("\c[fire][post] spawnee [%p]\c-: %s, total_monsters: %d", spawnee, spawnee.GetClassName(), level.total_monsters);
 		}
@@ -2404,35 +2443,35 @@ class KC_EventHandler : EventHandler
 				if (spawnname ~== "MarineRailgun") A_SpawnerSetUp(spawnee,"KCMarineRailgun");
 				if (spawnname ~== "MarineBFG") A_SpawnerSetUp(spawnee,"KCMarineBFG");
 				// Doom
-				if (spawnname ~== "Zombieman") A_SpawnerSetUp(spawnee,"ZombiemanSpawner");
-				if (spawnname ~== "StealthZombieman") A_SpawnerSetUp(spawnee,"StealthZombiemanSpawner");
-				if (spawnname ~== "ShotgunGuy") A_SpawnerSetUp(spawnee,"ShotgunGuySpawner");
-				if (spawnname ~== "StealthShotgunGuy") A_SpawnerSetUp(spawnee,"StealthShotgunGuySpawner");
-				if (spawnname ~== "ChaingunGuy") A_SpawnerSetUp(spawnee,"ChaingunGuySpawner");
-				if (spawnname ~== "StealthChaingunGuy") A_SpawnerSetUp(spawnee,"StealthChaingunGuySpawner");
-				if (spawnname ~== "WolfensteinSS") A_SpawnerSetUp(spawnee,"WolfensteinSSSpawner");
-				if (spawnname ~== "DoomImp") A_SpawnerSetUp(spawnee,"DoomImpSpawner");
-				if (spawnname ~== "StealthDoomImp") A_SpawnerSetUp(spawnee,"StealthDoomImpSpawner");
-				if (spawnname ~== "Demon") A_SpawnerSetUp(spawnee,"DemonSpawner");
-				if (spawnname ~== "Spectre") A_SpawnerSetUp(spawnee,"SpectreSpawner");
-				if (spawnname ~== "StealthDemon") A_SpawnerSetUp(spawnee,"StealthDemonSpawner");
-				if (spawnname ~== "Cacodemon") A_SpawnerSetUp(spawnee,"CacodemonSpawner");
-				if (spawnname ~== "StealthCacodemon") A_SpawnerSetUp(spawnee,"StealthCacodemonSpawner");
-				if (spawnname ~== "LostSoul") A_SpawnerSetUp(spawnee,"LostSoulSpawner");
-				if (spawnname ~== "PainElemental") A_SpawnerSetUp(spawnee,"PainElementalSpawner");
-				if (spawnname ~== "HellKnight") A_SpawnerSetUp(spawnee,"HellKnightSpawner");
-				if (spawnname ~== "StealthHellKnight") A_SpawnerSetUp(spawnee,"StealthHellKnightSpawner");
-				if (spawnname ~== "BaronOfHell") A_SpawnerSetUp(spawnee,"BaronOfHellSpawner");
-				if (spawnname ~== "StealthBaron") A_SpawnerSetUp(spawnee,"StealthBaronSpawner");
-				if (spawnname ~== "Revenant") A_SpawnerSetUp(spawnee,"RevenantSpawner");
-				if (spawnname ~== "StealthRevenant") A_SpawnerSetUp(spawnee,"StealthRevenantSpawner");
-				if (spawnname ~== "Arachnotron") A_SpawnerSetUp(spawnee,"ArachnotronSpawner");
-				if (spawnname ~== "StealthArachnotron") A_SpawnerSetUp(spawnee,"StealthArachnotronSpawner");
-				if (spawnname ~== "Fatso") A_SpawnerSetUp(spawnee,"MancubusSpawner");
-				if (spawnname ~== "StealthFatso") A_SpawnerSetUp(spawnee,"StealthMancubusSpawner");
-				if (spawnname ~== "Archvile") A_SpawnerSetUp(spawnee,"ArchvileSpawner");
-				if (spawnname ~== "Cyberdemon") A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
-				if (spawnname ~== "SpiderMastermind") A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
+				//if (spawnname ~== "Zombieman") A_SpawnerSetUp(spawnee,"ZombiemanSpawner");
+				//if (spawnname ~== "StealthZombieman") A_SpawnerSetUp(spawnee,"StealthZombiemanSpawner");
+				//if (spawnname ~== "ShotgunGuy") A_SpawnerSetUp(spawnee,"ShotgunGuySpawner");
+				//if (spawnname ~== "StealthShotgunGuy") A_SpawnerSetUp(spawnee,"StealthShotgunGuySpawner");
+				//if (spawnname ~== "ChaingunGuy") A_SpawnerSetUp(spawnee,"ChaingunGuySpawner");
+				//if (spawnname ~== "StealthChaingunGuy") A_SpawnerSetUp(spawnee,"StealthChaingunGuySpawner");
+				//if (spawnname ~== "WolfensteinSS") A_SpawnerSetUp(spawnee,"WolfensteinSSSpawner");
+				//if (spawnname ~== "DoomImp") A_SpawnerSetUp(spawnee,"DoomImpSpawner");
+				//if (spawnname ~== "StealthDoomImp") A_SpawnerSetUp(spawnee,"StealthDoomImpSpawner");
+				//if (spawnname ~== "Demon") A_SpawnerSetUp(spawnee,"DemonSpawner");
+				//if (spawnname ~== "Spectre") A_SpawnerSetUp(spawnee,"SpectreSpawner");
+				//if (spawnname ~== "StealthDemon") A_SpawnerSetUp(spawnee,"StealthDemonSpawner");
+				//if (spawnname ~== "Cacodemon") A_SpawnerSetUp(spawnee,"CacodemonSpawner");
+				//if (spawnname ~== "StealthCacodemon") A_SpawnerSetUp(spawnee,"StealthCacodemonSpawner");
+				//if (spawnname ~== "LostSoul") A_SpawnerSetUp(spawnee,"LostSoulSpawner");
+				//if (spawnname ~== "PainElemental") A_SpawnerSetUp(spawnee,"PainElementalSpawner");
+				//if (spawnname ~== "HellKnight") A_SpawnerSetUp(spawnee,"HellKnightSpawner");
+				//if (spawnname ~== "StealthHellKnight") A_SpawnerSetUp(spawnee,"StealthHellKnightSpawner");
+				//if (spawnname ~== "BaronOfHell") A_SpawnerSetUp(spawnee,"BaronOfHellSpawner");
+				//if (spawnname ~== "StealthBaron") A_SpawnerSetUp(spawnee,"StealthBaronSpawner");
+				//if (spawnname ~== "Revenant") A_SpawnerSetUp(spawnee,"RevenantSpawner");
+				//if (spawnname ~== "StealthRevenant") A_SpawnerSetUp(spawnee,"StealthRevenantSpawner");
+				//if (spawnname ~== "Arachnotron") A_SpawnerSetUp(spawnee,"ArachnotronSpawner");
+				//if (spawnname ~== "StealthArachnotron") A_SpawnerSetUp(spawnee,"StealthArachnotronSpawner");
+				//if (spawnname ~== "Fatso") A_SpawnerSetUp(spawnee,"MancubusSpawner");
+				//if (spawnname ~== "StealthFatso") A_SpawnerSetUp(spawnee,"StealthMancubusSpawner");
+				//if (spawnname ~== "Archvile") A_SpawnerSetUp(spawnee,"ArchvileSpawner");
+				//if (spawnname ~== "Cyberdemon") A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
+				//if (spawnname ~== "SpiderMastermind") A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
 				/*
 				if (spawnname ~== "BossBrain") A_SpawnerSetUp(spawnee,"BossBrainNew");
 				if (spawnname ~== "BossEye") A_SpawnerSetUp(spawnee,"BossEyeNew");
@@ -3305,12 +3344,16 @@ class KC_EventHandler : EventHandler
 					string droptype;
 					if (vict == "Zombieman" ||
 							vict == "ZombiemanNew" ||
+							vict == "ZombiemanClassic" ||
 							vict == "ShotgunGuy" ||
 							vict == "ShotgunGuyNew" ||
+							vict == "ShotgunGuyClassic" ||
 							vict == "ChaingunGuy" || 
 							vict == "ChaingunGuyNew" || 
+							vict == "ChaingunGuyClassic" || 
 							vict == "WolfensteinSS" ||
-							vict == "WolfensteinSSNew")
+							vict == "WolfensteinSSNew" ||
+							vict == "WolfensteinSSClassic")
 					{
 						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("RadSuit2",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
@@ -3340,6 +3383,7 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "Archvile" ||
 							vict == "ArchvileNew" ||
+							vict == "ArchvileClassic" ||
 							vict == "Diabloist")
 					{
 						int itemdropbase = random(4,5);
@@ -3348,8 +3392,10 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "HellKnight" ||
 							vict == "HellKnightNew" ||
+							vict == "HellKnightClassic" ||
 							vict == "BaronOfHell" || 
 							vict == "BaronOfHellNew" || 
+							vict == "BaronOfHellClassic" || 
 							vict == "Belphegor" || 
 							vict == "BruiserDemon" || 
 							vict == "Cybruiser" || 

@@ -221,7 +221,7 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 }
 
 // Doom Monsters
-class ZombiemanSpawner : KCMonsterSpawner // replaces Zombieman
+class ZombiemanSpawner : KCMonsterSpawner replaces Zombieman
 {
 	Default
 	{
@@ -236,6 +236,13 @@ class ZombiemanSpawner : KCMonsterSpawner // replaces Zombieman
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "ZombiemanClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -358,12 +365,12 @@ class ZombiemanSpawner : KCMonsterSpawner // replaces Zombieman
 		return result;
 	}
 }
-class StealthZombiemanSpawner : ZombiemanSpawner // replaces StealthZombieman 
+class StealthZombiemanSpawner : ZombiemanSpawner replaces StealthZombieman 
 {
 }
 
 // Shotgun Guy
-class ShotgunGuySpawner : KCMonsterSpawner // replaces ShotgunGuy
+class ShotgunGuySpawner : KCMonsterSpawner replaces ShotgunGuy
 {
 	Default
 	{
@@ -378,6 +385,13 @@ class ShotgunGuySpawner : KCMonsterSpawner // replaces ShotgunGuy
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "ShotgunGuyClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -471,12 +485,12 @@ class ShotgunGuySpawner : KCMonsterSpawner // replaces ShotgunGuy
 		return result;
 	}
 }
-class StealthShotgunGuySpawner : ShotgunGuySpawner //replaces StealthShotgunGuy 
+class StealthShotgunGuySpawner : ShotgunGuySpawner replaces StealthShotgunGuy 
 { 
 }
 
 // Chaingun Guy
-class ChaingunGuySpawner : KCMonsterSpawner // replaces ChaingunGuy
+class ChaingunGuySpawner : KCMonsterSpawner replaces ChaingunGuy
 {
 	Default
 	{
@@ -491,6 +505,13 @@ class ChaingunGuySpawner : KCMonsterSpawner // replaces ChaingunGuy
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "ChaingunGuyClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -534,12 +555,12 @@ class ChaingunGuySpawner : KCMonsterSpawner // replaces ChaingunGuy
 		return result;
 	}
 }
-class StealthChaingunGuySpawner : ChaingunGuySpawner //replaces StealthChaingunGuy 
+class StealthChaingunGuySpawner : ChaingunGuySpawner replaces StealthChaingunGuy 
 { 
 }
 
 // Wolfenstein SS
-class WolfensteinSSSpawner : KCMonsterSpawner // replaces WolfensteinSS
+class WolfensteinSSSpawner : KCMonsterSpawner replaces WolfensteinSS
 {
 	Default
 	{
@@ -555,6 +576,13 @@ class WolfensteinSSSpawner : KCMonsterSpawner // replaces WolfensteinSS
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
 		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "WolfensteinSSClassic";
+			result = classname;
+			return result;
+		}
+		
 		spawndoomtype = true;
 		
 		A_DebugPrintOut(classname, gotd1);
@@ -563,7 +591,7 @@ class WolfensteinSSSpawner : KCMonsterSpawner // replaces WolfensteinSS
 }
 
 // Imp
-class DoomImpSpawner : KCMonsterSpawner // replaces DoomImp
+class DoomImpSpawner : KCMonsterSpawner replaces DoomImp
 {
 	Default
 	{
@@ -577,6 +605,13 @@ class DoomImpSpawner : KCMonsterSpawner // replaces DoomImp
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "DoomImpClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -692,12 +727,12 @@ class DoomImpSpawner : KCMonsterSpawner // replaces DoomImp
 		return result;
 	}
 }
-class StealthDoomImpSpawner : DoomImpSpawner // replaces StealthDoomImp 
+class StealthDoomImpSpawner : DoomImpSpawner replaces StealthDoomImp 
 { 
 }
 
 // Demon
-class DemonSpawner : KCMonsterSpawner // replaces Demon
+class DemonSpawner : KCMonsterSpawner replaces Demon
 {
 	Default
 	{
@@ -712,6 +747,13 @@ class DemonSpawner : KCMonsterSpawner // replaces Demon
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "DemonClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -843,7 +885,7 @@ class DemonSpawner : KCMonsterSpawner // replaces Demon
 		return result;
 	}
 }
-class SpectreSpawner : KCMonsterSpawner // replaces Spectre
+class SpectreSpawner : KCMonsterSpawner replaces Spectre
 {
 	Default
 	{
@@ -858,7 +900,13 @@ class SpectreSpawner : KCMonsterSpawner // replaces Spectre
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
-
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "SpectreClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -958,11 +1006,11 @@ class SpectreSpawner : KCMonsterSpawner // replaces Spectre
 		return result;
 	}
 }
-class StealthDemonSpawner : DemonSpawner // replaces StealthDemon 
+class StealthDemonSpawner : DemonSpawner replaces StealthDemon 
 { 
 }
 // Revenant
-class RevenantSpawner : KCMonsterSpawner // replaces Revenant
+class RevenantSpawner : KCMonsterSpawner replaces Revenant
 {
 	Default
 	{
@@ -976,6 +1024,13 @@ class RevenantSpawner : KCMonsterSpawner // replaces Revenant
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "RevenantClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -999,12 +1054,12 @@ class RevenantSpawner : KCMonsterSpawner // replaces Revenant
 		return result;
 	}
 }
-class StealthRevenantSpawner : RevenantSpawner //replaces StealthRevenant 
+class StealthRevenantSpawner : RevenantSpawner replaces StealthRevenant 
 { 
 }
 
 // Cacodemon
-class CacodemonSpawner : KCMonsterSpawner // replaces Cacodemon
+class CacodemonSpawner : KCMonsterSpawner replaces Cacodemon
 {
 	Default
 	{
@@ -1018,6 +1073,13 @@ class CacodemonSpawner : KCMonsterSpawner // replaces Cacodemon
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "CacodemonClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -1178,12 +1240,12 @@ class CacodemonSpawner : KCMonsterSpawner // replaces Cacodemon
 		return result;
 	}
 }
-class StealthCacodemonSpawner : CacodemonSpawner // replaces StealthCacodemon 
+class StealthCacodemonSpawner : CacodemonSpawner replaces StealthCacodemon 
 { 
 }
 
 // Pain Elemental
-class PainElementalSpawner : KCMonsterSpawner // replaces PainElemental
+class PainElementalSpawner : KCMonsterSpawner replaces PainElemental
 {
 	Default
 	{
@@ -1198,6 +1260,13 @@ class PainElementalSpawner : KCMonsterSpawner // replaces PainElemental
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "PainElementalClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -1241,7 +1310,7 @@ class PainElementalSpawner : KCMonsterSpawner // replaces PainElemental
 }
 
 // LostSoul
-class LostSoulSpawner : KCMonsterSpawner // replaces LostSoul
+class LostSoulSpawner : KCMonsterSpawner replaces LostSoul
 {
 	Default
 	{
@@ -1256,6 +1325,13 @@ class LostSoulSpawner : KCMonsterSpawner // replaces LostSoul
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "LostSoulClassic";
+			result = classname;
+			return result;
+		}
 		
 		if (IsDoom1())
 		{
@@ -1313,7 +1389,7 @@ class LostSoulSpawner : KCMonsterSpawner // replaces LostSoul
 }
 
 // Arachnotron
-class ArachnotronSpawner : KCMonsterSpawner // replaces Arachnotron
+class ArachnotronSpawner : KCMonsterSpawner replaces Arachnotron
 {
 	Default
 	{
@@ -1328,6 +1404,13 @@ class ArachnotronSpawner : KCMonsterSpawner // replaces Arachnotron
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "ArachnotronClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -1359,12 +1442,12 @@ class ArachnotronSpawner : KCMonsterSpawner // replaces Arachnotron
 		return result;
 	}
 }
-class StealthArachnotronSpawner : ArachnotronSpawner // replaces StealthArachnotron 
+class StealthArachnotronSpawner : ArachnotronSpawner replaces StealthArachnotron 
 { 
 }
 
 // Hell Knight
-class HellKnightSpawner : KCMonsterSpawner // replaces HellKnight
+class HellKnightSpawner : KCMonsterSpawner replaces HellKnight
 {
 	Default
 	{
@@ -1379,6 +1462,13 @@ class HellKnightSpawner : KCMonsterSpawner // replaces HellKnight
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "HellKnightClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -1457,12 +1547,12 @@ class HellKnightSpawner : KCMonsterSpawner // replaces HellKnight
 		return result;
 	}
 }
-class StealthHellKnightSpawner : HellKnightSpawner // replaces StealthHellKnight 
+class StealthHellKnightSpawner : HellKnightSpawner replaces StealthHellKnight 
 { 
 }
 
 // Mancubus
-class MancubusSpawner : KCMonsterSpawner // replaces Fatso
+class MancubusSpawner : KCMonsterSpawner replaces Fatso
 {
 	Default
 	{
@@ -1477,7 +1567,14 @@ class MancubusSpawner : KCMonsterSpawner // replaces Fatso
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
-
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "FatsoClassic";
+			result = classname;
+			return result;
+		}
+		
 		spawndoomtype = true;
 		
 		if (kc_monsterevolutions && spawndoomtype)
@@ -1503,12 +1600,12 @@ class MancubusSpawner : KCMonsterSpawner // replaces Fatso
 		return result;
 	}
 }
-class StealthMancubusSpawner : MancubusSpawner // replaces StealthFatso 
+class StealthMancubusSpawner : MancubusSpawner replaces StealthFatso 
 { 
 }
 
 // Archvile
-class ArchvileSpawner : KCMonsterSpawner // replaces Archvile
+class ArchvileSpawner : KCMonsterSpawner replaces Archvile
 {
 	Default
 	{
@@ -1523,6 +1620,13 @@ class ArchvileSpawner : KCMonsterSpawner // replaces Archvile
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "ArchvileClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -1540,12 +1644,12 @@ class ArchvileSpawner : KCMonsterSpawner // replaces Archvile
 		return result;
 	}
 }
-class StealthArchvileSpawner : ArchvileSpawner // replaces StealthArchvile 
+class StealthArchvileSpawner : ArchvileSpawner replaces StealthArchvile 
 { 
 }
 
 // Baron Of Hell
-class BaronofHellSpawner : KCMonsterSpawner // replaces BaronofHell
+class BaronofHellSpawner : KCMonsterSpawner replaces BaronofHell
 {
 	Default
 	{
@@ -1560,7 +1664,14 @@ class BaronofHellSpawner : KCMonsterSpawner // replaces BaronofHell
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
-
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "BaronOfHellClassic";
+			result = classname;
+			return result;
+		}
+		
 		// Barons in E1M8 of Doom1 mode can't/shouldn't be able to become a different species 
 		// type at all to mitigate tag 666 problems :V
 		if (IsDoom1() && level.mapname != "E1M8")
@@ -1668,12 +1779,12 @@ class BaronofHellSpawner : KCMonsterSpawner // replaces BaronofHell
 		return result;
 	}
 }
-class StealthBaronSpawner : BaronofHellSpawner // replaces StealthBaron 
+class StealthBaronSpawner : BaronofHellSpawner replaces StealthBaron 
 { 
 }
 
 // Spider Mastermind
-class SpiderMastermindSpawner : KCMonsterSpawner // replaces SpiderMastermind
+class SpiderMastermindSpawner : KCMonsterSpawner replaces SpiderMastermind
 {
 	Default
 	{
@@ -1688,6 +1799,13 @@ class SpiderMastermindSpawner : KCMonsterSpawner // replaces SpiderMastermind
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "SpiderMastermindClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
@@ -1707,7 +1825,7 @@ class SpiderMastermindSpawner : KCMonsterSpawner // replaces SpiderMastermind
 }
 
 // Cyberdemon
-class CyberdemonSpawner : KCMonsterSpawner // replaces Cyberdemon
+class CyberdemonSpawner : KCMonsterSpawner replaces Cyberdemon
 {
 	Default
 	{
@@ -1722,6 +1840,13 @@ class CyberdemonSpawner : KCMonsterSpawner // replaces Cyberdemon
 		string result = classname;
 		if (CheckUOHYM()) return result;
 		bool spawndoomtype;
+		
+		if (!kc_usealteredmonsters) 
+		{
+			classname = "CyberdemonClassic";
+			result = classname;
+			return result;
+		}
 
 		spawndoomtype = true;
 		
