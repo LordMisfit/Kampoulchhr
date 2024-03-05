@@ -653,9 +653,14 @@ class KC_EventHandler : EventHandler
 		// Micro-Boss
 		
 		// Mini-Boss
+		if (spawnname == "SpiderMastermind") LevelCheck += random(random(1,2),3);
 		if (spawnname == "SpiderMastermindNew") LevelCheck += random(random(1,2),3);
+		if (spawnname == "SpiderMastermindClassic") LevelCheck += random(random(1,2),3);
 		if (spawnname == "Demolisher") LevelCheck += random(random(1,2),3);
+		if (spawnname == "Cyberdemon") LevelCheck += random(random(1,2),3);
 		if (spawnname == "CyberdemonNew") LevelCheck += random(random(1,2),3);
+		if (spawnname == "CyberdemonClassic") LevelCheck += random(random(1,2),3);
+		if (spawnname == "Annihilator") LevelCheck += random(random(1,2),3);
 		
 		// Tier 1 Boss
 		
@@ -1792,6 +1797,43 @@ class KC_EventHandler : EventHandler
 		
 		A_BloomMonsterNames(spawnee);
 		
+		if (spawnname ~== "Zombieman") spawnee.SetTag("Zombieman");
+		if (spawnname ~== "ShotgunGuy") spawnee.SetTag("Shotgun Guy");
+		if (spawnname ~== "ChaingunGuy") spawnee.SetTag("Chaingun Guy");
+		if (spawnname ~== "WolfensteinSS") spawnee.SetTag("Schutzstaffel");
+		if (spawnname ~== "DoomImp") spawnee.SetTag("Imp");
+		if (spawnname ~== "Demon") spawnee.SetTag("Pinky Demon");
+		if (spawnname ~== "Spectre") spawnee.SetTag("Pinky Spectre");
+		if (spawnname ~== "LostSoul") spawnee.SetTag("Lost Soul");
+		if (spawnname ~== "Cacodemon") spawnee.SetTag("Cacodemon");
+		if (spawnname ~== "PainElemental") spawnee.SetTag("Pain Elemental");
+		if (spawnname ~== "Arachnotron") spawnee.SetTag("Arachnotron");
+		if (spawnname ~== "Revenant") spawnee.SetTag("Revenant");
+		if (spawnname ~== "Fatso") spawnee.SetTag("Mancubus");
+		if (spawnname ~== "Archvile") spawnee.SetTag("Archvile");
+		if (spawnname ~== "HellKnight") spawnee.SetTag("Hell Knight");
+		if (spawnname ~== "BaronOfHell") spawnee.SetTag("Baron of Hell");
+		if (spawnname ~== "SpiderMastermind") spawnee.SetTag("Spider Mastermind");
+		if (spawnname ~== "Cyberdemon") spawnee.SetTag("CyberDemon");
+		if (spawnname ~== "ZombiemanClassic") spawnee.SetTag("Zombieman");
+		if (spawnname ~== "ShotgunGuyClassic") spawnee.SetTag("Shotgun Guy");
+		if (spawnname ~== "ChaingunGuyClassic") spawnee.SetTag("Chaingun Guy");
+		if (spawnname ~== "WolfensteinSSClassic") spawnee.SetTag("Schutzstaffel");
+		if (spawnname ~== "DoomImpClassic") spawnee.SetTag("Imp");
+		if (spawnname ~== "DemonClassic") spawnee.SetTag("Pinky Demon");
+		if (spawnname ~== "SpectreClassic") spawnee.SetTag("Pinky Spectre");
+		if (spawnname ~== "LostSoulClassic") spawnee.SetTag("Lost Soul");
+		if (spawnname ~== "CacodemonClassic") spawnee.SetTag("Cacodemon");
+		if (spawnname ~== "PainElementalClassic") spawnee.SetTag("Pain Elemental");
+		if (spawnname ~== "ArachnotronClassic") spawnee.SetTag("Arachnotron");
+		if (spawnname ~== "RevenantClassic") spawnee.SetTag("Revenant");
+		if (spawnname ~== "FatsoClassic") spawnee.SetTag("Mancubus");
+		if (spawnname ~== "ArchvileClassic") spawnee.SetTag("Archvile");
+		if (spawnname ~== "HellKnightClassic") spawnee.SetTag("Hell Knight");
+		if (spawnname ~== "BaronOfHellClassic") spawnee.SetTag("Baron of Hell");
+		if (spawnname ~== "SpiderMastermindClassic") spawnee.SetTag("Spider Mastermind");
+		if (spawnname ~== "CyberdemonClassic") spawnee.SetTag("CyberDemon");
+
 		if (spawnname == "DoomImpBall") 
 		{
 			spawnee.SetTag("Imp Fireball");
