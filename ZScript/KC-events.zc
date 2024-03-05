@@ -653,14 +653,14 @@ class KC_EventHandler : EventHandler
 		// Micro-Boss
 		
 		// Mini-Boss
-		if (spawnname == "SpiderMastermind") LevelCheck += random(random(1,2),3);
-		if (spawnname == "SpiderMastermindNew") LevelCheck += random(random(1,2),3);
-		if (spawnname == "SpiderMastermindClassic") LevelCheck += random(random(1,2),3);
-		if (spawnname == "Demolisher") LevelCheck += random(random(1,2),3);
-		if (spawnname == "Cyberdemon") LevelCheck += random(random(1,2),3);
-		if (spawnname == "CyberdemonNew") LevelCheck += random(random(1,2),3);
-		if (spawnname == "CyberdemonClassic") LevelCheck += random(random(1,2),3);
-		if (spawnname == "Annihilator") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "SpiderMastermind") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "SpiderMastermindNew") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "SpiderMastermindClassic") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "Demolisher") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "Cyberdemon") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "CyberdemonNew") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "CyberdemonClassic") LevelCheck += random(random(1,2),3);
+		if (spawnname ~== "Annihilator") LevelCheck += random(random(1,2),3);
 		
 		// Tier 1 Boss
 		
@@ -675,21 +675,21 @@ class KC_EventHandler : EventHandler
 				{
 					if (random(1,32) <= 1)
 					{
-						if (spawnname == "ClayDevilNew") LevelCheck += random(4,6);
-						else if (spawnname == "Skeleton") LevelCheck += random(8,12);
+						if (spawnname ~== "ClayDevilNew") LevelCheck += random(4,6);
+						else if (spawnname ~== "Skeleton") LevelCheck += random(8,12);
 						else LevelCheck += random(16,24);
 					}
 					else
 					{
-						if (spawnname == "ClayDevilNew") LevelCheck += random(1,2);
-						else if (spawnname == "Skeleton") LevelCheck += random(2,3);
+						if (spawnname ~== "ClayDevilNew") LevelCheck += random(1,2);
+						else if (spawnname ~== "Skeleton") LevelCheck += random(2,3);
 						else LevelCheck += random(8,12);
 					}
 				}
 				else
 				{
-					if (spawnname == "ClayDevilNew") LevelCheck += randompick(0,0,0,0,0,0,0,0,0,1);
-					else if (spawnname == "Skeleton") LevelCheck += random(0,1);
+					if (spawnname ~== "ClayDevilNew") LevelCheck += randompick(0,0,0,0,0,0,0,0,0,1);
+					else if (spawnname ~== "Skeleton") LevelCheck += random(0,1);
 					else LevelCheck += random(2,3);
 				}
 			}
@@ -698,15 +698,15 @@ class KC_EventHandler : EventHandler
 			int basechance = 128;
 			if (random(1,basechance) <= (1 + (skill * 0.25)))
 			{
-				if (spawnname == "ClayDevilNew") LevelCheck *= 1.25;
-				else if (spawnname == "Skeleton") LevelCheck *= 1.5;
+				if (spawnname ~== "ClayDevilNew") LevelCheck *= 1.25;
+				else if (spawnname ~== "Skeleton") LevelCheck *= 1.5;
 				else LevelCheck *= 2;
 				
 				basechance = 128;
 				if (random(1,basechance) <= (1 + (skill * 0.25))) 
 				{
-					if (spawnname == "ClayDevilNew") LevelCheck *= 1.25;
-					else if (spawnname == "Skeleton") LevelCheck *= 1.5;
+					if (spawnname ~== "ClayDevilNew") LevelCheck *= 1.25;
+					else if (spawnname ~== "Skeleton") LevelCheck *= 1.5;
 					else LevelCheck *= 2;
 				}
 			}
@@ -758,30 +758,30 @@ class KC_EventHandler : EventHandler
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1') e1m8exitroommon = true;
 				if (level.mapname == "E1M8" &&
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' && 
-						(spawnname == "BaronOfHell" ||
-						 spawnname == "BaronOfHellNew" ||
-						 spawnname == "BaronOfHellClassic" ||
-						 spawnname == "Belphegor" ||
-						 spawnname == "BruiserDemon" ||
-						 spawnname == "CyBruiser" ||
-						 spawnname == "ArchonOfHell" ||
-						 spawnname == "PyroDemon" ||
-						 spawnname == "FlyingBalrogDVDS" ||
-						 spawnname == "Hierophant")) e1m8baron = true;
+						(spawnname ~== "BaronOfHell" ||
+						 spawnname ~== "BaronOfHellNew" ||
+						 spawnname ~== "BaronOfHellClassic" ||
+						 spawnname ~== "Belphegor" ||
+						 spawnname ~== "BruiserDemon" ||
+						 spawnname ~== "CyBruiser" ||
+						 spawnname ~== "ArchonOfHell" ||
+						 spawnname ~== "PyroDemon" ||
+						 spawnname ~== "FlyingBalrogDVDS" ||
+						 spawnname ~== "Hierophant")) e1m8baron = true;
 				if (level.mapname == "E2M8" &&
 						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' && 
-						(spawnname == "Cyberdemon" || 
-						 spawnname == "CyberdemonNew" || 
-						 spawnname == "CyberdemonClassic" || 
-						 spawnname == "Annihilator")) e2m8cyber = true;
+						(spawnname ~== "Cyberdemon" || 
+						 spawnname ~== "CyberdemonNew" || 
+						 spawnname ~== "CyberdemonClassic" || 
+						 spawnname ~== "Annihilator")) e2m8cyber = true;
 				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
 						 (level.mapname == "E3M8" ||
 							level.mapname == "E4M8") &&
-						(spawnname == "SpiderMastermind" || 
-						 spawnname == "SpiderMastermindNew" || 
-						 spawnname == "SpiderMastermindClassic" || 
-						 spawnname == "Demolisher")) e34m8spider = true;
+						(spawnname ~== "SpiderMastermind" || 
+						 spawnname ~== "SpiderMastermindNew" || 
+						 spawnname ~== "SpiderMastermindClassic" || 
+						 spawnname ~== "Demolisher")) e34m8spider = true;
 				
 				if (A_CheckUOHYM() && level.mapname == "MAP01") 
 				{
@@ -987,9 +987,9 @@ class KC_EventHandler : EventHandler
 						if (DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
 						if (Korax(spawnee)) LevelCheck += random(15,30);
 						if (KoraxNew(spawnee)) LevelCheck += random(15,30);
-						if (spawnname == "ThamuzNew" || spawnname == "TchernobogNew") LevelCheck += random(15,30);
+						if (spawnname ~== "ThamuzNew" || spawnname ~== "TchernobogNew") LevelCheck += random(15,30);
 						// Tier 3 Boss
-						if (spawnname == "PennywiseBoss" || spawnname == "TchernobogNew") LevelCheck += random(23,45);
+						if (spawnname ~== "PennywiseBoss") LevelCheck += random(23,45);
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [actor-check: %s]: %d (Previous: %d), monsterrating: %d", spawnname, LevelCheck, PreviousLevelCheck, monsterrating);
 						
 						PreviousLevelCheck = LevelCheck;
@@ -1385,40 +1385,40 @@ class KC_EventHandler : EventHandler
 			String nm = "LDLegendaryMonsterTracker";
 			LDLPreload = nm;
 			
-			if (!(spawnname == "PeasantNew" ||
-						spawnname == "Peasant1New" ||
-						spawnname == "Peasant2New" ||
-						spawnname == "Peasant3New" ||
-						spawnname == "Peasant4New" ||
-						spawnname == "Peasant5New" ||
-						spawnname == "Peasant6New" ||
-						spawnname == "Peasant7New" ||
-						spawnname == "Peasant8New" ||
-						spawnname == "Peasant9New" ||
-						spawnname == "Peasant10New" ||
-						spawnname == "Peasant11New" ||
-						spawnname == "Peasant12New" ||
-						spawnname == "Peasant13New" ||
-						spawnname == "Peasant14New" ||
-						spawnname == "Peasant15New" ||
-						spawnname == "Peasant16New" ||
-						spawnname == "Peasant17New" ||
-						spawnname == "Peasant18New" ||
-						spawnname == "Peasant19New" ||
-						spawnname == "Peasant20New" ||
-						spawnname == "Peasant21New" ||
-						spawnname == "Peasant22New" ||
-						spawnname == "BeggarNew" ||
-						spawnname == "Beggar1New" ||
-						spawnname == "Beggar2New" ||
-						spawnname == "Beggar3New" ||
-						spawnname == "Beggar4New" ||
-						spawnname == "Beggar5New" ||
-						spawnname == "MerchantNew" ||
-						spawnname == "WeaponSmithNew" ||
-						spawnname == "BarKeepNew" ||
-						spawnname == "ArmorerNew" ||
-						spawnname == "MedicNew"))
+			if (!(spawnname ~== "PeasantNew" ||
+						spawnname ~== "Peasant1New" ||
+						spawnname ~== "Peasant2New" ||
+						spawnname ~== "Peasant3New" ||
+						spawnname ~== "Peasant4New" ||
+						spawnname ~== "Peasant5New" ||
+						spawnname ~== "Peasant6New" ||
+						spawnname ~== "Peasant7New" ||
+						spawnname ~== "Peasant8New" ||
+						spawnname ~== "Peasant9New" ||
+						spawnname ~== "Peasant10New" ||
+						spawnname ~== "Peasant11New" ||
+						spawnname ~== "Peasant12New" ||
+						spawnname ~== "Peasant13New" ||
+						spawnname ~== "Peasant14New" ||
+						spawnname ~== "Peasant15New" ||
+						spawnname ~== "Peasant16New" ||
+						spawnname ~== "Peasant17New" ||
+						spawnname ~== "Peasant18New" ||
+						spawnname ~== "Peasant19New" ||
+						spawnname ~== "Peasant20New" ||
+						spawnname ~== "Peasant21New" ||
+						spawnname ~== "Peasant22New" ||
+						spawnname ~== "BeggarNew" ||
+						spawnname ~== "Beggar1New" ||
+						spawnname ~== "Beggar2New" ||
+						spawnname ~== "Beggar3New" ||
+						spawnname ~== "Beggar4New" ||
+						spawnname ~== "Beggar5New" ||
+						spawnname ~== "MerchantNew" ||
+						spawnname ~== "WeaponSmithNew" ||
+						spawnname ~== "BarKeepNew" ||
+						spawnname ~== "ArmorerNew" ||
+						spawnname ~== "MedicNew"))
 			{
 				String nn;
 				if (A_CheckUOHYM())
@@ -2514,11 +2514,9 @@ class KC_EventHandler : EventHandler
 				//if (spawnname ~== "Archvile") A_SpawnerSetUp(spawnee,"ArchvileSpawner");
 				//if (spawnname ~== "Cyberdemon") A_SpawnerSetUp(spawnee,"CyberdemonSpawner");
 				//if (spawnname ~== "SpiderMastermind") A_SpawnerSetUp(spawnee,"SpiderMastermindSpawner");
-				/*
-				if (spawnname ~== "BossBrain") A_SpawnerSetUp(spawnee,"BossBrainNew");
-				if (spawnname ~== "BossEye") A_SpawnerSetUp(spawnee,"BossEyeNew");
-				if (spawnname ~== "SpawnShot") A_SpawnerSetUp(spawnee,"SpawnShotNew");
-				*/
+				//if (spawnname ~== "BossBrain") A_SpawnerSetUp(spawnee,"BossBrainNew");
+				//if (spawnname ~== "BossEye") A_SpawnerSetUp(spawnee,"BossEyeNew");
+				//if (spawnname ~== "SpawnShot") A_SpawnerSetUp(spawnee,"SpawnShotNew");
 				// Heretic
 				if (spawnname ~== "Chicken") A_SpawnerSetUp(spawnee,"ChickenNew");
 				if (spawnname ~== "HereticImp") A_SpawnerSetUp(spawnee,"GargoyleSpawner");
@@ -3401,6 +3399,7 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "Cacodemon" ||
 							vict == "CacodemonNew" ||
+							vict == "CacodemonClassic" ||
 							vict == "Cacolantern" ||
 							vict == "Abaddon")
 					{
@@ -3410,8 +3409,10 @@ class KC_EventHandler : EventHandler
 					}
 					if (vict == "Demon" || 
 							vict == "DemonNew" || 
+							vict == "DemonClassic" || 
 							vict == "Spectre" || 
 							vict == "SpectreNew" || 
+							vict == "SpectreClassic" || 
 							vict == "NightmareSpectre" || 
 							vict == "BloodDemon" || 
 							vict == "BloodSpectre" || 
@@ -3447,7 +3448,7 @@ class KC_EventHandler : EventHandler
 							vict == "Hierophant")
 					{
 						int itemdropbase = basedropdiv;
-						if (vict == "HellKnight" || vict == "HellKnightNew") basedropdiv *= 3;
+						if (vict == "HellKnight" || vict == "HellKnightNew" || vict == "HellKnightClassic") basedropdiv *= 3;
 						if (A_CheckForHeiwaPlayer()) basedropdiv *= 4;
 						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
