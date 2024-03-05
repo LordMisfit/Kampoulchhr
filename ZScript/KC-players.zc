@@ -2122,6 +2122,91 @@ class KCPlayerPawn : PlayerPawn
 			if (kcdebug_playerdamagemobj) Console.Printf("CCardsShadow [final damage]: %d", damage);
 		}
 		
+		
+		if ((mod == 'Explosive' ||
+				 mod == 'ExplosiveImpact' || 
+				 mod == 'CC_Firecracker') ||
+				flags & DMG_EXPLOSION)
+		{
+			if (MiscItem)
+			{
+				int HellWarriorShieldLevel = MiscItem.HellWarriorShieldLevel;
+				double randvar1;
+				double randvar2;
+				if (CountInv("EWShieldDefendMode"))
+				{
+					if (CountInv("EWShieldDefendModeExtra"))
+					{
+						randvar1 = (0.125 - (HellWarriorShieldLevel * 0.00625));
+						randvar2 = (0.1667 - (HellWarriorShieldLevel * 0.008334));
+						damage *= frandom(randvar1,randvar2);
+						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					}
+					else
+					{
+						randvar1 = (0.25 - (HellWarriorShieldLevel * 0.0125));
+						randvar2 = (0.3334 - (HellWarriorShieldLevel * 0.01667));
+						damage *= frandom(randvar1,randvar2);
+						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					}
+				}
+				else
+				{
+					if (CountInv("EWShieldIdleMode"))
+					{
+						randvar1 = (0.50 - (HellWarriorShieldLevel * 0.025));
+						randvar2 = (0.6667 - (HellWarriorShieldLevel * 0.03334));
+						damage *= frandom(randvar1,randvar2);
+						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					}
+				}
+			}
+		}
+		
+		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+		{
+			if (mod == 'StunningHead')
+			{
+				if (source) { }
+				else
+				{
+					damage *= frandom(0.025,0.0334);
+				}
+			}
+			if (mod == 'ZBloodBullet') mod = "Hitscan";
+			if (mod == 'Axe') mod = "Chop";
+			if (mod == 'SpecialFire') mod = 'Fire';
+			if (CountInv("PlayingCCards") && mod == 'BaneMelee') 
+			{
+				mod = 'Melee';
+				damage *= 1.5;
+			}
+			if (mod == 'Flare') 
+			{
+				mod = "Fire";
+				damage *= 3.0;
+			}
+			if (mod == 'Blast' ||
+					mod == 'CultistTNT' ||
+					((source && source.GetClassName() == "CCards_Actor_DeathExplosion") ||
+					(inflictor && inflictor.GetClassName() == "CCards_Actor_DeathExplosion")) ||
+					((source && source.GetClassName() == "CCards_NukeExplosion") ||
+					(inflictor && inflictor.GetClassName() == "CCards_NukeExplosion")))
+			{
+				mod = "Explosive";
+			}
+			//if ((source && source.CountInv("lolewatdisdo")) || 
+			//		(inflictor && inflictor.CountInv("lolewatdisdo"))) damage *= frandompick(1.1875,1.375,1.375,1.375,1.375,1.375,1.375,1.375,1.375,1.75);
+			//if ((source && source.CountInv("gimmesacrificelule")) || 
+			//		(inflictor && inflictor.CountInv("gimmesacrificelule"))) damage *= frandompick(1.25,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2.0);
+		}
+
 		/*
 		let NoU = D_NoUCard(FindInventory("D_NoUCard"));
 		if (NoU)
@@ -4096,6 +4181,34 @@ class EVP_Footsteps : Actor
 
 			double WeaponFactor = 1.0;
 			double WeaponFactorEx = 0.0;
+			if (PlayerWeapon is "FistMarine" ||
+					PlayerWeapon is "FistHeiwa") 
+			{
+				if (berserked) WeaponFactorEx += 0.25;
+									else WeaponFactorEx += 0.125;
+				fstpitch *= (1.0 + (WeaponFactorEx * frandom(0.875,1.125)));
+			}
+			if (PlayerWeapon is "KnifeHeiwa")
+			{
+				if (berserked) WeaponFactorEx += 0.25;
+									else WeaponFactorEx += 0.125;
+				fstpitch *= (1.0 + (WeaponFactorEx * frandom(0.875,1.125)));
+			}
+			if (PlayerWeapon is "EvilWarriorShield")
+			{
+				int HellWarriorShieldLevel = plr.CountInv("HellWarriorShieldLevel");
+				if (berserked)
+				{
+					if (plr.CountInv("HWShieldBlockHold")) WeaponFactorEx -= (0.15 * (1.0 + (HellWarriorShieldLevel * 0.009375)));
+																						else WeaponFactorEx -= (0.075 * (1.0 + (HellWarriorShieldLevel * 0.0046875)));
+				}
+				else
+				{
+					if (plr.CountInv("HWShieldBlockHold")) WeaponFactorEx -= (0.30 * (1.0 + (HellWarriorShieldLevel * 0.01875)));
+																						else WeaponFactorEx -= (0.15 * (1.0 + (HellWarriorShieldLevel * 0.009375)));
+				}
+			}
+
 			WeaponFactorEx *= 0.25;
 			WeaponFactorEx += 1.0;
 			WeaponFactorEx *= frandom(0.875,1.125);

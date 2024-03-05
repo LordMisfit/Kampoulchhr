@@ -3382,84 +3382,93 @@ class KC_EventHandler : EventHandler
 					
 					double rand = 2.0;
 					string droptype;
-					if (vict == "Zombieman" ||
-							vict == "ZombiemanNew" ||
-							vict == "ZombiemanClassic" ||
-							vict == "ShotgunGuy" ||
-							vict == "ShotgunGuyNew" ||
-							vict == "ShotgunGuyClassic" ||
-							vict == "ChaingunGuy" || 
-							vict == "ChaingunGuyNew" || 
-							vict == "ChaingunGuyClassic" || 
-							vict == "WolfensteinSS" ||
-							vict == "WolfensteinSSNew" ||
-							vict == "WolfensteinSSClassic")
+					if (vict ~== "Zombieman" ||
+							vict ~== "ZombiemanNew" ||
+							vict ~== "ZombiemanClassic" ||
+							vict ~== "ShotgunGuy" ||
+							vict ~== "ShotgunGuyNew" ||
+							vict ~== "ShotgunGuyClassic" ||
+							vict ~== "ChaingunGuy" || 
+							vict ~== "ChaingunGuyNew" || 
+							vict ~== "ChaingunGuyClassic" || 
+							vict ~== "WolfensteinSS" ||
+							vict ~== "WolfensteinSSNew" ||
+							vict ~== "WolfensteinSSClassic")
 					{
 						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("RadSuit2",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (vict == "Cacodemon" ||
-							vict == "CacodemonNew" ||
-							vict == "CacodemonClassic" ||
-							vict == "Cacolantern" ||
-							vict == "Abaddon")
+					if (vict ~== "Cacodemon" ||
+							vict ~== "CacodemonNew" ||
+							vict ~== "CacodemonClassic" ||
+							vict ~== "Cacolantern" ||
+							vict ~== "Abaddon")
 					{
 						int itemdropbase = random(2,3);
 						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
 						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("DoubleSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (vict == "Demon" || 
-							vict == "DemonNew" || 
-							vict == "DemonClassic" || 
-							vict == "Spectre" || 
-							vict == "SpectreNew" || 
-							vict == "SpectreClassic" || 
-							vict == "NightmareSpectre" || 
-							vict == "BloodDemon" || 
-							vict == "BloodSpectre" || 
-							vict == "NightmareBloodSpectre" || 
-							vict == "ChaingunDemon" || 
-							vict == "ChaingunSpectre")
+					if (vict ~== "Demon" || 
+							vict ~== "DemonNew" || 
+							vict ~== "DemonClassic" || 
+							vict ~== "Spectre" || 
+							vict ~== "SpectreNew" || 
+							vict ~== "SpectreClassic" || 
+							vict ~== "NightmareSpectre" || 
+							vict ~== "BloodDemon" || 
+							vict ~== "BloodSpectre" || 
+							vict ~== "NightmareBloodSpectre" || 
+							vict ~== "ChaingunDemon" || 
+							vict ~== "ChaingunSpectre")
 					{
 						int itemdropbase = 1;
 						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
 						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("GuardSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (vict == "Archvile" ||
-							vict == "ArchvileNew" ||
-							vict == "ArchvileClassic" ||
-							vict == "Diabloist")
+					if (vict ~== "Archvile" ||
+							vict ~== "ArchvileNew" ||
+							vict ~== "ArchvileClassic" ||
+							vict ~== "Diabloist")
 					{
 						int itemdropbase = random(4,5);
 						if (A_CheckForHeiwaPlayer()) itemdropbase *= 4;
 						if (random(1,basedropdiv) <= itemdropbase) victim.A_SpawnItemEx("HasteSphere",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
-					if (vict == "HellKnight" ||
-							vict == "HellKnightNew" ||
-							vict == "HellKnightClassic" ||
-							vict == "BaronOfHell" || 
-							vict == "BaronOfHellNew" || 
-							vict == "BaronOfHellClassic" || 
-							vict == "Belphegor" || 
-							vict == "BruiserDemon" || 
-							vict == "Cybruiser" || 
-							vict == "ArchonOfHell" || 
-							vict == "PyroDemon" || 
-							vict == "FlyingBalrogDVDS" || 
-							vict == "Hierophant")
+					if (vict ~== "HellKnight" ||
+							vict ~== "HellKnightNew" ||
+							vict ~== "HellKnightClassic" ||
+							vict ~== "BaronOfHell" || 
+							vict ~== "BaronOfHellNew" || 
+							vict ~== "BaronOfHellClassic" || 
+							vict ~== "Belphegor" || 
+							vict ~== "BruiserDemon" || 
+							vict ~== "Cybruiser" || 
+							vict ~== "ArchonOfHell" || 
+							vict ~== "PyroDemon" || 
+							vict ~== "FlyingBalrogDVDS" || 
+							vict ~== "Hierophant")
 					{
 						int itemdropbase = basedropdiv;
-						if (vict == "HellKnight" || vict == "HellKnightNew" || vict == "HellKnightClassic") basedropdiv *= 3;
+						if (vict ~== "HellKnight" || 
+								vict ~== "HellKnightNew" || 
+								vict ~== "HellKnightClassic") basedropdiv *= 3;
 						if (A_CheckForHeiwaPlayer()) basedropdiv *= 4;
 						if (random(1,basedropdiv) <= 1) victim.A_SpawnItemEx("Berserk",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					}
 					
-					if (Zombieman(victim) || 
-							ZombiemanNew(victim) || 
-							ChaingunGuy(victim) || 
-							ChaingunGuyNew(victim) || 
-							SpiderMastermind(victim) || 
-							SpiderMastermindNew(victim) || 
-							Demolisher(victim))
+					if (vict ~== "Zombieman" ||
+							vict ~== "ZombiemanNew" ||
+							vict ~== "ZombiemanClassic" ||
+							vict ~== "ChaingunGuy" || 
+							vict ~== "ChaingunGuyNew" || 
+							vict ~== "ChaingunGuyClassic" || 
+							vict ~== "Minigunner" || 
+							vict ~== "WolfensteinSS" ||
+							vict ~== "WolfensteinSSNew" ||
+							vict ~== "WolfensteinSSClassic" ||
+							vict ~== "SpiderMastermind" || 
+							vict ~== "SpiderMastermindNew" || 
+							vict ~== "SpiderMastermindClassic" || 
+							vict ~== "Demolisher")
 					{
 						if (random(1,(basedropdiv*0.015625)) <= random(2,3)) 
 						{
@@ -3480,8 +3489,9 @@ class KC_EventHandler : EventHandler
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
 						
-						if (Zombieman(victim) ||
-								ZombiemanNew(victim))
+					if (vict ~== "Zombieman" ||
+							vict ~== "ZombiemanNew" ||
+							vict ~== "ZombiemanClassic")
 						{
 							string droptypeammo = "ClipNew";
 							string droptypeammobig = "ClipBoxNew";
@@ -3604,9 +3614,10 @@ class KC_EventHandler : EventHandler
 								}
 							}
 						}
-						if (ChaingunGuy(victim) ||
-								ChaingunGuyNew(victim) ||
-								Minigunner(victim))
+						if (vict ~== "ChaingunGuy" || 
+								vict ~== "ChaingunGuyNew" || 
+								vict ~== "ChaingunGuyClassic" || 
+								vict ~== "Minigunner")
 						{
 							string droptypeammo = "ClipNew";
 							string droptypeammobig = "ClipBoxNew";
@@ -3667,8 +3678,9 @@ class KC_EventHandler : EventHandler
 								}
 							}
 						}
-						if (WolfensteinSS(victim) ||
-								WolfensteinSSNew(victim))
+						if (vict ~== "WolfensteinSS" ||
+								vict ~== "WolfensteinSSNew" ||
+								vict ~== "WolfensteinSSClassic")
 						{
 							int chancebase = randompick(1,1,1,1,1,2,2,3);
 							if (A_CheckForHeiwaPlayer()) chancebase *= 4;
@@ -3701,9 +3713,10 @@ class KC_EventHandler : EventHandler
 								}
 							}
 						}
-						if (SpiderMastermind(victim) ||
-								SpiderMastermindNew(victim) ||
-								Demolisher(victim))
+						if (vict ~== "SpiderMastermind" || 
+								vict ~== "SpiderMastermindNew" || 
+								vict ~== "SpiderMastermindClassic" || 
+								vict ~== "Demolisher")
 						{
 							droptype = "ChaingunMarine";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
@@ -3735,9 +3748,9 @@ class KC_EventHandler : EventHandler
 							}
 						}
 					}
-					if (ShotgunGuy(victim) ||
-							ShotgunGuyNew(victim) ||
-							SuperShotgunGuy(victim))
+					if (vict ~== "ShotgunGuy" ||
+							vict ~== "ShotgunGuyNew" ||
+							vict ~== "ShotgunGuyClassic")
 					{
 						if (A_CheckForHeiwaPlayer())
 						{
@@ -3794,8 +3807,9 @@ class KC_EventHandler : EventHandler
 							}
 						}
 					}
-					if (Revenant(victim) ||
-							RevenantNew(victim))
+					if (vict ~== "Revenant" ||
+							vict ~== "RevenantNew" ||
+							vict ~== "RevenantClassic")
 					{
 						if (random(1,(basedropdiv*0.125)) <= random(2,3)) 
 						{
@@ -3888,11 +3902,12 @@ class KC_EventHandler : EventHandler
 							}
 						}
 					}
-					if (Arachnotron(victim) ||
-							ArachnotronNew(victim) ||
-							RailArachnotron(victim) ||
-							FusionArachnotron(victim) ||
-							ArachnotronMK2(victim))
+					if (vict ~== "Arachnotron" ||
+							vict ~== "ArachnotronNew" ||
+							vict ~== "ArachnotronClassic" ||
+							vict ~== "RailArachnotron" ||
+							vict ~== "FusionArachnotron" ||
+							vict ~== "ArachnotronMK2")
 					{
 						if (random(1,(basedropdiv*0.0625)) <= random(2,3)) 
 						{
@@ -3971,26 +3986,31 @@ class KC_EventHandler : EventHandler
 							}
 						}
 					}
-					if (HellKnight(victim) ||
-							HellKnightNew(victim) ||
-							BaronOfHell(victim) ||
-							BaronOfHellNew(victim) ||
-							Belphegor(victim) ||
-							BruiserDemon(victim) ||
-							CyBruiser(victim) ||
-							ArchonOfHell(victim) ||
-							PyroDemon(victim) ||
-							FlyingBalrogDVDS(victim) ||
-							Hierophant(victim))
+					if (vict ~== "HellKnight" ||
+							vict ~== "HellKnightNew" ||
+							vict ~== "HellKnightClassic" ||
+							vict ~== "BaronOfHell" ||
+							vict ~== "BaronOfHellNew" ||
+							vict ~== "BaronOfHellClassic" ||
+							vict ~== "Belphegor" ||
+							vict ~== "BruiserDemon" ||
+							vict ~== "CyBruiser" ||
+							vict ~== "ArchonOfHell" ||
+							vict ~== "PyroDemon" ||
+							vict ~== "FlyingBalrogDVDS" ||
+							vict ~== "Hierophant")
 					{
 						int dropdiv = 64;
-						if (BaronOfHell(victim) || BaronOfHellNew(victim)) dropdiv = 16;
-						if (random(1,(basedropdiv*0.125)) <= random(2,3) && (BaronOfHell(victim) || BaronOfHellNew(victim))) 
-						{
-							droptype = "BackPack2";
-							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
+						if (vict ~== "BaronOfHell" ||
+								vict ~== "BaronOfHellNew" ||
+								vict ~== "BaronOfHellClassic") dropdiv = 32;
+						if (vict ~== "Belphegor") dropdiv = 40;
+						if (vict ~== "BruiserDemon" ||
+								vict ~== "CyBruiser" ||
+								vict ~== "ArchonOfHell") dropdiv = 24;
+						if (vict ~== "PyroDemon") dropdiv = 16;
+						if (vict ~== "FlyingBalrogDVDS") dropdiv = 28;
+						if (vict ~== "Hierophant") dropdiv = 20;
 						if (random(1,(basedropdiv*0.25)) <= random(2,3)) 
 						{
 							droptype = "BackPack2";
@@ -4003,16 +4023,10 @@ class KC_EventHandler : EventHandler
 							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
-						if (random(1,(basedropdiv*0.5)) <= random(2,3) && HellKnight(victim)) 
-						{
-							droptype = "BackPack2";
-							if (random(1,dropdiv) <= 1) droptype = "CombatPack";
-							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-						}
 					}
-					if (Cyberdemon(victim) ||
-							CyberdemonNew(victim) ||
-							Annihilator(victim))
+					if (vict ~== "Cyberdemon" ||
+							vict ~== "CyberdemonNew" ||
+							vict ~== "Annihilator")
 					{
 						if (random(1,64) <= randompick(1,1,1,1,1,2,2,3)) 
 						{

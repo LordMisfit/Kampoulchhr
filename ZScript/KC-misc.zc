@@ -1181,6 +1181,17 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+		if (weapon is "EvilWarriorShield")
+		{
+		}
+		else
+		{
+			if (owner.CountInv("EWShieldIdleMode") > 0) owner.SetInventory("EWShieldIdleMode",0);
+			if (owner.CountInv("EWShieldDefendMode") > 0) owner.SetInventory("EWShieldDefendMode",0);
+			if (owner.CountInv("EWShieldDefendModeExtra") > 0) owner.SetInventory("EWShieldDefendModeExtra",0);
+			if (owner.CountInv("HWShieldBlockHold") > 0) owner.SetInventory("HWShieldBlockHold",0);
+		}
+
 		if (CurrentHealth <= 0) Owner.A_SetInventory("PlayerIsDead", 1); 
 		else
 		if (CurrentHealth > 0)
@@ -2236,7 +2247,7 @@ class PlayerStatItem : Inventory
 					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 17.5;
 				}
 			}
-			If (owner.player.ReadyWeapon is "EvilWarriorShield")
+			If (weapon is "EvilWarriorShield")
 			{
 				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
 				if (Owner.CountInv("EWShieldDefendMode")) TotalMass *= (3.5 + (HellWarriorShieldLevel * 0.175));
@@ -5845,6 +5856,37 @@ class PlayerStatItem : Inventory
 			if (DEFFactor <= tempmax) DEFFactor = tempmax;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - EDefense): %.8f", DEFFactor);
 			
+			// Hell Warrior Shield [DEFENSIVE]
+			double EWShieldFactor = 1.00;
+			int BerserkFactorblock = frandompick[statitem2](0.334,0.5,0.667);
+			int HellWarriorShieldLevel = owner.CountInv("HellWarriorShieldLevel");
+			double temp1 = 0.00;
+			double temp2 = 0.00;
+			double temp3 = 0.00;
+			If (weapon is "EvilWarriorShield") 
+			{
+				temp1 = ((0.1667 + (HellWarriorShieldLevel * 0.01667)) + (HellWarriorShieldLevel * 0.00625));
+				if (Owner.CountInv("EWShieldDefendMode")) temp2 = ((0.433 + (HellWarriorShieldLevel * 0.0433)) + (HellWarriorShieldLevel * 0.005));
+				if (Owner.CountInv("EWShieldDefendModeExtra")) temp3 = ((0.4866 + (HellWarriorShieldLevel * 0.04866)) + (HellWarriorShieldLevel * 0.001));
+				if ((damageType == 'Slime' || damageType == 'Lava' || damageType == 'Magma' || (playeractor && playeractor.tookflrdmg) || damageType == 'Drowning' || damageType == 'Falling'))
+				{
+					double rand = (random[statitem](0,5) * 0.05);
+					temp1 *= rand;
+					temp2 *= rand;
+					temp3 *= rand;
+					BerserkFactorblock *= rand;
+				}
+				temp1 = (1.0 - temp1);
+				temp2 = (1.0 - temp2);
+				temp3 = (1.0 - temp3);
+				BerserkFactorblock = (1.0 - BerserkFactorblock);
+				EWShieldFactor *= temp1;
+				EWShieldFactor *= temp2;
+				EWShieldFactor *= temp3;
+				if (EWShieldFactor < 1.00 && ( Owner.CountInv("PowerStrength") || Owner.CountInv("KCPowerStrength"))) EWShieldFactor *= (1.0 - BerserkFactorblock);
+			}
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - HellWarrior Shield): %.8f, \c[blue]temp1: %.8f, temp2: %.8f, temp3: %.8f, BerserkFactorblock: %.8f", EWShieldFactor, temp1, temp2, temp3, BerserkFactorblock);
+		
 			double PlayerFistBlockFactor = 1.00;
 			int UsingFistBlock = 0;
 			BerserkFactorblock = frandompick[statitem2](0.25,0.334,0.334,0.334,0.5,0.5,0.5,0.5,0.5,0.5,0.667,0.667,0.667,0.75);
@@ -5949,6 +5991,49 @@ class PlayerStatItem : Inventory
 			if (PlayerFistBlockFactor < 1.00 && UsingFistBlock && Owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) PlayerFistBlockFactor *= BerserkFactorblock;
 			if (!UsingFistBlock) PlayerFistBlockFactor = 1.00;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - FistBlock): %.8f", PlayerFistBlockFactor);
+			
+			// Weapons
+			double WeaponFactor = 1.00;
+			if (weapon is "FistMarine" ||
+					weapon is "FistHeiwa")
+			{
+				if (!UsingFistBlock) 
+				{
+					if (berserked) WeaponFactor = 1.125;
+										else WeaponFactor = 1.25;
+				}
+				else
+				{
+					if (berserked) WeaponFactor = 0.625;
+										else WeaponFactor = 0.75;
+				}
+			}
+			if (weapon is "KnifeHeiwa")
+			{
+				if (berserked) WeaponFactor = 1.125;
+									else WeaponFactor = 1.25;
+			}
+			nm = "ImpalerXBow"; if (weapon is nm) 
+			{
+				double temp = (0.875 - (TruePlayerLevel * 0.005));
+				if (temp < 0.625) temp = 0.625;
+				WeaponFactor = temp;
+			}
+			nm = "DualImpalerXBow"; if (weapon is nm) 
+			{
+				double temp = (0.75 - (TruePlayerLevel * 0.01));
+				if (temp < 0.25) temp = 0.25;
+				WeaponFactor = temp;
+			}
+			nm = "ScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.125;
+			nm = "DualScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.25;
+			
+			nm = "PopcornGunNew"; if (weapon is nm) WeaponFactor = 0.9375;
+			nm = "GoreBalloonNew"; if (weapon is nm) WeaponFactor = 1.25;
+			nm = "ClownGrenadeNew"; if (weapon is nm) WeaponFactor = 1.125;
+			nm = "GutFlingerNew"; if (weapon is nm) WeaponFactor = 0.96875;
+			nm = "GasRocketLauncherNew"; if (weapon is nm) WeaponFactor = 0.875;
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - WeaponEquipped): %.8f", WeaponFactor);
 
 			// Difficulty Level
 			double SkillFactor = 1.00;
@@ -5970,7 +6055,9 @@ class PlayerStatItem : Inventory
 			double TOTALFactor = 1.0
 												 * LVLFactor
 												 * DEFFactor
+												 * EWShieldFactor
 												 * PlayerFistBlockFactor
+												 * WeaponFactor
 												 * SkillFactor
 												 * KCFactor
 												 * TSAFactor
@@ -6247,6 +6334,7 @@ class PlayerStatItem : Inventory
 			HUDSpeed *= PlayerFistBlockFactor;
 			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Fist Block]: %.8f", PlayerFistBlockFactor);
 		}
+		
 		//
 		let MiscItem = PlayerStatItem(Owner.FindInventory("PlayerStatItem"));
 		int ArmorAmt = owner.CountInv(armorclasstype);

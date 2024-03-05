@@ -1833,6 +1833,10 @@ class KCEffectProjectile : KCProjectile
 		if (master && master == playera)
 		{
 			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- master == player");
+			
+			if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
+			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= 100;
+			
 			if (playera.CountInv("EWShieldIdleMode") > 0) 
 			{
 				if (playera.CountInv("EWShieldDefendMode") > 0)
@@ -1881,7 +1885,9 @@ class KCEffectProjectile : KCProjectile
 			playpawn = KCPlayerPawn(master);
 			if (playpawn)
 			{
-				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (playpawn.player.cheats & CF_GODMODE2 || 
+						playpawn.player.cheats & CF_GODMODE || 
+						playpawn.bINVULNERABLE) user_canafflict = 0;
 				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
 			}
 			else
@@ -2160,18 +2166,22 @@ class KCEffectFastProjectile : KCFastProjectile
 	int A_StatusEffectChecker(int basechance)
 	{
 		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile [\c[green]%s\c[orange])", GetClassName());
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 
 		user_ailmentmaxchance = basechance;
-		if (master && master == player)
+		if (master && master == playera)
 		{
 			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
-			if (player.CountInv("EWShieldIdleMode") > 0) 
+			
+			if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
+			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= 100;
+			
+			if (playera.CountInv("EWShieldIdleMode") > 0) 
 			{
-				if (player.CountInv("EWShieldDefendMode") > 0)
+				if (playera.CountInv("EWShieldDefendMode") > 0)
 				{
-					if (player.CountInv("EWShieldDefendModeExtra") > 0) 
+					if (playera.CountInv("EWShieldDefendModeExtra") > 0) 
 					{
 						user_ailmentmaxchance *= 20;
 						if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- HWShield [Extra Guarding]");
@@ -2215,7 +2225,9 @@ class KCEffectFastProjectile : KCFastProjectile
 			playpawn = KCPlayerPawn(master);
 			if (playpawn)
 			{
-				if (playpawn.player.cheats & CF_GODMODE2 || playpawn.player.cheats & CF_GODMODE || playpawn.bINVULNERABLE) user_canafflict = 0;
+				if (playpawn.player.cheats & CF_GODMODE2 || 
+						playpawn.player.cheats & CF_GODMODE || 
+						playpawn.bINVULNERABLE) user_canafflict = 0;
 				if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- Invuln Check [found player]: %d", user_canafflict);
 			}
 			else
