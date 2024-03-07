@@ -3591,8 +3591,8 @@ class KCCreature : KCBaseZSC
 				if (playertarg.CountInv("TSArmorTier2") || 
 						playertarg.CountInv("TSArmorTier1"))
 				{
+					playertarg.A_StartSound("diabloistgravityreverse", CHAN_7);
 					//Console.Printf("gravitytype [TSA]: %d", gravitytype);
-					
 					if (playertarg.CountInv("TSArmorTier2"))
 					{
 						targ = self; // ...Time Seraph's Armor Level 2 REFLECTS Graviton Glare 
@@ -3648,7 +3648,18 @@ class KCCreature : KCBaseZSC
 							if (playertarg) playertarg.A_SetBlend("C0 C0 C0",1.25,random(39,40));
 							PrevInvulnTime -= PropertyValue;
 							PrevInvulnTime /= 35;
-							if (playertarg) playertarg.A_Print(String.Format("%1f second[s] of your invulnerablity were sapped!", PrevInvulnTime));
+							if (playertarg) 
+							{
+								playertarg.A_Print(String.Format("%1f second[s] of your invulnerablity were sapped!", PrevInvulnTime));
+								int dmgindtype = -1;
+								let DMGIND = KCDHIMonitor(playertarg.FindInventory("KCDHIMonitor"));
+								if (DMGIND)
+								{
+									dmgindtype = 2;
+									if (kcdebug_playerdmgindicators) Console.Printf("dmgindtype: %d", dmgindtype);
+									if (dmgindtype >= 0) DMGIND.DmgIndTrigger(1, self, self, dmgindtype);
+								}
+							}
 						}
 					}
 					else
