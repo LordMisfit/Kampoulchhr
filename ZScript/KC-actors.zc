@@ -3584,7 +3584,6 @@ class KCCreature : KCBaseZSC
 			A_FaceTarget();
 			if (!CheckSight(targ, 0)) return;
 			if (playertarg && playertarg.CountInv("PlayerDashing")) return;
-			targ.A_StartSound("diabloistgravityend", CHAN_7);
 
 			if (playertarg)
 			{
@@ -3616,7 +3615,7 @@ class KCCreature : KCBaseZSC
 								if (PropertyValue < 1) PropertyValue = 1;
 								targ.health = PropertyValue;
 								healthdiff = (PrevHealth - PropertyValue);
-								if (playertarg) playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+								if (targ) targ.A_SetBlend("C0 00 00",1.25,random(39,40));
 							}
 						}
 					}
@@ -3705,6 +3704,7 @@ class KCCreature : KCBaseZSC
 					healthdiff = (PrevHealth - PropertyValue);
 				}
 			}
+			targ.A_StartSound("diabloistgravityend", CHAN_7);
 			
 			// Print Outs
 			if (healthdiff)
@@ -3745,8 +3745,8 @@ class KCCreature : KCBaseZSC
 					else
 					if (targisself)
 					{
-						if (self.health > 0) DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
-														else DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
+						if (self.health > 0) DamageMessage.AppendFormat(" \cx[L%d]\c-", self.CountInv("MonsterLevel"));
+														else DamageMessage.AppendFormat(" \cx[L%d]\c-", self.CountInv("MonsterLevel"));
 						if (self.bFRIENDLY) DamageMessage.AppendFormat(friendmsg);
 					}
 					DamageMessage.AppendFormat(" by \cw%s's\c-", culprit);
