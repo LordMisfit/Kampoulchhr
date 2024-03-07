@@ -3595,8 +3595,8 @@ class KCCreature : KCBaseZSC
 					
 					if (playertarg.CountInv("TSArmorTier2"))
 					{
-						targ = self; // Time Seraph's Armor Level 2 REFLECTS Gravition Glare back at
-						             // the offending Diabloist :V
+						targ = self; // ...Time Seraph's Armor Level 2 REFLECTS Graviton Glare 
+						             // back at the offending Diabloist :V
 						if (gravitytype == 0) // HP only
 						{
 							if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.0625;
@@ -3673,7 +3673,18 @@ class KCCreature : KCBaseZSC
 								if (PropertyValue < 1) PropertyValue = 1;
 								targ.health = PropertyValue;
 								healthdiff = (PrevHealth - PropertyValue);
-								if (playertarg) playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+								if (playertarg) 
+								{
+									playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+									int dmgindtype = -1;
+									let DMGIND = KCDHIMonitor(playertarg.FindInventory("KCDHIMonitor"));
+									if (DMGIND)
+									{
+										dmgindtype = 0;
+										if (kcdebug_playerdmgindicators) Console.Printf("dmgindtype: %d", dmgindtype);
+										if (dmgindtype >= 0) DMGIND.DmgIndTrigger(1, self, self, dmgindtype);
+									}
+								}
 							}
 						}
 					}
@@ -3704,7 +3715,7 @@ class KCCreature : KCBaseZSC
 					healthdiff = (PrevHealth - PropertyValue);
 				}
 			}
-			targ.A_StartSound("diabloistgravityend", CHAN_7);
+			if (targ) targ.A_StartSound("diabloistgravityend", CHAN_7);
 			
 			// Print Outs
 			if (healthdiff)
