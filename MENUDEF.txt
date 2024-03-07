@@ -1,3 +1,10 @@
+OptionValue "DebugShieldParts"
+{
+	0, "None [DEFAULT]"
+	1, "Console Info Only"
+	2, "Show Melee Shield Ghosts"
+	3, "Show Melee Shield Ghosts [Weapons]"
+}
 OptionValue "OTHER_DeathMusic"
 {
 	0, "None [DEFAULT]"
@@ -162,7 +169,8 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "Double-tap dashing", 		"If [On], you can double tap movement keys quickly to dash ahead. Turn off if this type of dashing is obstructive/annoying. An alternative method to dash is to press a direction/or strafe and press <Weapon State 3>.",		"kc_doubledash",				"OnOff_DefaultOff"
 	StaticText " "
 	KCOption "Allow MP-Only Monsters in SP",		"Turn on to enable Multiplayer-tagged monsters in Single Player for more challenge. Default: No",		"kc_enablempmonstersinsp",			"YesNo_DefaultNo"
-	KCOption "Aetherius-Style Monster Evolutions",		"If enabled, the default Doom monsters can evolve into some of their Aetherius variants. Default: Yes",		"kc_monsterevolutions",			"YesNo_DefaultYes"
+	KCOption "Alternate Versions of Monsters",		"Determines if Kampoulchhr uses the default versions of the game mode's monsters, or their alternate variations. Alternate variations are subject to AI changes based on their levels, hitscanners can fire tracers when the option is enabled, and these monsters can evolve at spawn-in into stronger variants. Default: Altered",		"kc_usealteredmonsters", 				"AlteredMonsters"
+	KCOption "Aetherius-Style Monster Evolutions",		"If enabled, the default Doom monsters can evolve into their Aetherius variants. Default: Yes",		"kc_monsterevolutions",			"YesNo_DefaultYes"
 	KCOption "Doom 2 Monsters in Doom 1 Mode",		"If enabled, Doom 2 monsters can occasionally spawn from Doom 1 monster types in Doom 1 gamemodes. Default: Yes",		"kc_doommodeothermonsters",			"YesNo_DefaultYes"
 
 	KCOption "Player Shoots Hitscan/Tracers",		"Sets if the PLAYER'S hitscan attacks will shoot tracers instead. Note: This does NOT affect time-frozen hitscans which are ALWAYS tracers regardless of this option. Default: Tracers",		"kc_playertracers",			"PlayerTracers"
@@ -177,7 +185,6 @@ OptionMenu "KC-GeneralMenu1"
 	KCOption "'Improved' Icon of Sin",		"If this is turned on, a Romero's Head will gain a large Max HP boost, IF any spawn-cube shooters and spawn-cube spawnspots are also detected in the same map. Use this if you want longer IoS fights. Default: Yes",		"kc_improvediconofsin", 				"YesNo_DefaultYes"
 	KCOption "IoS Death Kills Its Minions",		"If this is turned on, killing the Icon of Sin also kills all of its SPAWNS. Default: Yes",		"kc_iconofsindthkillminions", 				"YesNo_DefaultYes"
 	StaticText " "
-	KCOption "Alternate Versions of Monsters",		"Determines if Kampoulchhr uses the default versions of the game mode's monsters, or their alternate variations. Alternate variations are subject to AI changes based on their levels, hitscanners can fire tracers when the option is enabled, and these monsters can evolve at spawn-in into stronger variants. Default: Altered",		"kc_usealteredmonsters", 				"AlteredMonsters"
 	KCTextField "Dead Monsters Fade [secs]",		"If not set to '0', sets a number of tics (positive values) or seconds (negative value * 35 tics) before a slain monster fades away. If set to '0', no fading occurs.",		"kc_deadmonsterfade"
 	StaticText " "
 	KCOption "Allow Dynamic Inventory Limits?",		"Allows your level to affect inventory item limits. Default: Yes",		"kc_dynamicinventorylimits", 				"YesNo_DefaultYes"
@@ -403,7 +410,7 @@ OptionMenu "KC-DebugMenu1"
 	IfGame(Strife) { Position -88 }
 	
 	KCOption "Show Ghost of Melee Attack Range",		"This is not console related: spawns 'ghosts'/'images' of the maximum range of specific melee attacks.",		"kcdebug_meleerangeghost",			"OnOff_DefaultOff"
-	KCOption "Ghosts of 'Shields'",		"? can block/destroy/reflect projectiles. These are actually done with invisible 'shield' actors spawned when doing these actions. This options makes those shields visible when attacking [so you can see the 'magic' in action :V].",		"kcdebug_showvisibleshieldparts",			"OnOff_DefaultOff"
+	KCOption "Ghosts of 'Shields'",		"? can block/destroy/reflect projectiles. These are actually done with invisible 'shield' actors spawned when doing these actions. This options makes those shields visible when attacking [so you can see the 'magic' in action :V].",		"kcdebug_showvisibleshieldparts",			"DebugShieldParts"
 	KCOption "Dash Meter",		"Shows dash-related info for the meter on the HUD.",		"kcdebug_dashmeter",			"OnOff_DefaultOff"
 	KCOption "Dashing [General]",		"Shows dash-related general info.",		"kcdebug_showdashinformation",			"OnOff_DefaultOff"
 	KCOption "HP Regen/Degen",		"Shows HP Regen/Degen Debug Info.",		"kcdebug_hpregen",			"OnOff_DefaultOff"
@@ -440,6 +447,7 @@ OptionMenu "KC-DebugMenu2"
 	KCOption "KC Time Freeze Checks",		"",		"kcdebug_timefreezechecks",			"OnOff_DefaultOff"
 	KCOption "ResetInventory Displays",		"Shows resetinventory information.",		"kcdebug_resetinventorydebug",				"OnOff_DefaultOff"
 	KCOption "Scripted Displays",		"Shows information for BossDeath() related stuff.",		"kcdebug_scriptdisplays",				"OnOff_DefaultOff"
+	KCOption "Speak At Displays",		"Shows information for SpeakAt related stuff.",		"kcdebug_speaktoboss",				"OnOff_DefaultOff"
 }
 OptionMenu "KC-DebugMenu3"
 {

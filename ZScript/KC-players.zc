@@ -1604,12 +1604,21 @@ class KCPlayerPawn : PlayerPawn
 			// the initial incoming damage and the armor still takes
 			// a bit of 'energy damage'] :P
 			if (mod == 'Plasma' ||
-					mod == 'Disintegrate' ||
-					mod == 'BFG' ||
-					mod == 'BFGSplash')
+					mod == 'Disintegrate')
 			{
 				if (random(1,2) <= 1) flags |= DMG_THRUSTLESS;
 				damage *= 0.5;
+			}
+			if (mod == 'BFG')
+			{
+				if (random(1,4) <= 3) flags |= DMG_THRUSTLESS;
+				damage *= 0.25;
+			}
+			// BFG Tracers are greatly mitigated by the Time Seraph's Armor as well.
+			if (mod == 'BFGSplash')
+			{
+				if (random(1,10) <= 9) flags |= DMG_THRUSTLESS;
+				damage *= 0.1;
 			}
 			
 			// Hades Thunder is half Thunder, half dark, so it's 
@@ -1673,8 +1682,12 @@ class KCPlayerPawn : PlayerPawn
 					TSTicDmg *= frandom(1.5,2.5);
 				}
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
-				if (CountInv(nn)) TSTicDmg *= frandom(0.334,0.667);
-				if (CountInv("TimeSeraphBangle")) TSTicDmg *= frandom(0.60,0.80);
+				if (CountInv(nn)) TSTicDmg *= frandom(0.1667,0.3334);
+				if (CountInv("TimeSeraphBangle")) 
+				{
+					if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
+											 else TSTicDmg *= frandom(0.80,0.90);
+				}
 				if (TSTicDmg) TSTicDmg *= kc_tsadmgfactor;
 				if (mod == 'CCShadow' && 
 						!A_CheckInvuln() &&
@@ -2295,6 +2308,15 @@ class KCPlayerPawn : PlayerPawn
 						Console.Printf(combatlogmsg);
 					}
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Evasion - no damage");
+					
+					int dmgindtype = -1;
+					let DMGIND = KCDHIMonitor(FindInventory("KCDHIMonitor"));
+					if (DMGIND)
+					{
+						dmgindtype = 5;
+						if (kcdebug_playerdmgindicators) Console.Printf("dmgindtype: %d", dmgindtype);
+						if (dmgindtype >= 0) DMGIND.DmgIndTrigger(1, inflictor, source, dmgindtype);
+					}
 					return 0;
 				}
 				else
@@ -3288,6 +3310,8 @@ class KCPlayerPawn : PlayerPawn
 		let DMGIND = KCDHIMonitor(FindInventory("KCDHIMonitor"));
 		if (DMGIND)
 		{
+			if (CountInv("EvadeAnAttack")) dmgindtype = 5;
+			else
 			if (playtooktsadamage) 
 			{
 				dmgindtype = 1;
@@ -3312,6 +3336,7 @@ class KCPlayerPawn : PlayerPawn
 		else
 		{
 			if (playtooktsadamage) playtooktsadamage = 0;
+			if (playabsorbtsadamage) playabsorbtsadamage = 0;
 		}
 		return ret;
 	}

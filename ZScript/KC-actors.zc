@@ -108,6 +108,13 @@ class KCBaseZSC : Actor
 		return UOHYM;
 	}
 	
+	action bool A_CheckBerserk()
+	{
+		bool check = false;
+		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) check = true;
+		return check;
+	}
+	
 	int A_CalcDamageFormula(int basedmg,
 													int baserand,
 													double factor1 = 0.005,
@@ -3581,57 +3588,94 @@ class KCCreature : KCBaseZSC
 
 			if (playertarg)
 			{
-				if (InvulnItem && InvulnerabilityTimer > 0)
+				// Time Seraph's Armor blocks Gravition Glare entirely, but... :V
+				if (playertarg.CountInv("TSArmorTier2") || 
+						playertarg.CountInv("TSArmorTier1"))
 				{
-					//Console.Printf("gravitytype: %d [Invulnerable]", gravitytype);
-
-					if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.03125;
-					if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.0625;
-					if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.1250;
-					if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.1875;
-					if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.21875;
-					if (gravitytype == 2) GravityEffectFactor *= 2;
-					if (random(1,16) == 16) GravityEffectFactor *= 2;
-
-					FinalGravityFactor = 1.000 - GravityEffectFactor;
-					GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
-					if (GravityEffectFactor > 0.000)
+					//Console.Printf("gravitytype [TSA]: %d", gravitytype);
+					
+					if (playertarg.CountInv("TSArmorTier2"))
 					{
-						double PrevInvulnTime = InvulnerabilityTimer;
-						PropertyValue = InvulnerabilityTimer;
-						PropertyValue = PropertyValue * FinalGravityFactor;
+						targ = self; // Time Seraph's Armor Level 2 REFLECTS Gravition Glare back at
+						             // the offending Diabloist :V
+						if (gravitytype == 0) // HP only
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.0625;
+							if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.1250;
+							if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
+							if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
+							if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+							FinalGravityFactor = 1.000 - GravityEffectFactor;
+							GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
+							if (GravityEffectFactor > 0.000)
+							{
+								PrevHealth = targ.health;
+								PropertyValue = PrevHealth;
+								PropertyValue = PropertyValue * FinalGravityFactor;
 						
-						if (PropertyValue < 1) PropertyValue = 1;
-						InvulnItem.EffectTics = PropertyValue;
-						if (playertarg) playertarg.A_SetBlend("C0 C0 C0",1.25,random(39,40));
-						PrevInvulnTime -= PropertyValue;
-						PrevInvulnTime /= 35;
-						if (playertarg) playertarg.A_Print(String.Format("%1f second[s] of your invulnerablity were sapped!", PrevInvulnTime));
+								if (PropertyValue < 1) PropertyValue = 1;
+								targ.health = PropertyValue;
+								healthdiff = (PrevHealth - PropertyValue);
+								if (playertarg) playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+							}
+						}
 					}
+					else return;
 				}
 				else
 				{
-					//Console.Printf("gravitytype: %d", gravitytype);
-
-					if (gravitytype == 0) // HP only
+					if (InvulnItem && InvulnerabilityTimer > 0)
 					{
-						if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.0625;
-						if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.1250;
-						if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
-						if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
-						if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+						//Console.Printf("gravitytype: %d [Invulnerable]", gravitytype);
+
+						if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.03125;
+						if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.0625;
+						if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.1250;
+						if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.1875;
+						if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.21875;
+						if (gravitytype == 2) GravityEffectFactor *= 2;
+						if (random(1,16) == 16) GravityEffectFactor *= 2;
+
 						FinalGravityFactor = 1.000 - GravityEffectFactor;
 						GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
 						if (GravityEffectFactor > 0.000)
 						{
-							PrevHealth = targ.health;
-							PropertyValue = PrevHealth;
+							double PrevInvulnTime = InvulnerabilityTimer;
+							PropertyValue = InvulnerabilityTimer;
 							PropertyValue = PropertyValue * FinalGravityFactor;
-
+							
 							if (PropertyValue < 1) PropertyValue = 1;
-							targ.health = PropertyValue;
-							healthdiff = (PrevHealth - PropertyValue);
-							if (playertarg) playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+							InvulnItem.EffectTics = PropertyValue;
+							if (playertarg) playertarg.A_SetBlend("C0 C0 C0",1.25,random(39,40));
+							PrevInvulnTime -= PropertyValue;
+							PrevInvulnTime /= 35;
+							if (playertarg) playertarg.A_Print(String.Format("%1f second[s] of your invulnerablity were sapped!", PrevInvulnTime));
+						}
+					}
+					else
+					{
+						//Console.Printf("gravitytype: %d", gravitytype);
+
+						if (gravitytype == 0) // HP only
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.0625;
+							if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.1250;
+							if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
+							if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
+							if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+							FinalGravityFactor = 1.000 - GravityEffectFactor;
+							GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
+							if (GravityEffectFactor > 0.000)
+							{
+								PrevHealth = targ.health;
+								PropertyValue = PrevHealth;
+								PropertyValue = PropertyValue * FinalGravityFactor;
+
+								if (PropertyValue < 1) PropertyValue = 1;
+								targ.health = PropertyValue;
+								healthdiff = (PrevHealth - PropertyValue);
+								if (playertarg) playertarg.A_SetBlend("C0 00 00",1.25,random(39,40));
+							}
 						}
 					}
 				}
@@ -3671,14 +3715,21 @@ class KCCreature : KCBaseZSC
 				string friendmsg = " \cn(F)\c-";
 				string charmmsg = " \cx(C)\c-";
 				
-				if ((playertarg && (kc_playerdmglog & 1)) || (actortarg && (kc_combatlog & 2)))
+				bool targisself = false;
+				if (targ == self) targisself = true;
+
+				if ((playertarg && (kc_playerdmglog & 1)) || 
+						(actortarg && (kc_combatlog & 2)) ||
+						(targisself && (kc_combatlog & 2)))
 				{
 					if (playertarg) victim = playertarg.GetClassName();
 					if (actortarg) victim = actortarg.GetClassName();
+					if (targisself) victim = self.GetClassName();
 
-						culprit = GetTag("");
-						if (playertarg) victim = playertarg.GetTag("");
-						if (actortarg) victim = actortarg.GetTag("");
+					culprit = GetTag("");
+					if (playertarg) victim = playertarg.GetTag("");
+					if (actortarg) victim = actortarg.GetTag("");
+					if (targisself) victim = self.GetTag("");
 
 					string DamageMessage = " \c[white]* ";
 					DamageMessage.AppendFormat("\cy%d\c- ", healthdiff);
@@ -3689,18 +3740,23 @@ class KCCreature : KCBaseZSC
 					{
 						if (actortarg.health > 0) DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
 																 else DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
+						if (actortarg.bFRIENDLY) DamageMessage.AppendFormat(friendmsg);
 					}
-					if (actortarg && actortarg.bFRIENDLY) 
+					else
+					if (targisself)
 					{
-						DamageMessage.AppendFormat(friendmsg);
+						if (self.health > 0) DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
+														else DamageMessage.AppendFormat(" \cx[L%d]\c-", actortarg.CountInv("MonsterLevel"));
+						if (self.bFRIENDLY) DamageMessage.AppendFormat(friendmsg);
 					}
 					DamageMessage.AppendFormat(" by \cw%s's\c-", culprit);
-					if (actorculprit && actorculprit.CountInv("MonsterLevel") >= 0) DamageMessage.AppendFormat(" \cw[L%d]\c-", actorculprit.CountInv("MonsterLevel"));
-					if (actorculprit && actorculprit.bFRIENDLY)
+					if (actorculprit)
 					{
-						DamageMessage.AppendFormat(friendmsg);
+						if (actorculprit.CountInv("MonsterLevel") >= 0) DamageMessage.AppendFormat(" \cw[L%d]\c-", actorculprit.CountInv("MonsterLevel"));
+						if (actorculprit.bFRIENDLY) DamageMessage.AppendFormat(friendmsg);
 					}
-					DamageMessage.AppendFormat(" \czGraviton Glare\c-!");
+					if (targisself) DamageMessage.AppendFormat(" own \czGraviton Glare\c-!");
+										 else DamageMessage.AppendFormat(" \czGraviton Glare\c-!");
 					if (kcdebug_showgametic) DamageMessage.AppendFormat(" (%d)", gametic);
 					
 					Console.Printf("%s", DamageMessage);
@@ -4127,19 +4183,39 @@ class KCCreature : KCBaseZSC
 			if (skill == SKILL_NORMAL) checkvalfactor = frandom(0.075,0.125);
 			if (skill == SKILL_HARD) checkvalfactor = frandom(0.0675,0.1125);
 			if (skill >= SKILL_VERY_HARD) checkvalfactor = frandom(0.06,0.10);
-			checkvalfactor *= frandompick(1.5,1.75,2);
+			if (TruePlayerLevel >= 100) checkvalfactor *= frandompick(2.0,2.25,2.5);
+			else if (TruePlayerLevel >= 55) checkvalfactor *= frandompick(1.75,2.0,2.25);
+			else if (TruePlayerLevel >= 10) checkvalfactor *= frandompick(1.5,1.75,2);
+			else checkvalfactor *= frandompick(1.25,1.5,1.75);
 		}
 		checkvalfactor *= 1.5;
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) checkvalfactor *= frandompick(3,3.5,3.5,4.0,4.0,4.0,4.375,4.375,4.375,4.375,4.375,4.75,4.75,4.75,5.125,5.125,5.5);
+		if (A_CheckBerserk()) checkvalfactor *= frandompick(3,3.5,3.5,4.0,4.0,4.0,4.375,4.375,4.375,4.375,4.375,4.75,4.75,4.75,5.125,5.125,5.5);
 		if (type == 3) // Knife
 		{
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.33333875 - (((TruePlayerLevel+1) * checkvalfactor) * 5));
-																															 else MaxCheck = (2 -          ((TruePlayerLevel+1) * (checkvalfactor * 0.8334)));
+			double base1 = 2.000;
+			double base2 = 0.33333875;
+			if (TruePlayerLevel >= 10) 
+			{
+				base1 = 1.667;
+				base2 = 0.266671;
+			}
+			if (TruePlayerLevel >= 55) 
+			{
+				base1 = 1.445;
+				base2 = 0.20000325;
+			}
+			if (TruePlayerLevel >= 100) 
+			{
+				base1 = 1.223;
+				base2 = 0.1333355;
+			}
+			if (A_CheckBerserk()) MaxCheck = (base2 - (((TruePlayerLevel+1) * checkvalfactor) * 5));
+											 else MaxCheck = (base1 - ((TruePlayerLevel+1) * (checkvalfactor * 0.8334)));
 		}
 		else
 		{
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxCheck = (0.666675 - (((TruePlayerLevel+1) * checkvalfactor) * 6));
-																															 else MaxCheck = (4 -        ((TruePlayerLevel+1) * checkvalfactor));
+			if (A_CheckBerserk()) MaxCheck = (0.666675 - (((TruePlayerLevel+1) * checkvalfactor) * 6));
+											 else MaxCheck = (4 -        ((TruePlayerLevel+1) * checkvalfactor));
 		}
 
 		if (MaxCheck <= 0.01) MaxCheck = 0.01;
@@ -6159,7 +6235,7 @@ class PlayerWhistle : KCBaseZSC
 						range = 64;
 						range += (TruePlayerLevel * frandompick(0.75,1,1.25));
 					}
-					if (target.CountInv("PowerStrength") || target.CountInv("KCPowerStrength")) 
+					if (A_CheckBerserk()) 
 					{
 						range *= frandom(4.5,5.5);
 						dmg *= frandom(9,11);
@@ -6866,7 +6942,7 @@ class ShieldPartMeleeNoReflect : ShieldPartBase
 			{
 				if (target)
 				{
-					if (target.CountInv("PowerStrength") || target.CountInv("KCPowerStrength")) 
+					if (A_CheckBerserk()) 
 					{
 						A_StartSound("fisthitberserkwall", 57);
 					} else { A_StartSound("FistHitWall", 57); }
@@ -6973,7 +7049,7 @@ class KickShieldNoReflect : ShieldPartMeleeNoReflect
 			{
 				if (target)
 				{
-					if (target.CountInv("PowerStrength") || target.CountInv("KCPowerStrength")) 
+					if (A_CheckBerserk()) 
 					{
 						A_StartSound("fisthitberserkwall", 57);
 					} else { A_StartSound("FistHitWall", 57); }

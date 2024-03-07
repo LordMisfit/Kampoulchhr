@@ -262,7 +262,8 @@ Class KCDHIVisualDamageManager play
 		if (dmgtype == 1) texname = "Graphics/HUD/DHIDmgDir4.png"; // TSA Damage Only
 		if (dmgtype == 2) texname = "Graphics/HUD/DHIDmgDir5.png"; // 0-damage hit
 		if (dmgtype == 3) texname = "Graphics/HUD/DHIDmgDir3.png"; // AP Damage Only
-		if (dmgtype >= 4) texname = "Graphics/HUD/DHIDmgDir6.png"; // TSA Absorbsion Only
+		if (dmgtype == 4) texname = "Graphics/HUD/DHIDmgDir6.png"; // TSA Absorbsion Only
+		if (dmgtype >= 5) texname = "Graphics/HUD/DHIDmgDir7.png"; // Dodged Hit Only
 
 		arrow.tex = TexMan.CheckForTexture(texname,TexMan.Type_Any);
 
