@@ -2015,10 +2015,10 @@ class KC_EventHandler : EventHandler
 					if (A_CheckForHeiwaPlayer()) spawnee.bNOTIMEFREEZE = false;
 				}
 				
+				if (ShieldPartBase(spawnee)) spawnee.bNOTIMEFREEZE = true;
 				if (!(PlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
-						 ShieldPartBase(spawnee) ||
 						 ShieldPartBase(spawnee) ||
 						 Pod(spawnee) ||
 						 BossBrainNew(spawnee))) 
@@ -2555,6 +2555,12 @@ class KC_EventHandler : EventHandler
 				if (spawnname ~== "FighterBoss") A_SpawnerSetUp(spawnee,"FighterBossNew");
 				if (spawnname ~== "MageBoss") A_SpawnerSetUp(spawnee,"MageBossNew");
 				if (spawnname ~== "Korax") A_SpawnerSetUp(spawnee,"KoraxNew");
+			}
+			
+			if (ShieldPartBase(spawnee)) 
+			{
+				spawnee.bNOTIMEFREEZE = true;
+				//Console.Printf("spawnee: \c[fire]%s", spawnee.GetClassName());
 			}
 		}
 		
@@ -5925,7 +5931,16 @@ class KC_EventHandler : EventHandler
 							!playera.CountInv("PlayerIsDead")) 
 							&& MiscItem.whistlecooldown == 0)
 					{
-						playera.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+						double vol = frandom(0.86,1.14);
+						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) vol *= 1.2;
+						playera.A_StartSound("player/whistle5",CHAN_VOICE,CHANF_DEFAULT,vol,ATTN_NONE,frandom(0.76,1.24));
+						if (!(playera.CountInv("KCTimeFreezer") ||
+									playera.CountInv("KCTimeFreezer1") ||
+									playera.CountInv("KCTimeFreezer2") ||
+									playera.CountInv("KCTimeFreezer3")))
+						{
+							playera.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+						}
 						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
 																																									 else MiscItem.whistlecooldown = random(42,49);
 					}

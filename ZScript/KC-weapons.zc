@@ -873,14 +873,24 @@ class KCWeaponBase : Weapon
 	// Used to Create Multiple "Shields" for Punches/Melee
 	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0, double angoffset = 0.0, double ptcoffset = 0.0)
 	{
-		bool spawned;
-		actor mo;
-		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
-		
 		let globalvars = KCGlobalVariables.Get();
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		bool spawned;
+		actor mo;
+		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+		if (mo) 
+		{
+			if ((playera.CountInv("KCTimeFreezer") ||
+					 playera.CountInv("KCTimeFreezer1") ||
+					 playera.CountInv("KCTimeFreezer2") ||
+					 playera.CountInv("KCTimeFreezer3")))
+			{
+				mo.bNOTIMEFREEZE = true;
+				Console.Printf("spawnee \c[sapphire][%p]\c-: \c[fire]%s\c-, \c[green]bNOTIMEFREEZE: %d\c-", mo, mo.GetClassName(), mo.bNOTIMEFREEZE);
+			}
+			A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
+		}
 		double pang = playera.angle;
 		double pptc = playera.pitch;
 	}
@@ -6574,7 +6584,6 @@ class Glock21 : MarineWeapon
 	}
 	
 
-	// Allows Heiwa to occasionally shout kiais/taunts when firing certain weapons
 	action void A_HeiwaNoAmmoCurse(int basechance = 0)
 	{
 		actor playera = players[0].mo;

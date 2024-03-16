@@ -4274,10 +4274,21 @@ class KCCreature : KCBaseZSC
 	// Used to Create Multiple "Shields" for Punches/Melee
 	action void A_MeleeShieldPiece(string attackname = "", int spawnheight = 32, int spawndistance = 0, double angoffset = 0.0, double ptcoffset = 0.0)
 	{
+		actor playera = players[0].mo;
 		bool spawned;
 		actor mo;
 		[spawned, mo] = A_SpawnItemEx(attackname, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), 0, 0, 0, 0, SXF_SETMASTER|SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
-		if (mo) A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
+		if (mo) 
+		{
+			if ((playera.CountInv("KCTimeFreezer") ||
+					 playera.CountInv("KCTimeFreezer1") ||
+					 playera.CountInv("KCTimeFreezer2") ||
+					 playera.CountInv("KCTimeFreezer3")))
+			{
+				mo.bNOTIMEFREEZE = true;
+			}
+			A_MeleeSetUpAttach(mo, cos(-pitch) * spawndistance, 0, spawnheight + (sin(-pitch) * spawndistance), angoffset, ptcoffset);
+		}
 	}
 	
 	// Shielding Hell Warrior
@@ -6265,7 +6276,6 @@ class PlayerWhistle : KCBaseZSC
 					}
 				}
 				
-				A_StartSound("player/whistle5",CHAN_VOICE,CHANF_DEFAULT,vol,ATTN_NONE,frandom(0.76,1.24));
 				A_KCExplode((dmg),range,XF_NOSPLASH,true,(range * 0.5),0,0,"","Beats");
 			}
 			TNT1 A 1 
