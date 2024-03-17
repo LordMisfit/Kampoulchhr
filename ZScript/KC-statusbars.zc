@@ -1121,7 +1121,13 @@ class KCStatusBarMain : BaseStatusBar
 		[ammo1, ammo2] = GetCurrentAmmo();
 		int x = -30;
 		int y = -24;
-
+		int barx = -42;
+		int bary = -56; // -48;
+		textureid dun;
+		double fontalpha = 1.0;
+		int FontWrapWidth = -1;
+		int FontLineSpace = 4;
+		Vector2 FontScale = (1.25, 1.25);
 		if (ammo1 != null)
 		{
 			string temp, temp2;
@@ -1203,6 +1209,41 @@ class KCStatusBarMain : BaseStatusBar
 						
 						DrawString(mKCSFont, FormatNumber(clipleft, 2), (jx, jy), DI_TEXT_ALIGN_CENTER, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 					}
+				}
+			}
+			if (PlayerWeapon is "EvilWarriorShield")
+			{
+				int shieldenergy;
+				int shieldenergymax = 1000;
+				int shieldenergypercent;
+				double shieldmeterlength = 0.4; // 0.2 vertical, 0.4 horizontal
+				if (shieldmeterlength > 1.5) shieldmeterlength = 1.5;
+				dun = TexMan.CheckForTexture("SHLDUNIT", TexMan.TYPE_MiscPatch);
+				let EWS = EvilWarriorShield(CPlayerPawn.FindInventory("EvilWarriorShield"));
+				if (EWS && MiscItem)
+				{
+					shieldenergy = EWS.shieldenergy;
+					shieldenergymax = MiscItem.HellWarriorMaxCharge;
+				}
+				if (shieldenergymax)
+				{
+					shieldenergypercent = shieldenergy * 100 / shieldenergymax;
+					int shieldbarunits = shieldenergypercent * shieldmeterlength;
+					for (int i; i < (100 * shieldmeterlength); i++) DrawTexture(TexMan.CheckForTexture("BLAKUNIT", TexMan.TYPE_MiscPatch), (barx+i, bary), 0, HX_SHADOW);
+					for (int i; i < shieldbarunits; i++) DrawTexture(dun, (barx+i, bary), 0, HX_SHADOW); // -46, -1
+				}
+				
+				int upgrades = MiscItem.HellWarriorShieldLevel;
+				if (upgrades)
+				{
+					int jx, jy;
+					jx = -50;
+					jy = bary + -40;
+					textureid blimg = TexMan.CheckForTexture("WIEVWASH", TexMan.TYPE_MiscPatch);
+					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, FontAlpha, (-1,-1), (0.25, 0.25)); // 51, -3
+					jx += 48;
+					jy += 8;
+					DrawString(mKCLFont, FormatNumber(upgrades, 1), (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, font.cr_gray, FontAlpha, FontWrapWidth, FontLineSpace, FontScale);
 				}
 			}
 			//GLKPENTR
@@ -3195,7 +3236,8 @@ class KCStatusBarMain : BaseStatusBar
 				LY += LYInc;
 				if (kc_doubledash) LegendStr.AppendFormat("\c[yellow]2x Tap Same Direction\c-");
 				else LegendStr.AppendFormat(ReturnKeyBind1("+user3", true, false));
-				LegendStr.AppendFormat(" = \c[blue]DASH\c-");
+				if (PlayerWeapon is "EvilWarriorShield" && CPlayerPawn.CountInv("EWShieldDefendMode")) LegendStr.AppendFormat(" = \c[gold]SHIELD DASH\c-");
+				else LegendStr.AppendFormat(" = \c[blue]DASH\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
