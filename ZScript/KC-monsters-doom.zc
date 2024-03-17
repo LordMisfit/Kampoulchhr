@@ -18793,7 +18793,7 @@ class OverHorn2 : OverFlesh1
 	}
 }
 
-class BossBrainNew : BossBrain // replaces BossBrain
+class BossBrainNew : BossBrain replaces BossBrain
 {
 	mixin MonsterCollider;
 	default
@@ -18875,10 +18875,11 @@ class BossBrainNew : BossBrain // replaces BossBrain
 		}
 	}
 }
-class BossEyeNew : BossEye // replaces BossEye
+class BossEyeNew : BossEye replaces BossEye
 {
 	mixin MonsterCollider;
 	int user_bosseyetype;
+	double bosseyetimefactor;
 	default
 	{
 		Height 32;
@@ -18890,20 +18891,22 @@ class BossEyeNew : BossEye // replaces BossEye
 	States
 	{
 		Spawn:
-			SSWV A 10 A_Look();
+			SSWV A 10 
+			{
+				A_Look();
+				if (skill <= 0) bosseyetimefactor = 1.5;
+				if (skill == 1) bosseyetimefactor = 1.25;
+				if (skill == 2) bosseyetimefactor = 1.0;
+				if (skill == 3) bosseyetimefactor = 0.8;
+				if (skill >= 4) bosseyetimefactor = 0.667;
+			}
 			Loop;
 		See:
 			SSWV A 181 
 			{
 				A_BrainAwake();
-				if (user_bosseyetype > 0) 
-				{
-					A_SetTics(tics*frandom(0.45,0.55));
-				}
-				else
-				{
-					A_SetTics(tics*frandom(0.9,1.1));
-				}
+				if (user_bosseyetype > 0) A_SetTics(tics*frandom(0.45,0.55)*bosseyetimefactor);
+														 else A_SetTics(tics*frandom(0.9,1.1)*bosseyetimefactor);
 			}
 		Shoot:
 			SSWV A 150 
@@ -18921,17 +18924,25 @@ class BossEyeNew : BossEye // replaces BossEye
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05)) timefactor = frandom(0.1,0.125);
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactor = frandom(0.025,0.0375);
 					}
-					A_SetTics(tics*(frandom(0.675,0.825) * timefactor));
+					A_SetTics(tics*(frandom(0.675,0.825) * timefactor)*bosseyetimefactor);
 				}
-				else { A_SetTics(tics*frandom(0.9,1.1)); }
+				else 
+				{
+					A_SetTics(tics*frandom(0.9,1.1)*bosseyetimefactor); 
+				}
 				
 				if (master) 
 				{
-					if (master.health >= 1) A_BrainSpit("SpawnShotNew");
+					if (master.health >= 1) 
+					{
+						A_BrainSpit("SpawnShotNew");
+						A_StartSound("brain/spit", 16, CHANF_DEFAULT, 1., ATTN_NONE);
+					}
 				}
 				else
 				{
 					A_BrainSpit("SpawnShotNew");
+					A_StartSound("brain/spit", 16, CHANF_DEFAULT, 1., ATTN_NONE);
 				}
 			}
 			loop;
@@ -19016,18 +19027,18 @@ class SpawnShotNew : SpawnShot
 		SeeSound "brain/spit";
 		DeathSound "brain/cubeboom";
 		
-		DropItem "DoomImpNew",							255,	50;
-		DropItem "DemonNew",								255,	40;
-		DropItem "SpectreNew",							255,	30;
-		DropItem "PainElementalNew",				255,	10;
-		DropItem "CacodemonNew",						255,	30;
-		DropItem "ArchvileNew",							255,	4;
-		DropItem "RevenantNew",							255,	10;
-		DropItem "ArachnotronNew",					255,	20;
-		DropItem "MancubusNew",							255,	30;
-		DropItem "HellKnightNew",						255,	20;
-		DropItem "BaronOfHellNew",					255,	10;
-		DropItem "CyberdemonNew",						255,	2;
+		DropItem "DoomImp",							255,	50;
+		DropItem "Demon",								255,	40;
+		DropItem "Spectre",							255,	30;
+		DropItem "PainElemental",				255,	10;
+		DropItem "Cacodemon",						255,	30;
+		DropItem "Archvile",							255,	4;
+		DropItem "Revenant",							255,	10;
+		DropItem "Arachnotron",					255,	20;
+		DropItem "Fatso",							255,	30;
+		DropItem "HellKnight",						255,	20;
+		DropItem "BaronOfHell",					255,	10;
+		DropItem "Cyberdemon",						255,	2;
 	}
 	
 	States

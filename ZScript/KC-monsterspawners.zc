@@ -187,6 +187,11 @@ class KCMonsterSpawner : RandomSpawner2 abstract
 				KCC.user_dontdroprandomstuff = user_dontdroprandomstuff;
 				KCC.user_dontdropnormaldrops = user_dontdropnormaldrops;
 			}
+			if (CountInv("IoSMinion"))
+			{
+				spawned.A_SetInventory("IoSMinion",CountInv("IoSMinion"));
+				A_SetInventory("IoSMinion",0);
+			}
 		}
 	}
 }
