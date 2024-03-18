@@ -2006,56 +2006,104 @@ class KCStatusBarMain : BaseStatusBar
 		int sepery = 6;
 		DigX = 256; // 68 + (Digits * Spacing); // 176
 		DigY = -28; // -90; // -90
+		if (A_CheckForHeiwa()) DigY -= 12; //18;
 		string hudstat;
 		if (MiscItem && kc_expgains)
 		{
-			if (kchud_showextraatkdefspd)
+			if (A_CheckForHeiwa())
 			{
-				if (kchud_showextraatkdefspd >= 3)
-				{
-					hudstat = "ATK: ";
-					hudstat.AppendFormat("%d", (VisiblePlayerATK + VisiblePlayerLevel));
-				}
-				else
-				{
-					hudstat = "ATK+: ";
-					hudstat.AppendFormat("%d", VisiblePlayerATK);
-					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
-				}
-				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_red, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				hudstat = "ATK: ";
+				hudstat.AppendFormat("%d", VisiblePlayerATK);
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_RED, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
 				DigY += sepery;
-				if (kchud_showextraatkdefspd >= 3)
-				{
-					hudstat = "DEF: ";
-					hudstat.AppendFormat("%d", (VisiblePlayerDEF + VisiblePlayerLevel));
-				}
-				else
-				{
-					hudstat = "DEF+: ";
-					hudstat.AppendFormat("%d", VisiblePlayerDEF);
-					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
-				}
+				
+				hudstat = "DEF: ";
+				hudstat.AppendFormat("%d", VisiblePlayerDEF);
 				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_olive, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
 				DigY += sepery;
-				if (kchud_showextraatkdefspd >= 3)
-				{
-					hudstat = "SPD: ";
-					hudstat.AppendFormat("%d", (VisiblePlayerSPD + VisiblePlayerLevel));
-				}
-				else
-				{
-					hudstat = "SPD+: ";
-					hudstat.AppendFormat("%d", VisiblePlayerSPD);
-					if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
-				}
+				
+				hudstat = "SPD: ";
+				hudstat.AppendFormat("%d", VisiblePlayerSPD);
 				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				
+				hudstat = "VIT: ";
+				hudstat.AppendFormat("%d", (MiscItem.VitalityPieces+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_green, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				/*
+				hudstat = "IQ : ";
+				hudstat.AppendFormat("%d", (MiscItem.IQPieces+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_purple, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				
+				hudstat = "SEN: ";
+				hudstat.AppendFormat("%d", (MiscItem.SensesPieces+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				*/
+				
+				hudstat = "GUT: ";
+				hudstat.AppendFormat("%d", (MiscItem.PlayerGUTS+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_fire, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				if (kchud_showluck)
+				{
+					DigY += sepery;
+					hudstat = "LUK: ";
+					hudstat.AppendFormat("%d", MiscItem.PlayerLuck);
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_gold, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				}
 			}
-			if (kchud_showluck)
+			else
 			{
-				hudstat = "LUCK: ";
-				hudstat.AppendFormat("%d", MiscItem.PlayerLuck);
-				if (kchud_showextraatkdefspd) DigY += sepery;
-				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_gold, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				if (kchud_showextraatkdefspd)
+				{
+					if (kchud_showextraatkdefspd >= 3)
+					{
+						hudstat = "ATK: ";
+						hudstat.AppendFormat("%d", (VisiblePlayerATK + VisiblePlayerLevel));
+					}
+					else
+					{
+						hudstat = "ATK+: ";
+						hudstat.AppendFormat("%d", VisiblePlayerATK);
+						if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+					}
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_red, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+					DigY += sepery;
+					if (kchud_showextraatkdefspd >= 3)
+					{
+						hudstat = "DEF: ";
+						hudstat.AppendFormat("%d", (VisiblePlayerDEF + VisiblePlayerLevel));
+					}
+					else
+					{
+						hudstat = "DEF+: ";
+						hudstat.AppendFormat("%d", VisiblePlayerDEF);
+						if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+					}
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_olive, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+					DigY += sepery;
+					if (kchud_showextraatkdefspd >= 3)
+					{
+						hudstat = "SPD: ";
+						hudstat.AppendFormat("%d", (VisiblePlayerSPD + VisiblePlayerLevel));
+					}
+					else
+					{
+						hudstat = "SPD+: ";
+						hudstat.AppendFormat("%d", VisiblePlayerSPD);
+						if (kchud_showextraatkdefspd >= 2) hudstat.AppendFormat(" [%d]", VisiblePlayerLevel);
+					}
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				}
+				if (kchud_showluck)
+				{
+					hudstat = "LUCK: ";
+					hudstat.AppendFormat("%d", MiscItem.PlayerLuck);
+					if (kchud_showextraatkdefspd) DigY += sepery;
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_gold, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				}
 			}
 		}
 		FontScale = (1.25, 1.25);
@@ -3512,12 +3560,14 @@ class KCStatusBarMain : BaseStatusBar
 		int VisiblePlayerATK = 0;
 		int VisiblePlayerDEF = 0;
 		int VisiblePlayerSPD = 0;
+		int VisiblePlayerGUTS = 0;
 		if (MiscItem)
 		{
 			VisiblePlayerLevel = MiscItem.TruePlayerLevel;
 			VisiblePlayerATK =  MiscItem.TruePlayerATK;
 			VisiblePlayerDEF =  MiscItem.TruePlayerDEF;
 			VisiblePlayerSPD =  MiscItem.TruePlayerSPD;
+			VisiblePlayerGUTS =  MiscItem.TruePlayerGUTS;
 		}
 		Vector2 iconbox = (40, 20);
 		int CurrHealth;

@@ -5257,11 +5257,17 @@ class KC_EventHandler : EventHandler
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);
 						nm = "CCards_Actor_FleaCurse"; if (victim.CountInv(nm)) ExpGain *= frandom(2.25,2.5);
-						if (MiscItem && MiscItem.PlayerIQ > 0) 
+						if (MiscItem && MiscItem.IQPieces > 0) 
 						{
-							double IQBonus = (1.0 + double(MiscItem.PlayerIQ / 256.0));
+							double IQBonus = (1.0 + double(MiscItem.IQPieces / 256.0));
 							ExpGain *= IQBonus;
-							if (kcdebug_worlddied) Console.Printf("[PlayerIQ] %d, [bonus: %.8f]", MiscItem.PlayerIQ, IQBonus);
+							if (kcdebug_worlddied) Console.Printf("[IQPieces] %d, [bonus: %.8f]", MiscItem.IQPieces, IQBonus);
+						}
+						if (MiscItem && MiscItem.SensesPieces > 0) 
+						{
+							double SensesBonus = (1.0 + double(MiscItem.SensesPieces / 256.0));
+							ExpGain *= SensesBonus;
+							if (kcdebug_worlddied) Console.Printf("[SensesPieces] %d, [bonus: %.8f]", MiscItem.SensesPieces, SensesBonus);
 						}
 						ExpGain *= frandom(0.05,0.125);
 

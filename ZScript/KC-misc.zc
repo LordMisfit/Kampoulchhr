@@ -151,6 +151,8 @@ class PlayerStatItem : Inventory
 	int HealthRatio;
 	int CurrentHealth;
 	int BaseStartMaxHealth;
+	int BaseStartMaxPP;
+	int BaseStartMaxMP;
 
 	int MaxHealthTrue;
 	int MaxHealthTrueRF;
@@ -163,6 +165,9 @@ class PlayerStatItem : Inventory
 	int VitalityCurrHPBoosts2;
 	int MaxHealthLimit;
 	
+	double IQPieces;
+	int IQCurrPPBoosts;
+	int IQCurrPPBoosts2;
 	int CurrentPsychicPoints;
 	int MaxPsychicPoints;
 	int MaxPsychicPointsRF;
@@ -172,6 +177,9 @@ class PlayerStatItem : Inventory
 	int PPBonusAdd;
 	int MaxPPLimit;
 	
+	double SensesPieces;
+	int SensesCurrMPBoosts;
+	int SensesCurrMPBoosts2;
 	int CurrentMagicPoints;
 	int MaxMagicPoints;
 	int MaxMagicPointsRF;
@@ -672,6 +680,12 @@ class PlayerStatItem : Inventory
 						HealthLevelAdd = 0;
 						HealthNoRPGAdd = 0;
 						HealthNoRPGAdd2 = 0;
+						PPLevelAdd = 0;
+						PPNoRPGAdd = 0;
+						PPNoRPGAdd2 = 0;
+						MPLevelAdd = 0;
+						MPNoRPGAdd = 0;
+						MPNoRPGAdd2 = 0;
 						owner.player.health = owner.player.mo.health = CurrentHealth = MaxHealthTrue;
 						owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
 						owner.A_SetInventory("PlayerMaxPP",MaxPsychicPoints);
@@ -682,6 +696,8 @@ class PlayerStatItem : Inventory
 						owner.A_SetInventory("PlayerGUTS",PlayerGUTS);
 						owner.A_SetInventory("PlayerLUCK",PlayerLUCK);
 						BaseStartMaxHealth = MaxHealthTrue; // Sets the original Max Health as at the start of a game [for various checks, including Sigil damage]
+						BaseStartMaxPP = MaxPsychicPoints;
+						BaseStartMaxMP = MaxMagicPoints;
 						if (kcdebug_startupinfo) Console.Printf("MaxHP: %d", MaxHealthTrue);
 					}
 					
@@ -753,6 +769,7 @@ class PlayerStatItem : Inventory
 					TruePlayerATK = PlayerATK;
 					TruePlayerDEF = PlayerDEF;
 					TruePlayerSPD = PlayerSPD;
+					TruePlayerGUTS = PlayerGUTS;
 				}
 				else
 				{
@@ -760,6 +777,7 @@ class PlayerStatItem : Inventory
 					TruePlayerATK = 0;
 					TruePlayerDEF = 0;
 					TruePlayerSPD = 0;
+					TruePlayerGUTS = 0;
 				}
 				
 				// Misc
@@ -991,6 +1009,61 @@ class PlayerStatItem : Inventory
 			}
 			
 			if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[green]MaxHealthTrue: %d\c-, BaseStartMaxHealth: %d, HealthNoRPGAdd2: %d (HealthNoRPGAdd: %d), HealthLevelAdd2: %d (HealthLevelAdd: %d), VitalityPiecesAdd: (%d * 15) (%.8f), VitalityCurrHPBoosts: %d, HealthBonusAdd2: %d (HealthBonusAdd: %d), \c[orange]HPRegenTimerMax: %d, HPDegenTimerMax: %d", MaxHealthTrue, BaseStartMaxHealth, int(HealthNoRPGAdd2), int(HealthNoRPGAdd), HealthLevelAdd2, HealthLevelAdd, VitalityPiecesAdd, VitalityPieces, VitalityCurrHPBoosts, HealthBonusAdd2, HealthBonusAdd, HPRegenTimerMax, HPDegenTimerMax);
+
+			int PPBonusAdd2 = PPBonusAdd;
+			int PPLevelAdd2 = PPLevelAdd;
+			int IQPiecesAdd = floor(int(IQPieces));
+			PPNoRPGAdd2 = 0;
+			if (!kc_expgains)
+			{
+				if (skill <= 0) PPBonusAdd2 *= 4.0;
+				if (skill == 1) PPBonusAdd2 *= 3.5;
+				if (skill == 2) PPBonusAdd2 *= 3.0;
+				if (skill == 3) PPBonusAdd2 *= 2.5;
+				if (skill >= 4) PPBonusAdd2 *= 2.0;
+				PPLevelAdd2 = 0;
+				if (skill <= 0) PPLevelAdd2 = (PPNoRPGAdd * 4.0);
+				if (skill == 1) PPLevelAdd2 = (PPNoRPGAdd * 3.5);
+				if (skill == 2) PPLevelAdd2 = (PPNoRPGAdd * 3.0);
+				if (skill == 3) PPLevelAdd2 = (PPNoRPGAdd * 2.5);
+				if (skill >= 4) PPLevelAdd2 = (PPNoRPGAdd * 2.0);
+			}
+			MaxPsychicPoints = (BaseStartMaxPP + int(PPNoRPGAdd2) + PPLevelAdd2 + PPBonusAdd2);
+			MaxPsychicPoints += int(IQPiecesAdd * 5);
+			while (IQCurrPPBoosts < IQPiecesAdd)
+			{
+				CurrentPsychicPoints += 5;
+				IQCurrPPBoosts++;
+			}
+			if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[purple]MaxPsychicPoints: %d\c-, BaseStartMaxPP: %d, PPNoRPGAdd2: %d (PPNoRPGAdd: %d), PPLevelAdd2: %d (PPLevelAdd: %d), IQPiecesAdd: (%d * 5) (%.8f), IQCurrPPBoosts: %d, PPBonusAdd2: %d (PPBonusAdd: %d)", MaxPsychicPoints, BaseStartMaxPP, int(PPNoRPGAdd2), int(PPNoRPGAdd), PPLevelAdd2, PPLevelAdd, IQPiecesAdd, IQPieces, IQCurrPPBoosts, PPBonusAdd2, PPBonusAdd);
+
+
+			int MPBonusAdd2 = MPBonusAdd;
+			int MPLevelAdd2 = MPLevelAdd;
+			int SensesPiecesAdd = floor(int(SensesPieces));
+			MPNoRPGAdd2 = 0;
+			if (!kc_expgains)
+			{
+				if (skill <= 0) MPBonusAdd2 *= 4.0;
+				if (skill == 1) MPBonusAdd2 *= 3.5;
+				if (skill == 2) MPBonusAdd2 *= 3.0;
+				if (skill == 3) MPBonusAdd2 *= 2.5;
+				if (skill >= 4) MPBonusAdd2 *= 2.0;
+				MPLevelAdd2 = 0;
+				if (skill <= 0) MPLevelAdd2 = (MPNoRPGAdd * 4.0);
+				if (skill == 1) MPLevelAdd2 = (MPNoRPGAdd * 3.5);
+				if (skill == 2) MPLevelAdd2 = (MPNoRPGAdd * 3.0);
+				if (skill == 3) MPLevelAdd2 = (MPNoRPGAdd * 2.5);
+				if (skill >= 4) MPLevelAdd2 = (MPNoRPGAdd * 2.0);
+			}
+			MaxMagicPoints = (BaseStartMaxMP + int(MPNoRPGAdd2) + MPLevelAdd2 + MPBonusAdd2);
+			MaxMagicPoints += int(SensesPiecesAdd * 5);
+			while (SensesCurrMPBoosts < SensesPiecesAdd)
+			{
+				CurrentMagicPoints += 5;
+				SensesCurrMPBoosts++;
+			}
+			if (kcdebug_maxhealthcalc) Console.Printf("\c[gold](MaxHealthStuff())\c- \c[blue]MaxMagicPoints: %d\c-, BaseStartMaxMP: %d, MPNoRPGAdd2: %d (MPNoRPGAdd: %d), MPLevelAdd2: %d (MPLevelAdd: %d), SensesPiecesAdd: (%d * 5) (%.8f), SensesCurrMPBoosts: %d, MPBonusAdd2: %d (MPBonusAdd: %d)", MaxMagicPoints, BaseStartMaxMP, int(mPNoRPGAdd2), int(mPNoRPGAdd), MPLevelAdd2, MPLevelAdd, SensesPiecesAdd, SensesPieces, SensesCurrMPBoosts, MPBonusAdd2, MPBonusAdd);
 		}
 		else
 		{
@@ -3275,6 +3348,20 @@ class PlayerStatItem : Inventory
 			globalvars.VitalityPieces = VitalityPieces = 0;
 			globalvars.VitalityCurrHPBoosts = VitalityCurrHPBoosts = 0;
 			globalvars.VitalityCurrHPBoosts2 = VitalityCurrHPBoosts2 = 0;
+			globalvars.PPLevelAdd = PPLevelAdd = 0;
+			globalvars.PPNoRPGAdd = PPNoRPGAdd = 0;
+			globalvars.PPNoRPGAdd2 = PPNoRPGAdd2 = 0;
+			globalvars.PPBonusAdd = PPBonusAdd = 0;
+			globalvars.IQPieces = IQPieces = 0;
+			globalvars.IQCurrPPBoosts = IQCurrPPBoosts = 0;
+			globalvars.IQCurrPPBoosts2 = IQCurrPPBoosts2 = 0;
+			globalvars.MPLevelAdd = MPLevelAdd = 0;
+			globalvars.MPNoRPGAdd = MPNoRPGAdd = 0;
+			globalvars.MPNoRPGAdd2 = MPNoRPGAdd2 = 0;
+			globalvars.MPBonusAdd = MPBonusAdd = 0;
+			globalvars.SensesPieces = SensesPieces = 0;
+			globalvars.SensesCurrMPBoosts = SensesCurrMPBoosts = 0;
+			globalvars.SensesCurrMPBoosts2 = SensesCurrMPBoosts2 = 0;
 			globalvars.MassLevelAdd = MassLevelAdd = 0;
 			globalvars.MassNoRPGAdd = MassNoRPGAdd = 0;
 			globalvars.MassNoRPGAdd2 = MassNoRPGAdd2 = 0;
@@ -3314,6 +3401,20 @@ class PlayerStatItem : Inventory
 			VitalityPieces = globalvars.VitalityPieces;
 			VitalityCurrHPBoosts = globalvars.VitalityCurrHPBoosts;
 			VitalityCurrHPBoosts2 = globalvars.VitalityCurrHPBoosts2;
+			PPLevelAdd = globalvars.PPLevelAdd;
+			PPNoRPGAdd = globalvars.PPNoRPGAdd;
+			PPNoRPGAdd2 = globalvars.PPNoRPGAdd2;
+			PPBonusAdd = globalvars.PPBonusAdd;
+			IQPieces = globalvars.IQPieces;
+			IQCurrPPBoosts = globalvars.IQCurrPPBoosts;
+			IQCurrPPBoosts2 = globalvars.IQCurrPPBoosts2;
+			MPLevelAdd = globalvars.MPLevelAdd;
+			MPNoRPGAdd = globalvars.MPNoRPGAdd;
+			MPNoRPGAdd2 = globalvars.MPNoRPGAdd2;
+			MPBonusAdd = globalvars.MPBonusAdd;
+			SensesPieces = globalvars.SensesPieces;
+			SensesCurrMPBoosts = globalvars.SensesCurrMPBoosts;
+			SensesCurrMPBoosts2 = globalvars.SensesCurrMPBoosts2;
 			MassLevelAdd = globalvars.MassLevelAdd;
 			MassNoRPGAdd = globalvars.MassNoRPGAdd;
 			MassNoRPGAdd2 = globalvars.MassNoRPGAdd2;
@@ -3723,6 +3824,56 @@ class PlayerStatItem : Inventory
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
 		
+
+		// Guts Boost [1]
+		if (KCPlayer(owner))
+		{
+			BaseChance1 = 0.5;
+			BaseChance2 = 0.0625;
+		}
+		if (HeiwaPlayer(owner))
+		{
+			BaseChance1 = 0.2;
+			BaseChance2 = 0.0625;
+			if (heiwavhardmodifier) 
+			{
+				BaseChance1 = 0.4;
+				BaseChance2 = 0.1875;
+			}
+		}
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+		// Guts Boost [2]
+		BaseChance1 *= BaseChance1a;
+		BaseChance2 *= BaseChance2a;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+		// Guts Boost [3]
+		BaseChance1 *= BaseChance1b;
+		BaseChance2 *= BaseChance2b;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+		// Guts Boost [4]
+		BaseChance1 *= BaseChance1c;
+		BaseChance2 *= BaseChance2c;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+		// Guts Boost [5]
+		BaseChance1 *= BaseChance1d;
+		BaseChance2 *= BaseChance2d;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+
 		// Attack Boost [1]
 		if (KCPlayer(owner))
 		{
@@ -4044,6 +4195,143 @@ class PlayerStatItem : Inventory
 		IQPPMaxGain = 0;
 		if (HeiwaPlayer(owner)) // Only Heiwa uses PP
 		{
+			if (random(1,256) <= random(128,160)) 
+			{
+				if (heiwavhardmodifier) PPMaxGain += randompick(0,0,0,0,0,1,1,1);
+													 else PPMaxGain += randompick(0,0,0,1,1,1,1,2);
+				if (random(1,256) <= random(32,40)) 
+				{
+					if (heiwavhardmodifier) PPMaxGain += randompick(0,0,0,0,0,1,1,1);
+														 else PPMaxGain += randompick(0,0,0,1,1,1,1,2);
+					if (random(1,256) <= random(16,20)) 
+					{
+						if (heiwavhardmodifier) PPMaxGain += randompick(0,0,0,0,1,1,1,1);
+															 else PPMaxGain += randompick(0,0,1,1,1,1,1,2);
+						if (random(1,256) <= random(4,5))
+						{
+							if (heiwavhardmodifier) PPMaxGain += randompick(0,0,0,0,1,1,1,1);
+																 else PPMaxGain += randompick(0,0,1,1,1,1,1,2);
+						}
+					}
+				}
+			}
+			if (heiwavhardmodifier)
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
+				else if (PlayerLevel <= 50)													PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			}
+			else
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03375,0.0375));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.03375));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.02625,0.03));
+				else if (PlayerLevel <= 50)													PPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0225,0.02625));
+			}
+			
+			if (heiwavhardmodifier)
+			{
+				PPMaxGain += 													 randompick[statitem](0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+				if (levelbonustype <= -1)	PPMaxGain += randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3);
+				if (levelbonustype == 0)	PPMaxGain += randompick[statitem](0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2);
+				if (levelbonustype == 1)	PPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2);
+				if (levelbonustype >= 2)	PPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+			}
+			else
+			{
+				PPMaxGain += 													 randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
+				if (levelbonustype <= -1)	PPMaxGain += randompick[statitem](0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
+				if (levelbonustype == 0)	PPMaxGain += randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3);
+				if (levelbonustype == 1)	PPMaxGain += randompick[statitem](0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+				if (levelbonustype >= 2)	PPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
+			}
+		
+			if (TrueGameSkill <= SKILL_VERY_EASY) 
+			{
+				if (heiwavhardmodifier)
+				{
+					PPMaxGain += randompick[statitem](0,1,1,2,2);
+					PPMaxGain += (MaxPsychicPoints / 270);
+				}
+				else
+				{
+					PPMaxGain += randompick[statitem](1,1,2,2,3);
+					PPMaxGain += (MaxPsychicPoints / 216);
+				}
+			}
+			if (TrueGameSkill == SKILL_EASY) 
+			{
+				if (heiwavhardmodifier)
+				{
+					PPMaxGain += randompick[statitem](0,0,1,1,2);
+					PPMaxGain += (MaxPsychicPoints / 324);
+				}
+				else
+				{
+					PPMaxGain += randompick[statitem](0,1,1,2,2);
+					PPMaxGain += (MaxPsychicPoints / 270);
+				}
+			}
+			if (TrueGameSkill == SKILL_NORMAL) 
+			{
+				if (heiwavhardmodifier)
+				{
+					PPMaxGain += randompick[statitem](0,0,0,1,1);
+					PPMaxGain += (MaxPsychicPoints / 378);
+				}
+				else
+				{
+					PPMaxGain += randompick[statitem](0,0,1,1,2);
+					PPMaxGain += (MaxPsychicPoints / 324);
+				}
+			}
+			if (TrueGameSkill == SKILL_HARD) 
+			{
+				if (heiwavhardmodifier)
+				{
+					PPMaxGain += randompick[statitem](0,0,0,0,1);
+					PPMaxGain += (MaxPsychicPoints / 432);
+				}
+				else
+				{
+					PPMaxGain += randompick[statitem](0,0,0,1,1);
+					PPMaxGain += (MaxPsychicPoints / 378);
+				}
+			}
+			if (TrueGameSkill == SKILL_VERY_HARD)
+			{
+				if (heiwavhardmodifier)
+				{
+					if (random(1,2) <= 1) 
+					{
+						PPMaxGain += randompick[statitem](0,0,0,0,1);
+						PPMaxGain += (MaxPsychicPoints / 488);
+					}
+				}
+				else
+				{
+					PPMaxGain += randompick[statitem](0,0,0,0,1);
+					PPMaxGain += (MaxPsychicPoints / 432);
+				}
+			}
+			if (heiwavhardmodifier) PPMaxGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
+			CurrentPsychicPoints += PPMaxGain;
+			PPLevelAdd += PPMaxGain;
+			if (type == 1) 
+			{
+				PPNoRPGAdd += PPMaxGain;
+				if (!kc_expgains)
+				{
+					if (skill <= 0) PPMaxGain *= 4.0;
+					if (skill == 1) PPMaxGain *= 3.5;
+					if (skill == 2) PPMaxGain *= 3.0;
+					if (skill == 3) PPMaxGain *= 2.5;
+					if (skill >= 4) PPMaxGain *= 2.0;
+				}
+			}
+			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+			if (kcdebug_levelupdisplays) Console.Printf("PPMaxGain: %d", PPMaxGain);
 		}
 
 		// Magic Points/MP Boost
@@ -4051,6 +4339,143 @@ class PlayerStatItem : Inventory
 		SensesMPMaxGain = 0;
 		if (HeiwaPlayer(owner)) // Only Heiwa uses MP
 		{
+			if (random(1,256) <= random(96,120)) 
+			{
+				if (heiwavhardmodifier) MPMaxGain += randompick(0,0,0,0,0,1,1,1);
+													 else MPMaxGain += randompick(0,0,0,1,1,1,1,2);
+				if (random(1,256) <= random(24,30)) 
+				{
+					if (heiwavhardmodifier) MPMaxGain += randompick(0,0,0,0,0,1,1,1);
+														 else MPMaxGain += randompick(0,0,0,1,1,1,1,2);
+					if (random(1,256) <= random(6,random(7,8))) 
+					{
+						if (heiwavhardmodifier) MPMaxGain += randompick(0,0,0,0,1,1,1,1);
+															 else MPMaxGain += randompick(0,0,1,1,1,1,1,2);
+						if (random(1,256) <= random(random(1,2),randompick(1,2,2,2,2,2,2,2)))
+						{
+							if (heiwavhardmodifier) MPMaxGain += randompick(0,0,0,0,1,1,1,1);
+																 else MPMaxGain += randompick(0,0,1,1,1,1,1,2);
+						}
+					}
+				}
+			}
+			if (heiwavhardmodifier)
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0525,0.06));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.045,0.0525));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0375,0.045));
+				else if (PlayerLevel <= 50)													MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.0375));
+			}
+			else
+			{
+						 if (PlayerLevel >= 151 && PlayerLevel <= 200)	MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03375,0.0375));
+				else if (PlayerLevel >= 101 && PlayerLevel <= 150)	MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.03,0.03375));
+				else if (PlayerLevel >= 51 && PlayerLevel <= 100)		MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.02625,0.03));
+				else if (PlayerLevel <= 50)													MPMaxGain += floor(PlayerLevel * frandompick[statitem](0.0225,0.02625));
+			}
+			
+			if (heiwavhardmodifier)
+			{
+				MPMaxGain += 													 randompick[statitem](0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+				if (levelbonustype <= -1)	MPMaxGain += randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3);
+				if (levelbonustype == 0)	MPMaxGain += randompick[statitem](0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2);
+				if (levelbonustype == 1)	MPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2);
+				if (levelbonustype >= 2)	MPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+			}
+			else
+			{
+				MPMaxGain += 													 randompick[statitem](0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
+				if (levelbonustype <= -1)	MPMaxGain += randompick[statitem](0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
+				if (levelbonustype == 0)	MPMaxGain += randompick[statitem](0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3);
+				if (levelbonustype == 1)	MPMaxGain += randompick[statitem](0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3);
+				if (levelbonustype >= 2)	MPMaxGain += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1);
+			}
+		
+			if (TrueGameSkill <= SKILL_VERY_EASY) 
+			{
+				if (heiwavhardmodifier)
+				{
+					MPMaxGain += randompick[statitem](0,1,1,2,2);
+					MPMaxGain += (MaxMagicPoints / 270);
+				}
+				else
+				{
+					MPMaxGain += randompick[statitem](1,1,2,2,3);
+					MPMaxGain += (MaxMagicPoints / 216);
+				}
+			}
+			if (TrueGameSkill == SKILL_EASY) 
+			{
+				if (heiwavhardmodifier)
+				{
+					MPMaxGain += randompick[statitem](0,0,1,1,2);
+					MPMaxGain += (MaxMagicPoints / 324);
+				}
+				else
+				{
+					MPMaxGain += randompick[statitem](0,1,1,2,2);
+					MPMaxGain += (MaxMagicPoints / 270);
+				}
+			}
+			if (TrueGameSkill == SKILL_NORMAL) 
+			{
+				if (heiwavhardmodifier)
+				{
+					MPMaxGain += randompick[statitem](0,0,0,1,1);
+					MPMaxGain += (MaxMagicPoints / 378);
+				}
+				else
+				{
+					MPMaxGain += randompick[statitem](0,0,1,1,2);
+					MPMaxGain += (MaxMagicPoints / 324);
+				}
+			}
+			if (TrueGameSkill == SKILL_HARD) 
+			{
+				if (heiwavhardmodifier)
+				{
+					MPMaxGain += randompick[statitem](0,0,0,0,1);
+					MPMaxGain += (MaxMagicPoints / 432);
+				}
+				else
+				{
+					MPMaxGain += randompick[statitem](0,0,0,1,1);
+					MPMaxGain += (MaxMagicPoints / 378);
+				}
+			}
+			if (TrueGameSkill == SKILL_VERY_HARD)
+			{
+				if (heiwavhardmodifier)
+				{
+					if (random(1,2) <= 1) 
+					{
+						MPMaxGain += randompick[statitem](0,0,0,0,1);
+						MPMaxGain += (MaxMagicPoints / 488);
+					}
+				}
+				else
+				{
+					MPMaxGain += randompick[statitem](0,0,0,0,1);
+					MPMaxGain += (MaxMagicPoints / 432);
+				}
+			}
+			if (heiwavhardmodifier) MPMaxGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
+			CurrentMagicPoints += MPMaxGain;
+			MPLevelAdd += MPMaxGain;
+			if (type == 1) 
+			{
+				MPNoRPGAdd += MPMaxGain;
+				if (!kc_expgains)
+				{
+					if (skill <= 0) MPMaxGain *= 4.0;
+					if (skill == 1) MPMaxGain *= 3.5;
+					if (skill == 2) MPMaxGain *= 3.0;
+					if (skill == 3) MPMaxGain *= 2.5;
+					if (skill >= 4) MPMaxGain *= 2.0;
+				}
+			}
+			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+			if (kcdebug_levelupdisplays) Console.Printf("MPMaxGain: %d", MPMaxGain);
 		}
 
 		// Mass/Balance
@@ -4275,6 +4700,78 @@ class PlayerStatItem : Inventory
 		}
 		if (kcdebug_levelupdisplays) Console.Printf("MassGain: %d", MassGain);
 		
+		// IQ Points [Heiwa Only, 1 full point = +5 max PP ala EarthBound :V]
+		double iqgain0 = frandompick(0.03125,0.0625,0.0625,0.0625,0.125,0.125,0.125,0.125,0.125,0.125,		0.1875,0.1875,0.1875,0.25); // frandompick(0.0125,0.0375,0.0375,0.0375,0.0375,0.0375,0.0625);
+		double iqgain1 = (iqgain0 + 0.0625); // (vitgain0 + 0.0625);
+		double iqgain2 = (iqgain0 + 0.1875); // (vitgain0 + 0.1875);
+		double iqgain3 = (iqgain0 + 0.25); // (vitgain0 + 0.25);
+		if (heiwavhardmodifier)
+		{
+			iqgain0 = frandompick(0.025,0.075,0.075,0.075,0.075,0.075,0.125);
+			iqgain1 = (iqgain0 + 0.125);
+			iqgain2 = (iqgain0 + 0.375);
+			iqgain3 = (iqgain0 + 0.5);
+		}
+		iqgain0 *= 1.334;
+		iqgain1 *= 1.334;
+		iqgain2 *= 1.334;
+		iqgain3 *= 1.334;
+		
+		double IQPieceGain = 0.0;
+		IQPieceGain += 													frandompick[statitem](iqgain0,iqgain0,iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2);
+		if (levelbonustype <= -1) IQPieceGain += frandompick[statitem](iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain3,iqgain3,iqgain3,iqgain3,iqgain3);
+		if (levelbonustype == 0)  IQPieceGain += frandompick[statitem](iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain3,iqgain3);
+		if (levelbonustype == 1)  IQPieceGain += frandompick[statitem](iqgain0,iqgain0,iqgain0,iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain3);
+		if (levelbonustype >= 2)  IQPieceGain += frandompick[statitem](iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1);
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) IQPieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+		IQPieces += IQPieceGain;
+
+		int IQPiecesAdd = floor(int(IQPieces));
+		if (HeiwaPlayer(owner))
+		{
+			if (kcdebug_levelupdisplays) Console.Printf("IQPPMaxGain [pre]: %d, IQCurrPPBoosts2: (%d / %d)", IQPPMaxGain, IQCurrPPBoosts2, IQPiecesAdd);
+			while (IQCurrPPBoosts2 < IQPiecesAdd)
+			{
+				IQPPMaxGain += 5;
+				IQCurrPPBoosts2++;
+			}
+			if (kcdebug_levelupdisplays) Console.Printf("IQPPMaxGain [post]: %d, IQCurrPPBoosts2: (%d / %d)", IQPPMaxGain, IQCurrPPBoosts2, IQPiecesAdd);
+		}
+
+		// Senses Points [Heiwa Only, 1 full point = +5 max MP]
+		double sensegain0 = frandompick(0.03125,0.0625,0.0625,0.0625,0.125,0.125,0.125,0.125,0.125,0.125,		0.1875,0.1875,0.1875,0.25); // frandompick(0.0125,0.0375,0.0375,0.0375,0.0375,0.0375,0.0625);
+		double sensegain1 = (sensegain0 + 0.0625); // (vitgain0 + 0.0625);
+		double sensegain2 = (sensegain0 + 0.1875); // (vitgain0 + 0.1875);
+		double sensegain3 = (sensegain0 + 0.25); // (vitgain0 + 0.25);
+		if (heiwavhardmodifier)
+		{
+			sensegain0 = frandompick(0.025,0.075,0.075,0.075,0.075,0.075,0.125);
+			sensegain1 = (sensegain0 + 0.125);
+			sensegain2 = (sensegain0 + 0.375);
+			sensegain3 = (sensegain0 + 0.5);
+		}
+		
+		double SensePieceGain = 0.0;
+		SensePieceGain += 													frandompick[statitem](sensegain0,sensegain0,sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2);
+		if (levelbonustype <= -1) SensePieceGain += frandompick[statitem](sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain3,sensegain3,sensegain3,sensegain3,sensegain3);
+		if (levelbonustype == 0)  SensePieceGain += frandompick[statitem](sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain3,sensegain3);
+		if (levelbonustype == 1)  SensePieceGain += frandompick[statitem](sensegain0,sensegain0,sensegain0,sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain3);
+		if (levelbonustype >= 2)  SensePieceGain += frandompick[statitem](sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1);
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) SensePieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+		SensesPieces += SensePieceGain;
+
+		int SensesPiecesAdd = floor(int(SensesPieces));
+		if (HeiwaPlayer(owner))
+		{
+			if (kcdebug_levelupdisplays) Console.Printf("SensesMPMaxGain [pre]: %d, SensesCurrMPBoosts2: (%d / %d)", SensesMPMaxGain, SensesCurrMPBoosts2, SensesPiecesAdd);
+			while (SensesCurrMPBoosts2 < SensesPiecesAdd)
+			{
+				SensesMPMaxGain += 5;
+				SensesCurrMPBoosts2++;
+			}
+			if (kcdebug_levelupdisplays) Console.Printf("SensesMPMaxGain [post]: %d, SensesCurrMPBoosts2: (%d / %d)", SensesMPMaxGain, SensesCurrMPBoosts2, SensesPiecesAdd);
+		}
+		
 		if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/levelup",101,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
 	}
 	
@@ -4310,6 +4807,7 @@ class PlayerStatItem : Inventory
 		PrevATK = PlayerATK;
 		PrevDEF = PlayerDEF;
 		PrevSPD = PlayerSPD;
+		PrevGUTS = PlayerGUTS;
 		for (leveluptimes = 0; leveluptimes < leveluptimesmax; leveluptimes++)
 		{
 			if (kcdebug_levelup) Console.Printf("%d / %d", leveluptimes, leveluptimesmax);
@@ -4326,6 +4824,7 @@ class PlayerStatItem : Inventory
 					owner.A_SetInventory("PlayerDEF",PlayerDEF);
 					owner.A_SetInventory("PlayerSPD",PlayerSPD);
 					owner.A_SetInventory("PlayerLUCK",PlayerLUCK);
+					owner.A_SetInventory("PlayerGUTS",PlayerGUTS);
 					if (!owner.CountInv("SilentLevelUp"))
 					{
 						string LevelUpMsg = "";
@@ -4333,10 +4832,14 @@ class PlayerStatItem : Inventory
 														 else LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
 						if (kc_extraatkdefspd)
 						{
-							if ((PlayerATK > PrevATK) || (PlayerDEF > PrevDEF) || (PlayerSPD > PrevSPD)) LevelUpMsg.AppendFormat("\n\n");
+							if ((PlayerATK > PrevATK) || 
+									(PlayerDEF > PrevDEF) || 
+									(PlayerSPD > PrevSPD) || 
+									(PlayerGUTS > PrevGUTS)) LevelUpMsg.AppendFormat("\n\n");
 							if (PlayerATK > PrevATK) LevelUpMsg.AppendFormat("\n\c[brick]Attack Increased By %d!", (PlayerATK-PrevATK));
 							if (PlayerDEF > PrevDEF) LevelUpMsg.AppendFormat("\n\c[olive]Defense Increased By %d!", (PlayerDEF-PrevDEF));
 							if (PlayerSPD > PrevSPD) LevelUpMsg.AppendFormat("\n\c[lightblue]Speed Increased By %d!", (PlayerSPD-PrevSPD));
+							if (PlayerGUTS > PrevGUTS) LevelUpMsg.AppendFormat("\n\c[FIRE]Guts Increased By %d!", (PlayerGUTS-PrevGUTS));
 						}
 						owner.A_Print(LevelUpMsg);
 						owner.A_SetBlend("00 00 FF",0.3,3,"00 00 FF",0.0);
@@ -5607,6 +6110,20 @@ class PlayerStatItem : Inventory
 		globalvars.VitalityPieces = VitalityPieces;
 		globalvars.VitalityCurrHPBoosts = VitalityCurrHPBoosts;
 		globalvars.VitalityCurrHPBoosts2 = VitalityCurrHPBoosts2;
+		globalvars.PPLevelAdd = PPLevelAdd;
+		globalvars.PPNoRPGADD = PPNoRPGADD;
+		globalvars.PPNoRPGADD2 = PPNoRPGADD2;
+		globalvars.PPBonusAdd = PPBonusAdd;
+		globalvars.IQPieces = IQPieces;
+		globalvars.IQCurrPPBoosts = IQCurrPPBoosts;
+		globalvars.IQCurrPPBoosts2 = IQCurrPPBoosts2;
+		globalvars.MPLevelAdd = MPLevelAdd;
+		globalvars.MPNoRPGADD = MPNoRPGADD;
+		globalvars.MPNoRPGADD2 = MPNoRPGADD2;
+		globalvars.MPBonusAdd = MPBonusAdd;
+		globalvars.SensesPieces = SensesPieces;
+		globalvars.SensesCurrMPBoosts = SensesCurrMPBoosts;
+		globalvars.SensesCurrMPBoosts2 = SensesCurrMPBoosts2;
 		globalvars.MassLevelAdd = MassLevelAdd;
 		globalvars.MassNoRPGAdd = MassNoRPGAdd;
 		globalvars.MassNoRPGAdd2 = MassNoRPGAdd2;
