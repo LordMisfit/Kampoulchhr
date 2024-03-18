@@ -1322,18 +1322,78 @@ class KCStatusBarMain : BaseStatusBar
 		return invY, wsammoname;
 	}
 	
-	int A_DrawFSMystical(double masterscale = 1.0, int yinc = -21)
+	int A_DrawFSMagic(double masterscale = 1.0, int yinc = -21)
 	{
-		int fontclr = font.CR_UNTRANSLATED;
+		int fontclr = font.cr_lightblue;
 		double fontalpha = 1.0;
 		KCPlayerPawn CPlayerPawn;
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
-		int MaxMagicPoints;
-		if (MiscItem) MaxMagicPoints = MiscItem.MaxMagicPoints;
-		int MaxPsychicPoints;
-		if (MiscItem) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+		int CurrentMagicPoints, MaxMagicPoints;
 		int ycorrection = -3;
+		if (MiscItem) 
+		{
+			MaxMagicPoints = MiscItem.MaxMagicPoints;
+			CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+			if (MaxMagicPoints > 0)
+			{
+				// Meters
+				vector2 mpos = (94, yinc+ycorrection);
+				int lgpiece = ((CurrentMagicPoints * 100) / MaxMagicPoints);
+				int lgpiece2 = ((CurrentMagicPoints * 100) / MaxMagicPoints);
+				double malpha = 0.875;
+				
+				if (lgpiece2 >= 101) DrawBar("MPNOTCH2", "MPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+												else DrawBar("MPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				
+				DrawString(mKCLFont, FormatNumber(CurrentMagicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+				DrawImage("MAGIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.5, 0.5));
+				
+				//Console.Printf("hudarmortype: %d", hudarmortype);
+				string MaxMPS = " / ";
+				MaxMPS.AppendFormat("%d", MaxMagicPoints);
+				DrawString(mKCMFont, MaxMPS, (94+1, (yinc-16)+1+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxMPS, (94, (yinc-16)+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+			}
+		}
+		
+		return yinc;
+	}
+	
+	int A_DrawFSPsychic(double masterscale = 1.0, int yinc = -21)
+	{
+		int fontclr = font.cr_purple;
+		double fontalpha = 1.0;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int CurrentPsychicPoints, MaxPsychicPoints;
+		int ycorrection = -3;
+		if (MiscItem) 
+		{
+			MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+			CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+			if (MaxPsychicPoints > 0)
+			{
+				// Meters
+				vector2 mpos = (94, yinc+ycorrection);
+				int lgpiece = ((CurrentPsychicPoints * 100) / MaxPsychicPoints);
+				int lgpiece2 = ((CurrentPsychicPoints * 100) / MaxPsychicPoints);
+				double malpha = 0.875;
+				
+				if (lgpiece2 >= 101) DrawBar("PPNOTCH2", "PPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+												else DrawBar("PPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				
+				DrawString(mKCLFont, FormatNumber(CurrentPsychicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+				DrawImage("PSIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.625, 0.625));
+				
+				//Console.Printf("hudarmortype: %d", hudarmortype);
+				string MaxPPS = " / ";
+				MaxPPS.AppendFormat("%d", MaxPsychicPoints);
+				DrawString(mKCMFont, MaxPPS, (94+1, (yinc-16)+1+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxPPS, (94, (yinc-16)+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+			}
+		}
 		
 		return yinc;
 	}
@@ -3482,14 +3542,19 @@ class KCStatusBarMain : BaseStatusBar
 			yinc = A_DrawFSHealth(1.0, yinc);
 			//Console.Printf("yinc [Post-FSHealth]: %d", yinc);
 			
+			/*
 			// Draw PP/MP/HCLR
-			if (MiscItem && 
-					(MiscItem.MaxPsychicPoints > 0 || 
-					 MiscItem.MaxMagicPoints > 0))
+			if (MiscItem && MiscItem.MaxPsychicPoints > 0)
 			{
-				//yinc -= 20;
-				//yinc = A_DrawFSMystical(1.0, yinc);
+				yinc -= 20;
+				yinc = A_DrawFSPsychic(1.0, yinc);
 			}
+			if (MiscItem && MiscItem.MaxMagicPoints > 0)
+			{
+				yinc -= 20;
+				yinc = A_DrawFSMagic(1.0, yinc);
+			}
+			*/
 			
 			name armorclasstype = "KCArmor";
 			let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
