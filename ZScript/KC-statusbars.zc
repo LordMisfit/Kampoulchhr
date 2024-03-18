@@ -1322,6 +1322,45 @@ class KCStatusBarMain : BaseStatusBar
 		return invY, wsammoname;
 	}
 	
+	int A_DrawFSHellcore(double masterscale = 1.0, int yinc = -21)
+	{
+		int fontclr = font.cr_brick;
+		double fontalpha = 1.0;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int HellcoreOverheatLevel;
+		int ycorrection = -3;
+		if (MiscItem) 
+		{
+			HellcoreOverheatLevel = MiscItem.HellcoreOverheatLevel;
+			if (HellcoreOverheatLevel > 0)
+			{
+				// Meters
+				vector2 mpos = (94, yinc+ycorrection);
+				int lgpiece = ((HellcoreOverheatLevel * 100) / 1000000);
+				int lgpiece2 = ((HellcoreOverheatLevel * 100) / 1000000);
+				double malpha = 0.875;
+				
+				if (lgpiece2 >= 101) DrawBar("HCNOTCH2", "HCNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+												else DrawBar("HCNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				
+				//DrawString(mKCLFont, FormatNumber(CurrentMagicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+				DrawImage("HLCRICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.5, 0.5));
+				
+				//Console.Printf("hudarmortype: %d", hudarmortype);
+				double percent = (HellcoreOverheatLevel * 100 / 1000000);
+				string HCLRPer = "";
+				HCLRPer.AppendFormat("%.2f", percent);
+				HCLRPer.AppendFormat("%%");
+				DrawString(mKCMFont, HCLRPer, (94+1, (yinc-16)+1+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, HCLRPer, (94, (yinc-16)+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+			}
+		}
+		
+		return yinc;
+	}
+	
 	int A_DrawFSMagic(double masterscale = 1.0, int yinc = -21)
 	{
 		int fontclr = font.cr_lightblue;
@@ -3542,25 +3581,33 @@ class KCStatusBarMain : BaseStatusBar
 			yinc = A_DrawFSHealth(1.0, yinc);
 			//Console.Printf("yinc [Post-FSHealth]: %d", yinc);
 			
-			/*
 			// Draw PP/MP/HCLR
-			if (MiscItem && MiscItem.MaxPsychicPoints > 0)
+			if (A_CheckForHeiwa() && MiscItem)
 			{
-				yinc -= 20;
-				yinc = A_DrawFSPsychic(1.0, yinc);
+				/*
+				if (MiscItem.MaxPsychicPoints > 0)
+				{
+					yinc -= 20;
+					yinc = A_DrawFSPsychic(1.0, yinc);
+				}
+				if (MiscItem.MaxMagicPoints > 0)
+				{
+					yinc -= 20;
+					yinc = A_DrawFSMagic(1.0, yinc);
+				}
+				if (MiscItem.HellcoreOverheatLevel)
+				{
+					yinc -= 20;
+					yinc = A_DrawFSHellcore(1.0, yinc);
+				}
+				*/
 			}
-			if (MiscItem && MiscItem.MaxMagicPoints > 0)
-			{
-				yinc -= 20;
-				yinc = A_DrawFSMagic(1.0, yinc);
-			}
-			*/
 			
 			name armorclasstype = "KCArmor";
 			let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
 			if (armor != null && armor.Amount > 0) 
 			{
-				// Draw Armor [and Time Seraph Armor info]
+				// Draw Armor 
 				yinc -= 20;
 				yinc = A_DrawFSArmor(1.0, yinc);
 				//Console.Printf("yinc [Post-FSArmor]: %d", yinc);
@@ -3568,7 +3615,7 @@ class KCStatusBarMain : BaseStatusBar
 			
 			if (MiscItem && MiscItem.TimeArmorEnergyMaxTics > 0)
 			{
-				// Draw Armor [Time Seraph Armor]
+				// Draw Time Seraph Armor Info
 				yinc -= 20;
 				yinc = A_DrawTSArmor(1.0, yinc);
 				//Console.Printf("yinc [Post-TSArmor]: %d", yinc);

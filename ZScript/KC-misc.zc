@@ -141,7 +141,8 @@ class PlayerStatItem : Inventory
 	double BaseRegenMulti;
 	double atkfct, deffct, spdfct, jmpfct, suvfct;
 
-	int HPMaxGain, MassGain, VitHPMaxGain;
+	int HPMaxGain, PPMaxGain, MPMaxGain, MassGain; 
+	int VitHPMaxGain, IQPPMaxGain, SensesMPMaxGain;
 	int SurvivalRate;
 
 	int spbkpkmaxhealthcarry;
@@ -179,6 +180,11 @@ class PlayerStatItem : Inventory
 	double MPNoRPGAdd2;
 	int MPBonusAdd;
 	int MaxMPLimit;
+
+	int HellcoreOverheatLevel;
+	double HellcoreCooldownSpeed;
+	int HellcoreCooldownTimer;
+	int HellcoreCoolRatio;
 
 	int TotalMass, BaseMass, PreBuffMass;
 	int MassLevelAdd;
@@ -584,9 +590,9 @@ class PlayerStatItem : Inventory
 						PlayerATK = 2;
 						PlayerDEF = 2;
 						PlayerSPD = 2;
-						PlayerVIT = 2;
-						PlayerIQ = 2;
-						PlayerGUTS = 2;
+						PlayerVIT = 0;
+						PlayerIQ = 0;
+						PlayerGUTS = 0;
 						PlayerLUCK = 2;
 
 						atkfct = deffct = spdfct = jmpfct = suvfct = 1.00;
@@ -996,7 +1002,7 @@ class PlayerStatItem : Inventory
 	{
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
-		if (!A_CheckNoTimer())
+		if (!A_CheckNoTimer() && A_CheckForHeiwa())
 		{
 			sielsgracecooldown = owner.CountInv("sielsgracecooldown");
 			sielsgraceactivations = owner.CountInv("sielsgraceactivations");
@@ -4033,6 +4039,20 @@ class PlayerStatItem : Inventory
 		//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
 		if (kcdebug_levelupdisplays) Console.Printf("HPMaxGain: %d", HPMaxGain);
 		
+		// Psychic Points/PP Boost
+		PPMaxGain = 0;
+		IQPPMaxGain = 0;
+		if (HeiwaPlayer(owner)) // Only Heiwa uses PP
+		{
+		}
+
+		// Magic Points/MP Boost
+		MPMaxGain = 0;
+		SensesMPMaxGain = 0;
+		if (HeiwaPlayer(owner)) // Only Heiwa uses MP
+		{
+		}
+
 		// Mass/Balance
 		double BaseMass = 1.0;
 		let playerset = KCPlayerPawn(owner);
