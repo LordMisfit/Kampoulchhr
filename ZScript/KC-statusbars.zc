@@ -1333,11 +1333,109 @@ class KCStatusBarMain : BaseStatusBar
 		if (MiscItem) MaxMagicPoints = MiscItem.MaxMagicPoints;
 		int MaxPsychicPoints;
 		if (MiscItem) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
-		int ivx = 20; // 20;
-		int ivy = -2; // -22;
-		int svx = 44; // 44;
-		int svy = -20; //-40;
 		int ycorrection = -3;
+		
+		return yinc;
+	}
+	
+	int A_DrawFSHealth(double masterscale = 1.0, int yinc = -1)
+	{
+		int ycorrection = -3;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int MaxHealthTrue = 100;
+		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		
+		int HealthColor = font.CR_brick;
+		if (CPlayerPawn.player.poisoncount) HealthColor = font.CR_darkgreen;
+		if (CPlayer.cheats & CF_BUDDHA2) HealthColor = font.CR_orange;
+		if (CPlayer.cheats & CF_GODMODE2) HealthColor = font.CR_sapphire;
+		bool IsInvuln = false;
+		if (CPlayerPawn.bINVULNERABLE || 
+				 CPlayerPawn.CountInv("PowerInvulnerable") || CPlayerPawn.CountInv("KCPowerInvuln") || 
+				 CPlayer.cheats & CF_GODMODE2 || CPlayer.cheats & CF_GODMODE) IsInvuln = true;
+		if (IsInvuln) HealthColor = font.CR_Gold;
+		
+		// Meters
+		vector2 mpos = (94+HPDmgShakeX, yinc+HPDmgShakeY+ycorrection);
+		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
+		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
+		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
+										else DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
+
+		// Show Current Health
+		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
+		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
+		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
+		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) 
+		{
+			double BaseSGAlpha = 2.0;
+			double SGAlpha = -2.0;
+			int SGpulsetimerMod = 100;
+			if (MiscItem.sielsgraceactivations % 4 == 0) SGpulsetimerMod = 80;
+			if (MiscItem.sielsgraceactivations % 4 == 1) SGpulsetimerMod = 65;
+			if (MiscItem.sielsgraceactivations % 4 == 2) SGpulsetimerMod = 55;
+			if (MiscItem.sielsgraceactivations % 4 == 3) SGpulsetimerMod = 50;
+			if (berserk)
+			{
+				BaseSGAlpha *= 0.75;
+				SGAlpha *= 0.75;
+				SGpulsetimerMod *= 0.5;
+			}
+			if (SGpulsetimerMod)
+			{
+				double BaseSGAlphaframe = BaseSGAlpha / (SGpulsetimerMod * 0.5);
+				int SGpulsetimer = level.time % SGpulsetimerMod;
+				int SGPulseFrame = (SGpulsetimerMod * 0.5);
+				SGPulseFrame = abs(SGPulseFrame - SGpulsetimer);
+				SGAlpha += BaseSGAlpha + (SGPulseFrame * BaseSGAlphaframe);
+				//Console.Printf("\c[brick]SGAlpha: %.3f, BaseSGAlphaframe: %.3f SGPulseFrame: %d, (timer: %d / %d)", SGAlpha, BaseSGAlphaframe, SGPulseFrame, SGpulsetimer, SGpulsetimerMod);
+			}
+			DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection), 0, SGAlpha);
+		}
+		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
+		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, (yinc-19)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
+		
+		// Shows a Special Icon for a specific 'mode'
+		if (A_CheckForHeiwa() && 
+				(MiscItem && MiscItem.heiwavhardmodifier))
+		{
+			double cloverAlphaPulse = -0.125;
+			int cloverAlphaTimer = level.time % 40;
+			if (cloverAlphaTimer == 0) cloverAlphaPulse = -0.125;
+			if (cloverAlphaTimer == 1 || cloverAlphaTimer == 39) cloverAlphaPulse = -0.1125;
+			if (cloverAlphaTimer == 2 || cloverAlphaTimer == 38) cloverAlphaPulse = -0.1000;
+			if (cloverAlphaTimer == 3 || cloverAlphaTimer == 37) cloverAlphaPulse = -0.0875;
+			if (cloverAlphaTimer == 4 || cloverAlphaTimer == 36) cloverAlphaPulse = -0.075;
+			if (cloverAlphaTimer == 5 || cloverAlphaTimer == 35) cloverAlphaPulse = -0.0625;
+			if (cloverAlphaTimer == 6 || cloverAlphaTimer == 34) cloverAlphaPulse = -0.05;
+			if (cloverAlphaTimer == 7 || cloverAlphaTimer == 33) cloverAlphaPulse = -0.0375;
+			if (cloverAlphaTimer == 8 || cloverAlphaTimer == 32) cloverAlphaPulse = -0.025;
+			if (cloverAlphaTimer == 9 || cloverAlphaTimer == 31) cloverAlphaPulse = -0.0125;
+			if (cloverAlphaTimer == 10 || cloverAlphaTimer == 30) cloverAlphaPulse = -0.00;
+			if (cloverAlphaTimer == 11 || cloverAlphaTimer == 29) cloverAlphaPulse = 0.0125;
+			if (cloverAlphaTimer == 12 || cloverAlphaTimer == 28) cloverAlphaPulse = 0.025;
+			if (cloverAlphaTimer == 13 || cloverAlphaTimer == 27) cloverAlphaPulse = 0.0375;
+			if (cloverAlphaTimer == 14 || cloverAlphaTimer == 26) cloverAlphaPulse = 0.05;
+			if (cloverAlphaTimer == 15 || cloverAlphaTimer == 25) cloverAlphaPulse = 0.0625;
+			if (cloverAlphaTimer == 16 || cloverAlphaTimer == 24) cloverAlphaPulse = 0.075;
+			if (cloverAlphaTimer == 17 || cloverAlphaTimer == 23) cloverAlphaPulse = 0.0875;
+			if (cloverAlphaTimer == 18 || cloverAlphaTimer == 22) cloverAlphaPulse = 0.10;
+			if (cloverAlphaTimer == 19 || cloverAlphaTimer == 21) cloverAlphaPulse = 0.125;
+			if (cloverAlphaTimer == 20) cloverAlphaPulse = 0.1375;
+			cloverAlphaPulse *= 2;
+			double cloveralpha = 1.0;
+			cloveralpha = 0.9 + cloverAlphaPulse;
+			DrawImage("CACLOVER", (20+HPDmgShakeX, (yinc-3)+HPDmgShakeY+ycorrection), 0, cloveralpha, (-1, -1), (0.5, 0.5));
+		}
+		
+		// Show Max Health
+		string MaxHPS = "\c[brick] / ";
+		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
+		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
+		DrawString(mKCMFont, MaxHPS, (94+1+HPDmgShakeX, (yinc-16)+1+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, 0.75, -1, 4, (1.25, 1.25));
+		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, (yinc-16)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
 		
 		return yinc;
 	}
@@ -1351,10 +1449,7 @@ class KCStatusBarMain : BaseStatusBar
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		int MaxHealthTrue;
 		if (MiscItem) MaxHealthTrue = MiscItem.MaxHealthTrue;
-		int ivx = 20; // 20;
-		int ivy = -2; // -22;
-		int svx = 44; // 44;
-		int svy = -20; //-40;
+		int ivy = 0; // -22;
 		int hudarmortype;
 		let armor = CPlayer.mo.FindInventory("KCArmor");
 		int ycorrection = -3;
@@ -1389,7 +1484,7 @@ class KCStatusBarMain : BaseStatusBar
 			MaxArmor *= (1.0 + fact);
 
 			// Meters
-			vector2 mpos = (94+APDmgShakeX, (yinc)+APDmgShakeY+ycorrection);
+			vector2 mpos = (94+APDmgShakeX, yinc+APDmgShakeY+ycorrection);
 			if (MaxArmor > 0)
 			{
 				int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
@@ -1409,10 +1504,8 @@ class KCStatusBarMain : BaseStatusBar
 				}
 			}
 			
-			
-			//DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0, svy-20), 0, font.cr_black, fontalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (svx+0+APDmgShakeX, svy-(yinc+41)+APDmgShakeY+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
-			DrawInventoryIcon(armor, (ivx+0+APDmgShakeX, ivy-(yinc+41)+APDmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (1.0, 1.0));
+			DrawString(mKCLFont, FormatNumber(mArmorInterpolator.GetValue(), 4), (44+APDmgShakeX, (yinc-19)+APDmgShakeY+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+			DrawInventoryIcon(armor, (20+APDmgShakeX, (yinc-1)+APDmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (1.0, 1.0));
 			
 			// Show Max Armor
 			if (hudarmortype > 0)
@@ -1428,18 +1521,24 @@ class KCStatusBarMain : BaseStatusBar
 					if (hudarmortype == 1) MaxAPS.AppendFormat("100");
 					if (hudarmortype == 2) MaxAPS.AppendFormat("200");
 				}
-				//MaxAPS.AppendFormat("%d", armor.maxamount);
-				//DrawString(mKCMFont, MaxAPS, (svx+50, svy-17), DI_TEXT_ALIGN_LEFT, font.cr_black, fontalpha, -1, 4, (1.25, 1.25));
-				DrawString(mKCMFont, MaxAPS, (svx+1+50+APDmgShakeX, svy+1-(yinc+38)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
-				DrawString(mKCMFont, MaxAPS, (svx+50+APDmgShakeX, svy-(yinc+38)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (94+1+APDmgShakeX, (yinc-16)+1+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
+				DrawString(mKCMFont, MaxAPS, (94+APDmgShakeX, (yinc-16)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));
 			}
-			
-			ivx += 0;
-			ivy -= 20;
-			svx += 0;
-			svy -= 20;
 		}
 		
+		return yinc;
+	}
+
+	int A_DrawTSArmor(double masterscale = 1.0, int yinc = 0)
+	{
+		int fontclr = font.CR_UNTRANSLATED;
+		double fontalpha = 1.0;
+		KCPlayerPawn CPlayerPawn;
+		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
+		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
+		int ivy = 0; // -22;
+		int ycorrection = -3;
+
 		if (MiscItem)
 		{
 			int metercolor = 0;
@@ -1492,7 +1591,8 @@ class KCStatusBarMain : BaseStatusBar
 				
 				if (MiscItem.TimeArmorEnergyMaxTics > 0)
 				{
-					vector2 tsapos = (ivx+2+TSADmgShakeX, ivy-(yinc+34)+TSADmgShakeY+ycorrection);
+					int iconbasepos = 6; //17;
+					vector2 tsapos = (22+TSADmgShakeX, (yinc-1+iconbasepos)+TSADmgShakeY+ycorrection);
 					let armor2 = CPlayer.mo.FindInventory("TSArtifactsInUse");
 					if (armor2)
 					{
@@ -1569,12 +1669,12 @@ class KCStatusBarMain : BaseStatusBar
 						if (energystat != 0) showarrow = true;
 														else showarrow = false;
 					}
-					if (showarrow) DrawImage(energyimg, (ivx-3+TSADmgShakeX, ivy-(yinc+36)+TSADmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
+					if (showarrow) DrawImage(energyimg, (17+TSADmgShakeX, ((yinc-1)+(iconbasepos-2))+TSADmgShakeY+ycorrection), 0, fontalpha, (-1, -1), (iconscale.x, iconscale.y));
 					
 					
 					int percent = MiscItem.TimeArmorEnergyTics * 100 / MiscItem.TimeArmorEnergyMaxTics;
 					// Meters
-					vector2 mpos = (94, -41);
+					vector2 mpos = (94+TSADmgShakeX, yinc+TSADmgShakeY+ycorrection);
 					int lgpiece = percent;
 					string TSAN = "TSA0NOTC";
 					if (metercolor == 1) TSAN = "TSA1NOTC";
@@ -1582,12 +1682,12 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
 					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
-					DrawBar(TSAN, "BLMET100", lgpiece, 100, (svx+50+TSADmgShakeX, svy-(yinc+22)+TSADmgShakeY+ycorrection), 1, 1, 0, alpha:malpha);
+					DrawBar(TSAN, "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 					
 					string perstr = "";
 					perstr.AppendFormat("%d", percent);
 					perstr.AppendFormat("%%");
-					DrawString(mKCLFont, perstr, (svx+60+TSADmgShakeX, svy-(yinc+41)+TSADmgShakeY+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+					DrawString(mKCLFont, perstr, (104+TSADmgShakeX, (yinc-19)+TSADmgShakeY+ycorrection), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				}
 			}
 		}
@@ -1794,108 +1894,6 @@ class KCStatusBarMain : BaseStatusBar
 				}
 			}
 		}
-	}
-	
-	int A_DrawFSHealth(double masterscale = 1.0, int yinc = -1)
-	{
-		int ycorrection = -3;
-		KCPlayerPawn CPlayerPawn;
-		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
-		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
-		int MaxHealthTrue = 100;
-		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
-		
-		int HealthColor = font.CR_brick;
-		if (CPlayerPawn.player.poisoncount) HealthColor = font.CR_darkgreen;
-		if (CPlayer.cheats & CF_BUDDHA2) HealthColor = font.CR_orange;
-		if (CPlayer.cheats & CF_GODMODE2) HealthColor = font.CR_sapphire;
-		bool IsInvuln = false;
-		if (CPlayerPawn.bINVULNERABLE || 
-				 CPlayerPawn.CountInv("PowerInvulnerable") || CPlayerPawn.CountInv("KCPowerInvuln") || 
-				 CPlayer.cheats & CF_GODMODE2 || CPlayer.cheats & CF_GODMODE) IsInvuln = true;
-		if (IsInvuln) HealthColor = font.CR_Gold;
-		
-		// Meters
-		vector2 mpos = (94+HPDmgShakeX, yinc+HPDmgShakeY+ycorrection);
-		int lgpiece = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
-		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
-		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
-										else DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
-
-		// Show Current Health
-		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
-		if (!berserk) berserk = CPlayer.mo.FindInventory("KCPowerStrength");
-		DrawImage(berserk ? "PSTRA0" : "MEDIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection));
-		if (A_CheckForHeiwa() && (MiscItem && MiscItem.sielsgraceactive)) 
-		{
-			double BaseSGAlpha = 2.0;
-			double SGAlpha = -2.0;
-			int SGpulsetimerMod = 100;
-			if (MiscItem.sielsgraceactivations % 4 == 0) SGpulsetimerMod = 80;
-			if (MiscItem.sielsgraceactivations % 4 == 1) SGpulsetimerMod = 65;
-			if (MiscItem.sielsgraceactivations % 4 == 2) SGpulsetimerMod = 55;
-			if (MiscItem.sielsgraceactivations % 4 == 3) SGpulsetimerMod = 50;
-			if (berserk)
-			{
-				BaseSGAlpha *= 0.75;
-				SGAlpha *= 0.75;
-				SGpulsetimerMod *= 0.5;
-			}
-			if (SGpulsetimerMod)
-			{
-				double BaseSGAlphaframe = BaseSGAlpha / (SGpulsetimerMod * 0.5);
-				int SGpulsetimer = level.time % SGpulsetimerMod;
-				int SGPulseFrame = (SGpulsetimerMod * 0.5);
-				SGPulseFrame = abs(SGPulseFrame - SGpulsetimer);
-				SGAlpha += BaseSGAlpha + (SGPulseFrame * BaseSGAlphaframe);
-				//Console.Printf("\c[brick]SGAlpha: %.3f, BaseSGAlphaframe: %.3f SGPulseFrame: %d, (timer: %d / %d)", SGAlpha, BaseSGAlphaframe, SGPulseFrame, SGpulsetimer, SGpulsetimerMod);
-			}
-			DrawImage(berserk ? "PCTRA0" : "MECIA0", (20+HPDmgShakeX, (yinc-1)+HPDmgShakeY+ycorrection), 0, SGAlpha);
-		}
-		//DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44, -20), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.5, 1.5));
-		DrawString(mKCLFont, FormatNumber(mHealthInterpolator.GetValue(), 4), (44+HPDmgShakeX, (yinc-19)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.5, 1.5));
-		
-		// Shows a Special Icon for a specific 'mode'
-		if (A_CheckForHeiwa() && 
-				(MiscItem && MiscItem.heiwavhardmodifier))
-		{
-			double cloverAlphaPulse = -0.125;
-			int cloverAlphaTimer = level.time % 40;
-			if (cloverAlphaTimer == 0) cloverAlphaPulse = -0.125;
-			if (cloverAlphaTimer == 1 || cloverAlphaTimer == 39) cloverAlphaPulse = -0.1125;
-			if (cloverAlphaTimer == 2 || cloverAlphaTimer == 38) cloverAlphaPulse = -0.1000;
-			if (cloverAlphaTimer == 3 || cloverAlphaTimer == 37) cloverAlphaPulse = -0.0875;
-			if (cloverAlphaTimer == 4 || cloverAlphaTimer == 36) cloverAlphaPulse = -0.075;
-			if (cloverAlphaTimer == 5 || cloverAlphaTimer == 35) cloverAlphaPulse = -0.0625;
-			if (cloverAlphaTimer == 6 || cloverAlphaTimer == 34) cloverAlphaPulse = -0.05;
-			if (cloverAlphaTimer == 7 || cloverAlphaTimer == 33) cloverAlphaPulse = -0.0375;
-			if (cloverAlphaTimer == 8 || cloverAlphaTimer == 32) cloverAlphaPulse = -0.025;
-			if (cloverAlphaTimer == 9 || cloverAlphaTimer == 31) cloverAlphaPulse = -0.0125;
-			if (cloverAlphaTimer == 10 || cloverAlphaTimer == 30) cloverAlphaPulse = -0.00;
-			if (cloverAlphaTimer == 11 || cloverAlphaTimer == 29) cloverAlphaPulse = 0.0125;
-			if (cloverAlphaTimer == 12 || cloverAlphaTimer == 28) cloverAlphaPulse = 0.025;
-			if (cloverAlphaTimer == 13 || cloverAlphaTimer == 27) cloverAlphaPulse = 0.0375;
-			if (cloverAlphaTimer == 14 || cloverAlphaTimer == 26) cloverAlphaPulse = 0.05;
-			if (cloverAlphaTimer == 15 || cloverAlphaTimer == 25) cloverAlphaPulse = 0.0625;
-			if (cloverAlphaTimer == 16 || cloverAlphaTimer == 24) cloverAlphaPulse = 0.075;
-			if (cloverAlphaTimer == 17 || cloverAlphaTimer == 23) cloverAlphaPulse = 0.0875;
-			if (cloverAlphaTimer == 18 || cloverAlphaTimer == 22) cloverAlphaPulse = 0.10;
-			if (cloverAlphaTimer == 19 || cloverAlphaTimer == 21) cloverAlphaPulse = 0.125;
-			if (cloverAlphaTimer == 20) cloverAlphaPulse = 0.1375;
-			cloverAlphaPulse *= 2;
-			double cloveralpha = 1.0;
-			cloveralpha = 0.9 + cloverAlphaPulse;
-			DrawImage("CACLOVER", (20+HPDmgShakeX, (yinc-3)+HPDmgShakeY+ycorrection), 0, cloveralpha, (-1, -1), (0.5, 0.5));
-		}
-		
-		// Show Max Health
-		string MaxHPS = "\c[brick] / ";
-		MaxHPS.AppendFormat("\c[brick]%d", MaxHealthTrue);
-		//DrawString(mKCMFont, MaxHPS, (94, -17), DI_TEXT_ALIGN_LEFT, font.cr_black, 1.00, -1, 4, (1.25, 1.25));
-		DrawString(mKCMFont, MaxHPS, (94+1+HPDmgShakeX, (yinc-16)+1+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, 0.75, -1, 4, (1.25, 1.25));
-		DrawString(mKCMFont, MaxHPS, (94+HPDmgShakeX, (yinc-16)+HPDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, HealthColor, 1.00, -1, 4, (1.25, 1.25));
-		
-		return yinc;
 	}
 	
 	//double, Vector2, int, int, int, int, int, int, int, int, int, double, string, int
@@ -3482,21 +3480,34 @@ class KCStatusBarMain : BaseStatusBar
 			int SlashUnit;
 			int yinc = -1;
 			yinc = A_DrawFSHealth(1.0, yinc);
+			//Console.Printf("yinc [Post-FSHealth]: %d", yinc);
 			
-			/*
 			// Draw PP/MP/HCLR
 			if (MiscItem && 
 					(MiscItem.MaxPsychicPoints > 0 || 
 					 MiscItem.MaxMagicPoints > 0))
 			{
-				yinc -= 20;
-				yinc = A_DrawFSMystical(1.0, yinc);
+				//yinc -= 20;
+				//yinc = A_DrawFSMystical(1.0, yinc);
 			}
-			*/
-
-			yinc -= 20;
-			// Draw Armor [and Time Seraph Armor info]
-			yinc = A_DrawFSArmor(1.0, yinc);
+			
+			name armorclasstype = "KCArmor";
+			let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
+			if (armor != null && armor.Amount > 0) 
+			{
+				// Draw Armor [and Time Seraph Armor info]
+				yinc -= 20;
+				yinc = A_DrawFSArmor(1.0, yinc);
+				//Console.Printf("yinc [Post-FSArmor]: %d", yinc);
+			}
+			
+			if (MiscItem && MiscItem.TimeArmorEnergyMaxTics > 0)
+			{
+				// Draw Armor [Time Seraph Armor]
+				yinc -= 20;
+				yinc = A_DrawTSArmor(1.0, yinc);
+				//Console.Printf("yinc [Post-TSArmor]: %d", yinc);
+			}
 			
 			// Draw Level
 			A_DrawFSLevel(1.0);

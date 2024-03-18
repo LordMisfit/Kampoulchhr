@@ -162,6 +162,7 @@ class PlayerStatItem : Inventory
 	int VitalityCurrHPBoosts2;
 	int MaxHealthLimit;
 	
+	int CurrentPsychicPoints;
 	int MaxPsychicPoints;
 	int MaxPsychicPointsRF;
 	int PPLevelAdd;
@@ -170,6 +171,7 @@ class PlayerStatItem : Inventory
 	int PPBonusAdd;
 	int MaxPPLimit;
 	
+	int CurrentMagicPoints;
 	int MaxMagicPoints;
 	int MaxMagicPointsRF;
 	int MPLevelAdd;
@@ -636,6 +638,8 @@ class PlayerStatItem : Inventory
 								}
 							}
 						}
+						CurrentPsychicPoints = MaxPsychicPoints;
+						CurrentMagicPoints = MaxMagicPoints;
 						if (heiwavhardmodifier) 
 						{
 							PlayerLUCK *= 2.5;
