@@ -2228,6 +2228,84 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	// Kick Force State for Player
+	action void A_ForcePlayState(statelabel fstate = "Kick")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 1/2]");
+		state meleestate = player.FindState(fstate);
+		if (meleestate != null) 
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 2/2]");
+			player.SetState(meleestate);
+		}
+		player.A_SetInventory("PKicking",1);
+	}
+	//
+	action void A_ForcePlayState4(statelabel fstate = "ShieldGuard")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState4 [attempt 1/2]");
+		if (!(player.CountInv("PKicking") || player.CountInv("PPunching")))
+		{
+			state meleestate = player.FindState(fstate);
+			if (meleestate != null) 
+			{
+				if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState4 [attempt 2/2]");
+				player.SetState(meleestate);
+			}
+		}
+	}
+	
+	//
+	action void A_ForcePlayState5(statelabel fstate = "Punch1")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState5 [attempt 1/2]");
+		state meleestate = player.FindState(fstate);
+		if (meleestate != null) 
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState5 [attempt 2/2]");
+			player.SetState(meleestate);
+		}
+		player.A_SetInventory("PPunching",1);
+	}
+	
+	//
+	action void A_ForcePlayStateMelee(statelabel fstate = "Melee")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateMelee [attempt 1/3]");
+		if (!(player.CountInv("PKicking") || player.CountInv("PPunching")))
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateMelee [attempt 2/3]");
+			state meleestate = player.FindState(fstate);
+			if (meleestate != null) 
+			{
+				if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateMelee [attempt 3/3]");
+				player.SetState(meleestate);
+			}
+		}
+	}
+	
+	//
+	action void A_ForcePlayStateRanged(statelabel fstate = "GrimophoneFire")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateRanged [attempt 1/3]");
+		if (!(player.CountInv("PKicking") || 
+					player.CountInv("PPunching")))
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateRanged [attempt 2/3]");
+			state rangestate = player.FindState(fstate);
+			if (rangestate != null) 
+			{
+				if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayStateRanged [attempt 3/3]");
+				player.SetState(rangestate);
+			}
+		}
+	}
+	
 	States
 	{
 		GrandControlLayer: // layer -1000
@@ -2310,20 +2388,6 @@ class MarineWeapon : KCWeaponBase
 		
 		DoReadyWeaponDisableSwitch(player, flags & WRF_DisableSwitch);
 		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
-	}
-	
-	// Kick Force State for Player
-	action void A_ForcePlayState(statelabel fstate = "Kick")
-	{
-		actor player = players[0].mo;
-		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 1/2]");
-		state meleestate = player.FindState(fstate);
-		if (meleestate != null) 
-		{
-			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 2/2]");
-			player.SetState(meleestate);
-		}
-		player.A_SetInventory("PKicking",1);
 	}
 	
 	action void A_KickKiais(int basechance = 128)
@@ -2602,21 +2666,6 @@ class HeiwaWeapon : KCWeaponBase
 		
 		DoReadyWeaponDisableSwitch(player, flags & WRF_DisableSwitch);
 		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
-	}
-	
-	
-	// Kick Force State for Player
-	action void A_ForcePlayState(statelabel fstate = "Kick")
-	{
-		actor player = players[0].mo;
-		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 1/2]");
-		state meleestate = player.FindState(fstate);
-		if (meleestate != null) 
-		{
-			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 2/2]");
-			player.SetState(meleestate);
-		}
-		player.A_SetInventory("PKicking",1);
 	}
 	
 	states

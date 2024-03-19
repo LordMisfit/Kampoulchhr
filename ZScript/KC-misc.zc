@@ -4828,8 +4828,22 @@ class PlayerStatItem : Inventory
 					if (!owner.CountInv("SilentLevelUp"))
 					{
 						string LevelUpMsg = "";
-						if (VitHPMaxGain > 0) LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP, \c[green]+%d Vitality\c[brick]]", PlayerLevel, (HPMaxGain + VitHPMaxGain), (VitHPMaxGain / 15));
-														 else LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d \c[brick][+%d HP]", PlayerLevel, HPMaxGain);
+						LevelUpMsg.AppendFormat("\c[Green]Congradulations, you've reached Level %d", PlayerLevel);
+						if (VitHPMaxGain > 0 || 
+								IQPPMaxGain > 0 || 
+								SensesMPMaxGain > 0 || 
+								HPMaxGain > 0 || 
+								PPMaxGain > 0 || 
+								MPMaxGain > 0) 
+						{
+							LevelUpMsg.AppendFormat("\n\n");
+							if (VitHPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[brick][+%d HP, \c[green]+%d Vitality\c[brick]]", (HPMaxGain + VitHPMaxGain), (VitHPMaxGain / 15));
+															 else LevelUpMsg.AppendFormat("\n\c[brick][+%d HP]", HPMaxGain);
+							if (IQPPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP, \c[purple]+%d IQ\c[purple]]", (PPMaxGain + IQPPMaxGain), (IQPPMaxGain / 5));
+															else LevelUpMsg.AppendFormat("\n\c[purple][+%d PP]", PPMaxGain);
+							if (SensesMPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP, \c[sapphire]+%d Senses\c[blue]]", (MPMaxGain + SensesMPMaxGain), (SensesMPMaxGain / 5));
+																	else LevelUpMsg.AppendFormat("\n\c[blue][+%d MP]", MPMaxGain);
+						}
 						if (kc_extraatkdefspd)
 						{
 							if ((PlayerATK > PrevATK) || 
