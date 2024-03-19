@@ -12,6 +12,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	mixin HUDRecovery;
 	mixin TimerCheck;
+	mixin DynMusicControl;
 
 	double airreplen, airreplentimer;
 	double ArmorEnc, TempArmorEnc;
@@ -1226,6 +1227,7 @@ class KCPlayerPawn : PlayerPawn
 				
 				if (recalleetarg && recalleetarg.bISMONSTER && !recalleetarg.bFRIENDLY)
 				{
+					A_DynamicMusic();
 					A_PrintBold(String.Format("\cfRecalled all allies to your location and gave them a new target!"), frandom(0.685,0.8));
 				}
 				else
@@ -3056,6 +3058,12 @@ class KCPlayerPawn : PlayerPawn
 					source.bFULLVOLACTIVE == false && 
 					source.bFULLVOLDEATH == false &&
 					source.bBOSS == false) isCCardsIllusion = true;
+			if (source.bISMONSTER &&
+					!source.bFRIENDLY &&
+					!isCCardsIllusion &&
+					!(ExplosiveBarrel(source) ||
+						ExplosiveBarrelNew(source) ||
+						Pod(source))) A_DynamicMusic(forcedplay:true);
 		}
 		else
 		if (inflictor)
@@ -3067,6 +3075,12 @@ class KCPlayerPawn : PlayerPawn
 					inflictor.bFULLVOLACTIVE == false && 
 					inflictor.bFULLVOLDEATH == false &&
 					inflictor.bBOSS == false) isCCardsIllusion = true;
+			if (inflictor.bISMONSTER && 
+					!inflictor.bFRIENDLY && 
+					!isCCardsIllusion &&
+					!(ExplosiveBarrel(inflictor) ||
+						ExplosiveBarrelNew(inflictor) ||
+						Pod(inflictor))) A_DynamicMusic(forcedplay:true);
 		}
 		
 		string combatlogmsg = "\c[sapphire]*\c- ";
@@ -3855,9 +3869,19 @@ class KCPlayer : KCPlayerPawn
 			}
 			Loop;
 		Missile:
-			PLAY EEE 4;
+			PLAY E 2;
+			PLAY E 2 
+			{
+				A_DynamicMusic(patktype:0);
+			}
+			PLAY EEEE 2;
 			Goto Spawn;
 		Melee:
+			PLAY F 0 
+			{
+				A_DynamicMusic(patktype:1);
+				if (kcdebug_forcedplayerstates) Console.Printf("Melee [%d]", gametic);
+			}
 			PLAY FF 3 BRIGHT;
 			Goto Missile;
 		Pain:
@@ -4041,9 +4065,18 @@ class HeiwaPlayer : KCPlayerPawn
 			}
 			Loop;
 		Missile:
-			PLAY EEE 4;
+			PLAY E 2;
+			PLAY E 2 
+			{
+				A_DynamicMusic(patktype:0);
+			}
+			PLAY EEEE 2;
 			Goto Spawn;
 		Melee:
+			PLAY F 0 
+			{
+				A_DynamicMusic(patktype:1);
+			}
 			PLAY FF 3 BRIGHT;
 			Goto Missile;
 		Pain:

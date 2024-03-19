@@ -2119,7 +2119,19 @@ class KCWeaponBase : Weapon
 				dmtarget = AimTarget();
 				if (dmtarget)
 				{
+					if (KCCustomGib(dmtarget)) dmtarget == null;
 					if (ShieldPartBase(dmtarget)) dmtarget == null;
+					if (ShieldPart(dmtarget)) dmtarget == null;
+					if (ShieldPartMeleeNoReflect(dmtarget)) dmtarget == null;
+
+					if (SwingShieldPart(dmtarget)) dmtarget == null;
+					if (SwingShieldPartNoReflect(dmtarget)) dmtarget == null;
+					if (ShieldPartMeleeNoReflect(dmtarget)) dmtarget == null;
+					if (ShieldPartMeleeReflect(dmtarget)) dmtarget == null;
+
+					if (KickShieldNoReflect(dmtarget)) dmtarget == null;
+					if (KickShieldReflect(dmtarget)) dmtarget == null;
+
 					if (ExplosiveBarrel(dmtarget)) dmtarget = null;
 					if (ExplosiveBarrel2(dmtarget)) dmtarget = null;
 					if (Pod(dmtarget)) dmtarget = null;
@@ -2300,6 +2312,19 @@ class MarineWeapon : KCWeaponBase
 		if (kcdebug_weaponstatdisplays2) Console.Printf("A_WeaponReady: Flags (final [QuickMelee]) (%s): %d [%d]", GetClassName(), flags, gametic);
 	}
 	
+	// Kick Force State for Player
+	action void A_ForcePlayState(statelabel fstate = "Kick")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 1/2]");
+		state meleestate = player.FindState(fstate);
+		if (meleestate != null) 
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 2/2]");
+			player.SetState(meleestate);
+		}
+		player.A_SetInventory("PKicking",1);
+	}
 	
 	action void A_KickKiais(int basechance = 128)
 	{
@@ -2328,6 +2353,7 @@ class MarineWeapon : KCWeaponBase
 			TNT1 A 0
 			{
 				A_QMWKickInit();
+				A_ForcePlayState("Melee");
 			}
 			goto KickStart;
 		KickStart: // 19
@@ -2579,6 +2605,20 @@ class HeiwaWeapon : KCWeaponBase
 	}
 	
 	
+	// Kick Force State for Player
+	action void A_ForcePlayState(statelabel fstate = "Kick")
+	{
+		actor player = players[0].mo;
+		if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 1/2]");
+		state meleestate = player.FindState(fstate);
+		if (meleestate != null) 
+		{
+			if (kcdebug_forcedplayerstates) Console.Printf("A_ForcePlayState [attempt 2/2]");
+			player.SetState(meleestate);
+		}
+		player.A_SetInventory("PKicking",1);
+	}
+	
 	states
 	{
 		User1:
@@ -2588,7 +2628,11 @@ class HeiwaWeapon : KCWeaponBase
 				return resolvestate("Ready");
 			}
 		Kick:
-			TNT1 A 0 A_QMWKickInit();
+			TNT1 A 0 
+			{
+				A_QMWKickInit();
+				A_ForcePlayState("Melee");
+			}
 			goto KickStart;
 
 		KickStart:
@@ -15044,6 +15088,7 @@ class EvilWarriorShield : MarineWeapon
 			{
 				A_PHellWarShot();
 				//A_ForcePlayState4("ShieldFire");
+				A_ForcePlayState("Missile");
 			}
 			EWS0 A 6 Bright
 			{

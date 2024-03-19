@@ -27,6 +27,54 @@ class CompatVulnItem : PlaceholderItem
 		}
 	}
 	
+	void A_DynamicMusic(int timerset = 200, int matktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
+	{
+		timerset *= kc_dynmustimescale;
+		bool changemusic;
+		actor dmtarget;
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.DynMusSetUsed == 1004) timerset *= 2.0;
+		if (checkres && bFRIENDLY) return;
+		
+		int tempdynmusictype = kc_dynamicmusic;
+		int tutlevelmin = 1801;
+		int tutlevelmax = 1804;
+		if (level.levelnum >= tutlevelmin && level.levelnum <= tutlevelmax) tempdynmusictype = 3;
+		
+		if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [%s]", self.GetClassName());
+		// Uses the mod's own system
+		dmtarget = target;
+		if (kcdebug_dynmusdisplays && tempdynmusictype && dmtarget && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [target: %s]", dmtarget.GetClassName());
+
+		if (dmtarget)
+		{
+			if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [dmtarget: %s]", dmtarget.GetClassName());
+			if (((bFRIENDLY == true || self == player) && dmtarget.bFRIENDLY == false) ||
+					 (bFRIENDLY == false && (dmtarget.bFRIENDLY == true || dmtarget == player))) changemusic = true;
+		}
+		if (matktype == 11) // Suicide Bomber type call
+		{
+			if (dmtarget && Distance3D(dmtarget) > 1024) changemusic = false;
+		}
+		if (forcedplay) changemusic = true;
+		if (tempdynmusictype && changemusic)
+		{
+			if (dmtarget && (dmtarget.bBOSS && !dmtarget.bFRIENDLY) || (!self.bFRIENDLY && self.bBOSS && dmtarget == player)) timerset *= 2.5;
+			if (MiscItem)
+			{
+				if (kc_deathmusic && player.health <= 0)
+				{
+				}
+				else
+				{
+					MiscItem.DynMusActCall = true;
+					if (MiscItem.DynMusFightTimer < timerset) MiscItem.DynMusFightTimer = timerset;
+				}
+			}
+		}
+	}
+	
 	int A_GetPlayerLvl2(int type = 0)
 	{
 		actor player = players[0].mo;

@@ -833,6 +833,153 @@ mixin class DmgCalc
 	}
 }
 
+
+mixin class DynMusicControl
+{
+	bool A_CheckUOHYM1()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("EE-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+
+	void A_DynamicMusic(int timerset = 200, int patktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
+	{
+		timerset *= kc_dynmustimescale;
+		bool changemusic;
+		actor dmtarget;
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.DynMusSetUsed == 1004) timerset *= 2.0;
+		if (checkres && bFRIENDLY) return;
+		
+		if (A_CheckUOHYM1())
+		{
+		}
+		else
+		{
+			int tempdynmusictype = kc_dynamicmusic;
+			int tutlevelmin = 1801;
+			int tutlevelmax = 1804;
+			if (level.levelnum >= tutlevelmin && level.levelnum <= tutlevelmax) tempdynmusictype = 3;
+			
+			if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (playerside) [%s]", self.GetClassName());
+			// Uses the mod's own system
+			KCPlayerPawn playpawn;
+			playpawn = KCPlayerPawn(self);
+			if (playpawn) 
+			{
+				if (AimTarget()) 
+				{
+					dmtarget = AimTarget();
+					if (dmtarget)
+					{
+						if (KCCustomGib(dmtarget)) dmtarget == null;
+						if (ShieldPartBase(dmtarget)) dmtarget == null;
+						if (ShieldPart(dmtarget)) dmtarget == null;
+						if (ShieldPartMeleeNoReflect(dmtarget)) dmtarget == null;
+
+						if (SwingShieldPart(dmtarget)) dmtarget == null;
+						if (SwingShieldPartNoReflect(dmtarget)) dmtarget == null;
+						if (ShieldPartMeleeNoReflect(dmtarget)) dmtarget == null;
+						if (ShieldPartMeleeReflect(dmtarget)) dmtarget == null;
+
+						if (KickShieldNoReflect(dmtarget)) dmtarget == null;
+						if (KickShieldReflect(dmtarget)) dmtarget == null;
+
+						if (ExplosiveBarrel(dmtarget)) dmtarget = null;
+						if (ExplosiveBarrel2(dmtarget)) dmtarget = null;
+						if (Pod(dmtarget)) dmtarget = null;
+						if (ExplosiveBarrelNew(dmtarget)) dmtarget = null;
+						if (dmtarget && !dmtarget.bISMONSTER) dmtarget = null;
+					}
+				}
+				if (dmtarget == null) // No Target, increment actiontimer by 1-3+
+				{
+					double actionmult = frandom(1.75,2.25);
+					if (patktype == -1) // Flower Crown IP
+					{
+						actionmult = frandom(8.75,11.25);
+					}
+					if (patktype == 1) // Melee [state]
+					{
+						if (playpawn.CountInv("PowerStrength") ||
+								playpawn.CountInv("KCPowerStrength")) actionmult = frandom(3.5,4.5);
+																								 else actionmult = frandom(0.875,1.125);
+					}
+					if (patktype == 2) // PreKick [state]
+					{
+						if (playpawn.CountInv("PowerStrength") ||
+								playpawn.CountInv("KCPowerStrength")) actionmult = frandom(10.5,13.5);
+																								 else actionmult = frandom(2.625,3.375);
+					}
+					
+					if (MiscItem.DynMusFightTimer > 0) actionmult *= frandompick(0.875,1.0,1.0,1.125,1.125,1.125,1.25,1.25,1.25,1.25,1.375,1.375,1.375,1.5,1.5,1.625);
+					
+					if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (playerside) [no dmtarget] actionmult: %.4f, [patktype: %d]", actionmult, patktype);
+					if (MiscItem)
+					{
+						MiscItem.playeractiontimer += (randompick(1,2,2,2,2,2,3) * actionmult);
+						if (random(1,4) <= 1) 
+						{
+							MiscItem.playeractiontimer += (randompick(1,2,2,2,2,2,3) * actionmult);
+							if (random(1,16) <= 1) 
+							{
+								MiscItem.playeractiontimer += (randompick(1,2,2,2,2,2,3) * actionmult);
+								if (random(1,64) <= 1) 
+								{
+									MiscItem.playeractiontimer += (randompick(1,2,2,2,2,2,3) * actionmult);
+								}
+							}
+						}
+						// If actiontimer exceeds a random range, force action music to play, ala SiN
+						if (MiscItem.DynMusFightTimer > 0)
+						{
+							if (MiscItem.playeractiontimer > random(7,11)) changemusic = true;
+						}
+						else
+						{
+							if (MiscItem.playeractiontimer > random(14,22)) changemusic = true;
+						}
+					}
+				}
+				
+				if (kcdebug_dynmusdisplays && tempdynmusictype && dmtarget && !forcedplay) Console.Printf("DynMusActionAttempt (playerside) [AimTarget: %s]", dmtarget.GetClassName());
+			}
+			else 
+			{
+				dmtarget = target;
+				if (kcdebug_dynmusdisplays && tempdynmusictype && dmtarget && !forcedplay) Console.Printf("DynMusActionAttempt (playerside) [target: %s]", dmtarget.GetClassName());
+			}
+
+			if (dmtarget)
+			{
+				if (kcdebug_dynmusdisplays && tempdynmusictype) Console.Printf("DynMusActionAttempt (playerside) [dmtarget: %s]", dmtarget.GetClassName());
+				if (((bFRIENDLY == true || self == player) && dmtarget.bFRIENDLY == false) ||
+						 (bFRIENDLY == false && (dmtarget.bFRIENDLY == true || dmtarget == player))) changemusic = true;
+			}
+			if (forcedplay) changemusic = true;
+			if (tempdynmusictype && changemusic)
+			{
+				if (dmtarget && (dmtarget.bBOSS && !dmtarget.bFRIENDLY) || (!self.bFRIENDLY && self.bBOSS && dmtarget == player)) timerset *= 2.5;
+				if (MiscItem)
+				{
+					MiscItem.playeractiontimer = 0;
+					MiscItem.playeractiontimerfrag = 0;
+					if (kc_deathmusic && player.health <= 0)
+					{
+					}
+					else
+					{
+						MiscItem.DynMusActCall = true;
+						if (MiscItem.DynMusFightTimer < timerset) MiscItem.DynMusFightTimer = timerset;
+					}
+				}
+			}
+		}
+	}
+}
+
 mixin class MonsterCollider
 {
 	int targetdummyhitcooldown;

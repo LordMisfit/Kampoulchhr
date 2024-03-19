@@ -5,6 +5,15 @@ OptionValue "DebugShieldParts"
 	2, "Show Melee Shield Ghosts"
 	3, "Show Melee Shield Ghosts [Weapons]"
 }
+
+OptionValue "DynamicMusicOpt"
+{
+	0, "Off [DEFAULT]"
+	1, "On (idle/fight pairs) [incomplete]"
+	2, "On (random fight music only)"
+	3, "On (random idle/fight pairs)"
+}
+
 OptionValue "OTHER_DeathMusic"
 {
 	0, "None [DEFAULT]"
@@ -164,6 +173,9 @@ OptionMenu "KC-GeneralMenu1"
 	IfGame(Strife) { Position -88 }
 	
 	KCTextfield "Time Freeze Projectile Disperse Range",		"This determines [in map units] the range projectiles will disperse from their origin point before coming to a stop while you have time frozen. This option is not cheaty to alter-mid game, as it is best to change it for better planning of time freeze projectile barrages with certain variants of time freeze. Default: 32 [map units]",		"kc_tfprojdisrange"
+	StaticText " "
+	KCOption "Enable Dynamic Music",		"A concept ported from the Dynamite Duchess games with some SiN-equse tweaks. Mode 1 uses pairs of music for idle/calm and fights/action music. Mode 2 keeps the main level music for calm/idle times, but starts a random fight theme on battle trigger transition. Mode 3 works similar to Mode 1, but the pairs of tracks are not set on the map, but randomized occasionally, making it a hybrid of Modes 1 & 2. Default: Off",		"kc_dynamicmusic",			"DynamicMusicOpt"
+	KCTextfield "Dynamic Music Length Scale [x]",		"Multiplier for how much time in tics that dynamic music runs when fight music is triggered. Default: 1x",		"kc_dynmustimescale"
 	StaticText " "
 	KCOption "Flight/Swim Dash Directions",		"Allows for vertical direction dashing when flying/swimming. Experimental at the moment. Default: Yes",		"kc_flightswimpitchdash",			"YesNo_DefaultYes"
 	KCOption "Double-tap dashing", 		"If [On], you can double tap movement keys quickly to dash ahead. Turn off if this type of dashing is obstructive/annoying. An alternative method to dash is to press a direction/or strafe and press <Weapon State 3>.",		"kc_doubledash",				"OnOff_DefaultOff"
