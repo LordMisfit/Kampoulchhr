@@ -16,6 +16,7 @@ class PlayerStatItem : Inventory
 	// 3 - ??????
 	// 4 - ??????
 	
+	int fighttimermod;
 	bool heiwavhardmodifier;
 	double spbkpkarmorbonus, spbkpkmedibigbonus;
 	double tracerheight;
@@ -443,6 +444,7 @@ class PlayerStatItem : Inventory
 				}
 				else if (medbag) medbag.Destroy();
 				
+				if (!fighttimermod) fighttimermod = randompick(4,8,8,16,16,16,16,16);
 				
 				// Mode Check
 				ClassicDoomType = gameinfo.gametype; // 0 = Unknown, 1 = Doom [any], 2 = Heretic, 4 = Hexen, 8 = Strife
@@ -5573,8 +5575,8 @@ class PlayerStatItem : Inventory
 						}
 						if (kcdebug_dynmusdisplays) 
 						{
-							if (tempdynmusictype == 2) Console.Printf("\c[sapphire]CalmTimer: %d \c[fire](FightTimer: %d)\c-, \c[green]RNG#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusCalmTimer, DynMusFightTimer, randmusroll, playeractiontimer, playeractiontimerfrag);
-																		else Console.Printf("\c[sapphire]CalmTimer: %d \c[fire](FightTimer: %d)\c-, \c[green]Set#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-, snglen: %d", DynMusCalmTimer, DynMusFightTimer, DynMusSetUsed, playeractiontimer, playeractiontimerfrag, snglen);
+							if (tempdynmusictype == 2) Console.Printf("\c[sapphire]CalmTimer: %d \c[fire](FightTimer: %d (mod: %d))\c-, \c[green]RNG#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusCalmTimer, DynMusFightTimer, fighttimermod, randmusroll, playeractiontimer, playeractiontimerfrag);
+																		else Console.Printf("\c[sapphire]CalmTimer: %d \c[fire](FightTimer: %d (mod: %d))\c-, \c[green]Set#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-, snglen: %d", DynMusCalmTimer, DynMusFightTimer, fighttimermod, DynMusSetUsed, playeractiontimer, playeractiontimerfrag, snglen);
 						}
 					}
 					else
@@ -5719,11 +5721,23 @@ class PlayerStatItem : Inventory
 							}
 							DynMusActCall = false;
 						}
-						DynMusFightTimer--;
+						
+						if (A_CheckTimeFreeze())
+						{
+							if (level.time % fighttimermod == 0) 
+							{
+								DynMusFightTimer--;
+								fighttimermod = randompick(4,8,8,16,16,16,16,16);
+							}
+						}
+						else
+						{
+							DynMusFightTimer--;
+						}
 						if (kcdebug_dynmusdisplays) 
 						{
-							if (tempdynmusictype == 2) Console.Printf("\c[fire]FightTimer: %d \c[sapphire](CalmTimer: %d)\c-, \c[green]RNG#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusFightTimer, DynMusCalmTimer, randmusroll, playeractiontimer, playeractiontimerfrag);
-																		else Console.Printf("\c[fire]FightTimer: %d \c[sapphire](CalmTimer: %d)\c-, \c[green]Set#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusFightTimer, DynMusCalmTimer, DynMusSetUsed, playeractiontimer, playeractiontimerfrag);
+							if (tempdynmusictype == 2) Console.Printf("\c[fire]FightTimer: %d (mod: %d) \c[sapphire](CalmTimer: %d)\c-, \c[green]RNG#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusFightTimer, fighttimermod, DynMusCalmTimer, randmusroll, playeractiontimer, playeractiontimerfrag);
+																		else Console.Printf("\c[fire]FightTimer: %d (mod: %d) \c[sapphire](CalmTimer: %d)\c-, \c[green]Set#: %d\c-, \c[orange]acttimer: %d\c-, \c[yellow]acttimerfrag: %d / 20\c-", DynMusFightTimer, fighttimermod, DynMusCalmTimer, DynMusSetUsed, playeractiontimer, playeractiontimerfrag);
 						}
 						if (DynMusFightTimer <= 0) 
 						{
