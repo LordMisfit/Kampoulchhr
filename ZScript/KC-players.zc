@@ -1247,76 +1247,79 @@ class KCPlayerPawn : PlayerPawn
 		//****************************************************
 		//*Flicker the Player when they survive a mortal hit *
 		//****************************************************
-		if (self.health == 1 && 
-				(player.cheats & CF_BUDDHA || player.cheats & CF_BUDDHA2) 
-				&& lasthealth > 1 &&
-				!self.cursector.Flags & 512)
+		if (self.cursector.Flags & 512) { } // E1M8-Style End Level Sector Special Won't Try to trigger Buddha effects
+		else
 		{
-			let SurviveItem = GiveTempMortalSurvive(FindInventory("GiveTempMortalSurvive"));
-			if (SurviveItem) 
+			if (self.health == 1 && 
+					(player.cheats & CF_BUDDHA || player.cheats & CF_BUDDHA2) 
+					&& lasthealth > 1)
 			{
-				SurviveItem.times++;
-				//Console.Printf("%d", SurviveItem.times);
-			}
-			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
-			if (MiscItem)
-			{
-				MiscItem.MercyInvulnOn = true;
-				MiscItem.MercyInvulnTimer = 1210; // 1.5 Seconds
-				if (A_CheckForHeiwa()) MiscItem.MercyInvulnTimer += int(ActualLevel * 24.375);
-													else MiscItem.MercyInvulnTimer += int(ActualLevel * 18.25);
-				
-				if (MiscItem.sielsgraceactive) 
+				let SurviveItem = GiveTempMortalSurvive(FindInventory("GiveTempMortalSurvive"));
+				if (SurviveItem) 
 				{
-					double sgtimer;
-					double sgvol = frandom(0.75,1.0);
-					A_StopSound(1280);
-					A_StopSound(1281);
-					A_StopSound(1282);
-					A_StopSound(1283);
-					A_StopSound(1284);
-					A_StartSound("sielsgrace0",1280,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
-					sgvol = 1.5;
-					if (MiscItem.sielsgraceactivations % 4 == 0) 
+					SurviveItem.times++;
+					//Console.Printf("%d", SurviveItem.times);
+				}
+				let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+				if (MiscItem)
+				{
+					MiscItem.MercyInvulnOn = true;
+					MiscItem.MercyInvulnTimer = 1210; // 1.5 Seconds
+					if (A_CheckForHeiwa()) MiscItem.MercyInvulnTimer += int(ActualLevel * 24.375);
+														else MiscItem.MercyInvulnTimer += int(ActualLevel * 18.25);
+					
+					if (MiscItem.sielsgraceactive) 
 					{
-						sgtimer = 4.376;
-						A_StartSound("sielsgrace1",1281,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						double sgtimer;
+						double sgvol = frandom(0.75,1.0);
+						A_StopSound(1280);
+						A_StopSound(1281);
+						A_StopSound(1282);
+						A_StopSound(1283);
+						A_StopSound(1284);
+						A_StartSound("sielsgrace0",1280,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						sgvol = 1.5;
+						if (MiscItem.sielsgraceactivations % 4 == 0) 
+						{
+							sgtimer = 4.376;
+							A_StartSound("sielsgrace1",1281,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						}
+						if (MiscItem.sielsgraceactivations % 4 == 1) 
+						{
+							sgtimer = 3.733;
+							A_StartSound("sielsgrace2",1282,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						}
+						if (MiscItem.sielsgraceactivations % 4 == 2) 
+						{
+							sgtimer = 3.812;
+							A_StartSound("sielsgrace3",1283,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						}
+						if (MiscItem.sielsgraceactivations % 4 == 3) 
+						{
+							sgtimer = 2.669;
+							A_StartSound("sielsgrace4",1284,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						}
+						
+						MiscItem.MercyInvulnTimer += (sgtimer * (TICRATE * 20));
+						if (kcdebug_survivalrate) Console.Printf("MiscItem.MercyInvulnTimer: %d", MiscItem.MercyInvulnTimer);
+						MiscItem.sielsgraceactive = 0;
+						MiscItem.MercyInvulnOnSiel = true;
+						int sgrestore = (MiscItem.MaxHealthTrue * (frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0)));
+						player.health = player.mo.health = sgrestore;
+						double fadetime = int(((TICRATE*frandom(0.8334,1.1667)) * sgtimer));
+						A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
+						MiscItem.sielsgraceactivations += 1;
+						A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
+						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
 					}
-					if (MiscItem.sielsgraceactivations % 4 == 1) 
+					else
 					{
-						sgtimer = 3.733;
-						A_StartSound("sielsgrace2",1282,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
-					}
-					if (MiscItem.sielsgraceactivations % 4 == 2) 
-					{
-						sgtimer = 3.812;
-						A_StartSound("sielsgrace3",1283,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
-					}
-					if (MiscItem.sielsgraceactivations % 4 == 3) 
-					{
-						sgtimer = 2.669;
-						A_StartSound("sielsgrace4",1284,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
+						player.health = player.mo.health = 1;
 					}
 					
-					MiscItem.MercyInvulnTimer += (sgtimer * (TICRATE * 20));
-					if (kcdebug_survivalrate) Console.Printf("MiscItem.MercyInvulnTimer: %d", MiscItem.MercyInvulnTimer);
-					MiscItem.sielsgraceactive = 0;
-					MiscItem.MercyInvulnOnSiel = true;
-					int sgrestore = (MiscItem.MaxHealthTrue * (frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0)));
-					player.health = player.mo.health = sgrestore;
-					double fadetime = int(((TICRATE*frandom(0.8334,1.1667)) * sgtimer));
-					A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
-					MiscItem.sielsgraceactivations += 1;
-					A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
-					if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
-				}
-				else
-				{
-					player.health = player.mo.health = 1;
-				}
-				
-				if (player.cheats & CF_BUDDHA)
-				{
+					if (player.cheats & CF_BUDDHA)
+					{
+					}
 				}
 			}
 		}

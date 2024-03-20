@@ -2085,30 +2085,34 @@ class PlayerStatItem : Inventory
 				if (A_CheckTimeFreeze()) SurvivalRate = 20000;
 			}
 			if (owner.CountInv("GiveTempMortalSurvive")) SurvivalRate = 20000;
-			int SurviveRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
-			if (SurviveRNGVal <= SurvivalRate)
-			{
-				owner.player.cheats |= CF_BUDDHA;
-			}
+			if (owner.cursector.Flags & 512) { } // E1M8-Style End Level Sector Special Won't Try to trigger Buddha effects
 			else
 			{
-				owner.player.cheats &= ~CF_BUDDHA;
-				if (A_CheckForHeiwa() && sielsgraceactive > 0) 
+				int SurviveRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
+				if (SurviveRNGVal <= SurvivalRate)
 				{
-					if (sielsgraceactivations < 4) owner.player.cheats |= CF_BUDDHA;
-				}
-			}
-
-			if (kcdebug_survivalrate)
-			{
-				if (A_CheckForHeiwa() && sielsgraceactive > 0)
-				{
-					Console.Printf("    \cdSurvival Rate [Siel's Grace Active: %d (used: %d)] \cx[cheatbits: %d]", sielsgraceactive, sielsgraceactivations, owner.player.cheats);
+					owner.player.cheats |= CF_BUDDHA;
 				}
 				else
 				{
-					if (SurviveRNGVal <= SurvivalRate) Console.Printf("    \cdSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
-																				else Console.Printf("    \cgSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+					owner.player.cheats &= ~CF_BUDDHA;
+					if (A_CheckForHeiwa() && sielsgraceactive > 0) 
+					{
+						if (sielsgraceactivations < 4) owner.player.cheats |= CF_BUDDHA;
+					}
+				}
+	
+				if (kcdebug_survivalrate)
+				{
+					if (A_CheckForHeiwa() && sielsgraceactive > 0)
+					{
+						Console.Printf("    \cdSurvival Rate [Siel's Grace Active: %d (used: %d)] \cx[cheatbits: %d]", sielsgraceactive, sielsgraceactivations, owner.player.cheats);
+					}
+					else
+					{
+						if (SurviveRNGVal <= SurvivalRate) Console.Printf("    \cdSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+																					else Console.Printf("    \cgSurvival Rate % Roll / Rate: %d / %d, \cx[cheatbits: %d]", SurviveRNGVal, SurvivalRate, owner.player.cheats);
+					}
 				}
 			}
 		}
