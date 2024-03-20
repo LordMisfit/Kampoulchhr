@@ -1250,7 +1250,7 @@ class KCPlayerPawn : PlayerPawn
 		if (self.health == 1 && 
 				(player.cheats & CF_BUDDHA || player.cheats & CF_BUDDHA2) 
 				&& lasthealth > 1 &&
-				self.cursector.Flags & 512)
+				!self.cursector.Flags & 512)
 		{
 			let SurviveItem = GiveTempMortalSurvive(FindInventory("GiveTempMortalSurvive"));
 			if (SurviveItem) 
