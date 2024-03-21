@@ -1526,6 +1526,10 @@ mixin class MonsterCollider
 			// Plasma Ignores 1/4th of "normal" damagefactor
 			if (mod == 'Plasma') 
 			{ 
+				if (infl == "PistolBlastWeak") PlasmaFactor = frandom(0.18,0.22);
+				if (infl == "PistolBlast") PlasmaFactor = frandom(0.28125,0.34375);
+				if (infl == "Blaster_RifleShot") PlasmaFactor = frandom(0.3375,0.4125);
+				if (infl == "Blaster_RifleShotRipper") PlasmaFactor = frandom(0.45,0.55);
 				ActorDefenseIgnoreFactor += (PlasmaFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			double BulletFactor = frandom(0.1125,0.1375);

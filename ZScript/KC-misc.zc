@@ -20,7 +20,7 @@ class PlayerStatItem : Inventory
 	bool heiwavhardmodifier;
 	double spbkpkarmorbonus, spbkpkmedibigbonus;
 	double tracerheight;
-	int darmortype;
+	int darmortype, darmortype2;
 	int IsMorphed, WasMorphed, WasMorphProj;
 	int MorphTimer;
 	int EvasionRate;
@@ -2352,31 +2352,34 @@ class PlayerStatItem : Inventory
 			double Base = 0.08;
 			double BaseMulti = 0.0002;
 			darmortype = 0;
+			darmortype2 = 0;
 			let armor = owner.FindInventory("KCArmor");
 			if (armor)
 			{
+				textureid icon = armor.icon;
+				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) 
+				{
+					darmortype = 1;
+					darmortype2 = 1;
+				}
+				else
+				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
+						icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch))
+				{
+					darmortype = 2;
+					darmortype2 = 2;
+				}
 				if (owner.CountInv("TSArmorTier1") || 
 						owner.CountInv("TSArmorTier2"))
 				{
 					darmortype = 0;
 				}
-				else
-				{
-					textureid icon = armor.icon;
-					if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
-							icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
-							icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
-							icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) 
-					{
-						darmortype = 1;
-					}
-					else
-					if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
-							icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch))
-					{
-						darmortype = 2;
-					}
 					
+				if (darmortype > 0)
+				{
 					if (darmortype == 2)
 					{
 						Base *= 2.0;
@@ -4322,6 +4325,7 @@ class PlayerStatItem : Inventory
 				}
 			}
 			if (heiwavhardmodifier) PPMaxGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
+			if (PPMaxGain < 1) PPMaxGain = 1;
 			CurrentPsychicPoints += PPMaxGain;
 			PPLevelAdd += PPMaxGain;
 			if (type == 1) 
@@ -4466,6 +4470,7 @@ class PlayerStatItem : Inventory
 				}
 			}
 			if (heiwavhardmodifier) MPMaxGain *= frandompick(1.25,1.5,1.5,1.5,1.5,1.75);
+			if (MPMaxGain < 1) MPMaxGain = 1;
 			CurrentMagicPoints += MPMaxGain;
 			MPLevelAdd += MPMaxGain;
 			if (type == 1) 
@@ -4843,12 +4848,12 @@ class PlayerStatItem : Inventory
 								MPMaxGain > 0) 
 						{
 							LevelUpMsg.AppendFormat("\n\n");
-							if (VitHPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[brick][+%d HP, \c[green]+%d Vitality\c[brick]]", (HPMaxGain + VitHPMaxGain), (VitHPMaxGain / 15));
-															 else LevelUpMsg.AppendFormat("\n\c[brick][+%d HP]", HPMaxGain);
-							if (IQPPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP, \c[purple]+%d IQ\c[purple]]", (PPMaxGain + IQPPMaxGain), (IQPPMaxGain / 5));
-															else LevelUpMsg.AppendFormat("\n\c[purple][+%d PP]", PPMaxGain);
-							if (SensesMPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP, \c[sapphire]+%d Senses\c[blue]]", (MPMaxGain + SensesMPMaxGain), (SensesMPMaxGain / 5));
-																	else LevelUpMsg.AppendFormat("\n\c[blue][+%d MP]", MPMaxGain);
+								if (VitHPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[brick][+%d HP, \c[green]+%d Vitality\c[brick]]", (HPMaxGain + VitHPMaxGain), (VitHPMaxGain / 15));
+							else if (HPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[brick][+%d HP]", HPMaxGain);
+								 if (IQPPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP, \c[purple]+%d IQ\c[purple]]", (PPMaxGain + IQPPMaxGain), (IQPPMaxGain / 5));
+							else if (PPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP]", PPMaxGain);
+									 if (SensesMPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP, \c[sapphire]+%d Senses\c[blue]]", (MPMaxGain + SensesMPMaxGain), (SensesMPMaxGain / 5));
+							else if (MPMaxGain > 0)  LevelUpMsg.AppendFormat("\n\c[blue][+%d MP]", MPMaxGain);
 						}
 						if (kc_extraatkdefspd)
 						{

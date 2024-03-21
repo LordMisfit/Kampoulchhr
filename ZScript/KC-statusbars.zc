@@ -1555,21 +1555,9 @@ class KCStatusBarMain : BaseStatusBar
 		if (armor != null && armor.Amount > 0)
 		{
 			//Console.Printf("armortype: %s", armor.GetClassName());
-			textureid icon = armor.icon;
-			if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
-					icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
-					icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
-					icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) 
-			{
-				hudarmortype = 1;
-				fontclr = font.cr_green;
-			}
-			if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
-					icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch))
-			{
-				hudarmortype = 2;
-				fontclr = font.cr_lightblue;
-			}
+			if (MiscItem) hudarmortype = MiscItem.darmortype2;
+			if (hudarmortype == 1) fontclr = font.cr_green;
+			if (hudarmortype == 2) fontclr = font.cr_lightblue;
 			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))
 			{
 				fontalpha = 0.25;

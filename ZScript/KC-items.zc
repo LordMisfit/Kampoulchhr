@@ -2731,8 +2731,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (MiscItem.darmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.darmortype2 >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
 				}
 			}
 			Loop;
@@ -2934,8 +2934,8 @@ class ArmorBonusBig : ArmorBonus2
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (MiscItem.darmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.darmortype2 >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
 				}
 			}
 			Loop;
