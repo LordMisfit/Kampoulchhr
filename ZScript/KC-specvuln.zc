@@ -237,6 +237,7 @@ class CompatVulnItem : PlaceholderItem
 			// Bullet/Pellet
 			if (mod == 'Bullet') 
 			{ 
+				if (infl == "KCTommyGunTracer" && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor = frandom(0.225,0.275);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 

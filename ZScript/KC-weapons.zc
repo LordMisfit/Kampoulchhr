@@ -7297,7 +7297,7 @@ class TommyGun : MarineWeapon
 			double origang = playera.angle;
 			double randpitch = shotpitch;
 			double randangle = shotangle;
-			[BombShotsB, BombShots] = A_FireProjectile("KCBulletTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			[BombShotsB, BombShots] = A_FireProjectile("KCTommyGunTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.05,0.1));
 		}
 	}
