@@ -4664,3 +4664,36 @@ class TommyGunModpack : CustomInventoryExt
 			Stop;
 	}
 }
+
+class BlasterRifleModpack : CustomInventoryExt
+{
+	default
+	{
+		-COUNTITEM;
+		+INVENTORY.BIGPOWERUP;
+		+DONTGIB;
+		Scale 0.25;
+		Tag "Blaster Rifle Modpack";
+		Inventory.InterHubAmount 0;
+		Inventory.MaxAmount 0;
+		Inventory.Icon "BMMDA0";
+		Inventory.Pickupsound "misc/modpackpickup";
+		Inventory.PickupMessage "You picked up a Blaster Rifle Mod Pack.";
+	}
+	States
+	{
+		Spawn:
+			BMMD ABCDCB 3 Bright;
+			Loop;
+		SpawnLetter:
+			BMMD E 5 Bright;
+			Goto Spawn;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("BlasterRifleUpgrade",1);
+			}
+			Stop;
+	}
+}

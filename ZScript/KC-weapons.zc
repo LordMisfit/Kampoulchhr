@@ -7245,6 +7245,7 @@ class DualTommyGunPickup : CustomInventoryExt
 // Tommy Gun
 class TommyGun : MarineWeapon
 {
+	bool modpackspawnattempt;
 	bool shoot;
 	default
 	{
@@ -7409,17 +7410,39 @@ class TommyGun : MarineWeapon
 		Idle:
 			TOMM A 4
 			{
+				int chance = 128;
+				if (bDROPPED) chance = 512;
 				let globalvars = KCGlobalVariables.Get();
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("TommyGun")) 
 				{
-					if (!playera.CountInv("DualTommyGuns"))
+					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
 					{
-						A_SpawnItemEx("DualTommyGunPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-						A_Destroy();
+						if (!playera.CountInv("TommyGunModPack"))
+						{
+							A_SpawnItemEx("TommyGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							A_Destroy();
+						}
+						else
+						{
+							if (!playera.CountInv("DualTommyGuns"))
+							{
+								A_SpawnItemEx("DualTommyGunPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								A_Destroy();
+							}
+						}
+					}
+					else
+					{
+						if (!playera.CountInv("DualTommyGuns"))
+						{
+							A_SpawnItemEx("DualTommyGunPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							A_Destroy();
+						}
 					}
 				}
+				invoker.modpackspawnattempt = true;
 			}
 			Loop;
 		
@@ -14717,6 +14740,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 	int shotcount;
 	int freeshot;
 	int flashspeed, altflashspeed;
+	bool modpackspawnattempt;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -14919,6 +14943,27 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 			}
 			Goto LightDone;
 		Spawn:
+			E11B A 4
+			{
+				int chance = 128;
+				if (bDROPPED) chance = 512;
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("BlasterRifle")) 
+				{
+					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					{
+						if (!playera.CountInv("BlasterRifleModPack"))
+						{
+							A_SpawnItemEx("BlasterRifleModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							A_Destroy();
+						}
+					}
+				}
+				invoker.modpackspawnattempt = true;
+			}
+		Idle:
 			E11B A -1;
 			Stop;
 	}
