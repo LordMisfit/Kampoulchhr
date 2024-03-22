@@ -4631,3 +4631,36 @@ class MediBag : CustomInventoryExt
 			Fail;
 	}
 }
+
+class TommyGunModpack : CustomInventoryExt
+{
+	default
+	{
+		-COUNTITEM;
+		+INVENTORY.BIGPOWERUP;
+		+DONTGIB;
+		Scale 0.25;
+		Tag "Tommy Gun Modpack";
+		Inventory.InterHubAmount 0;
+		Inventory.MaxAmount 0;
+		Inventory.Icon "TMMDA0";
+		Inventory.Pickupsound "misc/modpackpickup";
+		Inventory.PickupMessage "You picked up a Tommy Gun Mod Pack.";
+	}
+	States
+	{
+		Spawn:
+			TMMD ABCDCB 3 Bright;
+			Loop;
+		SpawnLetter:
+			TMMD E 5 Bright;
+			Goto Spawn;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("TommyGunUpgrade",1);
+			}
+			Stop;
+	}
+}
