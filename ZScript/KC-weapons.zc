@@ -15075,9 +15075,9 @@ class PikeAmmo : Ammo
 	{
 		//$Category EE Ammo
 		Inventory.Amount 1; // 2
-		Inventory.MaxAmount 12; // 10
+		Inventory.MaxAmount 10; // 10
 		Ammo.BackpackAmount 1; // 2
-		Ammo.BackpackMaxAmount 18;
+		Ammo.BackpackMaxAmount 20;
 		Scale 1;
 		Inventory.Icon "SCPAI0";
 		Inventory.PickupMessage "A strange pint of Devil's Food";
@@ -15090,6 +15090,31 @@ class PikeAmmo : Ammo
 	{
 		Spawn:
 			SCPA ABC 6 Bright;
+			Loop;
+	}
+}
+
+
+class PikeAmmoBig : PikeAmmo
+{
+	default
+	{
+		//$Category EE Ammo
+		Inventory.Amount 3; // 2
+		Inventory.MaxAmount 10; // 10
+		Ammo.BackpackAmount 3; // 2
+		Ammo.BackpackMaxAmount 20;
+		Scale 1;
+		Inventory.Icon "SCPAD0";
+		Inventory.PickupMessage "Many pints of Devil's Food!";
+		Inventory.PickupSound "pickup/pikeammo";
+		+FLOATBOB
+	}
+	
+	States
+	{
+		Spawn:
+			SCPA DEF 6 Bright;
 			Loop;
 	}
 }
