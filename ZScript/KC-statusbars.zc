@@ -1246,6 +1246,21 @@ class KCStatusBarMain : BaseStatusBar
 					DrawString(mKCLFont, FormatNumber(upgrades, 1), (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, font.cr_gray, FontAlpha, FontWrapWidth, FontLineSpace, FontScale);
 				}
 			}
+			temp = "BHGen";
+			if (PlayerWeapon is temp)
+			{
+				let BHLGen = BHGen(CPlayerPawn.FindInventory("BHGen"));
+				if (BHLGen)
+				{
+					int jx, jy;
+					jx = -30;
+					jy = -82; // -76;
+					textureid blimg;
+					if (BHLGen.altshottype >= 1) blimg = TexMan.CheckForTexture("BHGSMLHL", TexMan.TYPE_MiscPatch);
+																	else blimg = TexMan.CheckForTexture("BHGHGEHL", TexMan.TYPE_MiscPatch);
+					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
+				}
+			}
 			//GLKPENTR
 			
 			if (ammo1.maxamount > 0)
