@@ -14,7 +14,10 @@ class KCWeaponBase : Weapon
 	mixin InvWeaponShare;
 	mixin ActorStateReplace;
 	mixin HUDRecovery;
-
+	
+	int shottype;
+	int altshottype;
+	
 	int temp1;
 	int tommybarrageno;
 	int tauntyell;
@@ -2304,6 +2307,55 @@ class KCWeaponBase : Weapon
 				player.SetState(rangestate);
 			}
 		}
+	}
+	
+	action void A_BlasterPistolShot()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string shotname = "PistolBlast";
+		double shotangle = 0.0;
+		double shotpitch = 0.0;
+		double shotheight = 3;
+		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
+		{
+			shotname = "PistolBlastWeak";
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
+		}
+		else
+		{
+			shotname = "PistolBlast";
+			A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
+		}
+		
+		if (invoker.shottype >= 1)
+		{
+			double spreadfactor = 1.0;
+			if (A_CheckForHeiwa() && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
+				if (spreadfactor < 0.334) spreadfactor = 0.334;
+			}
+			A_SetTics(1);
+			shotangle = (3.0 * spreadfactor);
+			shotpitch = (3.0 * spreadfactor);
+			shotheight = (frandom(-2.25,2.25) * spreadfactor);
+			if (A_CheckForHeiwa() && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
+				if (spreadfactor < 0.1667) spreadfactor = 0.1667;
+			}
+			A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
+		}
+		else
+		{
+			shotangle = 0.0;
+			shotpitch = 0.0;
+			shotheight = 0;
+		}
+		//Console.Printf("invoker.shottype: %d", invoker.shottype);
+		A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
 	}
 	
 	States
@@ -10448,7 +10500,6 @@ class BoltsLarge : Bolts
 
 class BHGen : MarineWeapon
 {
-	int altshottype;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -11910,8 +11961,20 @@ Class Translocator : MarineWeapon
 	States
 	{
 		Spawn:
-			VTLP A -1;
-			Stop;
+			VTLP A 35
+			{
+				if (CountInv("Translocator") > 0)
+				{
+					bool spawned;
+					actor mo;
+					
+					// Main Ammo Drop [transfer TIDs to maintain script pickups :V ]
+					[spawned, mo] = A_SpawnItemEx("ChainsawSpawner",flags:SXF_NOCHECKPOSITION,tid:tid);
+					if (mo) { mo.bDROPPED = bDROPPED; }
+				}
+			}
+			loop;
+			
 		Ready:
 			VTLW D 1 A_WeaponReady();
 			Loop;
@@ -13187,8 +13250,6 @@ Class BlasterPistol : MarineWeapon
 {
 	//$Category Weapons
 	//$Title "Blaster Pistol"
-	int shottype;
-	int altshottype;
 	
 	Default
 	{
@@ -13215,55 +13276,6 @@ Class BlasterPistol : MarineWeapon
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
 		Inventory.RestrictedTo "HeiwaPlayer";
-	}
-	
-	action void A_BlasterPistolShot()
-	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		string shotname = "PistolBlast";
-		double shotangle = 0.0;
-		double shotpitch = 0.0;
-		double shotheight = 3;
-		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
-		{
-			shotname = "PistolBlastWeak";
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
-		}
-		else
-		{
-			shotname = "PistolBlast";
-			A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
-		}
-		
-		if (invoker.shottype >= 1)
-		{
-			double spreadfactor = 1.0;
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
-				if (spreadfactor < 0.334) spreadfactor = 0.334;
-			}
-			A_SetTics(1);
-			shotangle = (3.0 * spreadfactor);
-			shotpitch = (3.0 * spreadfactor);
-			shotheight = (frandom(-2.25,2.25) * spreadfactor);
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
-				if (spreadfactor < 0.1667) spreadfactor = 0.1667;
-			}
-			A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
-		}
-		else
-		{
-			shotangle = 0.0;
-			shotpitch = 0.0;
-			shotheight = 0;
-		}
-		//Console.Printf("invoker.shottype: %d", invoker.shottype);
-		A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
 	}
 	
 	States
@@ -13344,11 +13356,8 @@ Class BlasterPistol : MarineWeapon
 	}
 }
 
-
 Class BlasterPistols : MarineWeapon
 {
-	int shottype;
-	int altshottype;
 	//$Title "Blaster Pistol x2"
 
 	Default
@@ -13377,55 +13386,6 @@ Class BlasterPistols : MarineWeapon
 		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
 		Inventory.RestrictedTo "HeiwaPlayer";
-	}
-	
-	action void A_BlasterPistolShot()
-	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		string shotname = "PistolBlast";
-		double shotangle = 0.0;
-		double shotpitch = 0.0;
-		double shotheight = 3;
-		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
-		{
-			shotname = "PistolBlastWeak";
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
-		}
-		else
-		{
-			shotname = "PistolBlast";
-			A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
-		}
-		
-		if (invoker.shottype >= 1)
-		{
-			double spreadfactor = 1.0;
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
-				if (spreadfactor < 0.334) spreadfactor = 0.334;
-			}
-			A_SetTics(1);
-			shotangle = (3.0 * spreadfactor);
-			shotpitch = (3.0 * spreadfactor);
-			shotheight = (frandom(-2.25,2.25) * spreadfactor);
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
-				if (spreadfactor < 0.1667) spreadfactor = 0.1667;
-			}
-			A_Recoil((frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor));
-		}
-		else
-		{
-			shotangle = 0.0;
-			shotpitch = 0.0;
-			shotheight = 0;
-		}
-		//Console.Printf("invoker.shottype: %d", invoker.shottype);
-		A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
 	}
 	
 	States
