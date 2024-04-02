@@ -497,6 +497,9 @@ mixin class StunItems
 
 mixin class DmgCalc
 {
+	const DoomGuySTRLVLMult = 0.75;
+	const HeiwaSTRLVLMult = 0.25;
+
 	action bool A_CheckForHeiwa()
 	{
 		bool result = false;
@@ -536,8 +539,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
-												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * HeiwaSTRLVLMult);
+												else PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * DoomGuySTRLVLMult);
 			PlayerLevel = TruePlayerLevel;
 		}
 		
@@ -627,8 +630,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
-												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * HeiwaSTRLVLMult);
+												else PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * DoomGuySTRLVLMult);
 			PlayerLevel = TruePlayerLevel;
 		}
 		
@@ -743,8 +746,8 @@ mixin class DmgCalc
 		int TruePlayerLevel = A_GetPlayerLvl(1);
 		if (MiscItem) 
 		{
-			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * 0.334);
-												else PlayerATK = MiscItem.TruePlayerATK + TruePlayerLevel;
+			if (A_CheckForHeiwa()) PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * HeiwaSTRLVLMult);
+												else PlayerATK = MiscItem.TruePlayerATK + (TruePlayerLevel * DoomGuySTRLVLMult);
 			PlayerLevel = TruePlayerLevel;
 		}
 

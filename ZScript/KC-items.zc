@@ -21,6 +21,10 @@ class RandomSpawner2 : RandomSpawner
 
 class CustomInventoryExt : CustomInventory
 {
+	const HeiwaHPBoostTimerMult = 2.5;
+	const HealItemBaseHPBoostRatio = 25;
+	const HealItemBaseHPBoostRatio2 = 37.5;
+
 	string texname;
 	int user_type;
 	
@@ -327,11 +331,19 @@ class CustomInventoryExt : CustomInventory
 		if (playera.CountInv("CriticalHealth")) oldhealthratio = 3;
 		
 		HealAmount = MaxHealthTrue * healfactor;
+		double healratio = double((HealAmount * 1.0) / (MaxHealthLimit * 1.0));
 		if (CurrentHealth < MaxHealthLimit)
 		{
 			CurrentHealth += HealAmount;
 			if (CurrentHealth >= MaxHealthLimit) CurrentHealth = MaxHealthLimit;
 			playera.health = CurrentHealth;
+			if (MiscItem) 
+			{
+				int HPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseHPBoostRatio * healratio));
+				if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+				MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+			}
+
 			if (HeiwaPlayer(playera) && 
 					(oldhealthratio >= 3 || 
 					 (oldhealthratio == 2 && random(1,25) <= 21) || 
@@ -1144,6 +1156,9 @@ class Stimpack2 : CustomInventoryExt replaces Stimpack
 		Success:
 			TNT1 A 0
 			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+
 				A_StartSound("gethealthkit",5);
 				A_PickupMedicalItem(0.10,1.00);
 			}
@@ -1284,6 +1299,9 @@ class Medikit2 : CustomInventoryExt replaces Medikit
 		Success:
 			TNT1 A 0
 			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				
 				A_StartSound("gethealthkit",5);
 				A_PickupMedicalItem(0.25,1.00);
 			}
@@ -1564,9 +1582,16 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 				if (CurrentHealth < MaxHealthLimit)
 				{
 					HealthValue = MaxHealthTrue;
+					double healratio = double((HealthValue * 1.0) / (MaxHealthTrue * 1.0));
 					//if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
 					CurrentHealth += HealthValue;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+					if (MiscItem) 
+					{
+						int HPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseHPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+						MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+					}
 		
 					playera.health = CurrentHealth;
 				}
@@ -1646,9 +1671,16 @@ class MiniSoulsphere : CustomInventoryExt
 				if (CurrentHealth < MaxHealthLimit)
 				{
 					HealthValue = (MaxHealthTrue * 0.5);
+					double healratio = double((HealthValue * 1.0) / (MaxHealthTrue * 1.0));
 					//if ((dvds_showdamagemessages & 1) && HealthValue > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealthValue);
 					CurrentHealth += HealthValue;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+					if (MiscItem) 
+					{
+						int HPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseHPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+						MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+					}
 		
 					playera.health = CurrentHealth;
 				}
@@ -1685,7 +1717,7 @@ class MiniSoulsphere : CustomInventoryExt
 	}
 }
 
-class Megasphere2 : CustomInventory replaces MegaSphere
+class Megasphere2 : CustomInventoryExt replaces MegaSphere
 {
 	default
 	{
@@ -1723,9 +1755,16 @@ class Megasphere2 : CustomInventory replaces MegaSphere
 				if (CurrentHealth < MaxHealthLimit)
 				{
 					HealAmount = MaxHealthLimit;
+					double healratio = double((HealAmount * 1.0) / (MaxHealthTrue * 1.0));
 					//if ((dvds_showdamagemessages & 1) && HealAmount > 0 && CurrentHealth < MaxHealthLimit) A_PrintHealingMessage(self, HealAmount);
 					CurrentHealth += HealAmount;
 					if (CurrentHealth > MaxHealthLimit) CurrentHealth = MaxHealthLimit;
+					if (MiscItem) 
+					{
+						int HPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseHPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+						MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+					}
 				
 					playera.health = CurrentHealth;
 				}
@@ -4551,6 +4590,12 @@ class MediBag : CustomInventoryExt
 									}
 								}
 								//Console.Printf("healratio: %.8f, playvoice %d", healratio, playvoice);
+								if (MiscItem) 
+								{
+									int HPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseHPBoostRatio * healratio));
+									if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+									MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+								}
 
 								if (MiscItem && MiscItem.CanTalkUnderwater && playvoice)
 								{
