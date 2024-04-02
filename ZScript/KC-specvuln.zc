@@ -827,7 +827,12 @@ class CompatVulnItem : PlaceholderItem
 							randbonusincreaseHP *= multfactorHP;
 							if (criticalhit) randbonusincreaseHP *= critdmgmulti;
 							//if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
-							if (MiscItem) MiscItem.HPRegenBoostTimer += randbonusincreaseHP;
+							if (MiscItem) 
+							{
+								int HPRegenBoostTimeAmt = randbonusincreaseHP;
+								if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+								MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+							}
 							
 							KCPlayerPawn playpawn;
 							playpawn = FoundPlayer;

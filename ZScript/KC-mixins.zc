@@ -992,6 +992,8 @@ mixin class MonsterCollider
 	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 	string nm, nn, no, np;
 	
+	const HeiwaHPBoostTimerMult = 2.5;
+
 	bool CheckTimeFreeze()
 	{
 		bool check = false;
@@ -2625,7 +2627,14 @@ mixin class MonsterCollider
 					randbonusincreaseHP *= multfactorHP;
 					if (criticalhit) randbonusincreaseHP *= critdmgmulti;
 					//if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
-					if (MiscItem) MiscItem.HPRegenBoostTimer += randbonusincreaseHP;
+					actor player = players[0].mo;
+					let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+					if (MiscItem) 
+					{
+						int HPRegenBoostTimeAmt = randbonusincreaseHP;
+						if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+						MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+					}
 					
 					if (playpawn)
 					{
