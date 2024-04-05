@@ -2015,7 +2015,10 @@ class KC_EventHandler : EventHandler
 					if (A_CheckForHeiwaPlayer()) spawnee.bNOTIMEFREEZE = false;
 				}
 				
-				if (ShieldPartBase(spawnee)) spawnee.bNOTIMEFREEZE = true;
+				if (ShieldPartBase(spawnee) ||
+						TSArtifactSpawner(spawnee) ||
+						BaseTimeSeraphArtifact(spawnee)) spawnee.bNOTIMEFREEZE = true;
+				
 				if (!(PlayerPawn(spawnee) ||
 						 ExplosiveBarrel(spawnee) ||
 						 ExplosiveBarrel2(spawnee) ||
@@ -2557,7 +2560,9 @@ class KC_EventHandler : EventHandler
 				if (spawnname ~== "Korax") A_SpawnerSetUp(spawnee,"KoraxNew");
 			}
 			
-			if (ShieldPartBase(spawnee)) 
+			if (TSArtifactSpawner(spawnee) ||
+					BaseTimeSeraphArtifact(spawnee) ||
+					ShieldPartBase(spawnee)) 
 			{
 				spawnee.bNOTIMEFREEZE = true;
 				//Console.Printf("spawnee: \c[fire]%s", spawnee.GetClassName());
