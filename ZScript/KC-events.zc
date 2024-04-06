@@ -6847,6 +6847,14 @@ class KC_StaticEventHandler : StaticEventHandler
 							texname == "LAVA4" ||
 							texname == "SLIME12" ||
 							texname == "FLOOR6_1") damagetyp = 'Magma';
+					int d = Wads.CheckNumForName("KC-PSXDM", Wads.ns_global, -1, true);
+					if (d != -1)
+					{
+						if (texname == "LAVA01" ||
+								texname == "LAVA02" ||
+								texname == "LAVA03" ||
+								texname == "LAVA04") damagetyp = 'Magma';
+					}
 					if (texname == "FLAT22" ||
 							texname_c == "FLAT22") damagetyp = 'Shock';
 				}
