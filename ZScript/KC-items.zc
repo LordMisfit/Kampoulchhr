@@ -2206,6 +2206,22 @@ class KCArmor : BasicArmor
 		return copy;
 	}
 	
+	bool CheckMeleeDamageTypes(Name damageType)
+	{
+		bool check = false;
+		if (damageType == 'Melee' || 
+				damageType == 'Trample' || 
+				damageType == 'Stomp' || 
+				damageType == 'Fist' || 
+				damageType == 'Kick' || 
+				damageType == 'Knife' || 
+				damageType == 'Chainsaw' ||
+				damageType == 'Bonk' || 
+				damageType == 'Bap' || 
+				damageType == 'Chop') check = true;
+		return check;
+	}
+	
 	override bool HandlePickup(Inventory item)
 	{
 		return item.GetClass() == 'KCArmor';

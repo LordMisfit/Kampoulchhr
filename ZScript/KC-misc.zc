@@ -1081,7 +1081,9 @@ class PlayerStatItem : Inventory
 		{
 			sielsgracecooldown = owner.CountInv("sielsgracecooldown");
 			sielsgraceactivations = owner.CountInv("sielsgraceactivations");
-			if (sielsgracecooldown && sielsgraceactivations < 4)
+			if (owner.health > 0 && 
+					sielsgracecooldown && 
+					sielsgraceactivations < 4)
 			{
 				sielsgraceactive = 0;
 				sielsgracecooldown--;
@@ -1123,12 +1125,15 @@ class PlayerStatItem : Inventory
 				if (kcdebug_survivalrate) Console.Printf("sielsgraceactive: %d", sielsgraceactive);
 			}
 			owner.A_SetInventory("sielsgraceactivations",sielsgraceactivations);
-
-			if (whistlecooldown) whistlecooldown--;
-			if (OneLinerCooldown > 0) OneLinerCooldown--;
-			if (OneLinerTimerCool > 0) OneLinerTimerCool--;
-			if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
-			if (TSArtifactSpawnCooldown > 0) TSArtifactSpawnCooldown--;
+			
+			if (owner.health > 0)
+			{
+				if (whistlecooldown) whistlecooldown--;
+				if (OneLinerCooldown > 0) OneLinerCooldown--;
+				if (OneLinerTimerCool > 0) OneLinerTimerCool--;
+				if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
+				if (TSArtifactSpawnCooldown > 0) TSArtifactSpawnCooldown--;
+			}
 			
 			if (drowndebufflevel > 0)
 			{
@@ -1803,11 +1808,25 @@ class PlayerStatItem : Inventory
 						if (kcdebug_hpregen) Console.Printf("Regen/Degen Neutral");
 					}
 					
-					if (HPRegenBoostTimer > 0) 
+					if (owner.health > 0 && 
+							HPRegenBoostTimer > 0) 
 					{
 						if (timestoptype > 0)
 						{
-							if (level.time % 4) HPRegenBoostTimer--;
+							if (timestoptype == 1)
+							{
+								if (level.time % 25) HPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 2)
+							{
+								if (level.time % 4) HPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 3)
+							{
+								if (level.time % 10) HPRegenBoostTimer--;
+							}
 						}
 						else
 						{
@@ -1818,11 +1837,12 @@ class PlayerStatItem : Inventory
 					{
 						if (timestoptype > 0)
 						{
-							HPRegenBoostTimer++;
-							HPRegenBoostTimer++;
-							HPRegenBoostTimer++;
+							if (timestoptype == 1) HPRegenBoostTimer += 25;
+							if (timestoptype == 2) HPRegenBoostTimer += 4;
+							if (timestoptype == 3) HPRegenBoostTimer += 10;
 						}
-						HPRegenBoostTimer++;
+						else HPRegenBoostTimer++;
+						if (HPRegenBoostTimer > 0) HPRegenBoostTimer = 0;
 					}
 					if (kcdebug_hpregen && HPRegenBoostTimer) Console.Printf("HPRegenBoostTimer: %d", HPRegenBoostTimer);
 				}
@@ -3768,22 +3788,26 @@ class PlayerStatItem : Inventory
 		double BaseChance1b = 0.2;
 		double BaseChance1c = 0.2;
 		double BaseChance1d = 0.2;
+		double BaseChance1e = 0.2;
 		double BaseChance1hvhrand = frandompick(2.0,2.0,2.25,2.25,2.25,2.5,2.5,2.5,2.5,2.5,2.5,2.75,2.75,2.75,3.0,3.0);
 		double BaseChance2;
 		double BaseChance2a = 0.825;
 		double BaseChance2b = 0.825;
 		double BaseChance2c = 0.825;
 		double BaseChance2d = 0.825;
+		double BaseChance2e = 0.825;
 		if (HeiwaPlayer(owner)) 
 		{
 			BaseChance1a = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
 			BaseChance1b = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
 			BaseChance1c = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
 			BaseChance1d = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
+			BaseChance1e = frandompick(0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.5);
 			BaseChance2a = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
 			BaseChance2b = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
 			BaseChance2c = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
 			BaseChance2d = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
+			BaseChance2e = frandompick(0.6667,0.75,0.75,0.75,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.825,0.875,0.875,0.9375);
 		}
 		int LvlStatMulti = 1;
 		// Luck Boost [1]
@@ -3834,6 +3858,13 @@ class PlayerStatItem : Inventory
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
+		// Luck Boost [6]
+		BaseChance1 *= BaseChance1e;
+		BaseChance2 *= BaseChance2e;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerLUCK += LvlSkillMulti;
 
 		// Speed Boost [1]
 		if (KCPlayer(owner))
@@ -3879,6 +3910,13 @@ class PlayerStatItem : Inventory
 		// Speed Boost [5]
 		BaseChance1 *= BaseChance1d;
 		BaseChance2 *= BaseChance2d;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerSPD += LvlSkillMulti;
+		// Speed Boost [6]
+		BaseChance1 *= BaseChance1e;
+		BaseChance2 *= BaseChance2e;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -3933,6 +3971,13 @@ class PlayerStatItem : Inventory
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
+		// Guts Boost [6]
+		BaseChance1 *= BaseChance1e;
+		BaseChance2 *= BaseChance2e;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerGUTS += LvlSkillMulti;
 
 		// Attack Boost [1]
 		if (KCPlayer(owner))
@@ -3982,6 +4027,13 @@ class PlayerStatItem : Inventory
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
 		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
+		// Attack Boost [6]
+		BaseChance1 *= BaseChance1e;
+		BaseChance2 *= BaseChance2e;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerATK += LvlSkillMulti;
 		
 		// Defense Boost [1]
 		if (KCPlayer(owner))
@@ -4027,6 +4079,13 @@ class PlayerStatItem : Inventory
 		// Defense Boost [5]
 		BaseChance1 *= BaseChance1d;
 		BaseChance2 *= BaseChance2d;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
+		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
+		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
+		if (RollValue <= BaseChance1) PlayerDEF += LvlSkillMulti;
+		// Defense Boost [6]
+		BaseChance1 *= BaseChance1e;
+		BaseChance2 *= BaseChance2e;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
 		if (RollValue <= BaseChance2) { LvlSkillMulti = 2; } else { LvlSkillMulti = 1; } LvlSkillMulti *= LvlStatMulti;
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance);
@@ -4745,9 +4804,10 @@ class PlayerStatItem : Inventory
 		if (HeiwaPlayer(owner))
 		{
 			if (kcdebug_levelupdisplays) Console.Printf("VitHPMaxGain [pre]: %d, VitalityCurrHPBoosts2: (%d / %d)", VitHPMaxGain, VitalityCurrHPBoosts2, VitalityPiecesAdd);
+			int tempboost = VitalityCurrHPBoosts;
 			while (VitalityCurrHPBoosts2 < VitalityPiecesAdd)
 			{
-				VitHPMaxGain += 15;
+				if (VitalityCurrHPBoosts2 >= tempboost) VitHPMaxGain += 15;
 				if (heiwavhardmodifier) 
 				{
 					(MassGain += (randompick(6,7,7,8,8,8,8,9,9,10) + randompick(-1,0,0,0,0,0,0,0,0,1)) * frandom(1.125,1.375));
@@ -4792,9 +4852,10 @@ class PlayerStatItem : Inventory
 		if (HeiwaPlayer(owner))
 		{
 			if (kcdebug_levelupdisplays) Console.Printf("IQPPMaxGain [pre]: %d, IQCurrPPBoosts2: (%d / %d)", IQPPMaxGain, IQCurrPPBoosts2, IQPiecesAdd);
+			int tempboost = IQCurrPPBoosts;
 			while (IQCurrPPBoosts2 < IQPiecesAdd)
 			{
-				IQPPMaxGain += 5;
+				if (IQCurrPPBoosts2 >= tempboost) IQPPMaxGain += 5;
 				IQCurrPPBoosts2++;
 			}
 			if (kcdebug_levelupdisplays) Console.Printf("IQPPMaxGain [post]: %d, IQCurrPPBoosts2: (%d / %d)", IQPPMaxGain, IQCurrPPBoosts2, IQPiecesAdd);
@@ -4826,9 +4887,10 @@ class PlayerStatItem : Inventory
 		if (HeiwaPlayer(owner))
 		{
 			if (kcdebug_levelupdisplays) Console.Printf("SensesMPMaxGain [pre]: %d, SensesCurrMPBoosts2: (%d / %d)", SensesMPMaxGain, SensesCurrMPBoosts2, SensesPiecesAdd);
+			int tempboost = SensesCurrMPBoosts;
 			while (SensesCurrMPBoosts2 < SensesPiecesAdd)
 			{
-				SensesMPMaxGain += 5;
+				if (SensesCurrMPBoosts2 >= tempboost) SensesMPMaxGain += 5;
 				SensesCurrMPBoosts2++;
 			}
 			if (kcdebug_levelupdisplays) Console.Printf("SensesMPMaxGain [post]: %d, SensesCurrMPBoosts2: (%d / %d)", SensesMPMaxGain, SensesCurrMPBoosts2, SensesPiecesAdd);
@@ -5214,7 +5276,8 @@ class PlayerStatItem : Inventory
 					owner.A_StopSound(217);
 					owner.A_StartSound("TimeFreezeOut4",217,CHANF_DEFAULT,0.875,ATTN_NONE); 
 				}
-				if (!A_CheckNoTimer()) 
+				if (!A_CheckNoTimer() 
+						&& owner.health > 0) 
 				{
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) { }
 					else 
@@ -5291,7 +5354,8 @@ class PlayerStatItem : Inventory
 			if (timestopcooldown1tics > 0) 
 			{
 				owner.A_SetInventory("KCTimeCooldown",1);
-				if (!A_CheckNoTimer()) 
+				if (!A_CheckNoTimer() && 
+						owner.health > 0) 
 				{
 					timestopcooldown1tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
@@ -5320,7 +5384,18 @@ class PlayerStatItem : Inventory
 			if (timestopcooldown2tics > 0) 
 			{
 				owner.A_SetInventory("KCTimeCooldown2",1);
-				timestopcooldown2tics--;
+				if (!A_CheckNoTimer() && 
+						owner.health > 0) 
+				{
+					timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+				}
 				if (timestopcooldown2tics == 0) 
 				{
 					owner.A_SetInventory("KCTimeCooldown2",0);
@@ -5339,7 +5414,18 @@ class PlayerStatItem : Inventory
 			if (timestopcooldown3tics > 0) 
 			{
 				owner.A_SetInventory("KCTimeCooldown3",1);
-				timestopcooldown3tics--;
+				if (!A_CheckNoTimer() && 
+						owner.health > 0) 
+				{
+					timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+				}
 				if (timestopcooldown3tics == 0) 
 				{
 					owner.A_SetInventory("KCTimeCooldown3",0);
