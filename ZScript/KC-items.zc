@@ -2248,6 +2248,8 @@ class KCArmor : BasicArmor
 				}
 			}
 			
+			int firstsaved = saved;
+			
 			int oldsaved = saved;
 			double savebase = 0.0;
 			if (MiscItem)
@@ -2256,13 +2258,16 @@ class KCArmor : BasicArmor
 			}
 			saved *= (1.0 - savebase);
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post IP]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
-
+			
 			if (random(1,16) <= (random(7,9) + (8 - (skill * 2)))) 
 			{
 				oldsaved = saved;
 				savebase = 0.0;
+				int BKPKBonus;
+				if (PlayPawn) BKPKBonus = PlayPawn.CountInv("SpecialBackpackBonus");
+				if (BKPKBonus > 0) savebase += (BKPKBonus * frandom(0.01,0.05));
 				savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
-				if (savebase >= 0.25) savebase = 0.25;
+				if (savebase >= (0.10 * BKPKBonus)) savebase = (0.10 * BKPKBonus);
 				saved *= (1.0 - savebase);
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Special]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
@@ -2277,12 +2282,12 @@ class KCArmor : BasicArmor
 				saved *= (1.0 - savebase);
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Wine]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
-
+			
 			if (Amount < saved)
 			{
 				saved = Amount;
 			}
-			newdamage -= saved;
+			newdamage -= firstsaved;
 			Amount -= saved;
 			AbsorbCount += saved;
 			if (Amount == 0)

@@ -1433,7 +1433,7 @@ class PlayerStatItem : Inventory
 							BaseRegenMulti = inc;
 							if (HPRegenBoostTimer > 0) inc *= 2.5;
 							if (HPRegenBoostTimer < 0) inc *= 0.4;
-							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Regen]: %d", HPRegenBoostTimer);
+							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Regen]: %d, inc: %d", HPRegenBoostTimer, inc);
 							
 							double ssa = 1.00;
 							ssa *= ssainverse;
@@ -1459,8 +1459,11 @@ class PlayerStatItem : Inventory
 									if (owner.CountInv("FistPlayerBlock4")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.5); 
 								}
 							}
+							if (kcdebug_hpregen) Console.Printf("post weapon: inc: %d", inc);
+
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
 							if (owner.CountInv("KCPowerKampoul")) inc *= frandom(32,48);
+							if (kcdebug_hpregen) Console.Printf("post powerup inc: %d, tic: %d", inc, gametic);
 							if (timestoptype > 0)
 							{
 								double boostf = 1.125;
@@ -1469,23 +1472,52 @@ class PlayerStatItem : Inventory
 								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
 								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
 								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+								double timestopbaseboost;
 								if (A_CheckForHeiwa())
 								{
-									if (timestoptype == 1) inc *= (25 + (timefreeze1timesused * 0.25)); // Defensive
-									if (timestoptype == 2) inc *= (4 + (timefreeze2timesused * 0.04)); // Offensive
-									if (timestoptype == 3) inc *= (10 + (timefreeze3timesused * 0.10)); // Neutral
+									if (timestoptype == 1) 
+									{
+										timestopbaseboost = (25 + (timefreeze1timesused * 0.25)); // Defensive
+										if (timestopbaseboost > 100) timestopbaseboost = 100;
+									}
+									if (timestoptype == 2) 
+									{
+										timestopbaseboost = (4 + (timefreeze2timesused * 0.04)); // Offensive
+										if (timestopbaseboost > 16) timestopbaseboost = 16;
+									}
+									if (timestoptype == 3) 
+									{
+										timestopbaseboost = (10 + (timefreeze3timesused * 0.10)); // Neutral
+										if (timestopbaseboost > 40) timestopbaseboost = 40;
+									}
 								}
 								else
 								{
-									if (timestoptype == 1) inc *= (25 + (timefreeze1timesused * 0.0125)); // Defensive
-									if (timestoptype == 2) inc *= (4 + (timefreeze2timesused * 0.002)); // Offensive
-									if (timestoptype == 3) inc *= (10 + (timefreeze3timesused * 0.005)); // Neutral
+									if (timestoptype == 1) 
+									{
+										timestopbaseboost = (25 + (timefreeze1timesused * 0.0125)); // Defensive
+										if (timestopbaseboost > 50) timestopbaseboost = 50;
+									}
+									if (timestoptype == 2) 
+									{
+										timestopbaseboost = (4 + (timefreeze2timesused * 0.002)); // Offensive
+										if (timestopbaseboost > 8) timestopbaseboost = 8;
+									}
+									if (timestoptype == 3) 
+									{
+										timestopbaseboost = (10 + (timefreeze3timesused * 0.005)); // Neutral
+										if (timestopbaseboost > 20) timestopbaseboost = 20;
+									}
 								}
+								timestopbaseboost *= 0.5;
+								inc *= timestopbaseboost;
+								if (kcdebug_hpregen) Console.Printf("post timestoptype [%d] - inc: %d, timestopbaseboost: %.8f, tic: %d", timestoptype, inc, timestopbaseboost, gametic);
 								for (int ti; ti < boostphase2; ti++)
 								{
 									if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
-									if (kcdebug_hpregen) Console.Printf("boost: %.4f, tic: %d", ((ti+1) * boostphase), gametic);
+									if (kcdebug_hpregen) Console.Printf("boost: %.4f, inc: %d, tic: %d", ((ti+1) * boostphase), inc, gametic);
 								}
+								if (kcdebug_hpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 							}
 
 							if (berserked) 
@@ -1554,7 +1586,7 @@ class PlayerStatItem : Inventory
 							HPRegenTimer += inc;
 							genticsHUD = inc;
 							
-							if (HPRegenTimer > HPRegenTimerMax)
+							while (HPRegenTimer > HPRegenTimerMax)
 							{
 								HPRegenTimer -= HPRegenTimerMax;
 								if (HPRegenTimer < 0) HPRegenTimer = 0;
@@ -1579,10 +1611,7 @@ class PlayerStatItem : Inventory
 									owner.player.health = owner.player.mo.health = CurrentHealth;
 								}
 							}
-							else
-							{
-								if (HPRegenTimer < 0) HPRegenTimer = 0;
-							}
+							if (HPRegenTimer < 0) HPRegenTimer = 0;
 							if (kcdebug_hpregen) Console.Printf("RegenTimer: %d / %d  (inc: %d)", HPRegenTimer, HPRegenTimerMax, inc);
 						}
 						else
@@ -1608,7 +1637,7 @@ class PlayerStatItem : Inventory
 							BaseRegenMulti = inc;
 							if (HPRegenBoostTimer > 0) inc *= 0.4;
 							if (HPRegenBoostTimer < 0) inc *= 2.5;
-							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Degen]: %d", HPRegenBoostTimer);
+							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Degen]: %d, inc: %d", HPRegenBoostTimer, inc);
 							
 							
 							double ssa = 1.00;
@@ -1645,18 +1674,21 @@ class PlayerStatItem : Inventory
 								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
 								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
 								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+								double timestopbaseboost;
 								if (A_CheckForHeiwa())
 								{
-									if (timestoptype == 1) inc *= (0.04 - (timefreeze1timesused * 0.0004)); // Defensive
-									if (timestoptype == 2) inc *= (0.25 - (timefreeze2timesused * 0.0025)); // Offensive
-									if (timestoptype == 3) inc *= (0.10 - (timefreeze3timesused * 0.0010)); // Neutral
+									if (timestoptype == 1) timestopbaseboost = (0.04 - (timefreeze1timesused * 0.0004)); // Defensive
+									if (timestoptype == 2) timestopbaseboost = (0.25 - (timefreeze2timesused * 0.0025)); // Offensive
+									if (timestoptype == 3) timestopbaseboost = (0.10 - (timefreeze3timesused * 0.0010)); // Neutral
 								}
 								else
 								{
-									if (timestoptype == 1) inc *= (0.04 - (timefreeze1timesused * 0.00002)); // Defensive
-									if (timestoptype == 2) inc *= (0.25 - (timefreeze2timesused * 0.000125)); // Offensive
-									if (timestoptype == 3) inc *= (0.10 - (timefreeze3timesused * 0.00005)); // Neutral
+									if (timestoptype == 1) timestopbaseboost = (0.04 - (timefreeze1timesused * 0.00002)); // Defensive
+									if (timestoptype == 2) timestopbaseboost = (0.25 - (timefreeze2timesused * 0.000125)); // Offensive
+									if (timestoptype == 3) timestopbaseboost = (0.10 - (timefreeze3timesused * 0.00005)); // Neutral
 								}
+								if (timestopbaseboost < 0.001) timestopbaseboost = 0.001;
+								inc *= timestopbaseboost;
 								for (int ti; ti < boostphase2; ti++)
 								{
 									if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
@@ -1731,7 +1763,7 @@ class PlayerStatItem : Inventory
 							if (inc < 0) inc = 0;
 							HPDegenTimer += inc;
 							genticsHUD = inc;
-							if (HPDegenTimer > HPDegenTimerMax)
+							while (HPDegenTimer > HPDegenTimerMax)
 							{
 								HPDegenTimer -= HPDegenTimerMax;
 								if (HPDegenTimer < 0) HPDegenTimer = 0;
@@ -1756,10 +1788,7 @@ class PlayerStatItem : Inventory
 									owner.player.health = owner.player.mo.health = CurrentHealth;
 								}
 							}
-							else
-							{
-								if (HPDegenTimer < 0) HPDegenTimer = 0;
-							}
+							if (HPDegenTimer < 0) HPDegenTimer = 0;
 							if (kcdebug_hpregen) Console.Printf("DegenTimer: %d / %d  (inc: %d)", HPDegenTimer, HPDegenTimerMax, inc);
 						}
 						else
@@ -1774,8 +1803,27 @@ class PlayerStatItem : Inventory
 						if (kcdebug_hpregen) Console.Printf("Regen/Degen Neutral");
 					}
 					
-					if (HPRegenBoostTimer > 0) HPRegenBoostTimer--;
-					if (HPRegenBoostTimer < 0) HPRegenBoostTimer++;
+					if (HPRegenBoostTimer > 0) 
+					{
+						if (timestoptype > 0)
+						{
+							if (level.time % 4) HPRegenBoostTimer--;
+						}
+						else
+						{
+							HPRegenBoostTimer--;
+						}
+					}
+					if (HPRegenBoostTimer < 0) 
+					{
+						if (timestoptype > 0)
+						{
+							HPRegenBoostTimer++;
+							HPRegenBoostTimer++;
+							HPRegenBoostTimer++;
+						}
+						HPRegenBoostTimer++;
+					}
 					if (kcdebug_hpregen && HPRegenBoostTimer) Console.Printf("HPRegenBoostTimer: %d", HPRegenBoostTimer);
 				}
 				else
