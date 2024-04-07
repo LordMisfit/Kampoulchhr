@@ -3768,6 +3768,7 @@ class PlayerStatItem : Inventory
 		double BaseChance1b = 0.2;
 		double BaseChance1c = 0.2;
 		double BaseChance1d = 0.2;
+		double BaseChance1hvhrand = frandompick(2.0,2.0,2.25,2.25,2.25,2.5,2.5,2.5,2.5,2.5,2.5,2.75,2.75,2.75,3.0,3.0);
 		double BaseChance2;
 		double BaseChance2a = 0.825;
 		double BaseChance2b = 0.825;
@@ -3788,17 +3789,17 @@ class PlayerStatItem : Inventory
 		// Luck Boost [1]
 		if (KCPlayer(owner))
 		{
-			BaseChance1 = 0.125;
+			BaseChance1 = 0.25;
 			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.25;
+			BaseChance1 = 0.375;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.375;
-				BaseChance2 = 0.1875;
+				BaseChance1 *= BaseChance1hvhrand;
+				BaseChance2 *= 3;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3837,17 +3838,17 @@ class PlayerStatItem : Inventory
 		// Speed Boost [1]
 		if (KCPlayer(owner))
 		{
-			BaseChance1 = 0.25;
+			BaseChance1 = 0.375;
 			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.5625;
+			BaseChance1 = 0.703125;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 1.125;
-				BaseChance2 = 0.1875;
+				BaseChance1 *= BaseChance1hvhrand;
+				BaseChance2 *= 3;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3887,17 +3888,17 @@ class PlayerStatItem : Inventory
 		// Guts Boost [1]
 		if (KCPlayer(owner))
 		{
-			BaseChance1 = 0.5;
+			BaseChance1 = 0.625;
 			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.2;
+			BaseChance1 = 0.375;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.4;
-				BaseChance2 = 0.1875;
+				BaseChance1 *= BaseChance1hvhrand;
+				BaseChance2 *= 3;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3936,7 +3937,7 @@ class PlayerStatItem : Inventory
 		// Attack Boost [1]
 		if (KCPlayer(owner))
 		{
-			BaseChance1 = 0.1875;
+			BaseChance1 = 0.3125;
 			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
@@ -3945,8 +3946,8 @@ class PlayerStatItem : Inventory
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 1.0625;
-				BaseChance2 = 0.1875;
+				BaseChance1 *= BaseChance1hvhrand;
+				BaseChance2 *= 3;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
@@ -3985,17 +3986,17 @@ class PlayerStatItem : Inventory
 		// Defense Boost [1]
 		if (KCPlayer(owner))
 		{
-			BaseChance1 = 0.375;
+			BaseChance1 = 0.5625;
 			BaseChance2 = 0.0625;
 		}
 		if (HeiwaPlayer(owner))
 		{
-			BaseChance1 = 0.25;
+			BaseChance1 = 0.375;
 			BaseChance2 = 0.0625;
 			if (heiwavhardmodifier) 
 			{
-				BaseChance1 = 0.625;
-				BaseChance2 = 0.1875;
+				BaseChance1 *= BaseChance1hvhrand;
+				BaseChance2 *= 3;
 			}
 		}
 		RollValue = frandom[statitem2](0.00000001,RandomizedStatChance2);
