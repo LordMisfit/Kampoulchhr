@@ -233,6 +233,20 @@ class PlayerStatItem : Inventory
 	int HPDegenTimerMax;
 	bool berserked;
 
+	int PPRegenBoostTimer;
+	int PPRegenBonPenTimer;
+	int PPRegenTimer;
+	int PPDegenTimer;
+	int PPRegenTimerMax;
+	int PPDegenTimerMax;
+
+	int MPRegenBoostTimer;
+	int MPRegenBonPenTimer;
+	int MPRegenTimer;
+	int MPDegenTimer;
+	int MPRegenTimerMax;
+	int MPDegenTimerMax;
+
 	double timefreezegenduration;
 
 	double timefreeze1duration;
@@ -978,6 +992,10 @@ class PlayerStatItem : Inventory
 		
 		HPRegenTimerMax = 3500; // - ((StaminaLevel * 5) * 35);
 		HPDegenTimerMax = 3500; // + ((StaminaLevel * 5) * 17.5);
+		PPRegenTimerMax = 700;
+		PPDegenTimerMax = 700;
+		MPRegenTimerMax = 700;
+		MPDegenTimerMax = 700;
 		CurrentHealth = owner.player.mo.health;
 		int HealthBonusAdd2 = HealthBonusAdd;
 		int HealthLevelAdd2 = HealthLevelAdd;
@@ -1849,6 +1867,76 @@ class PlayerStatItem : Inventory
 				else
 				{
 					BaseRegenMulti = 0.0;
+				}
+				
+				// PP Regen/Degen
+				if (CurrentPsychicPoints < MaxPsychicPoints)
+				{
+					int inc = 20;
+					if (inc < 0) inc = 0;
+					PPRegenTimer += inc;
+					//genticsHUD = inc;
+					
+					while (PPRegenTimer > PPRegenTimerMax)
+					{
+						PPRegenTimer -= PPRegenTimerMax;
+						if (PPRegenTimer < 0) PPRegenTimer = 0;
+						
+						if (CurrentPsychicPoints < MaxPsychicPoints)
+						{
+							int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxPsychicPoints * 0.4) / 100;
+							if (berserked) 
+							{
+								rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxPsychicPoints * 0.8) / 100;
+								if (A_CheckForHeiwa() && random(1,4) <= 1)
+								{
+									if (random(1,4) <= 1) rec *= 2.5;
+																	 else rec *= 1.75;
+								}
+							}
+							if (rec < 1) rec = 1;
+
+							//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
+							CurrentPsychicPoints += rec;
+							if (CurrentPsychicPoints >= MaxPsychicPoints) CurrentPsychicPoints = MaxPsychicPoints;
+						}
+					}
+					if (PPRegenTimer < 0) PPRegenTimer = 0;
+				}
+				
+				// Magic Regen/Degen
+				if (CurrentMagicPoints < MaxMagicPoints)
+				{
+					int inc = 20;
+					if (inc < 0) inc = 0;
+					MPRegenTimer += inc;
+					//genticsHUD = inc;
+					
+					while (MPRegenTimer > MPRegenTimerMax)
+					{
+						MPRegenTimer -= MPRegenTimerMax;
+						if (MPRegenTimer < 0) MPRegenTimer = 0;
+						
+						if (CurrentMagicPoints < MaxMagicPoints)
+						{
+							int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxMagicPoints * 0.4) / 100;
+							if (berserked) 
+							{
+								rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxMagicPoints * 0.8) / 100;
+								if (A_CheckForHeiwa() && random(1,4) <= 1)
+								{
+									if (random(1,4) <= 1) rec *= 2.5;
+																	 else rec *= 1.75;
+								}
+							}
+							if (rec < 1) rec = 1;
+
+							//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
+							CurrentMagicPoints += rec;
+							if (CurrentMagicPoints >= MaxMagicPoints) CurrentMagicPoints = MaxMagicPoints;
+						}
+					}
+					if (MPRegenTimer < 0) MPRegenTimer = 0;
 				}
 			}
 			

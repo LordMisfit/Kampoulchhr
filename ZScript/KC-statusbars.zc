@@ -3693,23 +3693,24 @@ class KCStatusBarMain : BaseStatusBar
 			// Draw PP/MP/HCLR
 			if (A_CheckForHeiwa() && MiscItem)
 			{
-				/*
-				if (MiscItem.MaxPsychicPoints > 0)
+				if (kcdebug_showextrametersalways)
 				{
-					yinc -= 20;
-					yinc = A_DrawFSPsychic(1.0, yinc);
+					if (MiscItem.MaxPsychicPoints > 0)
+					{
+						yinc -= 20;
+						yinc = A_DrawFSPsychic(1.0, yinc);
+					}
+					if (MiscItem.MaxMagicPoints > 0)
+					{
+						yinc -= 20;
+						yinc = A_DrawFSMagic(1.0, yinc);
+					}
+					if (MiscItem.HellcoreOverheatLevel)
+					{
+						yinc -= 20;
+						yinc = A_DrawFSHellcore(1.0, yinc);
+					}
 				}
-				if (MiscItem.MaxMagicPoints > 0)
-				{
-					yinc -= 20;
-					yinc = A_DrawFSMagic(1.0, yinc);
-				}
-				if (MiscItem.HellcoreOverheatLevel)
-				{
-					yinc -= 20;
-					yinc = A_DrawFSHellcore(1.0, yinc);
-				}
-				*/
 			}
 			
 			name armorclasstype = "KCArmor";
