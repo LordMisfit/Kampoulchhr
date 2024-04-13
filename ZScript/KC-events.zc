@@ -4253,7 +4253,7 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
-							if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
+							if (A_CheckForHeiwaPlayer()) user_type = random(1,18);
 							droptype = "BackPack2";
 							if (user_type == 1) 
 							{
@@ -4973,12 +4973,14 @@ class KC_EventHandler : EventHandler
 					
 					// ???????? [Type 13] (Heiwa Only)
 					if (A_CheckForHeiwaPlayer() && 
-							playera.CountInv("SpecialBackpackBonus") < 5)
+							playera.CountInv("SpecialBackpackBonus") < 25)
 					{
 						basechance = kc_inventorydroprate13;
+						if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
-						luckbase = 1.0 + (monsterrating * 0.5); // (4096) 
+						luckbase = 1.0 + (monsterrating * 0.5); // (4096)
+						if (playera.CountInv("SpecialBackpackBonus") > 0) luckbase = 1.25 + (monsterrating * 0.625);
 						if (victim.bBOSS)
 						{
 							basechance *= 0.5;
