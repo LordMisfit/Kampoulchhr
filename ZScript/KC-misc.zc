@@ -5166,6 +5166,7 @@ class PlayerStatItem : Inventory
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				if (TSADrainAmt) TSADrainAmt *= kc_tsadrainspd;
+				if (TSADrainAmt) TSADrainAmt *= (1.0 / kc_tsaeffectiveness);
 				if (!A_CheckNoTimer()) 
 				{
 					int TimeArmorEnergyMod = (TimeArmorEnergyMaxTics / 67);
@@ -5215,6 +5216,7 @@ class PlayerStatItem : Inventory
 				TSARegenAmt = (8.0 + (PlayerLevel * 0.000625));
 				TSARegenAmt *= TimeArmorRelicsOwned;
 				if (TSARegenAmt) TSARegenAmt *= kc_tsaregenspd;
+				if (TSARegenAmt) TSARegenAmt *= kc_tsaeffectiveness;
 				if (A_CheckTimeFreeze()) 
 				{
 					if (TimeArmorRelicsOwned == 1) TSARegenAmt *= 0.25;
