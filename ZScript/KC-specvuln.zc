@@ -146,18 +146,23 @@ class CompatVulnItem : PlaceholderItem
 					double TimeSeraphBangleFactor = 1.0;
 					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
 					{
+						if (FoundPlayer.CountInv("TSArmorTier3Plus"))
+						{
+							TimeSeraphBangleFactor = 0.875;
+						}
+						else
 						if (FoundPlayer.CountInv("TSArmorTier2"))
 						{
-							TimeSeraphBangleFactor = frandompick(0.25,0.325,0.325,0.334,0.334,0.334,0.334,0.334,0.334,0.375,0.375,0.4167);
+							TimeSeraphBangleFactor = 0.625;
 						}
 						else
 						if (FoundPlayer.CountInv("TSArmorTier1"))
 						{
-							TimeSeraphBangleFactor = frandompick(0.334,0.375,0.375,0.4167,0.4167,0.4167,0.4167,0.4167,0.4167,0.4445,0.4445,0.5);
+							TimeSeraphBangleFactor = 0.5;
 						}
 						else
 						{
-							TimeSeraphBangleFactor = frandompick(0.4167,0.4445,0.4445,0.5,0.5,0.5,0.5,0.5,0.5,0.5556,0.5556,0.625);
+							TimeSeraphBangleFactor = 0.4167;
 						}
 						ActorDefenseIgnoreFactor += (TimeSeraphBangleFactor * (1.00 - ActorDefenseIgnoreFactor));
 					}
@@ -532,7 +537,8 @@ class CompatVulnItem : PlaceholderItem
 					
 					if (FoundPlayer.CountInv("TimeSeraphVisor"))
 					{
-						if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
+						if (FoundPlayer.CountInv("TSArmorTier3Plus")) TOTALFactor *= 1.8625;
+						else if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
 						else if (FoundPlayer.CountInv("TSArmorTier1")) TOTALFactor *= 1.2625;
 						else TOTALFactor *= 1.125;
 					}
@@ -605,7 +611,8 @@ class CompatVulnItem : PlaceholderItem
 					int bosscritres = 75;
 					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
 					{
-						if (FoundPlayer.CountInv("TSArmorTier2")) bosscritres *= 0.1;
+						if (FoundPlayer.CountInv("TSArmorTier3Plus")) bosscritres *= 0.0334;
+						else if (FoundPlayer.CountInv("TSArmorTier2")) bosscritres *= 0.1;
 						else if (FoundPlayer.CountInv("TSArmorTier1")) bosscritres *= 0.25;
 						else bosscritres *= 0.625;
 					}

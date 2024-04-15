@@ -1841,7 +1841,8 @@ class KCEffectProjectile : KCProjectile
 		{
 			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- master == player");
 			
-			if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
+			if (playera.CountInv("TSArmorTier3Plus") > 0) user_ailmentmaxchance *= 1000000;
+			else if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
 			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= 100;
 			
 			if (playera.CountInv("EWShieldIdleMode") > 0) 
@@ -2181,7 +2182,8 @@ class KCEffectFastProjectile : KCFastProjectile
 		{
 			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectFastProjectile - A_StatusEffectChecker:)\c- master == player");
 			
-			if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
+			if (playera.CountInv("TSArmorTier3Plus") > 0) user_ailmentmaxchance *= 1000000;
+			else if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
 			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= 100;
 			
 			if (playera.CountInv("EWShieldIdleMode") > 0) 
@@ -3598,12 +3600,14 @@ class KCCreature : KCBaseZSC
 			if (playertarg)
 			{
 				// Time Seraph's Armor blocks Gravition Glare entirely, but... :V
-				if (playertarg.CountInv("TSArmorTier2") || 
+				if (playertarg.CountInv("TSArmorTier3Plus") || 
+						playertarg.CountInv("TSArmorTier2") || 
 						playertarg.CountInv("TSArmorTier1"))
 				{
 					playertarg.A_StartSound("diabloistgravityreverse", CHAN_7);
 					//Console.Printf("gravitytype [TSA]: %d", gravitytype);
-					if (playertarg.CountInv("TSArmorTier2"))
+					if (playertarg.CountInv("TSArmorTier3Plus") || 
+							playertarg.CountInv("TSArmorTier2"))
 					{
 						targ = self; // ...Time Seraph's Armor Level 2 REFLECTS Graviton Glare 
 						             // back at the offending Diabloist :V
@@ -3614,6 +3618,7 @@ class KCCreature : KCBaseZSC
 							if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
 							if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
 							if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+							if (playertarg.CountInv("TSArmorTier3Plus")) GravityEffectFactor *= 10;
 							FinalGravityFactor = 1.000 - GravityEffectFactor;
 							GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
 							if (GravityEffectFactor > 0.000)

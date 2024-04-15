@@ -6054,7 +6054,7 @@ class RocketLauncherMarine : MarineWeapon //replaces RocketLauncher
 			}
 			MISG A 0 A_Refire();
 			Goto Ready;
-
+			
 		// Fire Mode
 		User4:
 			MISG A 0
@@ -15081,9 +15081,11 @@ class PikeAmmoBig : PikeAmmo
 
 class EvilWarriorShield : MarineWeapon
 {
+	int ammo_type;
 	int shieldenergy;
 	int shieldenergybits;
 	int shieldenergycost;
+	int shieldmagiccost;
 	int shieldrefire;
 	default
 	{
@@ -15146,15 +15148,22 @@ class EvilWarriorShield : MarineWeapon
 		
 		if (A_CheckBerserk()) A_SetTics(1);
 		A_PHellWarShieldOn();
-		if (!A_CheckInfiniteAmmo()) invoker.shieldenergy -= invoker.shieldenergycost;
-
-		if (invoker.shieldenergy < invoker.shieldenergycost)
+		if (!A_CheckInfiniteAmmo()) 
 		{
-			if (CountInv("PikeAmmo") > 0)
+			if (invoker.ammo_type == 0) invoker.shieldenergy -= invoker.shieldenergycost;
+			if (invoker.ammo_type == 1) MiscItem.CurrentMagicPoints -= invoker.shieldmagiccost;
+		}
+		
+		if (invoker.ammo_type == 0)
+		{
+			if (invoker.shieldenergy < invoker.shieldenergycost)
 			{
-				A_TakeInventory("PikeAmmo",1);
-				if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
-								 else invoker.shieldenergy += 1000;
+				if (CountInv("PikeAmmo") > 0)
+				{
+					A_TakeInventory("PikeAmmo",1);
+					if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
+									 else invoker.shieldenergy += 1000;
+				}
 			}
 		}
 
@@ -15291,16 +15300,29 @@ class EvilWarriorShield : MarineWeapon
 				if (!A_CheckInfiniteAmmo())
 				{
 					invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
+					invoker.shieldmagiccost = (5 + (player.CountInv("HellWarriorShieldLevel") * 0.375));
 					//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
-					if (invoker.shieldenergy < invoker.shieldenergycost)
+					if (invoker.ammo_type == 0)
 					{
-						if (CountInv("PikeAmmo") > 0)
+						if (invoker.shieldenergy < invoker.shieldenergycost)
 						{
-							A_TakeInventory("PikeAmmo",1);
-							if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
-											 else invoker.shieldenergy += 1000;
+							if (CountInv("PikeAmmo") > 0)
+							{
+								A_TakeInventory("PikeAmmo",1);
+								if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
+												 else invoker.shieldenergy += 1000;
+							}
+							else
+							{
+								return resolvestate("Ready");
+							}
+							return resolvestate(null);
 						}
-						else
+						return resolvestate(null);
+					}
+					if (invoker.ammo_type == 1)
+					{
+						if (MiscItem.CurrentMagicPoints < invoker.shieldmagiccost)
 						{
 							return resolvestate("Ready");
 						}
@@ -15394,22 +15416,34 @@ class EvilWarriorShield : MarineWeapon
 					if (!A_CheckInfiniteAmmo())
 					{
 						invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
+						invoker.shieldmagiccost = (5 + (player.CountInv("HellWarriorShieldLevel") * 0.375));
 						//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
-						if (invoker.shieldenergy < invoker.shieldenergycost)
+						if (invoker.ammo_type == 0)
 						{
-							if (CountInv("PikeAmmo") > 0)
+							if (invoker.shieldenergy < invoker.shieldenergycost)
 							{
-								A_TakeInventory("PikeAmmo",1);
-								if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
-												 else invoker.shieldenergy += 1000;
+								if (CountInv("PikeAmmo") > 0)
+								{
+									A_TakeInventory("PikeAmmo",1);
+									if (MiscItem) invoker.shieldenergy += MiscItem.HellWarriorMaxCharge;
+													 else invoker.shieldenergy += 1000;
+								}
+								else
+								{
+									return resolvestate("Ready");
+								}
+								return resolvestate(null);
 							}
-							else
+							return resolvestate("FireShot");
+						}
+						if (invoker.ammo_type == 1)
+						{
+							if (MiscItem.CurrentMagicPoints < invoker.shieldmagiccost)
 							{
 								return resolvestate("Ready");
 							}
-							return resolvestate(null);
+							return resolvestate("FireShot");
 						}
-						return resolvestate("FireShot");
 					}
 					return resolvestate(null);
 				}
@@ -15527,6 +15561,23 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 			}
 			Goto Ready;
+			
+		// Fire Mode
+		User4:
+			EWS0 A 0
+			{
+				if (invoker.ammo_type == 0)
+				{
+					invoker.ammo_type = 1;
+				}
+				else
+				if (invoker.ammo_type == 1)
+				{
+					invoker.ammo_type = 0;
+				}
+			}
+			EWS0 A 8;
+			goto Ready;
 
 		Spawn:
 			EWSH ABCDEFGH 3

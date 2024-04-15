@@ -1501,9 +1501,15 @@ class KCPlayerPawn : PlayerPawn
 		tsadefbase *= kc_tsaeffectiveness;
 		if (tsadefbase <= 10) tsadefbase = 10;
 		if (tsadefbase >= 100000) tsadefbase = 100000;
+		
 		if (kcdebug_playerdamagemobj) Console.Printf("tsadefbase: %d", tsadefbase);
 		
-		if (CountInv("TSArmorTier2"))
+		if (CountInv("TSArmorTier3Plus"))
+		{
+			TimeSeraphArmor = 3;
+			TSArmorDmgDivisor = (tsadefbase * tsadefbase * tsadefbase);
+		}
+		else if (CountInv("TSArmorTier2"))
 		{
 			TimeSeraphArmor = 2;
 			TSArmorDmgDivisor = (tsadefbase * tsadefbase);
@@ -1695,8 +1701,13 @@ class KCPlayerPawn : PlayerPawn
 					if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
 											 else TSTicDmg *= frandom(0.80,0.90);
 				}
-				if (TSTicDmg) TSTicDmg *= kc_tsadmgfactor;
-				if (TSTicDmg) TSTicDmg *= (1.0 / kc_tsaeffectiveness);
+				if (TSTicDmg) 
+				{
+					TSTicDmg *= kc_tsadmgfactor;
+					TSTicDmg *= (1.0 / kc_tsaeffectiveness);
+					if (TSTicDmg < 1) TSTicDmg = 1;
+					if (TSTicDmg > 10000) TSTicDmg = 10000;
+				}
 				if (mod == 'CCShadow' && 
 						!A_CheckInvuln() &&
 						!A_CheckKCTimeFreeze()) TSTicDmg *= 5; // The Shadow Trail CCard is 5x more damaging to the TSArmor
@@ -1833,8 +1844,13 @@ class KCPlayerPawn : PlayerPawn
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
 					TSTicDmg *= -1;
-					if (TSTicDmg) TSTicDmg *= kc_tsaeabfactor;
-					if (TSTicDmg) TSTicDmg *= kc_tsaeffectiveness;
+					if (TSTicDmg) 
+					{
+						TSTicDmg *= kc_tsaeabfactor;
+						TSTicDmg *= kc_tsaeffectiveness;
+						if (TSTicDmg < 1) TSTicDmg = 1;
+						if (TSTicDmg > 10000) TSTicDmg = 10000;
+					}
 				}
 				TSADmgFinal = TSTicDmg;
 				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f");

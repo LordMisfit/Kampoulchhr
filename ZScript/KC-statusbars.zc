@@ -1119,6 +1119,8 @@ class KCStatusBarMain : BaseStatusBar
 		
 		Ammo ammo1, ammo2;
 		[ammo1, ammo2] = GetCurrentAmmo();
+		int altammo, altammomax;
+		int usealtammo;
 		int x = -30;
 		int y = -24;
 		int barx = -42;
@@ -1272,17 +1274,31 @@ class KCStatusBarMain : BaseStatusBar
 				if (shieldmeterlength > 1.5) shieldmeterlength = 1.5;
 				dun = TexMan.CheckForTexture("SHLDUNIT", TexMan.TYPE_MiscPatch);
 				let EWS = EvilWarriorShield(CPlayerPawn.FindInventory("EvilWarriorShield"));
-				if (EWS && MiscItem)
+				if (EWS)
 				{
-					shieldenergy = EWS.shieldenergy;
-					shieldenergymax = MiscItem.HellWarriorMaxCharge;
-				}
-				if (shieldenergymax)
-				{
-					shieldenergypercent = shieldenergy * 100 / shieldenergymax;
-					int shieldbarunits = shieldenergypercent * shieldmeterlength;
-					for (int i; i < (100 * shieldmeterlength); i++) DrawTexture(TexMan.CheckForTexture("BLAKUNIT", TexMan.TYPE_MiscPatch), (barx+i, bary), 0, HX_SHADOW);
-					for (int i; i < shieldbarunits; i++) DrawTexture(dun, (barx+i, bary), 0, HX_SHADOW); // -46, -1
+					if (MiscItem)
+					{
+						if (EWS.ammo_type == 0)
+						{
+							shieldenergy = EWS.shieldenergy;
+							shieldenergymax = MiscItem.HellWarriorMaxCharge;
+							
+							if (shieldenergymax)
+							{
+								shieldenergypercent = shieldenergy * 100 / shieldenergymax;
+								int shieldbarunits = shieldenergypercent * shieldmeterlength;
+								for (int i; i < (100 * shieldmeterlength); i++) DrawTexture(TexMan.CheckForTexture("BLAKUNIT", TexMan.TYPE_MiscPatch), (barx+i, bary), 0, HX_SHADOW);
+								for (int i; i < shieldbarunits; i++) DrawTexture(dun, (barx+i, bary), 0, HX_SHADOW); // -46, -1
+							}
+							usealtammo = 0;
+						}
+						else
+						{
+							altammo = MiscItem.CurrentMagicPoints;
+							altammomax = MiscItem.MaxMagicPoints;
+							usealtammo = 1;
+						}
+					}
 				}
 				
 				int upgrades = MiscItem.HellWarriorShieldLevel;
@@ -1315,10 +1331,24 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			//GLKPENTR
 			
-			if (ammo1.maxamount > 0)
+			int trueammocurrent, trueammomax;
+			if (ammo1.maxamount > 0 || altammomax > 0)
 			{
-				AmmoAmount = ammo1.amount;
-				AmmoMaxAmount = ammo1.maxamount;
+				if (usealtammo)
+				{
+					AmmoAmount = altammo;
+					AmmoMaxAmount = altammomax;
+					trueammocurrent = altammo;
+					trueammomax = altammomax;
+				}
+				else
+				{
+					AmmoAmount = ammo1.amount;
+					AmmoMaxAmount = ammo1.maxamount;
+					trueammocurrent = ammo1.amount;
+					trueammomax = ammo1.maxamount;
+				}
+				
 				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
 				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
 				else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
@@ -1336,22 +1366,32 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			int DigitPush = 0;
-			if (ammo1.MaxAmount > 99) DigitPush = 8;
-			if (ammo1.MaxAmount > 999) DigitPush = 14;
-			if (ammo1.MaxAmount > 9999) DigitPush = 20;
+			if (trueammomax > 99) DigitPush = 8;
+			if (trueammomax > 999) DigitPush = 14;
+			if (trueammomax > 9999) DigitPush = 20;
 
-			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCMFont, FormatNumber(ammo1.MaxAmount, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+			if (usealtammo == 0)
+			{
+				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			}
+			DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
-			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			if (usealtammo == 0)
+			{
+				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+			}
 			DrawString(mKCMFont, "/", ((x-27-DigitPush), y+7), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
 			
-			DrawInventoryIcon(ammo1, (-14, -4));
-			if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			DrawString(mKCLFont, FormatNumber(ammo1.Amount, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			if (usealtammo == 0) DrawInventoryIcon(ammo1, (-14, -4));
+			if (usealtammo == 1) DrawImage("MAGIICON", (-14, -4), 0, wsalpha, (-1, -1), (0.5, 0.5)); 
+			if (usealtammo == 0)
+			{
+				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+			}
+			DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
 		else
@@ -1625,7 +1665,9 @@ class KCStatusBarMain : BaseStatusBar
 			if (MiscItem) hudarmortype = MiscItem.darmortype2;
 			if (hudarmortype == 1) fontclr = font.cr_green;
 			if (hudarmortype == 2) fontclr = font.cr_lightblue;
-			if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))
+			if (CPlayer.mo.CountInv("TSArmorTier1") || 
+					CPlayer.mo.CountInv("TSArmorTier2") || 
+					CPlayer.mo.CountInv("TSArmorTier3Plus"))
 			{
 				fontalpha = 0.25;
 				fontclr = font.cr_darkgray;
@@ -1644,7 +1686,9 @@ class KCStatusBarMain : BaseStatusBar
 				int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
 				int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
 				double malpha = 0.875;
-				if (CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2")) malpha *= 0.25;
+				if (CPlayer.mo.CountInv("TSArmorTier1") || 
+						CPlayer.mo.CountInv("TSArmorTier2") || 
+						CPlayer.mo.CountInv("TSArmorTier3Plus")) malpha *= 0.25;
 				
 				if (hudarmortype <= 1)
 				{
@@ -1835,7 +1879,9 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 2) TSAN = "TSA2NOTC";
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
-					if (!(CPlayer.mo.CountInv("TSArmorTier1") || CPlayer.mo.CountInv("TSArmorTier2"))) malpha *= 0.25;
+					if (!(CPlayer.mo.CountInv("TSArmorTier1") || 
+								CPlayer.mo.CountInv("TSArmorTier2") || 
+								CPlayer.mo.CountInv("TSArmorTier3Plus"))) malpha *= 0.25;
 					DrawBar(TSAN, "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 					
 					string perstr = "";
@@ -2062,6 +2108,7 @@ class KCStatusBarMain : BaseStatusBar
 		DigX = 256; // 68 + (Digits * Spacing); // 176
 		DigY = -28; // -90; // -90
 		if (A_CheckForHeiwa()) DigY -= 12; //18;
+		if (kcdebug_showextrametersalways) DigY -= 12;
 		string hudstat;
 		if (MiscItem && kc_expgains)
 		{
@@ -2086,17 +2133,19 @@ class KCStatusBarMain : BaseStatusBar
 				hudstat.AppendFormat("%d", (MiscItem.VitalityPieces+2));
 				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_green, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
 				DigY += sepery;
-				/*
-				hudstat = "IQ : ";
-				hudstat.AppendFormat("%d", (MiscItem.IQPieces+2));
-				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_purple, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
-				DigY += sepery;
 				
-				hudstat = "SEN: ";
-				hudstat.AppendFormat("%d", (MiscItem.SensesPieces+2));
-				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
-				DigY += sepery;
-				*/
+				if (kcdebug_showextrametersalways)
+				{
+					hudstat = "IQ : ";
+					hudstat.AppendFormat("%d", (MiscItem.IQPieces+2));
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_purple, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+					DigY += sepery;
+					
+					hudstat = "SEN: ";
+					hudstat.AppendFormat("%d", (MiscItem.SensesPieces+2));
+					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+					DigY += sepery;
+				}
 				
 				hudstat = "GUT: ";
 				hudstat.AppendFormat("%d", (MiscItem.PlayerGUTS+2));

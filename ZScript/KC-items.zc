@@ -1049,7 +1049,8 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			tagg.AppendFormat("Time Seraph's Bangle\c-");
 			tagg.AppendFormat(": Creates a scanning visor over the eyes for various vision related perks when used. Toggleable. [boosts damage dealt by 12.5%%");
 			tagg.AppendFormat(" and ignores up to ");
-			if (playera.CountInv("TSArmorTier2") > 0) tagg.AppendFormat("62.5");
+			if (playera.CountInv("TSArmorTier3Plus") > 0) tagg.AppendFormat("87.5");
+			else if (playera.CountInv("TSArmorTier2") > 0) tagg.AppendFormat("62.5");
 			else if (playera.CountInv("TSArmorTier1") > 0) tagg.AppendFormat("50");
 			else tagg.AppendFormat("41.67");
 			tagg.AppendFormat("%% of enemy defenses]");

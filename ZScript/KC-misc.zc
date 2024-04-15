@@ -1409,7 +1409,8 @@ class PlayerStatItem : Inventory
 					if (owner.CountInv("TimeSeraphPocketWatch")) 
 					{
 						ssainverseadd += 2.0;
-						if (owner.CountInv("TSArmorTier2")) ssainverseadd += 2.5;
+						if (owner.CountInv("TSArmorTier3Plus")) ssainverseadd += frandompick(7.5,10,10,10,10,10,12.5);
+						else if (owner.CountInv("TSArmorTier2")) ssainverseadd += 2.5;
 					}
 					if (owner.CountInv("TimeSeraphBangle")) 
 					{
@@ -2099,6 +2100,13 @@ class PlayerStatItem : Inventory
 			int buddhatype = 0;
 			if (A_CheckForHeiwa())
 			{
+				if (owner.CountInv("TSArmorTier3Plus"))
+				{
+					int temp = random(9687,9688);
+					SurvivalRate += temp;
+					SurviveRateCap += temp;
+				}
+				else
 				if (owner.CountInv("TSArmorTier2"))
 				{
 					SurvivalRate += 7500;
@@ -2113,6 +2121,13 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
+				if (owner.CountInv("TSArmorTier3Plus"))
+				{
+					int temp = randompick(6666,6666,6667);
+					SurvivalRate += temp;
+					SurviveRateCap += temp;
+				}
+				else
 				if (owner.CountInv("TSArmorTier2"))
 				{
 					SurvivalRate += 2500;
@@ -2312,13 +2327,15 @@ class PlayerStatItem : Inventory
 		{
 			if (owner.CountInv("KCPowerKampoul"))
 			{
-						 if (owner.CountInv("TSArmorTier2")) CritChance *= 0.1;
+						 if (owner.CountInv("TSArmorTier3Plus")) CritChance *= 0.0334;
+				else if (owner.CountInv("TSArmorTier2")) CritChance *= 0.1;
 				else if (owner.CountInv("TSArmorTier1")) CritChance *= 0.25;
 																						else CritChance *= 0.625;
 			}
 			else
 			{
-						 if (owner.CountInv("TSArmorTier2")) CritChance *= 0.55; // 0.1;
+						 if (owner.CountInv("TSArmorTier3Plus")) CritChance *= 0.5167; // 0.0334;
+				else if (owner.CountInv("TSArmorTier2")) CritChance *= 0.55; // 0.1;
 				else if (owner.CountInv("TSArmorTier1")) CritChance *= 0.625; // 0.25;
 																						else CritChance *= 0.8125; // 0.625;
 			}
@@ -2529,7 +2546,8 @@ class PlayerStatItem : Inventory
 					darmortype2 = 2;
 				}
 				if (owner.CountInv("TSArmorTier1") || 
-						owner.CountInv("TSArmorTier2"))
+						owner.CountInv("TSArmorTier2") ||
+						owner.CountInv("TSArmorTier3Plus"))
 				{
 					darmortype = 0;
 				}
@@ -2559,8 +2577,10 @@ class PlayerStatItem : Inventory
 					 owner.CountInv("KCPowerInvuln") || 
 					 owner.CountInv("PowerInvulnerable"))
 			{
-				int tsamassmul = 250;
-				if (owner.CountInv("TSArmorTier2")) TotalMass *= (tsamassmul*tsamassmul);
+				int tsamassmul = kc_tsamassmultbase;
+				tsamassmul *= kc_tsaeffectiveness;
+				if (owner.CountInv("TSArmorTier3Plus")) TotalMass *= (tsamassmul*tsamassmul*tsamassmul);
+				else if (owner.CountInv("TSArmorTier2")) TotalMass *= (tsamassmul*tsamassmul);
 				else if (owner.CountInv("TSArmorTier1")) TotalMass *= tsamassmul;
 				if (kcdebug_masscalcs) Console.Printf("Mass [TSArmor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
 			}
@@ -2765,6 +2785,22 @@ class PlayerStatItem : Inventory
 			if (BMaxArmor > 0) ArmorRatio = double((ArmorAmt * 1.0) / (BMaxArmor * 1.0));
 			double ArmorEnc = 0.00;
 			double ArmorWeight;
+			if (owner.CountInv("TSArmorTier3Plus"))
+			{
+				if (A_CheckForHeiwa())
+				{
+					ArmorWeight = 0.01875;
+					if (berserked) ArmorWeight *= 0.25;
+				}
+				else
+				{
+					ArmorWeight = 0.075;
+					if (berserked) ArmorWeight *= 0.875;
+				}
+				ArmorWeight *= armordiffmod;
+				ArmorEnc = ArmorWeight;
+			}
+			else
 			if (owner.CountInv("TSArmorTier2"))
 			{
 				if (A_CheckForHeiwa())
@@ -2851,7 +2887,8 @@ class PlayerStatItem : Inventory
 			double SpecialJumpZ = 1.00;
 			if (A_CheckForHeiwa())
 			{
-				if (owner.CountInv("TSArmorTier2")) 
+				if (owner.CountInv("TSArmorTier3Plus") ||
+						owner.CountInv("TSArmorTier2")) 
 				{
 					if (owner.CountInv("TimeSeraphVisor")) SpecialJumpZ *= frandompick(1.0,1.1875,1.1875,1.1875,1.375); 
 																						else SpecialJumpZ *= frandompick(1.0,1.125,1.125,1.125,1.25);
@@ -5135,14 +5172,21 @@ class PlayerStatItem : Inventory
 		
 		if (TimeArmorRelicsOwned)
 		{
-			TimeArmorEnergyMaxTics = ((3600 * TimeArmorRelicsOwned) * TICRATE);
+			TimeArmorEnergyMaxTics = ((1800 * TimeArmorRelicsOwned) * TICRATE);
 			
 			if (TimeArmorEnergyTics > 0)
 			{
 				nm = "TSArmorTier1";
 				nn = "TSArmorTier2";
-				no = "TimeSeraphVisor";
+				no = "TSArmorTier3Plus";
+				np = "TimeSeraphVisor";
 				TSADrainAmt = 0;
+				if (owner.CountInv(no)) 
+				{
+					TSADrainAmt += random(random(32,36),random(44,48));
+					TimeArmorRelicsUsedBits += 11;
+				}
+				else
 				if (owner.CountInv(nn)) 
 				{
 					TSADrainAmt += 40;
@@ -5154,7 +5198,7 @@ class PlayerStatItem : Inventory
 					TSADrainAmt += 10;
 					TimeArmorRelicsUsedBits += 1;
 				}
-				if (owner.CountInv(no)) 
+				if (owner.CountInv(np)) 
 				{
 					TimeArmorRelicsUsedBits += 4;
 					TSADrainAmt += 2;
@@ -5165,8 +5209,13 @@ class PlayerStatItem : Inventory
 					if (owner.CountInv("KCPowerTorchBangle")) owner.A_SetInventory("KCPowerTorchBangle",0);
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
-				if (TSADrainAmt) TSADrainAmt *= kc_tsadrainspd;
-				if (TSADrainAmt) TSADrainAmt *= (1.0 / kc_tsaeffectiveness);
+				if (TSADrainAmt)
+				{
+					TSADrainAmt *= kc_tsadrainspd;
+					TSADrainAmt *= (1.0 / kc_tsaeffectiveness);
+					if (TSADrainAmt < 1) TSADrainAmt = 1;
+					if (TSADrainAmt > 10000) TSADrainAmt = 10000;
+				}
 				if (!A_CheckNoTimer()) 
 				{
 					int TimeArmorEnergyMod = (TimeArmorEnergyMaxTics / 67);
@@ -5215,8 +5264,13 @@ class PlayerStatItem : Inventory
 			{
 				TSARegenAmt = (8.0 + (PlayerLevel * 0.000625));
 				TSARegenAmt *= TimeArmorRelicsOwned;
-				if (TSARegenAmt) TSARegenAmt *= kc_tsaregenspd;
-				if (TSARegenAmt) TSARegenAmt *= kc_tsaeffectiveness;
+				if (TSARegenAmt) 
+				{
+					TSARegenAmt *= kc_tsaregenspd;
+					TSARegenAmt *= kc_tsaeffectiveness;
+					if (TSARegenAmt < 1) TSARegenAmt = 1;
+					if (TSARegenAmt > 10000) TSARegenAmt = 10000;
+				}
 				if (A_CheckTimeFreeze()) 
 				{
 					if (TimeArmorRelicsOwned == 1) TSARegenAmt *= 0.25;
@@ -7152,6 +7206,22 @@ class PlayerStatItem : Inventory
 		double ArmorFactor = 1.0;
 		double ArmorWeight;
 		ArmorM = 0;
+		if (owner.CountInv("TSArmorTier3Plus"))
+		{
+			if (A_CheckForHeiwa())
+			{
+				ArmorWeight = 0.01875;
+				if (berserked) ArmorWeight *= 0.25;
+			}
+			else
+			{
+				ArmorWeight = 0.075;
+				if (berserked) ArmorWeight *= 0.875;
+			}
+			ArmorWeight *= armordiffmod;
+			ArmorM = ArmorWeight;
+		}
+		else
 		if (owner.CountInv("TSArmorTier2"))
 		{
 			if (A_CheckForHeiwa())
