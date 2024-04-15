@@ -1289,6 +1289,12 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
+		double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
+		double timestopbaseboost;
+		double boostf = 1.125;
+		double boostphase = 0.25;
+		double boostphase2 = 1.00;
+
 		if (weapon is "EvilWarriorShield")
 		{
 		}
@@ -1453,6 +1459,13 @@ class PlayerStatItem : Inventory
 							{
 								inc += ((TruePlayerLevel * 0.05) + (TruePlayerDEF * 0.05));
 							}
+							int temp1 = floor(VitalityPieces * 0.1);
+							int temp2 = floor(VitalityPieces * 0.2);
+							int temp3 = floor(VitalityPieces * 0.4);
+							int temp4 = floor(VitalityPieces * 0.8);
+							int temp5 = floor(VitalityPieces * 1.6);
+							if (berserked) inc += randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
+												else inc += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
 							
 							BaseRegenMulti = inc;
 							if (HPRegenBoostTimer > 0) inc *= 2.5;
@@ -1490,13 +1503,11 @@ class PlayerStatItem : Inventory
 							if (kcdebug_hpregen) Console.Printf("post powerup inc: %d, tic: %d", inc, gametic);
 							if (timestoptype > 0)
 							{
-								double boostf = 1.125;
-								double boostphase = 0.25;
-								double boostphase2 = 1.00;
+								boostf = 1.125;
+								boostphase = 0.25;
+								boostphase2 = 1.00;
 								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
-								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
 								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
-								double timestopbaseboost;
 								if (A_CheckForHeiwa())
 								{
 									if (timestoptype == 1) 
@@ -1618,9 +1629,16 @@ class PlayerStatItem : Inventory
 								if (CurrentHealth < MaxHealthTrue)
 								{
 									int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.4) / 100;
+									int temp1 = floor(VitalityPieces * 0.05);
+									int temp2 = floor(VitalityPieces * 0.1);
+									int temp3 = floor(VitalityPieces * 0.2);
+									int temp4 = floor(VitalityPieces * 0.4);
+									int temp5 = floor(VitalityPieces * 0.8);
+									rec += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
 									if (berserked) 
 									{
 										rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxHealthTrue * 0.8) / 100;
+										rec += randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
 										if (A_CheckForHeiwa() && random(1,4) <= 1)
 										{
 											if (random(1,4) <= 1) rec *= 2.5;
@@ -1657,6 +1675,13 @@ class PlayerStatItem : Inventory
 							{
 								inc -= ((TruePlayerLevel * 0.025) + (TruePlayerDEF * 0.025));
 							}
+							int temp1 = floor(VitalityPieces * 0.05);
+							int temp2 = floor(VitalityPieces * 0.1);
+							int temp3 = floor(VitalityPieces * 0.2);
+							int temp4 = floor(VitalityPieces * 0.4);
+							int temp5 = floor(VitalityPieces * 0.8);
+							if (berserked) inc -= randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
+												else inc -= randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
 							
 							BaseRegenMulti = inc;
 							if (HPRegenBoostTimer > 0) inc *= 0.4;
@@ -1696,9 +1721,7 @@ class PlayerStatItem : Inventory
 								double boostphase = 0.25;
 								double boostphase2 = 1.00;
 								if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
-								double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
 								if (kcdebug_hpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
-								double timestopbaseboost;
 								if (A_CheckForHeiwa())
 								{
 									if (timestoptype == 1) timestopbaseboost = (0.04 - (timefreeze1timesused * 0.0004)); // Defensive
@@ -1875,9 +1898,68 @@ class PlayerStatItem : Inventory
 				{
 					int inc = 20;
 					if (inc < 0) inc = 0;
-					PPRegenTimer += inc;
 					//genticsHUD = inc;
+
+					BaseRegenMulti = inc;
+					if (PPRegenBoostTimer > 0) inc *= 2.5;
+					if (PPRegenBoostTimer < 0) inc *= 0.4;
+					if (kcdebug_ppregen) Console.Printf("PPRegenBoostTimer [Regen]: %d, inc: %d", PPRegenBoostTimer, inc);
 					
+					if (timestoptype > 0)
+					{
+						boostf = 1.125;
+						boostphase = 0.25;
+						boostphase2 = 1.00;
+						if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
+						if (kcdebug_ppregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+						if (A_CheckForHeiwa())
+						{
+							if (timestoptype == 1) 
+							{
+								timestopbaseboost = (6.25 + (timefreeze1timesused * 0.0625)); // Defensive
+								if (timestopbaseboost > 25) timestopbaseboost = 25;
+							}
+							if (timestoptype == 2) 
+							{
+								timestopbaseboost = (1 + (timefreeze2timesused * 0.01)); // Offensive
+								if (timestopbaseboost > 4) timestopbaseboost = 4;
+							}
+							if (timestoptype == 3) 
+							{
+								timestopbaseboost = (2.5 + (timefreeze3timesused * 0.025)); // Neutral
+								if (timestopbaseboost > 10) timestopbaseboost = 10;
+							}
+						}
+						else
+						{
+							if (timestoptype == 1) 
+							{
+								timestopbaseboost = (6.25 + (timefreeze1timesused * 0.003125)); // Defensive
+								if (timestopbaseboost > 12.5) timestopbaseboost = 12.5;
+							}
+							if (timestoptype == 2) 
+							{
+								timestopbaseboost = (1 + (timefreeze2timesused * 0.0005)); // Offensive
+								if (timestopbaseboost > 2) timestopbaseboost = 2;
+							}
+							if (timestoptype == 3) 
+							{
+								timestopbaseboost = (2.5 + (timefreeze3timesused * 0.00125)); // Neutral
+								if (timestopbaseboost > 5) timestopbaseboost = 5;
+							}
+						}
+						timestopbaseboost *= 0.5;
+						inc *= timestopbaseboost;
+						if (kcdebug_ppregen) Console.Printf("post timestoptype [%d] - inc: %d, timestopbaseboost: %.8f, tic: %d", timestoptype, inc, timestopbaseboost, gametic);
+						for (int ti; ti < boostphase2; ti++)
+						{
+							if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
+							if (kcdebug_ppregen) Console.Printf("boost: %.4f, inc: %d, tic: %d", ((ti+1) * boostphase), inc, gametic);
+						}
+						if (kcdebug_ppregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
+					}
+					
+					PPRegenTimer += inc;
 					while (PPRegenTimer > PPRegenTimerMax)
 					{
 						PPRegenTimer -= PPRegenTimerMax;
@@ -1886,15 +1968,12 @@ class PlayerStatItem : Inventory
 						if (CurrentPsychicPoints < MaxPsychicPoints)
 						{
 							int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxPsychicPoints * 0.4) / 100;
-							if (berserked) 
-							{
-								rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxPsychicPoints * 0.8) / 100;
-								if (A_CheckForHeiwa() && random(1,4) <= 1)
-								{
-									if (random(1,4) <= 1) rec *= 2.5;
-																	 else rec *= 1.75;
-								}
-							}
+							int temp1 = floor(IQPieces * 0.05);
+							int temp2 = floor(IQPieces * 0.1);
+							int temp3 = floor(IQPieces * 0.2);
+							int temp4 = floor(IQPieces * 0.4);
+							int temp5 = floor(IQPieces * 0.8);
+							rec += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
 							if (rec < 1) rec = 1;
 
 							//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
@@ -1910,9 +1989,68 @@ class PlayerStatItem : Inventory
 				{
 					int inc = 20;
 					if (inc < 0) inc = 0;
-					MPRegenTimer += inc;
 					//genticsHUD = inc;
+
+					BaseRegenMulti = inc;
+					if (MPRegenBoostTimer > 0) inc *= 2.5;
+					if (MPRegenBoostTimer < 0) inc *= 0.4;
+					if (kcdebug_mpregen) Console.Printf("MPRegenBoostTimer [Regen]: %d, inc: %d", MPRegenBoostTimer, inc);
 					
+					if (timestoptype > 0)
+					{
+						boostf = 1.125;
+						boostphase = 0.25;
+						boostphase2 = 1.00;
+						if (boostphase > 0.00 && boostphase2 >= 1.00) boostphase2 /= boostphase;
+						if (kcdebug_mpregen) Console.Printf("timestopgphase: %.4f", timestopgphase);
+						if (A_CheckForHeiwa())
+						{
+							if (timestoptype == 1) 
+							{
+								timestopbaseboost = (6.25 + (timefreeze1timesused * 0.0625)); // Defensive
+								if (timestopbaseboost > 25) timestopbaseboost = 25;
+							}
+							if (timestoptype == 2) 
+							{
+								timestopbaseboost = (1 + (timefreeze2timesused * 0.01)); // Offensive
+								if (timestopbaseboost > 4) timestopbaseboost = 4;
+							}
+							if (timestoptype == 3) 
+							{
+								timestopbaseboost = (2.5 + (timefreeze3timesused * 0.025)); // Neutral
+								if (timestopbaseboost > 10) timestopbaseboost = 10;
+							}
+						}
+						else
+						{
+							if (timestoptype == 1) 
+							{
+								timestopbaseboost = (6.25 + (timefreeze1timesused * 0.003125)); // Defensive
+								if (timestopbaseboost > 12.5) timestopbaseboost = 12.5;
+							}
+							if (timestoptype == 2) 
+							{
+								timestopbaseboost = (1 + (timefreeze2timesused * 0.0005)); // Offensive
+								if (timestopbaseboost > 2) timestopbaseboost = 2;
+							}
+							if (timestoptype == 3) 
+							{
+								timestopbaseboost = (2.5 + (timefreeze3timesused * 0.00125)); // Neutral
+								if (timestopbaseboost > 5) timestopbaseboost = 5;
+							}
+						}
+						timestopbaseboost *= 0.5;
+						inc *= timestopbaseboost;
+						if (kcdebug_mpregen) Console.Printf("post timestoptype [%d] - inc: %d, timestopbaseboost: %.8f, tic: %d", timestoptype, inc, timestopbaseboost, gametic);
+						for (int ti; ti < boostphase2; ti++)
+						{
+							if (timestopgphase >= ((ti+1) * boostphase)) inc *= boostf;
+							if (kcdebug_mpregen) Console.Printf("boost: %.4f, inc: %d, tic: %d", ((ti+1) * boostphase), inc, gametic);
+						}
+						if (kcdebug_mpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
+					}
+
+					MPRegenTimer += inc;
 					while (MPRegenTimer > MPRegenTimerMax)
 					{
 						MPRegenTimer -= MPRegenTimerMax;
@@ -1921,15 +2059,12 @@ class PlayerStatItem : Inventory
 						if (CurrentMagicPoints < MaxMagicPoints)
 						{
 							int rec = randompick[statitem](1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2) * (MaxMagicPoints * 0.4) / 100;
-							if (berserked) 
-							{
-								rec = randompick[statitem](1,1,1,1,1,1,1,1,1,2) * (MaxMagicPoints * 0.8) / 100;
-								if (A_CheckForHeiwa() && random(1,4) <= 1)
-								{
-									if (random(1,4) <= 1) rec *= 2.5;
-																	 else rec *= 1.75;
-								}
-							}
+							int temp1 = floor(SensesPieces * 0.05);
+							int temp2 = floor(SensesPieces * 0.1);
+							int temp3 = floor(SensesPieces * 0.2);
+							int temp4 = floor(SensesPieces * 0.4);
+							int temp5 = floor(SensesPieces * 0.8);
+							rec += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
 							if (rec < 1) rec = 1;
 
 							//if (rec && kchud_showhpapdmgrecregen) A_RecoverHUD(rec, 0, false);
