@@ -7314,6 +7314,15 @@ class KCHealthBoostItem : KCSwitchableDecoration
 	property healstring: foodquote;
 	property healsound1: sound1;
 	property healsound2: sound2;
+
+	
+	bool A_CheckForHeiwaPlayer()
+	{
+		bool isHeiwa = false;
+		actor playera = players[0].mo;
+		if (HeiwaPlayer(playera) || playera.GetClassName() == "HeiwaPlayer") isHeiwa = true;
+		return isHeiwa;
+	}
 }
 
 class SingleTickDecoration : KCBaseZSC abstract

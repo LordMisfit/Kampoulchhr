@@ -4253,8 +4253,18 @@ class KC_EventHandler : EventHandler
 						{
 							double rand = 1.0;
 							user_type = random(1,13);
-							if (A_CheckForHeiwaPlayer()) user_type = random(1,18);
+							if (!playera.CountInv("Translocator")) user_type = random(0,13);
+							if (A_CheckForHeiwaPlayer()) 
+							{
+								if (!playera.CountInv("Translocator")) user_type = random(0,18);
+								user_type = random(1,18);
+							}
 							droptype = "BackPack2";
+							if (user_type == 0) 
+							{
+								droptype = "Translocator";
+								if (playera.CountInv(droptype)) droptype = "SpecialBackpack";
+							}
 							if (user_type == 1) 
 							{
 								droptype = "Pistol";
