@@ -2566,43 +2566,62 @@ class KCStatusBarMain : BaseStatusBar
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 
 		int wsfontclr = font.cr_gray;
-		if (typea == 1) // Sigil
+		if (AmmoMaxAmount > 0)
 		{
-			AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
-			if (AmmoAmount <= 0) wsfontclr = font.cr_black;
-			else if (MiscItem.oldhealthratio == 3) wsfontclr = font.cr_darkred;
-			else if (MiscItem.oldhealthratio == 2) wsfontclr = font.cr_red;
-			else if (MiscItem.oldhealthratio == 1 || (MiscItem.oldhealthratio == 0 && AmmoAmount <= AmmoMaxAmount)) wsfontclr = font.cr_brick;
-			else if (AmmoRatio >= 100 && AmmoRatio <= 133) wsfontclr = font.cr_teal;
-			else if (AmmoRatio >= 134 && AmmoRatio <= 166) wsfontclr = font.cr_cyan;
-			else if (AmmoRatio >= 167 && AmmoRatio <= 199) wsfontclr = font.cr_sapphire;
-			else if (AmmoRatio >= 200 && AmmoRatio <= 249) wsfontclr = font.cr_lightblue;
-			else if (AmmoRatio >= 250 && AmmoRatio <= 299) wsfontclr = font.cr_purple;
-			else if (AmmoRatio >= 300) wsfontclr = font.cr_gold;
-			else wsfontclr = font.cr_gray;
-		}
-		else
-		if (typea == 0) // Most
-		{
-			AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
-			if (AmmoAmount <= 0) wsfontclr = font.cr_black;
-			else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
-			else if (AmmoRatio >= 10 && AmmoRatio <= 19) wsfontclr = font.cr_red;
-			else if (AmmoRatio >= 20 && AmmoRatio <= 29) wsfontclr = font.cr_brick;
-			else if (AmmoRatio >= 30 && AmmoRatio <= 39) wsfontclr = font.cr_orange;
-			else if (AmmoRatio >= 40 && AmmoRatio <= 49) wsfontclr = font.cr_yellow;
-			else if (AmmoRatio >= 50 && AmmoRatio <= 59) wsfontclr = font.cr_gold;
-			else if (AmmoRatio >= 60 && AmmoRatio <= 69) wsfontclr = font.cr_olive;
-			else if (AmmoRatio >= 70 && AmmoRatio <= 79) wsfontclr = font.cr_darkgreen;
-			else if (AmmoRatio >= 80 && AmmoRatio <= 89) wsfontclr = font.cr_green;
-			else if (AmmoRatio >= 90 && AmmoRatio <= 99) wsfontclr = font.cr_cyan;
-			else if (AmmoAmount >= AmmoMaxAmount) wsfontclr = font.cr_sapphire;
-			else wsfontclr = font.cr_gray;
-		}
-		else
-		if (typea <= -1) // No Ammo Types [i.e Hand to Hand]
-		{
-			wsfontclr = font.cr_gray;
+			if (typea == 2) // MP Ammo type
+			{
+				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
+				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
+				else if (MiscItem.oldhealthratio == 3) wsfontclr = font.cr_darkred;
+				else if (MiscItem.oldhealthratio == 2) wsfontclr = font.cr_red;
+				else if (MiscItem.oldhealthratio == 1 || (MiscItem.oldhealthratio == 0 && AmmoAmount <= AmmoMaxAmount)) wsfontclr = font.cr_brick;
+				else if (AmmoRatio >= 100 && AmmoRatio <= 133) wsfontclr = font.cr_teal;
+				else if (AmmoRatio >= 134 && AmmoRatio <= 166) wsfontclr = font.cr_cyan;
+				else if (AmmoRatio >= 167 && AmmoRatio <= 199) wsfontclr = font.cr_sapphire;
+				else if (AmmoRatio >= 200 && AmmoRatio <= 249) wsfontclr = font.cr_lightblue;
+				else if (AmmoRatio >= 250 && AmmoRatio <= 299) wsfontclr = font.cr_purple;
+				else if (AmmoRatio >= 300) wsfontclr = font.cr_gold;
+				else wsfontclr = font.cr_gray;
+			}
+			else
+			if (typea == 1) // Sigil
+			{
+				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
+				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
+				else if (MiscItem.oldhealthratio == 3) wsfontclr = font.cr_darkred;
+				else if (MiscItem.oldhealthratio == 2) wsfontclr = font.cr_red;
+				else if (MiscItem.oldhealthratio == 1 || (MiscItem.oldhealthratio == 0 && AmmoAmount <= AmmoMaxAmount)) wsfontclr = font.cr_brick;
+				else if (AmmoRatio >= 100 && AmmoRatio <= 133) wsfontclr = font.cr_teal;
+				else if (AmmoRatio >= 134 && AmmoRatio <= 166) wsfontclr = font.cr_cyan;
+				else if (AmmoRatio >= 167 && AmmoRatio <= 199) wsfontclr = font.cr_sapphire;
+				else if (AmmoRatio >= 200 && AmmoRatio <= 249) wsfontclr = font.cr_lightblue;
+				else if (AmmoRatio >= 250 && AmmoRatio <= 299) wsfontclr = font.cr_purple;
+				else if (AmmoRatio >= 300) wsfontclr = font.cr_gold;
+				else wsfontclr = font.cr_gray;
+			}
+			else
+			if (typea == 0) // Most
+			{
+				AmmoRatio = AmmoAmount * 100 / AmmoMaxAmount;
+				if (AmmoAmount <= 0) wsfontclr = font.cr_black;
+				else if (AmmoRatio >= 0 && AmmoRatio <= 9) wsfontclr = font.cr_darkred;
+				else if (AmmoRatio >= 10 && AmmoRatio <= 19) wsfontclr = font.cr_red;
+				else if (AmmoRatio >= 20 && AmmoRatio <= 29) wsfontclr = font.cr_brick;
+				else if (AmmoRatio >= 30 && AmmoRatio <= 39) wsfontclr = font.cr_orange;
+				else if (AmmoRatio >= 40 && AmmoRatio <= 49) wsfontclr = font.cr_yellow;
+				else if (AmmoRatio >= 50 && AmmoRatio <= 59) wsfontclr = font.cr_gold;
+				else if (AmmoRatio >= 60 && AmmoRatio <= 69) wsfontclr = font.cr_olive;
+				else if (AmmoRatio >= 70 && AmmoRatio <= 79) wsfontclr = font.cr_darkgreen;
+				else if (AmmoRatio >= 80 && AmmoRatio <= 89) wsfontclr = font.cr_green;
+				else if (AmmoRatio >= 90 && AmmoRatio <= 99) wsfontclr = font.cr_cyan;
+				else if (AmmoAmount >= AmmoMaxAmount) wsfontclr = font.cr_sapphire;
+				else wsfontclr = font.cr_gray;
+			}
+			else
+			if (typea <= -1) // No Ammo Types [i.e Hand to Hand]
+			{
+				wsfontclr = font.cr_gray;
+			}
 		}
 		
 		return AmmoRatio, wsfontclr;
@@ -2634,6 +2653,7 @@ class KCStatusBarMain : BaseStatusBar
 		int baseinc = 1;
 		int weaponsincurslot;
 		int priority = 0;
+		int trueammocurrent, trueammomax;
 		//Console.Printf("%p, %s, wsalpha: %.8f", wsweapon, wsweapon.GetClassName(), wsalpha);
 		
 		x = startposx;
@@ -2699,9 +2719,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsammoname = "Clip";
 		if (A_CheckForHeiwa()) wsammoname = "Cell";
 		let ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 2;
 			if (wsweapon is wsname) 
@@ -2718,9 +2743,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "Glock21";
 		wsammoname = "Clip";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 2;
 			if (wsweapon is wsname)
@@ -2745,9 +2775,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "ShotgunMarine";
 		wsammoname = "Shell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 3;
 			if (wsweapon is wsname)
@@ -2765,9 +2800,14 @@ class KCStatusBarMain : BaseStatusBar
 		if (A_CheckForHeiwa()) wsname = "RiotGun";
 		wsammoname = "Shell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 3;
 			if (wsweapon is wsname)
@@ -2793,9 +2833,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsammoname = "Clip";
 		if (A_CheckForHeiwa()) wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 4;
 			if (wsweapon is wsname)
@@ -2812,9 +2857,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "TommyGun";
 		wsammoname = "TommAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 4;
 			if (wsweapon is wsname)
@@ -2839,9 +2889,14 @@ class KCStatusBarMain : BaseStatusBar
 		if (A_CheckForHeiwa()) wsname = "Deviation";
 		wsammoname = "RocketAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 5;
 			if (wsweapon is wsname)
@@ -2858,9 +2913,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "Devastator";
 		wsammoname = "MiniRockets";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 5;
 			if (wsweapon is wsname)
@@ -2886,9 +2946,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "PlasmaRifleMarine";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 
 			wsnum = 6;
 			if (wsweapon is wsname)
@@ -2905,9 +2970,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "TeslaCannon";
 		wsammoname = "Bolts";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 6;
 			if (wsweapon is wsname)
@@ -2931,9 +3001,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "BFG9000Marine";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 7;
 			if (wsweapon is wsname)
@@ -2950,9 +3025,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "BHGen";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 7;
 			if (wsweapon is wsname)
@@ -2973,9 +3053,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "Translocator"; // "KCSigil"
 		wsammoname = "TLBeaconAmmo";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			//[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, CurrHealth, PlayerMaxHP, 1);
 			
 			wsnum = 8;
@@ -2993,10 +3078,24 @@ class KCStatusBarMain : BaseStatusBar
 		weaponsincurslot = 1;
 		wsname = "EvilWarriorShield";
 		wsammoname = "PikeAmmo";
+		let EWS = EvilWarriorShield(CPlayerPawn.FindInventory("EvilWarriorShield"));
+		int temptype = 0;
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+			temptype = 0;
+		}
+		if (MiscItem && EWS && EWS.ammo_type == 1)
+		{
+			trueammocurrent = MiscItem.CurrentMagicPoints;
+			trueammomax = MiscItem.MaxMagicPoints;
+			temptype = 0;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, temptype);
 			
 			wsnum = 9;
 			if (wsweapon is wsname)
@@ -3019,9 +3118,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "SawThrower";
 		wsammoname = "Saws";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 0;
 			if (wsweapon is wsname)
@@ -3038,9 +3142,14 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "ImpalerXBow";
 		wsammoname = "ImpalerBolts";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, ammotype.Amount, ammotype.MaxAmount, 0);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
 			
 			wsnum = 0;
 			if (wsweapon is wsname)

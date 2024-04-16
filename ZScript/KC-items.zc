@@ -22,8 +22,14 @@ class RandomSpawner2 : RandomSpawner
 class CustomInventoryExt : CustomInventory
 {
 	const HeiwaHPBoostTimerMult = 2.5;
+	const HeiwaPPBoostTimerMult = 1.75;
+	const HeiwaMPBoostTimerMult = 1.75;
 	const HealItemBaseHPBoostRatio = 25;
 	const HealItemBaseHPBoostRatio2 = 37.5;
+	const HealItemBasePPBoostRatio = 12.5;
+	const HealItemBasePPBoostRatio2 = 18.75;
+	const HealItemBaseMPBoostRatio = 12.5;
+	const HealItemBaseMPBoostRatio2 = 18.75;
 
 	string texname;
 	int user_type;
@@ -276,10 +282,22 @@ class CustomInventoryExt : CustomInventory
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int CurrentHealth = playera.health;
+		int CurrentPsychicPoints, CurrentMagicPoints;
 		int HealthValue;
 		int MaxHealthTrue;
-		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxPsychicPoints;
+		int MaxMagicPoints;
+		if (MiscItem)
+		{
+			CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+			CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+			if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+			if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+			if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+		}
 		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		//int MaxPPLimit = MaxPsychicPoints * 2;
+		//int MaxMPLimit = MaxMagicPoints * 2;
 		
 		bool result = false;
 		if (currenthealth < MaxHealthLimit) result = true;
@@ -319,11 +337,23 @@ class CustomInventoryExt : CustomInventory
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int CurrentHealth = playera.health;
+		int CurrentPsychicPoints, CurrentMagicPoints;
 		int HealAmount;
 		int HealthValue;
 		int MaxHealthTrue;
-		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int MaxPsychicPoints;
+		int MaxMagicPoints;
+		if (MiscItem)
+		{
+			CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+			CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+			if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+			if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+			if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+		}
 		int MaxHealthLimit = MaxHealthTrue * maxhealthratio;
+		//int MaxPPLimit = MaxPsychicPoints * 2;
+		//int MaxMPLimit = MaxMagicPoints * 2;
 		int oldhealthratio;
 		if (playera.CountInv("NormalHealth")) oldhealthratio = 0;
 		if (playera.CountInv("DecentHealth")) oldhealthratio = 1;
@@ -1470,10 +1500,22 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int CurrentHealth = playera.health;
+				int CurrentPsychicPoints, CurrentMagicPoints;
 				int HealthValue;
 				int MaxHealthTrue;
-				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxPsychicPoints;
+				int MaxMagicPoints;
+				if (MiscItem)
+				{
+					CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+					CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+					if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+					if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+					if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+				}
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int MaxPPLimit = MaxPsychicPoints * 2;
+				int MaxMPLimit = MaxMagicPoints * 2;
 				
 				if (CurrentHealth < MaxHealthLimit)
 				{
@@ -1524,10 +1566,22 @@ class HealthBonusBig : CustomInventoryExt
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int CurrentHealth = playera.health;
+				int CurrentPsychicPoints, CurrentMagicPoints;
 				int HealthValue;
 				int MaxHealthTrue;
-				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxPsychicPoints;
+				int MaxMagicPoints;
+				if (MiscItem)
+				{
+					CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+					CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+					if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+					if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+					if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+				}
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int MaxPPLimit = MaxPsychicPoints * 2;
+				int MaxMPLimit = MaxMagicPoints * 2;
 				
 				if (CurrentHealth < MaxHealthLimit)
 				{
@@ -1570,10 +1624,22 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int CurrentHealth = playera.health;
+				int CurrentPsychicPoints, CurrentMagicPoints;
 				int HealthValue;
 				int MaxHealthTrue;
-				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxPsychicPoints;
+				int MaxMagicPoints;
+				if (MiscItem)
+				{
+					CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+					CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+					if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+					if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+					if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+				}
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int MaxPPLimit = MaxPsychicPoints * 2;
+				int MaxMPLimit = MaxMagicPoints * 2;
 				int oldhealthratio;
 				if (playera.CountInv("NormalHealth")) oldhealthratio = 0;
 				if (playera.CountInv("DecentHealth")) oldhealthratio = 1;
@@ -1595,6 +1661,38 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 					}
 		
 					playera.health = CurrentHealth;
+				}
+				
+				if (CurrentPsychicPoints < MaxPPLimit)
+				{
+					HealthValue = (MaxPsychicPoints * 0.5);
+					double healratio = double((HealthValue * 1.0) / (MaxPsychicPoints * 1.0));
+					CurrentPsychicPoints += HealthValue;
+					if (CurrentPsychicPoints > MaxPPLimit) CurrentPsychicPoints = MaxPPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentPsychicPoints = CurrentPsychicPoints;
+						
+						int PPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBasePPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) PPRegenBoostTimeAmt *= HeiwaPPBoostTimerMult;
+						MiscItem.PPRegenBoostTimer += PPRegenBoostTimeAmt;
+					}
+				}
+				
+				if (CurrentMagicPoints < MaxMPLimit)
+				{
+					HealthValue = (MaxMagicPoints * 0.5);
+					double healratio = double((HealthValue * 1.0) / (MaxMagicPoints * 1.0));
+					CurrentMagicPoints += HealthValue;
+					if (CurrentMagicPoints > MaxMPLimit) CurrentMagicPoints = MaxMPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentMagicPoints = CurrentMagicPoints;
+						
+						int MPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseMPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) MPRegenBoostTimeAmt *= HeiwaMPBoostTimerMult;
+						MiscItem.MPRegenBoostTimer += MPRegenBoostTimeAmt;
+					}
 				}
 				
 				if (HeiwaPlayer(playera))
@@ -1659,10 +1757,22 @@ class MiniSoulsphere : CustomInventoryExt
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int CurrentHealth = playera.health;
+				int CurrentPsychicPoints, CurrentMagicPoints;
 				int HealthValue;
 				int MaxHealthTrue;
-				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxPsychicPoints;
+				int MaxMagicPoints;
+				if (MiscItem)
+				{
+					CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+					CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+					if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+					if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+					if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+				}
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int MaxPPLimit = MaxPsychicPoints * 2;
+				int MaxMPLimit = MaxMagicPoints * 2;
 				int oldhealthratio;
 				if (playera.CountInv("NormalHealth")) oldhealthratio = 0;
 				if (playera.CountInv("DecentHealth")) oldhealthratio = 1;
@@ -1684,6 +1794,38 @@ class MiniSoulsphere : CustomInventoryExt
 					}
 		
 					playera.health = CurrentHealth;
+				}
+				
+				if (CurrentPsychicPoints < MaxPPLimit)
+				{
+					HealthValue = (MaxPsychicPoints * 0.25);
+					double healratio = double((HealthValue * 1.0) / (MaxPsychicPoints * 1.0));
+					CurrentPsychicPoints += HealthValue;
+					if (CurrentPsychicPoints > MaxPPLimit) CurrentPsychicPoints = MaxPPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentPsychicPoints = CurrentPsychicPoints;
+						
+						int PPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBasePPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) PPRegenBoostTimeAmt *= HeiwaPPBoostTimerMult;
+						MiscItem.PPRegenBoostTimer += PPRegenBoostTimeAmt;
+					}
+				}
+				
+				if (CurrentMagicPoints < MaxMPLimit)
+				{
+					HealthValue = (MaxMagicPoints * 0.25);
+					double healratio = double((HealthValue * 1.0) / (MaxMagicPoints * 1.0));
+					CurrentMagicPoints += HealthValue;
+					if (CurrentMagicPoints > MaxMPLimit) CurrentMagicPoints = MaxMPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentMagicPoints = CurrentMagicPoints;
+						
+						int MPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseMPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) MPRegenBoostTimeAmt *= HeiwaMPBoostTimerMult;
+						MiscItem.MPRegenBoostTimer += MPRegenBoostTimeAmt;
+					}
 				}
 				
 				if (HeiwaPlayer(playera))
@@ -1741,10 +1883,22 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int CurrentHealth = playera.health;
+				int CurrentPsychicPoints, CurrentMagicPoints;
 				int HealthValue;
 				int MaxHealthTrue;
-				if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+				int MaxPsychicPoints;
+				int MaxMagicPoints;
+				if (MiscItem)
+				{
+					CurrentPsychicPoints = MiscItem.CurrentPsychicPoints;
+					CurrentMagicPoints = MiscItem.CurrentMagicPoints;
+					if (MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
+					if (MiscItem.MaxPsychicPoints > 0) MaxPsychicPoints = MiscItem.MaxPsychicPoints;
+					if (MiscItem.MaxMagicPoints > 0) MaxMagicPoints = MiscItem.MaxMagicPoints;
+				}
 				int MaxHealthLimit = MaxHealthTrue * 2;
+				int MaxPPLimit = MaxPsychicPoints * 2;
+				int MaxMPLimit = MaxMagicPoints * 2;
 				int HealAmount;
 				int ptemp1, ptemp2;
 				int oldhealthratio;
@@ -1771,6 +1925,39 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				}
 				playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 				
+				
+				if (CurrentPsychicPoints < MaxPPLimit)
+				{
+					HealthValue = (MaxPsychicPoints * 1.0);
+					double healratio = double((HealthValue * 1.0) / (MaxPsychicPoints * 1.0));
+					CurrentPsychicPoints += HealthValue;
+					if (CurrentPsychicPoints > MaxPPLimit) CurrentPsychicPoints = MaxPPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentPsychicPoints = CurrentPsychicPoints;
+						
+						int PPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBasePPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) PPRegenBoostTimeAmt *= HeiwaPPBoostTimerMult;
+						MiscItem.PPRegenBoostTimer += PPRegenBoostTimeAmt;
+					}
+				}
+				
+				if (CurrentMagicPoints < MaxMPLimit)
+				{
+					HealthValue = (MaxMagicPoints * 1.0);
+					double healratio = double((HealthValue * 1.0) / (MaxMagicPoints * 1.0));
+					CurrentMagicPoints += HealthValue;
+					if (CurrentMagicPoints > MaxMPLimit) CurrentMagicPoints = MaxMPLimit;
+					if (MiscItem) 
+					{
+						MiscItem.CurrentMagicPoints = CurrentMagicPoints;
+						
+						int MPRegenBoostTimeAmt = (randompick(9,10,10,11,11,12,13) * (HealItemBaseMPBoostRatio2 * healratio));
+						if (HeiwaPlayer(playera)) MPRegenBoostTimeAmt *= HeiwaMPBoostTimerMult;
+						MiscItem.MPRegenBoostTimer += MPRegenBoostTimeAmt;
+					}
+				}
+
 				if (HeiwaPlayer(playera))
 				{
 					double maskpitch = 1.00;

@@ -1289,7 +1289,8 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		
-		double timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
+		double timestopgphase; 
+		if (timestopactivemaxtics) timestopgphase = double(timefreezegenduration / timestopactivemaxtics);
 		double timestopbaseboost;
 		double boostf = 1.125;
 		double boostphase = 0.25;
@@ -1897,8 +1898,6 @@ class PlayerStatItem : Inventory
 				if (CurrentPsychicPoints < MaxPsychicPoints)
 				{
 					int inc = 20;
-					if (inc < 0) inc = 0;
-					//genticsHUD = inc;
 
 					BaseRegenMulti = inc;
 					if (PPRegenBoostTimer > 0) inc *= 2.5;
@@ -1959,6 +1958,8 @@ class PlayerStatItem : Inventory
 						if (kcdebug_ppregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 					}
 					
+					if (inc < 0) inc = 0;
+					//genticsHUD = inc;
 					PPRegenTimer += inc;
 					while (PPRegenTimer > PPRegenTimerMax)
 					{
@@ -1982,14 +1983,50 @@ class PlayerStatItem : Inventory
 						}
 					}
 					if (PPRegenTimer < 0) PPRegenTimer = 0;
+
+					if (owner.health > 0 && 
+							PPRegenBoostTimer > 0) 
+					{
+						if (timestoptype > 0)
+						{
+							if (timestoptype == 1)
+							{
+								if (level.time % 6) PPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 2)
+							{
+								if (level.time % 1) PPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 3)
+							{
+								if (level.time % 2) PPRegenBoostTimer--;
+							}
+						}
+						else
+						{
+							PPRegenBoostTimer--;
+						}
+					}
+					if (PPRegenBoostTimer < 0) 
+					{
+						if (timestoptype > 0)
+						{
+							if (timestoptype == 1) PPRegenBoostTimer += 6;
+							if (timestoptype == 2) PPRegenBoostTimer += 1;
+							if (timestoptype == 3) PPRegenBoostTimer += 2;
+						}
+						else PPRegenBoostTimer++;
+						if (PPRegenBoostTimer > 0) PPRegenBoostTimer = 0;
+					}
+					if (kcdebug_ppregen && PPRegenBoostTimer) Console.Printf("PPRegenBoostTimer: %d", PPRegenBoostTimer);
 				}
 				
 				// Magic Regen/Degen
 				if (CurrentMagicPoints < MaxMagicPoints)
 				{
 					int inc = 20;
-					if (inc < 0) inc = 0;
-					//genticsHUD = inc;
 
 					BaseRegenMulti = inc;
 					if (MPRegenBoostTimer > 0) inc *= 2.5;
@@ -2050,7 +2087,10 @@ class PlayerStatItem : Inventory
 						if (kcdebug_mpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 					}
 
+					if (inc < 0) inc = 0;
+					//genticsHUD = inc;
 					MPRegenTimer += inc;
+					
 					while (MPRegenTimer > MPRegenTimerMax)
 					{
 						MPRegenTimer -= MPRegenTimerMax;
@@ -2073,6 +2113,44 @@ class PlayerStatItem : Inventory
 						}
 					}
 					if (MPRegenTimer < 0) MPRegenTimer = 0;
+
+					if (owner.health > 0 && 
+							MPRegenBoostTimer > 0) 
+					{
+						if (timestoptype > 0)
+						{
+							if (timestoptype == 1)
+							{
+								if (level.time % 6) MPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 2)
+							{
+								if (level.time % 1) MPRegenBoostTimer--;
+							}
+							else
+							if (timestoptype == 3)
+							{
+								if (level.time % 2) MPRegenBoostTimer--;
+							}
+						}
+						else
+						{
+							MPRegenBoostTimer--;
+						}
+					}
+					if (MPRegenBoostTimer < 0) 
+					{
+						if (timestoptype > 0)
+						{
+							if (timestoptype == 1) MPRegenBoostTimer += 6;
+							if (timestoptype == 2) MPRegenBoostTimer += 1;
+							if (timestoptype == 3) MPRegenBoostTimer += 2;
+						}
+						else MPRegenBoostTimer++;
+						if (MPRegenBoostTimer > 0) MPRegenBoostTimer = 0;
+					}
+					if (kcdebug_mpregen && MPRegenBoostTimer) Console.Printf("MPRegenBoostTimer: %d", MPRegenBoostTimer);
 				}
 			}
 			
