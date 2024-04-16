@@ -15146,12 +15146,21 @@ class EvilWarriorShield : MarineWeapon
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 		let globalvars = KCGlobalVariables.Get();
 		
+		int MPPenaltyTimeBase = 35 * random(16,24);
+		int MPPenaltyTimeAdd;
+
 		if (A_CheckBerserk()) A_SetTics(1);
 		A_PHellWarShieldOn();
 		if (!A_CheckInfiniteAmmo()) 
 		{
 			if (invoker.ammo_type == 0) invoker.shieldenergy -= invoker.shieldenergycost;
-			if (invoker.ammo_type == 1) MiscItem.CurrentMagicPoints -= invoker.shieldmagiccost;
+			if (invoker.ammo_type == 1 && MiscItem) 
+			{
+				MiscItem.CurrentMagicPoints -= invoker.shieldmagiccost;
+				MPPenaltyTimeAdd = MPPenaltyTimeBase * invoker.shieldmagiccost / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
+				if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
+				MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
+			}
 		}
 		
 		if (invoker.ammo_type == 0)
@@ -15175,7 +15184,6 @@ class EvilWarriorShield : MarineWeapon
 		int bounces = (randompick(2,2,2,2,2,2,2,3) + randompick(0,1,1,2) + randompick(0,0,0,0,1));
 		string shottype = "EvilWarriorShieldBall";
 		actor BombShotsB, BombShots;
-		KCProjectile IPCompat;
 		for (int i = 0; i < maxshots; i++)
 		{
 			[BombShotsB, BombShots] = A_FireProjectile(shottype, 0, 0, 0, 3); 
