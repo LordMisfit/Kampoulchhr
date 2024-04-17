@@ -4194,6 +4194,64 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				}
 				
+				// Mana
+				droptimes = 1;
+				if (monsterrating == 1) droptimes = randompick(1,1,1,1,1,1,2);
+				if (monsterrating == 2) droptimes = randompick(1,1,1,1,1,2,2);
+				if (monsterrating == 3) droptimes = randompick(1,1,1,1,2,2,2);
+				if (monsterrating == 4) droptimes = randompick(1,1,1,2,2,2,2);
+				if (monsterrating == 5) droptimes = randompick(1,1,2,2,2,2,3);
+				if (monsterrating == 6) droptimes = randompick(1,2,2,2,2,3,3);
+				if (monsterrating == 7) droptimes = randompick(2,2,2,2,3,3,3);
+				if (monsterrating >= 8) droptimes = randompick(2,2,2,3,3,3,4);
+				luckbase = 0.0625 + (monsterrating * 0.015625);
+				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+				luckbase *= kc_luckfactor;
+				lvldivider = 50;
+				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (inflicter && ((source && KCPlayerPawn(source))))
+				{
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				}
+				else
+				if (inflicter && KCPlayerPawn(inflicter))
+				{
+					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+				}
+				if (victim.bBOSS) droptimes *= bossdropmulti;
+				for (int i; i < droptimes; i++)
+				{
+					// Mana [Type 14]
+					basechance = kc_inventorydroprate14;
+					basechance *= kc_inventorydropratemulti;
+					basechance *= skillmult;
+					luckbase = 0.5 + (monsterrating * 0.125);
+					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+					luckbase *= kc_luckfactor;
+					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
+					//if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					int rollrand = random(1,maxchance);
+					if (rollrand <= 1) // Main Drop Chance
+					{
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Mana Drop Roll Success");
+						
+						double rand = 1.0;
+						string droptype = "ManaCube";
+						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						double raredropsndvol = frandom(1.75,2.25);
+						int raredropsndchannel = randompick(4191,4192,4222,4223,4264,4265);
+						victim.A_StartSound("mana/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+						raredropsndvol = frandom(1.75,2.25);
+						raredropsndchannel = randompick(4291,4292,4322,4323,4364,4365);
+						victim.A_StartSound("mana/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+						
+						victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+				}
 				
 				// Ammo/Weapons
 				string droptype;
