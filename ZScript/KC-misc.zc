@@ -46,6 +46,7 @@ class PlayerStatItem : Inventory
 	bool sielsgraceactive;
 	int sielsgraceactivations;
 	int sielsgracecooldown;
+	int sielsgraceluckcooldown;
 	int sielsgracecooldownbase;
 	
 	int TSArtifactSpawnCooldown;
@@ -317,6 +318,8 @@ class PlayerStatItem : Inventory
 	void A_SielsGraceCooldown(int type = 0)
 	{
 		sielsgracecooldown = sielsgracecooldownbase;
+		sielsgraceluckcooldown = ((300 * TICRATE) * frandompick(0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1));
+		if (sielsgraceluckcooldown > sielsgracecooldownbase) sielsgraceluckcooldown = sielsgracecooldownbase;
 		double levelbasis = 0.20;
 				 if (TruePlayerLevel <= 5) levelbasis = 0.20;
 		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) sielsgracecooldown *= 0.375;
@@ -340,7 +343,8 @@ class PlayerStatItem : Inventory
 		if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown *= 0.25;
 		if (type >= 1) sielsgracecooldown *= 0.25;
 		A_SetInventory("sielsgracecooldown",sielsgracecooldown);
-		//Console.Printf("sielsgracecooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, levelbasis, activationbasis);
+		A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
+		//Console.Printf("sielsgracecooldown: %d, sielsgraceluckcooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, sielsgraceluckcooldown, levelbasis, activationbasis);
 	}
 	
 	string ReturnKeyBind1(string keybindget)
@@ -1098,6 +1102,7 @@ class PlayerStatItem : Inventory
 		if (!A_CheckNoTimer() && A_CheckForHeiwa())
 		{
 			sielsgracecooldown = owner.CountInv("sielsgracecooldown");
+			sielsgraceluckcooldown = owner.CountInv("sielsgraceluckcooldown");
 			sielsgraceactivations = owner.CountInv("sielsgraceactivations");
 			if (owner.health > 0 && 
 					sielsgracecooldown && 
@@ -1136,6 +1141,12 @@ class PlayerStatItem : Inventory
 					double fadetime = int(TICRATE*frandom(0.4167,0.5834));
 					owner.A_SetBlend("87 68 99",0.000, fadetime, "87 68 99",0.25);
 				}
+			}
+			if (owner.health > 0 &&
+					sielsgraceluckcooldown)
+			{
+				sielsgraceluckcooldown--;
+				owner.A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
 			}
 			if (sielsgraceactive)
 			{
@@ -3906,7 +3917,7 @@ class PlayerStatItem : Inventory
 			timefreezedurationinc1 = 0.05;
 			timefreezedurationinc2 = 0.1;
 
-			sielsgracecooldownbase = (700 * 35); // 4 Minutes
+			sielsgracecooldownbase = (700 * 35);
 			if (A_CheckForHeiwa()) 
 			{
 				int sielgracestartchancemax = 64;

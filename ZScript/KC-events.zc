@@ -3274,6 +3274,8 @@ class KC_EventHandler : EventHandler
 				}
 				KCCVict = KCCreature(victim);
 			}
+			double sielgraceluckboost = 1.0; 
+			if (MiscItem && MiscItem.sielsgraceluckcooldown > 0) sielgraceluckboost += frandompick(2.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,7.5);
 
 			int armorbonusrolls;
 			int healthbonusrolls;
@@ -3365,6 +3367,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				lvldivider = 35;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (inflicter && ((source && KCPlayerPawn(source))))
@@ -3388,6 +3391,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) basedropdiv *= random(4,8);
 					
@@ -4174,6 +4178,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					
 					
@@ -4191,6 +4196,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 				}
 				
@@ -4207,6 +4213,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (inflicter && ((source && KCPlayerPawn(source))))
@@ -4228,6 +4235,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
@@ -4272,6 +4280,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (inflicter && ((source && KCPlayerPawn(source))))
@@ -4293,6 +4302,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
@@ -4555,6 +4565,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				lvldivider = 35;
 				
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
@@ -4578,6 +4589,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 1.75;
@@ -4605,6 +4617,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				lvldivider = 70;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (inflicter && ((source && KCPlayerPawn(source))))
@@ -4627,6 +4640,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 1.0 + (monsterrating * 0.25);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
@@ -4700,6 +4714,7 @@ class KC_EventHandler : EventHandler
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
+				luckbase *= sielgraceluckboost;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
@@ -4720,6 +4735,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
@@ -4748,6 +4764,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 0.5 + (monsterrating * 0.125); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
@@ -4768,6 +4785,7 @@ class KC_EventHandler : EventHandler
 					luckbase = 2.0 + (monsterrating * 0.5); // (512) 
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
+					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					rollrand = random(1,maxchance);
@@ -4899,6 +4917,7 @@ class KC_EventHandler : EventHandler
 						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_tsaluckfactor;
+						luckbase *= 1.0 + (sielgraceluckboost * 0.0625);
 						if (MiscItem)
 						{
 							if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
@@ -4906,6 +4925,7 @@ class KC_EventHandler : EventHandler
 							if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
 							luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 							luckbase *= kc_tsaluckfactor;
+							luckbase *= 1.0 + (sielgraceluckboost * 0.0625);
 							
 							if (MiscItem.TimeArmorRelicsOwned <= 2)
 							{
@@ -4975,6 +4995,7 @@ class KC_EventHandler : EventHandler
 												 (MiscItem.totalcompleted * allsecretsfactorkmsp) + 
 												 (MiscItem.totalcompleted * allitemsfactorkmsp));
 						luckbase *= kc_luckfactor;
+						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
@@ -5018,6 +5039,7 @@ class KC_EventHandler : EventHandler
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
+						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
@@ -5061,6 +5083,7 @@ class KC_EventHandler : EventHandler
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
+						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
