@@ -8818,6 +8818,7 @@ class ImpalerXBow : MarineWeapon
 			if (CountInv("ImpalerBowZoom") == 1)
 			{
 				BombShots.speed *= 1.25;
+				BombShots.A_ScaleVelocity(1.25);
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.0234375));
 				if (dmgfactor >= 3.0) dmgfactor = 3.0;
 				dmgfactor2 = 1.1875;
@@ -8826,6 +8827,7 @@ class ImpalerXBow : MarineWeapon
 			if (CountInv("ImpalerBowZoom") == 2) 
 			{
 				BombShots.speed *= 1.5;
+				BombShots.A_ScaleVelocity(1.5);
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
 				if (dmgfactor >= 4.0) dmgfactor = 4.0;
 				dmgfactor2 = 1.375;
@@ -8834,6 +8836,7 @@ class ImpalerXBow : MarineWeapon
 			if (CountInv("ImpalerBowZoom") == 3)
 			{
 				BombShots.speed *= 2.0;
+				BombShots.A_ScaleVelocity(2.0);
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.0625));
 				if (dmgfactor >= 8.0) dmgfactor = 8.0;
 				dmgfactor2 = 1.75;
@@ -8842,6 +8845,7 @@ class ImpalerXBow : MarineWeapon
 			if (CountInv("ImpalerBowZoom") >= 4)
 			{
 				BombShots.speed *= 4.0;
+				BombShots.A_ScaleVelocity(4.0);
 				dmgfactor = (1.0 + (TruePlayerLevel * 0.125));
 				if (dmgfactor >= 16.0) dmgfactor = 16.0;
 				dmgfactor2 = 2.5;
@@ -14197,7 +14201,7 @@ class KnifeHeiwa : MarineWeapon
 		if (divisiorfloor <= 2) divisiorfloor = 2;
 		if (basedivisor < divisiorfloor) basedivisor = divisiorfloor;
 		
-		int dmg = A_GetKnifeDamage(basedivisor,false);
+		int dmg = A_GetKnifeDamage(basedivisor,false,true);
 		if (CountInv("PlayerDashing")) 
 		{
 					if (TruePlayerLevel >= 100) dmg *= frandom(2.25,2.875);
@@ -14319,57 +14323,66 @@ class KnifeHeiwa : MarineWeapon
 		{
 			randangle *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
 			randpitch *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
-			shottype = "ThrownKnifeBerserk";
 		}
 		int TruePlayerLevel = invoker.ActualLevel;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25))
+		if (!(player.CountInv("KCTimeFreezer1") ||
+					player.CountInv("KCTimeFreezer2") ||
+					player.CountInv("KCTimeFreezer3")))
 		{
-			randangle *= frandom(0.0,0.125);
-			randpitch *= frandom(0.0,0.125);
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25))
+			{
+				randangle *= frandom(0.0,0.125);
+				randpitch *= frandom(0.0,0.125);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5))
+			{
+				randangle *= frandom(0.125,0.2625);
+				randpitch *= frandom(0.125,0.2625);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.75))
+			{
+				randangle *= frandom(0.25,0.4075);
+				randpitch *= frandom(0.25,0.4075);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.0))
+			{
+				randangle *= frandom(0.375,0.5325);
+				randpitch *= frandom(0.375,0.5325);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.25))
+			{
+				randangle *= frandom(0.5,0.6875);
+				randpitch *= frandom(0.5,0.6875);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5))
+			{
+				randangle *= frandom(0.625,0.8125);
+				randpitch *= frandom(0.625,0.8125);
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.75))
+			{
+				randangle *= frandom(0.75,0.9375);
+				randpitch *= frandom(0.75,0.9375);
+			}
 		}
 		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5))
 		{
-			randangle *= frandom(0.125,0.2625);
-			randpitch *= frandom(0.125,0.2625);
+			randangle = 0;
+			randpitch = 0;
 		}
-		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.75))
-		{
-			randangle *= frandom(0.25,0.4075);
-			randpitch *= frandom(0.25,0.4075);
-		}
-		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.0))
-		{
-			randangle *= frandom(0.375,0.5325);
-			randpitch *= frandom(0.375,0.5325);
-		}
-		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.25))
-		{
-			randangle *= frandom(0.5,0.6875);
-			randpitch *= frandom(0.5,0.6875);
-		}
-		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5))
-		{
-			randangle *= frandom(0.625,0.8125);
-			randpitch *= frandom(0.625,0.8125);
-		}
-		else
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.75))
-		{
-			randangle *= frandom(0.75,0.9375);
-			randpitch *= frandom(0.75,0.9375);
-		}
-		A_StartSound("weapons/knifetoss", 101);
-		A_StartSound("weapons/knifetoss", 102);
+		A_StartSound("weapons/knifetoss", CHAN_WEAPON,CHANF_DEFAULT,frandom(1.000,1.125),ATTN_NORM,frandom(0.975,1.025));
+		A_StartSound("weapons/knifetoss", CHAN_BODY,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.95,1.05));
 		if (A_CheckBerserk()) 
 		{
-			A_StartSound("weapons/knifetoss", 103);
-			A_StartSound("weapons/knifetoss", 104);
-			A_StartSound("weapons/knifetoss", 105);
+			A_StartSound("weapons/knifetoss", 103,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.925,1.075));
+			A_StartSound("weapons/knifetoss", 104,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.9,1.1));
+			A_StartSound("weapons/knifetoss", 105,CHANF_DEFAULT,frandom(0.75,0.875),ATTN_NORM,frandom(0.875,1.125));
 		}
 		
 		[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
@@ -14380,6 +14393,29 @@ class KnifeHeiwa : MarineWeapon
 			MPPenaltyTimeAdd = MPPenaltyTimeBase * invoker.throwmpcost / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
 			if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
 			MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
+		}
+		if (BombShots && MiscItem)
+		{
+			ThrownKnife itsaknife;
+			itsaknife = ThrownKnife(BombShots);
+			if (itsaknife)
+			{
+				int nogravtimer = (random(40,50) + (MiscItem.TruePlayerATK * 0.34));
+				int basedmg = (frandom(12,22) + A_GetKnifeDamage(randompick(8,7,7,7,7,7,7,6),false,false));
+				double velscale = ((1.0 + (MiscItem.TruePlayerATK * 0.008)) * frandompick(0.8,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.2));
+				if (A_CheckBerserk())
+				{
+					basedmg = ((frandom(11,23) + A_GetKnifeDamage(randompick(8,8,7,7,7,7,7,7,7,6,6),false,false)) * frandom(4.75,5.25));
+					velscale *= 5;
+					nogravtimer *= 5;
+					itsaknife.berserked = true;
+				}
+				itsaknife.Speed *= velscale;
+				itsaknife.A_ScaleVelocity(velscale);
+				itsaknife.finaldamagedealt = basedmg;
+				itsaknife.nogravtimer = nogravtimer;
+				if (kcdebug_rangedmg) Console.Printf("velscale: %.8f, nogravtimer: %d, finaldamagedealt: %d (%d)", velscale, nogravtimer, itsaknife.finaldamagedealt, basedmg);
+			}
 		}
 	}
 	
@@ -15149,6 +15185,9 @@ class KnifeHeiwa : MarineWeapon
 
 class ThrownKnife : SingleDamageFastRipper
 {
+	mixin DmgCalc;
+	bool berserked;
+	int nogravtimer;
 	default
 	{
 		Radius 2;
@@ -15157,17 +15196,65 @@ class ThrownKnife : SingleDamageFastRipper
 		Scale 1.25;
 		Decal "KnifeScorch";
 		SeeSound "weapons/knifeswing";
+		+DONTREFLECT;
 		+MISSILE;
 		+RIPPER;
 		+DROPOFF;
 		+NOGRAVITY;
 		+NOTELEPORT;
-		+BLOODSPLATTER;
 		+ACTIVATEIMPACT;
 		+ACTIVATEPCROSS;
 		+NOEXTREMEDEATH;
-		DamageFunction (frandom(12,22));
+		DamageFunction (finaldamagedealt);
+		DamageType "Knife";
 	}
+	
+	void A_CalcDmg()
+	{
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+
+		if (finaldamagedealt <= 0) 
+		{
+			finaldamagedealt = (frandom(12,22) + A_GetKnifeDamage(randompick(8,7,7,7,7,7,7,6),true,false));
+			if (kcdebug_rangedmg) Console.Printf("finaldamagedealt [was <= 0]: %d", finaldamagedealt);
+		}
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (nogravtimer <= 0) nogravtimer = random(40,50);
+		A_CalcDmg();
+		super.PostBeginPlay();
+	}
+	
+	override void Tick()
+	{
+		A_CalcDmg();
+		if (nogravtimer == 0) 
+		{
+			bNOGRAVITY = false;
+			A_Gravity();
+			nogravtimer--;
+		}
+		else 
+		if (nogravtimer > 0) 
+		{
+			bNOGRAVITY = true;
+			A_NoGravity();
+			actor playera = players[0].mo;
+			if (!(playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3")))
+			{
+				nogravtimer--;
+				//Console.Printf("nogravtimer: %d", nogravtimer);
+			}
+		}
+		super.Tick();
+	}
+	
 	States
 	{
 		Spawn:
@@ -15180,39 +15267,63 @@ class ThrownKnife : SingleDamageFastRipper
 				bRIPPER = false;
 				ThrustThingZ(0, frandom(16, 32), 0, 1);
 				ThrustThing(angle*256/360+frandom(80, 160), frandom(8, 16), 1, 0);
-				A_StartSound("weapons/knifecrash", 0);
+				A_StartSound("weapons/knifecrash", CHAN_BODY);
+				if (berserked)
+				{
+					A_StartSound("weapons/knifecrash", CHAN_WEAPON);
+					A_StartSound("weapons/knifecrash", CHAN_VOICE);
+				}
 			}
 			TNT1 A 0 A_Jump(128, "Crash2");
 			Goto Crash1;
 		Crash1:
-			KNIF B 2 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF B 2 Bright 
+			{
+				A_SpawnItemEx("SmokeSpawner");
+				if (berserked)
+				{
+					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("SmokeSpawner");
+				}
+			}
 			KNIF CDEB 2 Bright A_FadeOut(0.12);
 			Goto Crash1+1;
 		Crash2:
-			KNIF F 2 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF F 2 Bright
+			{
+				A_SpawnItemEx("SmokeSpawner");
+				if (berserked)
+				{
+					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("SmokeSpawner");
+				}
+			}
 			KNIF GHIF 2 Bright A_FadeOut(0.12);
 			Goto Crash2+1;
 		Death:
 			TNT1 A 0 
 			{
 				bMOVEWITHSECTOR = true;
-				A_StartSound("weapons/knifehitwall", 0);
+				A_StartSound("weapons/knifehitwall", CHAN_BODY);
+				if (berserked)
+				{
+					A_StartSound("weapons/knifehitwall", CHAN_WEAPON);
+					A_StartSound("weapons/knifehitwall", CHAN_VOICE);
+				}
 			}
 			Goto DeathLoop;
 		DeathLoop:
-			KNIF A 10 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF A 10 Bright
+			{
+				A_SpawnItemEx("SmokeSpawner");
+				if (berserked)
+				{
+					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("SmokeSpawner");
+				}
+			}
 			KNIF A 1 Bright A_FadeOut(0.02);
 			Goto DeathLoop+1;
-	}
-}
-
-class ThrownKnifeBerserk : ThrownKnife
-{
-	default
-	{
-		Speed 115;
-		Scale 1.0625;
-		DamageFunction (frandom(11,23) * frandom(4.75,5.25));
 	}
 }
 

@@ -526,7 +526,7 @@ mixin class DmgCalc
 		return Level;
 	}
 
-	action int A_GetKnifeDamage(int divisor = 4, bool istarget = false)
+	action int A_GetKnifeDamage(int divisor = 4, bool istarget = false, bool useberserk = false)
 	{
 		Weapon weapon;
 		if (istarget && target) weapon = target.player.ReadyWeapon;
@@ -595,9 +595,12 @@ mixin class DmgCalc
 		if (kcdebug_meleedmg) Console.Printf("\c[fire]StrDmg: %.8f\c- - (Strength: %d) - (Previous Dmg: %.8f)", damage, PlayerATK, previousdamage);
 
 		// Berserk Check
-		previousdamage = damage;
-		if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) damage = floor(damage * 10);
-		if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f) [%s, %s]", damage, previousdamage, weaponname, actorname);
+		if (useberserk)
+		{
+			previousdamage = damage;
+			if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) damage = floor(damage * 10);
+			if (kcdebug_meleedmg) Console.Printf("BerserkDmg: %.8f - (Previous Dmg: %.8f) [%s, %s]", damage, previousdamage, weaponname, actorname);
+		}
 
 		double PerkFactor;
 		double temp1, temp2;
