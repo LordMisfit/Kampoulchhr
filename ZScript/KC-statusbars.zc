@@ -3722,7 +3722,7 @@ class KCStatusBarMain : BaseStatusBar
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
 				if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife && KnifeAltUsable)) 
 				{
-					int KnifeCost = 8; // FoundKnife.throwmpcost;
+					int KnifeCost = FoundKnife.throwmpcost;
 					LegendStr.AppendFormat(" = \c[blue]THROW A KNIFE COPY [%d MP]\c-", KnifeCost);
 				}
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");

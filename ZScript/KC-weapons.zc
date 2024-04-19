@@ -14275,6 +14275,22 @@ class KnifeHeiwa : MarineWeapon
 		A_SetPitch(pptc);
 	}
 	
+	action void A_GetMPCost()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = invoker.ActualLevel;
+		invoker.throwmpcost = 8;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25)) invoker.throwmpcost -= 1;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 6)) invoker.throwmpcost -= 1;
+		if (invoker.throwmpcost < 1) invoker.throwmpcost = 1;
+	}
+	
 	action double A_GetKnifeSpd()
 	{
 		double output = 20;
@@ -14373,17 +14389,37 @@ class KnifeHeiwa : MarineWeapon
 			KNFE G -1;
 			loop;
 		Ready:
-			KNFG G 1 A_WeaponReady();
+			KNFG G 1 
+			{
+				invoker.A_GetMPCost();
+				A_WeaponReady();
+			}
 			loop;
 		Deselect:
-			KNFG G 0 A_StartSound("KnifeAway",CHAN_7);
+			KNFG G 0 
+			{
+				invoker.A_GetMPCost();
+				A_StartSound("KnifeAway",CHAN_7);
+			}
 		Deselect2:
-			KNFG G 1 A_Lower(12);
+			KNFG G 1 
+			{
+				invoker.A_GetMPCost();
+				A_Lower(12);
+			}
 			loop;
 		Select:
-			KNFG G 0 A_StartSound("KnifeOut",CHAN_7);
+			KNFG G 0 
+			{
+				invoker.A_GetMPCost();
+				A_StartSound("KnifeOut",CHAN_7);
+			}
 		Select2: 
-			KNFG G 1 A_Raise(12);
+			KNFG G 1 
+			{
+				invoker.A_GetMPCost();
+				A_Raise(12);
+			}
 			loop;
 		Fire:
 			KNFG H 3
@@ -14693,7 +14729,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (!A_CheckInfiniteAmmo())
 					{
-						invoker.throwmpcost = 8;
+						invoker.A_GetMPCost();
 						if (MiscItem.CurrentMagicPoints < invoker.throwmpcost)
 						{
 							A_SetTics(6);
@@ -14854,7 +14890,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (!A_CheckInfiniteAmmo())
 					{
-						invoker.throwmpcost = 8;
+						invoker.A_GetMPCost();
 						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
 						{
 							A_ReFire("AltFireBackThrow");
@@ -15047,7 +15083,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (!A_CheckInfiniteAmmo())
 					{
-						invoker.throwmpcost = 8;
+						invoker.A_GetMPCost();
 						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
 						{
 							A_ReFire("AltFireForwardThrow");
@@ -15130,7 +15166,7 @@ class ThrownKnife : SingleDamageFastRipper
 		+ACTIVATEIMPACT;
 		+ACTIVATEPCROSS;
 		+NOEXTREMEDEATH;
-		DamageFunction (frandom(6, 12));
+		DamageFunction (frandom(12,22));
 	}
 	States
 	{
@@ -15176,7 +15212,7 @@ class ThrownKnifeBerserk : ThrownKnife
 	{
 		Speed 115;
 		Scale 1.0625;
-		DamageFunction (frandom(6, 12) * 5);
+		DamageFunction (frandom(11,23) * frandom(4.75,5.25));
 	}
 }
 
