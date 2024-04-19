@@ -14141,6 +14141,7 @@ class Riotgun : MarineWeapon
 //
 class KnifeHeiwa : MarineWeapon
 {
+	int throwmpcost;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -14274,22 +14275,6 @@ class KnifeHeiwa : MarineWeapon
 		A_SetPitch(pptc);
 	}
 	
-	action void A_KnifeThrowAttack()
-	{
-		actor BombShotsB, BombShots;
-		double shotheight = 5;
-		double randangle = frandom(-1.0,1.0);
-		double randpitch = frandom(-1.0,1.0);
-		string shottype = "ThrownKnife";
-		if (A_CheckBerserk()) 
-		{
-			randangle *= frandom(2.5,6.25);
-			randpitch *= frandom(2.5,6.25);
-			shottype = "ThrownKnifeBerserk";
-		}
-		[BombShotsB, BombShots] = A_FireProjectile(shottype, frandom(-1, 1), false, 0, shotheight, FPF_NOAUTOAIM, frandom(-randpitch,randpitch));
-	}
-	
 	action double A_GetKnifeSpd()
 	{
 		double output = 20;
@@ -14297,6 +14282,89 @@ class KnifeHeiwa : MarineWeapon
 		if (output <= 1.0) output = 1.0;
 		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
 		return output;
+	}
+	
+	action void A_KnifeThrowAttack()
+	{
+		actor player = players[0].mo;
+		int buttons = GetPlayerInput(INPUT_BUTTONS);
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		
+		int MPPenaltyTimeBase = 35 * random(16,24);
+		int MPPenaltyTimeAdd;
+
+		actor BombShotsB, BombShots;
+		double shotheight = 5;
+		double randangle = (0.125 * random(-8,8));
+		double randpitch = (0.125 * random(-8,8));
+		string shottype = "ThrownKnife";
+		if (A_CheckBerserk()) 
+		{
+			randangle *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+			randpitch *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+			shottype = "ThrownKnifeBerserk";
+		}
+		int TruePlayerLevel = invoker.ActualLevel;
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25))
+		{
+			randangle *= frandom(0.0,0.125);
+			randpitch *= frandom(0.0,0.125);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5))
+		{
+			randangle *= frandom(0.125,0.2625);
+			randpitch *= frandom(0.125,0.2625);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.75))
+		{
+			randangle *= frandom(0.25,0.4075);
+			randpitch *= frandom(0.25,0.4075);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.0))
+		{
+			randangle *= frandom(0.375,0.5325);
+			randpitch *= frandom(0.375,0.5325);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.25))
+		{
+			randangle *= frandom(0.5,0.6875);
+			randpitch *= frandom(0.5,0.6875);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5))
+		{
+			randangle *= frandom(0.625,0.8125);
+			randpitch *= frandom(0.625,0.8125);
+		}
+		else
+		if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.75))
+		{
+			randangle *= frandom(0.75,0.9375);
+			randpitch *= frandom(0.75,0.9375);
+		}
+		A_StartSound("weapons/knifetoss", 101);
+		A_StartSound("weapons/knifetoss", 102);
+		if (A_CheckBerserk()) 
+		{
+			A_StartSound("weapons/knifetoss", 103);
+			A_StartSound("weapons/knifetoss", 104);
+			A_StartSound("weapons/knifetoss", 105);
+		}
+		
+		[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
+		if (BombShotsB)
+		{
+			MiscItem.CurrentMagicPoints -= invoker.throwmpcost;
+			if (MiscItem.CurrentMagicPoints < 0) MiscItem.CurrentMagicPoints = 0;
+			MPPenaltyTimeAdd = MPPenaltyTimeBase * invoker.throwmpcost / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
+			if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
+			MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
+		}
 	}
 	
 	States
@@ -14618,16 +14686,29 @@ class KnifeHeiwa : MarineWeapon
 		AltFire:
 			KNFG G 6
 			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
 				{
+					if (!A_CheckInfiniteAmmo())
+					{
+						invoker.throwmpcost = 8;
+						if (MiscItem.CurrentMagicPoints < invoker.throwmpcost)
+						{
+							A_SetTics(6);
+							return resolvestate("Ready");
+						}
+						A_SetTics(0);
+						return resolvestate("AltFireForwardStart");
+					}
 					A_SetTics(0);
-					return resolvestate("AltFireForwardThrow");
+					return resolvestate("AltFireForwardStart");
 				}
 				return resolvestate(null);
 			}
 			goto Ready;
-		AltFireForwardThrow:
+		AltFireForwardStart:
 			KNFG G 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -14679,6 +14760,7 @@ class KnifeHeiwa : MarineWeapon
 				int tic = 1;
 				A_SetTics(tic);
 			}
+		AltFireForwardThrow:
 			TNT1 A 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -14695,7 +14777,6 @@ class KnifeHeiwa : MarineWeapon
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
 				A_SetTics(tic);
-				A_StartSound("weapons/knifetoss", 1);
 			}
 			KNFG S 1
 			{
@@ -14732,7 +14813,6 @@ class KnifeHeiwa : MarineWeapon
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
 				A_SetTics(tic);
-				A_StartSound("weapons/knifetoss", 1);
 			}
 			KNFG W 1
 			{
@@ -14745,32 +14825,61 @@ class KnifeHeiwa : MarineWeapon
 				}
 				A_SetTics(tic);
 			}
-			TNT1 A 9
+			TNT1 A 5
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 5;
+				if (A_CheckBerserk())
+				{
+					tic = random(2,3);
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.375)) tic -= 1; // 27.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25)) tic -= 1; // 45
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.125)) tic -= 1; // 62.5
+					if (tic < 0) tic = 0;
+				}
+				else
+				{
+					tic = 5;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.75)) tic -= 1; // 35
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.75)) tic -= 1; // 55
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) tic -= 1; // 75
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.75)) tic -= 1; // 95
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.75)) tic -= 1; // 115
+					if (tic < 0) tic = randompick(0,1,1,1,2);
+				}
+				A_SetTics(tic);
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
+				{
+					if (!A_CheckInfiniteAmmo())
+					{
+						invoker.throwmpcost = 8;
+						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
+						{
+							A_ReFire("AltFireBackThrow");
+						}
+					}
+				}
+			}
+			TNT1 A 4
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 9;
 				if (A_CheckBerserk())
 				{
-					tic = random(4,5);
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.25)) tic -= 1; // 25
+					tic = 2;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.8125)) tic -= 1; // 56.25
 					if (tic < 0) tic = 0;
 				}
 				else
 				{
-					tic = 9;
+					tic = 4;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.125)) tic -= 1; // 62.5
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) tic -= 1; // 75
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.375)) tic -= 1; // 87.5
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.0)) tic -= 1; // 100
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.625)) tic -= 1; // 112.5
-					if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25)) tic -= 1; // 125
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 7.5)) tic -= 1; // 150
 					if (tic < 0) tic = randompick(0,1,1,1,2);
 				}
 				A_SetTics(tic);
@@ -14847,6 +14956,157 @@ class KnifeHeiwa : MarineWeapon
 			}
 			Goto Ready;
 		AltFireBackThrow:
+			TNT1 A 4
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 9;
+				if (A_CheckBerserk())
+				{
+					tic = 2;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.8125)) tic -= 1; // 56.25
+					if (tic < 0) tic = 0;
+				}
+				else
+				{
+					tic = 4;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) tic -= 1; // 75
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.625)) tic -= 1; // 112.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 7.5)) tic -= 1; // 150
+					if (tic < 0) tic = randompick(0,1,1,1,2);
+				}
+				A_SetTics(tic);
+			}
+			KNFG W 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG V 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG U 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG T 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_KnifeKiais(240);
+				A_SetTics(tic);
+				A_KnifeThrowAttack();
+			}
+			KNFG S 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG R 1 
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			TNT1 A 1
+			{
+				actor player = players[0].mo;
+				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
+				{
+					if (!A_CheckInfiniteAmmo())
+					{
+						invoker.throwmpcost = 8;
+						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
+						{
+							A_ReFire("AltFireForwardThrow");
+						}
+					}
+				}
+			}
+		AltFireBackEnd:
+			KNFG Q 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG P 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG O 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG N 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG M 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG G 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.25)) tic -= 1; // 25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
 			Goto Ready;
 	}
 }
@@ -14855,10 +15115,10 @@ class ThrownKnife : SingleDamageFastRipper
 {
 	default
 	{
-		Radius 4;
-		Height 8;
+		Radius 2;
+		Height 4;
 		Speed 23;
-		Scale 1.0;
+		Scale 1.25;
 		Decal "KnifeScorch";
 		SeeSound "weapons/knifeswing";
 		+MISSILE;
@@ -15477,6 +15737,7 @@ class EvilWarriorShield : MarineWeapon
 			if (invoker.ammo_type == 1 && MiscItem) 
 			{
 				MiscItem.CurrentMagicPoints -= invoker.shieldmagiccost;
+				if (MiscItem.CurrentMagicPoints < 0) MiscItem.CurrentMagicPoints = 0;
 				MPPenaltyTimeAdd = MPPenaltyTimeBase * invoker.shieldmagiccost / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
 				if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
 				MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
