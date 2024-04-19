@@ -14145,7 +14145,7 @@ class KnifeHeiwa : MarineWeapon
 	{
 		Inventory.PickupSound "misc/w_pkup";
 		KCWeaponBase.PickupSound1Heiwa "";
-		KCWeaponBase.PickupSound2 "";
+		KCWeaponBase.PickupSound2 "weapons/knifepickup";
 		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
 		KCWeaponBase.PickupSound3 "";
 		KCWeaponBase.PickupSound3Heiwa "";
@@ -14159,6 +14159,8 @@ class KnifeHeiwa : MarineWeapon
 		+WEAPON.MELEEWEAPON;
 		+WEAPON.NOALERT;
 		+NOEXTREMEDEATH;
+		XScale 1.25;
+		YScale 1.0;
 		Tag "Heiwa's Knife";
 		Obituary "%o was cut apart by %k's trusty knife.";
 		Inventory.RestrictedTo "HeiwaPlayer";
@@ -14270,6 +14272,22 @@ class KnifeHeiwa : MarineWeapon
 		A_KnifeHit(rangef,shieldpiece,0,(-pangoffset*2),(-pptcoffset*2)); // Lower Left
 		A_SetAngle(pang);
 		A_SetPitch(pptc);
+	}
+	
+	action void A_KnifeThrowAttack()
+	{
+		actor BombShotsB, BombShots;
+		double shotheight = 5;
+		double randangle = frandom(-1.0,1.0);
+		double randpitch = frandom(-1.0,1.0);
+		string shottype = "ThrownKnife";
+		if (A_CheckBerserk()) 
+		{
+			randangle *= frandom(2.5,6.25);
+			randpitch *= frandom(2.5,6.25);
+			shottype = "ThrownKnifeBerserk";
+		}
+		[BombShotsB, BombShots] = A_FireProjectile(shottype, frandom(-1, 1), false, 0, shotheight, FPF_NOAUTOAIM, frandom(-randpitch,randpitch));
 	}
 	
 	action double A_GetKnifeSpd()
@@ -14597,6 +14615,308 @@ class KnifeHeiwa : MarineWeapon
 				A_SetTics(tic);
 			}
 			goto Ready;
+		AltFire:
+			KNFG G 6
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
+				{
+					A_SetTics(0);
+					return resolvestate("AltFireForwardThrow");
+				}
+				return resolvestate(null);
+			}
+			goto Ready;
+		AltFireForwardThrow:
+			KNFG G 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.25)) tic -= 1; // 25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG M 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG N 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG O 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG P 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG Q 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			TNT1 A 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG R 1 
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+				A_StartSound("weapons/knifetoss", 1);
+			}
+			KNFG S 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG T 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_KnifeKiais(240);
+				A_SetTics(tic);
+				A_KnifeThrowAttack();
+			}
+			KNFG U 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG V 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+				A_StartSound("weapons/knifetoss", 1);
+			}
+			KNFG W 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			TNT1 A 9
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 9;
+				if (A_CheckBerserk())
+				{
+					tic = random(4,5);
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.25)) tic -= 1; // 25
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.1875)) tic -= 1; // 43.75
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.8125)) tic -= 1; // 56.25
+					if (tic < 0) tic = 0;
+				}
+				else
+				{
+					tic = 9;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.125)) tic -= 1; // 62.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) tic -= 1; // 75
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.375)) tic -= 1; // 87.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.0)) tic -= 1; // 100
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.625)) tic -= 1; // 112.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25)) tic -= 1; // 125
+					if (tic < 0) tic = randompick(0,1,1,1,2);
+				}
+				A_SetTics(tic);
+			}
+			KNFG Q 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG P 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG O 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG N 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				A_SetTics(tic);
+			}
+			KNFG M 1
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.25)) tic -= 1; // 25
+				else
+				{
+					if (A_CheckBerserk()) tic -= 1;
+				}
+				A_SetTics(tic);
+			}
+			KNFG G 6
+			{
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 6;
+				if (A_CheckBerserk())
+				{
+					tic = 3;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5625)) tic -= 1; // 31.25
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1; // 50
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.4375)) tic -= 1; // 68.75
+					if (tic < 0) tic = 0;
+				}
+				else
+				{
+					tic = 6;
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.875)) tic -= 1; // 37.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.125)) tic -= 1; // 62.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.375)) tic -= 1; // 87.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.625)) tic -= 1; // 112.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.875)) tic -= 1; // 137.5
+					if (TruePlayerLevel >= (A_GetKnifeSpd() * 8.125)) tic -= 1; // 162.5
+					if (tic < 0) tic = randompick(0,1,1,1,1,1,1,2);
+				}
+				A_SetTics(tic);
+			}
+			Goto Ready;
+		AltFireBackThrow:
+			Goto Ready;
+	}
+}
+
+class ThrownKnife : SingleDamageFastRipper
+{
+	default
+	{
+		Radius 4;
+		Height 8;
+		Speed 23;
+		Scale 1.0;
+		Decal "KnifeScorch";
+		SeeSound "weapons/knifeswing";
+		+MISSILE;
+		+RIPPER;
+		+DROPOFF;
+		+NOGRAVITY;
+		+NOTELEPORT;
+		+BLOODSPLATTER;
+		+ACTIVATEIMPACT;
+		+ACTIVATEPCROSS;
+		+NOEXTREMEDEATH;
+		DamageFunction (frandom(6, 12));
+	}
+	States
+	{
+		Spawn:
+			KNIF A 2 Bright;
+			Loop;
+		Crash:
+			TNT1 A 0 
+			{
+				A_Gravity();
+				bRIPPER = false;
+				ThrustThingZ(0, frandom(16, 32), 0, 1);
+				ThrustThing(angle*256/360+frandom(80, 160), frandom(8, 16), 1, 0);
+				A_StartSound("weapons/knifecrash", 0);
+			}
+			TNT1 A 0 A_Jump(128, "Crash2");
+			Goto Crash1;
+		Crash1:
+			KNIF B 2 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF CDEB 2 Bright A_FadeOut(0.12);
+			Goto Crash1+1;
+		Crash2:
+			KNIF F 2 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF GHIF 2 Bright A_FadeOut(0.12);
+			Goto Crash2+1;
+		Death:
+			TNT1 A 0 
+			{
+				bMOVEWITHSECTOR = true;
+				A_StartSound("weapons/knifehitwall", 0);
+			}
+			Goto DeathLoop;
+		DeathLoop:
+			KNIF A 10 Bright A_SpawnItemEx("SmokeSpawner");
+			KNIF A 1 Bright A_FadeOut(0.02);
+			Goto DeathLoop+1;
+	}
+}
+
+class ThrownKnifeBerserk : ThrownKnife
+{
+	default
+	{
+		Speed 115;
+		Scale 1.0625;
+		DamageFunction (frandom(6, 12) * 5);
 	}
 }
 

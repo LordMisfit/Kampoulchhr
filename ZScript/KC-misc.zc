@@ -315,11 +315,9 @@ class PlayerStatItem : Inventory
 		return result;
 	}
 	
-	void A_SielsGraceCooldown(int type = 0)
+	void A_SielsGraceCooldown(int type, bool luckboost)
 	{
 		sielsgracecooldown = sielsgracecooldownbase;
-		sielsgraceluckcooldown = ((300 * TICRATE) * frandompick(0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1));
-		if (sielsgraceluckcooldown > sielsgracecooldownbase) sielsgraceluckcooldown = sielsgracecooldownbase;
 		double levelbasis = 0.20;
 				 if (TruePlayerLevel <= 5) levelbasis = 0.20;
 		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) sielsgracecooldown *= 0.375;
@@ -343,7 +341,15 @@ class PlayerStatItem : Inventory
 		if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown *= 0.25;
 		if (type >= 1) sielsgracecooldown *= 0.25;
 		A_SetInventory("sielsgracecooldown",sielsgracecooldown);
-		A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
+		
+		if (luckboost)
+		{
+			sielsgraceluckcooldown = ((300 * TICRATE) * frandompick(0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1));
+			sielsgraceluckcooldown *= (1.0 + ((sielsgraceactivations) * frandompick(0.1,0.15,0.15,0.15,0.15,0.15,0.2)));
+			if (sielsgraceluckcooldown > sielsgracecooldownbase) sielsgraceluckcooldown = sielsgracecooldownbase;
+			A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
+		}
+
 		//Console.Printf("sielsgracecooldown: %d, sielsgraceluckcooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, sielsgraceluckcooldown, levelbasis, activationbasis);
 	}
 	
@@ -3948,7 +3954,7 @@ class PlayerStatItem : Inventory
 				}
 				sielgracestartchancemax /= randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,4,4,4,4,4,8,8,8,8,16,16,16,32,32,64);
 				if (sielgracestartchancemax < 2) sielgracestartchancemax = 2;
-				if (random(1,sielgracestartchancemax) <= (sielgracestartchancemax-1)) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
+				if (random(1,sielgracestartchancemax) <= (sielgracestartchancemax-1)) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1),false);
 																																				 else sielsgraceactive = true;
 			}
 		}

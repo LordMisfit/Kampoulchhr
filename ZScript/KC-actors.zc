@@ -7461,3 +7461,55 @@ class ElectricDischarge : KCBaseZSC
 			Stop;
 	}
 }
+
+class SmokeSpawner : KCBaseZSC
+{
+	default
+	{
+		Speed 20;
+		+NOCLIP;
+		+NOINTERACTION;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1;
+			TNT1 A 0 A_SpawnItem("ShotSmoke", 0, 0);
+			Stop;
+	}
+}
+
+class ShotSmoke : KCBaseZSC
+{
+	default
+	{
+		+NOINTERACTION;
+		VSpeed 1;
+		RenderStyle "Add";
+		Alpha 0.3;
+		Scale 0.1;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1;
+			SMOK ABCDEFGHIJKLMNOPQ 1 A_SpawnItem("ShotSmokeTrail");
+			Stop;
+	}
+}
+
+class ShotSmokeTrail : ShotSmoke
+{
+	default
+	{
+		VSpeed 0;
+		Alpha 0.15;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1;
+			SMOK CDEFGHIJKLMNOPQ 1;
+			Stop;
+	}
+}
