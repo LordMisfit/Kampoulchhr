@@ -8790,7 +8790,7 @@ class ImpalerXBow : MarineWeapon
 	
 	action double A_GetXBowSpd()
 	{
-		double output = 10;
+		double output = kc_impalerxbowlvlint; // 10;
 		double oldoutput = output;
 		if (output <= 1.0) output = 1.0;
 		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
@@ -14293,7 +14293,7 @@ class KnifeHeiwa : MarineWeapon
 	
 	action double A_GetKnifeSpd()
 	{
-		double output = 20;
+		double output = kc_knifespdlvlint; // 20;
 		double oldoutput = output;
 		if (output <= 1.0) output = 1.0;
 		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);

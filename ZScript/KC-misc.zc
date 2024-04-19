@@ -2310,15 +2310,21 @@ class PlayerStatItem : Inventory
 			if (A_CheckForHeiwa()) SurvivalRate = 25 * suvfct;
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Base]: %d", SurvivalRate);
 			
-			if (A_CheckForHeiwa()) SurvivalRate += (TruePlayerLevel * 8.75); // +0.0875% per level
-																						else SurvivalRate += (TruePlayerLevel * 5); // +0.05% per level
+			if (A_CheckForHeiwa()) SurvivalRate += (TruePlayerLevel * 6.5625); // +0.065625% per level
+												else SurvivalRate += (TruePlayerLevel * 3.75); // +0.0375% per level
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Level]: %d", SurvivalRate);
+			if (PlayerGUTS)
+			{
+				if (A_CheckForHeiwa()) SurvivalRate += (PlayerGUTS * 7.125); // +0.07125% per Luck Point
+													else SurvivalRate += (PlayerGUTS * 7.5); // +0.075% per Luck Point
+				if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Guts]: %d", SurvivalRate);
+			}
 			if (PlayerLUCK) 
 			{
 				if (A_CheckForHeiwa()) SurvivalRate += (PlayerLUCK * 1.1875); // +0.011875% per Luck Point
 													else SurvivalRate += (PlayerLUCK * 1.25); // +0.0125% per Luck Point
+				if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Luck]: %d", SurvivalRate);
 			}
-			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Luck]: %d", SurvivalRate);
 			
 			PerkFactor = 0;
 
@@ -2370,6 +2376,7 @@ class PlayerStatItem : Inventory
 					SurviveRateCap += 1250;
 				}
 			}
+			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [TSA]: %d", SurvivalRate);
 			
 			if (KillComboCount)
 			{
