@@ -3690,8 +3690,15 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			// Alt-Fires
+			bool KnifeAltUsable = false;
+			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
+			if (FoundKnife && MiscItem)
+			{
+				if (MiscItem.TruePlayerLevel >= 15) KnifeAltUsable = true;
+			}
 			LegendStr = "";
-			if (PlayerWeapon is "PistolMarine" ||
+			if ((PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable) ||
+					PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
 					PlayerWeapon is "BlasterPistols" ||
@@ -3713,6 +3720,11 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
+				if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife && KnifeAltUsable)) 
+				{
+					int KnifeCost = 8; // FoundKnife.throwmpcost;
+					LegendStr.AppendFormat(" = \c[blue]THROW A KNIFE COPY [%d MP]\c-", KnifeCost);
+				}
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
