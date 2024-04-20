@@ -315,7 +315,15 @@ class PlayerStatItem : Inventory
 		return result;
 	}
 	
-	void A_SielsGraceCooldown(int type, bool luckboost)
+	void A_SielsGraceLuckCooldown(int base)
+	{
+		sielsgraceluckcooldown = ((base * TICRATE) * frandompick(0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1));
+		sielsgraceluckcooldown *= (1.0 + ((sielsgraceactivations) * frandompick(0.1,0.15,0.15,0.15,0.15,0.15,0.2)));
+		if (sielsgraceluckcooldown > sielsgracecooldownbase) sielsgraceluckcooldown = sielsgracecooldownbase;
+		A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
+	}
+	
+	void A_SielsGraceCooldown(int type)
 	{
 		sielsgracecooldown = sielsgracecooldownbase;
 		double levelbasis = 0.20;
@@ -341,14 +349,6 @@ class PlayerStatItem : Inventory
 		if (owner && owner.CountInv("KCPowerKampoul")) sielsgracecooldown *= 0.25;
 		if (type >= 1) sielsgracecooldown *= 0.25;
 		A_SetInventory("sielsgracecooldown",sielsgracecooldown);
-		
-		if (luckboost)
-		{
-			sielsgraceluckcooldown = ((300 * TICRATE) * frandompick(0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1));
-			sielsgraceluckcooldown *= (1.0 + ((sielsgraceactivations) * frandompick(0.1,0.15,0.15,0.15,0.15,0.15,0.2)));
-			if (sielsgraceluckcooldown > sielsgracecooldownbase) sielsgraceluckcooldown = sielsgracecooldownbase;
-			A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
-		}
 
 		//Console.Printf("sielsgracecooldown: %d, sielsgraceluckcooldown: %d, levelbasis: %.8f, activationbasis: %.8f", sielsgracecooldown, sielsgraceluckcooldown, levelbasis, activationbasis);
 	}
@@ -3961,7 +3961,7 @@ class PlayerStatItem : Inventory
 				}
 				sielgracestartchancemax /= randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,4,4,4,4,4,8,8,8,8,16,16,16,32,32,64);
 				if (sielgracestartchancemax < 2) sielgracestartchancemax = 2;
-				if (random(1,sielgracestartchancemax) <= (sielgracestartchancemax-1)) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1),false);
+				if (random(1,sielgracestartchancemax) <= (sielgracestartchancemax-1)) A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
 																																				 else sielsgraceactive = true;
 			}
 		}

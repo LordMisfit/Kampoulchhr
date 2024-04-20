@@ -1304,13 +1304,19 @@ class KCPlayerPawn : PlayerPawn
 						if (kcdebug_survivalrate) Console.Printf("MiscItem.MercyInvulnTimer: %d", MiscItem.MercyInvulnTimer);
 						MiscItem.sielsgraceactive = 0;
 						MiscItem.MercyInvulnOnSiel = true;
-						int sgrestore = (MiscItem.MaxHealthTrue * (frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0)));
-						player.health = player.mo.health = sgrestore;
+						double sgrestore = frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0);
+						player.health = player.mo.health = (MiscItem.MaxHealthTrue * sgrestore);
+						int temp = (MiscItem.MaxPsychicPoints * sgrestore);
+						if (MiscItem.CurrentPsychicPoints < temp) MiscItem.CurrentPsychicPoints = temp;
+						temp = (MiscItem.MaxMagicPoints * sgrestore);
+						if (MiscItem.CurrentMagicPoints < temp) MiscItem.CurrentMagicPoints = temp;
+
 						double fadetime = int(((TICRATE*frandom(0.8334,1.1667)) * sgtimer));
 						A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
 						MiscItem.sielsgraceactivations += 1;
 						A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
-						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1),true);
+						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
+						MiscItem.A_SielsGraceLuckCooldown(300);
 					}
 					else
 					{
