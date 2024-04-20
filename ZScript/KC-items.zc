@@ -326,6 +326,7 @@ class CustomInventoryExt : CustomInventory
 				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
 				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
 				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
+				if (user_type >= 21 && user_type <= 24) spawntype = "SensesCapsule";
 				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
 				if (bCOUNTITEM) level.total_items--;
 				self.Destroy();
@@ -2980,13 +2981,14 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		{
 			if (!bDROPPED && random(1,basechance) <= 1)
 			{
-				int user_type = random(1,20);
+				int user_type = random(1,24);
 				string spawntype;
 				if (user_type >= 1 && user_type <= 4) spawntype = "VitalCapsule";
 				if (user_type >= 5 && user_type <= 8)  spawntype = "SpeedCapsule";
 				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
 				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
 				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
+				if (user_type >= 21 && user_type <= 24) spawntype = "SensesCapsule";
 				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
 				if (bCOUNTITEM) level.total_items--;
 				self.Destroy();
@@ -4638,6 +4640,37 @@ class IQCapsule : StatCaspuleBase
 					MiscItem.IQPieces++;
 					globalvars.IQPieces++;
 					//playera.A_GiveInventory("PlayerIQ",1);
+				}
+			}
+			Stop;
+	}
+}
+
+class SensesCapsule : StatCaspuleBase
+{
+	default
+	{
+		Inventory.PickupMessage "Picked up an \cnSenses Capsule\c-! \c[brick]Max MP permanently increased by 5!\c-";
+	}
+	
+	States
+	{
+		Spawn:
+			CAPS X -1;
+			Stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				let globalvars = KCGlobalVariables.Get();
+				if (MiscItem && 
+						playera && 
+						globalvars)
+				{
+					MiscItem.SensesPieces++;
+					globalvars.SensesPieces++;
+					//playera.A_GiveInventory("PlayerSenses",1);
 				}
 			}
 			Stop;

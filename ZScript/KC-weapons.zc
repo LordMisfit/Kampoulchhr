@@ -15183,6 +15183,31 @@ class KnifeHeiwa : MarineWeapon
 	}
 }
 
+class ThrownKnifeTrail : KCProjectile
+{
+	default
+	{
+		Radius 2;
+		Height 4;
+		Speed 0;
+		Scale 1.25;
+		Alpha 0.8;
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+		RenderStyle "Translucent";
+	}
+	
+	States
+	{
+		Spawn:
+			KNIF A 2 Bright
+			{
+				A_Fadeout(0.125,FTF_REMOVE);
+			}
+			loop;
+	}
+}
+
 class ThrownKnife : SingleDamageFastRipper
 {
 	mixin DmgCalc;
@@ -15258,7 +15283,11 @@ class ThrownKnife : SingleDamageFastRipper
 	States
 	{
 		Spawn:
-			KNIF A 2 Bright;
+			KNIF AA 2 Bright;
+			KNIF A 0 Bright
+			{
+				if (berserked) A_SpawnItemEx("ThrownKnifeTrail",flags:SXF_NOCHECKPOSITION);
+			}
 			Loop;
 		Crash:
 			TNT1 A 0 
@@ -15311,8 +15340,8 @@ class ThrownKnife : SingleDamageFastRipper
 					A_StartSound("weapons/knifehitwall", CHAN_VOICE);
 				}
 			}
-			Goto DeathLoop;
-		DeathLoop:
+			Goto DeathWait;
+		DeathWait:
 			KNIF A 10 Bright
 			{
 				A_SpawnItemEx("SmokeSpawner");
@@ -15322,8 +15351,11 @@ class ThrownKnife : SingleDamageFastRipper
 					A_SpawnItemEx("SmokeSpawner");
 				}
 			}
+			KNIF A 105 Bright;
+			goto DeathLoop;
+		DeathLoop:
 			KNIF A 1 Bright A_FadeOut(0.02);
-			Goto DeathLoop+1;
+			loop;
 	}
 }
 
