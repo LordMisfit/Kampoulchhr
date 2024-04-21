@@ -14319,56 +14319,78 @@ class KnifeHeiwa : MarineWeapon
 		double randangle = (0.125 * random(-8,8));
 		double randpitch = (0.125 * random(-8,8));
 		string shottype = "ThrownKnife";
-		if (A_CheckBerserk()) 
-		{
-			randangle *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
-			randpitch *= (1.5 + (0.5 * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
-		}
+		double spreadbase = 0.5;
 		int TruePlayerLevel = invoker.ActualLevel;
 		if (!(player.CountInv("KCTimeFreezer1") ||
 					player.CountInv("KCTimeFreezer2") ||
 					player.CountInv("KCTimeFreezer3")))
 		{
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.25))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.75))
+			{
+				randangle *= 0;
+				randpitch *= 0;
+				spreadbase = 0.0;
+			}
+			else
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.0))
 			{
 				randangle *= frandom(0.0,0.125);
 				randpitch *= frandom(0.0,0.125);
+				spreadbase = 0.0;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25))
 			{
 				randangle *= frandom(0.125,0.2625);
 				randpitch *= frandom(0.125,0.2625);
+				spreadbase = 0.0;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.75))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5))
 			{
 				randangle *= frandom(0.25,0.4075);
 				randpitch *= frandom(0.25,0.4075);
+				spreadbase = 0.03;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.0))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75))
 			{
 				randangle *= frandom(0.375,0.5325);
 				randpitch *= frandom(0.375,0.5325);
+				spreadbase = 0.14;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.25))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0))
 			{
 				randangle *= frandom(0.5,0.6875);
 				randpitch *= frandom(0.5,0.6875);
+				spreadbase = 0.23;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25))
 			{
 				randangle *= frandom(0.625,0.8125);
 				randpitch *= frandom(0.625,0.8125);
+				spreadbase = 0.32;
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.75))
+			if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5))
 			{
 				randangle *= frandom(0.75,0.9375);
 				randpitch *= frandom(0.75,0.9375);
+				spreadbase = 0.41;
+			}
+			else
+			{
+				randangle *= frandom(1.0125,0.9875);
+				randpitch *= frandom(1.0125,0.9875);
+				spreadbase = 0.5;
+			}
+			
+			if (A_CheckBerserk()) 
+			{
+				randangle *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+				randpitch *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
 			}
 		}
 		else
@@ -14384,6 +14406,7 @@ class KnifeHeiwa : MarineWeapon
 			A_StartSound("weapons/knifetoss", 104,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.9,1.1));
 			A_StartSound("weapons/knifetoss", 105,CHANF_DEFAULT,frandom(0.75,0.875),ATTN_NORM,frandom(0.875,1.125));
 		}
+		
 		
 		[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
 		if (BombShotsB)
@@ -14415,6 +14438,18 @@ class KnifeHeiwa : MarineWeapon
 				itsaknife.finaldamagedealt = basedmg;
 				itsaknife.nogravtimer = nogravtimer;
 				if (kcdebug_rangedmg) Console.Printf("velscale: %.8f, nogravtimer: %d, finaldamagedealt: %d (%d)", velscale, nogravtimer, itsaknife.finaldamagedealt, basedmg);
+			}
+			
+			bool spawned;
+			actor mo;
+			double portaloffset = 0.0625;
+			[spawned, mo] = A_SpawnItemEx("KnifeSummonCircle",(7+frandom(-portaloffset,portaloffset)),frandom(-portaloffset,portaloffset),(38+frandom(-portaloffset,portaloffset)),0.0,0.0,0.0,0.0,flags:SXF_NOCHECKPOSITION);
+			if (mo)
+			{
+				mo.scale.x = (frandom(0.01125,0.01375) * 0.5);
+				mo.scale.y = (frandom(0.01125,0.01375) * 0.5);
+				mo.A_StartSound("KnifeSummon",random(101,102),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
+				mo.A_StartSound("KnifeSummon",random(103,104),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
 			}
 		}
 	}
@@ -15180,6 +15215,31 @@ class KnifeHeiwa : MarineWeapon
 				A_SetTics(tic);
 			}
 			Goto Ready;
+	}
+}
+
+class KnifeSummonCircle : KCProjectile
+{
+	default
+	{
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Scale 0.00625;
+		Alpha 0.8;
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+		RenderStyle "Translucent";
+	}
+	
+	States
+	{
+		Spawn:
+			KSCR ACEGIBDFH 1 Bright
+			{
+				A_Fadeout((default.alpha * frandom(0.0443,0.0556)),FTF_REMOVE);
+			}
+			loop;
 	}
 }
 
