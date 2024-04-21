@@ -14223,14 +14223,14 @@ class KnifeHeiwa : MarineWeapon
 			string mk = "ShieldPartMeleeNoReflect";
 			int TruePlayerLevel = invoker.ActualLevel;
 			if (random(1,8) <= (1 + (TruePlayerLevel * (0.06 * output)))) mk = "ShieldPartMeleeReflect";
+			A_MeleeShieldPiece(mk,mkheight,mkdist3,angoffset,ptcoffset);
 			
 			int piecechance = 1;
 			if (A_CheckBerserk()) piecechance = randompick(2,2,3,3,3,3,4,4);
-			A_MeleeShieldPiece(mk,mkheight,mkdist3,angoffset,ptcoffset);
 			if (random(1,6) <= piecechance)
 			{
-				if (A_CheckBerserk()) piecechance = randompick(2,2,3,3,3,3,4,4);
 				A_MeleeShieldPiece(mk,mkheight,mkdist2,angoffset,ptcoffset);
+				if (A_CheckBerserk()) piecechance = randompick(2,2,3,3,3,3,4,4);
 				if (random(1,6) <= piecechance) A_MeleeShieldPiece(mk,mkheight,mkdist1,angoffset,ptcoffset);
 			}
 		}
@@ -15247,6 +15247,43 @@ class ThrownKnife : SingleDamageFastRipper
 		}
 	}
 	
+	
+	void A_ThrownKnifeShieldSetup(actor BombShots, double scaling = 0.0125, double xpos = 0.0, double ypos = 0.0, double zpos = 0.0, double ang = 0.0, double ptc = 0.0)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		
+		if (BombShots)
+		{
+			int oldrad = BombShots.radius;
+			int oldhei = BombShots.height;
+			let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+			double scalebase = 1.0;
+			if (MiscItem) scalebase = 1.0 + ((TruePlayerLevel - 15) * scaling);
+			if (scalebase <= 1.0) scalebase = 1.0;
+			//BombShots.A_SetSize((BombShots.radius * scalebase),(BombShots.height * scalebase));
+			//Console.Printf("rad: %d [%d], hei: %d [%d]", BombShots.radius, oldrad, BombShots.height, oldhei);
+			
+			ShieldPartBase SHmo;
+			SHmo = ShieldPartBase(BombShots);
+			if (SHmo)
+			{
+				if (kcdebug_showvisibleshieldparts == 1 ||
+						kcdebug_showvisibleshieldparts >= 3) Console.Printf("(ThrownKnife) [SHmo]: %s", SHmo.GetClassName());
+				SHmo.attachx = xpos;
+				SHmo.attachy = ypos;
+				SHmo.attachz = zpos;
+				SHmo.attachang = ang;
+				SHmo.attachptc = ptc;
+				SHmo.shieldee = self;
+				SHmo.target = self;
+				if (kcdebug_showvisibleshieldparts == 1 ||
+						kcdebug_showvisibleshieldparts >= 3) Console.Printf("(ThrownKnife) attachx: %.2f, attachy: %.2f, attachz: %.2f, shieldee: %s", SHmo.attachx, SHmo.attachy, SHmo.attachz, SHmo.shieldee.GetClassName());
+			}
+		}
+	}
+	
 	override void PostBeginPlay()
 	{
 		if (nogravtimer <= 0) nogravtimer = random(40,50);
@@ -15280,10 +15317,61 @@ class ThrownKnife : SingleDamageFastRipper
 		super.Tick();
 	}
 	
+	void A_KnifeGenShieldPart()
+	{
+		double spread = frandompick(0.75,1.5,1.5,2.25,2.25,2.25,2.25,2.25,2.25,3.0,3.0,3.75) * 2.0;
+		double spread2 = (spread * 3.0);
+		double xoffset = 4;
+		double yoffset = 0;
+		double zoffset = -4.0;
+		double scaled = 0.0125;
+		string type = "ThrownKnifeShieldPart";
+		if (berserked) 
+		{
+			type = "ThrownKnifeShieldPartBerserk";
+			xoffset = 4;
+		}
+		
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor BombShotsB, BombShots;
+		bool success;
+		[success, BombShots] = A_SpawnItemEx(type,0,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+		if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,0,0,zoffset);
+		int piecechance = 1;
+		if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
+		if (random(1,6) <= piecechance)
+		{
+			[success, BombShots] = A_SpawnItemEx(type,-xoffset,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,-xoffset,0,zoffset);
+			if (berserked) 
+			{
+				piecechance = 1;
+				if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
+				if (random(1,6) <= piecechance)
+				{
+					[success, BombShots] = A_SpawnItemEx(type,(-xoffset*2),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+					if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset*2),0,zoffset);
+					piecechance = 1;
+					if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
+					if (random(1,6) <= piecechance)
+					{
+						[success, BombShots] = A_SpawnItemEx(type,(-xoffset*3),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset*3),0,zoffset);
+					}
+				}
+			}
+		}
+		
+	}
+	
 	States
 	{
 		Spawn:
-			KNIF AA 2 Bright;
+			KNIF AAAA 1 Bright
+			{
+				if (A_CheckMeleeDestroyProj(3) > 0) A_KnifeGenShieldPart();
+			}
 			KNIF A 0 Bright
 			{
 				if (berserked) A_SpawnItemEx("ThrownKnifeTrail",flags:SXF_NOCHECKPOSITION);

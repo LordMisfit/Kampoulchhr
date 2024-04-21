@@ -892,6 +892,10 @@ mixin class DynMusicControl
 						if (KickShieldNoReflect(dmtarget)) dmtarget == null;
 						if (KickShieldReflect(dmtarget)) dmtarget == null;
 
+						if (ThrownKnifeShieldPart(dmtarget)) dmtarget = null;
+						if (ThrownKnifeShieldPartFoe(dmtarget)) dmtarget = null;
+						if (ThrownKnifeShieldPartBerserk(dmtarget)) dmtarget = null;
+
 						if (ExplosiveBarrel(dmtarget)) dmtarget = null;
 						if (ExplosiveBarrel2(dmtarget)) dmtarget = null;
 						if (Pod(dmtarget)) dmtarget = null;
@@ -1297,7 +1301,8 @@ mixin class MonsterCollider
 			{
 				if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[sapphire]Collision:  Passive - \c[green]%s\c- [ShieldPiece] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 				if (ShieldPartMeleeNoReflect(shieldpiece) || ShieldPartMeleeNoReflect(shieldpiece) ||
-						KickShieldReflect(shieldpiece) || KickShieldNoReflect(shieldpiece))
+						KickShieldReflect(shieldpiece) || KickShieldNoReflect(shieldpiece) ||
+						ThrownKnifeShieldPartBerserk(shieldpiece) || ThrownKnifeShieldPart(shieldpiece) || ThrownKnifeShieldPartFoe(shieldpiece))
 				{
 					if (kcdebug_generalcollisions & 1) Console.Printf("[MonsterCollider] \c[sapphire]Collision: Passive - \c[green]%s\c- [MeleeShieldPart] vs (\c[orange]%s\c-) {gametic: %d}", GetClassName(), other.GetClassName(), gametic);
 					if (ExplosiveBarrel(self)) return false;
