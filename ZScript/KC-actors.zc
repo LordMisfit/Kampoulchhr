@@ -3693,9 +3693,13 @@ class KCCreature : KCBaseZSC
 	{
 		int TrueGameSkill = skill;
 		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		int PlayerSenses;
+		int PlayerMaxSenses = 60;
+		if (MiscItem) PlayerSenses = MiscItem.SensesPieces;
 		gravitypulsetimer = 0;
 		double GravityEffectFactor, FinalGravityFactor;
-		int PropertyValue, LevelFactor;
+		int PropertyValue, SensesFactor, LevelFactor;
 		int basedmgratio;
 		int AffectedStat, MultFactor, THEEffect;
 		int InvulnerabilityTimer;
@@ -3764,6 +3768,9 @@ class KCCreature : KCBaseZSC
 								if (targ) targ.A_SetBlend("C0 00 00",1.25,random(39,40));
 							}
 						}
+						if (gravitytype == 2) // HP & MP
+						{
+						}
 					}
 					else return;
 				}
@@ -3780,7 +3787,11 @@ class KCCreature : KCBaseZSC
 						if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.21875;
 						if (gravitytype == 2) GravityEffectFactor *= 2;
 						if (random(1,16) == 16) GravityEffectFactor *= 2;
-
+						
+						SensesFactor = PlayerMaxSenses - PlayerSenses;
+						SensesFactor = clamp(SensesFactor, 0, SensesFactor);
+						GravityEffectFactor = GravityEffectFactor * SensesFactor / PlayerMaxSenses;
+						
 						FinalGravityFactor = 1.000 - GravityEffectFactor;
 						GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
 						if (GravityEffectFactor > 0.000)
@@ -3819,6 +3830,11 @@ class KCCreature : KCBaseZSC
 							if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
 							if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
 							if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+							
+							SensesFactor = PlayerMaxSenses - PlayerSenses;
+							SensesFactor = clamp(SensesFactor, 0, SensesFactor);
+							GravityEffectFactor = GravityEffectFactor * SensesFactor / PlayerMaxSenses;
+							
 							FinalGravityFactor = 1.000 - GravityEffectFactor;
 							GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
 							if (GravityEffectFactor > 0.000)
@@ -3843,6 +3859,41 @@ class KCCreature : KCBaseZSC
 									}
 								}
 							}
+						}
+						else
+						if (gravitytype == 1) // MP only
+						{
+							if (TrueGameSkill <= SKILL_VERY_EASY) GravityEffectFactor = 0.0625;
+							if (TrueGameSkill == SKILL_EASY) GravityEffectFactor = 0.1250;
+							if (TrueGameSkill == SKILL_NORMAL) GravityEffectFactor = 0.2500;
+							if (TrueGameSkill == SKILL_HARD) GravityEffectFactor = 0.3750;
+							if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
+							
+							SensesFactor = PlayerMaxSenses - PlayerSenses;
+							SensesFactor = clamp(SensesFactor, 0, SensesFactor);
+							GravityEffectFactor = GravityEffectFactor * SensesFactor / PlayerMaxSenses;
+							
+							FinalGravityFactor = 1.000 - GravityEffectFactor;
+							GravityEffectFactor = clamp(GravityEffectFactor, 0.000, GravityEffectFactor);
+							if (GravityEffectFactor > 0.000)
+							{
+								if (MiscItem) 
+								{
+									PropertyValue = MiscItem.CurrentMagicPoints * FinalGravityFactor;
+									
+									ptemp1 = (630 * FinalGravityFactor);
+									if (kcdebug_regenpenaltydisplay) Console.Printf("MPPenaltyTimeAdd: %d", ptemp1);
+									MiscItem.MPRegenBoostTimer -= ptemp1;
+									
+									if (PropertyValue < 1) PropertyValue = 1;
+									MiscItem.CurrentMagicPoints = PropertyValue;
+									if (playertarg) playertarg.A_SetBlend("00 00 C0",1.25,random(39,40));
+								}
+							}
+						}
+						else
+						if (gravitytype == 2) // HP & Mana
+						{
 						}
 					}
 				}

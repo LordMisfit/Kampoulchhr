@@ -833,7 +833,7 @@ class CompatVulnItem : PlaceholderItem
 							if (damageType == 'Kick') multfactorHP *= frandompick(1.0834,1.1667);
 							randbonusincreaseHP *= multfactorHP;
 							if (criticalhit) randbonusincreaseHP *= critdmgmulti;
-							//if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
+							if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
 							if (MiscItem) 
 							{
 								int HPRegenBoostTimeAmt = randbonusincreaseHP;

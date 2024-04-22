@@ -14146,6 +14146,7 @@ class Riotgun : MarineWeapon
 class KnifeHeiwa : MarineWeapon
 {
 	int throwmpcost;
+	int knifebarrageno;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -14169,10 +14170,6 @@ class KnifeHeiwa : MarineWeapon
 		Tag "Heiwa's Knife";
 		Obituary "%o was cut apart by %k's trusty knife.";
 		Inventory.RestrictedTo "HeiwaPlayer";
-	}
-	
-	action void A_KnifeThrow()
-	{
 	}
 	
 	action void A_KnifeHit(int rangef, bool shieldpiece, bool puffsound, double angoffset, double ptcoffset)
@@ -14306,6 +14303,7 @@ class KnifeHeiwa : MarineWeapon
 	
 	action void A_KnifeThrowAttack()
 	{
+		invoker.knifebarrageno++;
 		actor player = players[0].mo;
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
@@ -14398,6 +14396,44 @@ class KnifeHeiwa : MarineWeapon
 			randangle = 0;
 			randpitch = 0;
 		}
+		double randaccuracymult = 0;
+		if (invoker.knifebarrageno == 1) 
+		{
+			randaccuracymult = frandompick(0.0,0.0,0.0,0.0,frandom(0.001,0.05));
+		}
+		else 
+		if (invoker.knifebarrageno == 2)
+		{
+			randaccuracymult = frandom(0.04,0.10);
+		}
+		else 
+		if (invoker.knifebarrageno >= 3 && invoker.knifebarrageno <= 4)
+		{
+			randaccuracymult = frandom(0.10,0.25);
+		}
+		else 
+		if (invoker.knifebarrageno >= 5 && invoker.knifebarrageno <= 6)
+		{
+			randaccuracymult = frandom(0.25,0.625);
+		}
+		else 
+		if (invoker.knifebarrageno >= 7 && invoker.knifebarrageno <= 9)
+		{
+			randaccuracymult = frandom(0.625,1.0);
+		}
+		else 
+		if (invoker.knifebarrageno >= 10 && invoker.knifebarrageno <= 12)
+		{
+			randaccuracymult = frandom(0.93125,1.0);
+		}
+		else 
+		if (invoker.knifebarrageno >= 13)
+		{
+			randaccuracymult = 1.0;
+		}
+		Console.Printf("knifebarrageno: %d, randaccuracymult: %.8f", invoker.knifebarrageno, randaccuracymult);
+		randangle *= randaccuracymult;
+		randpitch *= randaccuracymult;
 		A_StartSound("weapons/knifetoss", CHAN_WEAPON,CHANF_DEFAULT,frandom(1.000,1.125),ATTN_NORM,frandom(0.975,1.025));
 		A_StartSound("weapons/knifetoss", CHAN_BODY,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.95,1.05));
 		if (A_CheckBerserk()) 
@@ -14439,18 +14475,6 @@ class KnifeHeiwa : MarineWeapon
 				itsaknife.nogravtimer = nogravtimer;
 				if (kcdebug_rangedmg) Console.Printf("velscale: %.8f, nogravtimer: %d, finaldamagedealt: %d (%d)", velscale, nogravtimer, itsaknife.finaldamagedealt, basedmg);
 			}
-			
-			bool spawned;
-			actor mo;
-			double portaloffset = 0.0625;
-			[spawned, mo] = A_SpawnItemEx("KnifeSummonCircle",(7+frandom(-portaloffset,portaloffset)),frandom(-portaloffset,portaloffset),(38+frandom(-portaloffset,portaloffset)),0.0,0.0,0.0,0.0,flags:SXF_NOCHECKPOSITION);
-			if (mo)
-			{
-				mo.scale.x = (frandom(0.01125,0.01375) * 0.5);
-				mo.scale.y = (frandom(0.01125,0.01375) * 0.5);
-				mo.A_StartSound("KnifeSummon",random(101,102),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
-				mo.A_StartSound("KnifeSummon",random(103,104),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
-			}
 		}
 	}
 	
@@ -14463,6 +14487,7 @@ class KnifeHeiwa : MarineWeapon
 			KNFG G 1 
 			{
 				invoker.A_GetMPCost();
+				invoker.knifebarrageno = 0;
 				A_WeaponReady();
 			}
 			loop;
@@ -14470,12 +14495,14 @@ class KnifeHeiwa : MarineWeapon
 			KNFG G 0 
 			{
 				invoker.A_GetMPCost();
+				invoker.knifebarrageno = 0;
 				A_StartSound("KnifeAway",CHAN_7);
 			}
 		Deselect2:
 			KNFG G 1 
 			{
 				invoker.A_GetMPCost();
+				invoker.knifebarrageno = 0;
 				A_Lower(12);
 			}
 			loop;
@@ -14483,18 +14510,21 @@ class KnifeHeiwa : MarineWeapon
 			KNFG G 0 
 			{
 				invoker.A_GetMPCost();
+				invoker.knifebarrageno = 0;
 				A_StartSound("KnifeOut",CHAN_7);
 			}
 		Select2: 
 			KNFG G 1 
 			{
 				invoker.A_GetMPCost();
+				invoker.knifebarrageno = 0;
 				A_Raise(12);
 			}
 			loop;
 		Fire:
 			KNFG H 3
 			{
+				invoker.knifebarrageno = 0;
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 3;
 				if (A_CheckBerserk()) 
@@ -14793,6 +14823,7 @@ class KnifeHeiwa : MarineWeapon
 		AltFire:
 			KNFG G 6
 			{
+				invoker.knifebarrageno = 0;
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -15060,6 +15091,7 @@ class KnifeHeiwa : MarineWeapon
 					if (tic < 0) tic = randompick(0,1,1,1,1,1,1,2);
 				}
 				A_SetTics(tic);
+				invoker.knifebarrageno = 0;
 			}
 			Goto Ready;
 		AltFireBackThrow:
@@ -15213,6 +15245,7 @@ class KnifeHeiwa : MarineWeapon
 					if (A_CheckBerserk()) tic -= 1;
 				}
 				A_SetTics(tic);
+				invoker.knifebarrageno = 0;
 			}
 			Goto Ready;
 	}
@@ -15348,6 +15381,18 @@ class ThrownKnife : SingleDamageFastRipper
 	{
 		if (nogravtimer <= 0) nogravtimer = random(40,50);
 		A_CalcDmg();
+
+		bool spawned;
+		actor mo;
+		double portaloffset = 0.0625;
+		[spawned, mo] = A_SpawnItemEx("KnifeSummonCircle",frandom(-portaloffset,portaloffset),frandom(-portaloffset,portaloffset),(3.6+frandom(-portaloffset,portaloffset)),0.0,0.0,0.0,0.0,flags:SXF_NOCHECKPOSITION);
+		if (mo)
+		{
+			mo.scale.x = (frandom(0.045,0.055) * 0.5);
+			mo.scale.y = (frandom(0.045,0.055) * 0.5);
+			mo.A_StartSound("KnifeSummon",random(101,102),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
+			mo.A_StartSound("KnifeSummon",random(103,104),CHANF_DEFAULT,frandom(0.5,0.67),ATTN_NORM,frandom(0.85,1.15));
+		}
 		super.PostBeginPlay();
 	}
 	

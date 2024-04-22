@@ -285,7 +285,7 @@ class CustomInventoryExt : CustomInventory
 		if (type <= 1) temp = randompick(25,30,35) * 1;
 		if (type == 2) temp = randompick(25,30,35) * 3;
 		if (type >= 3) temp = randompick(25,30,35) * 5;
-		//if (dvdsdebug_regenpenaltydisplay) Console.Printf("MPBonusTimeAdd: %d", temp);
+		if (kcdebug_regenpenaltydisplay) Console.Printf("MPBonusTimeAdd: %d", temp);
 		if (MiscItem) MiscItem.MPRegenBoostTimer += temp;
 	}
 	
