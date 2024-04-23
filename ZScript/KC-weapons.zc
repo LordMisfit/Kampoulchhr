@@ -14147,6 +14147,8 @@ class KnifeHeiwa : MarineWeapon
 {
 	int throwmpcost;
 	int knifebarrageno;
+	int knifespertoss;
+	int maxthrowableknives;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -14282,6 +14284,8 @@ class KnifeHeiwa : MarineWeapon
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = invoker.ActualLevel;
 		invoker.throwmpcost = 8;
+		invoker.maxthrowableknives = (TruePlayerLevel / (A_GetKnifeSpd() * 0.75));
+		
 		if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) invoker.throwmpcost -= 1;
 		if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25)) invoker.throwmpcost -= 1;
 		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) invoker.throwmpcost -= 1;
@@ -14290,6 +14294,8 @@ class KnifeHeiwa : MarineWeapon
 		if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25)) invoker.throwmpcost -= 1;
 		if (TruePlayerLevel >= (A_GetKnifeSpd() * 6)) invoker.throwmpcost -= 1;
 		if (invoker.throwmpcost < 1) invoker.throwmpcost = 1;
+		if (invoker.knifespertoss < 1) invoker.knifespertoss = 1;
+		if (invoker.knifespertoss > invoker.maxthrowableknives) invoker.knifespertoss = invoker.maxthrowableknives;
 	}
 	
 	action double A_GetKnifeSpd()
@@ -14303,7 +14309,6 @@ class KnifeHeiwa : MarineWeapon
 	
 	action void A_KnifeThrowAttack()
 	{
-		invoker.knifebarrageno++;
 		actor player = players[0].mo;
 		int buttons = GetPlayerInput(INPUT_BUTTONS);
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
@@ -14311,169 +14316,199 @@ class KnifeHeiwa : MarineWeapon
 		
 		int MPPenaltyTimeBase = 35 * random(16,24);
 		int MPPenaltyTimeAdd;
-
-		actor BombShotsB, BombShots;
-		double shotheight = 5;
-		double randangle = (0.125 * random(-8,8));
-		double randpitch = (0.125 * random(-8,8));
-		string shottype = "ThrownKnife";
-		double spreadbase = 0.5;
-		int TruePlayerLevel = invoker.ActualLevel;
-		if (!(player.CountInv("KCTimeFreezer1") ||
-					player.CountInv("KCTimeFreezer2") ||
-					player.CountInv("KCTimeFreezer3")))
+		
+		for (int i = 0; i < invoker.knifespertoss; i++)
 		{
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.75))
+			invoker.knifebarrageno++;
+			actor BombShotsB, BombShots;
+			double shotheight = 5;
+			double randangle = (0.125 * random(-8,8));
+			double randpitch = (0.125 * random(-8,8));
+			if (i > 0)
 			{
-				randangle *= 0;
-				randpitch *= 0;
-				spreadbase = 0.0;
+				randangle = ((0.125 * (i+1)) * random(-8,8));
+				randpitch = ((0.125 * (i+1)) * random(-8,8));
+			}
+			string shottype = "ThrownKnife";
+			double spreadbase = 0.5;
+			int TruePlayerLevel = invoker.ActualLevel;
+			if (!(player.CountInv("KCTimeFreezer1") ||
+						player.CountInv("KCTimeFreezer2") ||
+						player.CountInv("KCTimeFreezer3")))
+			{
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.75))
+				{
+					randangle *= 0;
+					randpitch *= 0;
+					spreadbase = 0.0;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.0))
+				{
+					randangle *= frandom(0.0,0.125);
+					randpitch *= frandom(0.0,0.125);
+					spreadbase = 0.0;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25))
+				{
+					randangle *= frandom(0.125,0.2625);
+					randpitch *= frandom(0.125,0.2625);
+					spreadbase = 0.0;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5))
+				{
+					randangle *= frandom(0.25,0.4075);
+					randpitch *= frandom(0.25,0.4075);
+					spreadbase = 0.03;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75))
+				{
+					randangle *= frandom(0.375,0.5325);
+					randpitch *= frandom(0.375,0.5325);
+					spreadbase = 0.14;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0))
+				{
+					randangle *= frandom(0.5,0.6875);
+					randpitch *= frandom(0.5,0.6875);
+					spreadbase = 0.23;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25))
+				{
+					randangle *= frandom(0.625,0.8125);
+					randpitch *= frandom(0.625,0.8125);
+					spreadbase = 0.32;
+				}
+				else
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5))
+				{
+					randangle *= frandom(0.75,0.9375);
+					randpitch *= frandom(0.75,0.9375);
+					spreadbase = 0.41;
+				}
+				else
+				{
+					randangle *= frandom(1.0125,0.9875);
+					randpitch *= frandom(1.0125,0.9875);
+					spreadbase = 0.5;
+				}
+				
+				if (A_CheckBerserk()) 
+				{
+					randangle *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+					randpitch *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+				}
 			}
 			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 6.0))
 			{
-				randangle *= frandom(0.0,0.125);
-				randpitch *= frandom(0.0,0.125);
-				spreadbase = 0.0;
+				randangle = 0;
+				randpitch = 0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25))
+			double randaccuracymult = 0;
+			if (invoker.knifebarrageno == 1) 
 			{
-				randangle *= frandom(0.125,0.2625);
-				randpitch *= frandom(0.125,0.2625);
-				spreadbase = 0.0;
+				randaccuracymult = frandompick(0.0,0.0,0.0,0.0,frandom(0.001,0.05));
+				if (i > 0) randaccuracymult = frandom(0.04,0.10);
+				if (i > 4) randaccuracymult = frandom(0.10,0.25);
+				if (i > 7) randaccuracymult = frandom(0.25,0.625);
+				if (i > 9) randaccuracymult = frandom(0.625,1.0);
+				if (i > 10) randaccuracymult = frandom(0.93125,1.0);
+				if (i > 11) randaccuracymult = 1.0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5))
+			else 
+			if (invoker.knifebarrageno == 2)
 			{
-				randangle *= frandom(0.25,0.4075);
-				randpitch *= frandom(0.25,0.4075);
-				spreadbase = 0.03;
+				randaccuracymult = frandom(0.04,0.10);
+				if (i > 0) randaccuracymult = frandom(0.10,0.25);
+				if (i > 4) randaccuracymult = frandom(0.25,0.625);
+				if (i > 7) randaccuracymult = frandom(0.625,1.0);
+				if (i > 9) randaccuracymult = frandom(0.93125,1.0);
+				if (i > 10) randaccuracymult = 1.0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75))
+			else 
+			if (invoker.knifebarrageno >= 3 && invoker.knifebarrageno <= 4)
 			{
-				randangle *= frandom(0.375,0.5325);
-				randpitch *= frandom(0.375,0.5325);
-				spreadbase = 0.14;
+				randaccuracymult = frandom(0.10,0.25);
+				if (i > 0) randaccuracymult = frandom(0.25,0.625);
+				if (i > 4) randaccuracymult = frandom(0.625,1.0);
+				if (i > 7) randaccuracymult = frandom(0.93125,1.0);
+				if (i > 9) randaccuracymult = 1.0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0))
+			else 
+			if (invoker.knifebarrageno >= 5 && invoker.knifebarrageno <= 6)
 			{
-				randangle *= frandom(0.5,0.6875);
-				randpitch *= frandom(0.5,0.6875);
-				spreadbase = 0.23;
+				randaccuracymult = frandom(0.25,0.625);
+				if (i > 0) randaccuracymult = frandom(0.625,1.0);
+				if (i > 4) randaccuracymult = frandom(0.93125,1.0);
+				if (i > 7) randaccuracymult = 1.0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25))
+			else 
+			if (invoker.knifebarrageno >= 7 && invoker.knifebarrageno <= 9)
 			{
-				randangle *= frandom(0.625,0.8125);
-				randpitch *= frandom(0.625,0.8125);
-				spreadbase = 0.32;
+				randaccuracymult = frandom(0.625,1.0);
+				if (i > 0) randaccuracymult = frandom(0.93125,1.0);
+				if (i > 4) randaccuracymult = 1.0;
 			}
-			else
-			if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5))
+			else 
+			if (invoker.knifebarrageno >= 10 && invoker.knifebarrageno <= 12)
 			{
-				randangle *= frandom(0.75,0.9375);
-				randpitch *= frandom(0.75,0.9375);
-				spreadbase = 0.41;
+				randaccuracymult = frandom(0.93125,1.0);
+				if (i > 0) randaccuracymult = 1.0;
 			}
-			else
+			else 
+			if (invoker.knifebarrageno >= 13)
 			{
-				randangle *= frandom(1.0125,0.9875);
-				randpitch *= frandom(1.0125,0.9875);
-				spreadbase = 0.5;
+				randaccuracymult = 1.0;
 			}
-			
+			if (kcdebug_rangedmg) Console.Printf("knifebarrageno: %d, randaccuracymult: %.8f", invoker.knifebarrageno, randaccuracymult);
+			randangle *= randaccuracymult;
+			randpitch *= randaccuracymult;
+			A_StartSound("weapons/knifetoss", CHAN_WEAPON,CHANF_DEFAULT,frandom(1.000,1.125),ATTN_NORM,frandom(0.975,1.025));
+			A_StartSound("weapons/knifetoss", CHAN_BODY,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.95,1.05));
 			if (A_CheckBerserk()) 
 			{
-				randangle *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
-				randpitch *= ((1.0 + spreadbase) + (spreadbase * randompick(1,2,2,2,3,3,3,3,3,3,4,4,4,5)));
+				A_StartSound("weapons/knifetoss", 103,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.925,1.075));
+				A_StartSound("weapons/knifetoss", 104,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.9,1.1));
+				A_StartSound("weapons/knifetoss", 105,CHANF_DEFAULT,frandom(0.75,0.875),ATTN_NORM,frandom(0.875,1.125));
 			}
-		}
-		else
-		{
-			randangle = 0;
-			randpitch = 0;
-		}
-		double randaccuracymult = 0;
-		if (invoker.knifebarrageno == 1) 
-		{
-			randaccuracymult = frandompick(0.0,0.0,0.0,0.0,frandom(0.001,0.05));
-		}
-		else 
-		if (invoker.knifebarrageno == 2)
-		{
-			randaccuracymult = frandom(0.04,0.10);
-		}
-		else 
-		if (invoker.knifebarrageno >= 3 && invoker.knifebarrageno <= 4)
-		{
-			randaccuracymult = frandom(0.10,0.25);
-		}
-		else 
-		if (invoker.knifebarrageno >= 5 && invoker.knifebarrageno <= 6)
-		{
-			randaccuracymult = frandom(0.25,0.625);
-		}
-		else 
-		if (invoker.knifebarrageno >= 7 && invoker.knifebarrageno <= 9)
-		{
-			randaccuracymult = frandom(0.625,1.0);
-		}
-		else 
-		if (invoker.knifebarrageno >= 10 && invoker.knifebarrageno <= 12)
-		{
-			randaccuracymult = frandom(0.93125,1.0);
-		}
-		else 
-		if (invoker.knifebarrageno >= 13)
-		{
-			randaccuracymult = 1.0;
-		}
-		Console.Printf("knifebarrageno: %d, randaccuracymult: %.8f", invoker.knifebarrageno, randaccuracymult);
-		randangle *= randaccuracymult;
-		randpitch *= randaccuracymult;
-		A_StartSound("weapons/knifetoss", CHAN_WEAPON,CHANF_DEFAULT,frandom(1.000,1.125),ATTN_NORM,frandom(0.975,1.025));
-		A_StartSound("weapons/knifetoss", CHAN_BODY,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.95,1.05));
-		if (A_CheckBerserk()) 
-		{
-			A_StartSound("weapons/knifetoss", 103,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.925,1.075));
-			A_StartSound("weapons/knifetoss", 104,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.9,1.1));
-			A_StartSound("weapons/knifetoss", 105,CHANF_DEFAULT,frandom(0.75,0.875),ATTN_NORM,frandom(0.875,1.125));
-		}
-		
-		
-		[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
-		if (BombShotsB)
-		{
-			MiscItem.CurrentMagicPoints -= invoker.throwmpcost;
-			if (MiscItem.CurrentMagicPoints < 0) MiscItem.CurrentMagicPoints = 0;
-			MPPenaltyTimeAdd = MPPenaltyTimeBase * invoker.throwmpcost / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
-			if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
-			MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
-		}
-		if (BombShots && MiscItem)
-		{
-			ThrownKnife itsaknife;
-			itsaknife = ThrownKnife(BombShots);
-			if (itsaknife)
+			
+			
+			[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
+			if (BombShotsB)
 			{
-				int nogravtimer = (random(40,50) + (MiscItem.TruePlayerATK * 0.34));
-				int basedmg = (frandom(12,22) + A_GetKnifeDamage(randompick(8,7,7,7,7,7,7,6),false,false));
-				double velscale = ((1.0 + (MiscItem.TruePlayerATK * 0.008)) * frandompick(0.8,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.2));
-				if (A_CheckBerserk())
+				MiscItem.CurrentMagicPoints -= (invoker.throwmpcost + i);
+				if (MiscItem.CurrentMagicPoints < 0) MiscItem.CurrentMagicPoints = 0;
+				MPPenaltyTimeAdd = MPPenaltyTimeBase * (invoker.throwmpcost + i) / (MiscItem.MaxMagicPoints * frandompick(0.5,1,1,1,1,1,1.5));
+				if (MPPenaltyTimeAdd < 1) MPPenaltyTimeAdd = 1;
+				MiscItem.MPRegenBoostTimer -= MPPenaltyTimeAdd;
+			}
+			if (BombShots && MiscItem)
+			{
+				ThrownKnife itsaknife;
+				itsaknife = ThrownKnife(BombShots);
+				if (itsaknife)
 				{
-					basedmg = ((frandom(11,23) + A_GetKnifeDamage(randompick(8,8,7,7,7,7,7,7,7,6,6),false,false)) * frandom(4.75,5.25));
-					velscale *= 5;
-					nogravtimer *= 5;
-					itsaknife.berserked = true;
+					int nogravtimer = (random(40,50) + (MiscItem.TruePlayerATK * 0.34));
+					int basedmg = (frandom(12,22) + A_GetKnifeDamage(randompick(8,7,7,7,7,7,7,6),false,false));
+					double velscale = ((1.0 + (MiscItem.TruePlayerATK * 0.008)) * frandompick(0.8,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.2));
+					if (A_CheckBerserk())
+					{
+						basedmg = ((frandom(11,23) + A_GetKnifeDamage(randompick(8,8,7,7,7,7,7,7,7,6,6),false,false)) * frandom(4.75,5.25));
+						velscale *= 5;
+						nogravtimer *= 5;
+						itsaknife.berserked = true;
+					}
+					itsaknife.Speed *= velscale;
+					itsaknife.A_ScaleVelocity(velscale);
+					itsaknife.finaldamagedealt = basedmg;
+					itsaknife.nogravtimer = nogravtimer;
+					if (kcdebug_rangedmg) Console.Printf("velscale: %.8f, nogravtimer: %d, finaldamagedealt: %d (%d)", velscale, nogravtimer, itsaknife.finaldamagedealt, basedmg);
 				}
-				itsaknife.Speed *= velscale;
-				itsaknife.A_ScaleVelocity(velscale);
-				itsaknife.finaldamagedealt = basedmg;
-				itsaknife.nogravtimer = nogravtimer;
-				if (kcdebug_rangedmg) Console.Printf("velscale: %.8f, nogravtimer: %d, finaldamagedealt: %d (%d)", velscale, nogravtimer, itsaknife.finaldamagedealt, basedmg);
 			}
 		}
 	}
@@ -14488,7 +14523,7 @@ class KnifeHeiwa : MarineWeapon
 			{
 				invoker.A_GetMPCost();
 				invoker.knifebarrageno = 0;
-				A_WeaponReady();
+				A_WeaponReady(WRF_ALLOWUSER4);
 			}
 			loop;
 		Deselect:
@@ -14832,7 +14867,13 @@ class KnifeHeiwa : MarineWeapon
 					if (!A_CheckInfiniteAmmo())
 					{
 						invoker.A_GetMPCost();
-						if (MiscItem.CurrentMagicPoints < invoker.throwmpcost)
+						int truethrowcost = invoker.throwmpcost;
+						if (invoker.knifespertoss >= 2)
+						{
+							truethrowcost *= invoker.knifespertoss;
+							truethrowcost += (invoker.knifespertoss-1);
+						}
+						if (MiscItem.CurrentMagicPoints < truethrowcost)
 						{
 							A_SetTics(6);
 							return resolvestate("Ready");
@@ -14993,7 +15034,13 @@ class KnifeHeiwa : MarineWeapon
 					if (!A_CheckInfiniteAmmo())
 					{
 						invoker.A_GetMPCost();
-						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
+						int truethrowcost = invoker.throwmpcost;
+						if (invoker.knifespertoss >= 2)
+						{
+							truethrowcost *= invoker.knifespertoss;
+							truethrowcost += (invoker.knifespertoss-1);
+						}
+						if (MiscItem.CurrentMagicPoints >= truethrowcost)
 						{
 							A_ReFire("AltFireBackThrow");
 						}
@@ -15187,7 +15234,13 @@ class KnifeHeiwa : MarineWeapon
 					if (!A_CheckInfiniteAmmo())
 					{
 						invoker.A_GetMPCost();
-						if (MiscItem.CurrentMagicPoints >= invoker.throwmpcost)
+						int truethrowcost = invoker.throwmpcost;
+						if (invoker.knifespertoss >= 2)
+						{
+							truethrowcost *= invoker.knifespertoss;
+							truethrowcost += (invoker.knifespertoss-1);
+						}
+						if (MiscItem.CurrentMagicPoints >= truethrowcost)
 						{
 							A_ReFire("AltFireForwardThrow");
 						}
@@ -15248,6 +15301,53 @@ class KnifeHeiwa : MarineWeapon
 				invoker.knifebarrageno = 0;
 			}
 			Goto Ready;
+		User4:
+			"####" # 0
+			{
+				int buttons = GetPlayerInput(INPUT_BUTTONS);
+				int TruePlayerLevel = invoker.ActualLevel;
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				invoker.maxthrowableknives = (TruePlayerLevel / (A_GetKnifeSpd() * 0.75));
+				if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5))
+				{
+					if (invoker.maxthrowableknives > 1)
+					{
+						if (buttons & BT_USER3)
+						{
+							invoker.knifespertoss--;
+							if (invoker.knifespertoss < 1) invoker.knifespertoss = invoker.maxthrowableknives;
+						}
+						else
+						{
+							invoker.knifespertoss++;
+							if (invoker.knifespertoss > invoker.maxthrowableknives) invoker.knifespertoss = 1;
+						}
+						A_StopSound(21);
+						A_StopSound(22);
+						A_StartSound("KnifeSummon", 21, CHANF_DEFAULT, 0.75, ATTN_NORM, 1.25);
+						A_StartSound("KnifeSummon", 22, CHANF_DEFAULT, 0.875, ATTN_NORM, 1.125);
+						A_Print(String.Format("You'll now throw %d knife copies per toss [ALT-FIRE]", invoker.knifespertoss));
+					}
+					else
+					{
+						A_StopSound(10);
+						A_StartSound("inv_fail",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+					}
+				}
+				else
+				{
+					A_StopSound(10);
+					A_StartSound("inv_fail",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+				}
+				if (kcdebug_rangedmg) Console.Printf("knifespertoss %d / maxthrowableknives: %d", invoker.knifespertoss, invoker.maxthrowableknives);
+			}
+			"####" # 8
+			{
+				A_SetTics(random(8,12));
+			}
+			goto Ready;
 	}
 }
 
