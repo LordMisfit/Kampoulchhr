@@ -231,6 +231,28 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
+	{
+		string LegendStr = "";
+		string UserKeyString;
+		Array<String> UserKeys;
+		
+		UserKeyString = UIKeybinds.getKeyboard(keybindget);
+		if (UserKeyString != "")
+		{
+			UserKeyString.Split(UserKeys,", ");
+			if (UserKeys[0] == "Space") UserKeys[0] = "SBar";
+			if (UserKeys[0] == "CapsLock") UserKeys[0] = "CapsL";
+			if (colored) LegendStr.AppendFormat("%s", UserKeys[0]);
+							else LegendStr.AppendFormat("\c[gold]%s\c-", UserKeys[0]);
+		}
+		else 
+		{
+			if (showunbound) LegendStr.AppendFormat("\c[red][unb]\c-");
+		}
+		return LegendStr;
+	}
+	
 	action bool A_CheckForHeiwaSnds()
 	{
 		actor playera = players[0].mo;
@@ -14495,7 +14517,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					int nogravtimer = (random(40,50) + (MiscItem.TruePlayerATK * 0.34));
 					int basedmg = (frandom(12,22) + A_GetKnifeDamage(randompick(8,7,7,7,7,7,7,6),false,false));
-					double velscale = ((1.0 + (MiscItem.TruePlayerATK * 0.008)) * frandompick(0.8,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.2));
+					double velscale = ((1.0 + (MiscItem.TruePlayerATK * 0.024)) * frandompick(0.8,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.2));
 					if (A_CheckBerserk())
 					{
 						basedmg = ((frandom(11,23) + A_GetKnifeDamage(randompick(8,8,7,7,7,7,7,7,7,6,6),false,false)) * frandom(4.75,5.25));

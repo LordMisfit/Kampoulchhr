@@ -308,6 +308,15 @@ class PlayerStatItem : Inventory
 		+Inventory.UNCLEARABLE;
 	}
 	
+	double A_GetKnifeSpd()
+	{
+		double output = kc_knifespdlvlint; // 20;
+		double oldoutput = output;
+		if (output <= 1.0) output = 1.0;
+		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
+		return output;
+	}
+	
 	bool A_CheckForHeiwa()
 	{
 		bool result = false;
@@ -5340,6 +5349,12 @@ class PlayerStatItem : Inventory
 							if (PlayerDEF > PrevDEF) LevelUpMsg.AppendFormat("\n\c[olive]Defense Increased By %d!", (PlayerDEF-PrevDEF));
 							if (PlayerSPD > PrevSPD) LevelUpMsg.AppendFormat("\n\c[lightblue]Speed Increased By %d!", (PlayerSPD-PrevSPD));
 							if (PlayerGUTS > PrevGUTS) LevelUpMsg.AppendFormat("\n\c[FIRE]Guts Increased By %d!", (PlayerGUTS-PrevGUTS));
+						}
+						if (PlayerLevel == (A_GetKnifeSpd() * 0.75))
+						{
+							LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
+							LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
+							LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
 						}
 						owner.A_Print(LevelUpMsg);
 						owner.A_SetBlend("00 00 FF",0.3,3,"00 00 FF",0.0);

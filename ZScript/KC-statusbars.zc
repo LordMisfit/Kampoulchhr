@@ -40,6 +40,15 @@ class KCStatusBarMain : BaseStatusBar
 	
 	int TrueGameSkill;
 	
+	double A_GetKnifeSpd()
+	{
+		double output = kc_knifespdlvlint; // 20;
+		double oldoutput = output;
+		if (output <= 1.0) output = 1.0;
+		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
+		return output;
+	}
+	
 	bool A_CheckForHeiwa()
 	{
 		bool result = false;
@@ -3615,7 +3624,7 @@ class KCStatusBarMain : BaseStatusBar
 			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
 			if (FoundKnife && MiscItem)
 			{
-				if (MiscItem.TruePlayerLevel >= 15) KnifeAltUsable = true;
+				if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
 				numberknifes = FoundKnife.maxthrowableknives;
 			}
 			// Weapon Specific Binds
