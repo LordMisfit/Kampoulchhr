@@ -4242,6 +4242,8 @@ class KC_EventHandler : EventHandler
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					//if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate14 * 0.25)) maxchance = (kc_inventorydroprate14 * 0.25);
+					
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1) // Main Drop Chance
 					{
@@ -4309,6 +4311,8 @@ class KC_EventHandler : EventHandler
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate6 * 0.25)) maxchance = (kc_inventorydroprate6 * 0.25);
+
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1) // Main Drop Chance
 					{
@@ -4594,6 +4598,7 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 1.75;
+					if (maxchance < (kc_inventorydroprate7 * 0.25)) maxchance = (kc_inventorydroprate7 * 0.25);
 					
 					if (random(1,(maxchance)) == 1) victim.A_SpawnItemEx("Stimpack",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 					if (random(1,(maxchance*3)) == 1) victim.A_SpawnItemEx("Medikit",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
@@ -4645,6 +4650,8 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate8 * 0.25)) maxchance = (kc_inventorydroprate8 * 0.25);
+
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
@@ -4740,6 +4747,8 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate1 * 0.25)) maxchance = (kc_inventorydroprate1 * 0.25);
+
 					int randroll = random(1,maxchance);
 					if (randroll <= 1)
 					{
@@ -4769,6 +4778,8 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate2 * 0.25)) maxchance = (kc_inventorydroprate2 * 0.25);
+
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
@@ -4789,8 +4800,10 @@ class KC_EventHandler : EventHandler
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
-					rollrand = random(1,maxchance);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (maxchance < (kc_inventorydroprate3 * 0.25)) maxchance = (kc_inventorydroprate3 * 0.25);
+
+					rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Rare Drop [success]");
@@ -4942,6 +4955,8 @@ class KC_EventHandler : EventHandler
 								if (basechance < 1) basechance = 1;
 								maxchance = basechance;
 								if (i > 0) maxchance *= 16;
+								if (maxchance < (kc_inventorydroprate5 * 0.25)) maxchance = (kc_inventorydroprate5 * 0.25);
+								
 								rollrand = random(1,maxchance);
 								if (rollrand <= 1)
 								{
@@ -5000,7 +5015,9 @@ class KC_EventHandler : EventHandler
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
+						if (maxchance < (kc_inventorydroprate10 * 0.25)) maxchance = (kc_inventorydroprate10 * 0.25);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [kmsphere]: %d (%d)", maxchance, basechance);
+
 						if (random(1,maxchance) <= 1)
 						{
 							double raredropsndpitch = frandompick(0.50,0.75,1.0,1.0625,1.125);
@@ -5044,6 +5061,7 @@ class KC_EventHandler : EventHandler
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
+						if (maxchance < (kc_inventorydroprate12 * 0.25)) maxchance = (kc_inventorydroprate12 * 0.25);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d)", maxchance, basechance);
 						if (random(1,maxchance) <= 1)
 						{
@@ -5089,7 +5107,9 @@ class KC_EventHandler : EventHandler
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
+						if (maxchance < (kc_inventorydroprate13 * 0.25)) maxchance = (kc_inventorydroprate13 * 0.25);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [spbkpk]: %d (%d)", maxchance, basechance);
+					
 						if (random(1,maxchance) <= 1)
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
