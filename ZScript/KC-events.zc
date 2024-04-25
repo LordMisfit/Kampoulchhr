@@ -4650,6 +4650,7 @@ class KC_EventHandler : EventHandler
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
+					if (i > 0) maxchance *= 5;
 					if (maxchance < (kc_inventorydroprate8 * 0.25)) maxchance = (kc_inventorydroprate8 * 0.25);
 
 					int rollrand = random(1,maxchance);

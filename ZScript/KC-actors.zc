@@ -3247,7 +3247,7 @@ class KCPuff : KCProjectile abstract
 	}
 }
 
-class BaseLensflare : KCBaseZSC
+class KCBaseLensflare : KCBaseZSC
 {
 	default
 	{
@@ -7712,7 +7712,7 @@ class ElectricDischarge : KCBaseZSC
 	}
 }
 
-class SmokeSpawner : KCBaseZSC
+class KCSmokeSpawner : KCBaseZSC
 {
 	default
 	{
@@ -7724,12 +7724,12 @@ class SmokeSpawner : KCBaseZSC
 	{
 		Spawn:
 			TNT1 A 1;
-			TNT1 A 0 A_SpawnItem("ShotSmoke", 0, 0);
+			TNT1 A 0 A_SpawnItem("KCShotSmoke", 0, 0);
 			Stop;
 	}
 }
 
-class ShotSmoke : KCBaseZSC
+class KCShotSmoke : KCBaseZSC
 {
 	default
 	{
@@ -7743,12 +7743,12 @@ class ShotSmoke : KCBaseZSC
 	{
 		Spawn:
 			TNT1 A 1;
-			SMOK ABCDEFGHIJKLMNOPQ 1 A_SpawnItem("ShotSmokeTrail");
+			SMOK ABCDEFGHIJKLMNOPQ 1 A_SpawnItem("KCShotSmokeTrail");
 			Stop;
 	}
 }
 
-class ShotSmokeTrail : ShotSmoke
+class KCShotSmokeTrail : KCShotSmoke
 {
 	default
 	{

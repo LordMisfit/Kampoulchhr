@@ -9780,7 +9780,7 @@ class TeslaFX : KCBaseZSC
 	}
 }
 
-class BlueFlare : BaseLensflare
+class KCBlueFlare : KCBaseLensflare
 {
 	default
 	{
@@ -9796,7 +9796,7 @@ class BlueFlare : BaseLensflare
 	}
 }
 
-class BlueFlareSmall : BlueFlare 
+class KCBlueFlareSmall : KCBlueFlare 
 {
 	default { Scale 0.2; }
 }
@@ -9840,13 +9840,13 @@ class TeslaBallBig : KCFastProjectile
 			TSLP A 0;
 			TSLP A 0 A_LoopActiveSound;
 			NULL A 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-4,4),frandom(-4,4),frandom(-1,1));
-			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			TSLP A 0 A_SpawnItemEx("KCBlueFlareSmall",8);
 			NULL B 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-5,5),frandom(-5,5),frandom(-1,1),frandom(-1,1),frandom(-1,1));
-			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			TSLP A 0 A_SpawnItemEx("KCBlueFlareSmall",8);
 			NULL C 1 A_SpawnItemEx("TeslaDebris",frandom(-5,5),frandom(-3,3),frandom(-3,3),frandom(-1,1),frandom(-1,1),frandom(-1,1));
-			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			TSLP A 0 A_SpawnItemEx("KCBlueFlareSmall",8);
 			NULL D 1 A_SpawnItemEx("TeslaDebris",frandom(-2,2),frandom(-2,2),frandom(-2,2),frandom(-1,1),frandom(-1,1),frandom(-1,1));
-			TSLP A 0 A_SpawnItemEx("BlueFlareSmall",8);
+			TSLP A 0 A_SpawnItemEx("KCBlueFlareSmall",8);
 			Goto Spawn+2;
 		Death:
 			NULL BBBBBBBBBBB 0 A_SpawnItemEx("TeslaDebris",frandom(-15,15),frandom(-15,15),frandom(-15,15),frandom(-1,1),frandom(-3,3),frandom(0,1));
@@ -9887,8 +9887,8 @@ class TeslaBallBigDual : TeslaBallBig
 			}
 			TSLP A 0 
 			{
-				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",16);
+				A_SpawnItemEx("KCBlueFlareSmall",8);
+				A_SpawnItemEx("KCBlueFlareSmall",16);
 			}
 			NULL B 1 
 			{
@@ -9898,8 +9898,8 @@ class TeslaBallBigDual : TeslaBallBig
 			}
 			TSLP A 0 
 			{
-				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",16);
+				A_SpawnItemEx("KCBlueFlareSmall",8);
+				A_SpawnItemEx("KCBlueFlareSmall",16);
 			}
 			NULL C 1 
 			{
@@ -9909,8 +9909,8 @@ class TeslaBallBigDual : TeslaBallBig
 			}
 			TSLP A 0 
 			{
-				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",16);
+				A_SpawnItemEx("KCBlueFlareSmall",8);
+				A_SpawnItemEx("KCBlueFlareSmall",16);
 			}
 			NULL D 1 
 			{
@@ -9920,8 +9920,8 @@ class TeslaBallBigDual : TeslaBallBig
 			}
 			TSLP A 0 
 			{
-				A_SpawnItemEx("BlueFlareSmall",8);
-				A_SpawnItemEx("BlueFlareSmall",16);
+				A_SpawnItemEx("KCBlueFlareSmall",8);
+				A_SpawnItemEx("KCBlueFlareSmall",16);
 			}
 			Goto Spawn+2;
 		Death:
@@ -15623,11 +15623,11 @@ class ThrownKnife : SingleDamageFastRipper
 		Crash1:
 			KNIF B 2 Bright 
 			{
-				A_SpawnItemEx("SmokeSpawner");
+				A_SpawnItemEx("KCSmokeSpawner");
 				if (berserked)
 				{
-					A_SpawnItemEx("SmokeSpawner");
-					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
 				}
 			}
 			KNIF CDEB 2 Bright A_FadeOut(0.12);
@@ -15635,11 +15635,11 @@ class ThrownKnife : SingleDamageFastRipper
 		Crash2:
 			KNIF F 2 Bright
 			{
-				A_SpawnItemEx("SmokeSpawner");
+				A_SpawnItemEx("KCSmokeSpawner");
 				if (berserked)
 				{
-					A_SpawnItemEx("SmokeSpawner");
-					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
 				}
 			}
 			KNIF GHIF 2 Bright A_FadeOut(0.12);
@@ -15659,11 +15659,11 @@ class ThrownKnife : SingleDamageFastRipper
 		DeathWait:
 			KNIF A 10 Bright
 			{
-				A_SpawnItemEx("SmokeSpawner");
+				A_SpawnItemEx("KCSmokeSpawner");
 				if (berserked)
 				{
-					A_SpawnItemEx("SmokeSpawner");
-					A_SpawnItemEx("SmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
+					A_SpawnItemEx("KCSmokeSpawner");
 				}
 			}
 			KNIF A 105 Bright;
