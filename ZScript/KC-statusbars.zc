@@ -2722,8 +2722,7 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "PistolMarine";
 		if (A_CheckForHeiwa()) 
 		{
-			if (CPlayerPawn.CountInv("BlasterPistols")) wsname = "BlasterPistols";
-			else if (CPlayerPawn.CountInv("BlasterPistol")) wsname = "BlasterPistol";
+			if (CPlayerPawn.CountInv("BlasterPistol")) wsname = "BlasterPistol";
 		}
 		wsammoname = "Clip";
 		if (A_CheckForHeiwa()) wsammoname = "Cell";
@@ -3637,7 +3636,6 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable && numberknifes > 1) ||
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
-					PlayerWeapon is "BlasterPistols" ||
 					PlayerWeapon is "RiotGun" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
@@ -3654,7 +3652,6 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				else if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
 				else if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
-				else if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
 				else if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
@@ -3674,13 +3671,11 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Primary Fires
 			LegendStr = "";
-			if (PlayerWeapon is "BlasterPistols" ||
-					PlayerWeapon is "Translocator" ||
+			if (PlayerWeapon is "Translocator" ||
 					PlayerWeapon is "SawThrower")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+attack", true, false));
-				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]FIRE LEFT BLASTER\c-");
 				if (PlayerWeapon is "SawThrower") 
 				{
 					LY -= LYInc;
@@ -3717,7 +3712,6 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
-					PlayerWeapon is "BlasterPistols" ||
 					PlayerWeapon is "ShotgunMarine" ||
 					PlayerWeapon is "SuperShotgunMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
@@ -3746,7 +3740,6 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
-				if (PlayerWeapon is "BlasterPistols") LegendStr.AppendFormat(" = \c[blue]FIRE RIGHT BLASTER\c-");
 				if (PlayerWeapon is "ShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "SuperShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");

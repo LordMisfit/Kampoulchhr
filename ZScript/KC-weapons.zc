@@ -956,20 +956,35 @@ class KCWeaponBase : Weapon
 					if (A_CheckForHeiwa()) weaponfactor += 0.25;
 														else weaponfactor += 0.75;
 				}
-				if (player.ReadyWeapon is "BlasterPistol") 
+				if (player.ReadyWeapon is "BlasterPistol")
 				{
-					if (A_CheckForHeiwa()) weaponfactor += 0.25;
-														else weaponfactor += 0.125;
-				}
-				if (player.ReadyWeapon is "BlasterPistols") 
-				{
-					if (A_CheckForHeiwa()) weaponfactor += 0.1875;
-														else weaponfactor += 0.09375;
+					bool dualblasters = false;
+					if (player.mo.CountInv("DualBlasterPistols") && !player.mo.CountInv("DualBlasterPistolsDisabled")) dualblasters = true;
+					if (dualblasters)
+					{
+						if (A_CheckForHeiwa()) weaponfactor += 0.1875;
+															else weaponfactor += 0.09375;
+					}
+					else
+					{
+						if (A_CheckForHeiwa()) weaponfactor += 0.25;
+															else weaponfactor += 0.125;
+					}
 				}
 				if (player.ReadyWeapon is "TommyGun") 
 				{
-					if (A_CheckForHeiwa()) weaponfactor += 0.15;
-														else weaponfactor -= 0.10;
+					bool dualtommys = false;
+					if (player.mo.CountInv("DualTommyGuns") && !player.mo.CountInv("DualTommyGunsDisabled")) dualtommys = true;
+					if (dualtommys)
+					{
+						if (A_CheckForHeiwa()) weaponfactor += 0.0375;
+															else weaponfactor -= 0.175;
+					}
+					else
+					{
+						if (A_CheckForHeiwa()) weaponfactor += 0.15;
+															else weaponfactor -= 0.10;
+					}
 				}
 				if (player.ReadyWeapon is "BlasterRifle") 
 				{
@@ -13257,7 +13272,7 @@ Class BlasterPickup : CustomInventoryExt
 			BLAP A -1;
 			Stop;
 		Use:
-			TNT1 A 0 A_JumpIfInventory ("BlasterPistols", 1, "DoubleGuns");
+			TNT1 A 0 A_JumpIfInventory ("DualBlasterPistols", 1, "DoubleGuns");
 			TNT1 A 0 A_JumpIfInventory ("BlasterPistol", 1, "DoubleGuns");
 		SingleGun:
 			TNT1 A 0 A_GiveInventory ("BlasterPistol", 1);
@@ -13265,7 +13280,7 @@ Class BlasterPickup : CustomInventoryExt
 		DoubleGuns:
 			//TNT1 A 0 A_TakeInventory ("BlasterPistol", 1);
 			TNT1 A 0 A_GiveInventory ("BlasterPistol", 1);
-			TNT1 A 0 A_GiveInventory ("BlasterPistols", 1);
+			TNT1 A 0 A_GiveInventory ("DualBlasterPistols", 1);
 			Stop;
 	}
 }
@@ -13382,35 +13397,26 @@ Class BlasterPistol : MarineWeapon
 	}
 }
 
-Class BlasterPistols : MarineWeapon
+Class DualBlasterPistols : CustomInventoryExt
 {
-	//$Title "Blaster Pistol x2"
-
 	Default
 	{
 		Inventory.PickupSound "misc/w_pkup";
-		KCWeaponBase.PickupSound1Heiwa "";
-		KCWeaponBase.PickupSound2 "";
-		KCWeaponBase.PickupSound2Heiwa "Heiwa/GrabWeapon1";
-		KCWeaponBase.PickupSound3 "";
-		KCWeaponBase.PickupSound3Heiwa "";
-		KCWeaponBase.PickupChan1 CHAN_ITEM;
-		KCWeaponBase.PickupChan2 CHAN_VOICE;
-		KCWeaponBase.PickupChan3 CHAN_ITEM;
-
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon1";
+		CustomInventoryExt.PickupSound3 "";
+		CustomInventoryExt.PickupSound3Heiwa "";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
 		Inventory.PickupMessage "You got a \cupair of Blaster Pistols\c-!";
-		Weapon.AmmoGive 50;
-		Weapon.AmmoType "Cell";
-		Weapon.AmmoUse 0;
-		Weapon.Ammotype2 "Cell";
-		Weapon.AmmoUse2 0;
-		Weapon.SlotNumber 2;
-		Obituary "%o was blasted by %k.";
 		Tag "Blaster Pistols";
 		Scale 0.5;
-		Weapon.WeaponScaleX 0.8;
-		Weapon.WeaponScaleY 1.0;
-		+WEAPON.AMMO_OPTIONAL;
+		+DONTGIB
+		-COUNTITEM;
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
@@ -13419,96 +13425,19 @@ Class BlasterPistols : MarineWeapon
 		Spawn:
 			BLAP B -1;
 			Stop;
-		Select:
-			TNT1 A 0 
+		Pickup:
+			TNT1 A 0
 			{
-				A_Overlay(3, "IdleRight"); 
-				A_Overlay(-3, "IdleLeft");
-			}
-		Raise:
-			BLPS A 1 A_Raise(12);
-			Loop;
-		Ready:
-			TNT1 A 1 A_WeaponReady(WRF_ALLOWUSER4);
-			Loop;
-						
-		Deselect:
-			LOWB A 0 A_ClearOverlays (-3, 3);
-		Deselect2:
-			LOWB A 1 A_Lower(12);
-			Loop;
-		
-		Fire:
-			Goto Ready;	
-		IdleRight:
-			BLPS A 1 A_JumpIf(GetPlayerInput(INPUT_BUTTONS) & BT_ALTATTACK, "FireRight");
-			Loop;
-		FireRight:
-			BLPS A 0 
-			{
-				invoker.shottype = 0;
-			}
-			Goto FireRight2;
-		FireRight2:
-			BLPS E 2 Bright
-			{
-				A_GunFlash();
-				A_BlasterPistolShot();
-			}
-			BLPS BCD 1;
-			BLPS CB 2;
-			BLPS A 4;
-			Goto IdleRight;
-		DryRight:
-			BLPS A 15 A_CheckReload();
-			Goto IdleRight;
-		IdleLeft:
-			LLPS A 1 A_JumpIf(GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK, "FireLeft");
-			Loop;	
-		FireLeft:
-			LLPS A 0 
-			{
-				invoker.shottype = 0;
-			}
-			Goto FireLeft2;
-		FireLeft2:
-			LLPS E 2 Bright
-			{
-				A_GunFlash();
-				A_BlasterPistolShot();
-			}
-			LLPS BCD 1;
-			LLPS CB 2;
-			LLPS A 4;
-			Goto IdleLeft;
-		DryLeft:
-			LLPS A 15 A_CheckReload();
-			Goto IdleLeft;
-		Flash:
-			TNT1 A 2 Bright A_Light1;
-			TNT1 A 2 Bright A_Light2;
-			Goto LightDone;
-		
-		// Fire Mode
-		User4:
-			BLPS A 0
-			{
-				A_StopSound(CHAN_6);
-				A_StartSound("weapons/blstrpst3",CHAN_6);
-				if (invoker.altshottype == 0)
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera) 
 				{
-					invoker.altshottype = 1;
-					A_Print("Never Consume Cells [all shots are weakened by default]");
-				}
-				else
-				if (invoker.altshottype == 1)
-				{
-					invoker.altshottype = 0;
-					A_Print("Default to using Cells first");
+					playera.A_GiveInventory("DualBlasterPistols",1);
+					playera.A_GiveInventory("Cell",50);
 				}
 			}
-			BLPS A 8;
-			goto Ready;
+			stop;
 	}
 }
 
