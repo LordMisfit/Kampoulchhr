@@ -1139,9 +1139,12 @@ class KCStatusBarMain : BaseStatusBar
 		int FontWrapWidth = -1;
 		int FontLineSpace = 4;
 		Vector2 FontScale = (1.25, 1.25);
-		if (ammo1 != null)
+		bool isMPOnlyAmmo = false;
+		string temp, temp2;
+		temp = "KnifeHeiwa";
+		if (PlayerWeapon is temp) isMPOnlyAmmo = true;
+		if (ammo1 != null || isMPOnlyAmmo)
 		{
-			string temp, temp2;
 			temp = "TommyGun";
 			if (PlayerWeapon is temp)
 			{
@@ -1192,6 +1195,37 @@ class KCStatusBarMain : BaseStatusBar
 					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("BMMDB0", TexMan.TYPE_MiscPatch);
 					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("BMMDE0", TexMan.TYPE_MiscPatch);
 					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
+				}
+			}
+			temp = "KnifeHeiwa";
+			if (PlayerWeapon is temp)
+			{
+				//Console.Printf("KnifeHeiwa");
+				bool KnifeAltUsable = false;
+				int numberknifes;
+				int NumOfKnives;
+				int KnifeCost;
+				let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
+				if (FoundKnife && MiscItem)
+				{
+					//Console.Printf("FoundKnife");
+					if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
+					numberknifes = FoundKnife.maxthrowableknives;
+					NumOfKnives = FoundKnife.knifespertoss;
+					KnifeCost = FoundKnife.throwmpcost;
+					if (KnifeAltUsable)
+					{
+						altammo = MiscItem.CurrentMagicPoints; // / KnifeCost;
+						altammomax = MiscItem.MaxMagicPoints; // / KnifeCost;
+						usealtammo = 1;
+						//Console.Printf("%d / %d", altammo, altammomax);
+					}
+					else
+					{
+						altammo = 0;
+						altammomax = 0;
+						usealtammo = 0;
+					}
 				}
 			}
 			temp = "Glock21";
@@ -1341,7 +1375,7 @@ class KCStatusBarMain : BaseStatusBar
 			//GLKPENTR
 			
 			int trueammocurrent, trueammomax;
-			if (ammo1.maxamount > 0 || altammomax > 0)
+			if ((ammo1 && ammo1.maxamount > 0) || altammomax > 0)
 			{
 				if (usealtammo)
 				{
@@ -1374,33 +1408,36 @@ class KCStatusBarMain : BaseStatusBar
 				else wsfontclr = font.cr_gray;
 			}
 			
-			int DigitPush = 0;
-			if (trueammomax > 99) DigitPush = 8;
-			if (trueammomax > 999) DigitPush = 14;
-			if (trueammomax > 9999) DigitPush = 20;
+			if (trueammomax > 0)
+			{
+				int DigitPush = 0;
+				if (trueammomax > 99) DigitPush = 8;
+				if (trueammomax > 999) DigitPush = 14;
+				if (trueammomax > 9999) DigitPush = 20;
 
-			if (usealtammo == 0)
-			{
-				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+				if (usealtammo == 0)
+				{
+					if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+4, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+					if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+3, y+14), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+				}
+				DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+				
+				if (usealtammo == 0)
+				{
+					if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+					if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
+				}
+				DrawString(mKCMFont, "/", ((x-27-DigitPush), y+7), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
+				
+				if (usealtammo == 0) DrawInventoryIcon(ammo1, (-14, -4));
+				if (usealtammo == 1) DrawImage("MAGIICON", (-14, -4), 0, wsalpha, (-1, -1), (0.5, 0.5)); 
+				if (usealtammo == 0)
+				{
+					if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+					if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
+				}
+				DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			}
-			DrawString(mKCMFont, FormatNumber(trueammomax, 3), (x+2, y+15), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
-			
-			if (usealtammo == 0)
-			{
-				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCMFont, "/", ((x+2-27-DigitPush), y+9), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCMFont, "/", ((x+1-27-DigitPush), y+8), DI_TEXT_ALIGN_RIGHT, font.cr_black, wsalpha, -1, 4, (1.5, 1.5));
-			}
-			DrawString(mKCMFont, "/", ((x-27-DigitPush), y+7), DI_TEXT_ALIGN_RIGHT, font.cr_DarkGray, wsalpha, -1, 4, (1.5, 1.5));
-			
-			if (usealtammo == 0) DrawInventoryIcon(ammo1, (-14, -4));
-			if (usealtammo == 1) DrawImage("MAGIICON", (-14, -4), 0, wsalpha, (-1, -1), (0.5, 0.5)); 
-			if (usealtammo == 0)
-			{
-				if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-				if (CPlayerPawn.CountInv("BackPackTier1")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+3, y-2), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
-			}
-			DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+2, y-3), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 			invY -= 20;
 		}
 		else
@@ -2664,6 +2701,8 @@ class KCStatusBarMain : BaseStatusBar
 		int weaponsincurslot;
 		int priority = 0;
 		int trueammocurrent, trueammomax;
+		int mpleveltimemod = 20;
+		int mpleveltimehalf = 10;
 		//Console.Printf("%p, %s, wsalpha: %.8f", wsweapon, wsweapon.GetClassName(), wsalpha);
 		
 		x = startposx;
@@ -2710,13 +2749,22 @@ class KCStatusBarMain : BaseStatusBar
 				numberknifes = FoundKnife.maxthrowableknives;
 				NumOfKnives = FoundKnife.knifespertoss;
 				KnifeCost = FoundKnife.throwmpcost;
-				//Console.Printf("level.time: %d / 20", level.time % 20);
-				if (level.time % 20 >= 10 && KnifeCost > 0)
+				if (KnifeAltUsable)
 				{
-					trueammocurrent = int(MiscItem.CurrentMagicPoints / KnifeCost);
-					trueammomax = int(MiscItem.MaxMagicPoints / KnifeCost);
-					//Console.Printf("%d / %d", trueammocurrent, trueammomax);
-					ammotypea = 0;
+					//Console.Printf("level.time: %d / %d", level.time % mpleveltimemod);
+					if (level.time % mpleveltimemod >= mpleveltimehalf && KnifeCost > 0)
+					{
+						trueammocurrent = int(MiscItem.CurrentMagicPoints / KnifeCost);
+						trueammomax = int(MiscItem.MaxMagicPoints / KnifeCost);
+						//Console.Printf("%d / %d", trueammocurrent, trueammomax);
+						ammotypea = 0;
+					}
+					else
+					{
+						trueammocurrent = 0;
+						trueammomax = 0;
+						ammotypea = -1;
+					}
 				}
 				else
 				{
@@ -3124,19 +3172,34 @@ class KCStatusBarMain : BaseStatusBar
 		wsammoname = "PikeAmmo";
 		let EWS = EvilWarriorShield(CPlayerPawn.FindInventory("EvilWarriorShield"));
 		int temptype = 0;
+		int ShieldMPCost;
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
-		if (ammotype)
+		if (EWS && MiscItem)
 		{
-			trueammocurrent = ammotype.Amount;
-			trueammomax = ammotype.maxAmount;
-			temptype = 0;
+			ShieldMPCost = EWS.shieldmagiccost;
+			//Console.Printf("level.time: %d / %d", level.time % mpleveltimemod);
+			if (level.time % mpleveltimemod >= mpleveltimehalf && ShieldMPCost > 0)
+			{
+				trueammocurrent = int(MiscItem.CurrentMagicPoints / ShieldMPCost);
+				trueammomax = int(MiscItem.MaxMagicPoints / ShieldMPCost);
+				//Console.Printf("%d / %d", trueammocurrent, trueammomax);
+				temptype = 0;
+			}
+			else
+			{
+				trueammocurrent = ammotype.Amount;
+				trueammomax = ammotype.maxAmount;
+				temptype = 0;
+			}
 		}
+		/*
 		if (MiscItem && EWS && EWS.ammo_type == 1)
 		{
 			trueammocurrent = MiscItem.CurrentMagicPoints;
 			trueammomax = MiscItem.MaxMagicPoints;
 			temptype = 0;
 		}
+		*/
 		if (CPlayerPawn.CountInv(wsname))
 		{
 			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, temptype);

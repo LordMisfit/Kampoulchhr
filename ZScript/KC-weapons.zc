@@ -16236,6 +16236,16 @@ class EvilWarriorShield : MarineWeapon
 		A_SetTics(tic);
 	}
 	
+	action void A_GetShieldCosts()
+	{
+		actor player = players[0].mo;
+		int buttons = GetPlayerInput(INPUT_BUTTONS);
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		let globalvars = KCGlobalVariables.Get();
+		invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
+		invoker.shieldmagiccost = (5 + (player.CountInv("HellWarriorShieldLevel") * 0.375));
+	}
+	
 	action void A_GetBobSpeed()
 	{
 		actor player = players[0].mo;
@@ -16277,6 +16287,7 @@ class EvilWarriorShield : MarineWeapon
 			{
 				A_WeaponReady(WRF_ALLOWUSER4);
 				A_GetBobSpeed();
+				A_GetShieldCosts();
 			}
 			loop;
 
@@ -16286,6 +16297,7 @@ class EvilWarriorShield : MarineWeapon
 				A_SetInventory("EWShieldIdleMode",1);
 				A_Raise(12);
 				A_GetBobSpeed();
+				A_GetShieldCosts();
 			}
 			goto Select;
 
@@ -16295,6 +16307,7 @@ class EvilWarriorShield : MarineWeapon
 				A_SetInventory("EWShieldIdleMode",0);
 				A_Lower(12);
 				A_GetBobSpeed();
+				A_GetShieldCosts();
 			}
 			goto Deselect;
 
@@ -16311,9 +16324,7 @@ class EvilWarriorShield : MarineWeapon
 				//HellWarriorMaxCharge
 				if (!A_CheckInfiniteAmmo())
 				{
-					invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
-					invoker.shieldmagiccost = (5 + (player.CountInv("HellWarriorShieldLevel") * 0.375));
-					//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
+					A_GetShieldCosts();
 					if (invoker.ammo_type == 0)
 					{
 						if (invoker.shieldenergy < invoker.shieldenergycost)
@@ -16427,9 +16438,7 @@ class EvilWarriorShield : MarineWeapon
 					//HellWarriorMaxCharge
 					if (!A_CheckInfiniteAmmo())
 					{
-						invoker.shieldenergycost = (10 + (player.CountInv("HellWarriorShieldLevel") * 0.75));
-						invoker.shieldmagiccost = (5 + (player.CountInv("HellWarriorShieldLevel") * 0.375));
-						//if (player.CountInv("SpellDiaryEE")) invoker.shieldenergycost *= 0.667;
+						A_GetShieldCosts();
 						if (invoker.ammo_type == 0)
 						{
 							if (invoker.shieldenergy < invoker.shieldenergycost)
