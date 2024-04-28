@@ -158,77 +158,260 @@ object InvulnerabilitySphere2
 }
 
 // Health Potion
-pulselight HEALTHPOTION
+pulselight HEALTHPOTION1
 {
 	color 0.0 0.0 0.3
-	size 12
-	secondarySize 15
+	size 24
+	secondarySize 32
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTION2
+{
+	color 0.0 0.0 0.3
+	size 27
+	secondarySize 36
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTION3
+{
+	color 0.0 0.0 0.3
+	size 30
+	secondarySize 40
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTION4
+{
+	color 0.0 0.0 0.3
+	size 33
+	secondarySize 44
 	interval 2.0
 	attenuate 1
 	offset 0 10 0
 }
 object HealthBonus2
 {
-	frame BON1 { light HEALTHPOTION }
+	frame BON1A { light HEALTHPOTION1 }
+	frame BON1B { light HEALTHPOTION2 }
+	frame BON1C { light HEALTHPOTION3 }
+	frame BON1D { light HEALTHPOTION4 }
 }
-pulselight HEALTHPOTIONBIG
+pulselight HEALTHPOTIONBIG1
 {
 	color 0.0 0.0 0.3
-	size 21
-	secondarySize 24
+	size 42
+	secondarySize 48
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTIONBIG2
+{
+	color 0.0 0.0 0.3
+	size 48
+	secondarySize 54
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTIONBIG3
+{
+	color 0.0 0.0 0.3
+	size 54
+	secondarySize 60
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
+}
+pulselight HEALTHPOTIONBIG4
+{
+	color 0.0 0.0 0.3
+	size 60
+	secondarySize 66
 	interval 2.0
 	attenuate 1
 	offset 0 10 0
 }
 object HealthBonusBig
 {
-	frame BON3 { light HEALTHPOTIONBIG }
+	frame BON3A { light HEALTHPOTIONBIG1 }
+	frame BON3B { light HEALTHPOTIONBIG2 }
+	frame BON3C { light HEALTHPOTIONBIG3 }
+	frame BON3D { light HEALTHPOTIONBIG4 }
 }
 
-pulselight ARMORBONUSGREEN
+pulselight ARMORBONUSGREEN1
 {
   color 0.1 0.3 0.1
-  size 12
-  secondarySize 15
+  size 24
+  secondarySize 30
   interval 1.0
-	dontlightself 1
+	//dontlightself 1
 	attenuate 1
   offset 0 10 0
 }
-pulselight ARMORBONUSBLUE
+pulselight ARMORBONUSGREEN2
+{
+  color 0.1 0.3 0.1
+  size 27
+  secondarySize 36
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSGREEN3
+{
+  color 0.1 0.3 0.1
+  size 30
+  secondarySize 40
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSGREEN4
+{
+  color 0.1 0.3 0.1
+  size 33
+  secondarySize 44
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSBLUE1
 {
   color 0.004 0.004 0.8907
-  size 12
-  secondarySize 15
+  size 24
+  secondarySize 30
   interval 1.0
-	dontlightself 1
+	//dontlightself 1
 	attenuate 1
   offset 0 10 0
 }
-pulselight ARMORBONUSSTONE
+pulselight ARMORBONUSBLUE2
+{
+  color 0.004 0.004 0.8907
+  size 27
+  secondarySize 36
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSBLUE3
+{
+  color 0.004 0.004 0.8907
+  size 30
+  secondarySize 40
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSBLUE4
+{
+  color 0.004 0.004 0.8907
+  size 33
+  secondarySize 44
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSSTONE1
 {
   color 0.629 0.488 0.336
-  size 12
-  secondarySize 15
+  size 24
+  secondarySize 30
   interval 1.0
-	dontlightself 1
+	//dontlightself 1
 	attenuate 1
   offset 0 10 0
 }
-pulselight ARMORBONUSDIAMOND
+pulselight ARMORBONUSSTONE2
+{
+  color 0.629 0.488 0.336
+  size 27
+  secondarySize 36
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSSTONE3
+{
+  color 0.629 0.488 0.336
+  size 30
+  secondarySize 40
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSSTONE4
+{
+  color 0.629 0.488 0.336
+  size 33
+  secondarySize 44
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSDIAMOND1
 {
   color 0.355 0.601 0.722
-  size 12
-  secondarySize 15
+  size 24
+  secondarySize 30
   interval 1.0
-	dontlightself 1
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSDIAMOND2
+{
+  color 0.355 0.601 0.722
+  size 27
+  secondarySize 36
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSDIAMOND3
+{
+  color 0.355 0.601 0.722
+  size 30
+  secondarySize 40
+  interval 1.0
+	//dontlightself 1
+	attenuate 1
+  offset 0 10 0
+}
+pulselight ARMORBONUSDIAMOND4
+{
+  color 0.355 0.601 0.722
+  size 33
+  secondarySize 44
+  interval 1.0
+	//dontlightself 1
 	attenuate 1
   offset 0 10 0
 }
 
 object ArmorBonus2
 {
-	frame BON2 { light ARMORBONUSGREEN }
+	frame BON2A { light ARMORBONUSGREEN1 }
+	frame BON2B { light ARMORBONUSGREEN2 }
+	frame BON2C { light ARMORBONUSGREEN3 }
+	frame BON2D { light ARMORBONUSGREEN4 }
 }
 
 //Armor
@@ -244,28 +427,44 @@ object KCBlueArmor
 	frame ARM2B { light BLUEARMOR2 }
 }
 
-pointlight SUPERARMORBONUS1
+pulselight SUPERARMORBONUS1
 {
 	color 0.0 0.7 0.0
-	size 6
+	size 42
+	secondarySize 48
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
 }
 
-pointlight SUPERARMORBONUS2
+pulselight SUPERARMORBONUS2
 {
 	color 0.0 0.7 0.0
-	size 7
+	size 48
+	secondarySize 54
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
 }
 
-pointlight SUPERARMORBONUS3
+pulselight SUPERARMORBONUS3
 {
 	color 0.0 0.7 0.0
-	size 8
+	size 54
+	secondarySize 60
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
 }
 
-pointlight SUPERARMORBONUS4
+pulselight SUPERARMORBONUS4
 {
 	color 0.0 0.7 0.0
-	size 9
+	size 60
+	secondarySize 66
+	interval 2.0
+	attenuate 1
+	offset 0 10 0
 }
 
 object ArmorBonusBig

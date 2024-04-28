@@ -1303,8 +1303,8 @@ class KCStatusBarMain : BaseStatusBar
 						}
 						else
 						{
-							altammo = MiscItem.CurrentMagicPoints;
-							altammomax = MiscItem.MaxMagicPoints;
+							altammo = MiscItem.CurrentMagicPoints; // / EWS.shieldmagiccost;
+							altammomax = MiscItem.MaxMagicPoints; // / EWS.shieldmagiccost;
 							usealtammo = 1;
 						}
 					}
@@ -2646,6 +2646,7 @@ class KCStatusBarMain : BaseStatusBar
 		//******************
 		//** weapon slots **
 		//******************
+		int ammotypea = -1;
 		int wsspace = 14; // 14
 		double wsalpha = 0.667;
 		double wsalphadefault = 0.667;
@@ -2695,10 +2696,45 @@ class KCStatusBarMain : BaseStatusBar
 		x += (baseinc * 2);
 		y += (baseinc * 2);
 		wsname = "ChainsawMarine";
-		if (A_CheckForHeiwa()) wsname = "KnifeHeiwa";
+		if (A_CheckForHeiwa()) 
+		{
+			wsname = "KnifeHeiwa";
+			bool KnifeAltUsable = false;
+			int numberknifes;
+			int NumOfKnives;
+			int KnifeCost;
+			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
+			if (FoundKnife && MiscItem)
+			{
+				if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
+				numberknifes = FoundKnife.maxthrowableknives;
+				NumOfKnives = FoundKnife.knifespertoss;
+				KnifeCost = FoundKnife.throwmpcost;
+				//Console.Printf("level.time: %d / 20", level.time % 20);
+				if (level.time % 20 >= 10 && KnifeCost > 0)
+				{
+					trueammocurrent = int(MiscItem.CurrentMagicPoints / KnifeCost);
+					trueammomax = int(MiscItem.MaxMagicPoints / KnifeCost);
+					//Console.Printf("%d / %d", trueammocurrent, trueammomax);
+					ammotypea = 0;
+				}
+				else
+				{
+					trueammocurrent = 0;
+					trueammomax = 0;
+					ammotypea = -1;
+				}
+			}
+			else
+			{
+				trueammocurrent = 0;
+				trueammomax = 0;
+				ammotypea = -1;
+			}
+		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, 0, 0, -1);
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, ammotypea);
 			
 			wsnum = 1;
 			if (wsweapon is wsname)
