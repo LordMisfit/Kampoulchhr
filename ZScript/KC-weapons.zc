@@ -13319,20 +13319,76 @@ Class BlasterPistol : MarineWeapon
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
+	action bool A_DualBPistolCheck()
+	{
+		bool check = false;
+		let globalvars = KCGlobalVariables.Get();
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (CountInv("DualBlasterPistols") && !CountInv("DualBlasterPistolsDisabled")) check = true;
+		return check;
+	}
+	
 	States
 	{
 		Spawn:
 			BLAP A -1;
 			Stop;
 		Select:
+			BLPS A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+			}
 			BLPS A 1 A_Raise(12);
 			Loop;
 		Ready:
-			BLPS A 1 A_WeaponReady(WRF_ALLOWUSER4);
+			BLPS A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+			}
+			BLPS A 1 
+			{
+				if (CountInv("DualBlasterPistols")) A_WeaponReady(WRF_ALLOWUSER4|WRF_ALLOWRELOAD);
+																			 else A_WeaponReady(WRF_ALLOWUSER4);
+			}
 			Loop;
 		Deselect:
+			BLPS A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+			}
 			BLPS A 1 A_Lower(12);
 			Loop;
+			
+		LeftReady:
+			LLPS A 0
+			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
+			}
+			LLPS A 1
+			{
+			}
+			Loop;
+			
+		LeftPrep:
+			LLPS A 0
+			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
+			}
+			LLPS A 12
+			{
+			}
+			Loop;
+
 		Fire:
 			BLPS A 0 
 			{
@@ -13348,36 +13404,104 @@ Class BlasterPistol : MarineWeapon
 		FireRight2:
 			BLPS E 2 Bright
 			{
-				A_GunFlash();
 				A_BlasterPistolShot();
 			}
 			BLPS B 1;
 			BLPS C 1
 			{
 				if (invoker.shottype >= 1) A_SetTics(0);
+				if (A_DualBPistolCheck()) A_Overlay(3,"LeftFire",false);
 			}
 			BLPS D 1;
 			BLPS CB 2
 			{
 				if (invoker.shottype >= 1) A_SetTics(1);
 			}
+			BLPS A 0 A_Refire();
 			BLPS A 4
 			{
 				if (invoker.shottype >= 1) A_SetTics(2);
 			}
-			Goto Ready;
-		DryRight:
-			BLPS A 15 A_CheckReload();
 			Goto Ready;
 		Flash:
 			TNT1 A 2 Bright A_Light1;
 			TNT1 A 2 Bright A_Light2;
 			Goto LightDone;
 		
+		LeftFire:
+			LLPS A 0 bright 
+			{
+				A_OverlayFlags(3,PSPF_POWDOUBLE|PSPF_CVARFAST,true);
+			}
+			LLPS E 2 Bright
+			{
+				A_GunFlash("FlashLeft");
+				A_BlasterPistolShot();
+			}
+			LLPS B 1;
+			LLPS C 1
+			{
+				if (invoker.shottype >= 1) A_SetTics(0);
+			}
+			LLPS D 1;
+			LLPS CB 2
+			{
+				if (invoker.shottype >= 1) A_SetTics(1);
+			}
+			LLPS A 0 A_Refire();
+			LLPS A 4
+			{
+				if (invoker.shottype >= 1) A_SetTics(2);
+			}
+		LeftFireEnd:
+			LLPS A 0
+			{
+				A_Overlay(3,"LeftReady",false);
+			}
+			goto LeftReady;
+
+		// Dual Mode
+		Reload:
+			BLPS A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("DualBlasterPistols"))
+				{
+					A_StopSound(10);
+					A_StartSound("weapons/blstrpst2",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+					if (playera.CountInv("DualBlasterPistolsDisabled"))
+					{
+						playera.A_SetInventory("DualBlasterPistolsDisabled",0);
+						A_Overlay(3,"LeftPrep",false);
+					}
+					else 
+					{
+						playera.A_SetInventory("DualBlasterPistolsDisabled",1);
+						A_Overlay(3,null,false);
+					}
+				}
+				else
+				{
+					A_StopSound(10);
+					A_StartSound("inv_fail",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+				}
+			}
+			BLPS A 8
+			{
+				A_SetTics(random(8,12));
+			}
+			goto Ready;
+
 		// Fire Mode
 		User4:
 			BLPS A 0
 			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+
 				A_StopSound(CHAN_6);
 				A_StartSound("weapons/blstrpst3",CHAN_6);
 				if (invoker.altshottype == 0)
@@ -13392,55 +13516,13 @@ Class BlasterPistol : MarineWeapon
 					A_Print("Default to using Cells first");
 				}
 			}
-			BLPS A 8;
+			BLPS A 8
+			{
+				A_SetTics(random(8,12));
+			}
 			goto Ready;
 	}
 }
-
-Class DualBlasterPistols : CustomInventoryExt
-{
-	Default
-	{
-		Inventory.PickupSound "misc/w_pkup";
-		CustomInventoryExt.PickupSound1Heiwa "";
-		CustomInventoryExt.PickupSound2 "";
-		CustomInventoryExt.PickupSound2Heiwa "Heiwa/GrabWeapon1";
-		CustomInventoryExt.PickupSound3 "";
-		CustomInventoryExt.PickupSound3Heiwa "";
-		CustomInventoryExt.PickupChan1 CHAN_ITEM;
-		CustomInventoryExt.PickupChan2 CHAN_VOICE;
-		CustomInventoryExt.PickupChan3 CHAN_ITEM;
-		Inventory.PickupMessage "You got a \cupair of Blaster Pistols\c-!";
-		Tag "Blaster Pistols";
-		Scale 0.5;
-		+DONTGIB
-		-COUNTITEM;
-		Inventory.Amount 1;
-		Inventory.MaxAmount 1;
-		Inventory.RestrictedTo "HeiwaPlayer";
-	}
-	
-	States
-	{
-		Spawn:
-			BLAP B -1;
-			Stop;
-		Pickup:
-			TNT1 A 0
-			{
-				let globalvars = KCGlobalVariables.Get();
-				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-				if (playera) 
-				{
-					playera.A_GiveInventory("DualBlasterPistols",1);
-					playera.A_GiveInventory("Cell",50);
-				}
-			}
-			stop;
-	}
-}
-
 
 Class BlastTrail : KCBaseZSC
 {

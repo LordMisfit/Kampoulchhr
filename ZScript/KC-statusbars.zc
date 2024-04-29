@@ -3716,6 +3716,15 @@ class KCStatusBarMain : BaseStatusBar
 																		 else LegendStr.AppendFormat(" = \c[brick]NO AMMO FOR RELOAD\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
+			if (PlayerWeapon is "BlasterPistol" &&
+					CPlayerPawn.CountInv("DualBlasterPistols"))
+			{
+				LY += LYInc;
+				LegendStr.AppendFormat(ReturnKeyBind1("+reload", true, false));
+				if (CPlayerPawn.CountInv("DualBlasterPistolsDisabled")) LegendStr.AppendFormat(" = \c[blue]SWAP TO DUAL-WIELDING\c-");
+																													 else LegendStr.AppendFormat(" = \c[blue]SWAP TO SINGLE-WIELDING\c-");
+				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
+			}
 			
 			bool KnifeAltUsable = false;
 			int numberknifes;
