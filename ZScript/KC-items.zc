@@ -5094,6 +5094,38 @@ class BlasterPistolModpack : CustomInventoryExt
 	}
 }
 
+class DevastatorModpack : CustomInventoryExt
+{
+	default
+	{
+		-COUNTITEM;
+		+INVENTORY.BIGPOWERUP;
+		+DONTGIB;
+		Scale 0.25;
+		Tag "Devastator Modpack";
+		Inventory.InterHubAmount 0;
+		Inventory.MaxAmount 0;
+		Inventory.Icon "DVMDA0";
+		Inventory.Pickupsound "misc/modpackpickup";
+		Inventory.PickupMessage "You picked up a Devastator Mod Pack.";
+	}
+	States
+	{
+		Spawn:
+			DVMD ABCDCB 3 Bright;
+			DVMD ABCDCB 3 Bright;
+			DVMD E 5 Bright;
+			Loop;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("DevastatorUpgrade",1);
+			}
+			Stop;
+	}
+}
+
 
 //**************
 // Mana Glitter*

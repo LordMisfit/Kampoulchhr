@@ -1659,7 +1659,8 @@ mixin class MonsterCollider
 				}
 				if (mod == 'Knife')
 				{
-					ActorDefenseIgnoreFactor += (frandom(0.0035,0.350) * (1.00 - ActorDefenseIgnoreFactor));
+					if (infl == 'ThrownKnife') ActorDefenseIgnoreFactor += (frandom(0.1875,0.875) * (1.00 - ActorDefenseIgnoreFactor));
+																else ActorDefenseIgnoreFactor += (frandom(0.0035,0.350) * (1.00 - ActorDefenseIgnoreFactor));
 				}
 				if (mod == 'Chainsaw')
 				{
