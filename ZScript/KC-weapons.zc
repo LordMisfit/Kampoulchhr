@@ -8484,6 +8484,7 @@ class MiniRocketBox : MiniRockets
 
 class DevastatorGenerator : CustomInventoryExt
 {
+	bool modpackspawnattempt;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -8505,6 +8506,27 @@ class DevastatorGenerator : CustomInventoryExt
 	States
 	{ 
 		Spawn: 
+			DVGG A 4
+			{
+				int chance = 128;
+				if (bDROPPED) chance = 512;
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("Devastator")) 
+				{
+					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					{
+						if (!playera.CountInv("DevastatorModPack"))
+						{
+							A_SpawnItemEx("DevastatorModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							self.Destroy();
+						}
+					}
+				}
+				invoker.modpackspawnattempt = true;
+			}
+		Idle:
 			DVGG A -1;
 			Loop;
 		Pickup: 
