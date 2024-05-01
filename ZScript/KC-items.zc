@@ -5013,6 +5013,44 @@ class BaseModPack : CustomInventoryExt
 	}
 }
 
+class RiotGunModpack : BaseModPack
+{
+	default
+	{
+		Tag "Riot Gun Modpack";
+		Inventory.Icon "RGMDA0";
+		Inventory.PickupMessage "You picked up a Riot Gun Mod Pack.";
+	}
+	
+	override void PostBeginPlay()
+	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("RiotGunUpgrade") && !self.grabbed)
+		{
+			A_SpawnItemEx("RandomModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+			self.Destroy();
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			RGMD ABCDCB 3 Bright;
+			RGMD ABCDCB 3 Bright;
+			RGMD E 5 Bright;
+			Loop;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("RiotGunUpgrade",1);
+				invoker.grabbed = true;
+			}
+			Stop;
+	}
+}
+
 class TommyGunModpack : BaseModPack
 {
 	default
@@ -5186,8 +5224,8 @@ class RandomModpack : CustomInventoryExt
 				actor mo;
 				for (int i = 0; i < 16; i++)
 				{
-					int rand = random(1,4);
-					//Console.Printf("i: %d / 16, rand: %d", i, rand);
+					int rand = random(1,5);
+					//Console.Printf("i: %d / 16, rand: %d / 5", i, rand);
 					if (rand <= 1)
 					{
 						if (!playera.CountInv("TommyGunUpgrade"))
@@ -5215,7 +5253,16 @@ class RandomModpack : CustomInventoryExt
 							break;
 						}
 					}
-					if (rand >= 4)
+					if (rand == 4)
+					{
+						if (!playera.CountInv("RiotGunUpgrade"))
+						{
+							[spawned, mo] = A_SpawnItemEx("RiotGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+							self.Destroy();
+							break;
+						}
+					}
+					if (rand >= 5)
 					{
 						if (!playera.CountInv("DevastatorUpgrade"))
 						{

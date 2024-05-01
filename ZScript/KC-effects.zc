@@ -738,36 +738,24 @@ class INTERMAPChecker : PlaceHolderItem
 	}
 }
 
-class BlasterRifleUpgrade : PlaceHolderItem 
+class BlasterRifleUpgrade : WeaponUpgradeItem 
 {
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
 }
 
-class BlasterPistolUpgrade : PlaceHolderItem 
+class BlasterPistolUpgrade : WeaponUpgradeItem 
 {
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
 }
 
-class DevastatorUpgrade : PlaceHolderItem 
+class DevastatorUpgrade : WeaponUpgradeItem 
 {
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
 }
 
-class TommyGunUpgrade : PlaceHolderItem 
+class TommyGunUpgrade : WeaponUpgradeItem 
 {
-	default
-	{
-		-INVENTORY.KEEPDEPLETED
-	}
+}
+
+class RiotGunUpgrade : WeaponUpgradeItem 
+{
 }
 
 class DualTommyGuns : PlaceHolderItem 
@@ -2735,7 +2723,21 @@ class KCPowerKampoul : Powerup
 	}
 }
 
-class HellWarriorShieldLevel : PlaceHolderItem { default { Inventory.MaxAmount 10; } }
+class WeaponUpgradeItem : PlaceHolderItem
+{
+	default
+	{
+		-INVENTORY.KEEPDEPLETED
+	}
+}
+
+class HellWarriorShieldLevel : WeaponUpgradeItem 
+{ 
+	default
+	{
+		Inventory.MaxAmount 10;
+	} 
+}
 class EWShieldIdleMode : PlaceholderItem { }
 class EWShieldDefendMode : PlaceholderItem { }
 class EWShieldDefendModeExtra : PlaceholderItem { }

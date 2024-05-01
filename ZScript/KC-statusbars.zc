@@ -1145,110 +1145,67 @@ class KCStatusBarMain : BaseStatusBar
 		if (PlayerWeapon is temp) isMPOnlyAmmo = true;
 		if (ammo1 != null || isMPOnlyAmmo)
 		{
+			bool usesmodpack = false;
+			textureid blimg;
+			int InvIconTimer = level.time % 41;
+			string frameprefix;
+			string framepostfix;
+			
 			temp = "TommyGun";
 			if (PlayerWeapon is temp)
 			{
-				if (CPlayerPawn.CountInv("TommyGunUpgrade"))
-				{
-					int jx, jy;
-					jx = -90; // kcdebug_misc1;
-					jy = -4; // kcdebug_misc2;
-					textureid blimg;
-					int InvIconTimer = level.time % 41;
-					if (InvIconTimer >= 0 && InvIconTimer <= 2) blimg = TexMan.CheckForTexture("TMMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 3 && InvIconTimer <= 5) blimg = TexMan.CheckForTexture("TMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 6 && InvIconTimer <= 8) blimg = TexMan.CheckForTexture("TMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 9 && InvIconTimer <= 11) blimg = TexMan.CheckForTexture("TMMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 12 && InvIconTimer <= 14) blimg = TexMan.CheckForTexture("TMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 15 && InvIconTimer <= 17) blimg = TexMan.CheckForTexture("TMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 18 && InvIconTimer <= 20) blimg = TexMan.CheckForTexture("TMMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 21 && InvIconTimer <= 23) blimg = TexMan.CheckForTexture("TMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 24 && InvIconTimer <= 26) blimg = TexMan.CheckForTexture("TMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 27 && InvIconTimer <= 29) blimg = TexMan.CheckForTexture("TMMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 30 && InvIconTimer <= 32) blimg = TexMan.CheckForTexture("TMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("TMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("TMMDE0", TexMan.TYPE_MiscPatch);
-					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
-				}
+				frameprefix = "TMMD";
+				if (CPlayerPawn.CountInv("TommyGunUpgrade")) usesmodpack = true;
 			}
 			temp = "BlasterPistol";
 			if (PlayerWeapon is temp)
 			{
-				if (CPlayerPawn.CountInv("BlasterPistolUpgrade"))
-				{
-					int jx, jy;
-					jx = -90; // kcdebug_misc1;
-					jy = -4; // kcdebug_misc2;
-					textureid blimg;
-					int InvIconTimer = level.time % 41;
-					if (InvIconTimer >= 0 && InvIconTimer <= 2) blimg = TexMan.CheckForTexture("BPMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 3 && InvIconTimer <= 5) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 6 && InvIconTimer <= 8) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 9 && InvIconTimer <= 11) blimg = TexMan.CheckForTexture("BPMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 12 && InvIconTimer <= 14) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 15 && InvIconTimer <= 17) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 18 && InvIconTimer <= 20) blimg = TexMan.CheckForTexture("BPMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 21 && InvIconTimer <= 23) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 24 && InvIconTimer <= 26) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 27 && InvIconTimer <= 29) blimg = TexMan.CheckForTexture("BPMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 30 && InvIconTimer <= 32) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("BPMDE0", TexMan.TYPE_MiscPatch);
-					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
-				}
+				frameprefix = "BPMD";
+				if (CPlayerPawn.CountInv("BlasterPistolUpgrade")) usesmodpack = true;
 			}
 			temp = "Devastator";
 			if (PlayerWeapon is temp)
 			{
-				if (CPlayerPawn.CountInv("DevastatorUpgrade"))
-				{
-					int jx, jy;
-					jx = -90; // kcdebug_misc1;
-					jy = -4; // kcdebug_misc2;
-					textureid blimg;
-					int InvIconTimer = level.time % 41;
-					if (InvIconTimer >= 0 && InvIconTimer <= 2) blimg = TexMan.CheckForTexture("DVMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 3 && InvIconTimer <= 5) blimg = TexMan.CheckForTexture("DVMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 6 && InvIconTimer <= 8) blimg = TexMan.CheckForTexture("DVMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 9 && InvIconTimer <= 11) blimg = TexMan.CheckForTexture("DVMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 12 && InvIconTimer <= 14) blimg = TexMan.CheckForTexture("DVMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 15 && InvIconTimer <= 17) blimg = TexMan.CheckForTexture("DVMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 18 && InvIconTimer <= 20) blimg = TexMan.CheckForTexture("DVMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 21 && InvIconTimer <= 23) blimg = TexMan.CheckForTexture("DVMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 24 && InvIconTimer <= 26) blimg = TexMan.CheckForTexture("DVMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 27 && InvIconTimer <= 29) blimg = TexMan.CheckForTexture("DVMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 30 && InvIconTimer <= 32) blimg = TexMan.CheckForTexture("DVMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("DVMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("DVMDE0", TexMan.TYPE_MiscPatch);
-					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
-				}
+				frameprefix = "DVMD";
+				if (CPlayerPawn.CountInv("DevastatorUpgrade")) usesmodpack = true;
 			}
 			temp = "BlasterRifle";
 			if (PlayerWeapon is temp)
 			{
-				if (CPlayerPawn.CountInv("BlasterRifleUpgrade"))
-				{
-					int jx, jy;
-					jx = -90; // kcdebug_misc1;
-					jy = -4; // kcdebug_misc2;
-					textureid blimg;
-					int InvIconTimer = level.time % 41;
-					if (InvIconTimer >= 0 && InvIconTimer <= 2) blimg = TexMan.CheckForTexture("BMMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 3 && InvIconTimer <= 5) blimg = TexMan.CheckForTexture("BMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 6 && InvIconTimer <= 8) blimg = TexMan.CheckForTexture("BMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 9 && InvIconTimer <= 11) blimg = TexMan.CheckForTexture("BMMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 12 && InvIconTimer <= 14) blimg = TexMan.CheckForTexture("BMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 15 && InvIconTimer <= 17) blimg = TexMan.CheckForTexture("BMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 18 && InvIconTimer <= 20) blimg = TexMan.CheckForTexture("BMMDA0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 21 && InvIconTimer <= 23) blimg = TexMan.CheckForTexture("BMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 24 && InvIconTimer <= 26) blimg = TexMan.CheckForTexture("BMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 27 && InvIconTimer <= 29) blimg = TexMan.CheckForTexture("BMMDD0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 30 && InvIconTimer <= 32) blimg = TexMan.CheckForTexture("BMMDC0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("BMMDB0", TexMan.TYPE_MiscPatch);
-					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("BMMDE0", TexMan.TYPE_MiscPatch);
-					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
-				}
+				frameprefix = "BMMD";
+				if (CPlayerPawn.CountInv("BlasterRifleUpgrade")) usesmodpack = true;
 			}
+			temp = "RiotGun";
+			if (PlayerWeapon is temp)
+			{
+				frameprefix = "RGMD";
+				if (CPlayerPawn.CountInv("RiotGunUpgrade")) usesmodpack = true;
+			}
+			if (usesmodpack)
+			{
+				int jx, jy;
+				jx = -90; // kcdebug_misc1;
+				jy = -4; // kcdebug_misc2;
+				string framename = frameprefix;
+				if (InvIconTimer >= 0 && InvIconTimer <= 2) framepostfix = "A0";
+				if (InvIconTimer >= 3 && InvIconTimer <= 5) framepostfix = "B0";
+				if (InvIconTimer >= 6 && InvIconTimer <= 8) framepostfix = "C0";
+				if (InvIconTimer >= 9 && InvIconTimer <= 11) framepostfix = "D0";
+				if (InvIconTimer >= 12 && InvIconTimer <= 14) framepostfix = "C0";
+				if (InvIconTimer >= 15 && InvIconTimer <= 17) framepostfix = "B0";
+				if (InvIconTimer >= 18 && InvIconTimer <= 20) framepostfix = "A0";
+				if (InvIconTimer >= 21 && InvIconTimer <= 23) framepostfix = "B0";
+				if (InvIconTimer >= 24 && InvIconTimer <= 26) framepostfix = "C0";
+				if (InvIconTimer >= 27 && InvIconTimer <= 29) framepostfix = "D0";
+				if (InvIconTimer >= 30 && InvIconTimer <= 32) framepostfix = "C0";
+				if (InvIconTimer >= 33 && InvIconTimer <= 35) framepostfix = "B0";
+				if (InvIconTimer >= 36 && InvIconTimer <= 40) framepostfix = "E0";
+				framename.AppendFormat("%s", framepostfix);
+				
+				blimg = TexMan.CheckForTexture(framename, TexMan.TYPE_MiscPatch);
+				DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
+			}
+			
 			temp = "KnifeHeiwa";
 			if (PlayerWeapon is temp)
 			{
@@ -1291,7 +1248,7 @@ class KCStatusBarMain : BaseStatusBar
 					{
 						jx = -30;
 						jy = -82; // -76;
-						textureid blimg = TexMan.CheckForTexture("GLKPENTR", TexMan.TYPE_MiscPatch);
+						blimg = TexMan.CheckForTexture("GLKPENTR", TexMan.TYPE_MiscPatch);
 						DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
 					}
 					jx = -13; // -20;
@@ -1402,7 +1359,7 @@ class KCStatusBarMain : BaseStatusBar
 					int jx, jy;
 					jx = -50;
 					jy = bary + -40;
-					textureid blimg = TexMan.CheckForTexture("WIEVWASH", TexMan.TYPE_MiscPatch);
+					blimg = TexMan.CheckForTexture("WIEVWASH", TexMan.TYPE_MiscPatch);
 					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, FontAlpha, (-1,-1), (0.25, 0.25)); // 51, -3
 					jx += 48;
 					jy += 8;
@@ -1418,7 +1375,6 @@ class KCStatusBarMain : BaseStatusBar
 					int jx, jy;
 					jx = -30;
 					jy = -82; // -76;
-					textureid blimg;
 					if (BHLGen.altshottype >= 1) blimg = TexMan.CheckForTexture("BHGSMLHL", TexMan.TYPE_MiscPatch);
 																	else blimg = TexMan.CheckForTexture("BHGHGEHL", TexMan.TYPE_MiscPatch);
 					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
