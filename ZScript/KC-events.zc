@@ -6425,7 +6425,8 @@ class KC_StaticEventHandler : StaticEventHandler
 						// seems to be automatically invalidated
 						if (item is 'HellWarriorShieldLevel' ||
 								item is 'TommyGunUpgrade' ||
-								item is 'BlasterRifleUpgrade')
+								item is 'BlasterRifleUpgrade' ||
+								item is 'BlasterPistolUpgrade')
 						{
 							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [12a - 'Weapon' Type Found]: i: %d, %s", i, item.GetClassName());
 							p.RemoveInventory(item);
@@ -6636,7 +6637,8 @@ class KC_StaticEventHandler : StaticEventHandler
 				if (!keepWeaponUpgrades &&
 						(item is 'HellWarriorShieldLevel' ||
 						 item is 'TommyGunUpgrade' ||
-						 item is 'BlasterRifleUpgrade'))
+						 item is 'BlasterRifleUpgrade' ||
+						 item is 'BlasterPistolUpgrade'))
 				{
 					keepinv = false;
 					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Weapon Upgrade Check  [!keepWeaponUpgrades]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
@@ -6761,7 +6763,8 @@ class KC_StaticEventHandler : StaticEventHandler
 					if (!keepWeaponUpgrades &&
 							(item is 'HellWarriorShieldLevel' ||
 							 item is 'TommyGunUpgrade' ||
-							 item is 'BlasterRifleUpgrade'))
+							 item is 'BlasterRifleUpgrade' ||
+							 item is 'BlasterPistolUpgrade'))
 					{
 						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5c - keepWeaponUpgrades off]: \c-%s", item.GetClassName());
 						item.bUndroppable = false;

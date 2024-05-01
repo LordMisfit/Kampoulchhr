@@ -2187,6 +2187,7 @@ class InvulnerabilitySphere2 : CustomInventoryExt replaces InvulnerabilitySphere
 							mo.bDROPPED = bDROPPED;
 							KampoulSphere kmpl;
 							kmpl = KampoulSphere(mo);
+							self.Destroy();
 						}
 					}
 				}
@@ -5056,6 +5057,38 @@ class BlasterRifleModpack : CustomInventoryExt
 			TNT1 A 0 
 			{
 				A_GiveInventory("BlasterRifleUpgrade",1);
+			}
+			Stop;
+	}
+}
+
+class BlasterPistolModpack : CustomInventoryExt
+{
+	default
+	{
+		-COUNTITEM;
+		+INVENTORY.BIGPOWERUP;
+		+DONTGIB;
+		Scale 0.25;
+		Tag "Blaster Pistol Modpack";
+		Inventory.InterHubAmount 0;
+		Inventory.MaxAmount 0;
+		Inventory.Icon "BPMDA0";
+		Inventory.Pickupsound "misc/modpackpickup";
+		Inventory.PickupMessage "You picked up a Blaster Pistol Mod Pack.";
+	}
+	States
+	{
+		Spawn:
+			BPMD ABCDCB 3 Bright;
+			BPMD ABCDCB 3 Bright;
+			BPMD E 5 Bright;
+			Loop;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("BlasterPistolUpgrade",1);
 			}
 			Stop;
 	}

@@ -1171,6 +1171,32 @@ class KCStatusBarMain : BaseStatusBar
 					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
 				}
 			}
+			temp = "BlasterPistol";
+			if (PlayerWeapon is temp)
+			{
+				if (CPlayerPawn.CountInv("BlasterPistolUpgrade"))
+				{
+					int jx, jy;
+					jx = -90; // kcdebug_misc1;
+					jy = -4; // kcdebug_misc2;
+					textureid blimg;
+					int InvIconTimer = level.time % 41;
+					if (InvIconTimer >= 0 && InvIconTimer <= 2) blimg = TexMan.CheckForTexture("BPMDA0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 3 && InvIconTimer <= 5) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 6 && InvIconTimer <= 8) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 9 && InvIconTimer <= 11) blimg = TexMan.CheckForTexture("BPMDD0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 12 && InvIconTimer <= 14) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 15 && InvIconTimer <= 17) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 18 && InvIconTimer <= 20) blimg = TexMan.CheckForTexture("BPMDA0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 21 && InvIconTimer <= 23) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 24 && InvIconTimer <= 26) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 27 && InvIconTimer <= 29) blimg = TexMan.CheckForTexture("BPMDD0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 30 && InvIconTimer <= 32) blimg = TexMan.CheckForTexture("BPMDC0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 33 && InvIconTimer <= 35) blimg = TexMan.CheckForTexture("BPMDB0", TexMan.TYPE_MiscPatch);
+					if (InvIconTimer >= 36 && InvIconTimer <= 40) blimg = TexMan.CheckForTexture("BPMDE0", TexMan.TYPE_MiscPatch);
+					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
+				}
+			}
 			temp = "BlasterRifle";
 			if (PlayerWeapon is temp)
 			{
@@ -3747,7 +3773,8 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "RiotGun" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
-					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
+					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
+					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "BHGen" ||
 					PlayerWeapon is "ImpalerXBow")
 			{
@@ -3771,6 +3798,11 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					if (CPlayerPawn.CountInv("DualDevastatorsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
 																													else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
+				}
+				else if (PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTeslaCannons"))
+				{
+					if (CPlayerPawn.CountInv("DualTeslaCannonsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
+																													 else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
 				else if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]CHANGE ALT-FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
