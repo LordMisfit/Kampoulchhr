@@ -115,6 +115,63 @@ class KCBaseZSC : Actor
 		return check;
 	}
 	
+	double A_CheckMonsterLevelDiv(double basecheck = 0, bool userating = true, actor act = null)
+	{
+		if (!act) act = self;
+		double newcheck = basecheck;
+		return newcheck;
+	}
+	
+	double A_CheckMonsterLevelMult(double basecheck = 0, bool userating = true, actor act = null)
+	{
+		if (!act) act = self;
+		double newcheck = basecheck;
+		return newcheck;
+	}
+	
+	bool A_CheckMonsterLevel(double basecheck = 0, int checktype = 0, bool userating = true, actor act = null)
+	{
+		if (!act) act = self;
+		double user_monsterlevel = CountInv("MonsterLevel");
+		if (act) user_monsterlevel = act.CountInv("MonsterLevel");
+		double user_monsterrating = CountInv("MonsterRating");
+		if (act) user_monsterrating = act.CountInv("MonsterRating");
+		double newcheck = basecheck;
+		bool check = false;
+		if (checktype == 10)
+		{
+			if (user_monsterlevel != newcheck) check = true;
+		}
+		else
+		{
+			if (checktype <= -2)
+			{
+				if (user_monsterlevel < newcheck) check = true;
+			}
+			else
+			if (checktype == -1)
+			{
+				if (user_monsterlevel <= newcheck) check = true;
+			}
+			else
+			if (checktype == 0)
+			{
+				if (user_monsterlevel == newcheck) check = true;
+			}
+			else
+			if (checktype == 1)
+			{
+				if (user_monsterlevel >= basecheck) check = true;
+			}
+			else
+			if (checktype >= 2)
+			{
+				if (user_monsterlevel > newcheck) check = true;
+			}
+		}
+		return check;
+	}
+	
 	int A_CalcDamageFormula(int basedmg,
 													int baserand,
 													double factor1 = 0.005,
@@ -175,8 +232,8 @@ class KCBaseZSC : Actor
 			}
 
 			damage = basedmg + (TargLevel * (basedmg * factor1));
-			if (CountInv("MonsterLevel") >= lvlthreshold1) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
-			if (CountInv("MonsterLevel") >= lvlthreshold2) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
+			if (A_CheckMonsterLevel(lvlthreshold1,1,true,self)) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
+			if (A_CheckMonsterLevel(lvlthreshold2,1,true,self)) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
 			damage *= (1.0 + (TargLevel * levelfactor));
 			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
 			projprevdmg = damage;
@@ -1382,21 +1439,21 @@ class KCProjectile : KCBaseZSC
 			int maxhp;
 			if ((target.SpawnHealth() + target.Stamina) > 0) maxhp = (target.SpawnHealth() + target.Stamina);
 			else maxhp = target.SpawnHealth();
-			maxhp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0111111112)); // +100% damage every ~90 levels
-			if (target.CountInv("MonsterLevel") > 30) 
+			maxhp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0111111112,true,self))); // +100% damage every ~90 levels
+			if (A_CheckMonsterLevel(30,2,true,target)) 
 			{
 				int temp;
 				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
 				else temp = target.SpawnHealth();
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0037037037333333)); // +33.4% damage every ~90 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0037037037333333,true,self))); // +33.4% damage every ~90 levels
 				maxhp += temp;
 			}
-			if (target.CountInv("MonsterLevel") > 60) 
+			if (A_CheckMonsterLevel(60,2,true,target)) 
 			{
 				int temp;
 				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
 				else temp = target.SpawnHealth();
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0018518518666667)); // +16.67% damage every ~90 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0018518518666667,true,self))); // +16.67% damage every ~90 levels
 				maxhp += temp;
 			}
 			maxhp *= 0.25; // +100% damage every ~180 levels
@@ -1405,19 +1462,19 @@ class KCProjectile : KCBaseZSC
 			HSFound = KCCreature(target);
 			int healthleft;
 			if (HSFound) healthleft = HSFound.hsexphealth;
-			healthleft *= (1.0 + (target.CountInv("MonsterLevel") * 0.0222222223)); // +100% damage every ~45 levels
-			if (target.CountInv("MonsterLevel") > 30) 
+			healthleft *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0222222223,true,self))); // +100% damage every ~45 levels
+			if (A_CheckMonsterLevel(30,2,true,target)) 
 			{
 				int temp;
 				if (HSFound) temp = HSFound.hsexphealth;
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0074074074333333)); // +33.4% damage every ~45 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0074074074333333,true,self))); // +33.4% damage every ~45 levels
 				healthleft += temp;
 			}
-			if (target.CountInv("MonsterLevel") > 60) 
+			if (A_CheckMonsterLevel(60,2,true,target)) 
 			{
 				int temp;
 				if (HSFound) temp = HSFound.hsexphealth;
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.0037037037166667)); // +16.7% damage every ~45 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.0037037037166667,true,self))); // +16.7% damage every ~45 levels
 				healthleft += temp;
 			}
 			healthleft *= 0.5;
@@ -1426,21 +1483,21 @@ class KCProjectile : KCBaseZSC
 			int maxhp2;
 			if ((target.SpawnHealth() + target.Stamina) > 0) maxhp2 = (target.SpawnHealth() + target.Stamina);
 			else maxhp2 = target.SpawnHealth();
-			maxhp2 *= (1.0 + (target.CountInv("MonsterLevel") * 0.005555556)); // +100% radius every ~180 levels
-			if (target.CountInv("MonsterLevel") > 30) 
+			maxhp2 *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.005555556,true,self))); // +100% radius every ~180 levels
+			if (A_CheckMonsterLevel(30,2,true,target)) 
 			{
 				int temp;
 				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
 				else temp = target.SpawnHealth();
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.001851852)); // +33.4% radius every ~180 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.001851852,true,self))); // +33.4% radius every ~180 levels
 				maxhp2 += temp;
 			}
-			if (target.CountInv("MonsterLevel") > 60) 
+			if (A_CheckMonsterLevel(60,2,true,target))
 			{
 				int temp;
 				if ((target.SpawnHealth() + target.Stamina) > 0) temp = (target.SpawnHealth() + target.Stamina);
 				else temp = target.SpawnHealth();
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.000925926)); // +16.7% radius every ~180 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.000925926,true,self))); // +16.7% radius every ~180 levels
 				maxhp2 += temp;
 			}
 			maxhp2 *= 0.125;
@@ -1448,19 +1505,19 @@ class KCProjectile : KCBaseZSC
 			HSFound = KCCreature(target);
 			int healthleft2;
 			if (HSFound) healthleft2 = HSFound.hsexphealth;
-			healthleft2 *= (1.0 + (target.CountInv("MonsterLevel") * 0.011111112)); // +100% radius every ~90 levels
-			if (target.CountInv("MonsterLevel") > 30) 
+			healthleft2 *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.011111112,true,self))); // +100% radius every ~90 levels
+			if (A_CheckMonsterLevel(30,2,true,target)) 
 			{
 				int temp;
 				if (HSFound) temp = HSFound.hsexphealth;
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.003703704)); // +33.4% radius every ~90 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.003703704,true,self))); // +33.4% radius every ~90 levels
 				healthleft2 += temp;
 			}
-			if (target.CountInv("MonsterLevel") > 60) 
+			if (A_CheckMonsterLevel(60,2,true,target)) 
 			{
 				int temp;
 				if (HSFound) temp = HSFound.hsexphealth;
-				temp *= (1.0 + (target.CountInv("MonsterLevel") * 0.001851852)); // +16.7% radius every ~90 levels
+				temp *= (1.0 + (target.CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.001851852,true,self))); // +16.7% radius every ~90 levels
 				healthleft2 += temp;
 			}
 			healthleft2 *= 0.25;
@@ -3467,8 +3524,8 @@ class KCCreature : KCBaseZSC
 			}
 
 			damage = basedmg + (TargLevel * (basedmg * factor1));
-			if (CountInv("MonsterLevel") >= lvlthreshold1) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
-			if (CountInv("MonsterLevel") >= lvlthreshold2) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
+			if (A_CheckMonsterLevel(lvlthreshold1,1,true,self)) damage += basedmg2 + (TargLevel * (basedmg2 * factor2));
+			if (A_CheckMonsterLevel(lvlthreshold2,1,true,self)) damage += basedmg3 + (TargLevel * (basedmg3 * factor3));
 			damage *= (1.0 + (TargLevel * levelfactor));
 			if (kcdebug_monsterdmgcalc) Console.Printf("\c[fire]damage [A_CalcDamageFormula2 - KCProjectile] (\c[ice]%s of %s\c[fire]): %d\c- [gametic: %d]", GetClassName(), target.GetClassName(), damage, gametic);
 			projprevdmg = damage;
@@ -3536,7 +3593,7 @@ class KCCreature : KCBaseZSC
 
 		if (timesrevivedamonster < maxviletimesrevived)
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 72+anglevec, 0);
@@ -3545,7 +3602,7 @@ class KCCreature : KCBaseZSC
 				A_SpawnProjectile("ReviveProj2", 0, 0, 288+anglevec, 0);
 			}
 			else
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec2, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 120+anglevec2, 0);
@@ -3561,7 +3618,7 @@ class KCCreature : KCBaseZSC
 
 		if (timesrevivedamonster < maxdiabtimesrevived)
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 72+anglevec, 0);
@@ -3570,7 +3627,7 @@ class KCCreature : KCBaseZSC
 				A_SpawnProjectile("ReviveProj2", 0, 0, 288+anglevec, 0);
 			}
 			else
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec2, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 120+anglevec2, 0);
@@ -3586,7 +3643,7 @@ class KCCreature : KCBaseZSC
 
 		if (timesrevivedamonster < maxbanshtimesrevived)
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 72+anglevec, 0);
@@ -3595,7 +3652,7 @@ class KCCreature : KCBaseZSC
 				A_SpawnProjectile("ReviveProj2", 0, 0, 288+anglevec, 0);
 			}
 			else
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30)
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))
 			{
 				A_SpawnProjectile("ReviveProj2", 0, 0, 0+anglevec2, 0);
 				A_SpawnProjectile("ReviveProj2", 0, 0, 120+anglevec2, 0);
@@ -3621,7 +3678,7 @@ class KCCreature : KCBaseZSC
 
 			targ.A_StartSound("diabloistgravitystart", CHAN_7);
 			bNOTARGETSWITCH = true;
-			if (random(1,256) <= (21.3335 + (user_monsterlevel/1.5))) bNOPAIN = true;
+			if (random(1,256) <= (21.3335 + (user_monsterlevel / A_CheckMonsterLevelDiv(1.5,true,self)))) bNOPAIN = true;
 			bQUICKTORETALIATE = false;
 		}
 	}
@@ -3634,15 +3691,15 @@ class KCCreature : KCBaseZSC
 		if (user_gravitytype == 1 || user_gravitytype == 3) 
 		{
 			//A_Log("HP Targetter");
-			if (kc_monsterlevelenabledflags && user_monsterlevel > 80) { A_VileTarget("DiabloistGravityHPTargeter3"); }
-			else if (kc_monsterlevelenabledflags && user_monsterlevel > 40) { A_VileTarget("DiabloistGravityHPTargeter2"); }
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_VileTarget("DiabloistGravityHPTargeter3"); }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_VileTarget("DiabloistGravityHPTargeter2"); }
 			else { A_VileTarget("DiabloistGravityHPTargeter"); }
 		}
 		if (user_gravitytype == 2 || user_gravitytype == 3)
 		{
 			//A_Log("MP Targetter");
-			if (kc_monsterlevelenabledflags && user_monsterlevel > 80) { A_VileTarget("DiabloistGravityManaTargeter3"); }
-			else if (kc_monsterlevelenabledflags && user_monsterlevel > 40) { A_VileTarget("DiabloistGravityManaTargeter2"); }
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_VileTarget("DiabloistGravityManaTargeter3"); }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_VileTarget("DiabloistGravityManaTargeter2"); }
 			else { A_VileTarget("DiabloistGravityManaTargeter"); }
 		}
 		bNOTARGETSWITCH = true;
@@ -3658,26 +3715,26 @@ class KCCreature : KCBaseZSC
 		{
 			if (bNOPAIN)
 			{
-				if (random (1,256) <= (8+(user_monsterlevel/(33.4*0.334))))
+				if (random (1,256) <= (8 + (user_monsterlevel / A_CheckMonsterLevelDiv((33.4*0.334),true,self))))
 				{
-					if (random (1,256) <= (64+(user_monsterlevel/(12.5*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
-					if (random (1,256) <= (53.3335+(user_monsterlevel/(15*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
-					if (random (1,256) <= (42.66675+(user_monsterlevel/(18.75*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
-					if (random (1,256) <= (32+(user_monsterlevel/(25*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
-					if (random (1,256) <= (21.3335+(user_monsterlevel/(37.5*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
-					if (random (1,256) <= (10.66675+(user_monsterlevel/(50*0.334)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (64 + (user_monsterlevel / A_CheckMonsterLevelDiv((12.5*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (53.3335 + (user_monsterlevel / A_CheckMonsterLevelDiv((15*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (42.66675 + (user_monsterlevel / A_CheckMonsterLevelDiv((18.75*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (32 + (user_monsterlevel / A_CheckMonsterLevelDiv((25*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (21.3335 + (user_monsterlevel / A_CheckMonsterLevelDiv((37.5*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
+					if (random (1,256) <= (10.66675 + (user_monsterlevel / A_CheckMonsterLevelDiv((50*0.334),true,self)))) A_Chase(null,null,CHF_FASTCHASE);
 				}
 			}
 			else
 			{
-				if (random (1,256) <= (32+(user_monsterlevel/(25*0.334))))
+				if (random (1,256) <= (32 + (user_monsterlevel / A_CheckMonsterLevelDiv((25*0.334),true,self))))
 				{
-					if (random (1,256) <= (64+(user_monsterlevel/(12.5*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
-					if (random (1,256) <= (53.3335+(user_monsterlevel/(15*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
-					if (random (1,256) <= (42.66675+(user_monsterlevel/(18.75*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
-					if (random (1,256) <= (32+(user_monsterlevel/(25*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
-					if (random (1,256) <= (21.3335+(user_monsterlevel/(37.5*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
-					if (random (1,256) <= (10.66675+(user_monsterlevel/(50*0.334)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (64 + (user_monsterlevel / A_CheckMonsterLevelDiv((12.5*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (53.3335 + (user_monsterlevel / A_CheckMonsterLevelDiv((15*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (42.66675 + (user_monsterlevel / A_CheckMonsterLevelDiv((18.75*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (32 + (user_monsterlevel / A_CheckMonsterLevelDiv((25*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (21.3335 + (user_monsterlevel / A_CheckMonsterLevelDiv((37.5*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
+					if (random (1,256) <= (10.66675 + (user_monsterlevel / A_CheckMonsterLevelDiv((50*0.334),true,self)))) A_Chase(null,null, CHF_FASTCHASE);
 				}
 			}
 		}
@@ -3907,7 +3964,7 @@ class KCCreature : KCBaseZSC
 				if (TrueGameSkill >= SKILL_VERY_HARD) GravityEffectFactor = 0.4375;
 
 				LevelFactor = 128;
-				if (kc_monsterlevelenabledflags) LevelFactor = 128 - CountInv("MonsterLevel");
+				if (kc_monsterlevelenabledflags) LevelFactor = (128 - (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(1.0)));
 				GravityEffectFactor = GravityEffectFactor * LevelFactor / 128;
 
 				FinalGravityFactor = 1.000 - GravityEffectFactor;
@@ -4144,7 +4201,7 @@ class KCCreature : KCBaseZSC
 				if (value2 <= 0) value2 = 8;
 				
 				int extrasteps;
-				if (kc_monsterlevelenabledflags) extrasteps = user_monsterlevel / value2;
+				if (kc_monsterlevelenabledflags) extrasteps = user_monsterlevel / A_CheckMonsterLevelDiv(value2,true,self);
 				specialspeed1 = value1 + extrasteps; // Number of steps to walk fast
 				if (kcdebug_showactormoveinfo) Console.Printf("\cx(%s) (gametic: %d) [A_KCPain]\c- specialspeed1: %d, basespeedtimer: %d, leveldivisor: %d, ?3: %d, ?4: %d, chanceroll[/100]: %d \cytics: %d\c-", GetClassName(), gametic, specialspeed1, value1, value2, value3, value4, value5, tics);
 			}
@@ -4160,7 +4217,7 @@ class KCCreature : KCBaseZSC
 	void A_FastChaseCalc(int base = 3, int leveldivisor = 24)
 	{
 		int user_monsterlevel = CountInv("MonsterLevel");
-		if (kc_monsterlevelenabledflags) { user_fastchaseextra = user_monsterlevel / leveldivisor; }
+		if (kc_monsterlevelenabledflags) { user_fastchaseextra = user_monsterlevel / A_CheckMonsterLevelDiv(leveldivisor,true,self); }
 		user_fastchasechance = base + user_fastchaseextra + user_painfastchase;
 		if (kcdebug_monsterspecialai) Console.Printf("Class: %s - \czFastChaseChance: %d (base: %d, leveldivisor: %d)\cz", GetClassName(), user_fastchasechance, base, leveldivisor); 
 	}
@@ -4222,22 +4279,22 @@ class KCCreature : KCBaseZSC
 			A_StopSound (CHAN_WEAPON);
 			if (!CountInv("HadesTeleportCooldown")) 
 			{
-				if (user_monsterlevel >= (minlevel*9))
+				if (A_CheckMonsterLevel((minlevel*9),1,true,self))
 				{
 					if (RandRoll <= (minchance*4)) splittype2 = 2;
 				}
 				else
-				if (user_monsterlevel >= (minlevel*4))
+				if (A_CheckMonsterLevel((minlevel*4),1,true,self))
 				{
 					if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
 				}
 				else
-				if (user_monsterlevel >= minlevel)
+				if (A_CheckMonsterLevel((minlevel*1),1,true,self))
 				{
 					if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
 				}
 				else
-				if (user_monsterlevel >= (minlevel/2))
+				if (A_CheckMonsterLevel((minlevel/2),1,true,self))
 				{
 					if (RandRoll <= minchance) splittype2 = 1;
 				}
@@ -4263,22 +4320,22 @@ class KCCreature : KCBaseZSC
 		{
 			if (!CountInv("HadesTeleportCooldown")) 
 			{
-				if (CountInv("MonsterLevel") >= (minlevel*9))
+				if (A_CheckMonsterLevel((minlevel*9),1,true,self))
 				{
 					splittype2 = 2;
 				}
 				else
-				if (CountInv("MonsterLevel") >= (minlevel*4))
+				if (A_CheckMonsterLevel((minlevel*4),1,true,self))
 				{
 					splittype2 = random(1,2);
 				}
 				else
-				if (CountInv("MonsterLevel") >= minlevel)
+				if (A_CheckMonsterLevel((minlevel*1),1,true,self))
 				{
 					randompick(1,1,1,1,1,1,1,2);
 				}
 				else
-				if (CountInv("MonsterLevel") >= (minlevel/2))
+				if (A_CheckMonsterLevel((minlevel/2),1,true,self))
 				{
 					splittype2 = 1;
 				}
@@ -4416,10 +4473,10 @@ class KCCreature : KCBaseZSC
 		int user_monsterlevel = CountInv("MonsterLevel");
 		
 		int nonsolidchance = 1;
-		if (GetClassName() == "CacodemonNew") nonsolidchance += (user_monsterlevel / 90);
-		if (GetClassName() == "Cacolantern") nonsolidchance += (user_monsterlevel / random(67,68));
-		if (GetClassName() == "Abaddon") nonsolidchance += (user_monsterlevel / 45);
-		if (GetClassName() == "PainElemental") nonsolidchance += (user_monsterlevel / 45);
+		if (GetClassName() == "CacodemonNew") nonsolidchance += (user_monsterlevel / A_CheckMonsterLevelDiv(90,true,self));
+		if (GetClassName() == "Cacolantern") nonsolidchance += (user_monsterlevel / A_CheckMonsterLevelDiv(random(67,68),true,self));
+		if (GetClassName() == "Abaddon") nonsolidchance += (user_monsterlevel / A_CheckMonsterLevelDiv(45,true,self));
+		if (GetClassName() == "PainElemental") nonsolidchance += (user_monsterlevel / A_CheckMonsterLevelDiv(45,true,self));
 		if (random(1,4) <= nonsolidchance) bSOLID = 0;
 	}
 	void A_ActorEndShadowSplit()
@@ -4443,22 +4500,22 @@ class KCCreature : KCBaseZSC
 				A_StopSound(CHAN_WEAPON);
 				if (!CountInv("ShadowSplitCooldown")) 
 				{
-					if (user_monsterlevel >= (minlevel*9))
+					if (A_CheckMonsterLevel((minlevel*9),1,true,self))
 					{
 						if (RandRoll <= (minchance*4)) splittype2 = 2;
 					}
 					else
-					if (user_monsterlevel >= (minlevel*4))
+					if (A_CheckMonsterLevel((minlevel*4),1,true,self))
 					{
 						if (RandRoll <= (minchance*2)) splittype2 = random(1,2);
 					}
 					else
-					if (user_monsterlevel >= minlevel)
+					if (A_CheckMonsterLevel((minlevel*1),1,true,self))
 					{
 						if (RandRoll <= minchance) splittype2 = randompick(1,1,1,1,1,1,1,2);
 					}
 					else
-					if (user_monsterlevel >= (minlevel/2))
+					if (A_CheckMonsterLevel((minlevel/2),1,true,self))
 					{
 						if (RandRoll <= (minchance/4)) splittype2 = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
 					}
@@ -4536,15 +4593,15 @@ class KCCreature : KCBaseZSC
 		if (kc_monsterlevelenabledflags)
 		{
 			double inits = frandompick(0.05,0.0625,0.0625,0.075,0.075,0.075,0.075,0.075,0.0875,0.0875,0.10);
-			damage += (CountInv("MonsterLevel") * ((inits * 0.875) * random(randmin,randmax)));
+			damage += (CountInv("MonsterLevel") * ((inits * A_CheckMonsterLevelMult(0.875,true,self)) * random(randmin,randmax)));
 			if (kc_monsterlevelenabledflags)
 			{
-				if (CountInv("MonsterLevel") >= 40) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
-				if (CountInv("MonsterLevel") >= 80) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
-				if (CountInv("MonsterLevel") >= 120) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
-				if (CountInv("MonsterLevel") >= 160) damage += (CountInv("MonsterLevel") * ((inits * 0.1875) * random(randmin,randmax)));
+				if (A_CheckMonsterLevel(40,1,true,self)) damage += (CountInv("MonsterLevel") * ((inits * A_CheckMonsterLevelMult(0.1875,true,self)) * random(randmin,randmax)));
+				if (A_CheckMonsterLevel(80,1,true,self)) damage += (CountInv("MonsterLevel") * ((inits * A_CheckMonsterLevelMult(0.1875,true,self)) * random(randmin,randmax)));
+				if (A_CheckMonsterLevel(120,1,true,self)) damage += (CountInv("MonsterLevel") * ((inits * A_CheckMonsterLevelMult(0.1875,true,self)) * random(randmin,randmax)));
+				if (A_CheckMonsterLevel(160,1,true,self)) damage += (CountInv("MonsterLevel") * ((inits * A_CheckMonsterLevelMult(0.1875,true,self)) * random(randmin,randmax)));
 			}
-			damage *= (1.0 + (CountInv("MonsterLevel") * frandom(0.00625,0.009375)));
+			damage *= (1.0 + (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(frandom(0.00625,0.009375),true,self)));
 		}
 		damage *= dmgfct;
 		
@@ -4885,10 +4942,10 @@ class KCCreature : KCBaseZSC
 	{
 		if (target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { if (random(1,1024) <= 640) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { if (random(1,1024) <= randompick(533,533,534)) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,1024) <= randompick(426,426,427)) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 60) { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,1024) <= 640) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,1024) <= randompick(533,533,534)) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,1024) <= randompick(426,426,427)) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
 			else { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
 		}
 	}
@@ -4902,10 +4959,10 @@ class KCCreature : KCBaseZSC
 	{
 		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { if (random(1,256) <= 144) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { if (random(1,256) <= 120) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,256) <= 96) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 60) { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,256) <= 144) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,256) <= 120) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 96) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,256) <= 72) { SetStateLabel(tele); } }
 			else { if (random(1,256) <= 72) { SetStateLabel(tele); } }
 		}
 	}
@@ -4914,10 +4971,10 @@ class KCCreature : KCBaseZSC
 	{
 		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { if (random(1,256) <= 68) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { if (random(1,256) <= 56) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { if (random(1,256) <= 44) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") <= 30) { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { if (random(1,256) <= 68) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 56) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { if (random(1,256) <= 44) { SetStateLabel(tele); } }
+			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,-1,true,self)) { if (random(1,256) <= 32) { SetStateLabel(tele); } }
 			else { if (random(1,256) <= 32) { SetStateLabel(tele); } }
 		}
 	}
@@ -5000,7 +5057,7 @@ class KCCreature : KCBaseZSC
 		}
 		else
 		{
-			if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) 
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) 
 			{
 				if (!A_JumpIfTargetInLOS("See", frandom(77.5,82.5)))
 				{
@@ -6158,7 +6215,7 @@ class KCCreature : KCBaseZSC
 	{
 		string atktype = missiletype;
 		Actor mo = SpawnMissile (target, atktype);
-		if (mo != null && kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90)
+		if (mo != null && kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self))
 		{
 			SpawnMissileAngle(atktype, mo.Angle - 45. / 8, mo.Vel.Z);
 			SpawnMissileAngle(atktype, mo.Angle + 45. / 8, mo.Vel.Z);
