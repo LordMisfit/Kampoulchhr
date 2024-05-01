@@ -7908,9 +7908,16 @@ class Devastator : MarineWeapon
 		double pspwnhgt2 = 6.0;
 		int shotsfired;
 		string firetype;
+		bool devupgrade;
+		if (CountInv("DevastatorUpgrade")) devupgrade = true;
 
 		A_StartSound("weapons/devshot",101,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.95,1.05));
 		A_StartSound("weapons/devburt",102,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.95,1.05));
+		if (devupgrade)
+		{
+			A_StartSound("weapons/devshot",201,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.95,1.05));
+			A_StartSound("weapons/devburt",202,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.95,1.05));
+		}
 		if (type == -2)
 		{
 			shotsfired = invoker.altammocost;
@@ -7929,6 +7936,15 @@ class Devastator : MarineWeapon
 			A_StartSound("weapons/devburt",106,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
 			A_StartSound("weapons/devburt",107,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
 			A_StartSound("weapons/devburt",108,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+			if (devupgrade)
+			{
+				A_StartSound("weapons/devshot",203,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
+				A_StartSound("weapons/devshot",204,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
+				A_StartSound("weapons/devshot",205,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+				A_StartSound("weapons/devburt",206,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
+				A_StartSound("weapons/devburt",207,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
+				A_StartSound("weapons/devburt",208,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+			}
 		}
 		if (type == -1)
 		{
@@ -7974,9 +7990,35 @@ class Devastator : MarineWeapon
 			A_StartSound("weapons/devburt",106,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
 			A_StartSound("weapons/devburt",107,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
 			A_StartSound("weapons/devburt",108,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+			if (devupgrade)
+			{
+				A_StartSound("weapons/devshot",203,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
+				A_StartSound("weapons/devshot",204,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
+				A_StartSound("weapons/devshot",205,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+				A_StartSound("weapons/devburt",206,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.85,1.15));
+				A_StartSound("weapons/devburt",207,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.75,1.25));
+				A_StartSound("weapons/devburt",208,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
+			}
+		}
+		if (devupgrade)
+		{
+			pangle *= 0.667;
+			pangle2 *= 0.667;
+			ppitch *= 0.667;
+			ppitch2 *= 0.667;
+			pspwnoff *= 0.667;
 		}
 		for (int i = 0; i < shotsfired; i++)
 		{
+			if (devupgrade)
+			{
+				A_FireProjectile(firetype,frandom(pangle,pangle2),false,pspwnoff,frandom(pspwnhgt,pspwnhgt2),FPF_NOAUTOAIM,frandom(ppitch,ppitch2));
+				if (random(1,4) <= 1) 
+				{
+					A_FireProjectile(firetype,frandom(pangle,pangle2),false,pspwnoff,frandom(pspwnhgt,pspwnhgt2),FPF_NOAUTOAIM,frandom(ppitch,ppitch2));
+					if (random(1,4) <= 1) A_FireProjectile(firetype,frandom(pangle,pangle2),false,pspwnoff,frandom(pspwnhgt,pspwnhgt2),FPF_NOAUTOAIM,frandom(ppitch,ppitch2));
+				}
+			}
 			A_FireProjectile(firetype,frandom(pangle,pangle2),false,pspwnoff,frandom(pspwnhgt,pspwnhgt2),FPF_NOAUTOAIM,frandom(ppitch,ppitch2));
 			A_FireProjectile(firetype,frandom(pangle,pangle2),true,pspwnoff,frandom(pspwnhgt,pspwnhgt2),FPF_NOAUTOAIM,frandom(ppitch,ppitch2));
 		}
@@ -7988,11 +8030,14 @@ class Devastator : MarineWeapon
 	action void A_DevPreReady()
 	{
 		invoker.altammocost = 5; // Set to affect the alt-fire cost and number of total shots [x2 the value of missiles] V:
+		if (CountInv("DevastatorUpgrade")) invoker.altammocost = 4;
+		
 		invoker.readytimer++;
 		if (invoker.readytimer >= random(3,4))
 		{
 			invoker.shotsfired = 0;
 			invoker.shotsfiredthreshold = randompick(10,random(12,13),random(12,13),15,15,15,15,15,15,15,random(17,18),random(17,18),20);
+			if (CountInv("DevastatorUpgrade")) invoker.shotsfiredthreshold *= 0.5;
 			if (kcdebug_weaponstatdisplays2) Console.Printf("invoker.shotsfiredthreshold [set]: %d", invoker.shotsfiredthreshold);
 		}
 	}
@@ -8058,14 +8103,34 @@ class Devastator : MarineWeapon
 			TNT1 A 0 
 			{
 				invoker.readytimer = 0;
-				invoker.speedtype = randompick(0,0,1,1,1) + 1;
-				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype = randompick(0,0,0,0,1) + 1;
-				invoker.speedtype2 = 1 + 1;
-				if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype2 = randompick(0,0,1,1,1) + 1;
+				if (CountInv("DevastatorUpgrade"))
+				{
+					invoker.speedtype = randompick(0,0,0,0,1,1,1) + 1;
+					if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype = randompick(0,0,0,0,0,0,1) + 1;
+					invoker.speedtype2 = randompick(0,0,1,1,1,1,1) + 1;
+					if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype2 = randompick(0,0,0,0,1,1,1) + 1;
+				}
+				else
+				{
+					invoker.speedtype = randompick(0,0,1,1,1) + 1;
+					if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype = randompick(0,0,0,0,1) + 1;
+					invoker.speedtype2 = 1 + 1;
+					if (invoker.shotsfired > invoker.shotsfiredthreshold) invoker.speedtype2 = randompick(0,0,1,1,1) + 1;
+				}
 				if (A_DualDevCheck()) 
 				{
-					invoker.speedtype -= 1;
-					invoker.speedtype2 -= 1;
+					if (CountInv("DevastatorUpgrade"))
+					{
+						invoker.speedtype -= 2;
+						invoker.speedtype2 -= 2;
+					}
+					else
+					{
+						invoker.speedtype -= 1;
+						invoker.speedtype2 -= 1;
+					}
+					if (invoker.speedtype < 1) invoker.speedtype = 1;
+					if (invoker.speedtype2 < 1) invoker.speedtype2 = 1;
 					return resolvestate("FireDual");
 				}
 				return resolvestate(null);
