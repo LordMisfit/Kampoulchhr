@@ -14083,9 +14083,11 @@ class BulletPuffSWCoop : BulletPuffSW
 
 class Riotgun : MarineWeapon
 {
+	bool modpackspawnattempt;
 	int RiotClipCounter;
 	int SWRiotMode;
 	int WeapFlagsTemp;
+	bool riotmod;
 	
 	default
 	{
@@ -14117,9 +14119,9 @@ class Riotgun : MarineWeapon
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
-	action void A_RiotGunTracer(actor playera, int type, double shotpitch, double shotangle, double shotheight)
+	action void A_RiotGunTracer(actor playera, int numpellets, int type, double shotpitch, double shotangle, double shotheight)
 	{
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < numpellets; i++)
 		{
 			actor BombShotsB, BombShots;
 			double origang = playera.angle;
@@ -14129,10 +14131,20 @@ class Riotgun : MarineWeapon
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (randompick(4,4,4,4,4,5) * random(1,3)), 'Bullet', 0.0);
 		}
 	}
-
+	
+	action void A_CheckRiotModPack()
+	{
+		invoker.riotmod = false;
+		actor playera = players[0].mo;
+		if (playera.CountInv("RiotGunUpgrade")) invoker.riotmod = true;
+	}
+	
 	action void A_RiotShooter(int type = 0)
 	{
+		invoker.riotmod = false;
+		int pelletnum = 12;
 		actor playera = players[0].mo;
+		if (playera.CountInv("RiotGunUpgrade")) invoker.riotmod = true;
 		KCPlayerPawn KCP;
 		KCP = KCPlayerPawn(playera);
 		double shotpitch = 2.8;
@@ -14148,13 +14160,51 @@ class Riotgun : MarineWeapon
 			shotangle = 6.2;
 			shotpitch = 4.2;
 		}
+
+		if (invoker.riotmod)
+		{
+			dmg = randompick(4,4,4,5,5,5) * random(1,randompick(3,3,3,4,4));
+			shotpitch *= 0.75;
+			shotangle *= 0.75;
+			pelletnum += random(1,3);
+		}
+
 		if (A_CheckTracerConditions())
 		{
-			A_RiotGunTracer(playera, 0, shotpitch, shotangle, A_GetShotHeightTracer(36));
+			A_RiotGunTracer(playera, pelletnum, 0, shotpitch, shotangle, A_GetShotHeightTracer(36));
 		}
 		else
 		{
-			A_FireBullets(shotangle, shotpitch, 12, dmg, "BulletPuffPlayerSW", FBF_NORANDOM|FBF_NOFLASH);
+			A_FireBullets(shotangle, shotpitch, pelletnum, dmg, "BulletPuffPlayerSW", FBF_NORANDOM|FBF_NOFLASH);
+		}
+	}
+	
+	action void A_RiotPitch(int type)
+	{
+		if (type == 0)
+		{
+			if (invoker.riotmod) A_SetPitch(pitch - 2.4);
+											else A_SetPitch(pitch - 4.0);
+		}
+		if (type == 1)
+		{
+			if (invoker.riotmod) A_SetPitch(pitch + 0.3);
+											else A_SetPitch(pitch + 0.5);
+		}
+		if (type == 2)
+		{
+			if (invoker.riotmod) A_SetPitch(pitch - 0.9);
+											else A_SetPitch(pitch - 1.5);
+		}
+		if (type == 3)
+		{
+			if (invoker.riotmod) A_SetPitch(pitch - 1.2);
+											else A_SetPitch(pitch - 2.0);
+		}
+		if (type == 4)
+		{
+			if (invoker.riotmod) A_SetPitch(pitch + 2.1);
+											else A_SetPitch(pitch + 3.5);
 		}
 	}
 	
@@ -14163,47 +14213,76 @@ class Riotgun : MarineWeapon
 		Ready:
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				if (invoker.SWRiotMode >= 1) return resolvestate("ModeReady");
 				return resolvestate(null);
 			}
-			RIOT C 1 A_WeaponReady(WRF_ALLOWUSER4);
+			RIOT C 1 
+			{
+				A_CheckRiotModPack();
+				A_WeaponReady(WRF_ALLOWUSER4);
+			}
 			Loop;
 		ModeReady:
-			RITO A 1 A_WeaponReady(WRF_ALLOWUSER4);
+			RITO A 1 
+			{
+				A_CheckRiotModPack();
+				A_WeaponReady(WRF_ALLOWUSER4);
+			}
 			Loop;
 		Deselect:
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				invoker.RiotClipCounter -= 4;
 				if (invoker.RiotClipCounter < 0) invoker.RiotClipCounter = 0;
 			}
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				if (invoker.SWRiotMode >= 1) return resolvestate("ModeDeselect");
 				return resolvestate(null);
 			}
 		DeselectLoop:
-			RIOT A 1 A_Lower(12);
+			RIOT A 1 
+			{
+				A_CheckRiotModPack();
+				A_Lower(12);
+			}
 			Loop;
 		ModeDeselect:
-			RITO A 1 A_Lower(12);
+			RITO A 1 
+			{
+				A_CheckRiotModPack();
+				A_Lower(12);
+			}
 			Loop;
 		Select:
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				A_StartSound("Weapons/RiotgunLoad",CHAN_6);
 				if (invoker.SWRiotMode >= 1) return resolvestate("ModeSelect");
 				return resolvestate(null);
 			}
 		SelectLoop:
-			RIOT A 1 A_Raise(12);
+			RIOT A 1 
+			{
+				A_CheckRiotModPack();
+				A_Raise(12);
+			}
 			Loop;
 		ModeSelect:
-			RITO A 1 A_Raise(12);
+			RITO A 1 
+			{
+				A_CheckRiotModPack();
+				A_Raise(12);
+			}
 			Loop;
 		Fire:
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				invoker.WeapFlagsTemp = (WRF_NOFIRE|WRF_NOSWITCH);
 				if (invoker.SWRiotMode >= 1) return resolvestate("Fire2");
 				return resolvestate(null);
@@ -14214,62 +14293,82 @@ class Riotgun : MarineWeapon
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
-			TNT1 A 0 A_RiotShooter(0);
-			RIOT D 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT D 1 Bright 
+			{
+				A_RiotShooter(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT G 1 Bright 
 			{
 				A_IncGunKiaiCounter((5 * random(8,12)));
-				A_SetPitch(pitch - 4.0);
+				A_RiotPitch(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT G 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT E 1 
 			{
-				A_SetPitch(pitch + 0.5);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 A_WeaponReady(invoker.WeapFlagsTemp);
 			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
-			TNT1 A 0 { invoker.RiotClipCounter += 1; }
-			TNT1 A 0 
+			RIOT E 1 offset(7, 39) 
 			{
-				A_SetPitch(pitch + 0.5);
+				if (invoker.riotmod) A_SetTics(0);
+				invoker.RiotClipCounter += 1;
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 offset(7, 39) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT E 1 offset(15,47) 
 			{
-				A_SetPitch(pitch + 0.5);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 offset(15,47) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT E 1 offset(7, 39) 
 			{
-				A_SetPitch(pitch + 0.5);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 offset(7, 39) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT E 1 offset(-1, 32) 
 			{
-				A_SetPitch(pitch + 0.5);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT E 1 offset(-1, 32) 
 			{
-				A_SetPitch(pitch + 0.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT E 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT F 1 offset(-1, 32) 
 			{
-				A_SetPitch(pitch + 0.5);
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT F 1 offset(-1, 32) 
+			{
+				A_RiotPitch(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
 			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RIOT F 1 offset(-1, 32) 
 			{
-				A_SetPitch(pitch + 0.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT F 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-		
-			RIOT A 3 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT B 3 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 5 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
+			RIOT A 3 offset(-1, 32) 
+			{
+				if (invoker.riotmod) A_SetTics(2);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT B 3 offset(-1, 32) 
+			{
+				if (invoker.riotmod) A_SetTics(2);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT C 5 offset(0, 32) 
+			{
+				if (invoker.riotmod) A_SetTics(random(3,4));
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			RIOT A 0 A_CheckReload();
 			TNT1 A 0 
 			{
@@ -14281,143 +14380,196 @@ class Riotgun : MarineWeapon
 		Fire2:
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
-			TNT1 A 0 A_CheckReload();
-			TNT1 A 0 A_RiotShooter(1);
-			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0
+			RITO D 1 Bright 
+			{
+				A_CheckReload();
+				A_RiotShooter(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RITO E 1 Bright 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			RITO F 1 offset(6, 39) 
 			{
 				A_IncGunKiaiCounter((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
+				A_RiotPitch(2);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
-			TNT1 A 0
+			RITO B 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 1.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_RiotPitch(3);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
+			RITO C 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 2.0);
+				A_RiotPitch(4);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
-			{
-				A_SetPitch(pitch + 3.5);
-			}
-			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0 A_CheckReload();
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
+				A_CheckReload();
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
-			TNT1 A 0 A_RiotShooter(1);
-			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 
+			RITO D 1 Bright 
+			{
+				A_RiotShooter(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RITO E 1 Bright 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			RITO F 1 offset(6, 39) 
 			{
 				A_IncGunKiaiCounter((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
+				A_RiotPitch(2);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
-			TNT1 A 0
+			RITO B 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 1.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_RiotPitch(3);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
+			RITO C 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 2.0);
+				A_RiotPitch(4);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
-			{
-				A_SetPitch(pitch + 3.5);
-			}
-			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0 A_CheckReload();
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
+				A_CheckReload();
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
-			TNT1 A 0 A_RiotShooter(1);
-			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0
+			RITO D 1 Bright 
+			{
+				A_RiotShooter(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RITO E 1 Bright 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			RITO F 1 offset(6, 39) 
 			{
 				A_IncGunKiaiCounter((1 * random(8,12)));
 				invoker.RiotClipCounter += 1;
+				A_RiotPitch(2);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
-			TNT1 A 0
+			RITO B 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 1.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_RiotPitch(3);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO F 1 offset(6, 39) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
+			RITO C 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 2.0);
+				A_RiotPitch(4);
+				A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
 			}
-			RITO B 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0
-			{
-				A_SetPitch(pitch + 3.5);
-			}
-			RITO C 1 offset(0, 32) A_WeaponReady(WRF_NOBOB | WRF_NOPRIMARY);
-			TNT1 A 0 A_CheckReload();
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
+				A_CheckReload();
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
-			TNT1 A 0 A_RiotShooter(1);
-			RITO DE 1 Bright A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0
+			RITO D 1 Bright 
+			{
+				A_RiotShooter(1);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RITO E 1 Bright 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
+			RITO F 1 offset(6, 39) 
 			{
 				A_IncGunKiaiCounter((2 * random(8,12)));
 				invoker.RiotClipCounter += 1;
+				A_RiotPitch(2);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			//A_SpawnItemEx("SWShellCasingSpawner",cos(-pitch)*30-8,11,25+sin(-pitch)*30);
-			TNT1 A 0
+			RITO B 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 1.5);
+				if (invoker.riotmod) A_SetTics(0);
+				A_RiotPitch(3);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RITO F 1 offset(6, 39) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0
+			RITO C 1 offset(0, 32) 
 			{
-				A_SetPitch(pitch - 2.0);
+				A_RiotPitch(4);
+				A_WeaponReady(invoker.WeapFlagsTemp);
 			}
-			RITO B 1 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0
-			{
-				A_SetPitch(pitch + 3.5);
-			}
-			RITO C 1 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT A 0 A_CheckForReload(4, "Reload2");
 			TNT1 A 0 
 			{
+				A_CheckRiotModPack();
+				A_CheckForReload(4, "Reload2");
 				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
-		
 			Goto Ready;
 		Reload:
 			TNT1 A 0 A_JumpIfNoAmmo("Ready");
-			TNT1 A 0 A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
-			RIOT C 1 offset(0, 50) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 1 offset(0, 59) A_WeaponReady(invoker.WeapFlagsTemp);
+			RIOT C 1 offset(0, 50) 
+			{
+				A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT C 1 offset(0, 59) 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			RIOT C 1 offset(0, 68) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 18 offset (0, 71) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 1 offset(0, 62) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 1 offset(0, 44) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
-			RIOT C 1 offset(0, 35) A_WeaponReady(invoker.WeapFlagsTemp);
-			RIOT C 1 offset(0, 32) A_WeaponReady(invoker.WeapFlagsTemp);
+			RIOT C 18 offset (0, 71) 
+			{
+				A_WeaponReady(invoker.WeapFlagsTemp);
+				if (invoker.riotmod) A_SetTics(randompick(10,11,11,11,11));
+			}
+			RIOT C 1 offset(0, 62) 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT C 1 offset(0, 44) 
+			{
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT C 1 offset(0, 35) 
+			{
+				A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RIOT C 1 offset(0, 32) 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			TNT1 A 0 
 			{
 				invoker.RiotClipCounter -= 4;
@@ -14426,15 +14578,33 @@ class Riotgun : MarineWeapon
 			Goto Ready;
 		Reload2:
 			TNT1 A 0 A_JumpIfNoAmmo("Ready");
-			TNT1 A 0 A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
-			RITO A 1 offset(-1, 50) A_WeaponReady(invoker.WeapFlagsTemp);
-			RITO A 1 offset(-1, 59) A_WeaponReady(invoker.WeapFlagsTemp);
+			RITO A 1 offset(-1, 50) 
+			{
+				A_StartSound("Weapons/RiotGunUp",CHAN_WEAPON);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
+			RITO A 1 offset(-1, 59) 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			RITO A 1 offset(-1, 68) A_WeaponReady(invoker.WeapFlagsTemp);
-			RITO A 17 offset(-1, 71) A_WeaponReady(invoker.WeapFlagsTemp);
-			RITO A 1 offset(-1, 62) A_WeaponReady(invoker.WeapFlagsTemp);
+			RITO A 17 offset(-1, 71) 
+			{
+				A_WeaponReady(invoker.WeapFlagsTemp);
+				if (invoker.riotmod) A_SetTics(randompick(10,10,10,10,11));
+			}
+			RITO A 1 offset(-1, 62) 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			RITO A 1 offset(-1, 44) A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
-			RITO A 1 offset(-1, 35) A_WeaponReady(invoker.WeapFlagsTemp);
+			RITO A 1 offset(-1, 35) 
+			{
+				A_StartSound("Weapons/RiotGunLoad",CHAN_WEAPON);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			RITO A 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
@@ -14450,10 +14620,14 @@ class Riotgun : MarineWeapon
 				A_StartSound("Weapons/RiotgunLoad");
 				invoker.WeapFlagsTemp = (WRF_NOFIRE|WRF_NOSWITCH);
 			}
-			RITO A 1 A_WeaponReady(invoker.WeapFlagsTemp);
-			TNT1 A 0 A_GiveInventory("RiotGunCooldown", 1);
+			RITO A 1 
+			{
+				if (invoker.riotmod) A_SetTics(0);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			TNT1 A 0 
 			{
+				A_GiveInventory("RiotGunCooldown", 1);
 				if (invoker.SWRiotMode >= 1) return resolvestate("RiotOff");
 				return resolvestate(null);
 			}
@@ -14467,6 +14641,27 @@ class Riotgun : MarineWeapon
 			RIOT C 4 A_WeaponReady(invoker.WeapFlagsTemp);
 			Goto Ready;
 		Spawn:
+			SW30 Z 4
+			{
+				int chance = 32;
+				if (bDROPPED) chance = 192;
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (playera.CountInv("RiotGun")) 
+				{
+					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					{
+						if (!playera.CountInv("RiotGunModPack"))
+						{
+							A_SpawnItemEx("RiotGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							A_Destroy();
+						}
+					}
+				}
+				invoker.modpackspawnattempt = true;
+			}
+		Idle:
 			SW30 Z -1;
 			Stop;
 	}
