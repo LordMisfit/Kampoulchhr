@@ -2410,11 +2410,11 @@ class KCWeaponBase : Weapon
 		[spawned, BombShots] = A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
 		if (BombShots)
 		{
-			if (CountInv("BlasterPistolUpgrade"))
+			PistolBlast pistolshot;
+			pistolshot = PistolBlast(BombShots);
+			if (pistolshot)
 			{
-				PistolBlast pistolshot;
-				pistolshot = PistolBlast(BombShots);
-				if (pistolshot)
+				if (CountInv("BlasterPistolUpgrade"))
 				{
 					if (!pistolshot.bRIPPER) pistolshot.bRIPPER = true;
 					if (PistolBlastWeak(pistolshot))
@@ -2433,6 +2433,10 @@ class KCWeaponBase : Weapon
 						pistolshot.A_ScaleVelocity(spdboost);
 						pistolshot.Speed *= spdboost;
 					}
+				}
+				else
+				{
+					if (pistolshot.bRIPPER) pistolshot.bRIPPER = false;
 				}
 			}
 		}
