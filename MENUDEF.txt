@@ -90,11 +90,29 @@ OptionValue "StartWeaponSingle"
 	1, "Yes"
 }
 
+OptionValue "StartWeaponSingleWMod"
+{
+	0, "No [DEFAULT]"
+	1, "Yes"
+	2, "No but w/ Mod Pack"
+	3, "Yes & w/ Mod Pack"
+}
+
 OptionValue "StartWeaponDual"
 {
 	0, "No [DEFAULT]"
 	1, "One"
 	2, "Both"
+}
+
+OptionValue "StartWeaponDualWMod"
+{
+	0, "No [DEFAULT]"
+	1, "One"
+	2, "Both"
+	3, "No but w/ Mod Pack"
+	4, "One & w/ Mod Pack"
+	5, "Both & w/ Mod Pack"
 }
 
 OptionValue "KeyLegendSpot"
@@ -305,11 +323,11 @@ OptionMenu "KC-HeiwaSpecific"
 	StaticText " "
 	KCOption "Starts w/ Knife?",		"Determines if Heiwa starts a new game with her knife.",		"kcheiwa_startknife", 				"StartWeaponSingle"
 	KCOption "Starts w/ Glock 21?",		"Determines if Heiwa starts a new game with the Glock 21 Pistol.",		"kcheiwa_startglock", 				"StartWeaponSingle"
-	KCOption "Starts w/ Blaster Pistol[s]?",		"Determines if Heiwa starts a new game with one or two Blaster Pistols.",		"kcheiwa_startblaster", 				"StartWeaponDual"
-	KCOption "Starts w/ Riot Gun?",		"Determines if Heiwa starts a new game with the Riot Gun.",		"kcheiwa_startriotgun", 				"StartWeaponSingle"
-	KCOption "Starts w/ Tommy Gun[s]?",		"Determines if Heiwa starts a new game with one or two Tommy Guns.",		"kcheiwa_starttommygun", 				"StartWeaponDual"
-	KCOption "Starts w/ E-11 Blaster Rifle?",		"Determines if Heiwa starts a new game with the E-11 Blaster Rifle.",		"kcheiwa_startblastrifle", 				"StartWeaponSingle"
-	KCOption "Starts w/ Devastator[s]?",		"Determines if Heiwa starts a new game with one or two Devastators.",		"kcheiwa_startdevastator", 				"StartWeaponDual"
+	KCOption "Starts w/ Blaster Pistol[s]?",		"Determines if Heiwa starts a new game with one or two Blaster Pistols.",		"kcheiwa_startblaster", 				"StartWeaponDualWMod"
+	KCOption "Starts w/ Riot Gun?",		"Determines if Heiwa starts a new game with the Riot Gun.",		"kcheiwa_startriotgun", 				"StartWeaponSingleWMod"
+	KCOption "Starts w/ Tommy Gun[s]?",		"Determines if Heiwa starts a new game with one or two Tommy Guns.",		"kcheiwa_starttommygun", 				"StartWeaponDualWMod"
+	KCOption "Starts w/ E-11 Blaster Rifle?",		"Determines if Heiwa starts a new game with the E-11 Blaster Rifle.",		"kcheiwa_startblastrifle", 				"StartWeaponSingleWMod"
+	KCOption "Starts w/ Devastator[s]?",		"Determines if Heiwa starts a new game with one or two Devastators.",		"kcheiwa_startdevastator", 				"StartWeaponDualWMod"
 	KCOption "Starts w/ Tesla Cannon[s]?",		"Determines if Heiwa starts a new game with one or two Tesla Cannons.",		"kcheiwa_starttesla", 				"StartWeaponDual"
 	KCOption "Starts w/ Black Hole Gen.?",		"Determines if Heiwa starts a new game with the Black Hole Generator [BTW: Heiwa is IMMUNE to the black holes launched by it, both damage and the pull :V].",		"kcheiwa_startbhgen", 				"StartWeaponSingle"
 	KCOption "Starts w/ Translocator?",		"Determines if Heiwa starts a new game with the Translocator Telebeacon System.",		"kcheiwa_starttransloc", 				"StartWeaponSingle"

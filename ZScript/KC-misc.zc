@@ -748,20 +748,31 @@ class PlayerStatItem : Inventory
 						if (kcheiwa_startglock) owner.A_SetInventory("Glock21",1);
 						if (kcheiwa_startblaster) 
 						{
-							if (kcheiwa_startblaster >= 1) owner.A_SetInventory("BlasterPistol",1);
-							if (kcheiwa_startblaster >= 2) owner.A_SetInventory("DualBlasterPistols",1);
+							if (kcheiwa_startblaster == 1 || kcheiwa_startblaster >= 4) owner.A_SetInventory("BlasterPistol",1);
+							if (kcheiwa_startblaster == 2 || kcheiwa_startblaster >= 5) owner.A_SetInventory("DualBlasterPistols",1);
+							if (kcheiwa_startblaster >= 3) owner.A_SetInventory("BlasterPistolUpgrade",1);
 						}
-						if (kcheiwa_startriotgun) owner.A_SetInventory("RiotGun",1);
+						if (kcheiwa_startriotgun) 
+						{
+							if (kcheiwa_startriotgun == 1 || kcheiwa_startriotgun == 3) owner.A_SetInventory("RiotGun",1);
+							if (kcheiwa_startriotgun >= 2) owner.A_SetInventory("RiotGunUpgrade",1);
+						}
 						if (kcheiwa_starttommygun) 
 						{
-							if (kcheiwa_starttommygun >= 1) owner.A_SetInventory("TommyGun",1);
-							if (kcheiwa_starttommygun >= 2) owner.A_SetInventory("DualTommyGuns",1);
+							if (kcheiwa_starttommygun == 1 || kcheiwa_starttommygun >= 4) owner.A_SetInventory("TommyGun",1);
+							if (kcheiwa_starttommygun == 2 || kcheiwa_starttommygun >= 5) owner.A_SetInventory("DualTommyGuns",1);
+							if (kcheiwa_starttommygun >= 3) owner.A_SetInventory("TommyGunUpgrade",1);
 						}
-						if (kcheiwa_startblastrifle) owner.A_SetInventory("BlasterRifle",1);
+						if (kcheiwa_startblastrifle) 
+						{
+							if (kcheiwa_startblastrifle == 1 || kcheiwa_startblastrifle == 3) owner.A_SetInventory("BlasterRifle",1);
+							if (kcheiwa_startblastrifle >= 2) owner.A_SetInventory("BlasterRifleUpgrade",1);
+						}
 						if (kcheiwa_startdevastator) 
 						{
-							if (kcheiwa_startdevastator >= 1) owner.A_SetInventory("Devastator",1);
-							if (kcheiwa_startdevastator >= 2) owner.A_SetInventory("DualDevastators",1);
+							if (kcheiwa_startdevastator == 1 || kcheiwa_startdevastator >= 4) owner.A_SetInventory("Devastator",1);
+							if (kcheiwa_startdevastator == 2 || kcheiwa_startdevastator >= 5) owner.A_SetInventory("DualDevastators",1);
+							if (kcheiwa_startdevastator >= 3) owner.A_SetInventory("DevastatorUpgrade",1);
 						}
 						if (kcheiwa_startdeviation) owner.A_SetInventory("Deviation",1);
 						if (kcheiwa_starttesla) 

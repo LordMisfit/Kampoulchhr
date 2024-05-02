@@ -13749,7 +13749,8 @@ Class BlasterPistol : MarineWeapon
 				let globalvars = KCGlobalVariables.Get();
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-
+				if (playera.CountInv("DualBlasterPistolsDisabled")) A_Overlay(3,null,false);
+																											 else A_Overlay(3,"LeftPrep",false);
 				A_StopSound(CHAN_6);
 				A_StartSound("weapons/blstrpst3",CHAN_6);
 				if (invoker.altshottype == 0)
