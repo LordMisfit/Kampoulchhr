@@ -57,7 +57,7 @@ class ChickenNew : KCCreature // replaces Chicken
 			CHKN A 0;
 			CHKN AB 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -65,19 +65,19 @@ class ChickenNew : KCCreature // replaces Chicken
 			TNT1 A 0;
 			CHKN A 8
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 			}
 			CHKN C 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ChicAttack](1,2));
@@ -171,7 +171,7 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			IMPX AABBCCBB 3
 			{
 				A_FloatChaseCheck(6,12,18,24,0.333,0.333);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -180,15 +180,15 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			IMPX DE 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IMPX F 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ImpMeAttack](5,12), "himp/attack", "himp/attack");
@@ -213,17 +213,17 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			IMPX A 10
 			{
 				A_DynamicMusic();
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			IMPX B 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 
 				// A_ImpMsAttack; Emulation
 				SetDamage(((0+(CountInv("MonsterLevel")/random(22,23)))));
@@ -231,8 +231,8 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			}
 			IMPX CBAB 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 			}
 			IMPX A 0 A_GargDashCheck2();
 			Goto Charge+2;
@@ -311,15 +311,15 @@ class HereticImpLeaderNew : HereticImpNew // replaces HereticImpLeader
 			IMPX DE 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IMPX F 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("HereticImpBallNew", 16, random[ImpMsAttack2](5,12), "himp/leaderattack");
@@ -385,7 +385,7 @@ class PlagueImp : HereticImpLeaderNew
 			IMPX AABBCCBB 3
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -394,15 +394,15 @@ class PlagueImp : HereticImpLeaderNew
 			IMPX DE 6
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IMPX F 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ImpMeAttack](6,14), "himp/attack", "himp/attack");
@@ -434,18 +434,18 @@ class PlagueImp : HereticImpLeaderNew
 			IMPX DE 6
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 135) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(135,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 
 				A_FaceTarget();
 			}
 			IMPX F 6 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 135) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(135,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 
 				if (random(1,256) <= 32) { A_SpawnProjectile("PlagueShot", 16, 0, frandom(-0.6,0.6), frandom(-0.06,0.06)); }
 														else { A_SpawnProjectile("PlagueShot", 16, 0, frandom(-6.0,6.0), frandom(-0.6,0.6)); }
@@ -455,16 +455,16 @@ class PlagueImp : HereticImpLeaderNew
 			IMPX DE 4
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
 
 				A_FaceTarget();
 			}
 			IMPX F 4
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
 
 				if (random(1,256) <= 32) { A_SpawnProjectile("PlagueShot", 16, 0, frandom(-0.96,0.96), frandom(-0.096,0.096)); }
 														else { A_SpawnProjectile("PlagueShot", 16, 0, frandom(-9.6,9.6), frandom(-0.96,0.96)); }
@@ -615,7 +615,7 @@ class WatcherImp : HereticImpNew
 			WATC AABBCCBB 3
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -626,15 +626,15 @@ class WatcherImp : HereticImpNew
 			WATC DE 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			WATC F 4 BRIGHT 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ImpMeAttack](7,14), "himp/attack");
@@ -643,15 +643,15 @@ class WatcherImp : HereticImpNew
 			WATC [\ 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			WATC ] 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ImpMeAttack](7,14), "himp/attack");
@@ -674,15 +674,15 @@ class WatcherImp : HereticImpNew
 			WATC DE 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			WATC F 4 BRIGHT 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("HereticImpBall2", 14, 14, "himp/leaderattack");
@@ -692,15 +692,15 @@ class WatcherImp : HereticImpNew
 			WATC [\ 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			WATC ] 4 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("HereticImpBall2", 14, 14, "himp/leaderattack");
@@ -724,15 +724,15 @@ class WatcherImp : HereticImpNew
 			WATC DE 6 BRIGHT
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			WATC F 6 BRIGHT 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("BeastBall2", 14, random[BeastAttack](1,8)*3, "beast/attack");
@@ -864,7 +864,7 @@ class MummyNew : KCCreature // replaces Mummy
 			MUMM A 0;
 			MUMM ABCD 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -872,22 +872,22 @@ class MummyNew : KCCreature // replaces Mummy
 			MUMM E 0 A_DynamicMusic();
 			MUMM E 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			MUMM F 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[MummyAttack](1,8)*2, "mummy/attack2", "mummy/attack");
 			}
 			MUMM G 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -984,8 +984,8 @@ class MummyLeaderNew : KCCreature // replaces MummyLeader
 			MUMA A 0;
 			MUMA ABCD 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -993,22 +993,22 @@ class MummyLeaderNew : KCCreature // replaces MummyLeader
 			MUMM E 0 A_DynamicMusic();
 			MUMM E 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			MUMM F 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[MummyAttack](1,8)*2, "mummy/attack2", "mummy/attack");
 			}
 			MUMM G 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1016,38 +1016,38 @@ class MummyLeaderNew : KCCreature // replaces MummyLeader
 			MUMA X 0 A_DynamicMusic();
 			MUMA X 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			MUMA Y 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			MUMA X 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			MUMA Y 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			MUMA X 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			MUMA Y 5 Bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("MummyFX1", 32, random[MummyAttack2](1,8)*2, "mummy/attack2");
@@ -1197,9 +1197,9 @@ class IceGolem : KCCreature
 					//A_LogInt(user_regenchanceextra);
 				}
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 				
 
@@ -1212,22 +1212,22 @@ class IceGolem : KCCreature
 			IGLM E 0 A_Jump(128, "Melee2");
 			IGLM E 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IGLM F 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(Random(15,27)*3, "mummy/attack2", "mummy/attack");
 			}
 			IGLM G 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1235,22 +1235,22 @@ class IceGolem : KCCreature
 			IGLM E 0 A_DynamicMusic();
 			IGLM H 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IGLM I 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(Random(15,27)*3, "mummy/attack2", "mummy/attack");
 			}
 			IGLM J 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1403,9 +1403,9 @@ class FrostGolem : IceGolem
 					//A_LogInt(user_regenchanceextra);
 				}
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 				
 
@@ -1418,22 +1418,22 @@ class FrostGolem : IceGolem
 			IGLM E 0 A_Jump(128, "Melee2");
 			IGLM E 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IGLM F 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(Random(15,27)*3, "mummy/attack2", "mummy/attack");
 			}
 			IGLM G 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1441,22 +1441,22 @@ class FrostGolem : IceGolem
 			IGLM E 0 A_DynamicMusic();
 			IGLM H 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			IGLM I 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(Random(15,27)*3, "mummy/attack2", "mummy/attack");
 			}
 			IGLM J 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1464,29 +1464,29 @@ class FrostGolem : IceGolem
 			IGLM E 0 A_DynamicMusic();
 			IGLM K 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_FaceTarget();
 			}
 			IGLM K 8
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 
 				user_randvar1 = random(3,9) * 2;
 				A_StartSound("IceGuyAttack");
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SpawnProjectile("IceGuyFX3New", 48, ((user_randvar1*4)/2), 0, 1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SpawnProjectile("IceGuyFX3New", 48, ((user_randvar1*4)/2), 0, 1); }
 				A_SpawnProjectile("IceGuyFX3New", 48, user_randvar1, 0, 1);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("IceGuyFX3New", 48, 0, 0, 1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("IceGuyFX3New", 48, 0, 0, 1); }
 				A_SpawnProjectile("IceGuyFX3New", 48, -user_randvar1, 0, 1);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SpawnProjectile("IceGuyFX3New", 48, ((-user_randvar1*4)/2), 0, 1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SpawnProjectile("IceGuyFX3New", 48, ((-user_randvar1*4)/2), 0, 1); }
 			}
 			IGLM K 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			Goto See;
@@ -1748,7 +1748,7 @@ class KnightNew : KCCreature // replaces Knight
 			KNIG A 0;
 			KNIG ABCD 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -1757,27 +1757,27 @@ class KnightNew : KCCreature // replaces Knight
 			KNIG E 0 A_DynamicMusic();
 			KNIG E 10
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			KNIG F 8 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 			}
 			KNIG G 8 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 				
 				if (bSHADOW || random(1,256) < 40)
@@ -1792,27 +1792,27 @@ class KnightNew : KCCreature // replaces Knight
 			KNIG E 0 A_DynamicMusic();
 			KNIG E 10
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			KNIG F 8 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 			}
 			KNIG G 8 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 
 				if (bSHADOW || random(1,256) < 40)
@@ -1988,8 +1988,8 @@ class DeathKnight : KCCreature
 			DKNT A 0 A_Jump(51,"SeeShielded");
 			DKNT AABBCCDD 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_DeathKnightShieldOff();
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
@@ -2015,21 +2015,21 @@ class DeathKnight : KCCreature
 			}
 			DKNT E 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			DKNT F 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("monster/dknswg");
 			}
 			DKNT G 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(10*random(1,8), "monster/dknhit");
@@ -2045,32 +2045,32 @@ class DeathKnight : KCCreature
 			}
 			DKNT E 6 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			DKNT F 6 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("monster/kntswg");
 			}
 			DKNT G 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 
 				A_SpawnProjectile("DKDart",32,0,-3,0);
 				A_SpawnProjectile("DKDart",32,0,-1,0);
 				A_SpawnProjectile("DKDart",32,0,1,0);
 				A_SpawnProjectile("DKDart",32,0,3,0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30)
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))
 				{
 					A_SpawnProjectile("DKDart",32,0,-5,0);
 					A_SpawnProjectile("DKDart",32,0,5,0);
 				}
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60)
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self))
 				{
 					A_SpawnProjectile("DKDart",32,0,-7,0);
 					A_SpawnProjectile("DKDart",32,0,7,0);
@@ -2086,8 +2086,8 @@ class DeathKnight : KCCreature
 	
 				user_defendtimer += 1;
 	
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_defendtimermax = 4; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { user_defendtimermax = 5; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_defendtimermax = 4; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_defendtimermax = 5; }
 				else { user_defendtimermax = 6; }
 				if (user_defendtimer >= user_defendtimermax) { user_defendtimer = 0; return resolvestate("Missile1Phase2"); }
 				return resolvestate(null);
@@ -2112,8 +2112,8 @@ class DeathKnight : KCCreature
 					A_SpawnProjectile("FHeadShot",44,-4,12,0);
 				}
 				
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_defendtimermax = 3; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { user_defendtimermax = 4; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_defendtimermax = 3; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_defendtimermax = 4; }
 				else { user_defendtimermax = 5; }
 				if (user_defendtimer >= user_defendtimermax) { user_defendtimer = 0; return resolvestate("Missile1End"); }
 				return resolvestate(null);
@@ -2140,7 +2140,7 @@ class DeathKnight : KCCreature
 
 				user_defendtimer += 1;
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_defendtimermax = 2; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_defendtimermax = 2; }
 				else { user_defendtimermax = 3; }
 				if (user_defendtimer >= user_defendtimermax) 
 				{
@@ -2162,7 +2162,7 @@ class DeathKnight : KCCreature
 					A_SpawnProjectile("DKbolt",44,-4,0,0); 
 				}
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_defendtimermax = 2; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_defendtimermax = 2; }
 				else { user_defendtimermax = 3; }
 				if (user_defendtimer >= user_defendtimermax) 
 				{
@@ -2203,9 +2203,9 @@ class DeathKnight : KCCreature
 				A_DeathKnightShieldOn();
 				user_defendtimer += 1;
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { user_defendtimermax = random(17,18); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_defendtimermax = random(16,17); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { user_defendtimermax = random(15,16); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { user_defendtimermax = random(17,18); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_defendtimermax = random(16,17); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_defendtimermax = random(15,16); }
 				else { user_defendtimermax = 15; }
 
 				if (user_defendtimer >= user_defendtimermax)
@@ -2529,57 +2529,57 @@ class WizardNew : KCCreature // replaces Wizard
 			WZRD A 3
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD A 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { bAVOIDMELEE = true; A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { bAVOIDMELEE = true; A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD A 3
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD A 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { bAVOIDMELEE = true; A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { bAVOIDMELEE = true; A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD B 3
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD B 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { bAVOIDMELEE = true; A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { bAVOIDMELEE = true; A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD B 3
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			WZRD B 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { bAVOIDMELEE = true; A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { bAVOIDMELEE = true; A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -2588,28 +2588,28 @@ class WizardNew : KCCreature // replaces Wizard
 			WZRD N 6
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(67,68)) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(67,68),2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			WZRD O 6
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(67,68)) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(67,68),2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			WZRD P 12 
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(67,68)) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(55,56)) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(44,45)) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(33,34)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(11,12)) { A_SetTics(11); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(67,68),2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(55,56),2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(44,45),2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(33,34),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(11,12),2,true,self)) { A_SetTics(11); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random(1,5)*8, "wizard/melee", "none", "Melee", true);
@@ -2620,68 +2620,68 @@ class WizardNew : KCCreature // replaces Wizard
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk1();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk2();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk1();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk2();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk1();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk2();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk1();
 			}
 			WZRD C 4
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(66,67,67)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,33,34)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(66,67,67),2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,33,34),2,true,self)) { A_SetTics(3); }
 				A_WizAtk2();
 			}
 			WZRD D 12
 			{
 				A_FloatChaseCheck(4,8,12,16,0.5,0.5);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(67,68)) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(55,56)) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(44,45)) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(33,34)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(11,12)) { A_SetTics(11); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(67,68),2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(55,56),2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(44,45),2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(33,34),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(11,12),2,true,self)) { A_SetTics(11); }
 
 				A_WizAtk3("WizardFX1New", 5*random(1,8));
 			}
@@ -2781,8 +2781,8 @@ class GreaterDisciple : KCCreature
 		See: 
 			DISC AAABBB 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			DISC A 0
@@ -2793,7 +2793,7 @@ class GreaterDisciple : KCCreature
 		Blur:
 			DISC A 1
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
 
 				A_StartSound("monster/blur");
 				A_KCChase("Melee","Missile",CHF_FASTCHASE);
@@ -2825,21 +2825,21 @@ class GreaterDisciple : KCCreature
 			DISC C 0 Bright A_Jump(128,"Missile3");
 			DISC C 1 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(0); }
 				A_StartSound("monster/disat1");
 			}
 			DISC CC 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			DISC D 8 Bright
 			{
 				A_FaceTarget();
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(7); }
 
 				A_SpawnProjectile("DiscipleShot1",36,0,-4,0);
 				A_SpawnProjectile("DiscipleShot1",36,0,4,0);
@@ -2852,61 +2852,61 @@ class GreaterDisciple : KCCreature
 		Missile3:
 			DISC E 1 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(0); }
 				A_StartSound("monster/disat2");
 			}
 			DISC EE 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			DISC F 8 Bright 
 			{
 				A_FaceTarget();
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(7); }
 
 				A_SpawnProjectile("DiscipleShot2",36,0,0,0);
 			}
 			DISC E 1 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(0); }
 				A_StartSound("monster/disat2");
 			}
 			DISC EE 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			DISC F 8 Bright 
 			{
 				A_FaceTarget();
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(7); }
 
 				A_SpawnProjectile("DiscipleShot2",36,0,0,0);
 			}
 			DISC E 1 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(0); }
 				A_StartSound("monster/disat2");
 			}
 			DISC EE 5 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			DISC F 8 Bright 
 			{
 				A_FaceTarget();
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(7); }
 
 				A_SpawnProjectile("DiscipleShot2",36,0,0,0);
 			}
@@ -3121,8 +3121,8 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP AABB 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -3139,8 +3139,8 @@ class HereticApprenticeNew : KCCreature
 			APDP C 0 A_Jump(64,"Missile3");
 			APDP D 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("wizard/attack");
 
@@ -3168,14 +3168,14 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha+0.08,0);
 				A_FaceTarget(); 
 			}
 			APDP D 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("wizard/attack");
 
@@ -3185,7 +3185,7 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha-0.08,0);
 				A_FaceTarget();
 			}
@@ -3196,14 +3196,14 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha+0.08,0);
 				A_FaceTarget(); 
 			}
 			APDP D 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("wizard/attack");
 
@@ -3213,7 +3213,7 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha-0.08,0);
 				A_FaceTarget();
 			}
@@ -3224,14 +3224,14 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha+0.08,0);
 				A_FaceTarget(); 
 			}
 			APDP D 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("wizard/attack");
 
@@ -3241,7 +3241,7 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha-0.08,0);
 				A_FaceTarget();
 			}
@@ -3252,14 +3252,14 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha+0.08,0);
 				A_FaceTarget(); 
 			}
 			APDP D 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("wizard/attack");
 
@@ -3269,7 +3269,7 @@ class HereticApprenticeNew : KCCreature
 			}
 			APDP CCCC 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); }
 				A_SetTranslucent(alpha-0.08,0);
 				A_FaceTarget();
 			}
@@ -3486,8 +3486,8 @@ class Banshee : KCCreature
 			BANS A 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(1); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
 
 				A_TakeInventory("BansheeMissile5Token",24);
 				A_TakeInventory("BansheePainToken",2);
@@ -3497,8 +3497,8 @@ class Banshee : KCCreature
 			BANS A 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 75) { A_SetTics(1); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
 
 				A_KCChase("Melee","Missile", CHF_RESURRECT,1,3,1,1);
 				A_SpawnItem("BansheeTrail",0,0);
@@ -3515,7 +3515,7 @@ class Banshee : KCCreature
 			BANS BCD 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 			}
 			BANS B 0 
 			{
@@ -3556,7 +3556,7 @@ class Banshee : KCCreature
 			BANS BCD 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 			}
 			BANS D 0 
 			{
@@ -3570,7 +3570,7 @@ class Banshee : KCCreature
 			BANS BCD 2 
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 			}
 			BANS B 0 A_Jump(256,"BansheeTeleport");
 			Goto See;
@@ -3579,7 +3579,7 @@ class Banshee : KCCreature
 			BANS BCD 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 			}
 			BANS D 0 
 			{
@@ -3608,13 +3608,13 @@ class Banshee : KCCreature
 			BANS BCD 2
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 			}
 			BANS D 4
 			{
 				A_FloatChaseCheck(3,6,9,12,0.625,0.625);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 
 				A_SpawnProjectile("BansheeFire5", 50, 0,-160);
 				A_SpawnProjectile("BansheeFire5", 50, 0,-128);
@@ -3985,7 +3985,7 @@ class IronLichNew : KCCreature // replaces IronLich
 		See:
 			LICH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -3993,22 +3993,22 @@ class IronLichNew : KCCreature // replaces IronLich
 			LICH A 0 A_DynamicMusic(); 
 			LICH A 5 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			LICH B 20 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(11); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(12); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 70) { A_SetTics(13); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(14); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 50) { A_SetTics(15); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(16); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(17); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(18); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 10) { A_SetTics(19); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(11); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(12); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(70,2,true,self)) { A_SetTics(13); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(14); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(50,2,true,self)) { A_SetTics(15); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(16); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(17); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(18); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(10,2,true,self)) { A_SetTics(19); }
 
 				if (kc_monsterlevelenabledflags) A_LichAttack(5 + (CountInv("MonsterLevel") / 30), 1 + (CountInv("MonsterLevel") / 45), 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
 																			else A_LichAttack(5, 1, 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
@@ -4321,19 +4321,19 @@ class IceLich : KCCreature
 		See:
 			ILCH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 				A_SpawnItemEx("IceGuyWisp1", random(-20,20), random(-20,20), random(50,70), 0, 0, 0, 32, 128);
 			}
 			ILCH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 				A_SpawnItemEx("IceGuyWisp1", random(-20,20), random(-20,20), random(50,70), 0, 0, 0, 32, 128);
 			}
 			ILCH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -4342,16 +4342,16 @@ class IceLich : KCCreature
 			ILCH B 0 bright A_JumpIfCloser(300, "Breath");
 			ILCH B 20 bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(11); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(12); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 70) { A_SetTics(13); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(14); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 50) { A_SetTics(15); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(16); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(17); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(18); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 10) { A_SetTics(19); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(11); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(12); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(70,2,true,self)) { A_SetTics(13); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(14); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(50,2,true,self)) { A_SetTics(15); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(16); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(17); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(18); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(10,2,true,self)) { A_SetTics(19); }
 				A_FaceTarget();
 				A_StartSound("IceGuyAttack", CHAN_AUTO);
 
@@ -4373,7 +4373,7 @@ class IceLich : KCCreature
 			}
 			ILCH BBB 2 bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 
 				A_SpawnProjectile("IceBreath", 20, 0, frandom(-10.0,10.0), CMF_CHECKTARGETDEAD);
 			}
@@ -4475,7 +4475,7 @@ class Goldlich : IronlichNew
 		See:
 			LICH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 				A_KCChase("Melee","Missile",0,1,3,1,1);
@@ -4485,23 +4485,23 @@ class Goldlich : IronlichNew
 			LICH A 0 A_DynamicMusic(); 
 			LICH A 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 				A_FaceTarget();
 			}
 			LICH B 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 
 				A_LichAttack(5 + (CountInv("MonsterLevel") / 10), 1 + (CountInv("MonsterLevel") / 15), 8*random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
 			}
 			LICH BBB 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 				A_FaceTarget();
 			}
@@ -4511,8 +4511,8 @@ class Goldlich : IronlichNew
 			LICH A 1 A_FaceTarget();
 			LICH A 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 			}
 			LICH B 0
@@ -4537,8 +4537,8 @@ class Goldlich : IronlichNew
 			TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0 A_KCWander(0,1,3,1,1);
 			TNT1 A 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_SetSolid();
 			}
 			TNT1 A 0 A_SpawnItemEx("TeleportFog");
@@ -4546,16 +4546,16 @@ class Goldlich : IronlichNew
 		Missile3:
 			LICH B 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_StartSound("goldlich/attack2");
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 			}
 			LICH B 1 A_FaceTarget();
 			LICH B 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 
 				for (user_barragecounter = 0; user_barragecounter < 12; user_barragecounter++)
 				{
@@ -4566,22 +4566,22 @@ class Goldlich : IronlichNew
 			LICH B 1 A_FaceTarget();
 			LICH B 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 			}
 			LICH B 1 A_FaceTarget();
 			LICH B 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 240) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(240,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(2); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 			}
 			LICH B 1 A_FaceTarget();
 			LICH B 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 			}
 			LICH B 1 A_FaceTarget();
@@ -4589,8 +4589,8 @@ class Goldlich : IronlichNew
 		Missile4:
 			LICH B 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_StartSound("goldlich/attack1");
 
 				user_shotsfired = 0;
@@ -4605,8 +4605,8 @@ class Goldlich : IronlichNew
 		Missile4Loop: // 4 times
 			LICH B 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 
 				A_SpawnProjectile("GoldLichFire");
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
@@ -4833,7 +4833,7 @@ class BloodLich : KCCreature
 		See:
 			BLCH A 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
@@ -4844,9 +4844,9 @@ class BloodLich : KCCreature
 			BLCH B 0 Bright A_Jump(96,"Curse");
 			BLCH B 6 Bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				A_StartSound("MageStaffFire", CHAN_AUTO);
 
@@ -4868,7 +4868,7 @@ class BloodLich : KCCreature
 			}
 			BLCH BBB 2 Bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 
 				A_SpawnProjectile("FireBreath", 20, 0, frandom(-3.0,3.0), CMF_CHECKTARGETDEAD);
 			}
@@ -4884,9 +4884,9 @@ class BloodLich : KCCreature
 			BLCH B 0 Bright A_JumpIfCloser(300, "Breath");
 			BLCH B 6 Bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_SpawnProjectile("CurseSpell", 20, 0, 0, 1);
@@ -5077,8 +5077,8 @@ class ClinkNew : KCCreature // replaces Clink
 			CLNK ABCD 3
 			{
 				A_SetInventory("ClinkLungeAttackStatus",0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23))
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self))
 				{
 					A_KCChase("Melee","Missile",0,1,3,1,1); 
 				}
@@ -5092,13 +5092,13 @@ class ClinkNew : KCCreature // replaces Clink
 			CLNK E 0 A_DynamicMusic();
 			CLNK E 0
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) 
 				{
 					if (random(1,256) <= 154) { return resolvestate("AxeMissile"); } else { return resolvestate("LungeAttack"); } 
 					return resolvestate("See");
 				}
 				else
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) 
 				{
 					if (random(1,256) <= 85) { return resolvestate("AxeMissile"); } else { return resolvestate("LungeAttack"); } 
 					return resolvestate("See"); 
@@ -5110,14 +5110,14 @@ class ClinkNew : KCCreature // replaces Clink
 		AxeMissile:
 			CLNK EF 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			CLNK G 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("ClinkAxe", 30, random[ClinkAttack](3,9), "clink/attack");
@@ -5131,9 +5131,9 @@ class ClinkNew : KCCreature // replaces Clink
 			CLNK P 0 A_DynamicMusic();
 			CLNK P 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			CLNK P 0
@@ -5162,9 +5162,9 @@ class ClinkNew : KCCreature // replaces Clink
 			CLNK G 0 A_FaceTarget();
 			CLNK G 7
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_SetInventory("ClinkLungeAttackStatus",0);
 				A_FaceTarget();
 				
@@ -5180,21 +5180,21 @@ class ClinkNew : KCCreature // replaces Clink
 			CLNK E 0 A_DynamicMusic();
 			CLNK E 5 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			CLNK F 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			CLNK G 7 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(random[ClinkAttack](3,9), "clink/attack", "clink/attack");
@@ -5409,21 +5409,21 @@ class DarkClink : KCCreature //Recolour by Bouncy, new (edited) sprites by Phobu
 			DCLK ABCD 3
 			{
 				A_SetInventory("ClinkLungeAttackStatus",0);
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 
 				user_fastchasetimermax = 8;
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > random(112,113)) { user_fastchasetimermax = 5; }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 75) { user_fastchasetimermax = 6; }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > random(37,38)) { user_fastchasetimermax = 7; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(112,113),2,true,self)) { user_fastchasetimermax = 5; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { user_fastchasetimermax = 6; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { user_fastchasetimermax = 7; }
 				user_fastchasetimer++;
 				if (user_fastchasetimer >= user_fastchasetimermax) 
 				{
-					if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > random(22,23)) { A_KCChase("Melee","Missile",CHF_FASTCHASE|CHF_NIGHTMAREFAST,1,3,1,1); } else { A_KCChase("Melee",null,CHF_FASTCHASE|CHF_NIGHTMAREFAST,1,3,1,1); }
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_KCChase("Melee","Missile",CHF_FASTCHASE|CHF_NIGHTMAREFAST,1,3,1,1); } else { A_KCChase("Melee",null,CHF_FASTCHASE|CHF_NIGHTMAREFAST,1,3,1,1); }
 					user_fastchasetimer = 0; 
 				}
 				else
 				{
-					if (CountInv("MonsterLevel") && CountInv("MonsterLevel") >  random(22,23)) { A_KCChase("Melee","Missile",0,1,3,1,1); } else { A_KCChase("Melee",null,0,1,3,1,1); }
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_KCChase("Melee","Missile",0,1,3,1,1); } else { A_KCChase("Melee",null,0,1,3,1,1); }
 				}
 			}
 			Loop;
@@ -5431,21 +5431,21 @@ class DarkClink : KCCreature //Recolour by Bouncy, new (edited) sprites by Phobu
 			TNT1 A 0 A_DynamicMusic();
 			DCLK E 4
 			{
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			DCLK F 3
 			{
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_FaceTarget();
 			}
 			DCLK G 6 
 			{
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 135) { A_SetTics(3); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 45) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(135,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 				
 				A_CustomMeleeAttack(5*random(1,10), "clink/attack", "clink/attack");
@@ -5455,14 +5455,14 @@ class DarkClink : KCCreature //Recolour by Bouncy, new (edited) sprites by Phobu
 		Missile:
 			DCLK EF 4
 			{
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			DCLK G 4
 			{
-				if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (CountInv("MonsterLevel") && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 
 				A_CustomComboAttack("ClinkAxe2", 30, 5*random(1,10), "clink/attack");
@@ -5619,8 +5619,8 @@ class BeastNew : KCCreature // replaces Beast
 		See:
 			BEAS ABCDEF 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -5628,20 +5628,20 @@ class BeastNew : KCCreature // replaces Beast
 			BEAS H 0 A_DynamicMusic(); 
 			BEAS H 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			BEAS I 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 				
 				A_CustomComboAttack("BeastBallNew", 32, random[BeastAttack](1,8)*3, "beast/attack");
@@ -5763,9 +5763,9 @@ class ShadowBeast : KCCreature
 			TNT1 A 0 A_JumpIfHealthLower((user_MaxHP / 2), "Run");
 			BDEM ABCDEF 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); bAVOIDMELEE = true; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); bAVOIDMELEE = true; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); bAVOIDMELEE = true; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); bAVOIDMELEE = true; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); bAVOIDMELEE = true; }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -5773,9 +5773,9 @@ class ShadowBeast : KCCreature
 			TNT1 A 0 A_StartSound("shadowbeast/sight");
 			BDEM AABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFF 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_KCChase(null,null,0,1,3,1,1);
 			}
 			TNT1 A 0 A_Jump(252, "Missile");
@@ -5789,16 +5789,16 @@ class ShadowBeast : KCCreature
 		Missile1a:
 			BDEM H 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			BDEM I 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall1", 56, 0, -8);
@@ -5809,54 +5809,54 @@ class ShadowBeast : KCCreature
 		Missile1b:
 			BDEM H 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			BDEM I 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, -16);
 			}
 			BDEM I 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, -8);
 			}
 			BDEM I 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, 0);
 			}
 			BDEM I 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, 8);
 			}
 			BDEM I 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, 16);
 			}
 			BDEM I 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 		
 				A_SpawnProjectile("ShadowBeastBall2", 56, 0, 32);
@@ -5868,14 +5868,14 @@ class ShadowBeast : KCCreature
 		Missile2a:
 			BDEM H 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			BDEM IIIIIIIIIIIII 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 150) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(150,2,true,self)) { A_SetTics(1); }
 
 				A_SpawnProjectile("ShadowBeastBallFire", 56, 0, random(-8,8));
 			}
@@ -5883,21 +5883,21 @@ class ShadowBeast : KCCreature
 		Missile2b:
 			BDEM H 16 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(78,79,79,79)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(67,68)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(56,56,56,57)) { A_SetTics(11); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(12); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,34,34,34)) { A_SetTics(13); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(22,23)) { A_SetTics(14); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(11,11,11,12)) { A_SetTics(15); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(78,79,79,79),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(67,68),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(56,56,56,57),2,true,self)) { A_SetTics(11); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(12); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,34,34,34),2,true,self)) { A_SetTics(13); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(14); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(11,11,11,12),2,true,self)) { A_SetTics(15); }
 				A_FaceTarget();
 			}
 			BDEM I 6 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 
 				A_SpawnProjectile("ShadowBeastBall3", 56, 0, -64);
@@ -5991,13 +5991,13 @@ class ShadowBeast : KCCreature
 			TNT1 A 0 A_Jump(60, 45);
 			TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 2 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 150) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(150,2,true,self)) { A_SetTics(1); }
 				A_KCWander(0,1,3,1,1);
 			}
 			BDEM ABCDEF 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_FadeIn(0.1667,FTF_CLAMP);
 				if (random(1,6) == 1) { A_KCWander(0,1,3,1,1); } else { A_KCChase(null,null,0,1,3,1,1); }
 			}
@@ -6708,9 +6708,9 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			MNTR ABCD 5
 			{
 				A_SetInventory("MaulotaurChargeDefense",0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_MinotaurRoam();
 			}
 			Loop;
@@ -6718,9 +6718,9 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			MNTR ABCD 5 
 			{
 				A_SetInventory("MaulotaurChargeDefense",0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_MinotaurChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -6732,25 +6732,25 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			TNT1 A 0 A_DynamicMusic();
 			MNTR V 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			MNTR W 7
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_FaceTarget();
 			}
 			MNTR X 12 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,34,34,34)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(11,11,11,12)) { A_SetTics(11); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,34,34,34),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(11,11,11,12),2,true,self)) { A_SetTics(11); }
 				A_MinotaurAtk1(4*random(1,8), -16);
 			}
 			Goto See;
@@ -6762,23 +6762,23 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			TNT1 A 0 A_DynamicMusic();
 			MNTR V 10
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				if (random(1,256) <= 170) { A_MinotaurDecide(); }
 			}
 			MNTR Y 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			MNTR Z 9 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(8); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(8); }
 				A_MinotaurAtk2("MinotaurFX1",5*random(1,8),3*random(1,8));
 			}
 			Goto See;
@@ -6790,25 +6790,25 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			TNT1 A 0 A_DynamicMusic();
 			MNTR V 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			MNTR W 7
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_FaceTarget();
 			}
 			MNTR X 12 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,34,34,34)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(11,11,11,12)) { A_SetTics(11); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,34,34,34),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(11,11,11,12),2,true,self)) { A_SetTics(11); }
 				A_MinotaurAtk3(4*random(1,8), -16, "MinotaurFX2New");
 			}
 			Goto See;
@@ -6820,10 +6820,10 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			TNT1 A 0 A_DynamicMusic();
 			MNTR X 12
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(33,34,34,34)) { A_SetTics(9); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > randompick(11,11,11,12)) { A_SetTics(11); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(33,34,34,34),2,true,self)) { A_SetTics(9); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(randompick(11,11,11,12),2,true,self)) { A_SetTics(11); }
 			}
 			Goto Hammer;
 		Charge:
@@ -7039,7 +7039,7 @@ class SnakeNew : KCCreature // replaces Snake
 			SNKE A 0;
 			SNKE ABCD 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -7048,29 +7048,29 @@ class SnakeNew : KCCreature // replaces Snake
 			TNT1 A 0 A_DynamicMusic();
 			SNKE FF 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			SNKE FFF 4
 			{
 				A_CheckIfTargetDead("See");
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 
 				if (A_JumpIfCloser(256,null)) { user_varience = 1.0; }
 				else if (A_JumpIfCloser(512,null)) { user_varience = 2.0; }
 				else if (A_JumpIfCloser(1024,null)) { user_varience = 3.0; }
 				else if (A_JumpIfCloser(2048,null)) { user_varience = 4.0; }
 				else { user_varience = 5.0; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
 				A_SpawnProjectile("SnakeProjANew", 32, 0, 0, CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, 0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { A_SpawnProjectile("SnakeProjANew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
 			}
 			TNT1 A 0
 			{
@@ -7078,27 +7078,27 @@ class SnakeNew : KCCreature // replaces Snake
 			}
 			SNKE FFF 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			SNKE F 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(3); }
 
 				if (A_JumpIfCloser(256,null)) { user_varience = 1.0; }
 				else if (A_JumpIfCloser(512,null)) { user_varience = 2.0; }
 				else if (A_JumpIfCloser(1024,null)) { user_varience = 3.0; }
 				else if (A_JumpIfCloser(2048,null)) { user_varience = 4.0; }
 				else { user_varience = 5.0; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
 				A_SpawnProjectile("SnakeProjBNew", 32, 0, 0, CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, 0);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SpawnProjectile("SnakeProjBNew", 32, 0, frandom(user_varience,-user_varience), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(user_varience,-user_varience)); }
 			}
 			goto See;
 		Pain:
@@ -7225,11 +7225,11 @@ class HellGuard : KCCreature
 	
 	void A_HGShot()
 	{
-		if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
-		if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
+		if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
+		if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
 		A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0));
-		if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
-		if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
+		if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
+		if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SpawnProjectile("HellGuardBall", 28, -8, (frandom(-4.0,4.0)*2.0), CMF_OFFSETPITCH|CMF_BADPITCH|CMF_CHECKTARGETDEAD, frandom(-3.0,3.0)); }
 	}
 	
 	States
@@ -7242,8 +7242,8 @@ class HellGuard : KCCreature
 			TNT1 A 0;
 			HLGD AABBCCDD 3
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
 				A_KCChase("Melee","Missile",0,1,3,1,1);
 			}
 			Loop;
@@ -7252,16 +7252,16 @@ class HellGuard : KCCreature
 			TNT1 A 0 A_DynamicMusic();
 			HLGD E 8 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 			}
 			HLGD F 4 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 
 				A_HGShot();
 			}
@@ -7271,13 +7271,13 @@ class HellGuard : KCCreature
 			}
 			HLGD E 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_FaceTarget(); } else { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_FaceTarget(); } else { A_SetTics(0); }
 			}
 			HLGD F 4 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) 
 				{
 					A_SetTics(2); 
 					A_HGShot();
@@ -7293,14 +7293,14 @@ class HellGuard : KCCreature
 			}
 			HLGD E 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			HLGD F 4 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 
 				A_HGShot();
 			}
@@ -7310,13 +7310,13 @@ class HellGuard : KCCreature
 			}
 			HLGD E 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_FaceTarget(); } else { A_SetTics(0); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_FaceTarget(); } else { A_SetTics(0); }
 			}
 			HLGD F 4 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) 
 				{
 					A_SetTics(2); 
 					A_HGShot();
@@ -7332,14 +7332,14 @@ class HellGuard : KCCreature
 			}
 			HLGD E 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 			}
 			HLGD F 4 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 
 				A_HGShot();
 			}
@@ -7454,24 +7454,24 @@ class Serpathor : KCCreature
 			SBTC AABBCCDD 2 
 			{
 				user_shotsfired = 0;
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(1); } 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(1); } 
 
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) 
 				{ 
 					if (random(1,8) == 1) { user_shotsfiredmax = 6; } else { user_shotsfiredmax = 5; }
 				}
 				else
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(67,68)) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(67,68),2,true,self)) 
 				{ 
 					if (random(1,8) == 1) { user_shotsfiredmax = 5; } else { user_shotsfiredmax = 4; }
 				}
 				else
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) 
 				{ 
 					if (random(1,8) == 1) { user_shotsfiredmax = 4; } else { user_shotsfiredmax = 3; }
 				}
 				else
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) 
 				{ 
 					if (random(1,8) == 1) { user_shotsfiredmax = 3; } else { user_shotsfiredmax = 2; }
 				}
@@ -7481,9 +7481,9 @@ class Serpathor : KCCreature
 				}
 
 				user_fastchasetimermax = 8;
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(112,113)) { user_fastchasetimermax = 5; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 150) { user_fastchasetimermax = 6; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(37,38)) { user_fastchasetimermax = 7; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(112,113),2,true,self)) { user_fastchasetimermax = 5; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(150,2,true,self)) { user_fastchasetimermax = 6; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) { user_fastchasetimermax = 7; }
 				user_fastchasetimer++;
 				if (user_fastchasetimer >= user_fastchasetimermax) 
 				{
@@ -7502,22 +7502,22 @@ class Serpathor : KCCreature
 			SBTC E 0 A_StartSound("snake/sight", CHAN_VOICE);
 			SBTC EE 5 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 		MissileFire:
 			SBTC E 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(3); }
 				
 				A_SpawnProjectile("SerpathorPhoenixFX1", 32, 0, 0, CMF_CHECKTARGETDEAD);
 			}
 			SBTC EE 5 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			SBTC E 0
@@ -7530,18 +7530,18 @@ class Serpathor : KCCreature
 		MedusaBlast:
 			SBTC AF 8 Bright 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 			}
 			SBTC G 8 Bright
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(7); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 
 				A_StartSound("weapons/blastershoot");
 				A_SpawnProjectile("MedusaBeam", 64, 8);
@@ -7549,8 +7549,8 @@ class Serpathor : KCCreature
 			}
 			SBTC F 5
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
 				A_FaceTarget();
 			}
 			Goto Missile+1;
@@ -8003,68 +8003,68 @@ class DSparilMountedNew : DSparilBase // replaces Sorcerer1
 			SRCR A 0;
 			SRCR ABCD 5 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > random(22,23)) { A_SetTics(4); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(22,23),2,true,self)) { A_SetTics(4); }
 				A_Sor1Chase();
 			}
 			Loop;
 		Missile:
 			SRCR Q 7 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_FaceTarget();
 			}
 			SRCR R 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			SRCR S 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_Srcr1Attack(8 * random(1,8), "SorcererFX1New");
 			}
 			Goto See;
 		Missile2:
 			SRCR S 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_FaceTarget();
 			}
 			SRCR Q 7 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(6); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(6); }
 				A_FaceTarget();
 			}
 			SRCR R 6
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(3); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(4); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(5); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(5); }
 				A_FaceTarget();
 			}
 			SRCR S 10 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(8); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(9); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(8); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(9); }
 				A_Srcr1Attack(8*random(1,8), "SorcererFX1New");
 			}
 			Goto See;
@@ -8223,17 +8223,17 @@ class DSparilUnmountedNew : DSparilBase // replaces Sorcerer2
 			SOR2 A 0;
 			SOR2 MNOP 4
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; A_SetTics(3); }
 
 				user_chaseteleportchance = 512;
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 240) { user_chaseteleportchance = 256; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 210) { user_chaseteleportchance = 288; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 180) { user_chaseteleportchance = 320; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 150) { user_chaseteleportchance = 352; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { user_chaseteleportchance = 384; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { user_chaseteleportchance = 416; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { user_chaseteleportchance = 448; }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { user_chaseteleportchance = 480; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(240,2,true,self)) { user_chaseteleportchance = 256; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(210,2,true,self)) { user_chaseteleportchance = 288; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { user_chaseteleportchance = 320; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(150,2,true,self)) { user_chaseteleportchance = 352; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_chaseteleportchance = 384; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { user_chaseteleportchance = 416; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_chaseteleportchance = 448; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_chaseteleportchance = 480; }
 				
 				user_chaseteleportchance2 = 1;
 				if (health <= user_HPCritRange) { user_chaseteleportchance2 = 8; }
@@ -8276,32 +8276,32 @@ class DSparilUnmountedNew : DSparilBase // replaces Sorcerer2
 			SOR2 R 0 A_DynamicMusic();
 			SOR2 R 9 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(8); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(8); }
 				A_Srcr2Decide();
 			}
 			SOR2 S 9 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(5); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(6); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(7); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(8); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(7); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(8); }
 				A_FaceTarget();
 			}
 			SOR2 T 20 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 100) { A_SetTics(10); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(11); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 80) { A_SetTics(12); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 70) { A_SetTics(13); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(14); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 50) { A_SetTics(15); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 40) { A_SetTics(16); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { A_SetTics(17); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 20) { A_SetTics(18); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 10) { A_SetTics(19); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(100,2,true,self)) { A_SetTics(10); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(11); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { A_SetTics(12); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(70,2,true,self)) { A_SetTics(13); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(14); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(50,2,true,self)) { A_SetTics(15); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(40,2,true,self)) { A_SetTics(16); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(17); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(18); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(10,2,true,self)) { A_SetTics(19); }
 				A_Srcr2Attack(20*random(1,8),"Sorcerer2FX1New","Sorcerer2FX2New");
 			}
 			Goto See;

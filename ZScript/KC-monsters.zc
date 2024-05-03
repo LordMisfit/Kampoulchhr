@@ -1314,15 +1314,15 @@ class HellClericDVDS : KCCreature
 		See:
 			HELC AABBCCDD 2
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 30) { bAVOIDMELEE = true; } else { bAVOIDMELEE = false; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(1); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; } else { bAVOIDMELEE = false; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 				user_fastchasetimer++;
 				if (user_fastchasetimer >= 1 && user_fastchasetimer <= 2) { user_fastchasetimermax = 16; }
 				if (user_fastchasetimer >= 3 && user_fastchasetimer <= 4) { user_fastchasetimermax = 4; }
 				if (user_fastchasetimer >= 5 && user_fastchasetimer <= 6) { user_fastchasetimermax = 8; }
 				if (user_fastchasetimer >= 7 && user_fastchasetimer <= 8) { user_fastchasetimermax = 2; }
 				if (user_fastchasetimer >= 8) { user_fastchasetimer = 0; }
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 120) { user_fastchasetimermax /= 2; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_fastchasetimermax /= 2; }
 				if (random(1,user_fastchasetimermax) == 1) 
 				{
 					A_KCChase("Melee","Missile", CHF_FASTCHASE | CHF_NIGHTMAREFAST); 
@@ -1342,8 +1342,8 @@ class HellClericDVDS : KCCreature
 			}
 			HELC E 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 
 				user_attacktype = random(1,2);
 				user_attacks = 0;
@@ -1353,8 +1353,8 @@ class HellClericDVDS : KCCreature
 		MissileLoop:
 			HELC G 4 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 90) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 45) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
 				A_FaceTarget();
 
 				user_tempvar1 = 24;
@@ -1370,12 +1370,12 @@ class HellClericDVDS : KCCreature
 				{
 					dmg = (7 + (CountInv("MonsterLevel") * 0.035));
 					dmg += ((12 * baserand) + (CountInv("MonsterLevel") * (0.06 * baserand)));
-					if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") >= 30)
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,1,true,self))
 					{
 						dmg += (2.334 + (CountInv("MonsterLevel") * 0.001167));
 						dmg += ((4 * baserand) + (CountInv("MonsterLevel") * (0.02 * baserand)));
 					}
-					if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") >= 60)
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,1,true,self))
 					{
 						dmg += (1.167 + (CountInv("MonsterLevel") * 0.000584));
 						dmg += ((2 * baserand) + (CountInv("MonsterLevel") * (0.01 * baserand)));
@@ -1385,11 +1385,11 @@ class HellClericDVDS : KCCreature
 				dmg *= 0.5;
 				
 				A_CustomComboAttack(atktype, user_tempvar1, (dmg), "imp/melee", "Melee", true);
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") >= random(112,113))
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(112,113),1,true,self))
 				{
 					A_SpawnProjectile(atktype,user_tempvar1,0,(user_tempvar2*1));
 					A_SpawnProjectile(atktype,user_tempvar1,0,(user_tempvar2*-1));
-					if (CountInv("MonsterLevel") >= 225)
+					if (A_CheckMonsterLevel(225,1,true,self))
 					{
 						A_SpawnProjectile(atktype,user_tempvar1,0,(user_tempvar2*2));
 						A_SpawnProjectile(atktype,user_tempvar1,0,(user_tempvar2*-2));
@@ -1405,7 +1405,7 @@ class HellClericDVDS : KCCreature
 			}
 			HELC F 3 
 			{
-				if (kc_monsterlevelenabledflags && CountInv("MonsterLevel") > 60) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
 				A_FaceTarget();
 			}
 			loop;
