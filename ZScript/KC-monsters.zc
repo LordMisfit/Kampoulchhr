@@ -1368,19 +1368,19 @@ class HellClericDVDS : KCCreature
 				dmg *= 0.5;
 				if (kc_monsterlevelenabledflags)
 				{
-					dmg = (7 + (CountInv("MonsterLevel") * 0.035));
-					dmg += ((12 * baserand) + (CountInv("MonsterLevel") * (0.06 * baserand)));
+					dmg = (7 + (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.035,true,self)));
+					dmg += ((12 * baserand) + (CountInv("MonsterLevel") * (A_CheckMonsterLevelMult(0.06,true,self) * baserand)));
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,1,true,self))
 					{
-						dmg += (2.334 + (CountInv("MonsterLevel") * 0.001167));
-						dmg += ((4 * baserand) + (CountInv("MonsterLevel") * (0.02 * baserand)));
+						dmg += (2.334 + (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.001167,true,self)));
+						dmg += ((4 * baserand) + (CountInv("MonsterLevel") * (A_CheckMonsterLevelMult(0.02,true,self) * baserand)));
 					}
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,1,true,self))
 					{
-						dmg += (1.167 + (CountInv("MonsterLevel") * 0.000584));
-						dmg += ((2 * baserand) + (CountInv("MonsterLevel") * (0.01 * baserand)));
+						dmg += (1.167 + (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.000584,true,self)));
+						dmg += ((2 * baserand) + (CountInv("MonsterLevel") * (A_CheckMonsterLevelMult(0.01,true,self) * baserand)));
 					}
-					dmg *= (1.0 + (CountInv("MonsterLevel") * 0.005));
+					dmg *= (1.0 + (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.005,true,self)));
 				}
 				dmg *= 0.5;
 				

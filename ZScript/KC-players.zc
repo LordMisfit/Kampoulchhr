@@ -2007,7 +2007,7 @@ class KCPlayerPawn : PlayerPawn
 						sour == "EviternatusCeph")
 				{
 					ignoretier = 3;
-					rand1 += 10 + ((source.CountInv("MonsterLevel")) * 1.0);
+					rand1 += 10 + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(1.0,true,KCSource));
 					randarmign += (frandompick(0.030,0.035,0.04,0.045,0.05) * kc_enemyarmorignorefactor);
 				}
 				else // Tier 2 Enemies [i.e. very-high armor bypass, usually named bosses [Serpent Riders, Pennywise in HTC2, and the Dinah Doppelgangers] V:]
@@ -2024,7 +2024,7 @@ class KCPlayerPawn : PlayerPawn
 						KoraxNew(KCSource))
 				{
 					ignoretier = 2;
-					rand1 += 5 + ((source.CountInv("MonsterLevel")) * 0.5);
+					rand1 += 5 + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.5,true,KCSource));
 					randarmign += (frandompick(0.015,0.0175,0.02,0.0225,0.025) * kc_enemyarmorignorefactor);
 				}
 				else // Tier 1 Enemies [i.e. medium-high armor bypass, usually standard boss/mini-bosses, and BlackBears V:]
@@ -2052,20 +2052,20 @@ class KCPlayerPawn : PlayerPawn
 						DSparilMountedNew(KCSource))
 				{
 					ignoretier = 1;
-					rand1 += randompick(2,3) + ((source.CountInv("MonsterLevel")) * 0.25);
+					rand1 += randompick(2,3) + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.25,true,KCSource));
 					randarmign += (frandompick(0.0075,0.00875,0.01,0.01125,0.0125) * kc_enemyarmorignorefactor);
 				}
 				else // Tier -1 Enemies (enemies with WEAKER armor bypass on average versus even Tier 0s :V)
 				if (sour == "")
 				{
 					ignoretier = -1;
-					rand1 += randompick(0,0,0,0,0,1,1,1) + ((source.CountInv("MonsterLevel")) * 0.0625);
+					rand1 += randompick(0,0,0,0,0,1,1,1) + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.0625,true,KCSource));
 					randarmign += ((frandompick(0.00375,0.004375,0.005,0.0056125,0.00625) * 0.5) * kc_enemyarmorignorefactor);
 				}
 				else // Tier 0 Enemies [i.e. average armor bypass]
 				{
 					ignoretier = 0;
-					rand1 += randompick(1,1,1,2) + ((source.CountInv("MonsterLevel")) * 0.125);
+					rand1 += randompick(1,1,1,2) + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.125,true,KCSource));
 					randarmign += (frandompick(0.00375,0.004375,0.005,0.0056125,0.00625) * kc_enemyarmorignorefactor);
 				}
 				

@@ -198,7 +198,7 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			IMPX A 0
 			{
 				user_chargechance = 25;
-				if (kc_monsterlevelenabledflags) user_chargechance += (CountInv("MonsterLevel") * (0.075));
+				if (kc_monsterlevelenabledflags) user_chargechance += (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.075,true,self));
 				if (user_chargechance > 70) user_chargechance = 70;
 
 				if (random(1,100) > user_chargechance) { return resolvestate("See"); }
@@ -226,8 +226,8 @@ class HereticImpNew : KCCreature // replaces HereticImp
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(5); }
 
 				// A_ImpMsAttack; Emulation
-				SetDamage(((0+(CountInv("MonsterLevel")/random(22,23)))));
-				A_SkullAttack(12+(CountInv("MonsterLevel")/randompick(11,11,11,12)));
+				SetDamage(((0 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(random(22,23),true,self)))));
+				A_SkullAttack(12 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(randompick(11,11,11,12),true,self)));
 			}
 			IMPX CBAB 6
 			{
@@ -415,8 +415,8 @@ class PlagueImp : HereticImpLeaderNew
 				int theta;
 				A_CheckIfTargetDead("See");
 				user_shotsfired = 0;
-				if (health <= user_HPLowRange) { theta = (80 - (CountInv("MonsterLevel") * 1.0)); }
-																	else { theta = (240 - (CountInv("MonsterLevel") * 0.3334)); }
+				if (health <= user_HPLowRange) { theta = (80 - (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(1.0,true,self))); }
+																	else { theta = (240 - (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.3334,true,self))); }
 
 				if (random(1,256) <= theta)
 				{
@@ -425,7 +425,7 @@ class PlagueImp : HereticImpLeaderNew
 				}
 				else 
 				{ 
-					user_shotsfiredmax = randompick(3,4,5,6) + (CountInv("MonsterLevel") / frandompick(5.625,11.25,16.875,22.5));
+					user_shotsfiredmax = randompick(3,4,5,6) + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(frandompick(5.625,11.25,16.875,22.5),true,self));
 					return resolvestate("MissileMulti"); 
 				}
 				return resolvestate(null);
@@ -4010,8 +4010,8 @@ class IronLichNew : KCCreature // replaces IronLich
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(20,2,true,self)) { A_SetTics(18); }
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(10,2,true,self)) { A_SetTics(19); }
 
-				if (kc_monsterlevelenabledflags) A_LichAttack(5 + (CountInv("MonsterLevel") / 30), 1 + (CountInv("MonsterLevel") / 45), 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
-																			else A_LichAttack(5, 1, 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
+				if (kc_monsterlevelenabledflags) A_LichAttack(5 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(30,true,self)), 1 + A_CheckMonsterLevelDiv(45,true,self), 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
+																		else A_LichAttack(5, 1, 6 * random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
 			}
 			goto See;
 		Pain:
@@ -4363,7 +4363,7 @@ class IceLich : KCCreature
 			ILCH B 0 bright 
 			{
 				user_shotsfired = 0;
-				user_shotsfiredmax = 5 + (CountInv("MonsterLevel") / 22.5);
+				user_shotsfiredmax = 5 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(22.5,true,self));
 			}
 		BreathLoop: // 5 times
 			ILCH B 0 bright 
@@ -4496,7 +4496,7 @@ class Goldlich : IronlichNew
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(4); }
 				A_SpawnItemEx("GoldLichGlitter", random(-32,32), random(-32,32), random(8,104),0,0,0, 0,0, 0);
 
-				A_LichAttack(5 + (CountInv("MonsterLevel") / 10), 1 + (CountInv("MonsterLevel") / 15), 8*random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
+				A_LichAttack(5 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(10,true,self)), 1 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(15,true,self)), 8*random(1,8), "HeadFX1New", "HeadFX3New", "WhirlwindNew");
 			}
 			LICH BBB 5
 			{
@@ -4594,7 +4594,7 @@ class Goldlich : IronlichNew
 				A_StartSound("goldlich/attack1");
 
 				user_shotsfired = 0;
-				user_shotsfiredmax = 4 + (CountInv("MonsterLevel") / 22.5);
+				user_shotsfiredmax = 4 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(22.5,true,self));
 				if (random(1,2) == 1)
 				{
 					A_SpawnProjectile("GoldLichFire");
@@ -4858,7 +4858,7 @@ class BloodLich : KCCreature
 			BLCH B 0 bright 
 			{
 				user_shotsfired = 0;
-				user_shotsfiredmax = 5 + (CountInv("MonsterLevel") / 22.5);
+				user_shotsfiredmax = 5 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(22.5,true,self));
 			}
 		BreathLoop: // 5
 			BLCH B 0 Bright
@@ -5921,18 +5921,18 @@ class ShadowBeast : KCCreature
 			Goto See;
 
 		Pain:
-			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / 2)), "Spread");
+			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(2,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
-			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / 8)), "Spread");
+			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(8,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
 			BDEM GG 4;
 			Goto See;
 		Pain.Kick:
-			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / 16)), "Spread");
+			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(16,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
 			BDEM GGGG 4;
@@ -6829,7 +6829,7 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 		Charge:
 			TNT1 A 0 
 			{
-				SetDamage(7 + (CountInv("MonsterLevel") / 22.5));
+				SetDamage(7 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(22.5,true,self)));
 			}
 			TNT1 A 0 A_DynamicMusic();
 			MNTR U 2 A_MinotaurCharge();
@@ -7747,7 +7747,7 @@ class DSparilBase : KCUniqueBoss
 	void A_Sor1Pain()
 	{
 		int extrasteps;
-		if (kc_monsterlevelenabledflags) extrasteps = CountInv("MonsterLevel") / 8;
+		if (kc_monsterlevelenabledflags) extrasteps = (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(8,true,self));
 		special1 = random(18,22) + extrasteps; // Number of steps to walk fast
 		A_Pain();
 	}
@@ -7847,7 +7847,7 @@ class DSparilBase : KCUniqueBoss
 		if (random[Sorc2Pain](1,4) <= 3)
 		{
 			int extrasteps;
-			if (kc_monsterlevelenabledflags) extrasteps = CountInv("MonsterLevel") / 3;
+			if (kc_monsterlevelenabledflags) extrasteps = (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(3,true,self));
 			special2 = random(16,24) + extrasteps; // Number of steps to walk fast
 			A_Pain();
 		}
@@ -7897,12 +7897,12 @@ class DSparilBase : KCUniqueBoss
 			int ExtraChance;
 			if (CountInv("LDLegendaryMonsterTransformed"))
 			{
-				ExtraChance = 1 + (CountInv("MonsterLevel") / 90);
+				ExtraChance = 1 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(90,true,self));
 				if (random(1,16) <= ExtraChance) DSparilTeleport ();
 			}
 			else
 			{
-				ExtraChance = 2 + (CountInv("MonsterLevel") / 90);
+				ExtraChance = 2 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(90,true,self));
 				if (random(1,4) <= ExtraChance) DSparilTeleport ();
 			}
 		}

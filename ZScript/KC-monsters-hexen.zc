@@ -2619,7 +2619,7 @@ class SlaughtaurNew : CentaurNew //replaces CentaurLeader
 				A_FaceTarget();
 	
 				user_paintomissile = 10;
-				if (kc_monsterlevelenabledflags) user_paintomissile -= (CountInv("MonsterLevel") * (0.1));
+				if (kc_monsterlevelenabledflags) user_paintomissile -= (CountInv("MonsterLevel") * A_CheckMonsterLevelMult(0.1,true,self));
 				if (user_paintomissile < 1) user_paintomissile = 1;
 	
 				if (random(1,user_paintomissile) == 1) { return resolvestate("Missile"); }
@@ -5624,7 +5624,7 @@ class VampireKC : BishopNew
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
 				A_FaceTarget();
 				user_shotsfired = 0;
-				user_shotsfiredmax = 42 + (random(1,256) & 14) + (CountInv("MonsterLevel") / 10);
+				user_shotsfiredmax = 42 + (random(1,256) & 14) + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(10,true,self));
 			}
 			VAM1 AAAAAAAAAAAAAA 0 A_SpawnDebris("VampireBloodBoom",1);
 		BeamLoop: // 56
