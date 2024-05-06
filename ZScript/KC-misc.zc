@@ -16,6 +16,79 @@ class PlayerStatItem : Inventory
 	// 3 - ??????
 	// 4 - ??????
 	
+	int hamonrippletier;
+	int nagareflowtier;
+	int moonlightcovergirlACT;
+	bool hastomeofetdark;
+	array<int> hascirclesofpower;
+	// 1 = 3-Way
+	// 2 = 5-Way
+	// 3 = 7-Way
+	// 4 = 9-Way (new to KC/etc as a usable Circle of Power)
+	// 5 = 11-Way (new to KC/etc)
+	// 6 = 13-Way (new to KC/etc)
+	array<int> hasalignmentrunes;
+	// -1 = Tzs[c]hest/(B'th'ya) [Wings/Existence; White/(Yellow)] (new to KC/etc)
+	// 0 = Mantorok [Black Heart/Decay; Purple]
+	// 1 = Chattur'gha [Claw/Body; Red]
+	// 2 = Ulyaoth [Veil/Soul; Blue]
+	// 3 = Xel'lotath [Sigil/Mind; Green]
+	array<int> hasactionrunes;
+	// 1 = Bankorok [Protect]
+	// 2 = Tier [Summon]
+	// 3 = Narokath [Absorb]
+	// 4 = Nethlek [Dispel]
+	// 5 = Antorbok [Protect]
+	array<int> hastargetrunes;
+	// 1 = Magormor [Item]
+	// 2 = Redgormor [Area]
+	// 3 = Santak [Creature]
+	// 4 = Tirtak [Time/Dimension] (new to KC)
+	array<int> haspowerrunes;
+	// 1 = Pargon [Increase/Magnify Power]
+	// 2 = Silgon [Decrease/Surpress Power] (new to KC)
+	array<double> toedspellcosts_3way;
+	array<double> toedspellcosts_5way;
+	array<double> toedspellcosts_7way;
+	array<double> toedspellcosts_9way;
+	array<double> toedspellcosts_11way;
+	array<double> toedspellcosts_13way;
+	// 1 = Fortify Item (Protect & Item)* - "This incantation allows a protective shield to be given to an inanimate object in order to protect it from the wrath of opposing attacks."
+	// 2 = Damage Field (Protect & Area) - "This incantation exerts a force of mystical power within the confines of its runes. Nothing may enter till it is dispelled."
+	// 3 = Bind (Protect & Creature) - "This Magick enables the caster to bind a creature with Magick forcing it to ally with them."
+	// 4 = Shield (Protect & Self) - "From all manner of Magick will you be protected when encased in this geas. The alignments can help but never hinder, for within well-conjured Magick comes greater protection."
+	// 5 = ? (Protect & Time/Dimension)* - [Currently Unknown Effect]
+	// 6 = Duplicate Item (Summon & Item)* - "This Magick can create a perfect copy or duplicate of any existing inanimate object as long as the origin item does not possess any inherit magickal or otherwise mystical energy. This can be used for the sake of creating sustenance, extra ammunition or other such things for the user." 
+	// 7 = Magick Pool (Summon & Area) - "This Magick transfers the innate magickal energy of the environment to the self. The limitless power of the Ancients will be at your disposal for the duration of the Magick. Once the Magick has waned, you will be bereft of spiritual power, until it naturally seeps back into your being."
+	// 8a = Summon Trapper (Summon & Creature) [3 point] - "Evoking this Magick brings into existence a creature known as the 'Trapper'. Trappers possess the unique ability to transcend most forms of space and time, and to relocate objects and creatures to their own plane."
+	// 8b = Summon Zombie (Summon & Creature) [5 point] - "This conjuration summons a shambling corpse from the Planes of Eternal Darkness, where the dead, and all manner of fell things, dwell. This Magick should not be undertaken lightly, for its toll on the psyche of mortalkind is normally not pleasant. To see with the eyes of the dead is to become them..."
+	// 8c = Summon Horror (Summon & Creature) [7 point] - "The bestial fury of the 'Horror' is unleashed by this Magick. The Horror's abilities are yours - enemies may be crushed or rent apart, wracked by Magick. This spell should not be undertaken lightly, for its toll on the psyche of mortalkind is high."
+	// 8d = Summon Guardian (Summon & Creature)* [9 point] - [Currently Unknown Effect]
+	// 8e = Summon Greater Guardian (Summon & Creature)* [11 point] - [Currently Unknown Effect]
+	// 8f = Summon [Ancient/Eternal] (Summon & Creature)* [13 point] - [Currently Unknown Effect]
+	// 9 = Summon Doppelganger (Summon & Self)* - "This deft-defying Magick conjures a phantom copy of the caster into the living planes. The 'doppelganger' will act on its own accord and attack their 'original's' enemies and assist their allies... for a scant amount of time before dissipating back into nothingness."
+	// 10 = ? (Summon & Time/Dimension)* - [Currently Unknown Effect]
+	// 11 = Matter Healing (Absorb & Item)* - "With this incantation, you will absorb the essence of lesser items to convert them into power (aka health/soul energy/mind-energy). Greater items cannot be affected by this without more power placed into the Magick. Some items should also only be absorbed in desperate situations, for even strong and powerful weapons, armors and items alike can permanently be destroyed by this Magick. Enchanted items also grant more power to their caster, but have a risk of causing energy imbalances as well that can throw the user off balance for a time."
+	// 12 = Reveal[/Become] Invisible (Absorb & Area) - "With this enchantment the invisible is rendered visible. Use it wisely, for some things are invisible for a reason, and mortalkind not meant to see them."
+	// 13 = ? (Absorb & Creature)* - [Currently Unknown Effect]
+	// 14 = Recovery (Absorb & Self) - "This spell enables the transfer of magickal power from the environment to the self. Restoration of the body, spirit and mind is this spell's purpose."
+	// 15 = ? (Absorb & Time/Dimension)* - [Currently Unknown Effect]
+	// 16 = Disenchant Item (Dispel & Item)* - "That which is whole, shall be broken. That which is sharpened, will become dull. Thus is the nature of the Disenchant Item Magick. Any remnant magicks from the dispelled item will be absorbed to the caster to replenish their soul."
+	// 17 = Disenchant Magick (Dispel & Area) - "For every Magick there is a counter. That which is protected, is protected no more. That which is bound, is unbound. Be warned that a more powerful Magick than this will endure its ravages."
+	// 18a = Disperse Trapper (Dispel & Creature)* [3 point] - "For this spell, one can prematurely dispel a summoned trapper from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 18b = Disperse Zombie (Dispel & Creature)* [5 point] - "For this spell, one can prematurely dispel a summoned zombie from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 18c = Disperse Horror (Dispel & Creature)* [7 point] - "For this spell, one can prematurely dispel a summoned horror from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 18d = Disperse Guardian (Dispel & Creature)* [9 point] - "For this spell, one can prematurely dispel a summoned guardian from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 18e = Disperse Greater Guardian (Dispel & Creature)* [11 point] - "For this spell, one can prematurely dispel a summoned grand guardian from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 18f = Disperse Ancient (Dispel & Creature)* [13 point] - "For this spell, one can prematurely dispel a summoned ancient from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
+	// 19 = Disperse Doppelganger (Dispel & Self)* - "For this spell, one can prematurely dispel a summoned doppelganger from the physical planes to recover extra strength, vitality, mind and energy for the soul."
+	// 20 = ? (Dispel & Time/Dimension)* - [Currently Unknown Effect]
+	// 21 = Enchant Item (Project & Item) - "That which is broken, shall be fixed. That which is dull, will be sharp. Thus is the nature of the Enchant Item Magick." [2 min duration]
+	// 22 = Magickal Attack (Project & Area) - "This incantation saturates an area with aligned magickal energy, inflicting massive damage to all enemies within its influence. This Magick will affect both large and small - for even the greatest of enemies are made of many small parts."
+	// 23 = ? (Project & Creature)* - [Currently Unknown Effect]
+	// 24 = Reinforce Self (Project & Self)* - "This Magick accelerates and improves the offensive and defensive aspects of the caster's body itself, the mind, body and soul amongst them, if only temporarily." (1 min duration)
+	// 25 = ? (Project & Time/Dimension)* - [Currently Unknown Effect]
+	
 	int fighttimermod;
 	bool heiwavhardmodifier;
 	double spbkpkarmorbonus, spbkpkmedibigbonus;

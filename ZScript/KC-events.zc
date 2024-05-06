@@ -18,6 +18,17 @@ class KC_EventHandler : EventHandler
 		return isHeiwa;
 	}
 	
+	bool A_CheckBerserk(actor checked)
+	{
+		bool check = false;
+		if (checked)
+		{
+			if (checked.CountInv("PowerStrength") || 
+					checked.CountInv("KCPowerStrength")) check = true;
+		}
+		return check;
+	}
+	
 	bool A_CheckKCTimeFreeze()
 	{
 		bool freeze = false;
@@ -2789,7 +2800,7 @@ class KC_EventHandler : EventHandler
 								else if (inflicter) ang = inflicter.angle;
 								double force = frandompick(13.75,15,16.25);
 								force *= 0.25;
-								if (inflicter && (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength"))) force *= frandompick(1.5,2,2.5);
+								if (inflicter && (source && A_CheckBerserk(source))) force *= frandompick(1.5,2,2.5);
 								
 								if (!victim.bDONTTHRUST || !victim.bCANNOTPUSH)
 								{
@@ -2806,7 +2817,7 @@ class KC_EventHandler : EventHandler
 								force *= 0.25;
 								if (source)
 								{
-									if (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength")) force *= frandompick(1.125,1.25,1.375);
+									if (A_CheckBerserk(source)) force *= frandompick(1.125,1.25,1.375);
 									if (PlayerPawn(source))
 									{
 										if (source.CountInv("KCTimeFreezer1")) force *= frandompick(0.2,0.25);
@@ -2831,7 +2842,7 @@ class KC_EventHandler : EventHandler
 								if (random(1,2) <= 1) force *= -1;
 								if (source)
 								{
-									if (source.CountInv("PowerStrength") || source.CountInv("KCPowerStrength")) force *= frandompick(1.125,1.25,1.375);
+									if (A_CheckBerserk(source)) force *= frandompick(1.125,1.25,1.375);
 								}
 
 								if (random(1,8) <= 1) force *= 1.5;
@@ -5597,7 +5608,7 @@ class KC_EventHandler : EventHandler
 									if (waslegendary) basechance *= 5;
 									
 									if (victim.bBOSS) basechance *= 8;
-									if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
+									if (playera && A_CheckBerserk(playera)) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
 									int maxchance = 256;
 									if (waslegendary) maxchance *= 0.25;
 									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
@@ -5607,7 +5618,7 @@ class KC_EventHandler : EventHandler
 										if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 										string voicenm;
 										double voicevol = frandom(1.25,1.75);
-										if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+										if (playera && A_CheckBerserk(playera))  voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 										int randvoice = random(1,9);
 										if (randvoice == 1) 
 										{
@@ -6073,10 +6084,15 @@ class KC_EventHandler : EventHandler
 				{
 					if ((playera.health > 0 &&
 							!playera.CountInv("PlayerIsDead")) 
-							&& MiscItem.whistlecooldown == 0)
+							&& MiscItem.whistlecooldown <= 0)
 					{
 						double vol = frandom(0.86,1.14);
-						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) vol *= 1.2;
+						int basewcooldown = random(42,49);
+						if (playera && A_CheckBerserk(playera))  
+						{
+							vol *= 1.2;
+							basewcooldown *= 0.67;
+						}
 						playera.A_StartSound("player/whistle5",CHAN_VOICE,CHANF_DEFAULT,vol,ATTN_NONE,frandom(0.76,1.24));
 						if (!(playera.CountInv("KCTimeFreezer") ||
 									playera.CountInv("KCTimeFreezer1") ||
@@ -6085,8 +6101,11 @@ class KC_EventHandler : EventHandler
 						{
 							playera.A_SpawnItemEx("PlayerWhistle",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
 						}
-						if (playera.CountInv("PowerStrength") || playera.CountInv("KCPowerStrength")) MiscItem.whistlecooldown = random(28,33);
-																																									 else MiscItem.whistlecooldown = random(42,49);
+						else
+						{
+							basewcooldown *= 0.25;
+						}
+						MiscItem.whistlecooldown += basewcooldown;
 					}
 				}
 			}
