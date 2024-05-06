@@ -57,7 +57,7 @@ class PlayerStatItem : Inventory
 	// 2 = Damage Field (Protect & Area) - "This incantation exerts a force of mystical power within the confines of its runes. Nothing may enter till it is dispelled."
 	// 3 = Bind (Protect & Creature) - "This Magick enables the caster to bind a creature with Magick forcing it to ally with them."
 	// 4 = Shield (Protect & Self) - "From all manner of Magick will you be protected when encased in this geas. The alignments can help but never hinder, for within well-conjured Magick comes greater protection."
-	// 5 = ? (Protect & Time/Dimension)* - [Currently Unknown Effect]
+	// 5 = SpaceTime Booster (Protect & Time/Dimension)* - "This Magick will prevent the abilities of other beings allowing dimensional or time-based manipulation from affecting the immediate area around yourself, though will allow the user to still utilize similar abilities if they possess any. Stronger levels increase this Magick's area of effect."
 	// 6 = Duplicate Item (Summon & Item)* - "This Magick can create a perfect copy or duplicate of any existing inanimate object as long as the origin item does not possess any inherit magickal or otherwise mystical energy. This can be used for the sake of creating sustenance, extra ammunition or other such things for the user." 
 	// 7 = Magick Pool (Summon & Area) - "This Magick transfers the innate magickal energy of the environment to the self. The limitless power of the Ancients will be at your disposal for the duration of the Magick. Once the Magick has waned, you will be bereft of spiritual power, until it naturally seeps back into your being."
 	// 8a = Summon Trapper (Summon & Creature) [3 point] - "Evoking this Magick brings into existence a creature known as the 'Trapper'. Trappers possess the unique ability to transcend most forms of space and time, and to relocate objects and creatures to their own plane."
@@ -67,12 +67,12 @@ class PlayerStatItem : Inventory
 	// 8e = Summon Greater Guardian (Summon & Creature)* [11 point] - [Currently Unknown Effect]
 	// 8f = Summon [Ancient/Eternal] (Summon & Creature)* [13 point] - [Currently Unknown Effect]
 	// 9 = Summon Doppelganger (Summon & Self)* - "This deft-defying Magick conjures a phantom copy of the caster into the living planes. The 'doppelganger' will act on its own accord and attack their 'original's' enemies and assist their allies... for a scant amount of time before dissipating back into nothingness."
-	// 10 = ? (Summon & Time/Dimension)* - [Currently Unknown Effect]
+	// 10 = HastenFlasher Aura (Summon & Time/Dimension)* - "With this powerful and costly incantation, you will greatly accelerate both your physical, mental and metaphysical speed in the heat of perilous situations."
 	// 11 = Matter Healing (Absorb & Item)* - "With this incantation, you will absorb the essence of lesser items to convert them into power (aka health/soul energy/mind-energy). Greater items cannot be affected by this without more power placed into the Magick. Some items should also only be absorbed in desperate situations, for even strong and powerful weapons, armors and items alike can permanently be destroyed by this Magick. Enchanted items also grant more power to their caster, but have a risk of causing energy imbalances as well that can throw the user off balance for a time."
 	// 12 = Reveal[/Become] Invisible (Absorb & Area) - "With this enchantment the invisible is rendered visible. Use it wisely, for some things are invisible for a reason, and mortalkind not meant to see them."
-	// 13 = ? (Absorb & Creature)* - [Currently Unknown Effect]
+	// 13 = Eldritch Fusion (Absorb & Creature)* - "This risky Magick allows the user to fuse aspects of a summoned being's mana and soul to themself for a short period, altering their own abilities. Care must be given to which creatures one tries to fuse to themselves, as their own natures can risk overtaking the user's own impulses while the effect lingers."
 	// 14 = Recovery (Absorb & Self) - "This spell enables the transfer of magickal power from the environment to the self. Restoration of the body, spirit and mind is this spell's purpose."
-	// 15 = ? (Absorb & Time/Dimension)* - [Currently Unknown Effect]
+	// 15 = StopTime ShowGoer (Absorb & Time/Dimension)* - "This Magick draws away the flow of time itself around a small area centered around one target of the user's, locking them away in time for a short time. This will render them entirely immune to physical damage, though mystical and magickal ravages will still affect them to varying degrees."
 	// 16 = Disenchant Item (Dispel & Item)* - "That which is whole, shall be broken. That which is sharpened, will become dull. Thus is the nature of the Disenchant Item Magick. Any remnant magicks from the dispelled item will be absorbed to the caster to replenish their soul."
 	// 17 = Disenchant Magick (Dispel & Area) - "For every Magick there is a counter. That which is protected, is protected no more. That which is bound, is unbound. Be warned that a more powerful Magick than this will endure its ravages."
 	// 18a = Disperse Trapper (Dispel & Creature)* [3 point] - "For this spell, one can prematurely dispel a summoned trapper from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
@@ -82,12 +82,17 @@ class PlayerStatItem : Inventory
 	// 18e = Disperse Greater Guardian (Dispel & Creature)* [11 point] - "For this spell, one can prematurely dispel a summoned grand guardian from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
 	// 18f = Disperse Ancient (Dispel & Creature)* [13 point] - "For this spell, one can prematurely dispel a summoned ancient from the physical planes to recover extra strength and to prevent potential loss of control over the creature as well."
 	// 19 = Disperse Doppelganger (Dispel & Self)* - "For this spell, one can prematurely dispel a summoned doppelganger from the physical planes to recover extra strength, vitality, mind and energy for the soul."
-	// 20 = ? (Dispel & Time/Dimension)* - [Currently Unknown Effect]
+	// 20 = SlowenSludger Field (Dispel & Time/Dimension)* - "With this incantation, one can greatly diminish the physical, mental and metaphysical speed of anything that enters this field of Magick."
 	// 21 = Enchant Item (Project & Item) - "That which is broken, shall be fixed. That which is dull, will be sharp. Thus is the nature of the Enchant Item Magick." [2 min duration]
 	// 22 = Magickal Attack (Project & Area) - "This incantation saturates an area with aligned magickal energy, inflicting massive damage to all enemies within its influence. This Magick will affect both large and small - for even the greatest of enemies are made of many small parts."
-	// 23 = ? (Project & Creature)* - [Currently Unknown Effect]
+	// 23a = Reinforce Trapper (Project & Creature) [3 point]* - "This Magick accelerates and improves the offensive and defensive aspects of the summoned trapper, the mind, body and soul amongst them, if only temporarily." (1 min duration)
+	// 23b = Reinforce Zombie (Project & Creature) [5 point]* - "This Magick accelerates and improves the offensive and defensive aspects of the summoned zombie, the mind, body and soul amongst them, if only temporarily." (1.5 min duration)
+	// 23c = Reinforce Horror (Project & Creature) [7 point]* -  "This Magick accelerates and improves the offensive and defensive aspects of the summoned horror, the mind, body and soul amongst them, if only temporarily." (2.0 min duration)
+	// 23d = Reinforce Guardian (Project & Creature) [9 point]* -  "This Magick accelerates and improves the offensive and defensive aspects of the summoned guardian, the mind, body and soul amongst them, if only temporarily." (2.75 min duration)
+	// 23e = Reinforce Greater Guardian (Project & Creature) [11 point]* -  "This Magick accelerates and improves the offensive and defensive aspects of the summoned grand guardian, the mind, body and soul amongst them, if only temporarily." (3.5 min duration)
+	// 23f = Reinforce Ancient (Project & Creature) [13 point]* -  "This Magick accelerates and improves the offensive and defensive aspects of the summoned ancient, the mind, body and soul amongst them, if only temporarily." (4 min duration)
 	// 24 = Reinforce Self (Project & Self)* - "This Magick accelerates and improves the offensive and defensive aspects of the caster's body itself, the mind, body and soul amongst them, if only temporarily." (1 min duration)
-	// 25 = ? (Project & Time/Dimension)* - [Currently Unknown Effect]
+	// 25 = SelfBane Permanence (Project & Time/Dimension)* - "This magick allows the user to lock their timeline in place entirely for a short time. This renders them physically, mentally and psychologically 'immortal' and undying, though their power is locked at this state and cannot be further boosted, or diminished, during the effect."
 	
 	int fighttimermod;
 	bool heiwavhardmodifier;
