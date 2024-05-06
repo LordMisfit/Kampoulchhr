@@ -2419,7 +2419,7 @@ class KCWeaponBase : Weapon
 					if (!pistolshot.bRIPPER) pistolshot.bRIPPER = true;
 					if (PistolBlastWeak(pistolshot))
 					{
-						pistolshot.finaldamagedealt = (randompick(1,1,2,2,2,2,2) * random(4,random(5,9)));
+						pistolshot.finaldamagedealt = (randompick(1,2,2,2,3,3,3) * random(4,randompick(5,7,9)));
 						double spdboost = frandompick(1.21875,1.25,1.25,1.25,1.25,1.25,1.25,1.28125);
 						pistolshot.A_ScaleVelocity(spdboost);
 						pistolshot.Speed *= spdboost;
@@ -2428,7 +2428,7 @@ class KCWeaponBase : Weapon
 					}
 					else
 					{
-						pistolshot.finaldamagedealt = (4 * random(4,9));
+						pistolshot.finaldamagedealt = (randompick(4,4,5,5) * random(4,randompick(5,7,9)));
 						double spdboost = frandompick(1.4375,1.5,1.5,1.5,1.5,1.5,1.5,1.5625);
 						pistolshot.A_ScaleVelocity(spdboost);
 						pistolshot.Speed *= spdboost;
@@ -10432,7 +10432,6 @@ class TeslaShot : KCFastProjectile
 		Radius 6;
 		Height 8;
 		Speed 75;
-		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		DamageType "Lightning";
 		DamageFunction (10 * random(1,8));
 		SeeSound "";
@@ -10448,6 +10447,7 @@ class TeslaShot : KCFastProjectile
 		+NOSPRITESHADOW;
 		ProjectileKickback 50;
 		DeathSound "weapons/plasmax";
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 	}
 	
 	States
@@ -10474,7 +10474,6 @@ class TeslaShot2 : KCFastProjectile
 		SeeSound "";
 		DamageType "Lightning";
 		DamageFunction (80 * random(1,8));
-		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		DeathSound "TSLPRJC2";
 		RenderStyle "Add";
 		alpha 0.5;
@@ -10489,6 +10488,7 @@ class TeslaShot2 : KCFastProjectile
 		+NOSPRITESHADOW;
 		+FORCERADIUSDMG;
 		ProjectileKickback 50;
+		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 	}
 	
 	States
@@ -13833,7 +13833,7 @@ Class PistolBlast : SingleDamageRipper
 		Radius 3;
 		Height 3;
 		Speed 60;
-		DamageFunction (4 * random(2,8)); // (5 * random(1,8));
+		DamageFunction (finaldamagedealt); // (5 * random(1,8));
 		Projectile;
 		+RANDOMIZE
 		+ZDOOMTRANS
@@ -13842,6 +13842,7 @@ Class PistolBlast : SingleDamageRipper
 		SeeSound "weapons/blstrpst";
 		DeathSound "weapons/blstrhit";
 		Obituary "%o suffered a fatal laser impact from %k's blaster pistol.";
+		ProjectileKickback 25;
 		DamageType "Plasma";
 		Translation "192:207=168:183", "240:247=184:191";
 		Decal "BlasterScorch";
@@ -13857,7 +13858,7 @@ Class PistolBlast : SingleDamageRipper
 
 		if (finaldamagedealt <= 0) 
 		{
-			finaldamagedealt = (4 * random(2,8));
+			finaldamagedealt = (randompick(4,4,4,5) * randompick(2,4,6,8));
 			if (kcdebug_rangedmg) Console.Printf("finaldamagedealt [was <= 0]: %d", finaldamagedealt);
 		}
 	}
@@ -13893,6 +13894,7 @@ Class PistolBlastWeak : PistolBlast
 {
 	Default
 	{
+		ProjectileKickback 4;
 		Radius 2; // 3
 		Height 2; // 3
 		Speed 20; // 30
@@ -13915,7 +13917,7 @@ Class PistolBlastWeak : PistolBlast
 
 		if (finaldamagedealt <= 0) 
 		{
-			finaldamagedealt = randompick(1,1,1,1,2,2,2) * random(2,random(4,8));
+			finaldamagedealt = randompick(1,1,1,2,2,2,3) * randompick(2,randompick(4,6,8));
 			if (kcdebug_rangedmg) Console.Printf("finaldamagedealt [was <= 0]: %d", finaldamagedealt);
 		}
 	}
