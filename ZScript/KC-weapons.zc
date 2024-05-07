@@ -14731,6 +14731,7 @@ class KnifeHeiwa : MarineWeapon
 	int knifebarrageno;
 	int knifespertoss;
 	int maxthrowableknives;
+	double knifeswingdeffactor;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -15058,7 +15059,6 @@ class KnifeHeiwa : MarineWeapon
 				A_StartSound("weapons/knifetoss", 104,CHANF_DEFAULT,frandom(0.875,1.00),ATTN_NORM,frandom(0.9,1.1));
 				A_StartSound("weapons/knifetoss", 105,CHANF_DEFAULT,frandom(0.75,0.875),ATTN_NORM,frandom(0.875,1.125));
 			}
-			
 			
 			[BombShotsB, BombShots] = A_FireProjectile(shottype, randangle, false, 0, shotheight, FPF_NOAUTOAIM, randpitch);
 			if (BombShotsB)

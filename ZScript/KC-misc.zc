@@ -819,7 +819,7 @@ class PlayerStatItem : Inventory
 					if (A_CheckForHeiwa())
 					{
 						timefreeze1timesused = kcheiwa_timefreeze1times;
-						if (kcheiwa_startspbkpk) owner.A_SetInventory("SpecialBackpackBonus",1);
+						if (kcheiwa_startspbkpk) owner.A_SetInventory("SpecialBackpackBonus",kcheiwa_startspbkpk);
 						if (kcheiwa_startcharm) owner.A_SetInventory("TimeSeraphCharm",1);
 						if (kcheiwa_startwatch) owner.A_SetInventory("TimeSeraphPocketWatch",1);
 						if (kcheiwa_startbangle) owner.A_SetInventory("TimeSeraphBangle",1);
@@ -1262,12 +1262,12 @@ class PlayerStatItem : Inventory
 			
 			if (owner.health > 0)
 			{
-				if (tfcooldown) tfcooldown--;
-				if (whistlecooldown) whistlecooldown--;
+				if (tfcooldown > 0) tfcooldown--;
+				if (whistlecooldown > 0) whistlecooldown--;
 				if (OneLinerCooldown > 0) OneLinerCooldown--;
 				if (OneLinerTimerCool > 0) OneLinerTimerCool--;
-				if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
 				if (TSArtifactSpawnCooldown > 0) TSArtifactSpawnCooldown--;
+				if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
 			}
 			
 			if (drowndebufflevel > 0)
@@ -2381,7 +2381,7 @@ class PlayerStatItem : Inventory
 				EvasionRate += SkillFactor;
 			}
 			
-			if (tfcooldown)
+			if (tfcooldown > 0)
 			{
 				PerkFactor = randompick(random(937,938),1875,1875,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,7500,7500,8750);
 				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
@@ -2859,7 +2859,7 @@ class PlayerStatItem : Inventory
 				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
 				if (Owner.CountInv("EWShieldDefendMode")) TotalMass *= (3.5 + (HellWarriorShieldLevel * 0.175));
 				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (1.75 + (HellWarriorShieldLevel * 0.0875));
-				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) TotalMass *= 2.5;
+				if (berserked) TotalMass *= 2.5;
 			}
 			// Armor
 
@@ -7049,9 +7049,16 @@ class PlayerStatItem : Inventory
 				temp1 = ((0.1667 + (HellWarriorShieldLevel * 0.01667)) + (HellWarriorShieldLevel * 0.00625));
 				if (Owner.CountInv("EWShieldDefendMode")) temp2 = ((0.433 + (HellWarriorShieldLevel * 0.0433)) + (HellWarriorShieldLevel * 0.005));
 				if (Owner.CountInv("EWShieldDefendModeExtra")) temp3 = ((0.4866 + (HellWarriorShieldLevel * 0.04866)) + (HellWarriorShieldLevel * 0.001));
-				if ((damageType == 'Slime' || damageType == 'Lava' || damageType == 'Magma' || (playeractor && playeractor.tookflrdmg) || damageType == 'Drowning' || damageType == 'Falling'))
+				
+				if ((damageType == 'Slime' || 
+						 damageType == 'Lava' || 
+						 damageType == 'Magma' || 
+						(playeractor && playeractor.tookflrdmg) || 
+						 damageType == 'Drowning' || 
+						 damageType == 'Falling'))
 				{
 					double rand = (random[statitem](0,5) * 0.05);
+					if (berserked) rand = (random[statitem](2,5) * 0.05);
 					temp1 *= rand;
 					temp2 *= rand;
 					temp3 *= rand;
@@ -7064,7 +7071,11 @@ class PlayerStatItem : Inventory
 				EWShieldFactor *= temp1;
 				EWShieldFactor *= temp2;
 				EWShieldFactor *= temp3;
-				if (EWShieldFactor < 1.00 && ( Owner.CountInv("PowerStrength") || Owner.CountInv("KCPowerStrength"))) EWShieldFactor *= (1.0 - BerserkFactorblock);
+				if (EWShieldFactor < 1.00 && 
+						(berserked)) 
+				{
+					EWShieldFactor *= (1.0 - BerserkFactorblock);
+				}
 			}
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - HellWarrior Shield): %.8f, \c[blue]temp1: %.8f, temp2: %.8f, temp3: %.8f, BerserkFactorblock: %.8f", EWShieldFactor, temp1, temp2, temp3, BerserkFactorblock);
 		
@@ -7175,7 +7186,7 @@ class PlayerStatItem : Inventory
 			
 			// Translocatior
 			double TranslocatorFactor = 1.00;
-			if (tfcooldown)
+			if (tfcooldown > 0)
 			{
 				TranslocatorFactor = frandompick(0.125,0.25,0.25,0.25,0.25,0.25,0.25,0.375);
 				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - TranslocatorFactor): %.8f", TranslocatorFactor);
@@ -7186,7 +7197,7 @@ class PlayerStatItem : Inventory
 			if (weapon is "FistMarine" ||
 					weapon is "FistHeiwa")
 			{
-				if (!UsingFistBlock) 
+				if (!UsingFistBlock)
 				{
 					if (berserked) WeaponFactor = 1.125;
 										else WeaponFactor = 1.25;
@@ -7645,6 +7656,8 @@ class PlayerStatItem : Inventory
 		double WeaponFactorEx = 0.0;
 		double MarineWeapLevel = 16;
 		double HeiwaWeapLevel = 40;
+		double MarineLowFact2 = 0.5;
+		double HeiwaLowFact2 = 0.3125;
 		double tempfactor1;
 		double tempfactor2;
 		// Weapon Checks
@@ -7652,9 +7665,8 @@ class PlayerStatItem : Inventory
 				weapon is "FistHeiwa" ||
 				weapon is "KnifeHeiwa")
 		{
-
-			if (berserked) tempfactor1 = 0.25;
-								else tempfactor1 = 0.125;
+			tempfactor1 = 0.125;
+			if (berserked) tempfactor1 *= 2;
 			if (A_CheckForHeiwa())
 			{
 				tempfactor2 = (0.50 + (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
@@ -7664,21 +7676,52 @@ class PlayerStatItem : Inventory
 			}
 			WeaponFactorEx += tempfactor1;
 		}
+		if (weapon is "Glock21")
+		{
+			if (A_CheckForHeiwa()) tempfactor1 = -0.0125;
+												else tempfactor1 = -0.00078125;
+			if (berserked) tempfactor1 *= 0.25;
+			
+			tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
+			if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+		}
+		if (weapon is "BlasterPistol")
+		{
+			bool dualbpistols = false;
+			if (owner.CountInv("DualBlasterPistols") && !owner.CountInv("DualBlasterPistolsDisabled")) dualbpistols = true;
+
+			if (A_CheckForHeiwa()) tempfactor1 = -0.016875;
+												else tempfactor1 = -0.0010546875;
+			if (berserked) tempfactor1 *= 0.25;
+			
+			if (dualbpistols) tempfactor1 *= 1.75;
+			if (owner.CountInv("BlasterPistolUpgrade"))
+			{
+				if (dualbpistols) tempfactor1 *= 0.667;
+										 else tempfactor1 *= 0.75;
+			}
+			tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
+			if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+		}
 		if (weapon is "RiotGun")
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (berserked) tempfactor1 = 0.03125;
-									else tempfactor1 = 0.125;
+				tempfactor1 = 0.125;
+				if (berserked) tempfactor1 *= 0.25;
+				if (owner.CountInv("RiotGunUpgrade")) tempfactor1 *= 0.75;
+				
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (berserked) tempfactor1 = 0.078125;
-									else tempfactor1 = 0.01953125;
-				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.334)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				tempfactor1 = 0.01953125;
+				if (berserked) tempfactor1 *= 0.25;
+				if (owner.CountInv("RiotGunUpgrade")) tempfactor1 *= 0.75;
+				
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (MarineWeapLevel * 1.334)) ));
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			tempfactor1 *= tempfactor2;
 			WeaponFactorEx -= tempfactor1;
@@ -7690,33 +7733,33 @@ class PlayerStatItem : Inventory
 			
 			if (A_CheckForHeiwa())
 			{
-				if (dualtommys)
+				if (dualtommys) tempfactor1 = 0.225;
+									 else tempfactor1 = 0.1;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				
+				if (owner.CountInv("TommyGunUpgrade"))
 				{
-					if (berserked) tempfactor1 = 0.05625;
-										else tempfactor1 = 0.225;
-				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.025;
-										else tempfactor1 = 0.1;
+					if (dualtommys) tempfactor1 *= 0.667;
+										 else tempfactor1 *= 0.75;
 				}
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (dualtommys)
+				if (dualtommys) tempfactor1 = 0.1125;
+									 else tempfactor1 = 0.05;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				
+				if (owner.CountInv("TommyGunUpgrade"))
 				{
-					if (berserked) tempfactor1 = 0.028125;
-										else tempfactor1 = 0.1125;
-				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.0125;
-										else tempfactor1 = 0.05;
+					if (dualtommys) tempfactor1 *= 0.667;
+										 else tempfactor1 *= 0.75;
 				}
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (MarineWeapLevel * 0.834)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
@@ -7726,17 +7769,20 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (berserked) tempfactor1 = 0.025;
-									else tempfactor1 = 0.1;
+				tempfactor1 = 0.1;
+				if (berserked) tempfactor1 *= 0.25;
+				
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (berserked) tempfactor1 = 0.0125;
-									else tempfactor1 = 0.05;
+				tempfactor1 = 0.05;
+				if (berserked) tempfactor1 *= 0.25;
+
+				if (owner.CountInv("BlasterRifleUpgrade")) tempfactor1 *= 0.667;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (MarineWeapLevel * 0.834)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
@@ -7746,18 +7792,21 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (berserked) tempfactor1 = 0.075;
-									else tempfactor1 = 0.3;
+				tempfactor1 = 0.3;
+
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (berserked) tempfactor1 = 0.05;
-									else tempfactor1 = 0.2;
+				tempfactor1 = 0.2;
+									
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
 			WeaponFactorEx -= tempfactor1;
 		}
@@ -7768,33 +7817,33 @@ class PlayerStatItem : Inventory
 			
 			if (A_CheckForHeiwa())
 			{
-				if (dualdevs)
+				if (dualdevs) tempfactor1 = 0.45;
+								 else tempfactor1 = 0.2;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				
+				if (owner.CountInv("DevastatorUpgrade"))
 				{
-					if (berserked) tempfactor1 = 0.1125;
-										else tempfactor1 = 0.45;
+					if (dualdevs) tempfactor1 *= 0.5834;
+									 else tempfactor1 *= 0.667;
 				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.05;
-										else tempfactor1 = 0.2;
-				}
-				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 2))));
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (dualdevs)
+				if (dualdevs) tempfactor1 = 0.225;
+								 else tempfactor1 = 0.1;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				
+				if (owner.CountInv("DevastatorUpgrade"))
 				{
-					if (berserked) tempfactor1 = 0.05625;
-										else tempfactor1 = 0.225;
-				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.025;
-										else tempfactor1 = 0.1;
+					if (dualdevs) tempfactor1 *= 0.5834;
+									 else tempfactor1 *= 0.667;
 				}
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
@@ -7807,33 +7856,20 @@ class PlayerStatItem : Inventory
 
 			if (A_CheckForHeiwa())
 			{
-				if (dualteslas)
-				{
-					if (berserked) tempfactor1 = 0.05;
-										else tempfactor1 = 0.2;
-				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.03125;
-										else tempfactor1 = 0.125;
-				}
+				if (dualteslas) tempfactor1 = 0.2;
+									 else tempfactor1 = 0.125;
+				
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 1.25)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (dualteslas)
-				{
-					if (berserked) tempfactor1 = 0.0125;
-										else tempfactor1 = 0.05;
-				}
-				else
-				{
-					if (berserked) tempfactor1 = 0.078125;
-										else tempfactor1 = 0.01953125;
-				}
+				if (dualteslas) tempfactor1 = 0.05;
+									 else tempfactor1 = 0.01953125;
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.3125;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			tempfactor1 *= tempfactor2;
 			WeaponFactorEx -= tempfactor1;
@@ -7842,17 +7878,19 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				if (berserked) tempfactor1 = 0.125;
-									else tempfactor1 = 0.5;
+				tempfactor1 = 0.5;
+				
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
 			{
-				if (berserked) tempfactor1 = 0.09375;
-									else tempfactor1 = 0.375;
+				tempfactor1 = 0.375;
+				
+				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
-				if (tempfactor2 <= 0.5) tempfactor2 = 0.5;
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
