@@ -4976,6 +4976,40 @@ class ShotgunMarine : MarineWeapon //replaces Shotgun
 		Inventory.RestrictedTo "KCPlayer";
 	}
 	
+	override bool CanPickup(Actor toucher)
+	{
+		if (toucher == null) return false;
+
+		int rsize = RestrictedToPlayerClass.Size();
+		//Console.Printf("rsize: %d", rsize);
+		if (rsize > 0)
+		{
+			for (int i=0; i < rsize; i++)
+			{
+				if (toucher is RestrictedToPlayerClass[i]) 
+				{
+					return true;
+				}
+			}
+			//Console.Printf("@n3km");
+			return false;
+		}
+
+		rsize = ForbiddenToPlayerClass.Size();
+		if (rsize > 0)
+		{
+			for (int i=0; i < rsize; i++)
+			{
+				if (toucher is ForbiddenToPlayerClass[i]) return false;
+			}
+		}
+		
+		let currentitemtype = toucher.FindInventory("Shell");
+		//Console.Printf("@#$$@$");
+		if (currentitemtype && currentitemtype.Amount >= currentitemtype.MaxAmount) return false;
+		return true;
+	}
+
 	override String PickupMessage()
 	{
 		string msg = PickupMsg;
@@ -12089,10 +12123,12 @@ Class Translocator : MarineWeapon
 		actor playera = players[0].mo;
 		tfradius = 16;			// telefrag radius (player radius is 16)
 		if (playera) tfradius = playera.radius;
+		if (A_CheckForHeiwa()) tfradius *= 1.5;
 
 		tfenabled = true;		// enable/disable telefrag
 		tfdynamicdamage = true;	// use the player's current health+armor values as telefrag damage
 		tfdamage = 400;			// fixed telefrag damage (only used if tfdynamicdamage = false)
+		if (A_CheckForHeiwa()) tfdamage *= 2.5;
 		Super.PostBeginPlay();
 	}
 	Default
@@ -12206,6 +12242,8 @@ Class Translocator : MarineWeapon
 		Fire:
 			TNT1 A 0
 			{	
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 				if (!invoker.beacon) 
 				{
 					[invoker.bacon, invoker.beacon] = A_FireProjectile("TLBeacon",spawnheight:-5,pitch:-5);
@@ -12243,6 +12281,7 @@ Class Translocator : MarineWeapon
 								if (invoker.tfdynamicdamage)
 								{
 									invoker.tfdamage = invoker.owner.health + invoker.owner.FindInventory("BasicArmor").amount;
+									if (A_CheckForHeiwa()) invoker.tfdamage *= 2.5;
 								}
 								invoker.dummy.A_Explode(invoker.tfdamage,invoker.tfradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius);
 							}
@@ -12251,6 +12290,7 @@ Class Translocator : MarineWeapon
 							invoker.dummy.A_SpawnItemex("TLBeaconFog2",xofs:-8);
 							invoker.beacon.Destroy();
 							invoker.dummy.Destroy();
+							if (MiscItem) MiscItem.tfcooldown += random(31,39);
 							A_GiveInventory("TLBeaconAmmo");
 							Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
 						}

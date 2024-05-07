@@ -117,6 +117,7 @@ class PlayerStatItem : Inventory
 	int DynMusChangeChance;
 	int snglen;
 	
+	int tfcooldown;
 	bool MercyInvulnOn;
 	bool MercyInvulnOnSiel;
 	int MercyInvulnTimer;
@@ -586,8 +587,8 @@ class PlayerStatItem : Inventory
 				{
 					if (itemtimer <= 1)
 					{
-						timefreeze2levellearned = random(36,50);
-						timefreeze3levellearned = random(42,62);
+						timefreeze2levellearned = random(18,25); // random(36,50);
+						timefreeze3levellearned = random(30,random(42,43)); // random(42,62);
 						if (timefreeze3levellearned < timefreeze2levellearned) timefreeze3levellearned = timefreeze2levellearned;
 					}
 					
@@ -1261,6 +1262,7 @@ class PlayerStatItem : Inventory
 			
 			if (owner.health > 0)
 			{
+				if (tfcooldown) tfcooldown--;
 				if (whistlecooldown) whistlecooldown--;
 				if (OneLinerCooldown > 0) OneLinerCooldown--;
 				if (OneLinerTimerCool > 0) OneLinerTimerCool--;
@@ -2378,6 +2380,14 @@ class PlayerStatItem : Inventory
 				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
 				EvasionRate += SkillFactor;
 			}
+			
+			if (tfcooldown)
+			{
+				PerkFactor = randompick(random(937,938),1875,1875,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,7500,7500,8750);
+				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
+				EvasionRate += SkillFactor;
+			}
+			
 			int EvasionRNGVal = random[statitem](1,10000); // Based on 0.01% to 100.00%
 			if (EvasionRNGVal <= EvasionRate) 
 			{
@@ -3235,32 +3245,44 @@ class PlayerStatItem : Inventory
 			weapon = owner.player.ReadyWeapon;
 			double WeaponJumpZ = 1.00;
 			double WeaponJumpEx = 0.00;
+			double BaseEncFactor = 0.00;
 			if (weapon is "FistMarine" || 
 					weapon is "FistHeiwa" ||
 					weapon is "KnifeHeiwa")
 			{
-				if (berserked)
+				if (A_CheckForHeiwa()) BaseEncFactor = 0.1667;
+													else BaseEncFactor = 0.125;
+				if (berserked) BaseEncFactor *= 1.5;
+			}
+			if (weapon is "Glock21")
+			{
+				if (A_CheckForHeiwa()) BaseEncFactor = -0.0125;
+													else BaseEncFactor = -0.00078125;
+				if (berserked) BaseEncFactor *= 0.25;
+			}
+			if (weapon is "BlasterPistol")
+			{
+				bool dualbpistols = false;
+				if (owner.CountInv("DualBlasterPistols") && !owner.CountInv("DualBlasterPistolsDisabled")) dualbpistols = true;
+
+				if (A_CheckForHeiwa()) BaseEncFactor = -0.016875;
+													else BaseEncFactor = -0.0010546875;
+				if (berserked) BaseEncFactor *= 0.25;
+				
+				if (dualbpistols) BaseEncFactor *= 1.75;
+				if (owner.CountInv("BlasterPistolUpgrade"))
 				{
-					if (A_CheckForHeiwa()) WeaponJumpEx += 0.20;
-														else WeaponJumpEx += 0.1625;
-				}
-				else 
-				{
-					WeaponJumpEx += 0.125;
+					if (dualbpistols) BaseEncFactor *= 0.667;
+											 else BaseEncFactor *= 0.75;
 				}
 			}
 			if (weapon is "RiotGun")
 			{
-				if (A_CheckForHeiwa())
-				{
-					if (berserked) WeaponJumpEx -= 0.025;
-										else WeaponJumpEx -= 0.1;
-				}
-				else
-				{
-					if (berserked) WeaponJumpEx -= 0.0125;
-										else WeaponJumpEx -= 0.05;
-				}
+				if (A_CheckForHeiwa()) BaseEncFactor = -0.1;
+													else BaseEncFactor = -0.05;
+				if (berserked) BaseEncFactor *= 0.25;
+				
+				if (owner.CountInv("RiotGunUpgrade")) BaseEncFactor *= 0.75;
 			}
 			if (weapon is "TommyGun")
 			{
@@ -3269,56 +3291,36 @@ class PlayerStatItem : Inventory
 				
 				if (A_CheckForHeiwa())
 				{
-					if (dualtommys)
-					{
-						if (berserked) WeaponJumpEx -= 0.028125;
-											else WeaponJumpEx -= 0.1125;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.0125;
-											else WeaponJumpEx -= 0.05;
-					}
+					if (dualtommys) BaseEncFactor = -0.1125;
+										 else BaseEncFactor = -0.05;
 				}
 				else
 				{
-					if (dualtommys)
-					{
-						if (berserked) WeaponJumpEx -= 0.0140625;
-											else WeaponJumpEx -= 0.05625;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.00625;
-											else WeaponJumpEx -= 0.025;
-					}
+					if (dualtommys) BaseEncFactor = -0.05625;
+										 else BaseEncFactor = -0.025;
+				}
+				if (berserked) BaseEncFactor *= 0.25;
+				
+				if (owner.CountInv("TommyGunUpgrade"))
+				{
+					if (dualtommys) BaseEncFactor *= 0.667;
+										 else BaseEncFactor *= 0.75;
 				}
 			}
 			if (weapon is "BlasterRifle")
 			{
-				if (A_CheckForHeiwa())
-				{
-					if (berserked) WeaponJumpEx -= 0.0125;
-										else WeaponJumpEx -= 0.05;
-				}
-				else
-				{
-					if (berserked) WeaponJumpEx -= 0.00625;
-										else WeaponJumpEx -= 0.025;
-				}
+				if (A_CheckForHeiwa()) BaseEncFactor = -0.05;
+													else BaseEncFactor = -0.025;
+				if (berserked) BaseEncFactor *= 0.25;
+				
+				if (owner.CountInv("BlasterRifleUpgrade")) BaseEncFactor *= 0.667;
 			}
 			if (weapon is "Deviation")
 			{
-				if (A_CheckForHeiwa())
-				{
-					if (berserked) WeaponJumpEx -= 0.0375;
-										else WeaponJumpEx -= 0.15;
-				}
-				else
-				{
-					if (berserked) WeaponJumpEx -= 0.025;
-										else WeaponJumpEx -= 0.10;
-				}
+				if (A_CheckForHeiwa()) BaseEncFactor = -0.15;
+													else BaseEncFactor = -0.10;
+				if (berserked) BaseEncFactor *= 0.25;
+				
 			}
 			if (weapon is "Devastator")
 			{
@@ -3327,29 +3329,20 @@ class PlayerStatItem : Inventory
 
 				if (A_CheckForHeiwa())
 				{
-					if (dualdevs)
-					{
-						if (berserked) WeaponJumpEx -= 0.05625;
-											else WeaponJumpEx -= 0.225;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.025;
-											else WeaponJumpEx -= 0.1;
-					}
+					if (dualdevs) BaseEncFactor = -0.225;
+									 else BaseEncFactor = -0.1;
 				}
 				else
 				{
-					if (dualdevs)
-					{
-						if (berserked) WeaponJumpEx -= 0.028125;
-											else WeaponJumpEx -= 0.1125;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.0125;
-											else WeaponJumpEx -= 0.05;
-					}
+					if (dualdevs) BaseEncFactor = -0.1125;
+									 else BaseEncFactor = -0.05;
+				}
+				if (berserked) BaseEncFactor *= 0.25;
+				
+				if (owner.CountInv("DevastatorUpgrade"))
+				{
+					if (dualdevs) BaseEncFactor *= 0.5834;
+									 else BaseEncFactor *= 0.667;
 				}
 			}
 			if (weapon is "TeslaCannon")
@@ -3359,61 +3352,49 @@ class PlayerStatItem : Inventory
 
 				if (A_CheckForHeiwa())
 				{
-					if (dualteslas)
-					{
-						if (berserked) WeaponJumpEx -= 0.025;
-											else WeaponJumpEx -= 0.1;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.015625;
-											else WeaponJumpEx -= 0.0625;
-					}
+					if (dualteslas) BaseEncFactor = -0.1;
+										 else BaseEncFactor = -0.0625;
 				}
 				else
 				{
-					if (dualteslas)
-					{
-						if (berserked) WeaponJumpEx -= 0.0125;
-											else WeaponJumpEx -= 0.05;
-					}
-					else
-					{
-						if (berserked) WeaponJumpEx -= 0.015625;
-											else WeaponJumpEx -= 0.0078125;
-					}
+					if (dualteslas) BaseEncFactor = -0.05;
+										 else BaseEncFactor = -0.0078125;
 				}
+				if (berserked) BaseEncFactor *= 0.25;
 			}
 			if (weapon is "BHGen")
 			{
-				if (A_CheckForHeiwa())
-				{
-					if (berserked) WeaponJumpEx -= 0.0625;
-										else WeaponJumpEx -= 0.25;
-				}
-				else
-				{
-					if (berserked) WeaponJumpEx -= 0.046875;
-										else WeaponJumpEx -= 0.1875;
-				}
+				if (A_CheckForHeiwa()) BaseEncFactor -= 0.25;
+													else BaseEncFactor -= 0.1875;
+				if (berserked) BaseEncFactor *= 0.25;
 			}
 			If (weapon is "EvilWarriorShield")
 			{
-				if (berserked)
+				if (Owner.CountInv("HWShieldBlockHold")) BaseEncFactor = (-0.25 * (1.0 + (HellWarriorShieldLevel * 0.0015625)));
+																						else BaseEncFactor = (-0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+				if (berserked) BaseEncFactor *= 0.25;
+				if (A_CheckForHeiwa())
 				{
-					if (Owner.CountInv("HWShieldBlockHold")) WeaponJumpEx -= (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
-																							else WeaponJumpEx -= (0.05 * (1.0 + (HellWarriorShieldLevel * 0.003125)));
-				}
-				else
-				{
-					if (Owner.CountInv("HWShieldBlockHold")) WeaponJumpEx -= (0.20 * (1.0 + (HellWarriorShieldLevel * 0.0125)));
-																							else WeaponJumpEx -= (0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+					double basebonus = 0.875;
+					if (berserked) basebonus = 0.8125;
+					if (TruePlayerLevel >= 10) BaseEncFactor *= basebonus;
+					if (TruePlayerLevel >= 20) BaseEncFactor *= basebonus;
+					if (TruePlayerLevel >= 30) BaseEncFactor *= basebonus;
+					if (TruePlayerLevel >= 40) BaseEncFactor *= basebonus;
+					if (TruePlayerLevel >= 50) BaseEncFactor *= basebonus;
+					if (TruePlayerLevel >= 60) BaseEncFactor *= (basebonus*basebonus);
+					if (TruePlayerLevel >= 70) BaseEncFactor *= (basebonus*basebonus);
+					if (TruePlayerLevel >= 80) BaseEncFactor *= (basebonus*basebonus);
+					if (TruePlayerLevel >= 90) BaseEncFactor *= (basebonus*basebonus);
+					if (TruePlayerLevel >= 100) BaseEncFactor *= (basebonus*basebonus);
+					if (TruePlayerLevel >= 120) BaseEncFactor *= (basebonus*basebonus*basebonus);
 				}
 			}
+			WeaponJumpEx += BaseEncFactor;
 			
 			WeaponJumpEx *= kc_weaponencumbrance;
 			WeaponJumpZ += WeaponJumpEx;
-			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [WeaponEquipped]: %.8f, WeaponJumpEx: %.8f, kc_weaponencumbrance: %.8f", WeaponJumpZ, WeaponJumpEx, kc_weaponencumbrance);
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [WeaponEquipped]: %.8f, WeaponJumpEx: %.8f, BaseEncFactor: %.8f, kc_weaponencumbrance: %.8f", WeaponJumpZ, WeaponJumpEx, BaseEncFactor, kc_weaponencumbrance);
 			
 			double FistBlockJumpZ = 1.00;
 			if (A_CheckForHeiwa())
@@ -7192,6 +7173,14 @@ class PlayerStatItem : Inventory
 			if (!UsingFistBlock) PlayerFistBlockFactor = 1.00;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - FistBlock): %.8f", PlayerFistBlockFactor);
 			
+			// Translocatior
+			double TranslocatorFactor = 1.00;
+			if (tfcooldown)
+			{
+				TranslocatorFactor = frandompick(0.125,0.25,0.25,0.25,0.25,0.25,0.25,0.375);
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - TranslocatorFactor): %.8f", TranslocatorFactor);
+			}
+			
 			// Weapons
 			double WeaponFactor = 1.00;
 			if (weapon is "FistMarine" ||
@@ -7258,6 +7247,7 @@ class PlayerStatItem : Inventory
 												 * EWShieldFactor
 												 * PlayerFistBlockFactor
 												 * WeaponFactor
+												 * TranslocatorFactor
 												 * SkillFactor
 												 * KCFactor
 												 * TSAFactor

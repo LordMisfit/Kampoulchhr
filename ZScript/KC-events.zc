@@ -6112,67 +6112,198 @@ class KC_EventHandler : EventHandler
 			[key1, key2] = Bindings.GetKeysForCommand("KC_TimeStop");
 			if ((key1 && key1 == e.Args[0]) || (key2 && key2 == e.Args[0]))
 			{
+				bool alttimestoptypes = false;
 				if (KCPlayerPawn(playera) && 
 						playera.health > 0 && 
 						!playera.CountInv("PlayerIsDead") && 
 						MiscItem)
 				{
-					if (MiscItem.timestopstate <= 0)
+					int timestopinittype = 1;
+					if (MiscItem.timestopstate <= 0) // Check to make sure a Time Ability isn't already active :V
 					{
-					//Type 1 - Defensive Freeze [default, 10s duration/45s cooldown (base), 4-5x less damage dealt to foes, greatly boosted regeneration]
-					//if ()
-					//{
-							if (MiscItem.timestopcooldown1tics <= 0)
+						if (alttimestoptypes)
+						{
+							if (buttons & BT_ZOOM) timestopinittype = 3;
+							else if (buttons & BT_SPEED) timestopinittype = 2;
+							else timestopinittype = 1;
+						}
+						//Type 3 - Offensive Freeze [10s duration/45s cooldown (base), 4-5x damage to all frozen foes when hit, less boosted regen]
+						if (timestopinittype >= 3)
+						{
+							if (MiscItem.TruePlayerLevel >= MiscItem.timefreeze3levellearned)
 							{
-								MiscItem.timestopcooldown1tics = 0;
-								MiscItem.timestopstate = 1;
-								MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
-								MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
-								playera.A_SetBlend("4F644F",0.667,random(random(22,23),27));
-
-								playera.A_StopSound(216);
-								playera.A_StopSound(217); // Cuts Wind-Down Off
-								playera.A_StopSound(218); // Cuts Ticks Off
-								playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
-								Console.Printf("Time Freeze Activated");
+								if (MiscItem.timestopcooldown3tics <= 0)
+								{
+									MiscItem.timestopcooldown3tics = 0;
+									MiscItem.timestopstate = 3;
+									MiscItem.timestopactivetics = int(MiscItem.timefreeze3duration * TICRATE);
+									MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze3duration * TICRATE);
+									playera.A_SetBlend("644F4F",0.667,random(random(22,23),27));
+	
+									playera.A_StopSound(216);
+									playera.A_StopSound(217); // Cuts Wind-Down Off
+									playera.A_StopSound(218); // Cuts Ticks Off
+									playera.A_StopSound(219); // Cuts Type Sound Off
+									playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									playera.A_StartSound("TimeFreezeOffensiveIn",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									Console.Printf("Offensive Time Freeze Activated");
+								}
+								else
+								{
+									playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+									Console.Printf("\c[brick]Offensive Time Freeze Must Cool Down First!");
+								}
 							}
 							else
 							{
 								playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
-								Console.Printf("\c[brick]Time Freeze Must Cool Down First!");
 							}
-					//}
-					//Type 2 - Neutral Freeze [20s duration/22.5s cooldown (base), neutral damage values dealt to foes, no extra regeneration boosts]
-					//if ()
-					//{
-					//}
-					//}
-					//Type 3 - Offensive Freeze [10s duration/45s cooldown (base), 4-5x damage to all frozen foes when hit, less boosted regen]
-					//if ()
-					//{
-					//}
+						}
+						//Type 2 - Neutral Freeze [20s duration/22.5s cooldown (base), neutral damage values dealt to foes, no extra regeneration boosts]
+						else
+						if (timestopinittype == 2) 
+						{
+							if (MiscItem.TruePlayerLevel >= MiscItem.timefreeze2levellearned)
+							{
+								if (MiscItem.timestopcooldown2tics <= 0)
+								{
+									MiscItem.timestopcooldown2tics = 0;
+									MiscItem.timestopstate = 2;
+									MiscItem.timestopactivetics = int(MiscItem.timefreeze2duration * TICRATE);
+									MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze2duration * TICRATE);
+									playera.A_SetBlend("646464",0.667,random(random(22,23),27));
+	
+									playera.A_StopSound(216);
+									playera.A_StopSound(217); // Cuts Wind-Down Off
+									playera.A_StopSound(218); // Cuts Ticks Off
+									playera.A_StopSound(219); // Cuts Type Sound Off
+									playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									playera.A_StartSound("TimeFreezeNeutralIn",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									Console.Printf("Neutral Time Freeze Activated");
+								}
+								else
+								{
+									playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+									Console.Printf("\c[brick]Neutral Time Freeze Must Cool Down First!");
+								}
+							}
+							else
+							{
+								playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+							}
+						}
+						//Type 1 - Defensive Freeze [default, 10s duration/45s cooldown (base), 4-5x less damage dealt to foes, greatly boosted regeneration]
+						else
+						{
+							if (timestopinittype <= 1)
+							{
+								if (MiscItem.timestopcooldown1tics <= 0)
+								{
+									MiscItem.timestopcooldown1tics = 0;
+									MiscItem.timestopstate = 1;
+									MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
+									MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
+									playera.A_SetBlend("4F644F",0.667,random(random(22,23),27));
+
+									playera.A_StopSound(216);
+									playera.A_StopSound(217); // Cuts Wind-Down Off
+									playera.A_StopSound(218); // Cuts Ticks Off
+									playera.A_StopSound(219); // Cuts Type Sound Off
+									playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									playera.A_StartSound("TimeFreezeDefensiveIn",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+									if (MiscItem.TruePlayerLevel >= MiscItem.timefreeze2levellearned &&
+											alttimestoptypes)
+									{
+										Console.Printf("Neutral Time Freeze Activated");
+									}
+									else
+									{
+										Console.Printf("Time Freeze Activated");
+									}
+								}
+								else
+								{
+									if (MiscItem.TruePlayerLevel >= MiscItem.timefreeze2levellearned &&
+											alttimestoptypes)
+									{
+										playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+										Console.Printf("\c[brick]Defensive Time Freeze Must Cool Down First!");
+									}
+									else
+									{
+										playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+										Console.Printf("\c[brick]Time Freeze Must Cool Down First!");
+									}
+								}
+							}
+							else
+							{
+								playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
+							}
+						}
 					}
 					else
 					{
 						MiscItem.timestopactivetics = 0;
 						MiscItem.timestopstate = 0;
-						playera.A_SetInventory("KCTimeFreezer1",0);
-						
-						MiscItem.timestopcooldown1tics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
-						MiscItem.timestopcooldown1maxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
-						playera.A_SetInventory("KCTimeCooldown",1);
-						//playera.A_SetInventory("KCTimeCooldown2",1);
-						//playera.A_SetInventory("KCTimeCooldown3",1);
-						MiscItem.timefreeze1cooldownratio2 = 0.0;
-
-						MiscItem.timefreeze1timesused += MiscItem.timeusemulti;
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
-						if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
 						playera.A_StopSound(217); // Cuts Wind-Down Off
 						playera.A_StopSound(218); // Cuts Ticks Off
+						playera.A_StopSound(219); // Cuts Type Sound Off
 						playera.A_StartSound("TimeFreezeOut4a",216,CHANF_DEFAULT,0.875,ATTN_NONE); 
-						Console.Printf("Time Freeze Cut Short");
+
+						if (playera.CountInv("KCTimeFreezer1"))
+						{
+							playera.A_SetInventory("KCTimeFreezer1",0);
+							MiscItem.timestopcooldown1tics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
+							MiscItem.timestopcooldown1maxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
+							MiscItem.timefreeze1cooldownratio2 = 0.0;
+							MiscItem.timefreeze1timesused += MiscItem.timeusemulti;
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze1timesused += MiscItem.timeusemulti; // 1
+							playera.A_SetInventory("KCTimeCooldown",1);
+							playera.A_StartSound("TimeFreezeDefensiveOut",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+							if (MiscItem.TruePlayerLevel >= MiscItem.timefreeze2levellearned &&
+									alttimestoptypes)
+							{
+								Console.Printf("Defensive Time Freeze Cut Short");
+							}
+							else 
+							{
+								Console.Printf("Time Freeze Cut Short");
+							}
+						}
+						else
+						if (playera.CountInv("KCTimeFreezer2"))
+						{
+							playera.A_SetInventory("KCTimeFreezer2",0);
+							MiscItem.timestopcooldown2tics = (int(MiscItem.timefreeze2cooldown * TICRATE) * MiscItem.timefreeze2cooldownratio2);
+							MiscItem.timestopcooldown2maxtics = (int(MiscItem.timefreeze2cooldown * TICRATE) * MiscItem.timefreeze2cooldownratio2);
+							MiscItem.timefreeze2cooldownratio2 = 0.0;
+							MiscItem.timefreeze2timesused += MiscItem.timeusemulti;
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze2timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze2timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze2timesused += MiscItem.timeusemulti; // 1
+							playera.A_SetInventory("KCTimeCooldown2",1);
+							playera.A_StartSound("TimeFreezeNeutralOut",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+							Console.Printf("Neutral Time Freeze Cut Short");
+						}
+						else
+						if (playera.CountInv("KCTimeFreezer3"))
+						{
+							playera.A_SetInventory("KCTimeFreezer3",0);
+							MiscItem.timestopcooldown3tics = (int(MiscItem.timefreeze3cooldown * TICRATE) * MiscItem.timefreeze3cooldownratio2);
+							MiscItem.timestopcooldown3maxtics = (int(MiscItem.timefreeze3cooldown * TICRATE) * MiscItem.timefreeze3cooldownratio2);
+							MiscItem.timefreeze3cooldownratio2 = 0.0;
+							MiscItem.timefreeze3timesused += MiscItem.timeusemulti;
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 3)) MiscItem.timefreeze3timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 2)) MiscItem.timefreeze3timesused += MiscItem.timeusemulti; // 1
+							if ((playera.CountInv("KCPowerKampoul") && random(1,4) <= 1)) MiscItem.timefreeze3timesused += MiscItem.timeusemulti; // 1
+							playera.A_SetInventory("KCTimeCooldown3",1);
+							playera.A_StartSound("TimeFreezeOffensiveOut",219,CHANF_DEFAULT,0.875,ATTN_NONE); 
+							Console.Printf("Offensive Time Freeze Cut Short");
+						}
+						
 					}
 				}
 			}
