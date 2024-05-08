@@ -2596,62 +2596,30 @@ class PlayerStatItem : Inventory
 			{
 				if (Owner.CountInv("KnifePlayerSwing4"))
 				{ 
-					if (A_CheckForHeiwa())
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.625,0.625,0.625,0.625,0.875));
-						if (random(1,8) <= 1) SurviveRateCap += 3000;
-														 else SurviveRateCap += 1875; // 1500
-					}
-					else
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.5,0.5,0.5,0.5,0.75));
-						SurviveRateCap += 2250;
-					}
+					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.3125,0.3125,0.3125,0.3125,0.4375));
+					if (random(1,8) <= 1) SurviveRateCap += 1500;
+													 else SurviveRateCap += random(937,938); // 1500
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Knife Swing (4)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("KnifePlayerSwing3"))
 				{ 
-					if (A_CheckForHeiwa())
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.5,0.5,0.5,0.5,0.6875));
-						if (random(1,16) <= 1) SurviveRateCap += 2000;
-															else SurviveRateCap += 1250; // 1000
-					}
-					else
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.375,0.375,0.375,0.375,0.5625));
-						SurviveRateCap += 1500;
-					}
+					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.34375));
+					if (random(1,16) <= 1) SurviveRateCap += 1000;
+														else SurviveRateCap += 625; // 1000
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Knife Swingd (3)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("KnifePlayerSwing2"))
 				{ 
-					if (A_CheckForHeiwa())
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.375,0.375,0.375,0.375,0.5));
-						if (random(1,24) <= 1) SurviveRateCap += randompick(1333,1333,1334);
-															else SurviveRateCap += randompick(833,833,834); // 666.7
-					}
-					else
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.375));
-						SurviveRateCap += 1000;
-					}
+					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.1875,0.1875,0.1875,0.1875,0.25));
+					if (random(1,24) <= 1) SurviveRateCap += randompick(666,667,667);
+														else SurviveRateCap += randompick(416,417,417); // 666.7
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Knife Swing (2)]: %d", SurvivalRate);
 				}
 				else if (Owner.CountInv("KnifePlayerSwing"))
 				{
-					if (A_CheckForHeiwa())
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.25,0.25,0.25,0.25,0.3125));
-						if (random(1,32) <= 1) SurviveRateCap += randompick(666,667,667);
-															else SurviveRateCap += randompick(416,417,416); // 333.4
-					}
-					else
-					{
-						SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.125,0.125,0.125,0.125,0.1875));
-						SurviveRateCap += 500;
-					}
+					SurvivalRate += ((10000 - SurvivalRate) * frandompick[statitem](0.125,0.125,0.125,0.125,0.15625));
+					if (random(1,32) <= 1) SurviveRateCap += randompick(333,333,334);
+														else SurviveRateCap += randompick(208,208,209); // 333.4
 					if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Final w/o Knife Swing (1)]: %d", SurvivalRate);
 				}
 			}
@@ -2922,10 +2890,10 @@ class PlayerStatItem : Inventory
 			if (weapon is "KnifeHeiwa" && 
 					owner.CountInv("KnifePlayerSwingItem"))
 			{
-				if (Owner.CountInv("KnifePlayerSwing"))  TotalMass *= 2.5;
-				if (Owner.CountInv("KnifePlayerSwing2")) TotalMass *= 3.334;
-				if (Owner.CountInv("KnifePlayerSwing3")) TotalMass *= 5;
-				if (Owner.CountInv("KnifePlayerSwing4")) TotalMass *= 8.75;
+				if (Owner.CountInv("KnifePlayerSwing"))  TotalMass *= 1.75;
+				if (Owner.CountInv("KnifePlayerSwing2")) TotalMass *= 2.167;
+				if (Owner.CountInv("KnifePlayerSwing3")) TotalMass *= 3;
+				if (Owner.CountInv("KnifePlayerSwing4")) TotalMass *= 4.875;
 			}
 			If (weapon is "EvilWarriorShield")
 			{
@@ -6627,6 +6595,48 @@ class PlayerStatItem : Inventory
 				BaseFlatDefValueHUD *= 1.25;
 			}
 		}
+		if (owner.CountInv("KnifePlayerSwing"))
+		{
+			BaseFlatDefValue *= (1.0625 * 1.25);
+			BaseFlatDefValueCrush *= (1.025 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.0125 * 1.25);
+			BaseFlatDefValueHUD *= (1.0625 * 1.25);
+		}
+		if (owner.CountInv("KnifePlayerSwing2"))
+		{
+			BaseFlatDefValue *= (1.125 * 1.25);
+			BaseFlatDefValueCrush *= (1.05 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
+			BaseFlatDefValueHUD *= (1.125 * 1.25);
+		}
+		if (owner.CountInv("KnifePlayerSwing3"))
+		{
+			BaseFlatDefValue *= (1.25 * 1.25);
+			BaseFlatDefValueCrush *= (1.10 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.05 * 1.25);
+			BaseFlatDefValueHUD *= (1.25 * 1.25);
+		}
+		if (owner.CountInv("KnifePlayerSwing4"))
+		{
+			BaseFlatDefValue *= (1.50 * 1.25);
+			BaseFlatDefValueCrush *= (1.20 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.10 * 1.25);
+			BaseFlatDefValueHUD *= (1.50 * 1.25);
+		}
+		if (owner.CountInv("KnifePlayerSwingExtra"))
+		{
+			BaseFlatDefValue *= (1.125 * 1.25);
+			BaseFlatDefValueCrush *= (1.05 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
+			BaseFlatDefValueHUD *= (1.125 * 1.25);
+		}
+		if (owner.CountInv("KnifePlayerSwingExtra2"))
+		{
+			BaseFlatDefValue *= (1.125 * 1.25);
+			BaseFlatDefValueCrush *= (1.05 * 1.25);
+			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
+			BaseFlatDefValueHUD *= (1.125 * 1.25);
+		}
 		if (owner.CountInv("PowerGuard"))
 		{
 			BaseFlatDefValue *= 2.00;
@@ -7734,10 +7744,10 @@ class PlayerStatItem : Inventory
 		double PlayerKnifeSwingFactor = 1.0;
 		if (Owner.CountInv("KnifePlayerSwingItem"))
 		{
-			if (Owner.CountInv("KnifePlayerSwing")) PlayerKnifeSwingFactor *= frandom[statitem](1.125,1.25);
-			if (Owner.CountInv("KnifePlayerSwing2")) PlayerKnifeSwingFactor *= frandom[statitem](1.25,1.375);
-			if (Owner.CountInv("KnifePlayerSwing3")) PlayerKnifeSwingFactor *= frandom[statitem](1.375,1.5);
-			if (Owner.CountInv("KnifePlayerSwing4")) PlayerKnifeSwingFactor *= frandom[statitem](1.5,1.75);
+			if (Owner.CountInv("KnifePlayerSwing")) PlayerKnifeSwingFactor *= frandom[statitem](1.0625,1.125);
+			if (Owner.CountInv("KnifePlayerSwing2")) PlayerKnifeSwingFactor *= frandom[statitem](1.125,1.1875);
+			if (Owner.CountInv("KnifePlayerSwing3")) PlayerKnifeSwingFactor *= frandom[statitem](1.1875,1.25);
+			if (Owner.CountInv("KnifePlayerSwing4")) PlayerKnifeSwingFactor *= frandom[statitem](1.25,1.375);
 			Speed *= PlayerKnifeSwingFactor;
 			HUDSpeed *= PlayerKnifeSwingFactor;
 			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Knife Swing]: %.8f", PlayerKnifeSwingFactor);
