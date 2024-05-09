@@ -11,9 +11,13 @@ class KCStatusBarMain : BaseStatusBar
 	const SKILL_OMEGA = 8;
 	
 	DynamicValueInterpolator mHealthInterpolator;
+	DynamicValueInterpolator mPPInterpolator;
+	DynamicValueInterpolator mMPInterpolator;
 	DynamicValueInterpolator mArmorInterpolator;
 	DynamicValueInterpolator mEXPInterpolator;
 	int prevhealthtick, healthtick;
+	int prevPPtick, PPtick;
+	int prevMPtick, MPtick;
 	int prevarmortick, armortick;
 	int prevEXPtick, EXPtick;
 	HUDFont mBigFont;
@@ -102,6 +106,8 @@ class KCStatusBarMain : BaseStatusBar
 			Console.Printf("diparms_sbar: boxsize: %d x %d, boxofs: %d x %d, selectofs: %d x %d, innersize: %d x %d", diparms_sbar.boxsize.x, diparms_sbar.boxsize.y, diparms_sbar.boxofs.x, diparms_sbar.boxofs.y, diparms_sbar.selectofs.x, diparms_sbar.selectofs.y, diparms_sbar.innersize.x, diparms_sbar.innersize.y);
 		}
 		mHealthInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		mPPInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		mMPInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
 		mArmorInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
 		mEXPInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
 		healthtick = armortick = EXPtick = 8;
@@ -116,6 +122,8 @@ class KCStatusBarMain : BaseStatusBar
 	{
 		Super.NewGame();
 		mHealthInterpolator.Reset(0);
+		mPPInterpolator.Reset(0);
+		mMPInterpolator.Reset(0);
 		mArmorInterpolator.Reset(0);
 		mEXPInterpolator.Reset(0);
 	}
@@ -128,11 +136,21 @@ class KCStatusBarMain : BaseStatusBar
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		double tickinc = 0.1;
+		// Transformations Go Here
 		if (MiscItem && MiscItem.itemtimer <= 2) tickinc = 1.0;
 		healthtick = CPlayerPawn.CountInv("PlayerMaxHP") * tickinc;
-		// Transformations Go Here
 		if (healthtick < 1) healthtick = 1;
 		if (healthtick != prevhealthtick) mHealthInterpolator = DynamicValueInterpolator.Create(CPlayerPawn.health, 0.25, 1, healthtick);
+		PPtick = CPlayerPawn.CountInv("PlayerMaxPP") * tickinc;
+		MPtick = CPlayerPawn.CountInv("PlayerMaxMP") * tickinc;
+		if (MiscItem)
+		{
+			if (PPtick < 1) PPtick = 1;
+			if (PPtick != prevPPtick) mPPInterpolator = DynamicValueInterpolator.Create(MiscItem.CurrentPsychicPoints, 0.25, 1, PPtick);
+			if (MPtick < 1) MPtick = 1;
+			if (MPtick != prevMPtick) mMPInterpolator = DynamicValueInterpolator.Create(MiscItem.CurrentMagicPoints, 0.25, 1, MPtick);
+		}
+
 		name armorclasstype = "KCArmor";
 		let armor = KCArmor(CPlayerPawn.FindInventory(armorclasstype));
 		if (armor != null && armor.Amount > 0) 
@@ -147,10 +165,17 @@ class KCStatusBarMain : BaseStatusBar
 		//Console.Printf("HealthTick: %d [%d], ArmorTick %d [%d], EXPTick %d [%d]", healthtick, prevhealthtick, armortick, prevarmortick, EXPtick, prevEXPtick);
 		
 		mHealthInterpolator.Update(CPlayerPawn.health);
+		if (MiscItem)
+		{
+			mPPInterpolator.Update(MiscItem.CurrentPsychicPoints);
+			mMPInterpolator.Update(MiscItem.CurrentMagicPoints);
+		}
 		if (armor != null && armor.Amount > 0) mArmorInterpolator.Update(armor.Amount);
 		mEXPInterpolator.Update(CPlayerPawn.CountInv("ExpPts"));
 		
 		prevhealthtick = healthtick;
+		prevPPtick = PPtick;
+		prevMPtick = MPtick;
 		prevarmortick = armortick;
 		prevEXPtick = EXPtick;
 
@@ -1539,14 +1564,14 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				// Meters
 				vector2 mpos = (94, yinc+ycorrection);
-				int lgpiece = ((CurrentMagicPoints * 100) / MaxMagicPoints);
-				int lgpiece2 = ((CurrentMagicPoints * 100) / MaxMagicPoints);
+				int lgpiece = ((mMPInterpolator.GetValue() * 100) / MaxMagicPoints);
+				int lgpiece2 = ((mMPInterpolator.GetValue() * 100) / MaxMagicPoints);
 				double malpha = 0.875;
 				
 				if (lgpiece2 >= 101) DrawBar("MPNOTCH2", "MPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
 												else DrawBar("MPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 				
-				DrawString(mKCLFont, FormatNumber(CurrentMagicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+				DrawString(mKCLFont, FormatNumber(mMPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				DrawImage("MAGIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.5, 0.5));
 				
 				//Console.Printf("hudarmortype: %d", hudarmortype);
@@ -1577,14 +1602,14 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				// Meters
 				vector2 mpos = (94, yinc+ycorrection);
-				int lgpiece = ((CurrentPsychicPoints * 100) / MaxPsychicPoints);
-				int lgpiece2 = ((CurrentPsychicPoints * 100) / MaxPsychicPoints);
+				int lgpiece = ((mPPInterpolator.GetValue() * 100) / MaxPsychicPoints);
+				int lgpiece2 = ((mPPInterpolator.GetValue() * 100) / MaxPsychicPoints);
 				double malpha = 0.875;
 				
 				if (lgpiece2 >= 101) DrawBar("PPNOTCH2", "PPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
 												else DrawBar("PPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 				
-				DrawString(mKCLFont, FormatNumber(CurrentPsychicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
+				DrawString(mKCLFont, FormatNumber(mPPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				DrawImage("PSIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.625, 0.625));
 				
 				//Console.Printf("hudarmortype: %d", hudarmortype);
