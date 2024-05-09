@@ -12347,7 +12347,10 @@ Class Translocator : MarineWeapon
 						else
 						{
 						//------------------------------------Teleport----------------------------------						
-							A_SpawnItemex("TLBeaconFog");
+							bool spawned;
+							actor mo;
+							[spawned, mo] = A_SpawnItemex("TLBeaconFog");
+							if (mo) mo.target = playera;
 							if (invoker.tfenabled)
 							{
 								if (invoker.tfdynamicdamage)
@@ -12359,7 +12362,8 @@ Class Translocator : MarineWeapon
 							}
 							self.target = invoker.dummy;
 							A_Warp(AAPTR_TARGET, zofs: -invoker.beacon.height, flags: WARPF_USECALLERANGLE);
-							invoker.dummy.A_SpawnItemex("TLBeaconFog2",xofs:-8);
+							[spawned, mo] = invoker.dummy.A_SpawnItemex("TLBeaconFog2",xofs:-8);
+							if (mo) mo.target = playera;
 							invoker.beacon.Destroy();
 							invoker.dummy.Destroy();
 							if (MiscItem) MiscItem.tfcooldown += random(31,39);
@@ -13359,7 +13363,23 @@ class FistHeiwa : MarineWeapon // replaces Fist
 }
 
 //-----------------------------------Beacon-------------------------------------
-Class TLBeacon : KCBaseZSC
+class TLBeaconBase : KCBaseZSC
+{
+	default
+	{
+		+NOTIMEFREEZE;
+	}
+	
+	override void Tick()
+	{
+		actor playera = players[0].mo;
+		bNOTIMEFREEZE = false;
+		if (target && target == playera) bNOTIMEFREEZE = true;
+		super.Tick();
+	}
+}
+
+Class TLBeacon : TLBeaconBase
 {
 	Default
 	{
@@ -13374,7 +13394,6 @@ Class TLBeacon : KCBaseZSC
 		
 		BounceFactor 0.2;
 		WallBounceFactor 0.2;
-		+NOTIMEFREEZE;
 		+THRUACTORS;
 		-NOGRAVITY;
 		-NOTELEPORT;
@@ -13389,16 +13408,20 @@ Class TLBeacon : KCBaseZSC
 	
 	void TLParticleG()
 	{
+		int flags1 = SPF_FULLBRIGHT;
 		if (pos.z != floorz)
 		{
-			A_SpawnParticle("green",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+			if (bNOTIMEFREEZE) flags1 = SPF_FULLBRIGHT|SPF_NOTIMEFREEZE;
+			A_SpawnParticle("green",flags1,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
 		}
 	}
 	void TLParticleR()
 	{
+		int flags1 = SPF_FULLBRIGHT;
 		if (pos.z != floorz)
 		{
-			A_SpawnParticle("red",SPF_FULLBRIGHT,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
+			if (bNOTIMEFREEZE) flags1 = SPF_FULLBRIGHT|SPF_NOTIMEFREEZE;
+			A_SpawnParticle("red",flags1,lifetime:25,size:10,zoff:5,startalphaf:1.0,fadestepf:-1);
 		}
 	}
 	
@@ -13422,7 +13445,7 @@ Class TLBeacon : KCBaseZSC
 }
 
 //--------------------------------Misc Actors-----------------------------------
-Class TLBeaconFog : KCBaseZSC
+Class TLBeaconFog : TLBeaconBase
 {
 	Default
 	{
@@ -13444,7 +13467,7 @@ Class TLBeaconFog : KCBaseZSC
 	}
 }
 
-Class TLBeaconFog2 : KCBaseZSC
+Class TLBeaconFog2 : TLBeaconBase
 {
 	Default
 	{
@@ -13481,7 +13504,7 @@ Class TLBeaconAmmo : Ammo  //not used as an item to pick up
 	}
 }
 
-Class TLBeaconDummy : KCBaseZSC
+Class TLBeaconDummy : TLBeaconBase
 {
 	Default
 	{
@@ -13498,7 +13521,7 @@ Class TLBeaconDummy : KCBaseZSC
 	Override Void PostBeginPlay()
 	{
 		actor playera = players[0].mo;
-		if (playera)  A_SetSize(playera.Radius, (playera.height - 5));
+		if (playera) A_SetSize(playera.Radius, (playera.height - 5));
 	}
 	
 	States
