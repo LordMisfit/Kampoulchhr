@@ -12358,6 +12358,12 @@ Class Translocator : MarineWeapon
 									invoker.tfdamage = invoker.owner.health + (invoker.owner.mass * 1.25) + invoker.owner.FindInventory("BasicArmor").amount;
 									if (A_CheckForHeiwa()) invoker.tfdamage *= 2.5;
 								}
+								invoker.tfradius = 16;			// telefrag radius (player radius is 16)
+								if (playera) 
+								{
+									invoker.tfradius = playera.radius;
+									if (MiscItem) invoker.tfradius *= (1.0 + (MiscItem.TruePlayerLevel * 0.005));
+								}
 								invoker.dummy.A_Explode(invoker.tfdamage,invoker.tfradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius,0,10,"KCBulletPuff","Translocator");
 							}
 							self.target = invoker.dummy;
