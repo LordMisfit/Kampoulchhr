@@ -1333,6 +1333,10 @@ class KCWeaponBase : Weapon
 		A_SetInventory("KnifePlayerSwing2",0);
 		A_SetInventory("KnifePlayerSwing3",0);
 		A_SetInventory("KnifePlayerSwing4",0);
+		A_SetInventory("KnifePlayerSpeedFactor",0);
+		A_SetInventory("KnifePlayerSpeedFactor2",0);
+		A_SetInventory("KnifePlayerSpeedFactor3",0);
+		A_SetInventory("KnifePlayerSpeedFactor4",0);
 		A_SetInventory("KnifePlayerSwingExtra",0);
 		A_SetInventory("KnifePlayerSwingExtra2",0);
 		if (MiscItem)
@@ -1340,23 +1344,28 @@ class KCWeaponBase : Weapon
 			if (TruePlayerLevel >= 0 && TruePlayerLevel <= 10)
 			{
 				A_SetInventory("KnifePlayerSwing",1);
+				A_SetInventory("KnifePlayerSpeedFactor",1);
 			}
 			if (TruePlayerLevel >= 11 && TruePlayerLevel <= 25)
 			{
 				A_SetInventory("KnifePlayerSwing2",1);
+				A_SetInventory("KnifePlayerSpeedFactor2",1);
 			}
 			if (TruePlayerLevel >= 26 && TruePlayerLevel <= 45)
 			{
 				A_SetInventory("KnifePlayerSwing3",1);
+				A_SetInventory("KnifePlayerSpeedFactor3",1);
 			}
 			if (TruePlayerLevel >= 55)
 			{
 				A_SetInventory("KnifePlayerSwing4",1);
+				A_SetInventory("KnifePlayerSpeedFactor4",1);
 			}
 		}
 		else
 		{
 			A_SetInventory("KnifePlayerSwing",0);
+			A_SetInventory("KnifePlayerSpeedFactor",0);
 		}
 		if (random(1,16) <= 1) 
 		{
@@ -1374,6 +1383,10 @@ class KCWeaponBase : Weapon
 		A_SetInventory("KnifePlayerSwing2",0);
 		A_SetInventory("KnifePlayerSwing3",0);
 		A_SetInventory("KnifePlayerSwing4",0);
+		A_SetInventory("KnifePlayerSpeedFactor",0);
+		A_SetInventory("KnifePlayerSpeedFactor2",0);
+		A_SetInventory("KnifePlayerSpeedFactor3",0);
+		A_SetInventory("KnifePlayerSpeedFactor4",0);
 		A_SetInventory("KnifePlayerSwingExtra",0);
 		A_SetInventory("KnifePlayerSwingExtra2",0);
 		A_SetInventory("KnifePlayerSwingItem",0);

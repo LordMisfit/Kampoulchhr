@@ -3444,6 +3444,11 @@ class PlayerStatItem : Inventory
 				if (Owner.CountInv("FistPlayerSpeedFactor2")) FistBlockJumpZ = 0.65;
 				if (Owner.CountInv("FistPlayerSpeedFactor3")) FistBlockJumpZ = 0.80;
 				if (Owner.CountInv("FistPlayerSpeedFactor4")) FistBlockJumpZ = 0.95;
+				
+				if (Owner.CountInv("KnifePlayerSpeedFactor")) FistBlockJumpZ = 1.0125;
+				if (Owner.CountInv("KnifePlayerSpeedFactor2")) FistBlockJumpZ = 1.025;
+				if (Owner.CountInv("KnifePlayerSpeedFactor3")) FistBlockJumpZ = 1.05;
+				if (Owner.CountInv("KnifePlayerSpeedFactor4")) FistBlockJumpZ = 1.1;
 			}
 			else
 			{
@@ -4788,7 +4793,7 @@ class PlayerStatItem : Inventory
 				if (skill >= 4) HPMaxGain *= 2.0;
 			}
 		}
-		//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+		if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
 		if (kcdebug_levelupdisplays) Console.Printf("HPMaxGain: %d", HPMaxGain);
 		
 		// Psychic Points/PP Boost
@@ -4932,7 +4937,7 @@ class PlayerStatItem : Inventory
 					if (skill >= 4) PPMaxGain *= 2.0;
 				}
 			}
-			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(PPMaxGain,0);
 			if (kcdebug_levelupdisplays) Console.Printf("PPMaxGain: %d", PPMaxGain);
 		}
 
@@ -5077,7 +5082,7 @@ class PlayerStatItem : Inventory
 					if (skill >= 4) MPMaxGain *= 2.0;
 				}
 			}
-			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(HPMaxGain,0);
+			//if (!owner.CountInv("SilentLevelUp")) A_StatIncHud(MPMaxGain,0);
 			if (kcdebug_levelupdisplays) Console.Printf("MPMaxGain: %d", MPMaxGain);
 		}
 
@@ -5447,8 +5452,8 @@ class PlayerStatItem : Inventory
 							else if (HPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[brick][+%d HP]", HPMaxGain);
 								 if (IQPPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP, \c[purple]+%d IQ\c[purple]]", (PPMaxGain + IQPPMaxGain), (IQPPMaxGain / 5));
 							else if (PPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[purple][+%d PP]", PPMaxGain);
-									 if (SensesMPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP, \c[sapphire]+%d Senses\c[blue]]", (MPMaxGain + SensesMPMaxGain), (SensesMPMaxGain / 5));
-							else if (MPMaxGain > 0)  LevelUpMsg.AppendFormat("\n\c[blue][+%d MP]", MPMaxGain);
+						 if (SensesMPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP, \c[sapphire]+%d Senses\c[blue]]", (MPMaxGain + SensesMPMaxGain), (SensesMPMaxGain / 5));
+							else if (MPMaxGain > 0) LevelUpMsg.AppendFormat("\n\c[blue][+%d MP]", MPMaxGain);
 						}
 						if (kc_extraatkdefspd)
 						{
@@ -5466,6 +5471,8 @@ class PlayerStatItem : Inventory
 							LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
 							LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
 							LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
+							
+							if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/skilllvl",102,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
 						}
 						owner.A_Print(LevelUpMsg);
 						owner.A_SetBlend("00 00 FF",0.3,3,"00 00 FF",0.0);
@@ -6058,6 +6065,10 @@ class PlayerStatItem : Inventory
 		}
 		else
 		{
+			nt = "KnifePlayerSpeedFactor"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "KnifePlayerSpeedFactor2"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "KnifePlayerSpeedFactor3"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
+			nt = "KnifePlayerSpeedFactor4"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 			nt = "KnifePlayerSwing"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 			nt = "KnifePlayerSwing2"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 			nt = "KnifePlayerSwing3"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);

@@ -5028,7 +5028,7 @@ class KC_EventHandler : EventHandler
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate10 * 0.25)) maxchance = (kc_inventorydroprate10 * 0.25);
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [kmsphere]: %d (%d)", maxchance, basechance);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [kmsphere]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 
 						if (random(1,maxchance) <= 1)
 						{
@@ -5074,7 +5074,7 @@ class KC_EventHandler : EventHandler
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate12 * 0.25)) maxchance = (kc_inventorydroprate12 * 0.25);
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d)", maxchance, basechance);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 						if (random(1,maxchance) <= 1)
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
@@ -5125,7 +5125,7 @@ class KC_EventHandler : EventHandler
 						maxchance = basechance;
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate13 * 0.25)) maxchance = (kc_inventorydroprate13 * 0.25);
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [spbkpk]: %d (%d)", maxchance, basechance);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [spbkpk]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 					
 						if (random(1,maxchance) <= 1)
 						{
