@@ -145,7 +145,8 @@ class KCPlayerPawn : PlayerPawn
 	{
 		bool result = false;
 		actor playera = players[0].mo;
-		if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
+		if (playera.GetClassName() == "HeiwaPlayer" || 
+				HeiwaPlayer(playera)) result = true;
 		return result;
 	}
 	
@@ -3628,8 +3629,11 @@ class KCPlayerPawn : PlayerPawn
 		}
 	}
 	
+	
 	override bool CanCollideWith(Actor other, bool passive) // KCPlayerPawn
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		if (A_CheckVoodooDoll())
 		{
 			if (!passive)
@@ -3649,11 +3653,69 @@ class KCPlayerPawn : PlayerPawn
 			if (!passive)
 			{
 				if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[brick]Collision:\c- NotPassive - \c[orange]%s\c- vs (\c[green]%s\c-) [PlayerPawn] {gametic: %d}", other.GetClassName(), GetClassName(), gametic); 
-				// Pass through different species of select types.
-				if (other.bFRIENDLY == 1)
+				
+				if (A_CheckKCTimeFreeze())
 				{
-					if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
-					return false;
+					// Pass through different species of select types.
+					if (other.bFRIENDLY == 1)
+					{
+						if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+						return false;
+					}
+					else
+					{
+						if (MiscItem && MiscItem.tfcooldown > 0)
+						{
+							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly - TFCooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+							return false;
+						}
+						else
+						{
+							if (other.health <= 0)
+							{
+								if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly - <= 0 health] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+								return false;
+							}
+							else
+							{
+								if (A_CheckForHeiwa())
+								{
+									if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+									return true;
+								}
+								else
+								{
+									if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					// Pass through different species of select types.
+					if (other.bFRIENDLY == 1)
+					{
+						if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+						return false;
+					}
+					else
+					{
+						if (MiscItem && MiscItem.tfcooldown > 0)
+						{
+							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TFCooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+							return false;
+						}
+						else
+						{
+							if (other.health <= 0)
+							{
+								if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly - <= 0 health] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+								return false;
+							}
+						}
+					}
 				}
 			}
 			else

@@ -12355,16 +12355,18 @@ Class Translocator : MarineWeapon
 							{
 								if (invoker.tfdynamicdamage)
 								{
-									invoker.tfdamage = invoker.owner.health + (invoker.owner.mass * 1.25) + invoker.owner.FindInventory("BasicArmor").amount;
-									if (A_CheckForHeiwa()) invoker.tfdamage *= 2.5;
+									invoker.tfdamage = invoker.owner.health + (invoker.owner.mass * frandom(0.75,1.25)) + invoker.owner.FindInventory("BasicArmor").amount;
+									if (A_CheckForHeiwa()) invoker.tfdamage *= (1.75 * (1.0 + (MiscItem.TruePlayerLevel * 0.00875)));
 								}
 								invoker.tfradius = 16;			// telefrag radius (player radius is 16)
 								if (playera) 
 								{
 									invoker.tfradius = playera.radius;
-									if (MiscItem) invoker.tfradius *= (1.0 + (MiscItem.TruePlayerLevel * 0.005));
+									if (MiscItem) invoker.tfradius *= (1.0 + (MiscItem.TruePlayerLevel * 0.01));
+									
 								}
-								invoker.dummy.A_Explode(invoker.tfdamage,invoker.tfradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius,0,10,"KCBulletPuff","Translocator");
+								double tfouterradius = invoker.tfradius *= (1.5 + (1.0 + (MiscItem.TruePlayerLevel * 0.0075)));
+								invoker.dummy.A_Explode(invoker.tfdamage,tfouterradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius,0,10,"KCBulletPuff","Translocator");
 							}
 							self.target = invoker.dummy;
 							A_Warp(AAPTR_TARGET, zofs: -invoker.beacon.height, flags: WARPF_USECALLERANGLE);
