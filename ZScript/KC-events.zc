@@ -4870,12 +4870,13 @@ class KC_EventHandler : EventHandler
 							{
 								basediv = 0.5;
 								basediv2 = 0.125;
-								tsaminmultlevel *= 0.25;
+								tsaminmultlevel *= 0.0625;
 							}
 							else
 							{
 								basediv = 0.9375;
 								basediv2 = 0.25;
+								tsaminmultlevel *= 0.25;
 							}
 							if (MiscItem.TimeArmorRelicsOwned >= 1) 
 							{
@@ -4943,7 +4944,7 @@ class KC_EventHandler : EventHandler
 								basechance -= (timefreezes * basediv2);
 							}
 						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: (%d) \c[orange][%d / %d], timefreezes: %d", basechance, (i+1), droptimes, timefreezes);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: (%d) \c[orange][%d / %d], timefreezes: %d", basechance, (i+1), droptimes, timefreezes);
 						luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -4977,7 +4978,7 @@ class KC_EventHandler : EventHandler
 								rollrand = random(1,maxchance);
 								if (rollrand <= 1)
 								{
-									if (kcdebug_worlddiedmonsterdrops) Console.Printf("Extremely Rare Drop [success]");
+									if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]Extremely Rare Drop [success]");
 									double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 									double raredropsndvol = frandom(1.75,2.25);
 									int raredropsndchannel = randompick(193,194,224,225,266,267);
@@ -5006,7 +5007,7 @@ class KC_EventHandler : EventHandler
 										}
 									}
 								}
-								if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 							}
 						}
 					}
