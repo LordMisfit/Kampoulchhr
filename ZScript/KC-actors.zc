@@ -605,6 +605,36 @@ class KCBaseZSC : Actor
 		}
 	}
 	
+	void A_Tracer(double tang = 16.875, int smoketracer = 1)
+	{
+		// killough 1/18/98: this is why some missiles do not have smoke
+		// and some do. Also, internal demos start at random gametics, thus
+		// the bug in which revenants cause internal demos to go out of sync.
+
+		if (level.maptime & 3) return;
+	
+		// spawn a puff of smoke behind the rocket
+		Actor smoke;
+		if (smoketracer > 0)
+		{
+			if (smoketracer == 1 || (smoketracer >= 2 && tracer))
+			{
+				SpawnPuff ("BulletPuff", pos, angle, angle, 3);
+				smoke = Spawn ("RevenantTracerSmoke", Vec3Offset(-Vel.X, -Vel.Y, 0.), ALLOW_REPLACE);
+				if (smoke != null)
+				{
+					smoke.Vel.Z = 1.;
+					smoke.tics -= random[Tracer](0, 3);
+					if (smoke.tics < 1)
+						smoke.tics = 1;
+				}
+			}
+		}
+		
+		// The rest of this function was identical with Strife's version, except for the angle being used.
+		A_Tracer2(tang);
+	}
+	
 	void A_Tracer2(double traceang = 19.6875)
 	{
 		double dist;
@@ -619,12 +649,36 @@ class KCBaseZSC : Actor
 				dest.CountInv("PlayerDashing") || 
 				Speed == 0 || 
 				!CanSeek(dest))
+		{
+			if ((dest && dest.CountInv("PlayerDashing")) 
+					&& tracer)
 			{
-				if (dest.CountInv("PlayerDashing") && random(1,16) <= 1) tracer == null;
-				return;
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (MiscItem && 
+						playera && 
+						(dest == playera))
+				{
+					double detracechance = 1;
+					double detracemultfactor = (0.03125 * random(60,68));
+					int levelfactor1 = 15;
+					int times = MiscItem.TruePlayerLevel / levelfactor1;
+					if (times < 1) times = 1;
+					for (int i; i < times; i++) { detracechance *= detracemultfactor; }
+					
+					detracechance = int(floor(detracechance));
+					if (random(1,16) <= detracechance) 
+					{
+						tracer = null;
+						return;
+					}
+				}
 			}
+		}
 	
-		// change angle 	
+		// change angle
+		if (!tracer || !dest) return;
+		
 		double exact = AngleTo(dest);
 		double diff = deltaangle(angle, exact);
 
@@ -661,6 +715,116 @@ class KCBaseZSC : Actor
 				Vel.Z -= 1. / 8;
 			else
 				Vel.Z += 1. / 8;
+		}
+	}
+	
+	int SeekerFrozeTimer, SeekerFrozeTimer2;
+	double Seekerdist2d;
+	double Seekerdist3d;
+	double Seekerlastdist2d, Seekerlastdist3d;
+	void A_SeekerCheckTracer()
+	{
+		bool stilltracer = true;
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (tracer && CanSeek(tracer))
+		{
+			int timecheck = level.time;
+			int detracerbasechance;
+			Seekerdist2d = Distance2D(tracer);
+			Seekerdist3d = Distance3D(tracer);
+			if ((playera.CountInv("KCTimeFreezer") ||
+					 playera.CountInv("KCTimeFreezer1") ||
+					 playera.CountInv("KCTimeFreezer2") ||
+					 playera.CountInv("KCTimeFreezer3")))
+			{
+				SeekerFrozeTimer++;
+				if (Seekerdist3d >= (Seekerlastdist3d * 1.1875))
+				{
+					int timerchance = randompick(1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3);
+					if (Seekerdist3d >= (Seekerlastdist3d * 1.375)) timerchance = randompick(3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5);
+					if (Seekerdist3d >= (Seekerlastdist3d * 1.75)) timerchance = randompick(7,8,8,8,8,8,8,9);
+					if (Seekerdist3d >= (Seekerlastdist3d * 2.5)) timerchance = 32;
+					if (random(1,32) <= timerchance)
+					{
+						SeekerFrozeTimer2++;
+						if (MiscItem)
+						{
+							int levelfactor1 = 4;
+							int levelfactor2 = 10;
+							int levelfactor3 = 25;
+							int levelfactor4 = 50;
+							if (MiscItem.TruePlayerLevel >= levelfactor1)
+							{
+								int times = MiscItem.TruePlayerLevel / levelfactor1;
+								if (times < 1) times = 1;
+								for (int i; i < times; i++) { if (random(1,32) <= 1) SeekerFrozeTimer2++; }
+							}
+							if (MiscItem.TruePlayerLevel >= levelfactor2)
+							{
+								int times = MiscItem.TruePlayerLevel / levelfactor2;
+								if (times < 1) times = 1;
+								for (int i; i < times; i++) { if (random(1,16) <= 1) SeekerFrozeTimer2++; }
+							}
+							if (MiscItem.TruePlayerLevel >= levelfactor3)
+							{
+								int times = MiscItem.TruePlayerLevel / levelfactor3;
+								if (times < 1) times = 1;
+								for (int i; i < times; i++) { if (random(1,8) <= 1) SeekerFrozeTimer2++; }
+							}
+							if (MiscItem.TruePlayerLevel >= levelfactor4)
+							{
+								int times = MiscItem.TruePlayerLevel / levelfactor4;
+								if (times < 1) times = 1;
+								for (int i; i < times; i++) { if (random(1,4) <= 1) SeekerFrozeTimer2++; }
+							}
+						}
+					}
+				}
+				else
+				{
+					if (SeekerFrozeTimer2 > 0) 
+					{
+						SeekerFrozeTimer2 -= 2;
+						if (SeekerFrozeTimer2 < 0) SeekerFrozeTimer2 = 0;
+					}
+				}
+				int detracerchance = 0;
+				if (SeekerFrozeTimer2 >= 70)
+				{
+					if (SeekerFrozeTimer2 >= 490)
+					{
+						detracerchance = (SeekerFrozeTimer2 / randompick(37,37,38));
+					}
+					else
+					{
+						if (SeekerFrozeTimer2 >= 210)
+						{
+							detracerchance = (SeekerFrozeTimer2 / randompick(51,52,52));
+						}
+						else
+						{
+							detracerchance = (SeekerFrozeTimer2 / 70);
+						}
+					}
+					detracerbasechance = randompick(128,256,256,256,256,256,256,256,256,256,256,256,256,256,256,512);
+					if (timecheck % 32) detracerbasechance /= 2;
+					if (timecheck % 16) detracerbasechance /= 2;
+					if (timecheck % 8) detracerbasechance /= 2;
+					if (timecheck % 4) detracerbasechance /= 2;
+					if (timecheck % 2) detracerbasechance /= 2;
+					if (random(1,detracerbasechance) <= detracerchance) stilltracer = false;
+				}
+			}
+			else
+			{
+				SeekerFrozeTimer = 0;
+				SeekerFrozeTimer2 = 0;
+				Seekerlastdist2d = Seekerdist2d;
+				Seekerlastdist3d = Seekerdist3d;
+			}
+			if (kcdebug_seekerprojcheck) Console.Printf("\c[fire][%s]\c- stilltracer: %d, SeekerFrozeTimer: %d, SeekerFrozeTimer: %d, 3d: %.8f vs %.8f, detracerbasechance: %d / 256", GetClassName(), stilltracer, SeekerFrozeTimer, SeekerFrozeTimer2, Seekerdist3d, Seekerlastdist3d, detracerbasechance);
+			if (!stilltracer && tracer) tracer = null;
 		}
 	}
 	
