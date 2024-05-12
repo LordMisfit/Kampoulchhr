@@ -32,6 +32,10 @@ class KCPlayerPawn : PlayerPawn
 	int TruePlayerDEF;
 	int TruePlayerSPD;
 	
+	int CLWater;
+	
+	int dimtimer;
+	
 	actor DmgSource;
 	actor DmgInflictor;
 	int DmgFlags;
@@ -115,13 +119,6 @@ class KCPlayerPawn : PlayerPawn
 		Species "Players"; // IMPORTANT FRACKIN' NOTE MISFIT: SET YOUR DAMN PLAYERPAWN'S SPECIES TO THE SAME AS YOUR SHIELDPARTBASE[s], YOU DINGLEPUFFEROO! >:V
 	}
 	
-	bool A_CheckUOHYM()
-	{
-		bool UOHYM = false;
-		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
-		return UOHYM;
-	}
-	
 	bool A_CheckInvuln()
 	{
 		bool result = false;
@@ -132,6 +129,146 @@ class KCPlayerPawn : PlayerPawn
 				CountInv("KCPowerInvuln") || 
 				CountInv("PowerInvulnerable")) result = true;
 		return result;
+	}
+	
+	void A_CheckDeathHeartBeats(int hbtimer)
+	{
+		if (kc_playerbpm)
+		{
+			double bmpbasevol = 1.00;
+			int beat1 = 18; //18
+			int beat2 = 42; //24
+			int beat3 = 72; //30
+			int beat4 = 108; //36
+			int beat5 = 150; //42
+			int beat6 = 198; //48
+			int beat7 = 252; //54
+			int beat8 = 312; //60
+			int beat9 = 378; //66
+			int beat10 = 450; //72
+			double beat1vol = 0.95;
+			double beat2vol = 0.85;
+			double beat3vol = 0.75;
+			double beat4vol = 0.65;
+			double beat5vol = 0.55;
+			double beat6vol = 0.45;
+			double beat7vol = 0.35;
+			double beat8vol = 0.25;
+			double beat9vol = 0.15;
+			double beat10vol = 0.05;
+			// Fading Heartbeats when dead
+			if (hbtimer == (beat1-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat1)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat1+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat2-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat2)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat2+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat3-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat3)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat3+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat4-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat4)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat4+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat5-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat5)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat5+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat6-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat6)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat6+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat7-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat7)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat7+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat8-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat8)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat8+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat9-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat9)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat9+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat10-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat10)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat10+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (kcdebug_deathtimerdisplays) Console.Printf("HBTimer [dead]: %d", hbtimer);
+		}
+	}
+
+	void A_CheckReviveHeartBeats(int hbtimer)
+	{
+		if (kc_playerbpm)
+		{
+			double bmpbasevol = 1.00;
+			int beat1 = 18; //18
+			int beat2 = 42; //24
+			int beat3 = 72; //30
+			int beat4 = 108; //36
+			int beat5 = 150; //42
+			int beat6 = 198; //48
+			int beat7 = 252; //54
+			int beat8 = 312; //60
+			int beat9 = 378; //66
+			int beat10 = 450; //72
+			double beat1vol = 0.05;
+			double beat2vol = 0.15;
+			double beat3vol = 0.25;
+			double beat4vol = 0.35;
+			double beat5vol = 0.45;
+			double beat6vol = 0.55;
+			double beat7vol = 0.65;
+			double beat8vol = 0.75;
+			double beat9vol = 0.85;
+			double beat10vol = 0.95;
+			// Gradually louder Heartbeats when reviving
+			if (hbtimer == (beat1-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat1)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat1+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat1vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat2-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat2)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat2+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat2vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat3-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat3)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat3+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat3vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat4-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat4)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat4+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat4vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat5-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat5)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat5+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat5vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat6-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat6)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat6+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat6vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat7-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat7)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat7+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat7vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat8-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat8)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat8+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat8vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat9-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat9)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat9+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat9vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (hbtimer == (beat10-1)) A_StartSound("heartb2",134,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat10)) A_StartSound("heartb2",135,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			if (hbtimer == (beat10+1)) A_StartSound("heartb2",136,CHANF_DEFAULT,(beat10vol*bmpbasevol),ATTN_NORM,1.0);
+			
+			if (kcdebug_deathtimerdisplays) Console.Printf("HBTimer [reviving]: %d", hbtimer);
+		}
 	}
 	
 	bool A_CheckVoodooDoll()
@@ -176,6 +313,21 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - KCPlayerPawn)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
 		return Level;
+	}
+	
+	bool A_CheckUOHYM()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+	
+	override void CheatGive(String name, int amount)
+	{
+		// empty
+		// or you can add custom code here.
+		//if (A_CheckUOHYM()) { } else 
+		super.CheatGive(name, amount); // use this to call the original function
 	}
 	
 	override void PlayerLandedMakeGruntSound(actor onmobj)
@@ -407,6 +559,107 @@ class KCPlayerPawn : PlayerPawn
 		}
 	}
 	
+	
+	override void PlayerThink()
+	{
+		wasongroundprevtic = player.onground;
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+		
+		CheckFOV();
+
+		if (player.inventorytics)
+		{
+			player.inventorytics--;
+		}
+		CheckCheats();
+
+		if (bJustAttacked)
+		{ // Chainsaw/Gauntlets attack auto forward motion
+			cmd.yaw = 0;
+			cmd.forwardmove = 0xc800/2;
+			cmd.sidemove = 0;
+			bJustAttacked = false;
+		}
+
+		bool totallyfrozen = CheckFrozen();
+
+		// Handle crouching
+		CheckCrouch(totallyfrozen);
+		CheckMusicChange();
+
+		if (player.playerstate == PST_DEAD)
+		{
+			DeathThink ();
+			return;
+		}
+		if (player.jumpTics != 0)
+		{
+			player.jumpTics--;
+			if (player.onground && player.jumpTics < -18)
+			{
+				player.jumpTics = 0;
+			}
+			//Console.Printf("player.jumpTics: %d", player.jumpTics);
+		}
+		if (player.morphTics && !(player.cheats & CF_PREDICTING))
+		{
+			MorphPlayerThink ();
+		}
+
+		CheckPitch();
+		HandleMovement();
+		CalcHeight ();
+
+		if (!(player.cheats & CF_PREDICTING))
+		{
+			CheckEnvironment();
+			// Note that after this point the PlayerPawn may have changed due to getting unmorphed or getting its skull popped so 'self' is no longer safe to use.
+			// This also must not read mo into a local variable because several functions in this block can change the attached PlayerPawn.
+			player.mo.CheckUse();
+			player.mo.CheckUndoMorph();
+			// Cycle psprites.
+			player.mo.TickPSprites();
+			// Other Counters
+			if (player.damagecount)
+			{
+				if (player.damagecount >= uint(random(93,94))) damagecntfrag -= randompick(0,0,0,1,1,1,2,2,2);
+				else if (player.damagecount >= 75) damagecntfrag -= randompick(1,1,2,2,3,3,4,4);
+				else if (player.damagecount >= 50) damagecntfrag -= randompick(3,3,4,4,5,5,6,6);
+				else if (player.damagecount >= 25) damagecntfrag -= randompick(5,6,6,7,7,8,8,9);
+				else damagecntfrag -= randompick(8,8,9,9,9,9,10,10);
+				while (damagecntfrag <= 0)
+				{
+					player.damagecount--;
+					damagecntfrag += 10;
+					if (player.damagecount <= 0) break;
+				}
+			}
+			else
+			{
+				damagecntfrag = 10;
+			}
+			if (kcdebug_countdisplays == 1 && player.damagecount > 0) Console.Printf("player.damagecount: %d, damagecntfrag: %d", player.damagecount, damagecntfrag);
+			if (player.bonuscount) player.bonuscount--;
+			if (kcdebug_countdisplays == 1 && player.bonuscount > 0) Console.Printf("player.bonuscount: %d", player.bonuscount);
+
+			if (player.hazardcount)
+			{
+				player.hazardcount--;
+				if (player.hazardinterval <= 0)
+					player.hazardinterval = 32; // repair invalid hazardinterval
+				if (!(Level.maptime % player.hazardinterval) && player.hazardcount > 16*TICRATE)
+					player.mo.DamageMobj (NULL, NULL, 5, player.hazardtype);
+			}
+			if (kcdebug_countdisplays == 2) Console.Printf("player.hazardcount: %d, player.hazardinterval: %d / 32, player.hazardtype: %s", player.hazardcount, player.hazardinterval, player.hazardtype);
+			player.mo.CheckPoison();
+			player.mo.CheckDegeneration();
+			player.mo.CheckAirSupply();
+		}
+		wasongroundcurrtic = player.onground;
+		if (kcdebug_playermove) Console.Printf("wasongroundprevtic: %d, wasongroundcurrtic: %d [gametic: %d]", wasongroundprevtic, wasongroundcurrtic, gametic);
+	}
+
 	override void BeginPlay()
 	{
 		basexscale = scale.x;
@@ -512,6 +765,15 @@ class KCPlayerPawn : PlayerPawn
 		}
 
 		double defaultviewheight = ViewHeight + player.crouchviewdelta;
+		if (A_CheckUOHYM())
+		{
+			if (level.mapname == "MAP01" ||
+					level.mapname == "20PAM" ||
+					level.mapname == "MAP02")
+			{
+				if (player.health > 0) defaultviewheight *= 1.166666666666667;
+			}
+		}
 
 		if (player.cheats & CF_NOVELOCITY)
 		{
@@ -584,6 +846,80 @@ class KCPlayerPawn : PlayerPawn
 		if (player.viewz < floorz + 4)
 		{
 			player.viewz = floorz + 4;
+		}
+	}
+	
+	void DepositAllStuff()
+	{
+		weapons.clear();
+		ammos.clear();
+		invitems.clear();
+		invitemsamt.clear();
+		
+		DepositWeapon('KnifeHeiwa');
+		DepositWeapon('Translocator');
+		
+		DepositWeapon('PistolMarine');
+		DepositWeapon('Glock21');
+		DepositWeapon('ChaingunMarine');
+		DepositAmmo('Clip');
+		DepositWeapon('ShotgunMarine');
+		DepositWeapon('SuperShotgunMarine');
+		DepositWeapon('RiotGun');
+		DepositAmmo('Shell');
+		DepositWeapon('RocketLauncherMarine');
+		DepositWeapon('Deviation');
+		DepositAmmo('Rocket');
+		DepositWeapon('BlasterPistol');
+		DepositWeapon('BlasterRifle');
+		DepositWeapon('PlasmaRifleMarine');
+		DepositWeapon('BFG9000Marine');
+		DepositWeapon('BHGen');
+		DepositAmmo('Cell');
+		
+		DepositWeapon('TommyGun');
+		DepositAmmo('TommAmmo');
+		DepositWeapon('Devastator');
+		DepositAmmo('MiniRockets');
+		DepositWeapon('TeslaCannon');
+		DepositAmmo('Bolts');
+		DepositWeapon('EvilWarriorShield');
+		DepositAmmo('PikeAmmo');
+		DepositWeapon('ImpalerXBow');
+		DepositAmmo('ImpalerBolts');
+		DepositWeapon('SawThrower');
+		DepositAmmo('Saws');
+		
+		/*
+		DepositInvItem('??????');
+		*/
+	}
+	void DepositWeapon(name weap)
+	{
+		if (self.findInventory(weap))
+		{
+			weapons.push(weap); // weapons.push(Int(weap));
+			self.takeInventory(weap, 1);
+		}
+	}
+	
+	void DepositAmmo(name ammo)
+	{
+		if (self.findInventory(ammo))
+		{
+			ammos.push(ammo); // ammos.push(Int(ammo));
+			ammosamt.push(CountInv(ammo));
+			self.SetInventory(ammo, 0);
+		}
+	}
+	
+	void DepositInvItem(name invi)
+	{
+		if (self.findInventory(invi))
+		{
+			invitems.push(invi); // invitems.push(Int(invi));
+			invitemsamt.push(CountInv(invi));
+			self.takeInventory(invi, CountInv(invi));
 		}
 	}
 	
@@ -680,8 +1016,511 @@ class KCPlayerPawn : PlayerPawn
 				}
 			}
 		}
+		
+		if (A_CheckUOHYM() && 
+				level.mapname == "MAP01" &&
+				!(CountInv("UOHInCL") || CountInv("UOHInBR")))
+		{
+			if (health < 0) health = 0;
+			double speed = sqrt((vel.x * vel.x) + (vel.y * vel.y) + (vel.z * vel.z));
+			if (speed <= 0) 
+			{
+				clinicstart = true;
+				spot = self.pos;
+				lastAngle = self.angle;
+			}
+		
+			if (!clinicstart ||
+					 hasDied ||
+					 self.curSector.special == 115)
+			{
+			}
+			else
+			{
+				if (deathtimer <= 0) ++deathTimer;
+				
+				if (deathtimer > deathtimerthres1 && deathtimer < deathtimerthres2) 
+				{
+					++deathtimer_b;
+					if (!self.findInventory('FadeToken'))
+					{
+						if (deathfadetimebase > 0) SetMusicVolume(1.0 - double(deathtimer_b / double(deathfadetimebase)));
+					}
+					if (kcdebug_deathtimerdisplays) Console.Printf("[processing] UOHYMTimer: %d, UOHYMTimer_b: %d", deathTimer, deathTimer_b);
+				}
+				else
+				{
+					if (kcdebug_deathtimerdisplays) Console.Printf("[dying] UOHYMTimer: %d, UOHYMTimer_b: %d", deathTimer, deathTimer_b);
+					A_CheckDeathHeartBeats(deathTimer);
+				}
+				
+				if (deathtimer > deathtimerthres2)
+				{
+					self.player.resurrect();
+					deathsongused = 0;
+					Teleport_NoFog(1964, 1, 0);
+					ACS_NamedExecute("CheckHospital",0,0,0,0);
+					self.player.cheats |= CF_TotallyFrozen;
+					revived = true;
+					
+					DepositAllStuff();
+				}
+			}
+		}
 	}
 	
+	override void Die (Actor source, Actor inflictor, int dmgflags, Name MeansOfDeath)
+	{
+		Super.Die (source, inflictor, dmgflags, MeansOfDeath);
+
+		if (player != NULL && player.mo == self) player.bonuscount = 0;
+
+		if (player != NULL && player.mo != self)
+		{ // Make the real player die, too
+			player.mo.Die (source, inflictor, dmgflags, MeansOfDeath);
+		}
+		else
+		{
+			if (player != NULL && sv_weapondrop)
+			{ // Voodoo dolls don't drop weapons
+				let weap = player.ReadyWeapon;
+				if (weap != NULL)
+				{
+					// kgDROP - start - modified copy from a_action.cpp
+					let di = weap.GetDropItems();
+
+					if (di != NULL)
+					{
+						while (di != NULL)
+						{
+							if (di.Name != 'None')
+							{
+								class<Actor> ti = di.Name;
+								if (ti) A_DropItem (ti, di.Amount, di.Probability);
+							}
+							di = di.Next;
+						}
+					} 
+					else if (weap.SpawnState != NULL &&
+						weap.SpawnState != GetDefaultByType('Actor').SpawnState)
+					{
+						let weapitem = Weapon(A_DropItem (weap.GetClass(), -1, 256));
+						if (weapitem)
+						{
+							if (weap.AmmoGive1 && weap.Ammo1)
+							{
+								weapitem.AmmoGive1 = weap.Ammo1.Amount;
+							}
+							if (weap.AmmoGive2 && weap.Ammo2)
+							{
+								weapitem.AmmoGive2 = weap.Ammo2.Amount;
+							}
+							weapitem.bIgnoreSkill = true;
+						}
+					}
+					else
+					{
+						let item = Inventory(A_DropItem (weap.AmmoType1, -1, 256));
+						if (item != NULL)
+						{
+							item.Amount = weap.Ammo1.Amount;
+							item.bIgnoreSkill = true;
+						}
+						item = Inventory(A_DropItem (weap.AmmoType2, -1, 256));
+						if (item != NULL)
+						{
+							item.Amount = weap.Ammo2.Amount;
+							item.bIgnoreSkill = true;
+						}
+					}
+				}
+			}
+			if (!multiplayer && level.deathsequence != 'None')
+			{
+				level.StartIntermission(level.deathsequence, FSTATE_EndingGame);
+			}
+		}
+	}
+	
+	void ForwardThrust (double move, double angle)
+	{
+		if ((waterlevel || bNoGravity) && Pitch != 0 && !player.GetClassicFlight())
+		{
+			double zpush = move * sin(Pitch);
+			if (waterlevel && waterlevel < 2 && zpush < 0) zpush = 0;
+			Vel.Z -= zpush;
+			move *= cos(Pitch);
+		}
+		Thrust(move, angle);
+	}
+	
+	override bool ResetAirSupply(bool playgasp)
+	{
+		let player = self.player;
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		
+		bool wasdrowning;
+		if (AirTime <= 0) 
+		{
+			wasdrowning = true;
+			AirTime = 0;
+			if (kcdebug_airmeter == 1) Console.Printf("wasdrowning");
+		}
+		
+		if (AirTime < MaxAirTime)
+		{
+			if (MaxAirTime > 0) airreplen = ((MaxAirTime / (TICRATE * 5.0)) * 100.0);
+			if (airreplen < 1) airreplen = 1;
+			if (MiscItem) airreplen *= (1.0 + (ActualLevel * 0.0125));
+			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) airreplen *= 1.25;
+			if (CountInv("PowerNoDrown") || 
+					CountInv("PowerIronFeet") || 
+					//CountInv("PowerIronFeet2") || 
+					CountInv("PowerMask")) airreplen *= 1.625;
+			double ssa = 1.00;
+			//if (CountInv("ExpeditionHat")) ssa += 2.00;
+			//if (CountInv("ClassyRibbon")) ssa += 1.00;
+			airreplen *= ssa;
+			if (MiscItem)
+			{
+				if (MiscItem.drowndebufflevel)
+				{
+					airreplen *= (1.00 - (MiscItem.drowndebufflevel * frandompick(0.5,0.0625,0.0625,0.75,0.75,0.75,0.75,0.75,0.875,0.875,0.875,1.0)));
+					if (airreplen < 1 && random(1,16) <= (16 - int(MiscItem.drowndebufflevel * frandom(0.8,1.2)))) airreplen = 1;
+					if (airreplen < 0) airreplen = 0;
+				}
+			}
+			airreplentimer += airreplen;
+			while (airreplentimer > 100)
+			{
+				AirTime += 1;
+				airreplentimer -= 100;
+			}
+			if (kcdebug_airmeter >= 1) Console.Printf("\c[sapphire]airreplentimer: %d, airreplen: %d (%d / %d)", airreplentimer, airreplen, AirTime, MaxAirTime);
+
+			if (AirTime > MaxAirTime) AirTime = MaxAirTime;
+		}
+
+		if (playgasp)
+		{
+			if (wasdrowning)
+			{
+				bool emergegaspsnd = false;
+				if (takendrowndmg)
+				{
+					emergegaspsnd = true;
+					takendrowndmg = false;
+				}
+				else if (random(1,9) <= 6) 
+				{
+					emergegaspsnd = true;
+					willgasp = false;
+				}
+
+				if (emergegaspsnd)
+				{
+					if (waterlevel <= 2)
+					{
+						A_StopSound(CHAN_VOICE);
+						//if (GetClassName() == "DinahPlayer") A_StartSound("dinah/drowngasp1",CHAN_VOICE,CHANF_DEFAULT,frandom(0.9,1.1),ATTN_NORM,1.0);
+					}
+					willgasp = false;
+				}
+			}
+			else
+			{
+				bool emergegaspsnd = false;
+				if (willgasp)
+				{
+					int AirMeterRatio;
+					if (MaxAirTime > 0) 
+					{
+						AirMeterRatio = (AirTime * 100 / MaxAirTime);
+						
+						if (AirMeterRatio <= 75) emergegaspsnd = true;
+						else if (AirMeterRatio <= randompick(87,88) && random(1,16) <= 10) emergegaspsnd = true;
+						else if (AirMeterRatio <= 100 && random(1,16) <= 4) emergegaspsnd = true;
+						
+						if (emergegaspsnd)
+						{
+							if (waterlevel <= 2)
+							{
+								A_StopSound(CHAN_VOICE);
+								//if (GetClassName() == "DinahPlayer") A_StartSound("dinah/watergasp",CHAN_VOICE,CHANF_DEFAULT,frandom(0.9,1.1),ATTN_NORM,1.0);
+							}
+						}
+					}
+					willgasp = false;
+				}
+			}
+		}
+		return wasdrowning;
+	}
+	
+	void SpawnBubbles(string bubbletype = "AirBubble1", double bubblex = 0, double bubbley = 0, double bubblez = 0)
+	{
+		bubblex += random(3,11);
+		bubblex += random(-2,2);
+		bubblez += random((Player.ViewHeight-2),(Player.ViewHeight+2));
+		A_SpawnItemEx("AirBubble1",bubblex,bubbley,bubblez,0,0,0,0,SXF_NOCHECKPOSITION);
+	}
+	
+	override void CheckAirSupply()
+	{
+		if (!player || !player.mo || player.mo != self)
+		{
+			super.CheckAirSupply();
+		}
+		else
+		{
+			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+			MaxAirTime = (20 * TICRATE); // 7000
+			if (A_CheckForHeiwa()) MaxAirTime = (30 * TICRATE); // 10500
+			double GenAirBonusMulti = 1.666666666666667;
+
+			if (kcdebug_airmeter >= 2) Console.Printf("GenAirBonusMulti: %.8f", GenAirBonusMulti);
+			
+			if (MiscItem) 
+			{
+				double lvlfactor = 2.916666666666667;
+				if (skill <= SKILL_VERY_EASY)	lvlfactor = 4.666666666666667; // 1.6x
+				if (skill == SKILL_EASY)			lvlfactor = 3.572916666666667; // 1.225x
+				if (skill == SKILL_NORMAL)		lvlfactor = 2.916666666666667; // 1.0x
+				if (skill == SKILL_HARD)			lvlfactor = 2.479166666666667; // 0.85x
+				if (skill >= SKILL_VERY_HARD)	lvlfactor = 2.041666666666667; // 0.7x
+				lvlfactor *= 1.5;
+				lvlfactor *= GenAirBonusMulti;
+				MaxAirTime += (TruePlayerLevel * lvlfactor);
+				MaxAirTime += (MiscItem.AirBonusAdd);
+			}
+
+			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxAirTime *= 1.25;
+			if (MaxAirTime > 0) MaxAirTime *= AirCapacity;
+			if (GetAge() <= 1 && AirTime != MaxAirTime) AirTime = MaxAirTime;
+			
+			// Drown Damage
+			int DrownDmg = 2 + (-AirTime / TICRATE);
+			DrownDmg = ceil(DrownDmg * frandompick(0.625,0.75,0.875,1.000));
+			if (CLWater == 1) 
+			{
+				DrownDmg = 8 + (-AirTime / TICRATE);
+				DrownDmg = ceil(DrownDmg * frandompick(0.875,0.9375,0.9675,1.000));
+			}
+			if (CLWater == 2) 
+			{
+				DrownDmg = 3 + (-AirTime / TICRATE);
+				DrownDmg = ceil(DrownDmg * frandompick(0.6875,0.8375,0.9375,1.000));
+			}
+
+			if (DrownDmg < 0) DrownDmg = 0;
+			if (kcdebug_airmeter == 1) Console.Printf("InWaterTime: %d, WaterLevel: %d (WaterDepth: %.4f), AirTime: %d / %d, DrownDmg: %d, willgasp: %d, takendrowndmg: %d", InWaterTime, waterlevel, WaterDepth, AirTime, MaxAirTime, DrownDmg, willgasp, takendrowndmg);
+			// Handle air supply	
+			//if (level.airsupply > 0)
+			{
+				let player = self.player;
+				if (waterlevel >= 3)
+				{
+					if (InWaterTime <= 0)
+					{
+						A_StartSound("misc/enterwater",215,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.8,1.2));
+					}
+					InWaterTime++;
+					
+					if (CountInv("PowerNoDrown") || 
+							CountInv("PowerIronFeet") || 
+							//CountInv("PowerIronFeet2") || 
+							CountInv("PowerMask"))
+					{
+						willgasp = false;
+					}
+					else
+					{
+						willgasp = true;
+					}
+				}
+				else 
+				{
+					if (InWaterTime > 0)
+					{
+						A_StartSound("misc/exitwater2",215,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.8,1.2));
+						if (kcdebug_airmeter == 1) Console.Printf("misc/exitwater2");
+					}
+					InWaterTime = 0;
+				}
+				
+				if (waterlevel < 3 || (bInvulnerable) || 
+					(player.cheats & (CF_GODMODE | CF_NOCLIP2)) || (player.cheats & CF_GODMODE2) || 
+					CountInv("KCPowerInvuln") || CountInv("PowerInvulnerable"))
+				{
+					ResetAirSupply(true);
+				}
+				else
+				{
+					buttons = GetPlayerInput(INPUT_BUTTONS);
+
+					double bubblex, bubbley, bubblez;
+					if (!(CountInv("PowerNoDrown") || 
+								CountInv("PowerIronFeet") || 
+								//CountInv("PowerIronFeet2") || 
+								CountInv("PowerMask"))) 
+					{
+						if (CLWater)
+						{
+							if (CLWater == 2)
+							{
+								if (random(1,16) <= random(3,6)) airtime -= random(1,2);
+																						else airtime -= random(2,4);
+							}
+							else airtime -= random(4,8);
+						}
+						else
+						{
+							AirTime--;
+						}
+					}
+					if (AirTime > MaxAirTime) AirTime = MaxAirTime;
+					if (AirTime <= 0)
+					{
+						int drownint = 31;
+						if (CLWater)
+						{
+							if (AirTime <= 0) AirTime = 0;
+							if (CLWater == 2)
+							{
+								if (random(1,16) <=  random(3,6)) drownint = 31;
+																						 else drownint = 27;
+							}
+							else
+							{
+								drownint = 22;
+							}
+						}
+						if (!(level.maptime & drownint) && DrownDmg)
+						{
+							DamageMobj(NULL, NULL, DrownDmg, 'Drowning');
+							string drownsnd = "misc/drowning";
+							if (health <= 0) drownsnd = "misc/drowninglong";
+							if (health > 0)
+							{
+								if (MiscItem)
+								{
+									MiscItem.drowndebuginit = true;
+									if (MiscItem.drowndebufflevel < 10)
+									{
+										MiscItem.drowndebufflevel++;
+										if (CLWater)
+										{
+											if (CLWater == 2)
+											{
+												if (random(1,16) <= random(3,6)) MiscItem.drowndebufftimer += random(38,53);
+																										else MiscItem.drowndebufftimer += random(25,35);
+											}
+											else
+											{
+												MiscItem.drowndebufftimer += random(50,70);
+											}
+										}
+										else
+										{
+											MiscItem.drowndebufftimer += random(25,35);
+										}
+									}
+								}
+							}
+							A_StopSound(120);
+							A_StartSound(drownsnd,120,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(1.375,1.5));
+							takendrowndmg = true;
+							
+							SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+							SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+							SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+							if (random(1,3) <= random(1,2))
+							{
+								SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+								SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+								SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+								if (random(1,3) <= 1) 
+								{
+									SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+									SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+									SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+								}
+							}
+							if (CLWater == 1)
+							{
+								SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								if (random(1,3) <= random(1,2))
+								{
+									SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+									SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+									SpawnBubbles("AirBubble1",frandom(-8,8),frandom(-8,8),frandom(-5,5));
+									if (random(1,3) <= 1) 
+									{
+										SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+										SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+										SpawnBubbles("AirBubble1",frandom(-11,11),frandom(-11,11),frandom(-7,7));
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						int basechance = 64;
+						bool extrabubbles = true;
+						bool moveaffectchance = true;
+						if (CountInv("PowerNoDrown") || 
+								CountInv("PowerIronFeet") || 
+								//CountInv("PowerIronFeet2") || 
+								CountInv("PowerMask"))
+						{
+							basechance *= 16;
+							extrabubbles = false;
+							if (random(1,32) <= 31) moveaffectchance = false;
+						}
+						
+						if (moveaffectchance)
+						{
+							if (buttons & BT_FORWARD || 
+									buttons & BT_BACK || 
+									buttons & BT_MOVELEFT || 
+									buttons & BT_MOVERIGHT)
+							{
+								basechance *= frandom(0.6,0.75);
+								if (random(1,16) <= random(1,2)) basechance *= 0.5;
+							}
+							if (buttons & BT_JUMP || buttons & BT_CROUCH)
+							{
+								basechance *= frandom(0.6,0.75);
+								if (random(1,16) <= random(1,2)) basechance *= 0.5;
+							}
+						}
+						
+						if (random(1,basechance) <= 1)
+						{
+							SpawnBubbles("AirBubble1",frandom(-4,4),frandom(-4,4),frandom(-2,2));
+							if (extrabubbles)
+							{
+								if (random(1,(basechance*0.125)) <= 1) SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								if (random(1,(basechance*0.5)) <= 1) SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								if (random(1,(basechance*2)) <= 1) SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+								if (random(1,(basechance*8)) <= 1) SpawnBubbles("AirBubble1",frandom(-5,5),frandom(-5,5),frandom(-3,3));
+							}
+						}
+					}
+				}
+			}
+			int tempAirTime = AirTime;
+			if (tempAirTime < 0) tempAirTime = 0;
+			int tempMaxAirTime = MaxAirTime;
+			if (tempMaxAirTime < 0) tempMaxAirTime = 0;
+			A_SetInventory("AirMeter", tempAirTime);
+			A_SetInventory("MaxAirMeter", tempMaxAirTime);
+		}
+	}
+
 	override void FallAndSink(double grav, double oldfloorz)
 	{
 		if (kcdebug_playermove && WaterDepth > 0) Console.Printf("Current water depth: %.4f", WaterDepth);
@@ -965,6 +1804,12 @@ class KCPlayerPawn : PlayerPawn
 	
 	override void Tick()
 	{
+		deathtimerthres1 = (15 * 35);
+		deathtimerthres2 = (30 * 35);
+		deathtimerthres3 = (45 * 35);
+		deathtimerthres4 = (10 * 35);
+		deathfadetimebase = (10 * 35);
+		
 		// VOODOO Doll Protection
 		if (A_CheckVoodooDoll()) 
 		{
@@ -1014,38 +1859,64 @@ class KCPlayerPawn : PlayerPawn
 				nm = "CCards_Actor_RainDamaged"; if (CountInv(nm)) A_TakeInventory(nm,0x7FFFFFFD);
 				nm = "CCards_Actor_WebSlow"; if (CountInv(nm)) A_TakeInventory(nm,0x7FFFFFFD);
 			}
-
+			
+			// Dimming
+			if (A_CheckUOHYM() && 
+					level.mapname == "MAP01")
+			{
+				if (CountInv("UOHEnd4")) 
+				{
+					if (dimtimer < 175) dimtimer++;
+					//Console.Printf("dimtimer: %d", dimtimer);
+				}
+				else dimtimer = 0;
+			}
+			else dimtimer = 0;
+			
 			// Death Stuff
 			double fademax = 1.00;
-			if (health <= 0)
+			if (A_CheckUOHYM() && 
+					level.mapname == "MAP01" &&
+					!(CountInv("UOHInCL") || CountInv("UOHInBR")))
 			{
-				if (deadtimer <= 0) 
-				{
-					fadetime = int(TICRATE*frandom(2.1667,2.8334));
-					A_SetBlend("00 00 00",0.00, fadetime, "00 00 00",fademax);
-				}
-				if (deadtimer > (fadetime-2)) A_SetInventory("BlackScreenHUD",1);
-				if (kc_deathmusic == 13)
-				{
-					if (deadtimer == 108) A_StartSound("mortis",145,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-					if (deadtimer > 107) A_SetInventory("MortisScreenHUD",1);
-													else A_SetInventory("MortisScreenHUD",0);
-				}
-				else A_SetInventory("MortisScreenHUD",0);
-				deadtimer++;
-				//Console.Printf("DeadTimer: %d, FadeTime: %d", deadtimer, fadetime);
 			}
-			else 
+			else
 			{
-				if (deadtimer > 0) 
+				if (health <= 0)
 				{
-					fadetime *= 0.25;
-					A_SetBlend("00 00 00",fademax, fadetime, "00 00 00",0.00);
-					A_SetInventory("BlackScreenHUD",0);
-					A_SetInventory("MortisScreenHUD",0);
+					if (deadtimer <= 0) 
+					{
+						fadetime = int(TICRATE*frandom(2.1667,2.8334));
+						A_SetBlend("00 00 00",0.00, fadetime, "00 00 00",fademax);
+					}
+					if (deadtimer > (fadetime-2)) A_SetInventory("BlackScreenHUD",1);
+					if (kc_deathmusic == 13)
+					{
+						if (deadtimer == 108) A_StartSound("mortis",145,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+						if (deadtimer > 107) A_SetInventory("MortisScreenHUD",1);
+														else A_SetInventory("MortisScreenHUD",0);
+					}
+					else A_SetInventory("MortisScreenHUD",0);
+					deadtimer++;
+					//Console.Printf("DeadTimer: %d, FadeTime: %d", deadtimer, fadetime);
+					if (kcdebug_deathtimerdisplays) Console.Printf("deadtimer: %d", deadtimer);
+					
+					// Fading Heartbeats when dead
+					A_CheckDeathHeartBeats(deadtimer);
 					//Console.Printf("DeadTimer: %d, FadeTime: %d", deadtimer, fadetime);
 				}
-				deadtimer = 0;
+				else 
+				{
+					if (deadtimer > 0) 
+					{
+						fadetime *= 0.25;
+						A_SetBlend("00 00 00",fademax, fadetime, "00 00 00",0.00);
+						A_SetInventory("BlackScreenHUD",0);
+						A_SetInventory("MortisScreenHUD",0);
+						//Console.Printf("DeadTimer: %d, FadeTime: %d", deadtimer, fadetime);
+					}
+					deadtimer = 0;
+				}
 			}
 			
 			// Heartbeat [low health]

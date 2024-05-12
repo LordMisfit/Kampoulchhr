@@ -2546,6 +2546,101 @@ class JustUppercutted : PlaceholderItem
 	}
 }
 
+class AirBubble1 : KCBaseZSC
+{
+	double deteri;
+	Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Translucent";
+		Alpha 0.75;
+		Scale 0.75;
+		VSpeed 1;
+		Mass 0;
+	}
+	
+	override void PostBeginPlay()
+	{
+		scale.x = frandom(0.3,0.45);
+		scale.y = frandom(0.3,0.45);
+		if (GetClassName() == "AirBubble2")
+		{
+			scale.x *= frandom(1.45,1.55);
+			scale.y *= frandom(1.45,1.55);
+		}
+		basealpha = alpha;
+		vel.z = frandom(0.9,1.5) * frandompick(0.5,0.75,0.75,0.75,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,1.5,2.0);
+		if (waterlevel >= 3) vel.z *= frandompick(0.34,0.5,0.5,0.5,0.67);
+		basescalex = scale.x;
+		basescaley = scale.y;
+		deteri = frandom(0.0625,0.125);
+		bool makesound;
+		if (random(1,16) <= 5) makesound = true;
+		else if (waterlevel >= 3 && random(1,8) <= 7) makesound = true;
+
+		if (makesound) A_StartSound("misc/bubbles",CHAN_AUTO,CHANF_DEFAULT,frandom(0.7,1.3),ATTN_NORM,frandom(0.7,1.3));
+		Super.PostBeginPlay();
+	}
+
+	States
+	{
+		Spawn:
+			BUBL AAAAAAAAAA 4
+			{
+				if (waterlevel <= 2)
+				{
+					A_SetScale((scale.x-(basescalex*(deteri*2.5))),(scale.y-(basescaley*(deteri*2.5))));
+					A_FadeOut((basealpha*(deteri*2.5)),FTF_REMOVE|FTF_CLAMP);
+				}
+				else
+				{
+					A_SetScale((scale.x-(basescalex*deteri)),(scale.y-(basescaley*deteri)));
+					A_FadeOut((basealpha*deteri),FTF_REMOVE|FTF_CLAMP);
+				}
+			}
+			loop;
+	}
+}
+
+class AirBubble2 : AirBubble1
+{
+	Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Translucent";
+		Alpha 0.75;
+		Scale 1.5;
+		VSpeed 1;
+		Mass 0;
+	}
+	
+	States
+	{
+		Spawn:
+			BUBL BBBBBBBBBB 4
+			{
+				if (waterlevel <= 2)
+				{
+					A_SetScale((scale.x-(basescalex*(deteri*2.5))),(scale.y-(basescaley*(deteri*2.5))));
+					A_FadeOut((basealpha*(deteri*2.5)),FTF_REMOVE|FTF_CLAMP);
+				}
+				else
+				{
+					A_SetScale((scale.x-(basescalex*deteri)),(scale.y-(basescaley*deteri)));
+					A_FadeOut((basealpha*deteri),FTF_REMOVE|FTF_CLAMP);
+				}
+			}
+			STOP;
+	}
+}
 
 class KCPowerSpread1 : Powerup
 {
@@ -4051,3 +4146,78 @@ class PPunching : PlaceHolderItem
 	}
 }
 
+
+class AED_Token : Inventory {}
+class FadeToken : Inventory 
+{
+	default
+	{
+		+INVENTORY.UNDROPPABLE;
+		Inventory.MaxAmount 1;
+	}
+}
+
+class Adrenaline : Berserk2 // BerserkNew
+{
+	default
+	{
+		Inventory.PickupMessage "";
+	}
+	states
+	{
+		Pickup:
+			TNT1 A 0 
+			{
+				let MiscItem = PlayerStatItem(Player.mo.FindInventory("PlayerStatItem"));
+				int temp1 = player.mo.health;
+				int oldhealth = player.mo.health;
+				int prevtemp1 = temp1;
+				int temp4 = player.mo.CountInv("PlayerMaxHP");
+				int temp2 = (temp4 * 1.25);
+				int perc = 125;
+
+				int temp3 = temp4;
+				temp3 *= 1.00;
+				
+				if (temp1 < temp2)
+				{
+					temp1 += temp3;
+					if (temp1 > temp2) temp1 = temp2;
+					player.mo.health = player.health = temp1;
+					int healdiff = player.mo.health - oldhealth;
+					//if (healdiff) invoker.A_RecoverHUD(healdiff, 0, true);
+				}
+				int AngerLevelNInc = randompick(8,8,8,8,16,16,16,24);
+				//player.mo.A_GiveInventory("AngerLevelEventN",AngerLevelNInc);
+				//player.mo.A_GiveInventory("AngerLevelEventNMin",AngerLevelNInc);
+				
+				A_StartSound("getberserkpack",CHAN_BODY);
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					A_StopSound(CHAN_VOICE);
+					//A_StartSound("dinah/drowngasp1",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+				}
+				A_SetBlend("f0 f0 f0",0.2,random(8,12));
+				if (!player.mo.CountInv("KCPowerStrength"))
+				{
+					player.mo.SetInventory("KCPowerStrength",1);
+					let BerserkItem = KCPowerStrength(player.mo.FindInventory("KCPowerStrength"));
+					if (BerserkItem) BerserkItem.EffectTics = 600 * TICRATE;
+				}
+				else
+				{
+					let BerserkItem = KCPowerStrength(player.mo.FindInventory("KCPowerStrength"));
+					if (BerserkItem) BerserkItem.EffectTics += 600 * TICRATE;
+				}
+				Console.Printf("\c[purple]You've been resurrected from your fate. Do be careful this time...");
+				
+				A_SelectWeapon("FistHeiwa");
+			}
+	}
+}
+
+class UOHInCL : PlaceholderItemDepletable { }
+class UOHInBR : PlaceholderItemDepletable { }
+class UOHEnd4 : PlaceholderItemUndrop { }

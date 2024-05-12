@@ -2101,6 +2101,7 @@ mixin class MonsterCollider
 				!KCUniqueBoss(self) &&
 				GetClassName() != nm &&
 				GetClassName() != nn &&
+				mod != 'Translocator' && 
 				!bDORMANT)
 		{
 			int initdmg = damage;
@@ -2197,7 +2198,11 @@ mixin class MonsterCollider
 			if (kcdebug_actordmgdisplays && MiscItem) Console.Printf("DamageMobj [Mixin] (\c[green]%s\c-): Critbase: %d / %d", GetClassName(), MiscItem.CritChance, CritRoll);
 			if (FoundPlayer.CountInv("CheatCrit") || FoundPlayer.CountInv("CheatCritUltimate")) criticalhit = true;
 		}
-		if (criticalhit && (mod == 'BlackHole' && random(1,8) <= 7)) criticalhit = false;
+		if (criticalhit) 
+		{	
+					 if (mod == 'Translocator') criticalhit = false;
+			else if (mod == 'BlackHole' && random(1,8) <= 7) criticalhit = false;
+		}
 		
 		initdmg = damage;
 		if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [Mixin] (\c[green]%s\c-): initdmg vs Damage: %d vs %d (damagefactor: %.8f)", GetClassName(), initdmg, damage, damagefactor);
