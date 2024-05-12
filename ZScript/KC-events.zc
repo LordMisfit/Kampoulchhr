@@ -6318,11 +6318,64 @@ class KC_EventHandler : EventHandler
 	
 	override void UiTick()
 	{
+		int ChangedMusicDefault;
+		//
 		super.UiTick();
 	}
 
 	override void RenderOverlay(RenderEvent e)
 	{
+		//
+		//
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1 &&
+				level.mapname == "MAP01")
+		{
+			PlayerPawn player = PlayerPawn(players[consoleplayer].mo);
+			if (player)
+			{
+				let kcplayer = KCPlayerPawn(player);
+				if (kcplayer)
+				{
+					if (kcplayer.whitehot > 0)
+					{
+						double alpha = double(kcplayer.whitehot) / double(15 * 1);
+						Screen.dim(Color(0xFFFFFF), alpha, 0, 0, Screen.getWidth(), screen.getHeight());
+					}
+					
+					int fadepoint = kcplayer.deathtimerthres1;
+					if (kcplayer.deathsongused == 1) fadepoint = 545;
+					if (kcplayer.deathsongused == 2) fadepoint = 615;
+					if (kcplayer.deathtimer >= (fadepoint-3) && 
+							kcplayer.deathtimer <= (fadepoint+3)) 
+					{
+						S_ChangeMusic("D_SILENT", 0, false, true);
+						if (kcdebug_deathtimerdisplays) Console.Printf("Music Silencing [%d]", kcplayer.deathtimer);
+					}
+					
+					double alpha = 0.0;
+					if (kcplayer.deathtimer < kcplayer.deathtimerthres4)
+					{
+						if (kcplayer.CountInv("UOHEnd4")) 
+						{
+							alpha = double(kcplayer.dimtimer) / double(175);
+							//Console.Printf("[ending 4] alpha: %.8f", alpha);
+							Screen.dim(Color(0), alpha, 0, 0, Screen.getWidth(), screen.getHeight());
+						}
+					}
+					else
+					{
+						//10 seconds to fade to black
+						if (kcplayer.deathfadetimebase > 0) 
+						{
+							alpha = double(kcplayer.deathtimer_b) / double(kcplayer.deathfadetimebase);
+							//Console.Printf("[deathfadetimebase] alpha: %.8f", alpha);
+							Screen.dim(Color(0), alpha, 0, 0, Screen.getWidth(), screen.getHeight());
+						}
+					}
+				}
+			}
+		}
+		
 		super.RenderOverlay(e);
 	}
 	
