@@ -659,18 +659,24 @@ class KCBaseZSC : Actor
 						playera && 
 						(dest == playera))
 				{
-					double detracechance = 1;
-					double detracemultfactor = (0.03125 * random(60,68));
-					int levelfactor1 = 15;
-					int times = MiscItem.TruePlayerLevel / levelfactor1;
-					if (times < 1) times = 1;
-					for (int i; i < times; i++) { detracechance *= detracemultfactor; }
-					
-					detracechance = int(floor(detracechance));
-					if (random(1,16) <= detracechance) 
+					if (!(playera.CountInv("KCTimeFreezer") ||
+							playera.CountInv("KCTimeFreezer1") ||
+							playera.CountInv("KCTimeFreezer2") ||
+							playera.CountInv("KCTimeFreezer3")))
 					{
-						tracer = null;
-						return;
+						double detracechance = 1;
+						double detracemultfactor = (0.03125 * random(60,68));
+						int levelfactor1 = 15;
+						int times = MiscItem.TruePlayerLevel / levelfactor1;
+						if (times < 1) times = 1;
+						for (int i; i < times; i++) { detracechance *= detracemultfactor; }
+						
+						detracechance = int(floor(detracechance));
+						if (random(1,16) <= detracechance) 
+						{
+							tracer = null;
+							return;
+						}
 					}
 				}
 			}
@@ -808,6 +814,10 @@ class KCBaseZSC : Actor
 						}
 					}
 					detracerbasechance = randompick(128,256,256,256,256,256,256,256,256,256,256,256,256,256,256,512);
+					if (skill >= SKILL_VERY_HARD) detracerbasechance *= 1.125;
+					if (skill >= SKILL_HARD) detracerbasechance *= 1.125;
+					if (skill <= SKILL_EASY) detracerbasechance *= 0.75;
+					if (skill <= SKILL_VERY_EASY) detracerbasechance *= 0.75;
 					if (timecheck % 32) detracerbasechance /= 2;
 					if (timecheck % 16) detracerbasechance /= 2;
 					if (timecheck % 8) detracerbasechance /= 2;

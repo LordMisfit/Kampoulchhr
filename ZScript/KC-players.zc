@@ -3239,19 +3239,22 @@ class KCPlayerPawn : PlayerPawn
 				}
 				combatlogmsg.AppendFormat(" [%s]", mod);
 				//Console.Printf("armoramt: %d, PlayerArmorIgnoreFactor: %.8f", armoramt, PlayerArmorIgnoreFactor);
-				if ((ret || armdmg) && armoramt && PlayerArmorIgnoreFactor)
+				if (!(playtooktsadamage || playabsorbtsadamage))
 				{
-					double temp = (PlayerArmorIgnoreFactor * 100.0);
-					combatlogmsg.AppendFormat(" \c[orange](");
-					if (flags & DMG_NO_ARMOR)
+					if ((ret || armdmg) && armoramt && PlayerArmorIgnoreFactor)
 					{
-						combatlogmsg.AppendFormat("FULL", temp);
+						double temp = (PlayerArmorIgnoreFactor * 100.0);
+						combatlogmsg.AppendFormat(" \c[orange](");
+						if (flags & DMG_NO_ARMOR)
+						{
+							combatlogmsg.AppendFormat("FULL", temp);
+						}
+						else
+						{
+							combatlogmsg.AppendFormat("%.2f%%", temp);
+						}
+						combatlogmsg.AppendFormat("  armor bypass)\c-");
 					}
-					else
-					{
-						combatlogmsg.AppendFormat("%.2f%%", temp);
-					}
-					combatlogmsg.AppendFormat("  armor bypass)\c-");
 				}
 				if (flags & DMG_EXPLOSION) combatlogmsg.AppendFormat(" \c[brick][AOE]\c-");
 				if (kcdebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);

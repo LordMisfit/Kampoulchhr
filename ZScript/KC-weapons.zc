@@ -12351,11 +12351,35 @@ Class Translocator : MarineWeapon
 							actor mo;
 							[spawned, mo] = A_SpawnItemex("TLBeaconFog");
 							if (mo) mo.target = playera;
+							double MassUsed = invoker.owner.default.mass;
+							int HealthUsed = (invoker.owner.health * frandom(0.75,1.25));
+							int ArmorUsed = (invoker.owner.FindInventory("KCArmor").amount * frandom(0.75,1.25));
+							if (invoker.owner.CountInv("TSArmorTier3Plus") || 
+									invoker.owner.CountInv("TSArmorTier2") || 
+									invoker.owner.CountInv("TSArmorTier1")) ArmorUsed = 0;
 							if (invoker.tfenabled)
 							{
 								if (invoker.tfdynamicdamage)
 								{
-									invoker.tfdamage = invoker.owner.health + (invoker.owner.mass * frandom(0.75,1.25)) + invoker.owner.FindInventory("BasicArmor").amount;
+									if (MiscItem)
+									{
+										MassUsed = MiscItem.TotalMass;
+										
+										if ((playera.bINVULNERABLE || 
+												playera.player.cheats & CF_GODMODE2 || 
+												playera.player.cheats & CF_GODMODE) || 
+												playera.CountInv("KCPowerInvuln") || 
+												playera.CountInv("PowerInvulnerable")) 
+										{
+											MassUsed /= 128;
+										}
+										else
+										{
+											MassUsed = MiscItem.TotalNonTSAMass;
+										}
+										MassUsed *= frandom(0.75,1.25);
+									}
+									invoker.tfdamage = (HealthUsed + MassUsed + ArmorUsed);
 									if (A_CheckForHeiwa()) invoker.tfdamage *= (1.75 * (1.0 + (MiscItem.TruePlayerLevel * 0.00875)));
 								}
 								invoker.tfradius = 16;			// telefrag radius (player radius is 16)
@@ -12363,9 +12387,9 @@ Class Translocator : MarineWeapon
 								{
 									invoker.tfradius = playera.radius;
 									if (MiscItem) invoker.tfradius *= (1.0 + (MiscItem.TruePlayerLevel * 0.01));
-									
 								}
-								double tfouterradius = invoker.tfradius *= (1.5 + (1.0 + (MiscItem.TruePlayerLevel * 0.0075)));
+								double tfouterradius = (invoker.tfradius * (1.5 * (1.0 + (MiscItem.TruePlayerLevel * 0.0075))));
+								//Console.Printf("tfdamage: %d, tfouterradius: %.8f, tfradiustfradius: %.8f, health: %d, mass: %d, armor: %d", invoker.tfdamage, tfouterradius, invoker.tfradius, HealthUsed, MassUsed, ArmorUsed);
 								invoker.dummy.A_Explode(invoker.tfdamage,tfouterradius,XF_NOSPLASH|XF_THRUSTLESS,false,invoker.tfradius,0,10,"KCBulletPuff","Translocator");
 							}
 							self.target = invoker.dummy;

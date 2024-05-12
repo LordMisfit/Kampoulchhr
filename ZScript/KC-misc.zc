@@ -275,7 +275,7 @@ class PlayerStatItem : Inventory
 	int HellcoreCooldownTimer;
 	int HellcoreCoolRatio;
 
-	int TotalMass, BaseMass, PreBuffMass;
+	int TotalMass, BaseMass, PreBuffMass, TotalNonTSAMass;
 	int MassLevelAdd;
 	int MassNoRPGAdd;
 	double MassNoRPGAdd2;
@@ -2957,6 +2957,7 @@ class PlayerStatItem : Inventory
 			}
 
 			// TSArmor
+			TotalNonTSAMass = TotalMass;
 			if (!(owner.bINVULNERABLE || 
 					 owner.player.cheats & CF_GODMODE2 || 
 					 owner.player.cheats & CF_GODMODE) || 
@@ -2965,9 +2966,21 @@ class PlayerStatItem : Inventory
 			{
 				int tsamassmul = kc_tsamassmultbase;
 				tsamassmul *= kc_tsaeffectiveness;
-				if (owner.CountInv("TSArmorTier3Plus")) TotalMass *= (tsamassmul*tsamassmul*tsamassmul);
-				else if (owner.CountInv("TSArmorTier2")) TotalMass *= (tsamassmul*tsamassmul);
-				else if (owner.CountInv("TSArmorTier1")) TotalMass *= tsamassmul;
+				if (owner.CountInv("TSArmorTier3Plus")) 
+				{
+					TotalMass *= (tsamassmul*tsamassmul*tsamassmul);
+					TotalNonTSAMass *= ((tsamassmul*tsamassmul*tsamassmul) * 0.25);
+				}
+				else if (owner.CountInv("TSArmorTier2")) 
+				{
+					TotalMass *= (tsamassmul*tsamassmul);
+					TotalNonTSAMass *= ((tsamassmul*tsamassmul) * 0.25);
+				}
+				else if (owner.CountInv("TSArmorTier1")) 
+				{
+					TotalMass *= tsamassmul;
+					TotalNonTSAMass *= ((tsamassmul) * 0.25);
+				}
 				if (kcdebug_masscalcs) Console.Printf("Mass [TSArmor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
 			}
 
