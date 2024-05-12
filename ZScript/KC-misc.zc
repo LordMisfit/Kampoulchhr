@@ -154,7 +154,7 @@ class PlayerStatItem : Inventory
 	int armtier;
 	
 	int CompatPackMode;
-
+	int PlayerWaterLevel;
 	int EWShieldKills;
 	int HellWarriorMaxCharge;
 	int HellWarriorShieldLevel;
@@ -908,6 +908,7 @@ class PlayerStatItem : Inventory
 				// Misc
 				weapon = owner.player.ReadyWeapon;
 				
+				PlayerWaterLevel = owner.waterlevel;
 				// Check if player can breath/talk underwater
 				CanTalkUnderwater = 0;
 				if (owner.waterlevel < 3) 
@@ -5508,7 +5509,7 @@ class PlayerStatItem : Inventory
 			TruePlayerSPD = 0;
 		}
 		ActualLevel = A_CheckActualLevel(1);
-
+		
 		int oldhealth = owner.health;
 		if (owner.CountInv("NormalHealth")) oldhealthratio = 0;
 		if (owner.CountInv("DecentHealth")) oldhealthratio = 1;
