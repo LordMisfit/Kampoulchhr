@@ -2055,6 +2055,7 @@ class KCStatusBarMain : BaseStatusBar
 				airlowFlashTimer = level.time % airlowmod;
 			}
 			int lowairx, lowairy;
+			double airmeterscale = 0.875;
 			if (airlow)
 			{
 				lowairx = random(-airlow,airlow);
@@ -2081,6 +2082,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (kchud_airmeterdisplay & 1) airsecstring.AppendFormat("%.1f", airseconds);
 						if (kchud_airmeterdisplay & 1 && kchud_airmeterdisplay & 2) 
 						{
+							airmeterscale = 0.75;
 							airsecstring.AppendFormat(" (");
 						}
 						if (kchud_airmeterdisplay & 2) airsecstring.AppendFormat("%.1f%%", AirPercent);
@@ -2090,10 +2092,22 @@ class KCStatusBarMain : BaseStatusBar
 						}
 						fontclr = font.CR_sapphire;
 						if (AirMeterCurrent <= 0) fontclr = font.CR_Red;
-						DrawString(mKCLFont, airsecstring, (104+lowairx, (yinc-19)+lowairy), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
-						vector2 iconscale = (0.5, 0.5);
-						DrawImage("DRWNE0", (20+lowairx, (yinc-1)+lowairy), 0, fontalpha, (-1, -1), iconscale);
+						int xpos = 104; // 104;
+						if (kchud_airmeterdisplay <= 1) xpos = 116;
+						if (kchud_airmeterdisplay == 2) xpos = 120;
+						if (kchud_airmeterdisplay >= 3) xpos = 196;
+						
+						DrawString(mKCLFont, airsecstring, (xpos+lowairx, (yinc-19)+lowairy), DI_TEXT_ALIGN_RIGHT, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 					}
+					
+					vector2 iconscale = (0.5, 0.5);
+					String texname = "DRWNE0";
+					int timer = level.time;
+					if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNE0";
+					if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNF0";
+					if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNG0";
+					if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWNH0";
+					DrawImage(texname, (20+lowairx, (yinc-1)+lowairy), 0, fontalpha, (-1, -1), iconscale);
 				}
 			}
 		}
