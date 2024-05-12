@@ -1287,6 +1287,7 @@ class PowerNoDrown : PowerProtection
 		int ticwhiletimes = 3;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -1473,6 +1474,166 @@ class KCPowerIronFeet : PowerIronFeet
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy ();
+		if (EffectTics <= 0) Destroy();
+		//Console.Printf("EffectTics: %d", EffectTics);
+	}
+}
+
+
+class PowerIronFeet2 : PowerIronFeet
+{
+	mixin TimerCheck;
+	string texname;
+	int timer;
+	double ticpiece;
+	default
+	{
+		Inventory.Icon "BIOSA0";
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void AbsorbDamage (int damage, Name damageType, out int newdamage, Actor inflictor, Actor source, int flags)
+	{
+		if (damageType == 'Magma' || damageType == 'Lava') newdamage = damage * frandom(0.00,0.05);
+
+		if (damageType == 'Slime' || 
+				damageType == 'Drowning' ||
+				damageType == 'Dust') newdamage = 0;
+
+		double dmgfactor = 0.5;
+		if (skill <= 0) dmgfactor = 0.25;
+		if (skill == 1) dmgfactor = 0.375;
+		if (skill == 2) dmgfactor = 0.5;
+		if (skill == 3) dmgfactor = 0.625;
+		if (skill >= 4) dmgfactor = 0.75;
+		if (damageType == 'Boiling')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.0,0.125,0.125,0.25,0.25,0.25,0.375,0.375,0.50) * dmgfactor);
+		}
+		if (damagetype == 'Ice')
+		{
+			newdamage = damage *= (frandompick(0.25,0.3125,0.3125,0.375,0.375,0.375,0.4375,0.4375,0.5) * dmgfactor);
+		}
+		if (damagetype == 'Fire' ||
+				damagetype == 'CCFire' ||
+				damagetype == 'Flames' ||
+				damagetype == 'CCardsEyeFire' || 
+				damagetype == 'Burn' || 
+				damagetype == 'Inferno' || 
+				damagetype == 'Flare' || 
+				damagetype == 'Solar' || 
+				damagetype == 'Boiling' || 
+				damagetype == 'Lava' || 
+				damagetype == 'Magma' ||
+				damagetype == 'SpecialFire') 
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.5,0.625,0.625,0.75,0.75,0.75,0.875,0.875,1.0) * dmgfactor);
+		}
+		if (damagetype == 'CherryBomb')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'Spinner')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'BRocket')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'Popper')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'Explosive' ||
+				damagetype == 'ExplosiveImpact' || 
+				damagetype == 'CC_Firecracker')
+		{
+			if (gameinfo.gametype & 8) newdamage = 0;
+			else newdamage = damage *= (frandompick(0.75,0.8125,0.8125,0.875,0.875,0.875,0.9375,0.9375,1.0) * dmgfactor);
+		}
+		if (damagetype == 'Poison' ||
+				damagetype == 'CardPoison' ||
+				damagetype == 'CCardsPoison')
+		{
+			newdamage = damage *= (frandompick(0.25,0.3125,0.3125,0.375,0.375,0.375,0.4375,0.4375,0.5) * dmgfactor);
+		}
+		if (damagetype == 'Beats' || damagetype == 'Musak' || damagetype == 'Zap')
+		{
+			newdamage = damage *= frandompick(0.875,0.90625,0.90625,0.9375,0.9375,0.9375,0.96875,0.96875,1.0);
+		}
+		if (damagetype == 'BFGSplash')
+		{
+			newdamage = damage *= (frandompick(0.875,0.90625,0.90625,0.9375,0.9375,0.9375,0.96875,0.96875,1.0) * 0.25);
+		}
+		if (damageType == 'Melee' ||
+				damageType == 'Trample' ||
+				damageType == 'Stomp' ||
+				damageType == 'Fist' ||
+				damageType == 'Kick' ||
+				damageType == 'Chainsaw' ||
+				damageType == 'Bonk' ||
+				damageType == 'Bap' ||
+				damageType == 'Chop')
+		{
+			newdamage = damage *= frandompick(0.9375,0.953125,0.953125,0.96875,0.96875,0.96875,0.984375,0.984375,1.0);
+		}
+	}
+	
+	override void DoEffect()
+	{
+		if (Owner.player != NULL)
+		{
+			Owner.player.mo.ResetAirSupply();
+		}
+		
+		if (!owner.CountInv("PowerNoDrown"))
+		{
+			if ((gameinfo.gametype & 8 || (exex_masknoise && owner.waterlevel >= 3)) && !(Level.maptime & 0x3f))
+			{
+				double maskpitch = frandompick(frandom(1.125,1.275),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.25,1.375),frandom(1.375,1.5));
+				if (owner.waterlevel >= 3) maskpitch *= 1.259921885;
+				Owner.A_StartSound("misc/mask", CHAN_7, CHANF_DEFAULT, frandom(0.875,1.0), ATTN_NORM, maskpitch);
+			}
+		}
+	}
+
+	override void Tick()
+	{
+		timer++;
+		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "BIOSA0";
+		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "BIOSB0";
+		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "BIOSC0";
+		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "BIOSD0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		//Console.Printf("EffectTics: %d", EffectTics);
+		int fadeouttic = 75;
+		if (EffectTics > fadeouttic && owner) owner.A_StopSound(203);
+		if (EffectTics == fadeouttic && owner) owner.A_StartSound("buffs/bioshieldfading",203,CHANF_DEFAULT,2.25,ATTN_NORM);
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -2978,6 +3139,7 @@ class PowerDouble : PowerDamage
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3032,6 +3194,7 @@ class PowerHalve : PowerDamage
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3093,6 +3256,7 @@ class PowerGuard : PowerProtection
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3153,6 +3317,7 @@ class PowerWeaken : PowerProtection
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3244,10 +3409,14 @@ class DrownDebuffBase : TempDefenseBuff
 	override void Tick()
 	{
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWND0";
+		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNE0";
+		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNF0";
+		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNG0";
+		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWNH0";
+		//if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNA0";
+		//if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNB0";
+		//if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNC0";
+		//if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWND0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 }
@@ -3537,6 +3706,7 @@ class PowerHaste : PowerSpeedTimeCheck
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3580,6 +3750,7 @@ class PowerSlow : PowerSpeedTimeCheck
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3622,8 +3793,9 @@ class PowerTerror : PowerFrightener
 		if (timer % 30 >= 24 && timer % 30 <= 29) texname = "TERRE0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
