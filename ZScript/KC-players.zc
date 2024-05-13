@@ -1388,7 +1388,23 @@ class KCPlayerPawn : PlayerPawn
 								if (CountInv("TSArmorTier1")) chancebase = random(12,20);
 								if (CountInv("TSArmorTier2")) chancebase = random(48,80);
 								if (CountInv("TSArmorTier3Plus")) chancebase = random(192,320);
-								if (random(1,chancebase) <= 1) AirTime--;
+								if (random(1,chancebase) <= 1) 
+								{
+									AirTime--;
+								}
+								else
+								{
+									if (CountInv("TSArmorTier1")) chancebase = random(192,320);
+									if (CountInv("TSArmorTier2")) chancebase = random(48,80);
+									if (CountInv("TSArmorTier3Plus")) chancebase = random(12,20);
+									chancebase *= 0.5;
+									if (random(1,chancebase) <= 1 &&
+											AirTime < MaxAirTime) 
+									{
+										AirTime++;
+										if (AirTime > MaxAirTime) AirTime = MaxAirTime;
+									}
+								}
 							}
 							else
 							{
