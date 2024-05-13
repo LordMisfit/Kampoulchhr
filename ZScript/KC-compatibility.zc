@@ -124,6 +124,13 @@ Class KCLevelCompatibility : LevelPostProcessor
 		3006 // Sentinel
 	};
 	
+	bool A_CheckUOHYM()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+	
 	protected void Apply( Name checksum, String mapname )
 	{
 		if (gameinfo.gametype & GAME_Doom)

@@ -4862,10 +4862,10 @@ class KC_EventHandler : EventHandler
 						basechance *= kc_inventorydropratemulti;
 						if (A_CheckForHeiwaPlayer()) basechance *= 0.875;
 						basechance *= skillmult;
+						double basediv = 0.5;
+						double basediv2 = 0.125;
 						if (timefreezes)
 						{
-							double basediv = 0.5;
-							double basediv2 = 0.125;
 							if (A_CheckKCTimeFreeze())
 							{
 								basediv = 0.5;
@@ -4944,7 +4944,7 @@ class KC_EventHandler : EventHandler
 								basechance -= (timefreezes * basediv2);
 							}
 						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: (%d) \c[orange][%d / %d], timefreezes: %d", basechance, (i+1), droptimes, timefreezes);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
 						luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));

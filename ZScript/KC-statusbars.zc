@@ -62,6 +62,13 @@ class KCStatusBarMain : BaseStatusBar
 		return result;
 	}
 	
+	bool A_CheckUOHYM()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
+	}
+	
 	override void Init()
 	{
 		Super.Init();

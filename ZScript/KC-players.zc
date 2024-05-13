@@ -420,7 +420,8 @@ class KCPlayerPawn : PlayerPawn
 
 			// Armor items
 			double ArmorAirControl = 1.00;
-			if (CountInv("TSArmorTier2")) 
+			if (CountInv("TSArmorTier3Plus") || 
+					CountInv("TSArmorTier2")) 
 			{
 				if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
 				{
@@ -1275,9 +1276,13 @@ class KCPlayerPawn : PlayerPawn
 		{
 			let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 			MaxAirTime = (20 * TICRATE); // 7000
-			if (A_CheckForHeiwa()) MaxAirTime = (30 * TICRATE); // 10500
 			double GenAirBonusMulti = 1.666666666666667;
 
+			if (A_CheckForHeiwa()) 
+			{
+				MaxAirTime = (24 * TICRATE); // 10500
+				double GenAirBonusMulti = 2.0;
+			}
 			if (kcdebug_airmeter >= 2) Console.Printf("GenAirBonusMulti: %.8f", GenAirBonusMulti);
 			
 			if (MiscItem) 
@@ -1375,7 +1380,20 @@ class KCPlayerPawn : PlayerPawn
 						}
 						else
 						{
-							AirTime--;
+							if (CountInv("TSArmorTier3Plus") || 
+									CountInv("TSArmorTier2") || 
+									CountInv("TSArmorTier1"))
+							{
+								int chancebase = 16;
+								if (CountInv("TSArmorTier1")) chancebase = random(12,20);
+								if (CountInv("TSArmorTier2")) chancebase = random(48,80);
+								if (CountInv("TSArmorTier3Plus")) chancebase = random(192,320);
+								if (random(1,chancebase) <= 1) AirTime--;
+							}
+							else
+							{
+								AirTime--;
+							}
 						}
 					}
 					if (AirTime > MaxAirTime) AirTime = MaxAirTime;
@@ -1554,7 +1572,8 @@ class KCPlayerPawn : PlayerPawn
 				if (vel.z <= 0)
 				{
 					// Time Seraph Armor Tier 2 allows slowfall due to capelets by holding either one or both of JUMP or CROUCH keys [both to slow down extra]
-					if (CountInv("TSArmorTier2"))
+					if (CountInv("TSArmorTier3Plus") || 
+							CountInv("TSArmorTier2"))
 					{
 						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH)
 						{
@@ -2546,6 +2565,7 @@ class KCPlayerPawn : PlayerPawn
 				nm = "TSArmorTier1";
 				nn = "TSArmorTier2";
 				no = "TimeSeraphVisor";
+				np = "TSArmorTier3Plus";
 				double TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
 				if (skill <= 0) 
 				{
@@ -2574,6 +2594,7 @@ class KCPlayerPawn : PlayerPawn
 				}
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.1667,0.3334);
+				if (CountInv(np)) TSTicDmg *= frandom(0.041667,0.083334);
 				if (CountInv("TimeSeraphBangle")) 
 				{
 					if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
