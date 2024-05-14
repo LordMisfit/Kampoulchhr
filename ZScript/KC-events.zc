@@ -1311,6 +1311,7 @@ class KC_EventHandler : EventHandler
 				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials2(spawnee,monsterlevel,monsterrating);
 				[spawnee, monsterlevel, monsterrating] = AddLevelSpecials3(spawnee,monsterlevel,monsterrating);
 				if (!LD_nomonsters) A_LegendaryCheck(spawnee);
+				//if (!A_CheckUOHYM()) [spawnee, monsterlevel, monsterrating] = SetUpMiracles(spawnee,monsterlevel,monsterrating);
 			}
 		}
 		KCCreature spawnee2;
@@ -3229,6 +3230,16 @@ class KC_EventHandler : EventHandler
 		Super.WorldThingDamaged(e);
 	}
 	
+	int A_UOHYMDropCheck(int droptimes)
+	{
+		if (A_CheckUOHYM() && random(1,6) <= 1 && droptimes > 1) 
+		{
+			droptimes *= 0.25;
+			if (droptimes < 1 && random(1,6) <= 5) droptimes = 1;
+		}
+		return droptimes;
+	}
+	
 	int, int, actor, actor, actor, actor, int, int, bool, bool A_KillDropTables(int PLuck, int TrueLuck, actor victim, actor inflicter, actor source, actor mastor, int specialtype, int monsterrating, bool playerkill, bool allykill)
 	{
 		actor playera = players[0].mo;
@@ -3362,9 +3373,14 @@ class KC_EventHandler : EventHandler
 				}
 			}
 			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
+			if (A_CheckUOHYM() && random(1,6) <= 1) candropitems = false;
 			
 			double minmultlevel = 0.25;
+			if (A_CheckUOHYM()) minmultlevel *= 2;
 			if (victim.bBOSS) minmultlevel /= bossdropmulti;
+			if (waslegendary) minmultlevel *= frandompick(0.334,0.5,0.5,0.5,0.5,0.5,0.5,0.667);
+			if (minmultlevel <= 0.0125) minmultlevel = 0.0125;
+			
 			if (candropitems)
 			{
 				if (kcdebug_worlddied) Console.Printf("candropitems [post]: %d", candropitems);
@@ -3384,6 +3400,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= sielgraceluckboost;
 				lvldivider = 35;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -3402,6 +3419,7 @@ class KC_EventHandler : EventHandler
 					// Doom Monsters
 					basedropdiv = 512;
 					basedropdiv *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 4;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4189,6 +4207,7 @@ class KC_EventHandler : EventHandler
 					// Heretic Monsters
 					basedropdiv = 512;
 					basedropdiv *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 4;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4199,6 +4218,7 @@ class KC_EventHandler : EventHandler
 					// Hexen Monsters
 					basedropdiv = 512;
 					basedropdiv *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 4;
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
@@ -4207,6 +4227,7 @@ class KC_EventHandler : EventHandler
 					// Strife Monsters
 					basedropdiv = 512;
 					basedropdiv *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 4;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4230,6 +4251,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -4246,6 +4268,7 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate14;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4299,6 +4322,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -4315,6 +4339,7 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate6;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 8;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4587,6 +4612,7 @@ class KC_EventHandler : EventHandler
 				lvldivider = 35;
 				
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -4604,6 +4630,7 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate7;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4639,6 +4666,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= sielgraceluckboost;
 				lvldivider = 70;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -4656,6 +4684,7 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate8;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 1.0 + (monsterrating * 0.25);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
@@ -4738,6 +4767,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
 				{
 					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
@@ -4855,15 +4885,80 @@ class KC_EventHandler : EventHandler
 					// Extremely Rare Drops [Type 5]
 					if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 					{
+						int tsawarmuptier = 0;
+						double tsawarmuptiermulti = 3;
 						double tsaminmultlevel = minmultlevel;
 						int timefreezes;
-						if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+						if (MiscItem) 
+						{
+							if (MiscItem.TSArtifactSpawnCooldown <= 0 && 
+									MiscItem.TSArtifactSpawnWarmUp >= ((kc_tsadropcooldown * TICRATE) * (tsawarmuptiermulti)))
+							{
+								if (MiscItem.TSArtifactSpawnWarmUp >= ((kc_tsadropcooldown * TICRATE) * (tsawarmuptiermulti*tsawarmuptiermulti)))
+								{
+									if (MiscItem.TSArtifactSpawnWarmUp >= ((kc_tsadropcooldown * TICRATE) * (tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti)))
+									{
+										if (MiscItem.TSArtifactSpawnWarmUp >= ((kc_tsadropcooldown * TICRATE) * (tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti)))
+										{
+											if (MiscItem.TSArtifactSpawnWarmUp >= ((kc_tsadropcooldown * TICRATE) * (tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti*tsawarmuptiermulti)))
+											{
+												tsaminmultlevel *= 0.0;
+												tsawarmuptier = 5;
+											}
+											else
+											{
+												tsaminmultlevel *= 0.00390625;
+												tsawarmuptier = 4;
+											}
+										}
+										else
+										{
+											tsaminmultlevel *= 0.015625;
+											tsawarmuptier = 3;
+										}
+									}
+									else
+									{
+										tsaminmultlevel *= 0.0625;
+										tsawarmuptier = 2;
+									}
+								}
+								else
+								{
+									tsaminmultlevel *= 0.25;
+									tsawarmuptier = 1;
+								}
+							}
+							timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: WarmupTimer: %d, \c[orange][%d / %d], timefreezes: %d", MiscItem.TSArtifactSpawnWarmUp, (i+1), droptimes, timefreezes);
+						}
 						basechance = kc_inventorydroprate5;
 						basechance *= kc_inventorydropratemulti;
-						if (A_CheckForHeiwaPlayer()) basechance *= 0.875;
+						double tsatierbasemult = 0.75;
+						if (A_CheckForHeiwaPlayer()) 
+						{
+							basechance *= 0.875;
+							tsatierbasemult = 0.5;
+							if (tsawarmuptier >= 1) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 2) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 3) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 4) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 5) basechance *= tsatierbasemult;
+						}
+						else
+						{
+							basechance *= 1.142857142857143;
+							tsatierbasemult = 0.75;
+							if (tsawarmuptier >= 1) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 2) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 3) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 4) basechance *= tsatierbasemult;
+							if (tsawarmuptier >= 5) basechance *= tsatierbasemult;
+						}
 						basechance *= skillmult;
 						double basediv = 0.5;
 						double basediv2 = 0.125;
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare, pre tf check]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
 						if (timefreezes)
 						{
 							if (A_CheckKCTimeFreeze())
@@ -4888,63 +4983,67 @@ class KC_EventHandler : EventHandler
 								basediv *= 1.334;
 								basediv2 *= 0.67;
 							}
-							if (timefreezes >= 20)
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare, pre artifact check]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
+							if (A_CheckKCTimeFreeze())
 							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 40)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 80)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 160)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 320)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 640)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 1280)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 2560)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 5120)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 10240)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
-							}
-							if (timefreezes >= 20480)
-							{
-								basechance *= basediv;
-								basechance -= (timefreezes * basediv2);
+								if (timefreezes >= 20)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 40)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 80)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 160)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 320)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 640)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 1280)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 2560)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 5120)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 10240)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
+								if (timefreezes >= 20480)
+								{
+									basechance *= basediv;
+									basechance -= (timefreezes * basediv2);
+								}
 							}
 						}
-						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare, post tf check]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
 						luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
 						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));

@@ -129,6 +129,7 @@ class PlayerStatItem : Inventory
 	int sielsgracecooldownbase;
 	
 	int TSArtifactSpawnCooldown;
+	int TSArtifactSpawnWarmUp;
 	
 	int BaseFlatDefValue, BaseFlatDefValueCrush, BaseFlatDefValueDmgFlr, BaseFlatDefValueHUD;
 	int ArmorDefValue, ArmorDefValueCrush, ArmorDefValueDmgFlr, ArmorDefValueHUD;
@@ -1267,7 +1268,16 @@ class PlayerStatItem : Inventory
 				if (whistlecooldown > 0) whistlecooldown--;
 				if (OneLinerCooldown > 0) OneLinerCooldown--;
 				if (OneLinerTimerCool > 0) OneLinerTimerCool--;
-				if (TSArtifactSpawnCooldown > 0) TSArtifactSpawnCooldown--;
+				if (TSArtifactSpawnCooldown > 0) 
+				{
+					if (TSArtifactSpawnWarmUp > 0) TSArtifactSpawnWarmUp = 0;
+					TSArtifactSpawnCooldown--;
+				}
+				else
+				{
+					if (TSArtifactSpawnCooldown < 0) TSArtifactSpawnCooldown = 0;
+					TSArtifactSpawnWarmUp++;
+				}
 				if (kcdebug_onelinertimers) Console.Printf("OneLinerCooldown: %d, OneLinerTimerCool: %d", OneLinerCooldown, OneLinerTimerCool);
 			}
 			
