@@ -1992,7 +1992,8 @@ class KCStatusBarMain : BaseStatusBar
 					if (metercolor == 2) TSAN = "TSA2NOTC";
 					if (metercolor == 3) TSAN = "TSA3NOTC";
 					double malpha = 0.875;
-					if (!(CPlayer.mo.CountInv("TSArmorTier1") || 
+					if (!(CPlayer.mo.CountInv("TimeSeraphVisor") || 
+								CPlayer.mo.CountInv("TSArmorTier1") || 
 								CPlayer.mo.CountInv("TSArmorTier2") || 
 								CPlayer.mo.CountInv("TSArmorTier3Plus"))) malpha *= 0.25;
 					DrawBar(TSAN, "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
