@@ -7357,7 +7357,7 @@ class KC_WaterHandler : StaticEventHandler
 						if (playbloom == -1 && p.mo.waterlevel >= 3) tempeffectsize += 1.0;
 						effectSize *= tempeffectsize;
 					}
-					//if ((playbloom == -1 && p.mo.waterlevel >= 3) && p.mo.CountInv("PowerNoDrown")) effectSize *= frandom(0.045,0.055);
+					if ((playbloom == -1 && p.mo.waterlevel >= 3) && p.mo.CountInv("PowerNoDrown")) effectSize *= frandom(0.045,0.055);
 					//Console.Printf("effectSize: %.8f, zoom: %.8f [tic: %d]", effectSize, (1 - (effectSize * 2)), gametic);
 					PPShader.SetUniform1f("KCwatershader", "waterFactor", effectSize);
 					PPShader.SetUniform1f("KCwatershader", "zoomFactor", 1 - (effectSize * 2));

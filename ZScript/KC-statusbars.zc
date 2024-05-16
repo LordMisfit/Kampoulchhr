@@ -876,6 +876,21 @@ class KCStatusBarMain : BaseStatusBar
 					ItemEffectSecs = (CPlayerPawn.player.poisoncount / thinker.TICRATE);
 					Debuff = true;
 				}
+				if (PowerNoDrown(item)) 
+				{
+					ItemTicMod = 260;
+					if (MiscItem.PlayerWaterLevel >= 3)
+					{
+						ItemTicMod = 26;
+						ItemFontCLR = font.CR_Sapphire;
+						if (level.time % ItemTicMod >= 0 && level.time % ItemTicMod >= (ItemTicMod*0.5)) ItemFontCLR = font.CR_LightBlue;
+					}
+					else 
+					{
+						ItemFontCLR = font.CR_DarkGray;
+						if (level.time % ItemTicMod >= 0 && level.time % ItemTicMod >= (ItemTicMod*0.5)) ItemFontCLR = font.CR_Grey;
+					}
+				}
 				if (KCTimeCooldown(item))
 				{
 					if (MiscItem && MiscItem.timestopstate <= 0) 
