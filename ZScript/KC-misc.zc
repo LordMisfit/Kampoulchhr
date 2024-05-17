@@ -124,6 +124,7 @@ class PlayerStatItem : Inventory
 	int MercyInvulnMod;
 	bool sielsgraceactive;
 	int sielsgraceactivations;
+	int sielsgracetrueactivations;
 	int sielsgracecooldown;
 	int sielsgraceluckcooldown;
 	int sielsgracecooldownbase;
@@ -774,7 +775,7 @@ class PlayerStatItem : Inventory
 							PlayerLUCK *= 2.5;
 							TempLUCK = PlayerLUCK;
 							atkfct += frandom[statitem](-(variance*0.125),(variance*1.875));
-							deffct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							deffct += frandom[statitem](-(variance*1.875),(variance*0.125));
 							spdfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							jmpfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							suvfct += frandom[statitem](-(variance*0.125),(variance*1.875));
@@ -1211,6 +1212,7 @@ class PlayerStatItem : Inventory
 			sielsgracecooldown = owner.CountInv("sielsgracecooldown");
 			sielsgraceluckcooldown = owner.CountInv("sielsgraceluckcooldown");
 			sielsgraceactivations = owner.CountInv("sielsgraceactivations");
+			sielsgracetrueactivations = owner.CountInv("sielsgracetrueactivations");
 			if (owner.health > 0 && 
 					sielsgracecooldown && 
 					sielsgraceactivations < 4)
@@ -1261,6 +1263,7 @@ class PlayerStatItem : Inventory
 				if (kcdebug_survivalrate) Console.Printf("sielsgraceactive: %d", sielsgraceactive);
 			}
 			owner.A_SetInventory("sielsgraceactivations",sielsgraceactivations);
+			owner.A_SetInventory("sielsgracetrueactivations",sielsgracetrueactivations);
 			
 			if (owner.health > 0)
 			{
@@ -2425,6 +2428,15 @@ class PlayerStatItem : Inventory
 		
 		if (!A_CheckNoTimer())
 		{
+			double NewSuvFct = suvfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewSuvFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewSuvFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewSuvFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewSuvFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewSuvFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+			}
+			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [NewSuvFct]: %.8f (%.8f)", NewSuvFct, suvfct);
+
 			SurvivalRate = 100 * suvfct; // out of 10000 [100 = 1%]
 			if (A_CheckForHeiwa()) SurvivalRate = 25 * suvfct;
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [Base]: %d", SurvivalRate);
@@ -3488,7 +3500,14 @@ class PlayerStatItem : Inventory
 			if (drowndebufflevel) DrownDebuffJumpZ = 1.00 - (drowndebufflevel * frandompick[statitem](0.06,0.075,0.09));
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [DrownDebuff]: %.8f", DrownDebuffJumpZ);
 			
-			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [jmpfct]: %.8f", jmpfct);
+			double NewJmpFct = jmpfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewJmpFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewJmpFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewJmpFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewJmpFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewJmpFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+			}
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [jmpfct]: %.8f (%.8f)", NewJmpFct, jmpfct);
 			
 			double TotalJumpZ = CharacterJumpZ
 												* LevelJumpZ
@@ -3500,7 +3519,7 @@ class PlayerStatItem : Inventory
 												* SpecialJumpZ
 												* FistBlockJumpZ
 												* DrownDebuffJumpZ
-												* jmpfct;
+												* NewJmpFct;
 
 			PlayerPawn(Owner).JumpZ = TotalJumpZ;
 			actualjumpheight = ((TotalJumpZ * 35 / TICRATE) * 18);
@@ -7117,6 +7136,12 @@ class PlayerStatItem : Inventory
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - TSA): %.8f", TSAFactor);
 			
 			double NewAtkFct = atkfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewAtkFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewAtkFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewAtkFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewAtkFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewAtkFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+			}
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - atkfct): %.8f [%.8f]", NewAtkFct, atkfct);
 
 			double TOTALFactor = 1.0
@@ -7493,6 +7518,12 @@ class PlayerStatItem : Inventory
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - TSAFactor): %.8f", TSAFactor);
 			
 			double NewDefFct = deffct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewDefFct *= (1.0 - (sielsgracetrueactivations * 0.125));
+				if (NewDefFct <= (0.667 - (sielsgracetrueactivations * 0.0834))) NewDefFct = (0.667 - (sielsgracetrueactivations * 0.0834));
+				if (NewDefFct >= (1.5 - (sielsgracetrueactivations * 0.1875))) NewDefFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+			}
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - NewDefFct): %.8f (%.8f)", NewDefFct, deffct);
 			
 			double TOTALFactor = 1.0
@@ -8160,7 +8191,16 @@ class PlayerStatItem : Inventory
 		HUDSpeed *= WeaponFactor;
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [WeaponEquipped]: %.8f", WeaponFactor);
 		//
-		Speed *= spdfct;
+		double NewSpdFct = spdfct;
+		if (sielsgracetrueactivations > 0)
+		{
+			NewSpdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+			if (NewSpdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewSpdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+			if (NewSpdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewSpdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+		}
+		Speed *= NewSpdFct;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [NewSpdFct]: %.8f (%.8f)", NewSpdFct, spdfct);
+
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Final]: %.8f, HUDSpeed: %.2f", Speed, HUDSpeed);
 		return Speed;
 	}

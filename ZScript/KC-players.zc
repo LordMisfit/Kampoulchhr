@@ -2270,7 +2270,9 @@ class KCPlayerPawn : PlayerPawn
 						double fadetime = int(((TICRATE*frandom(0.8334,1.1667)) * sgtimer));
 						A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
 						MiscItem.sielsgraceactivations += 1;
+						MiscItem.sielsgracetrueactivations += 1;
 						A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
+						A_SetInventory("sielsgracetrueactivations",MiscItem.sielsgracetrueactivations);
 						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
 						MiscItem.A_SielsGraceLuckCooldown(300);
 					}
