@@ -411,7 +411,7 @@ class KCPlayerPawn : PlayerPawn
 
 			// Stats Based AirControl
 			double StatAirControl = 1.00;
-			if (kc_expgains) StatAirControl = 1.00 + ((ActualLevel + PlayerSPD) * 0.01);
+			if (kc_expgains) StatAirControl = 1.00 + ((ActualLevel + (PlayerSPD * 3)) * 0.0025);
 									else StatAirControl = 1.00 + ((PlayerSPD) * 0.01);
 			
 			// Time Freeze Air Control
@@ -515,7 +515,28 @@ class KCPlayerPawn : PlayerPawn
 			{
 				// [RH] allow very limited movement if not on ground.
 				movefactor *= level.aircontrol;
-				bobfactor*= level.aircontrol;
+				bobfactor *= level.aircontrol;
+			}
+
+			if (waterlevel >= 2)
+			{
+				if (A_CheckKCTimeFreeze())
+				{
+					double timefreezewaterfactor = 1.00;
+					if (CountInv("KCTimeFreezer1")) 
+					{
+						timefreezewaterfactor *= frandompick(0.4,0.5);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(0.2,0.25);
+					}
+					if (CountInv("KCTimeFreezer2")) 
+					{
+						timefreezewaterfactor *= frandompick(2,2.5);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(4,5);
+					}
+					
+					movefactor *= timefreezewaterfactor;
+					bobfactor *= timefreezewaterfactor;
+				}
 			}
 
 			fm = cmd.forwardmove;
@@ -1448,25 +1469,33 @@ class KCPlayerPawn : PlayerPawn
 							{
 								if (MiscItem)
 								{
-									MiscItem.drowndebuginit = true;
-									if (MiscItem.drowndebufflevel < 10)
+									int tsadebuffchance = 1;
+									if (CountInv("TSArmorTier3Plus")) tsadebuffchance = 64;
+									if (CountInv("TSArmorTier2")) tsadebuffchance = 16;
+									if (CountInv("TSArmorTier1")) tsadebuffchance = 4;
+									
+									if (random(1,tsadebuffchance) <= 1)
 									{
-										MiscItem.drowndebufflevel++;
-										if (CLWater)
+										MiscItem.drowndebuginit = true;
+										if (MiscItem.drowndebufflevel < 10)
 										{
-											if (CLWater == 2)
+											MiscItem.drowndebufflevel++;
+											if (CLWater)
 											{
-												if (random(1,16) <= random(3,6)) MiscItem.drowndebufftimer += random(38,53);
-																										else MiscItem.drowndebufftimer += random(25,35);
+												if (CLWater == 2)
+												{
+													if (random(1,16) <= random(3,6)) MiscItem.drowndebufftimer += random(38,53);
+																											else MiscItem.drowndebufftimer += random(25,35);
+												}
+												else
+												{
+													MiscItem.drowndebufftimer += random(50,70);
+												}
 											}
 											else
 											{
-												MiscItem.drowndebufftimer += random(50,70);
+												MiscItem.drowndebufftimer += random(25,35);
 											}
-										}
-										else
-										{
-											MiscItem.drowndebufftimer += random(25,35);
 										}
 									}
 								}
@@ -2633,6 +2662,9 @@ class KCPlayerPawn : PlayerPawn
 					if (TSTicDmg < 1) TSTicDmg = 1;
 					if (TSTicDmg > 10000) TSTicDmg = 10000;
 				}
+				if (mod == 'Drowning' && 
+						!A_CheckInvuln() &&
+						!A_CheckKCTimeFreeze()) TSTicDmg *= (randompick(9,10,10,10,10,10,10,10,10,11) * randompick(2,3,3,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,7,7,8));
 				if (mod == 'CCShadow' && 
 						!A_CheckInvuln() &&
 						!A_CheckKCTimeFreeze()) TSTicDmg *= 5; // The Shadow Trail CCard is 5x more damaging to the TSArmor
