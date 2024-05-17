@@ -1837,6 +1837,16 @@ class KCPlayerPawn : PlayerPawn
 			else if (waterlevel >= 2)
 			{
 				Vel.Z = 4 * Speed;
+				if (A_CheckKCTimeFreeze())
+				{
+					if (CountInv("KCTimeFreezer1")) Vel.Z *= frandompick(0.4,0.5);
+					if (CountInv("KCTimeFreezer2")) Vel.Z *= frandompick(2,2.5);
+					if (waterlevel >= 3)
+					{
+						if (CountInv("KCTimeFreezer1")) Vel.Z *= frandompick(0.2,0.25);
+						if (CountInv("KCTimeFreezer2")) Vel.Z *= frandompick(4,5);
+					}
+				}
 			}
 			else if (bNoGravity)
 			{
