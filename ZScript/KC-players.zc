@@ -2660,12 +2660,13 @@ class KCPlayerPawn : PlayerPawn
 					TSTicDmg *= frandom(1.5,2.5);
 				}
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
-				if (CountInv(nn)) TSTicDmg *= frandom(0.1667,0.3334);
-				if (CountInv(np)) TSTicDmg *= frandom(0.041667,0.083334);
+				if (CountInv(nn)) TSTicDmg *= frandom(0.083334,0.125);
+				if (CountInv(np)) TSTicDmg *= frandom(0.010421875,0.015625);
 				if (CountInv("TimeSeraphBangle")) 
 				{
-					if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
-											 else TSTicDmg *= frandom(0.80,0.90);
+							 if (CountInv(np)) TSTicDmg *= frandom(0.20,0.60);
+					else if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
+														else TSTicDmg *= frandom(0.80,0.90);
 				}
 				if (TSTicDmg) 
 				{
