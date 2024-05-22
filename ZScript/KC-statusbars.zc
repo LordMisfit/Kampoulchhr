@@ -876,6 +876,15 @@ class KCStatusBarMain : BaseStatusBar
 					ItemEffectSecs = (CPlayerPawn.player.poisoncount / thinker.TICRATE);
 					Debuff = true;
 				}
+				if (sielsgraceluckcooldown(item) && item.amount >= 1) 
+				{
+					if (MiscItem) 
+					{
+						ItemEffectTics = MiscItem.sielsgraceluckcooldown;
+						ItemEffectSecs = (MiscItem.sielsgraceluckcooldown / thinker.TICRATE);
+						ItemFontCLR = font.CR_green;
+					}
+				}
 				if (PowerNoDrown(item)) 
 				{
 					ItemTicMod = 260;

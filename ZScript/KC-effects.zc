@@ -97,7 +97,7 @@ class DashTimeFreezer : TimeFreezerKeepSound
 	int EffectTics2;
 	int Dire;
 
-	override void Tick ()
+	override void Tick()
 	{
 		PowerTimeFreezer.Tick();
 		S_ResumeSound(false);
@@ -329,7 +329,7 @@ class KCTimeCooldown : EmptyPowerup
 		Inventory.Icon "TMFRZID0";
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
 		EmptyPowerup.Tick();
 		bool debugtick = false;
@@ -398,7 +398,7 @@ class KCTimeCooldown2 : EmptyPowerup
 		Inventory.Icon "TMFRZIF0";
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
 		EmptyPowerup.Tick();
 		bool debugtick = false;
@@ -467,7 +467,7 @@ class KCTimeCooldown3 : EmptyPowerup
 		Inventory.Icon "TMFRZIE0";
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
 		EmptyPowerup.Tick();
 		bool debugtick = false;
@@ -1178,7 +1178,28 @@ class PlayerGUTS : PlayerStatPlaceholder { }
 class PlayerLUCK : PlayerStatPlaceholder { }
 
 class sielsgracecooldown : PlayerStatPlaceholder { }
-class sielsgraceluckcooldown : PlayerStatPlaceholder { }
+class sielsgraceluckcooldown : EmptyPowerup 
+{ 
+	int EffectTics2;
+	int Dire;
+	double fadeintensity;	
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	mixin TimerCheck;
+	string texname;
+	override void Tick()
+	{
+		int baseinc = 12;
+		timer++;
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "CCLVA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "CCLVB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "CCLVC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "CCLVD0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+}
+
 class sielsgraceactivations : PlayerStatPlaceholder { }
 class sielsgracetrueactivations : PlayerStatPlaceholder { }
 
@@ -1461,11 +1482,12 @@ class KCPowerIronFeet : PowerIronFeet
 
 	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "BIOSA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "BIOSB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "BIOSC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "BIOSD0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "BIOSA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "BIOSB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "BIOSC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "BIOSD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		//Console.Printf("EffectTics: %d", EffectTics);
@@ -1620,11 +1642,12 @@ class PowerIronFeet2 : PowerIronFeet
 
 	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "BIOSA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "BIOSB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "BIOSC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "BIOSD0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "BIOSA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "BIOSB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "BIOSC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "BIOSD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		//Console.Printf("EffectTics: %d", EffectTics);
@@ -1670,13 +1693,14 @@ class KCPowerInvisibility : PowerInvisibility
 	
 	override void Tick()
 	{
+		int baseinc = 36;
 		timer++;
-		if (timer % 36 >= 0 && timer % 36 <= 5) texname = "PINSA0";
-		if (timer % 36 >= 6 && timer % 36 <= 11) texname = "PINSB0";
-		if (timer % 36 >= 12 && timer % 36 <= 17) texname = "PINSC0";
-		if (timer % 36 >= 18 && timer % 36 <= 23) texname = "PINSD0";
-		if (timer % 36 >= 24 && timer % 36 <= 29) texname = "PINSC0";
-		if (timer % 36 >= 30 && timer % 36 <= 35) texname = "PINSB0";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % baseinc <= ((baseinc*0.1667)-1)) texname = "PINSA0";
+		if (timer % baseinc >= (baseinc*0.1667) && timer % baseinc <= ((baseinc*0.3334)-1)) texname = "PINSB0";
+		if (timer % baseinc >= (baseinc*0.3334) && timer % baseinc <= ((baseinc*0.5000)-1)) texname = "PINSC0";
+		if (timer % baseinc >= (baseinc*0.5000) && timer % baseinc <= ((baseinc*0.6667)-1)) texname = "PINSD0";
+		if (timer % baseinc >= (baseinc*0.6667) && timer % baseinc <= ((baseinc*0.8334)-1)) texname = "PINSC0";
+		if (timer % baseinc >= (baseinc*0.8334) && timer % baseinc <= ((baseinc*1.0000)-1)) texname = "PINSB0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		int fadeouttic = 64;
@@ -1719,15 +1743,16 @@ class KCPowerInvuln : PowerInvulnerable
 		+INVENTORY.ADDITIVETIME;
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 36;
 		timer++;
-		if (timer % 36 >= 0 && timer % 36 <= 5) texname = "PINVA0";
-		if (timer % 36 >= 6 && timer % 36 <= 11) texname = "PINVB0";
-		if (timer % 36 >= 12 && timer % 36 <= 17) texname = "PINVC0";
-		if (timer % 36 >= 18 && timer % 36 <= 23) texname = "PINVD0";
-		if (timer % 36 >= 24 && timer % 36 <= 29) texname = "PINVC0";
-		if (timer % 36 >= 30 && timer % 36 <= 35) texname = "PINVB0";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % baseinc <= ((baseinc*0.1667)-1)) texname = "PINVA0";
+		if (timer % baseinc >= (baseinc*0.1667) && timer % baseinc <= ((baseinc*0.3334)-1)) texname = "PINVB0";
+		if (timer % baseinc >= (baseinc*0.3334) && timer % baseinc <= ((baseinc*0.5000)-1)) texname = "PINVC0";
+		if (timer % baseinc >= (baseinc*0.5000) && timer % baseinc <= ((baseinc*0.6667)-1)) texname = "PINVD0";
+		if (timer % baseinc >= (baseinc*0.6667) && timer % baseinc <= ((baseinc*0.8334)-1)) texname = "PINVC0";
+		if (timer % baseinc >= (baseinc*0.8334) && timer % baseinc <= ((baseinc*1.0000)-1)) texname = "PINVB0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		if (EffectTics % 70 == 69) owner.A_StartSound("buffs/invulnpulse",200,CHANF_DEFAULT,frandom(0.75,1.0),ATTN_NORM);
@@ -1794,12 +1819,13 @@ class KCPowerStrength : PowerStrength
 	int fadeouttic;
 	string texname;
 
-	override void Tick ()
+	override void Tick()
 	{
 		bool debugtick = false;
 
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 23) texname = "PSTRA0";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % 24 <= ((baseinc*1.0000)-1)) texname = "PSTRA0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		int Point1 = 225;
@@ -2280,9 +2306,10 @@ class KCPowerLightAmp : PowerLightAmp
 	
 	override void Tick()
 	{
+		int baseinc = 12;
 		timer++;
-		if (timer % 12 >= 0 && timer % 12 <= 5) texname = "PVISA0";
-		if (timer % 12 >= 6 && timer % 12 <= 11) texname = "PVISB0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "PVISA0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "PVISB0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 
 		int fadeouttic = 107;
@@ -2821,11 +2848,12 @@ class KCPowerSpread1 : Powerup
 	
 	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "SRSHA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "SRSHB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "SRSHC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "SRSHD0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "SRSHA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "SRSHB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "SRSHC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "SRSHD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -2864,11 +2892,12 @@ class KCPowerSpread2 : Powerup
 	
 	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "SRSHE0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "SRSHF0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "SRSHG0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "SRSHH0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "SRSHE0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "SRSHF0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "SRSHG0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "SRSHH0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3129,13 +3158,14 @@ class PowerDouble : PowerDamage
 		}
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DDMGA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DDMGB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DDMGC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DDMGB0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "DDMGA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "DDMGB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "DDMGC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "DDMGD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3184,13 +3214,14 @@ class PowerHalve : PowerDamage
 		}
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "ATKDOWN";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "ATKDOWN";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "ATKDOWN";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "ATKDOWN";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "ATKDOWN";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "ATKDOWN";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "ATKDOWN";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "ATKDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3246,13 +3277,14 @@ class PowerGuard : PowerProtection
 		}
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "GUADA0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "GUADB0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "GUADC0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "GUADD0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "GUADA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "GUADB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "GUADC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "GUADD0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3307,13 +3339,14 @@ class PowerWeaken : PowerProtection
 		}
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DEFDOWN";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DEFDOWN";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DEFDOWN";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DEFDOWN";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "DEFDOWN";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "DEFDOWN";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "DEFDOWN";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "DEFDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3409,16 +3442,18 @@ class DrownDebuffBase : TempDefenseBuff
 	
 	override void Tick()
 	{
+		int baseinc = 24;
 		timer++;
-		if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNE0";
-		if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNF0";
-		if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNG0";
-		if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWNH0";
-		//if (timer % 24 >= 0 && timer % 24 <= 5) texname = "DRWNA0";
-		//if (timer % 24 >= 6 && timer % 24 <= 11) texname = "DRWNB0";
-		//if (timer % 24 >= 12 && timer % 24 <= 17) texname = "DRWNC0";
-		//if (timer % 24 >= 18 && timer % 24 <= 23) texname = "DRWND0";
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "DRWNE0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "DRWNF0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "DRWNG0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "DRWNH0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		//if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "DRWNA0";
+		//if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "DRWNB0";
+		//if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "DRWNC0";
+		//if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "DRWND0";
 	}
 }
 
@@ -3652,14 +3687,14 @@ class IsPoisoned : PowerDamageTimeCheck
 		+INVENTORY.ADDITIVETIME;
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 18;
 		timer++;
-		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "POISON";
-		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "POISON";
-		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "POISON";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % baseinc <= ((baseinc*0.3334)-1)) texname = "POISON";
+		if (timer % baseinc >= (baseinc*0.3334) && timer % baseinc <= ((baseinc*0.6667)-1)) texname = "POISON";
+		if (timer % baseinc >= (baseinc*0.6667) && timer % baseinc <= ((baseinc*1.0000)-1)) texname = "POISON";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
-		
 		
 		if (Owner == NULL) Destroy();
 		else
@@ -3697,12 +3732,13 @@ class PowerHaste : PowerSpeedTimeCheck
 		+INVENTORY.ADDITIVETIME;
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 18;
 		timer++;
-		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDUP";
-		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDUP";
-		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDUP";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % baseinc <= ((baseinc*0.3334)-1)) texname = "SPDUP";
+		if (timer % baseinc >= (baseinc*0.3334) && timer % baseinc <= ((baseinc*0.6667)-1)) texname = "SPDUP";
+		if (timer % baseinc >= (baseinc*0.6667) && timer % baseinc <= ((baseinc*1.0000)-1)) texname = "SPDUP";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3741,12 +3777,13 @@ class PowerSlow : PowerSpeedTimeCheck
 		+INVENTORY.ADDITIVETIME;
 	}
 
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 18;
 		timer++;
-		if (timer % 18 >= 0 && timer % 18 <= 5) texname = "SPDDOWN";
-		if (timer % 18 >= 6 && timer % 18 <= 11) texname = "SPDDOWN";
-		if (timer % 18 >= 12 && timer % 18 <= 17) texname = "SPDDOWN";
+		if (timer % baseinc >= (baseinc*0.0000) && timer % baseinc <= ((baseinc*0.3334)-1)) texname = "SPDDOWN";
+		if (timer % baseinc >= (baseinc*0.3334) && timer % baseinc <= ((baseinc*0.6667)-1)) texname = "SPDDOWN";
+		if (timer % baseinc >= (baseinc*0.6667) && timer % baseinc <= ((baseinc*1.0000)-1)) texname = "SPDDOWN";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -3784,14 +3821,15 @@ class PowerTerror : PowerFrightener
 		+INVENTORY.ADDITIVETIME;
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
+		int baseinc = 30;
 		timer++;
-		if (timer % 30 >= 0 && timer % 30 <= 5) texname = "TERRA0";
-		if (timer % 30 >= 6 && timer % 30 <= 11) texname = "TERRB0";
-		if (timer % 30 >= 12 && timer % 30 <= 17) texname = "TERRC0";
-		if (timer % 30 >= 18 && timer % 30 <= 23) texname = "TERRD0";
-		if (timer % 30 >= 24 && timer % 30 <= 29) texname = "TERRE0";
+		if (timer % baseinc >= (baseinc*0.0) && timer % baseinc <= ((baseinc*0.2)-1)) texname = "TERRA0";
+		if (timer % baseinc >= (baseinc*0.2) && timer % baseinc <= ((baseinc*0.4)-1)) texname = "TERRB0";
+		if (timer % baseinc >= (baseinc*0.4) && timer % baseinc <= ((baseinc*0.6)-1)) texname = "TERRC0";
+		if (timer % baseinc >= (baseinc*0.6) && timer % baseinc <= ((baseinc*0.8)-1)) texname = "TERRD0";
+		if (timer % baseinc >= (baseinc*0.8) && timer % baseinc <= ((baseinc*1.0)-1)) texname = "TERRE0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 		
 		actor playera = players[0].mo;
@@ -4282,7 +4320,7 @@ class PKicking : PlaceHolderItem
 		-INVENTORY.KEEPDEPLETED
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
@@ -4304,7 +4342,7 @@ class PPunching : PlaceHolderItem
 		-INVENTORY.KEEPDEPLETED
 	}
 	
-	override void Tick ()
+	override void Tick()
 	{
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));

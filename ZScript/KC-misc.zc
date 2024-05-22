@@ -222,7 +222,7 @@ class PlayerStatItem : Inventory
 	int ExtraDashCharge;
 	
 	double BaseRegenMulti;
-	double atkfct, deffct, spdfct, jmpfct, suvfct;
+	double atkfct, deffct, spdfct, jmpfct, suvfct, mssfct, evdfct;
 
 	int HPMaxGain, PPMaxGain, MPMaxGain, MassGain; 
 	int VitHPMaxGain, IQPPMaxGain, SensesMPMaxGain;
@@ -719,7 +719,7 @@ class PlayerStatItem : Inventory
 						PlayerGUTS = 0;
 						PlayerLUCK = 2;
 
-						atkfct = deffct = spdfct = jmpfct = suvfct = 1.00;
+						atkfct = deffct = spdfct = jmpfct = suvfct = mssfct = evdfct = 1.00;
 						double variance = 0.10;
 						heiwavhardmodifier = false;
 						if (A_CheckForHeiwa())
@@ -779,6 +779,8 @@ class PlayerStatItem : Inventory
 							spdfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							jmpfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 							suvfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							mssfct += frandom[statitem](-(variance*0.125),(variance*1.875));
+							evdfct += frandom[statitem](-(variance*0.125),(variance*1.875));
 						}
 						else
 						{
@@ -788,6 +790,8 @@ class PlayerStatItem : Inventory
 							spdfct += frandom[statitem](-variance,variance);
 							jmpfct += frandom[statitem](-variance,variance);
 							suvfct += frandom[statitem](-variance,variance);
+							mssfct += frandom[statitem](-variance,variance);
+							evdfct += frandom[statitem](-variance,variance);
 						}
 						if (kcdebug_startupinfo) Console.Printf("atkfct: %.8f, deffct: %.8f, spdfct: %.8f, jmpfct: %.8f, suvfct: %.8f, Luck: %d", atkfct, deffct, spdfct, jmpfct, suvfct, PlayerLUCK);
 						
@@ -2977,12 +2981,13 @@ class PlayerStatItem : Inventory
 					
 					if (MassInc) TotalMass += MassInc;
 					if (MassMulti != 1.0) TotalMass *= MassMulti;
-					if (kcdebug_masscalcs) Console.Printf("Mass [Armor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
+					if (kcdebug_masscalcs && darmortype) Console.Printf("Mass [\c[green]Armor\c-]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f, darmortype: %d", TotalMass, MassInc, MassMulti, kc_armorencumbrance, darmortype);
 				}
 			}
 
 			// TSArmor
 			TotalNonTSAMass = TotalMass;
+			bool debugtsamass = false;
 			if (!(owner.bINVULNERABLE || 
 					 owner.player.cheats & CF_GODMODE2 || 
 					 owner.player.cheats & CF_GODMODE) || 
@@ -2993,20 +2998,23 @@ class PlayerStatItem : Inventory
 				tsamassmul *= kc_tsaeffectiveness;
 				if (owner.CountInv("TSArmorTier3Plus")) 
 				{
+					debugtsamass = true;
 					TotalMass *= (tsamassmul*tsamassmul*tsamassmul);
 					TotalNonTSAMass *= ((tsamassmul*tsamassmul*tsamassmul) * 0.25);
 				}
 				else if (owner.CountInv("TSArmorTier2")) 
 				{
+					debugtsamass = true;
 					TotalMass *= (tsamassmul*tsamassmul);
 					TotalNonTSAMass *= ((tsamassmul*tsamassmul) * 0.25);
 				}
 				else if (owner.CountInv("TSArmorTier1")) 
 				{
+					debugtsamass = true;
 					TotalMass *= tsamassmul;
 					TotalNonTSAMass *= ((tsamassmul) * 0.25);
 				}
-				if (kcdebug_masscalcs) Console.Printf("Mass [TSArmor]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
+				if (kcdebug_masscalcs && debugtsamass) Console.Printf("Mass [\c[HeiwaDeluge]TSArmor\c-]: %d, Inc: %.8f, Multi: %.8f, kc_armorencumbrance: %.8f", TotalMass, MassInc, MassMulti, kc_armorencumbrance);
 			}
 
 			if (TotalMass < 1) TotalMass = 1;
@@ -3527,7 +3535,7 @@ class PlayerStatItem : Inventory
 			actualjumpheight = ((TotalJumpZ * 35 / TICRATE) * 18);
 			actualjumpheight2 = (((TotalJumpZ*2)**2)/2+owner.maxstepheight)/((TotalJumpZ**2)/2+owner.maxstepheight);
 			TrueJumpHeight = ((TotalJumpZ * (TotalJumpZ + 1.0)) / 2) + owner.maxstepheight;
-			if (kcdebug_jumpingcalcs) Console.Printf("TotalJumpZ: %.8f [\c[gold]actualjumpheight: %d\c- / \c[fire]actualjumpheight2: %d\c-x / \c[blue]TrueJumpHeight: %d\c-] (CharacterJumpZ: %.8f, LevelJumpZ: %.8f, SpeedJumpZ: %.8f, HealthJumpZ: %.8f, BuffJumpZ: %.8f, ArmorJumpZ: %.8f, SpecialJumpZ: %.8f, WeaponJumpZ: %.8f, jmpfct: %.8f), owner.maxstepheight: %d, \c[red]TICRATE: %d\c-", TotalJumpZ, actualjumpheight, actualjumpheight2, TrueJumpHeight, CharacterJumpZ, LevelJumpZ, SpeedJumpZ, HealthJumpZ, BuffJumpZ, ArmorJumpZ, SpecialJumpZ, WeaponJumpZ, jmpfct, owner.maxstepheight, TICRATE);
+			if (kcdebug_jumpingcalcs) Console.Printf("TotalJumpZ: %.8f [\c[gold]actualjumpheight: %d\c- / \c[fire]actualjumpheight2: %d\c-x / \c[blue]TrueJumpHeight: %d\c-] (CharacterJumpZ: %.8f, LevelJumpZ: %.8f, SpeedJumpZ: %.8f, HealthJumpZ: %.8f, BuffJumpZ: %.8f, ArmorJumpZ: %.8f, SpecialJumpZ: %.8f, WeaponJumpZ: %.8f, jmpfct: %.8f (%.8f)), owner.maxstepheight: %d, \c[red]TICRATE: %d\c-", TotalJumpZ, actualjumpheight, actualjumpheight2, TrueJumpHeight, CharacterJumpZ, LevelJumpZ, SpeedJumpZ, HealthJumpZ, BuffJumpZ, ArmorJumpZ, SpecialJumpZ, WeaponJumpZ, NewJmpFct, jmpfct, owner.maxstepheight, TICRATE);
 		}
 	}
 	
@@ -3944,6 +3952,8 @@ class PlayerStatItem : Inventory
 			globalvars.spdfct = spdfct = 1.0;
 			globalvars.jmpfct = jmpfct = 1.0;
 			globalvars.suvfct = suvfct = 1.0;
+			globalvars.mssfct = mssfct = 1.0;
+			globalvars.evdfct = evdfct = 1.0;
 			globalvars.heiwavhardmodifier = heiwavhardmodifier = 0;
 			globalvars.PlayerATK = PlayerATK = 2;
 			globalvars.PlayerDEF = PlayerDEF = 2;
@@ -3994,6 +4004,8 @@ class PlayerStatItem : Inventory
 			spdfct = globalvars.spdfct;
 			jmpfct = globalvars.jmpfct;
 			suvfct = globalvars.suvfct;
+			mssfct = globalvars.mssfct;
+			evdfct = globalvars.evdfct;
 			heiwavhardmodifier = globalvars.heiwavhardmodifier;
 			PlayerATK = globalvars.PlayerATK;
 			PlayerDEF = globalvars.PlayerDEF;
@@ -6939,6 +6951,8 @@ class PlayerStatItem : Inventory
 		globalvars.spdfct = spdfct;
 		globalvars.jmpfct = jmpfct;
 		globalvars.suvfct = suvfct;
+		globalvars.mssfct = mssfct;
+		globalvars.evdfct = evdfct;
 		globalvars.PlayerATK = PlayerATK;
 		globalvars.PlayerDEF = PlayerDEF;
 		globalvars.PlayerSPD = PlayerSPD;
