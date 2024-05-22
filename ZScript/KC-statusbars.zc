@@ -911,7 +911,7 @@ class KCStatusBarMain : BaseStatusBar
 				}
 
 				let icon = item.GetPowerupIcon();
-				if (icon.IsValid())
+				if (icon.IsValid() && item.amount >= 1)
 				{
 					double transp = 1.00;
 					if (item.IsBlinking()) transp = 0.50;
