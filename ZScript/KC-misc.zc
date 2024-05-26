@@ -2321,6 +2321,17 @@ class PlayerStatItem : Inventory
 			SPDEvadeCheck += LUKEvaAlt;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0b - SPD Evade Check (luck check)]: %.4f\c-", SPDEvadeCheck);
 			
+			double NewEvdFct = evdfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewEvdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewEvdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewEvdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewEvdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewEvdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				
+			}
+			SPDEvadeCheck *= NewEvdFct;
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0x - SPD Evade Check (NewEvdFct)]: %.4f\c-, NewEvdFct: %.8f", SPDEvadeCheck, NewEvdFct);
+			
 			// Weapon
 			weapon = owner.player.ReadyWeapon;
 			double WeapEvaAlt = 0.0;
@@ -2338,9 +2349,8 @@ class PlayerStatItem : Inventory
 				if (temp > 0.1875) temp = 0.1875; // Mitigated @ Level 25, INVERSED @ Level 50+
 				WeapEvaAlt += (BaseEVA * temp);
 			}
-			
 			SPDEvadeCheck += WeapEvaAlt;
-			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0e - SPD Evade Check (weapon check)]: %.4f\c-", SPDEvadeCheck);
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0f - SPD Evade Check (weapon check)]: %.4f\c-", SPDEvadeCheck);
 			
 			// Berserk
 			double BersEvaAlt = 0.0;
