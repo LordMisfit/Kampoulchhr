@@ -2941,8 +2941,19 @@ class PlayerStatItem : Inventory
 				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (1.75 + (HellWarriorShieldLevel * 0.0875));
 				if (berserked) TotalMass *= 2.5;
 			}
+			
+			double NewMssFct = mssfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewMssFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewMssFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewMssFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewMssFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewMssFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				
+			}
+			TotalMass *= NewMssFct;
+			if (kcdebug_masscalcs && NewMssFct) Console.Printf("Mass [NewMssFct]: %d, NewMssFct: %.8f", TotalMass, NewMssFct);
+			
 			// Armor
-
 			name armorclasstype = "KCArmor";
 			int ArmorAmt = owner.CountInv(armorclasstype);
 			double MassInc = 0;
