@@ -12353,7 +12353,8 @@ Class Translocator : MarineWeapon
 							if (mo) mo.target = playera;
 							double MassUsed = invoker.owner.default.mass;
 							int HealthUsed = (invoker.owner.health * frandom(0.75,1.25));
-							int ArmorUsed = (invoker.owner.FindInventory("KCArmor").amount * frandom(0.75,1.25));
+							int ArmorUsed = 0;
+							if (invoker.owner.FindInventory("KCArmor")) ArmorUsed = (invoker.owner.FindInventory("KCArmor").amount * frandom(0.75,1.25));
 							if (invoker.owner.CountInv("TSArmorTier3Plus") || 
 									invoker.owner.CountInv("TSArmorTier2") || 
 									invoker.owner.CountInv("TSArmorTier1")) ArmorUsed = 0;

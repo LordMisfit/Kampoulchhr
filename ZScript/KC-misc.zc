@@ -2321,17 +2321,6 @@ class PlayerStatItem : Inventory
 			SPDEvadeCheck += LUKEvaAlt;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0b - SPD Evade Check (luck check)]: %.4f\c-", SPDEvadeCheck);
 			
-			double NewEvdFct = evdfct;
-			if (sielsgracetrueactivations > 0)
-			{
-				NewEvdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewEvdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewEvdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewEvdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewEvdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
-				
-			}
-			SPDEvadeCheck *= NewEvdFct;
-			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0x - SPD Evade Check (NewEvdFct)]: %.4f\c-, NewEvdFct: %.8f", SPDEvadeCheck, NewEvdFct);
-			
 			// Weapon
 			weapon = owner.player.ReadyWeapon;
 			double WeapEvaAlt = 0.0;
@@ -2350,7 +2339,7 @@ class PlayerStatItem : Inventory
 				WeapEvaAlt += (BaseEVA * temp);
 			}
 			SPDEvadeCheck += WeapEvaAlt;
-			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0f - SPD Evade Check (weapon check)]: %.4f\c-", SPDEvadeCheck);
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0c - SPD Evade Check (weapon check)]: %.4f\c-", SPDEvadeCheck);
 			
 			// Berserk
 			double BersEvaAlt = 0.0;
@@ -2363,16 +2352,27 @@ class PlayerStatItem : Inventory
 				if (skill >= 4) BersEvaAlt += (BaseEVA * 0.0625);
 			}
 			SPDEvadeCheck += BersEvaAlt;
-			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0f - SPD Evade Check (berserk check)]: %.4f\c-", SPDEvadeCheck);
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0d - SPD Evade Check (berserk check)]: %.4f\c-", SPDEvadeCheck);
 			
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0x - SPD Evade Check]: %.4f\c-", SPDEvadeCheck);
 			
 			if (kc_expgains) EvasionRate = (((TruePlayerLevel + 1) * SPDEvadeCheck) + ((TruePlayerSPD + 1) * SPDEvadeCheck)) * 0.5;
-			else EvasionRate = SPDEvadeCheck;
+									else EvasionRate = SPDEvadeCheck;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 1 - Base (Agl/Evade, Lvl/Evade)]: %d\c-", EvasionRate);
 			
 			if (Owner.CountInv("PowerHaste")) EvasionRate *= 2.5;
 			if (Owner.CountInv("PowerSlow")) EvasionRate *= 0.4;
+			
+			double NewEvdFct = evdfct;
+			if (sielsgracetrueactivations > 0)
+			{
+				NewEvdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
+				if (NewEvdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewEvdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				if (NewEvdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewEvdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				
+			}
+			EvasionRate *= NewEvdFct;
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 1x - Base (NewEvdFct)]: %.4f\c-, NewEvdFct: %.8f", EvasionRate, NewEvdFct);
 			
 			if (IsMorphed == 1) // Rat Form gives up to +75% evasion chance
 			{
