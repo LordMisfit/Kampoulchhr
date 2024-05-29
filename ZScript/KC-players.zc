@@ -46,7 +46,7 @@ class KCPlayerPawn : PlayerPawn
 	
 	int PoisonDmgPainInt;
 	int AirTime, MaxAirTime;
-	int InWaterTime;
+	int InWaterTime, InWaterTime2;
 	
 	bool isvoodoodoll;
 	int neverbleeds;
@@ -679,7 +679,14 @@ class KCPlayerPawn : PlayerPawn
 			player.mo.CheckAirSupply();
 		}
 		wasongroundcurrtic = player.onground;
-		if (kcdebug_playermove) Console.Printf("wasongroundprevtic: %d, wasongroundcurrtic: %d [gametic: %d]", wasongroundprevtic, wasongroundcurrtic, gametic);
+		if (A_CheckKCTimeFreeze())
+		{
+			if (waterlevel >= 1) InWaterTime2++;
+											else InWaterTime2 = 0;
+		}
+		else InWaterTime2 = 0;
+		
+		if (kcdebug_playermove) Console.Printf("wasongroundprevtic: %d, wasongroundcurrtic: %d, InWaterTime2: %d [gametic: %d]", wasongroundprevtic, wasongroundcurrtic, InWaterTime2, gametic);
 	}
 
 	override void BeginPlay()
@@ -1603,6 +1610,7 @@ class KCPlayerPawn : PlayerPawn
 		let PlayerWeapon = player.ReadyWeapon;
 		UserCmd cmd = player.cmd;
 		bool berserked;
+		double timefreezewaterfactor = 1.00;
 		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) berserked = true;
 		
 		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() Start)\c- Vel.Z: %.4f [oldfloorz: %.8f, grav: %.8f] [tic: %d]", Vel.Z, oldfloorz, grav, gametic);
@@ -1680,6 +1688,87 @@ class KCPlayerPawn : PlayerPawn
 			}
 			else
 			{
+				if (InWaterTime2 >= 0 && InWaterTime2 <= 17)
+				{
+					if (CountInv("KCTimeFreezer1")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= 0;
+						}
+						else
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(0.1,0.125);
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(0.05,0.0625);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(0.0125,0.015625);
+					}
+					if (CountInv("KCTimeFreezer2")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
+						}
+						else
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(8,10);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(16,20);
+					}
+				}
+				else
+				if (InWaterTime2 >= 18 && InWaterTime2 <= 35)
+				{
+					if (CountInv("KCTimeFreezer1")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= 0;
+						}
+						else
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(0.1,0.125);
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(0.2,0.25);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(0.05,0.0625);
+					}
+					if (CountInv("KCTimeFreezer2")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
+						}
+						else
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(4,5);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(8,10);
+					}
+				}
+				else
+				{
+					if (CountInv("KCTimeFreezer1")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= 0;
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(0.4,0.5);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(0.2,0.25);
+					}
+					if (CountInv("KCTimeFreezer2")) 
+					{
+						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+						{
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
+						}
+						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(2,2.5);
+						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(4,5);
+					}
+				}
+				
 				if (waterlevel > 1)
 				{
 					double massfactor = (MiscItem.PreBuffMass * 0.01);
@@ -1754,7 +1843,14 @@ class KCPlayerPawn : PlayerPawn
 						if (waterlevel == 2) sinkspeed *= 0.25;
 						if (kcdebug_playermove) Console.Printf("\c[sapphire]Vel.Z: %.8f, startvelz: %.8f, sinkspeed: %.8f, ArmorEnc: %.8f [tic: %d]", Vel.Z, startvelz, sinkspeed, ArmorEnc, gametic);
 					}
-				
+					
+					if (A_CheckKCTimeFreeze() && waterlevel >= 2)
+					{
+						Vel.Z *= timefreezewaterfactor;
+						startvelz *= timefreezewaterfactor;
+						sinkspeed *= timefreezewaterfactor;
+					}
+					
 					if (Vel.Z < sinkspeed)
 					{
 						Vel.Z = (startvelz < sinkspeed) ? startvelz : sinkspeed;
@@ -1767,7 +1863,7 @@ class KCPlayerPawn : PlayerPawn
 				}
 			}
 		}
-		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() End)\c- Vel.Z: %.4f [tic: %d]", Vel.Z, gametic);
+		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() End)\c- Vel.Z: %.4f (timefreezewaterfactor: %.8f [InWaterTime2: %d]) [tic: %d]", Vel.Z, timefreezewaterfactor, InWaterTime2, gametic);
 	}
 	
 	override void CheckCrouch(bool totallyfrozen)

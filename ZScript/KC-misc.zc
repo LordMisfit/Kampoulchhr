@@ -5710,75 +5710,81 @@ class PlayerStatItem : Inventory
 
 			if (TimeArmorEnergyTics < TimeArmorEnergyMaxTics)
 			{
-				TSARegenAmt = (8.0 + (PlayerLevel * 0.000625));
+				double baseregenamt = (8.0 + (TruePlayerLevel * 0.025));
+				TSARegenAmt = baseregenamt;
 				TSARegenAmt *= TimeArmorRelicsOwned;
-				if (TSARegenAmt) 
+				if (TSARegenAmt)
 				{
 					TSARegenAmt *= kc_tsaregenspd;
 					TSARegenAmt *= kc_tsaeffectiveness;
-					if (TSARegenAmt < 1) TSARegenAmt = 1;
-					if (TSARegenAmt > 10000) TSARegenAmt = 10000;
+					if (TSARegenAmt < 0.0008) TSARegenAmt = 0.0008;
+					if (TSARegenAmt > (baseregenamt * 1250)) TSARegenAmt = (baseregenamt * 1250);
 				}
+				
 				if (A_CheckTimeFreeze()) 
 				{
 					if (TimeArmorRelicsOwned == 1) TSARegenAmt *= 0.25;
 					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
 					if (TimeArmorRelicsOwned >= 3) TSARegenAmt *= 0.325;
 				}
-				else
+				
+				PlayerPawn plr;
+				plr = PlayerPawn(owner);
+				if (plr)
 				{
-					PlayerPawn plr;
-					plr = PlayerPawn(owner);
-					if (plr)
+					double plrspeed = (plr.vel.x * plr.vel.x) + (plr.vel.y * plr.vel.y) + (plr.vel.z * plr.vel.z);
+					bool isrunning = false;
+					bool ismanualmove = false;
+					if (plr.player.cmd.buttons & BT_MOVELEFT ||
+							plr.player.cmd.buttons & BT_MOVERIGHT ||
+							plr.player.cmd.buttons & BT_FORWARD ||
+							plr.player.cmd.buttons & BT_BACK) ismanualmove = true;
+					if (cl_run) 
 					{
-						double plrspeed = (plr.vel.x * plr.vel.x) + (plr.vel.y * plr.vel.y) + (plr.vel.z * plr.vel.z);
-						bool isrunning = false;
-						bool ismanualmove = false;
-						if (plr.player.cmd.buttons & BT_MOVELEFT ||
-								plr.player.cmd.buttons & BT_MOVERIGHT ||
-								plr.player.cmd.buttons & BT_FORWARD ||
-								plr.player.cmd.buttons & BT_BACK) ismanualmove = true;
-						if (cl_run) 
-						{
-							if (plr.player.cmd.buttons & BT_SPEED) isrunning = false; 
-																								else isrunning = true; 
-						}
-						else
-						{
-							if (plr.player.cmd.buttons & BT_SPEED) isrunning = true; 
-																								else isrunning = false; 
-						}
-						double basespd = 1024;
-						if (TimeArmorRelicsOwned >= 1) 
-						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
-							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
-							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
-						}
-						if (TimeArmorRelicsOwned >= 2) 
-						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
-							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
-							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
-						}
-						if (TimeArmorRelicsOwned >= 3) 
-						{
-							if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
-							if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
-							if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
-							if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
-							if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
-						}
-						double mulfactor = 1.0;
-						if (basespd) mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
-						if (mulfactor < 1.0) mulfactor = 1.0;
-						TSARegenAmt *= mulfactor;
-						//Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d", plrspeed, basespd, mulfactor, TSARegenAmt);
+						if (plr.player.cmd.buttons & BT_SPEED) isrunning = false; 
+																							else isrunning = true; 
 					}
+					else
+					{
+						if (plr.player.cmd.buttons & BT_SPEED) isrunning = true; 
+																							else isrunning = false; 
+					}
+					double basespd = 1024;
+					if (TimeArmorRelicsOwned >= 1) 
+					{
+						if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+						if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+						if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+						if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+						if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
+					}
+					if (TimeArmorRelicsOwned >= 2) 
+					{
+						if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+						if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+						if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+						if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+						if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
+					}
+					if (TimeArmorRelicsOwned >= 3) 
+					{
+						if (TrueGameSkill <= SKILL_VERY_EASY) basespd -= (160 - random(-4,4));
+						if (TrueGameSkill == SKILL_EASY) basespd -= (144 - random(-3,3));
+						if (TrueGameSkill == SKILL_NORMAL) basespd -= (128 - random(-2,2));
+						if (TrueGameSkill == SKILL_HARD) basespd -= (112 - random(-1,1));
+						if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
+					}
+					double mulfactor = 1.0;
+					if (basespd) mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
+					if (mulfactor < 1.0) mulfactor = 1.0;
+					if (A_CheckTimeFreeze()) 
+					{
+						if (TimeArmorRelicsOwned == 1) mulfactor /= 0.25;
+						if (TimeArmorRelicsOwned == 2) mulfactor /= 0.275;
+						if (TimeArmorRelicsOwned >= 3) mulfactor /= 0.325;
+					}
+					TSARegenAmt *= mulfactor;
+					Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d", plrspeed, basespd, mulfactor, TSARegenAmt);
 				}
 				
 				if (!A_CheckNoTimer()) 

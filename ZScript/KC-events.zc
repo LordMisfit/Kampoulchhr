@@ -3297,7 +3297,11 @@ class KC_EventHandler : EventHandler
 				KCCVict = KCCreature(victim);
 			}
 			double sielgraceluckboost = 1.0; 
-			if (MiscItem && MiscItem.sielsgraceluckcooldown > 0) sielgraceluckboost = frandompick(2.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,7.5);
+			if (MiscItem)
+			{
+				if (MiscItem.sielsgraceluckcooldown > 0) sielgraceluckboost *= frandompick(2.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,7.5);
+				if (MiscItem.sielsgracetrueactivations > 0) sielgraceluckboost *= (1.0 + (MiscItem.sielsgracetrueactivations * 0.1));
+			}
 			if (kcdebug_worlddiedmonsterdrops) Console.Printf("sielgraceluckboost: %.8f", sielgraceluckboost);
 
 			int armorbonusrolls;
