@@ -5711,21 +5711,20 @@ class PlayerStatItem : Inventory
 			if (TimeArmorEnergyTics < TimeArmorEnergyMaxTics)
 			{
 				double baseregenamt = (8.0 + (TruePlayerLevel * 0.025));
+				if (A_CheckTimeFreeze()) 
+				{
+					if (TimeArmorRelicsOwned == 1) baseregenamt *= 0.25;
+					if (TimeArmorRelicsOwned == 2) baseregenamt *= 0.275;
+					if (TimeArmorRelicsOwned >= 3) baseregenamt *= 0.325;
+				}
 				TSARegenAmt = baseregenamt;
 				TSARegenAmt *= TimeArmorRelicsOwned;
 				if (TSARegenAmt)
 				{
 					TSARegenAmt *= kc_tsaregenspd;
 					TSARegenAmt *= kc_tsaeffectiveness;
-					if (TSARegenAmt < 0.0008) TSARegenAmt = 0.0008;
+					if (TSARegenAmt < (baseregenamt / 1250)) TSARegenAmt = (baseregenamt / 1250);
 					if (TSARegenAmt > (baseregenamt * 1250)) TSARegenAmt = (baseregenamt * 1250);
-				}
-				
-				if (A_CheckTimeFreeze()) 
-				{
-					if (TimeArmorRelicsOwned == 1) TSARegenAmt *= 0.25;
-					if (TimeArmorRelicsOwned == 2) TSARegenAmt *= 0.275;
-					if (TimeArmorRelicsOwned >= 3) TSARegenAmt *= 0.325;
 				}
 				
 				PlayerPawn plr;
@@ -5775,16 +5774,38 @@ class PlayerStatItem : Inventory
 						if (TrueGameSkill >= SKILL_VERY_HARD) basespd -= (96 - random(0,0));
 					}
 					double mulfactor = 1.0;
-					if (basespd) mulfactor += ((plrspeed * 1.0) / (basespd * 1.0));
-					if (mulfactor < 1.0) mulfactor = 1.0;
-					if (A_CheckTimeFreeze()) 
+					if (A_CheckTimeFreeze()) basespd *= (random(87,113) * 0.01);
+															else basespd *= (random(98,102) * 0.01);
+					double moveratio = ((plrspeed * 1.0) / (basespd * 1.0));
+					
+					if (A_CheckTimeFreeze() && plrspeed) 
 					{
-						if (TimeArmorRelicsOwned == 1) mulfactor /= 0.25;
-						if (TimeArmorRelicsOwned == 2) mulfactor /= 0.275;
-						if (TimeArmorRelicsOwned >= 3) mulfactor /= 0.325;
+						if (TimeArmorRelicsOwned == 1) 
+						{
+							moveratio /= 0.20;
+							if (moveratio >= 5) moveratio = 5;
+						}
+						if (TimeArmorRelicsOwned == 2) 
+						{
+							moveratio /= 0.18;
+							if (moveratio >= 5.56) moveratio = 5.56;
+						}
+						if (TimeArmorRelicsOwned >= 3) 
+						{
+							moveratio /= 0.14;
+							if (moveratio >= 7.143) moveratio = 7.143;
+						}
+						if (basespd) mulfactor = (moveratio * moveratio);
+						if (mulfactor < 0.0) mulfactor = 0.0;
 					}
+					else
+					{
+						if (basespd) mulfactor += (moveratio + ((moveratio + (moveratio*0.5) + (moveratio*0.25))));
+						if (mulfactor < 1.0) mulfactor = 1.0;
+					}
+					
 					TSARegenAmt *= mulfactor;
-					Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d", plrspeed, basespd, mulfactor, TSARegenAmt);
+					if (kcdebug_timeserapharmor) Console.Printf("plrspeed / basespd: %.8f / %.8f, mulfactor: %.8f, TSARegenAmt: %d (baseregenamt: %d), moveratio: %.8f", plrspeed, basespd, mulfactor, TSARegenAmt, baseregenamt, moveratio);
 				}
 				
 				if (!A_CheckNoTimer()) 

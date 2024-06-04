@@ -1698,21 +1698,14 @@ class KCPlayerPawn : PlayerPawn
 						}
 						else
 						{
-							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(0.1,0.125);
+							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(0.05,0.0625);
 						}
 						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(0.05,0.0625);
 						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(0.0125,0.015625);
 					}
 					if (CountInv("KCTimeFreezer2")) 
 					{
-						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
-						{
-							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
-						}
-						else
-						{
-							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
-						}
+						if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
 						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(8,10);
 						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(16,20);
 					}
@@ -1735,14 +1728,7 @@ class KCPlayerPawn : PlayerPawn
 					}
 					if (CountInv("KCTimeFreezer2")) 
 					{
-						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
-						{
-							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
-						}
-						else
-						{
-							if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
-						}
+						if (waterlevel >= 1) timefreezewaterfactor *= frandompick(8,10);
 						if (waterlevel >= 2) timefreezewaterfactor *= frandompick(4,5);
 						if (waterlevel >= 3) timefreezewaterfactor *= frandompick(8,10);
 					}

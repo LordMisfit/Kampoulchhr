@@ -264,6 +264,19 @@ class KCWeaponBase : Weapon
 		return result;
 	}
 	
+	action int A_GetWaterMeleeCheck(int ticcheck)
+	{
+		if (waterlevel >= 3)
+		{
+			actor playera = players[0].mo;
+			if (playera.CountInv("KCTimeFreezer1"))
+			{
+				ticcheck *= frandom(4.0,5.0);
+			}
+		}
+		return ticcheck;
+	}
+	
 	action double A_GetHandToHandSpd(int type)
 	{
 		double output;
@@ -2630,32 +2643,50 @@ class MarineWeapon : KCWeaponBase
 		KickStart: // 19
 			LEG2 A 2 
 			{
+				int tic = 2;
+				if (A_CheckBerserk()) tic *= 0.5; 
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 B 2
 			{
+				int tic = 2;
+				if (A_CheckBerserk()) tic *= 0.5; 
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+
 				A_SetInventory("IsKicking",1);
 				A_StartSound("fistswingmedium0",1);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 C 1
 			{
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
 				A_KickKiais(128);
 			}
 			LEG2 D 1
 			{
+				int tic = 1;
+				if (A_CheckBerserk()) tic = 0;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 E 2 
 			{
 				A_SetInventory("IsKicking",1);
 				A_OverlayOffset(-2,0,0,0);
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Kicking 8 [shields/hit]: %d", tic);
 				A_SetTics(tic);
+				
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
@@ -2799,30 +2830,55 @@ class MarineWeapon : KCWeaponBase
 			LEG2 F 5 
 			{
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(random(2,3));
+
+				int tic = 5;
+				if (A_CheckBerserk()) tic *= frandom(0.4,0.6);
+				tic = A_GetWaterMeleeCheck(tic);
+				if (kcdebug_weaponstatdisplays) Console.Printf("Kicking 8 [shields/hit]: %d", tic);
+				A_SetTics(tic);
 			}
 			LEG2 E 2 
 			{
+				int tic = 2;
+				if (A_CheckBerserk()) tic *= 0.5;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(1);
 			}
 			LEG2 D 1 
 			{ 
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
 			}
 			LEG2 C 1 
 			{ 
+				int tic = 1;
+				if (A_CheckBerserk()) tic = 0;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 B 1
 			{
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
 			}
 			LEG2 A 1 
 			{
+				int tic = 1;
+				if (A_CheckBerserk()) tic = 0;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_SetInventory("IsKicking",1);
-				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			LEG2 A 0 { return resolvestate("KickEnd"); }
 		KickEnd:
@@ -3531,6 +3587,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 21)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 1: %d", tic);
@@ -3548,6 +3605,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 22)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 2 [shields/hit]: %d", tic);
@@ -3596,6 +3654,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 20)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 26)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 1) tic = 1;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 3: %d", tic);
@@ -3613,6 +3672,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 19)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 4: %d", tic);
@@ -3631,6 +3691,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 23)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 29)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 5: %d", tic);
@@ -3657,6 +3718,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 21)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("RightPunch 1: %d", tic);
@@ -3674,6 +3736,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 22)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("RPunch 2 [shields/hit]: %d", tic);
@@ -3722,6 +3785,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 20)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 26)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 1) tic = 1;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 3: %d", tic);
@@ -3739,6 +3803,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 19)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 4: %d", tic);
@@ -3757,6 +3822,7 @@ class FistMarine : MarineWeapon replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 23)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 29)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 5: %d", tic);
@@ -3788,6 +3854,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 10)) tic -= 1; // 50 [10]
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 1: %d", tic);
@@ -3801,6 +3868,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) tic -= 1; // 25 [5]
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 2: %d", tic);
 				A_SetTics(tic);
@@ -3813,6 +3881,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 13)) tic -= 1; // 65 [13]
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 3: %d", tic);
@@ -3826,6 +3895,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 7)) tic -= 1; // 35 [7]
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 4: %d", tic);
 				A_SetTics(tic);
@@ -3838,6 +3908,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) tic -= 1; // 55 [11]
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 5: %d", tic);
@@ -3852,6 +3923,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 4)) tic -= 1; // 20 [4]
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 1: %d", tic);
 				A_SetTics(tic);
@@ -3881,6 +3953,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) tic -= 1; // 55 [11]
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 2: %d", tic);
@@ -3894,6 +3967,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) tic -= 1; // 40 [8]
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 3: %d", tic);
 				A_SetTics(tic);
@@ -3906,6 +3980,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 14)) tic -= 1; // 70 [14]
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 4: %d", tic);
@@ -3919,6 +3994,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int TruePlayerLevel = invoker.ActualLevel;
 				
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) tic -= 1; // 10 [2]
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 5: %d", tic);
 				A_SetTics(tic);
@@ -3932,6 +4008,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) tic -= 1; // 10 [2]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 5: %d", tic);
 				A_SetTics(tic);
 				
@@ -3963,7 +4040,9 @@ class FistMarine : MarineWeapon replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				A_SetTics(1);
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 
 				A_SetInventory("IsUppercutting",1); 
 			}
@@ -3987,6 +4066,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) tic -= 1; // 55 [11]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 8: %d", tic);
 				A_SetTics(tic);
 				
@@ -3999,6 +4079,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) tic -= 1; // 30 [6]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 9: %d", tic);
 				A_SetTics(tic);
 				
@@ -4012,6 +4093,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 14)) tic -= 1; // 70 [14]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 10: %d", tic);
 				A_SetTics(tic);
 				
@@ -4024,6 +4106,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 7)) tic -= 1; // 35 [7]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 11: %d", tic);
 				A_SetTics(tic);
 				
@@ -4037,6 +4120,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) tic -= 1; // 55 [10]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 12: %d", tic);
 				A_SetTics(tic);
 				
@@ -4060,6 +4144,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) tic -= 1; // 45 [9]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 1: %d", tic);
 				A_SetTics(tic);
 				
@@ -4073,6 +4158,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 13)) tic -= 1; // 65 [13]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 2: %d", tic);
 				A_SetTics(tic);
 
@@ -4085,6 +4171,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 1)) tic -= 1; // 5 [1]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 3: %d", tic);
 				A_SetTics(tic);
 
@@ -4098,6 +4185,7 @@ class FistMarine : MarineWeapon replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 10)) tic -= 1; // 50 [10]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 4: %d", tic);
 				A_SetTics(tic);
 				
@@ -4110,6 +4198,7 @@ class FistMarine : MarineWeapon replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) tic -= 1; // 15 [3]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 5: %d", tic);
 				A_SetTics(tic);
 				
@@ -4127,84 +4216,117 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF A 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF B 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+
 				A_PFistBlockOn();
 			}
 			DPDF C 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+
 				A_GiveInventory("FistPlayerBlockItem",1);
 				A_PFistBlockOn();
 			}
 			DPDF D 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF E 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF F 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF G 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF H 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF I 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 		User4Hold:
 			DPDF J 1 // BRIGHT
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				A_PFistBlockOn();
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 
+				A_PFistBlockOn();
+				
 				A_GiveInventory("FistPlayerBlockHold",1);
 				A_WeaponReady(WRF_NOBOB|WRF_NOFIRE|WRF_DISABLESWITCH);
 			}
@@ -4214,83 +4336,108 @@ class FistMarine : MarineWeapon replaces Fist
 			DPDF I 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF H 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF G 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF F 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF E 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF D 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF C 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF B 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
 				A_PFistBlockOn();
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) { A_SetTics(0); }
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF A 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
@@ -12621,6 +12768,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 21)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 1: %d", tic);
@@ -12638,6 +12786,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 22)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 2 [shields/hit]: %d", tic);
@@ -12688,6 +12837,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 20)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 26)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 1) tic = 1;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 3: %d", tic);
@@ -12705,6 +12855,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 19)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 4: %d", tic);
@@ -12723,6 +12874,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 23)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 29)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 5: %d", tic);
@@ -12749,6 +12901,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 9)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 15)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 21)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("RightPunch 1: %d", tic);
@@ -12766,6 +12919,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 10)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 16)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 22)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("RPunch 2 [shields/hit]: %d", tic);
@@ -12816,6 +12970,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 14)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 20)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 26)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 1) tic = 1;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 3: %d", tic);
@@ -12833,6 +12988,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 7)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 13)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 19)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 4: %d", tic);
@@ -12851,6 +13007,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 17)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 23)) tic -= 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(0) * 29)) tic -= 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				if (tic < 0) tic = 0;
 				if (kcdebug_weaponstatdisplays) Console.Printf("LeftPunch 5: %d", tic);
@@ -12884,6 +13041,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) tic -= 1; // 50 [10]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 1: %d", tic);
 				A_SetTics(tic);
 			}
@@ -12896,6 +13054,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 4)) tic -= 1; // 25 [5]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 2: %d", tic);
 				A_SetTics(tic);
 			}
@@ -12909,6 +13068,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) tic -= 1; // 65 [13]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 3: %d", tic);
 				A_SetTics(tic);
 			}
@@ -12921,6 +13081,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) tic -= 1; // 35 [7]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 4: %d", tic);
 				A_SetTics(tic);
 			}
@@ -12934,6 +13095,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 10)) tic -= 1; // 55 [11]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutStart 5: %d", tic);
 				A_SetTics(tic);
 			}
@@ -12947,6 +13109,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 3)) tic -= 1; // 20 [4]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 1: %d", tic);
 				A_SetTics(tic);
 				
@@ -12976,6 +13139,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) tic -= 1; // 60 [12]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 2: %d", tic);
 				A_SetTics(tic);
 				
@@ -12988,6 +13152,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 7)) tic -= 1; // 40 [8]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 3: %d", tic);
 				A_SetTics(tic);
 				
@@ -13001,6 +13166,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 13)) tic -= 1; // 70 [14]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 4: %d", tic);
 				A_SetTics(tic);
 				
@@ -13013,6 +13179,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 1)) tic -= 1; // 10 [2]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 5: %d", tic);
 				A_SetTics(tic);
 				
@@ -13025,6 +13192,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 1)) tic -= 1; // 10 [2]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 5: %d", tic);
 				A_SetTics(tic);
 				
@@ -13056,7 +13224,9 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
 				int TruePlayerLevel = invoker.ActualLevel;
 				
-				A_SetTics(1);
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 
 				A_SetInventory("IsUppercutting",1); 
 			}
@@ -13067,6 +13237,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) tic -= 1; // 15 [3]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 7: %d", tic);
 				A_SetTics(tic);
 				
@@ -13080,6 +13251,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) tic -= 1; // 60 [12]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 8: %d", tic);
 				A_SetTics(tic);
 				
@@ -13092,6 +13264,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) tic -= 1; // 30 [6]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 9: %d", tic);
 				A_SetTics(tic);
 				
@@ -13105,6 +13278,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 13)) tic -= 1; // 70 [14]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 10: %d", tic);
 				A_SetTics(tic);
 				
@@ -13117,6 +13291,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 6)) tic -= 1; // 35 [7]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 11: %d", tic);
 				A_SetTics(tic);
 				
@@ -13130,6 +13305,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 10)) tic -= 1; // 55 [11]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("Uppercut 12: %d", tic);
 				A_SetTics(tic);
 				
@@ -13153,6 +13329,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) tic -= 1; // 45 [9]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 1: %d", tic);
 				A_SetTics(tic);
 				
@@ -13166,6 +13343,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 12)) tic -= 1; // 65 [13]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 2: %d", tic);
 				A_SetTics(tic);
 
@@ -13178,6 +13356,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 0)) tic -= 1; // 5 [1]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 3: %d", tic);
 				A_SetTics(tic);
 
@@ -13191,6 +13370,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				int tic = 1;
 				if (A_CheckBerserk()) tic *= frandom(0.34,0.67);
 				else if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 9)) tic -= 1; // 50 [10]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 4: %d", tic);
 				A_SetTics(tic);
 				
@@ -13203,6 +13383,7 @@ class FistHeiwa : MarineWeapon // replaces Fist
 				
 				int tic = 1;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) tic -= 1; // 15 [3]
+				tic = A_GetWaterMeleeCheck(tic);
 				if (kcdebug_weaponstatdisplays) Console.Printf("UppercutEnd 5: %d", tic);
 				A_SetTics(tic);
 				
@@ -13220,76 +13401,103 @@ class FistHeiwa : MarineWeapon // replaces Fist
 			DPDF A 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF B 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF C 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_GiveInventory("FistPlayerBlockItem",1);
 				A_PFistBlockOn();
 			}
 			DPDF D 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF E 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF F 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF G 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF H 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 			DPDF I 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 			}
 		User4Hold:
@@ -13297,7 +13505,11 @@ class FistHeiwa : MarineWeapon // replaces Fist
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				A_PFistBlockOn();
-
+				
+				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
+				
 				A_GiveInventory("FistPlayerBlockHold",1);
 				A_WeaponReady(WRF_NOBOB|WRF_NOFIRE|WRF_DISABLESWITCH);
 			}
@@ -13307,83 +13519,110 @@ class FistHeiwa : MarineWeapon // replaces Fist
 			DPDF I 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF H 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF G 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF F 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF E 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF D 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { A_SetTics(0); }
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 11)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF C 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 5)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF B 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 1;
+				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { tic = 0; }
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
-				if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 8)) { A_SetTics(0); }
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
 			DPDF A 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
-				if (A_CheckBerserk()) { A_SetTics(0); }
+				int tic = 1;
+				if (A_CheckBerserk()) { tic = 0; }
 				else
 				{
-					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { A_SetTics(0); }
+					if (TruePlayerLevel >= (A_GetHandToHandSpd(1) * 2)) { tic = 0; }
 				}
+				tic = A_GetWaterMeleeCheck(tic);
+				A_SetTics(tic);
 				A_PFistBlockOn();
 				A_SetInventory("FistPlayerBlockHold",0);
 			}
@@ -14990,6 +15229,15 @@ class KnifeHeiwa : MarineWeapon
 		A_SetPitch(pptc);
 	}
 	
+	action double A_GetKnifeSpd()
+	{
+		double output = kc_knifespdlvlint; // 20;
+		double oldoutput = output;
+		if (output <= 1.0) output = 1.0;
+		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
+		return output;
+	}
+	
 	action void A_GetMPCost()
 	{
 		actor player = players[0].mo;
@@ -15008,15 +15256,6 @@ class KnifeHeiwa : MarineWeapon
 		if (invoker.throwmpcost < 1) invoker.throwmpcost = 1;
 		if (invoker.knifespertoss < 1) invoker.knifespertoss = 1;
 		if (invoker.knifespertoss > invoker.maxthrowableknives) invoker.knifespertoss = invoker.maxthrowableknives;
-	}
-	
-	action double A_GetKnifeSpd()
-	{
-		double output = kc_knifespdlvlint; // 20;
-		double oldoutput = output;
-		if (output <= 1.0) output = 1.0;
-		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
-		return output;
 	}
 	
 	action void A_KnifeThrowAttack()
@@ -15288,6 +15527,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG I 2 
@@ -15304,6 +15544,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG J 3
@@ -15321,6 +15562,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				A_KnifeKiais(240);
 				A_KnifeAttackFull(random(78,82),4.625,6.25);
@@ -15339,6 +15581,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG L 3
@@ -15356,6 +15599,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				if (A_CheckBerserk()) A_SetTics(1);
 				A_ReFire("FireBackSlash");
@@ -15404,6 +15648,7 @@ class KnifeHeiwa : MarineWeapon
 					}
 					if (tic < 0) tic = 0;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG K 2
@@ -15420,6 +15665,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG J 3
@@ -15437,6 +15683,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG G 2 
@@ -15453,6 +15700,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				A_ReFire();
 			}
@@ -15502,6 +15750,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 7.0)) tic -= 1;
 				}
 				if (tic < 0) tic = 0;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG L 2
@@ -15519,6 +15768,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG K 2
@@ -15535,6 +15785,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG J 2
@@ -15552,6 +15803,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.0)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				A_KnifeKiais(240);
 				A_KnifeAttackFull(random(78,82),4.625,6.25);
@@ -15570,6 +15822,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG H 2
@@ -15587,6 +15840,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.0)) tic -= 1;
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5)) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG H 0
@@ -15636,12 +15890,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG M 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG N 1
@@ -15653,12 +15909,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG O 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG P 1
@@ -15670,12 +15928,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG Q 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 		AltFireForwardThrow:
@@ -15688,12 +15948,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG R 1 
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG S 1
@@ -15705,14 +15967,16 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG T 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
-				A_KnifeKiais(240);
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
+				A_KnifeKiais(240);
 				A_KnifeThrowAttack();
 			}
 			KNFG U 1
@@ -15724,12 +15988,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG V 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG W 1
@@ -15741,6 +16007,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			TNT1 A 5
@@ -15767,6 +16034,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.75)) tic -= 1; // 115
 					if (tic < 0) tic = randompick(0,1,1,1,2);
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
 				{
@@ -15806,6 +16074,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 7.5)) tic -= 1; // 150
 					if (tic < 0) tic = randompick(0,1,1,1,2);
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG Q 1
@@ -15817,12 +16086,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG P 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG O 1
@@ -15834,12 +16105,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG N 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG M 1
@@ -15851,6 +16124,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG G 6
@@ -15876,6 +16150,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 8.125)) tic -= 1; // 162.5
 					if (tic < 0) tic = randompick(0,1,1,1,1,1,1,2);
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				invoker.knifebarrageno = 0;
 			}
@@ -15901,6 +16176,7 @@ class KnifeHeiwa : MarineWeapon
 					if (TruePlayerLevel >= (A_GetKnifeSpd() * 7.5)) tic -= 1; // 150
 					if (tic < 0) tic = randompick(0,1,1,1,2);
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG W 1
@@ -15912,12 +16188,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG V 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG U 1
@@ -15929,14 +16207,16 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG T 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
-				A_KnifeKiais(240);
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
+				A_KnifeKiais(240);
 				A_KnifeThrowAttack();
 			}
 			KNFG S 1
@@ -15948,12 +16228,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG R 1 
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			TNT1 A 1
@@ -15967,6 +16249,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				if (TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) // 15
 				{
@@ -15991,6 +16274,7 @@ class KnifeHeiwa : MarineWeapon
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG P 1
@@ -16002,12 +16286,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG O 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG N 1
@@ -16019,12 +16305,14 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG M 1
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 			}
 			KNFG G 1
@@ -16036,6 +16324,7 @@ class KnifeHeiwa : MarineWeapon
 				{
 					if (A_CheckBerserk()) tic -= 1;
 				}
+				tic = A_GetWaterMeleeCheck(tic);
 				A_SetTics(tic);
 				invoker.knifebarrageno = 0;
 			}
