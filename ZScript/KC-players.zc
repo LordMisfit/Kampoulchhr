@@ -3170,6 +3170,12 @@ class KCPlayerPawn : PlayerPawn
 		if (mod == "CardPoison" && 
 				((inflictor && inflictor.GetClassName() == "CCards_Actor_MiasmaEffect") || 
 				(source && source.GetClassName() == "CCards_Actor_MiasmaEffect"))) miasmaeffect = true;
+		if (mod == "UhWat" &&
+				Wads.CheckNumForName("KC-HONTE", Wads.ns_global, -1, true) != -1) 
+		{
+			flags |= DMG_FIXEDDMG;
+			damage = 0;
+		}
 		
 		int prev_health = health;
 		int origdmg, olddmg, prevdmg;
