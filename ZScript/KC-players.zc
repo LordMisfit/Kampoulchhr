@@ -2524,7 +2524,7 @@ class KCPlayerPawn : PlayerPawn
 		playabsorbtsadamage = 0;
 		
 		A_CheckNeverBleed(0, damage, flags);
-		string nm, nn, no, np;
+		string nm, nn, no, np, nq, nr, ns, nt;
 		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
 		let globalvars = KCGlobalVariables.Get();
 		string infl, sour, vict;
@@ -2715,15 +2715,9 @@ class KCPlayerPawn : PlayerPawn
 				nn = "TSArmorTier2";
 				no = "TimeSeraphVisor";
 				np = "TSArmorTier3Plus";
+				nq = "TimeSeraphBangle";
 				
 				double TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
-				if (TSTicDmg) 
-				{
-					TSTicDmg *= kc_tsadmgfactor;
-					TSTicDmg *= (1.0 / kc_tsaeffectiveness);
-					if (TSTicDmg < 1) TSTicDmg = 1;
-					if (TSTicDmg > 10000) TSTicDmg = 10000;
-				}
 				if (skill <= 0) 
 				{
 					TSTicDmg = (olddmg * frandom(TICRATE*0.25,TICRATE));
@@ -2752,12 +2746,22 @@ class KCPlayerPawn : PlayerPawn
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.083334,0.125);
 				if (CountInv(np)) TSTicDmg *= frandom(0.010421875,0.015625);
-				if (CountInv("TimeSeraphBangle")) 
+				if (CountInv(nq)) 
 				{
 							 if (CountInv(np)) TSTicDmg *= frandom(0.20,0.60);
 					else if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
 														else TSTicDmg *= frandom(0.80,0.90);
 				}
+				if (TSTicDmg) 
+				{
+					double tsaeffectiveness = (1.0 / kc_tsaeffectiveness);
+					TSTicDmg *= kc_tsadmgfactor;
+					TSTicDmg *= (1.0 / kc_tsaeffectiveness);
+					if (TSTicDmg < (1 * kc_tsadmgfactor * tsaeffectiveness)) TSTicDmg = (1 * kc_tsadmgfactor * tsaeffectiveness);
+					if (TSTicDmg > (10000 * kc_tsadmgfactor * tsaeffectiveness)) TSTicDmg = (10000 * kc_tsadmgfactor * tsaeffectiveness);
+				}
+				
+				
 				if (mod == 'Drowning' && 
 						!A_CheckInvuln() &&
 						!A_CheckKCTimeFreeze()) TSTicDmg *= (randompick(9,10,10,10,10,10,10,10,10,11) * randompick(2,3,3,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,7,7,8));
@@ -3173,7 +3177,15 @@ class KCPlayerPawn : PlayerPawn
 		if (mod == "UhWat" &&
 				Wads.CheckNumForName("KC-HONTE", Wads.ns_global, -1, true) != -1) 
 		{
-			flags |= DMG_FIXEDDMG;
+			flags |= DMG_NO_DODGE;
+			A_SetInventory("EvadeAnAttack",0);
+			flags |= DMG_IGNOREDEF;
+			flags |= DMG_NO_ARMOR;
+			flags |= DMG_NO_FACTOR;
+			flags |= DMG_NO_PROTECT;
+			flags |= DMG_NO_ENHANCE;
+			flags |= DMG_NODASHAVOID;
+			flags |= DMG_CANTKILL;
 			damage = 0;
 		}
 		

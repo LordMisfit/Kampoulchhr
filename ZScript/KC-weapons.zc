@@ -15095,7 +15095,7 @@ class Riotgun : MarineWeapon
 //
 class KnifeHeiwa : MarineWeapon
 {
-	int throwmpcost;
+	double throwmpcost;
 	int knifebarrageno;
 	int knifespertoss;
 	int maxthrowableknives;
@@ -15243,16 +15243,21 @@ class KnifeHeiwa : MarineWeapon
 		actor player = players[0].mo;
 		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
 		int TruePlayerLevel = invoker.ActualLevel;
-		invoker.throwmpcost = 8;
-		invoker.maxthrowableknives = (TruePlayerLevel / (A_GetKnifeSpd() * 0.75));
+		double levelbase = (A_GetKnifeSpd() * 0.75); // 15
+		invoker.throwmpcost = 8.0;
+		invoker.throwmpcost *= 0.625;
+		invoker.maxthrowableknives = (TruePlayerLevel / levelbase);
 		
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 1.5)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 2.25)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.0)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 3.75)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 4.5)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 5.25)) invoker.throwmpcost -= 1;
-		if (TruePlayerLevel >= (A_GetKnifeSpd() * 6)) invoker.throwmpcost -= 1;
+		double mpcostreduce;
+		if (TruePlayerLevel >= (levelbase * 2)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 3)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 4)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 5)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 6)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 7)) mpcostreduce += 1;
+		if (TruePlayerLevel >= (levelbase * 8)) mpcostreduce += 1;
+		mpcostreduce *= 0.625;
+		invoker.throwmpcost -= mpcostreduce;
 		if (invoker.throwmpcost < 1) invoker.throwmpcost = 1;
 		if (invoker.knifespertoss < 1) invoker.knifespertoss = 1;
 		if (invoker.knifespertoss > invoker.maxthrowableknives) invoker.knifespertoss = invoker.maxthrowableknives;
