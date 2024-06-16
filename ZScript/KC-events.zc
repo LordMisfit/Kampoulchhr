@@ -3540,9 +3540,9 @@ class KC_EventHandler : EventHandler
 							victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
 						
-					if (vict ~== "Zombieman" ||
-							vict ~== "ZombiemanNew" ||
-							vict ~== "ZombiemanClassic")
+						if (vict ~== "Zombieman" ||
+								vict ~== "ZombiemanNew" ||
+								vict ~== "ZombiemanClassic")
 						{
 							string droptypeammo = "ClipNew";
 							string droptypeammobig = "ClipBoxNew";
@@ -3563,7 +3563,11 @@ class KC_EventHandler : EventHandler
 										droptypeammobig = "ClipBoxNew";
 									}
 									if (!(playera.CountInv("Glock21") || 
-												playera.CountInv("BlasterPickup")))
+												playera.CountInv("BlasterPickup") || 
+												playera.CountInv("RiotGun") || 
+												playera.CountInv("ImpalerXBow") || 
+												playera.CountInv("TommyGun") || 
+												playera.CountInv("BlasterRifle")))
 									{
 										double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
 										double raredropsndvol = frandom(1.75,2.25);
@@ -3665,6 +3669,80 @@ class KC_EventHandler : EventHandler
 								}
 							}
 						}
+						if (vict ~== "ShotgunGuy" ||
+								vict ~== "ShotgunGuyNew" ||
+								vict ~== "ShotgunGuyClassic")
+						{
+							droptype = "RiotGun";
+							string droptypeammo = "ShellNew";
+							string droptypeammobig = "ShellBoxNew";
+							if (A_CheckForHeiwaPlayer())
+							{
+								if (random(1,16) <= 1)
+								{
+									droptype = "RiotGun";
+									droptypeammo = "ShellNew";
+									droptypeammobig = "ShellBoxNew";
+								}
+								else
+								{
+									droptype = "ImpalerXBow";
+									droptypeammo = "ImpalerBolts";
+									droptypeammobig = "ImpalerBoltsBig";
+								}
+								if (random(1,(basedropdiv*0.03125)) <= 1) 
+								{
+									if (!(playera.CountInv("Glock21") || 
+												playera.CountInv("BlasterPickup") || 
+												playera.CountInv("RiotGun") || 
+												playera.CountInv("ImpalerXBow") || 
+												playera.CountInv("TommyGun") || 
+												playera.CountInv("BlasterRifle")))
+									{
+										double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+										double raredropsndvol = frandom(1.75,2.25);
+										int raredropsndchannel = randompick(191,192,222,223,264,265);
+										victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										
+										droptype = droptypeammo;
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										
+										if (random(1,2) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,4) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,8) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,16) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,32) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+									}
+								}
+							}
+						}
 						if (vict ~== "ChaingunGuy" || 
 								vict ~== "ChaingunGuyNew" || 
 								vict ~== "ChaingunGuyClassic" || 
@@ -3672,6 +3750,73 @@ class KC_EventHandler : EventHandler
 						{
 							string droptypeammo = "ClipNew";
 							string droptypeammobig = "ClipBoxNew";
+							if (A_CheckForHeiwaPlayer())
+							{
+								if (random(1,(basedropdiv*0.03125)) <= 1) 
+								{
+									if (random(1,16) <= 1)
+									{
+										droptype = "BlasterRifle";
+										droptypeammo = "CellNew";
+										droptypeammobig = "CellPackNew";
+									}
+									else
+									{
+										droptype = "TommyGun";
+										droptypeammo = "TommAmmo";
+										droptypeammobig = "TommAmmoBig";
+									}
+									if (!(playera.CountInv("Glock21") || 
+												playera.CountInv("BlasterPickup") || 
+												playera.CountInv("RiotGun") || 
+												playera.CountInv("ImpalerXBow") || 
+												playera.CountInv("TommyGun") || 
+												playera.CountInv("BlasterRifle")))
+									{
+										double raredropsndpitch = (frandompick(0.75,0.875,1.0,1.125,1.25) + 0.5);
+										double raredropsndvol = frandom(1.75,2.25);
+										int raredropsndchannel = randompick(191,192,222,223,264,265);
+										victim.A_StartSound("ultrarareitem/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										
+										droptype = droptypeammo;
+										if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+										victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										
+										if (random(1,2) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,4) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,8) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,16) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+										if (random(1,32) <= random(1,4))
+										{
+											droptype = droptypeammo;
+											if (random(1,32) <= randompick(1,1,1,1,1,2,2,3)) droptype = droptypeammobig;
+											victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+										}
+									}
+								}
+							}
+
 							if (random(1,basedropdiv) <= 1) 
 							{
 								int chancebase = randompick(1,1,1,1,1,2,2,3);

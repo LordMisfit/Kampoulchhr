@@ -5544,13 +5544,16 @@ class PlayerStatItem : Inventory
 							if (PlayerSPD > PrevSPD) LevelUpMsg.AppendFormat("\n\c[lightblue]Speed Increased By %d!", (PlayerSPD-PrevSPD));
 							if (PlayerGUTS > PrevGUTS) LevelUpMsg.AppendFormat("\n\c[FIRE]Guts Increased By %d!", (PlayerGUTS-PrevGUTS));
 						}
-						if (PlayerLevel == (A_GetKnifeSpd() * 0.75))
+						if (A_CheckForHeiwa())
 						{
-							LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
-							LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
-							LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
-							
-							if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/skilllvl",102,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
+							if (PlayerLevel == (A_GetKnifeSpd() * 0.75))
+							{
+								LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
+								LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
+								LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
+								
+								if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/skilllvl",102,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
+							}
 						}
 						owner.A_Print(LevelUpMsg);
 						owner.A_SetBlend("00 00 FF",0.3,3,"00 00 FF",0.0);
@@ -6608,15 +6611,16 @@ class PlayerStatItem : Inventory
 		defbase = (1.0 / kc_defenselvlint);
 		BaseFlatDefValueHUD = ((ActualLevel * defbase) + (TruePlayerDEF * defbase));
 		BaseFlatDefValueHUD *= 1.0 + (((ActualLevel * baseflatmul) + (TruePlayerDEF * baseflatmul)));
-
+		
+		double heiwafistblockbonus = 1.25;
 		if (owner.CountInv("FistPlayerBlock"))
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (1.125 * 1.25);
-				BaseFlatDefValueCrush *= (1.05 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
-				BaseFlatDefValueHUD *= (1.125 * 1.25);
+				BaseFlatDefValue *= (1.125 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.05 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.025 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (1.125 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6630,10 +6634,10 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (1.25 * 1.25);
-				BaseFlatDefValueCrush *= (1.10 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.05 * 1.25);
-				BaseFlatDefValueHUD *= (1.25 * 1.25);
+				BaseFlatDefValue *= (1.25 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.10 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.05 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (1.25 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6647,10 +6651,10 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (1.5 * 1.25);
-				BaseFlatDefValueCrush *= (1.20 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.10 * 1.25);
-				BaseFlatDefValueHUD *= (1.5 * 1.25);
+				BaseFlatDefValue *= (1.5 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.20 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.10 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (1.5 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6664,10 +6668,10 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (2.00 * 1.25);
-				BaseFlatDefValueCrush *= (1.40 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.20 * 1.25);
-				BaseFlatDefValueHUD *= (2.00 * 1.25);
+				BaseFlatDefValue *= (2.00 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.40 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.20 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (2.00 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6681,10 +6685,10 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (1.25 * 1.25);
-				BaseFlatDefValueCrush *= (1.10 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.05 * 1.25);
-				BaseFlatDefValueHUD *= (1.25 * 1.25);
+				BaseFlatDefValue *= (1.25 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.10 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.05 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (1.25 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6698,10 +6702,10 @@ class PlayerStatItem : Inventory
 		{
 			if (A_CheckForHeiwa())
 			{
-				BaseFlatDefValue *= (1.25 * 1.25);
-				BaseFlatDefValueCrush *= (1.10 * 1.25);
-				BaseFlatDefValueDmgFlr *= (1.05 * 1.25);
-				BaseFlatDefValueHUD *= (1.25 * 1.25);
+				BaseFlatDefValue *= (1.25 * heiwafistblockbonus);
+				BaseFlatDefValueCrush *= (1.10 * heiwafistblockbonus);
+				BaseFlatDefValueDmgFlr *= (1.05 * heiwafistblockbonus);
+				BaseFlatDefValueHUD *= (1.25 * heiwafistblockbonus);
 			}
 			else
 			{
@@ -6711,47 +6715,65 @@ class PlayerStatItem : Inventory
 				BaseFlatDefValueHUD *= 1.25;
 			}
 		}
+		double heiwaknifebonus = 1.25;
 		if (owner.CountInv("KnifePlayerSwing"))
 		{
-			BaseFlatDefValue *= (1.0625 * 1.25);
-			BaseFlatDefValueCrush *= (1.025 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.0125 * 1.25);
-			BaseFlatDefValueHUD *= (1.0625 * 1.25);
+			BaseFlatDefValue *= (1.0625 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.025 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.0125 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.0625 * heiwaknifebonus);
 		}
 		if (owner.CountInv("KnifePlayerSwing2"))
 		{
-			BaseFlatDefValue *= (1.125 * 1.25);
-			BaseFlatDefValueCrush *= (1.05 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
-			BaseFlatDefValueHUD *= (1.125 * 1.25);
+			BaseFlatDefValue *= (1.125 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.05 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.025 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.125 * heiwaknifebonus);
 		}
 		if (owner.CountInv("KnifePlayerSwing3"))
 		{
-			BaseFlatDefValue *= (1.25 * 1.25);
-			BaseFlatDefValueCrush *= (1.10 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.05 * 1.25);
-			BaseFlatDefValueHUD *= (1.25 * 1.25);
+			BaseFlatDefValue *= (1.25 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.10 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.05 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.25 * heiwaknifebonus);
 		}
 		if (owner.CountInv("KnifePlayerSwing4"))
 		{
-			BaseFlatDefValue *= (1.50 * 1.25);
-			BaseFlatDefValueCrush *= (1.20 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.10 * 1.25);
-			BaseFlatDefValueHUD *= (1.50 * 1.25);
+			BaseFlatDefValue *= (1.50 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.20 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.10 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.50 * heiwaknifebonus);
 		}
 		if (owner.CountInv("KnifePlayerSwingExtra"))
 		{
-			BaseFlatDefValue *= (1.125 * 1.25);
-			BaseFlatDefValueCrush *= (1.05 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
-			BaseFlatDefValueHUD *= (1.125 * 1.25);
+			BaseFlatDefValue *= (1.125 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.05 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.025 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.125 * heiwaknifebonus);
 		}
 		if (owner.CountInv("KnifePlayerSwingExtra2"))
 		{
-			BaseFlatDefValue *= (1.125 * 1.25);
-			BaseFlatDefValueCrush *= (1.05 * 1.25);
-			BaseFlatDefValueDmgFlr *= (1.025 * 1.25);
-			BaseFlatDefValueHUD *= (1.125 * 1.25);
+			BaseFlatDefValue *= (1.125 * heiwaknifebonus);
+			BaseFlatDefValueCrush *= (1.05 * heiwaknifebonus);
+			BaseFlatDefValueDmgFlr *= (1.025 * heiwaknifebonus);
+			BaseFlatDefValueHUD *= (1.125 * heiwaknifebonus);
+		}
+		if (owner.CountInv("KCPowerKampoul"))
+		{
+			if (A_CheckForHeiwa())
+			{
+				BaseFlatDefValue *= 3.00;
+				BaseFlatDefValueCrush *= 1.80;
+				BaseFlatDefValueDmgFlr *= 1.40;
+				BaseFlatDefValueHUD *= 3.00;
+			}
+			else
+			{
+				BaseFlatDefValue *= 1.50;
+				BaseFlatDefValueCrush *= 1.20;
+				BaseFlatDefValueDmgFlr *= 1.10;
+				BaseFlatDefValueHUD *= 1.50;
+			}
 		}
 		if (owner.CountInv("PowerGuard"))
 		{
@@ -6796,12 +6818,12 @@ class PlayerStatItem : Inventory
 			BaseFlatDefValueHUD *= 1.2;
 		}
 		BaseFlatDefValue *= kc_natflatdeffactor;
-		BaseFlatDefValueCrush *= kc_natflatdeffactor;
-		BaseFlatDefValueDmgFlr *= kc_natflatdeffactor;
-		BaseFlatDefValueHUD *= kc_natflatdeffactor;
 		BaseFlatDefValue *= kc_flatdefensefactor;
+		BaseFlatDefValueCrush *= kc_natflatdeffactor;
 		BaseFlatDefValueCrush *= kc_flatdefensefactor;
+		BaseFlatDefValueDmgFlr *= kc_natflatdeffactor;
 		BaseFlatDefValueDmgFlr *= kc_flatdefensefactor;
+		BaseFlatDefValueHUD *= kc_natflatdeffactor;
 		BaseFlatDefValueHUD *= kc_flatdefensefactor;
 		
 		//**********************
@@ -6879,12 +6901,12 @@ class PlayerStatItem : Inventory
 			ArmorDefValueHUD *= GuardVal;
 		}
 		ArmorDefValue *= kc_armflatdeffactor;
-		ArmorDefValueCrush *= kc_armflatdeffactor;
-		ArmorDefValueDmgFlr *= kc_armflatdeffactor;
-		ArmorDefValueHUD *= kc_armflatdeffactor;
 		ArmorDefValue *= kc_flatdefensefactor;
+		ArmorDefValueCrush *= kc_armflatdeffactor;
 		ArmorDefValueCrush *= kc_flatdefensefactor;
+		ArmorDefValueDmgFlr *= kc_armflatdeffactor;
 		ArmorDefValueDmgFlr *= kc_flatdefensefactor;
+		ArmorDefValueHUD *= kc_armflatdeffactor;
 		ArmorDefValueHUD *= kc_flatdefensefactor;
 	}
 	
@@ -7534,8 +7556,16 @@ class PlayerStatItem : Inventory
 				}
 				else
 				{
-					if (berserked) WeaponFactor = 0.625;
-										else WeaponFactor = 0.75;
+					if (weapon is "FistHeiwa")
+					{
+						if (berserked) WeaponFactor = 0.125;
+											else WeaponFactor = 0.5;
+					}
+					else
+					{
+						if (berserked) WeaponFactor = 0.625;
+											else WeaponFactor = 0.75;
+					}
 				}
 			}
 			if (weapon is "KnifeHeiwa")
@@ -8327,6 +8357,25 @@ class PlayerDashJump : Inventory
 		return result;
 	}
 	
+	bool A_CheckTimeFreeze()
+	{
+		bool check = false;
+		string nm, nn, no;
+		nm = "KCTimeFreezer1";
+		nn = "KCTimeFreezer2";
+		no = "KCTimeFreezer3";
+		if (owner)
+		{
+			if (owner.CountInv(nm) || 
+					owner.CountInv(nn) || 
+					owner.CountInv(no)) 
+			{
+				check = true;
+			}
+		}
+		return check;
+	}
+	
 	int A_CheckActualLevel(int type = 0)
 	{
 		actor playera = players[0].mo;
@@ -8595,9 +8644,15 @@ class PlayerDashJump : Inventory
 		
 		double DashSpdMul = 1.00;
 		DashSpeed = (25 + (ActualLevel * 0.03125));
-		if (Owner.waterlevel == 1) DashSpdMul = 0.9375;
-		if (Owner.waterlevel == 2) DashSpdMul = 0.875;
-		if (Owner.waterlevel >= 3) DashSpdMul = 0.75;
+		if (Owner.waterlevel == 1) DashSpdMul *= 0.9375;
+		if (Owner.waterlevel == 2) DashSpdMul *= 0.875;
+		if (Owner.waterlevel >= 3) DashSpdMul *= 0.75;
+		if (weapon is "FistHeiwa" &&
+				owner.CountInv("FistPlayerBlockItem")) 
+		{
+			if (berserked) DashSpdMul *= frandom(0.9375,1.0);
+								else DashSpdMul *= frandom(0.46875,0.53125);
+		}
 
 		DashSpeed *= DashSpdMul;
 		if (berserked) 
@@ -9353,7 +9408,9 @@ class PlayerDashJump : Inventory
 			owner.bFORCERADIUSDMG = false;
 			
 			//if (PlayDash.OnGround) { PlayDash.OnGround = False; Owner.AddZ(1); }
-			if (PlayDash.OnGround && DashTics % 2) 
+			if (PlayDash.OnGround && 
+					DashTics % 2 && 
+					!A_CheckTimeFreeze()) 
 			{
 				Owner.A_SpawnItemEx("DashPuff",0,0,8,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION);
 			}
@@ -9363,11 +9420,18 @@ class PlayerDashJump : Inventory
 			{
 				if (firsttic == 0) // On the Ground when Dashing began
 				{
-					if (dashveltimer == 0) { owner.vel.x *= 1.0125; owner.vel.y *= 1.0125; }
+					if (dashveltimer == 0) 
+					{
+						owner.vel.x *= 1.0125; 
+						owner.vel.y *= 1.0125; 
+					}
 				}
 				else // In the Air when Dashing began
 				{
-					if ((kc_allowdashing == 2 || kc_allowdashing == 4) && dashveltimer2 == 0) { owner.vel.z = 0.0; }
+					if ((kc_allowdashing == 2 || kc_allowdashing == 4) && dashveltimer2 == 0) 
+					{
+						owner.vel.z = 0.0; 
+					}
 				}
 			}
 
@@ -9379,7 +9443,10 @@ class PlayerDashJump : Inventory
 			}
 			else
 			{
-				if ((kc_allowdashing == 2 || kc_allowdashing == 4) && dashveltimer2 == 0) Owner.Vel.Z = 0.0;
+				if ((kc_allowdashing == 2 || kc_allowdashing == 4) && dashveltimer2 == 0) 
+				{
+					Owner.Vel.Z = 0.0;
+				}
 			}
 
 			Owner.A_SetBlend("78447E",frandom[statitem](0.08,0.12),random[statitem](2,3));
@@ -9394,7 +9461,10 @@ class PlayerDashJump : Inventory
 			
 			if (DashTics >= (MaxDashTics - 8)) 
 			{
-				if (kc_flightswimpitchdash && (owner.waterlevel >= 3 || (owner.bNOGRAVITY || owner.bFLY)))
+				if (kc_flightswimpitchdash && 
+						(owner.waterlevel >= 3 || 
+						 (owner.bNOGRAVITY || 
+						  owner.bFLY)))
 				{
 					if (kcdebug_showdashinformation) Console.Printf("DashSpeed: %.8f, DashDir: %.8f, DashPitch: %.8f", DashSpeed, DashDir, DashPitch);
 					Owner.Vel3DFromAngle(DashSpeed, DashDir, DashPitch);
@@ -9414,18 +9484,27 @@ class PlayerDashJump : Inventory
 			{
 				if (DashTics > (MaxDashTics * 0.75)) DashSpeed *= 1.025;
 				
+				// Hand to Hand [Shoulder Tackle] (berserked)
 				if (DashTics % 2) 
 				{
 					owner.bFORCERADIUSDMG = true;
 					
 					// Dashing Without a Specific Weapon
-					DashDmg = (random[statitem](8,12) * random[statitem](1,3));
+					DashDmg = random[statitem](8,12);
 					if ((weapon is "FistHeiwa" || 
 							weapon is "FistMarine") &&
 							owner.CountInv("FistPlayerBlockItem"))
 					{
-						if (weapon is "FistHeiwa") DashDmg += (random[statitem](4,6) * random[statitem](1,3));
-						if (weapon is "FistMarine") DashDmg += (random[statitem](6,9) * random[statitem](1,3));
+						if (weapon is "FistHeiwa") 
+						{
+							DashDmg += (random[statitem](4,6) + ((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(1.25,1.6667));
+							DashDmg *= random[statitem](1,3);
+						}
+						if (weapon is "FistMarine") 
+						{
+							DashDmg += (random[statitem](6,9) + (((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(0.625,0.8334)));
+							DashDmg *= random[statitem](1,3);
+						}
 					}
 					if (owner.waterlevel == 1) DashDmg *= 1.125;
 					if (owner.waterlevel == 2) DashDmg *= 1.25;
@@ -9467,19 +9546,57 @@ class PlayerDashJump : Inventory
 			}
 			else // Not Berserked
 			{
+				bool shtackle = false;
 				if (DashTics % 2) 
 				{
-					if (random[statitem](1,16) <= 15)
+					if (weapon is "FistHeiwa" &&
+							owner.CountInv("FistPlayerBlockItem"))
 					{
-						owner.bFORCERADIUSDMG = true;
+						if (random[statitem](1,16) <= 15)
+						{
+							shtackle = true;
+						}
 					}
 				}
 				if (DashTics % 2 == 1) 
 				{
-					if (random[statitem](1,64) <= random[statitem](48,54))
+					if (weapon is "FistHeiwa" &&
+							owner.CountInv("FistPlayerBlockItem"))
 					{
-						owner.bFORCERADIUSDMG = true;
+						if (random[statitem](1,64) <= random[statitem](48,54))
+						{
+							shtackle = true;
+						}
 					}
+				}
+				
+				// Hand to Hand [Shoulder Tackle]
+				if (shtackle)
+				{
+					owner.bFORCERADIUSDMG = true;
+					
+					// Dashing Without a Specific Weapon
+					DashDmg = random[statitem](4,6);
+					if (weapon is "FistHeiwa") 
+					{
+						DashDmg += (random[statitem](2,3) + ((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(0.125,0.16675));
+						DashDmg *= random[statitem](1,3);
+					}
+					if (weapon is "FistMarine") 
+					{
+						DashDmg += (random[statitem](3,4) + (((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(0.0625,0.08334)));
+						DashDmg *= random[statitem](1,3);
+					}
+					if (owner.waterlevel == 1) DashDmg *= 1.0625;
+					if (owner.waterlevel == 2) DashDmg *= 1.125;
+					if (owner.waterlevel >= 3) DashDmg *= 1.1875;
+					DashRad = (owner.radius * 1.3125) + frandom[statitem](-0.375,0.375);
+					DashRad += (owner.radius * 1.1875) + frandom[statitem](-0.075,0.075);
+					if (owner.waterlevel == 1) DashRad *= 1.125;
+					if (owner.waterlevel == 2) DashRad *= 1.25;
+					if (owner.waterlevel >= 3) DashRad *= 1.375;
+					dashtype = "Dashing";
+					Owner.A_Explode(Dashdmg,DashRad,XF_NOTMISSILE,false,(DashRad*0.5),0,0,"",dashtype);
 				}
 				
 				// HW Shield

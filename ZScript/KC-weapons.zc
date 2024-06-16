@@ -17916,14 +17916,14 @@ class EvilWarriorShieldBall : KCProjectile
 	}
 }
 
-class PhobosDustBlower : MarineWeapon
+class DustBlower : MarineWeapon
 {
 	default
 	{
 		//$Category Weapons
 		//$Title "Dust Blower"
 		Weapon.SelectionOrder 450;
-		Inventory.PickupMessage "You got a Phobos Dust Blower!";
+		Inventory.PickupMessage "You got a \c[fire]Dust Blower!\c- \cx[Slot 8]\c-";
 		Weapon.SlotNumber 8;
 		Weapon.Kickback 20000;
 		Tag "Dust Blower";
@@ -17956,7 +17956,7 @@ class PhobosDustBlower : MarineWeapon
 		Hold:
 			PDBZ BBB 2
 			{
-				if(waterlevel > 2)
+				if (waterlevel > 2)
 				{
 					A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
 					A_StartSound("weapons/airblow/underwater",7,CHANF_LOOPING,0.7);
@@ -18001,6 +18001,7 @@ class PhobosAir : KCProjectile
 		+GHOST;
 		+THRUGHOST;
 		Species "Players";
+		DamageType "Wind";
 		+MTHRUSPECIES;
 		+THRUSPECIES;
 	}
@@ -18026,6 +18027,10 @@ class PhobosAir : KCProjectile
 			TNT1 A 1;
 			Stop;
 	}
+}
+
+class PhobosAirBig : PhobosAir
+{
 }
 
 class Bubble : KCBaseZSC

@@ -3920,8 +3920,29 @@ class KCStatusBarMain : BaseStatusBar
 				LY += LYInc;
 				if (kc_doubledash) LegendStr.AppendFormat("\c[yellow]2x Tap Same Direction\c-");
 				else LegendStr.AppendFormat(ReturnKeyBind1("+user3", true, false));
-				if (PlayerWeapon is "EvilWarriorShield" && CPlayerPawn.CountInv("EWShieldDefendMode")) LegendStr.AppendFormat(" = \c[gold]SHIELD DASH\c-");
-				else LegendStr.AppendFormat(" = \c[blue]DASH\c-");
+				if (PlayerWeapon is "EvilWarriorShield" && 
+						CPlayerPawn.CountInv("EWShieldDefendMode")) 
+				{
+					LegendStr.AppendFormat(" = \c[gold]SHIELD DASH\c-");
+				}
+				else 
+				if (PlayerWeapon is "FistHeiwa" && 
+						CPlayerPawn.CountInv("FistPlayerBlockItem")) 
+				{
+					LegendStr.AppendFormat(" = \c[gold]SHOULDER TACKLE DASH\c-");
+				}
+				else 
+				if (PlayerWeapon is "FistMarine" && 
+						CPlayerPawn.CountInv("FistPlayerBlockItem") &&
+						(CPlayer.mo.FindInventory("PowerStrength") ||
+						 CPlayer.mo.FindInventory("KCPowerStrength"))) 
+				{
+					LegendStr.AppendFormat(" = \c[gold]SHOULDER TACKLE DASH\c-");
+				}
+				else 
+				{
+					LegendStr.AppendFormat(" = \c[blue]DASH\c-");
+				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			

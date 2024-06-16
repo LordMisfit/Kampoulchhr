@@ -131,6 +131,14 @@ class KCPlayerPawn : PlayerPawn
 		return result;
 	}
 	
+	bool A_CheckBerserk()
+	{
+		bool check = false;
+		if (CountInv("PowerStrength") || 
+				CountInv("KCPowerStrength")) check = true;
+		return check;
+	}
+	
 	void A_CheckDeathHeartBeats(int hbtimer)
 	{
 		if (kc_playerbpm)
@@ -342,7 +350,7 @@ class KCPlayerPawn : PlayerPawn
 			grunted = false;
 			// Why should this number vary by gravity?
 			double truegruntspeed = self.player.mo.GruntSpeed;
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) truegruntspeed *= 1.34;
+			if (A_CheckBerserk()) truegruntspeed *= 1.34;
 			//Console.Printf("%.8f (%.8f) [%.8f]", self.Vel.Z, truegruntspeed, self.player.mo.GruntSpeed);
 			if (waterlevel <= 1)
 			{
@@ -433,7 +441,7 @@ class KCPlayerPawn : PlayerPawn
 
 			// Buffs
 			double BuffAirControl = 1.00;
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) BuffAirControl *= 1.334;
+			if (A_CheckBerserk()) BuffAirControl *= 1.334;
 			
 			// ?
 			double ssa = 1.00;
@@ -1201,7 +1209,7 @@ class KCPlayerPawn : PlayerPawn
 			if (MaxAirTime > 0) airreplen = ((MaxAirTime / (TICRATE * 5.0)) * 100.0);
 			if (airreplen < 1) airreplen = 1;
 			if (MiscItem) airreplen *= (1.0 + (ActualLevel * 0.0125));
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) airreplen *= 1.25;
+			if (A_CheckBerserk()) airreplen *= 1.25;
 			if (CountInv("PowerNoDrown") || 
 					CountInv("PowerIronFeet") || 
 					CountInv("PowerIronFeet2") || 
@@ -1333,7 +1341,7 @@ class KCPlayerPawn : PlayerPawn
 				MaxAirTime += (MiscItem.AirBonusAdd);
 			}
 
-			if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) MaxAirTime *= 1.25;
+			if (A_CheckBerserk()) MaxAirTime *= 1.25;
 			if (MaxAirTime > 0) MaxAirTime *= AirCapacity;
 			if (GetAge() <= 1 && AirTime != MaxAirTime) AirTime = MaxAirTime;
 			
@@ -1610,8 +1618,8 @@ class KCPlayerPawn : PlayerPawn
 		let PlayerWeapon = player.ReadyWeapon;
 		UserCmd cmd = player.cmd;
 		bool berserked;
+		if (A_CheckBerserk()) berserked = true;
 		double timefreezewaterfactor = 1.00;
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) berserked = true;
 		
 		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() Start)\c- Vel.Z: %.4f [oldfloorz: %.8f, grav: %.8f] [tic: %d]", Vel.Z, oldfloorz, grav, gametic);
 		if (Pos.Z > floorz && !bNOGRAVITY)
@@ -3472,7 +3480,7 @@ class KCPlayerPawn : PlayerPawn
 			if (flags & DMG_NO_SARMOR) Console.Printf("    (\cyIgnoresPermArmor?: yes)");
 			if (flags & DMG_FIXEDDMG) Console.Printf("    (\cyDealsFixedDmg?: yes)");
 		}
-		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- damagetype: %s", mod);
+		if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- damagetype: %s [damage: %d]", mod, damage);
 		
 		if (source) AttackingActor = Actor(source);
 		if (inflictor) 
@@ -3500,9 +3508,12 @@ class KCPlayerPawn : PlayerPawn
 		
 		if (mod == 'PSI') 
 		{
+			olddmg = damage;
 			bool weapcheck = false;
 			flags |= DMG_NO_ARMOR;
-			if ((weapon is "FistMarine" || weapon is "FistHeiwa") && CountInv("FistPlayerBlockItem")) 
+			if ((weapon is "FistMarine" || 
+					 weapon is "FistHeiwa") && 
+					CountInv("FistPlayerBlockItem")) 
 			{
 				if (weapon is "FistHeiwa") damage *= frandompick(0.00025,0.00025,0.0025,0.0025,0.0025,0.0025,0.025,0.025);
 															else damage *= frandompick(0.001,0.001,0.01,0.01,0.01,0.01,0.1,0.1);
@@ -3519,17 +3530,19 @@ class KCPlayerPawn : PlayerPawn
 			{
 				if (player.cheats & CF_BUDDHA) { } else player.cheats |= CF_BUDDHA;
 			}
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PSI Attack - Damage: %d [vs %d]", damage, olddmg);
 		}
 		
 		// Heiwa has specialized resistances to Plasma/Mauler and BFG [sprays and main shots] :V
 		if (A_CheckForHeiwa())
 		{
+			bool showdebugmsg;
 			olddmg = damage;
-			double factor1 = 1; // 1/16 chance [lowest damage]
-			double factor2 = 1; // 3/16 chance [lower damage]
-			double factor3 = 1; // 8/16 chance [average damage]
-			double factor4 = 1; // 3/16 chance [higher damage]
-			double factor5 = 1; // 1/16 chance [highest damage]
+			double factor1 = 1.0; // 1/16 chance [lowest damage]
+			double factor2 = 1.0; // 3/16 chance [lower damage]
+			double factor3 = 1.0; // 8/16 chance [average damage]
+			double factor4 = 1.0; // 3/16 chance [higher damage]
+			double factor5 = 1.0; // 1/16 chance [highest damage]
 			if (mod == 'BFGSplash') 
 			{
 				factor1 = frandompick(0.00,0.01,0.01,0.01,0.01);
@@ -3559,7 +3572,7 @@ class KCPlayerPawn : PlayerPawn
 			}
 			
 			damage *= frandompick(factor1,factor2,factor2,factor2,factor3,factor3,factor3,factor3,factor3,factor3,factor3,factor3,factor4,factor4,factor4,factor5);
-			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Heiwa Damage Checks - damagetype: %s, damage: %d [vs %d]", mod, damage, olddmg);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Heiwa Damage Checks - damagetype: %s, damage: %d [vs %d], factor1: %.8f, factor2: %.8f, factor3: %.8f, factor4: %.8f, factor5: %.8f", mod, damage, olddmg, factor1, factor2, factor3, factor4, factor5);
 		}
 
 		armortier = 0;
@@ -3800,6 +3813,10 @@ class KCPlayerPawn : PlayerPawn
 			}
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [AOE]: %d (%d)", damage, olddmg);
 		}
+		else
+		{
+			if (AttackingActor != self) useflatdefense = true;
+		}
 		
 		olddmg = damage;
 		if (source != null)
@@ -3857,8 +3874,7 @@ class KCPlayerPawn : PlayerPawn
 				if (mod == 'Crush')
 				{
 					double basecrushdmgfact;
-					if (PowerStrength(FindInventory("PowerStrength")) || 
-							KCPowerStrength(FindInventory("KCPowerStrength")))
+					if (A_CheckBerserk())
 					{
 						basecrushdmgfact = frandompick(25,33.4,33.4,50,50,50,50,50,50,66.7,66.7,75);
 					}
@@ -3963,7 +3979,8 @@ class KCPlayerPawn : PlayerPawn
 		}
 		
 		// Berserk Effects
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength") && !SigilDrain)
+		if (A_CheckBerserk() && 
+				!SigilDrain)
 		{
 			olddmg = damage;
 			if (mod == 'Falling') damage = ceil(damage * frandom(0.625,0.75));
@@ -4594,7 +4611,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (PainInterval <= 0) PainInterval = 63;
 		int PoisonTargInv = randompick(4,5,5,5,5,5,6);
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) PoisonTargInv -= randompick(0,1,1,1,1,1,1,1,1,1,1,1,1,2);
+		if (A_CheckBerserk()) PoisonTargInv -= randompick(0,1,1,1,1,1,1,1,1,1,1,1,1,2);
 		int targtime = target.level.time & 63; // target.level.time % PainInterval;
 		if (playPainSound)
 		{
@@ -4633,7 +4650,7 @@ class KCPlayerPawn : PlayerPawn
 
 		int countdec = randompick(3,4,4,4,5,5,5,5,5,5,5,6,6,6,7);
 		int countint = randompick(14,15,15,15,15,15,15,15,15,15);
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength"))
+		if (A_CheckBerserk())
 		{
 			countdec = (randompick(3,4,4,4,5,5,5,5,5,5,5,6,6,6,7) - randompick(0,1,1,1,1,1,1,1,1,2));
 			countint = randompick(13,13,13,14,14,14,14,14,14,15);
@@ -4655,7 +4672,7 @@ class KCPlayerPawn : PlayerPawn
 						player.cheats & CF_GODMODE))
 			{
 				int poisdmg = randompick(1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3);
-				if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) 
+				if (A_CheckBerserk()) 
 				{
 					poisdmg = randompick(1,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3);
 					poisdmg *= frandompick(1.25,1.375,1.375,1.5,1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
@@ -4663,7 +4680,7 @@ class KCPlayerPawn : PlayerPawn
 				if (MiscItem) 
 				{
 					poisdmg = ((randompick(1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3) * 0.01) * MiscItem.MaxHealthTrue);
-					if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) 
+					if (A_CheckBerserk()) 
 					{
 						poisdmg = ((randompick(1,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3) * 0.01) * MiscItem.MaxHealthTrue);;
 						poisdmg *= frandompick(1.25,1.375,1.375,1.5,1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
@@ -4964,7 +4981,7 @@ class KCPlayer : KCPlayerPawn
 			if (MiscItem.HUDSpeed <= 0.25) tics = ceil(tics *= 1.75);
 			if (MiscItem.HUDSpeed <= 0.0625) tics = ceil(tics *= 2.0);
 		}
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) tics = ceil(tics *= 0.875);
+		if (A_CheckBerserk()) tics = ceil(tics *= 0.875);
 		if (CountInv("OverFullHealth3")) tics = ceil(tics *= 0.85);
 		if (CountInv("OverFullHealth2")) tics = ceil(tics *= 0.9);
 		if (CountInv("OverFullHealth1")) tics = ceil(tics *= 0.95);
@@ -5201,7 +5218,7 @@ class HeiwaPlayer : KCPlayerPawn
 			if (MiscItem.HUDSpeed <= 0.25) tics = ceil(tics *= 1.75);
 			if (MiscItem.HUDSpeed <= 0.0625) tics = ceil(tics *= 2.0);
 		}
-		if (CountInv("PowerStrength") || CountInv("KCPowerStrength")) tics = ceil(tics *= 0.875);
+		if (A_CheckBerserk()) tics = ceil(tics *= 0.875);
 		if (CountInv("OverFullHealth3")) tics = ceil(tics *= 0.85);
 		if (CountInv("OverFullHealth2")) tics = ceil(tics *= 0.9);
 		if (CountInv("OverFullHealth1")) tics = ceil(tics *= 0.95);
@@ -5373,7 +5390,8 @@ class EVP_Footsteps : Actor
 		if (MiscItem)
 		{
 			bool berserked;
-			if (plr.CountInv("PowerStrength") || plr.CountInv("KCPowerStrength")) berserked = true;
+			if (plr.CountInv("PowerStrength") || 
+					plr.CountInv("KCPowerStrength")) berserked = true;
 
 			int ActualLevel = A_CheckActualLevel(1);
 			let PlayerWeapon = plr.player.ReadyWeapon;

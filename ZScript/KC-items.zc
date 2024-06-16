@@ -2524,7 +2524,7 @@ class KCArmor : BasicArmor
 				if (savebase >= 0.75) savebase = 0.75;
 			}
 			saved *= (1.0 - savebase);
-			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post IP]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+			//if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post IP]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			
 			if (random(1,16) <= (random(7,9) + (8 - (skill * 2)))) 
 			{
@@ -2547,7 +2547,7 @@ class KCArmor : BasicArmor
 					if (savebase >= 0.75) savebase = 0.75;
 				}
 				saved *= (1.0 - savebase);
-				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Wine]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+				//if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Wine]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
 			
 			if (Amount < saved)
