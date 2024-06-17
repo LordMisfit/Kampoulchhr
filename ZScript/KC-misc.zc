@@ -192,8 +192,13 @@ class PlayerStatItem : Inventory
 	string nm, nn, no, np, nq, nr;
 	int sttabs;
 	int genticsHUD;
-	double ArmorML;
-	double ArmorM;
+	double ArmorEnc;
+	double ArmorEncL;
+	double LVLfactArmr;
+	double ATKfactArmr;
+
+	double LVLfactWeap;
+	double ATKfactWeap;
 	
 	int oldhealthratio;
 	int NumOfLegendMeds, MedCurrLvl, LegMedCap;
@@ -505,6 +510,46 @@ class PlayerStatItem : Inventory
 				
 				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
 				else berserked = false;
+				
+				LVLfactArmr = 0.02;
+				if (TrueGameSkill <= SKILL_VERY_EASY) LVLfactArmr = 0.004;
+				if (TrueGameSkill == SKILL_EASY) LVLfactArmr = 0.0035;
+				if (TrueGameSkill == SKILL_NORMAL) LVLfactArmr = 0.003;
+				if (TrueGameSkill == SKILL_HARD) LVLfactArmr = 0.0025;
+				if (TrueGameSkill >= SKILL_VERY_HARD) LVLfactArmr = 0.002;
+				if (owner.waterlevel >= 3) LVLfactArmr *= 0.75;
+				else if (owner.waterlevel == 2) LVLfactArmr *= 0.91667;
+				else if (owner.waterlevel == 1) LVLfactArmr *= 0.975;
+				
+				ATKfactArmr = 0.02;
+				if (TrueGameSkill <= SKILL_VERY_EASY) ATKfactArmr = 0.012;
+				if (TrueGameSkill == SKILL_EASY) ATKfactArmr = 0.0105;
+				if (TrueGameSkill == SKILL_NORMAL) ATKfactArmr = 0.009;
+				if (TrueGameSkill == SKILL_HARD) ATKfactArmr = 0.0075;
+				if (TrueGameSkill >= SKILL_VERY_HARD) ATKfactArmr = 0.006;
+				if (owner.waterlevel >= 3) ATKfactArmr *= 0.75;
+				else if (owner.waterlevel == 2) ATKfactArmr *= 0.91667;
+				else if (owner.waterlevel == 1) ATKfactArmr *= 0.975;
+				
+				LVLfactWeap = 0.02;
+				if (TrueGameSkill <= SKILL_VERY_EASY) LVLfactWeap = 0.004;
+				if (TrueGameSkill == SKILL_EASY) LVLfactWeap = 0.0035;
+				if (TrueGameSkill == SKILL_NORMAL) LVLfactWeap = 0.003;
+				if (TrueGameSkill == SKILL_HARD) LVLfactWeap = 0.0025;
+				if (TrueGameSkill >= SKILL_VERY_HARD) LVLfactWeap = 0.002;
+				if (owner.waterlevel >= 3) LVLfactWeap *= 0.75;
+				else if (owner.waterlevel == 2) LVLfactWeap *= 0.91667;
+				else if (owner.waterlevel == 1) LVLfactWeap *= 0.975;
+				
+				ATKfactWeap = 0.02;
+				if (TrueGameSkill <= SKILL_VERY_EASY) ATKfactWeap = 0.012;
+				if (TrueGameSkill == SKILL_EASY) ATKfactWeap = 0.0105;
+				if (TrueGameSkill == SKILL_NORMAL) ATKfactWeap = 0.009;
+				if (TrueGameSkill == SKILL_HARD) ATKfactWeap = 0.0075;
+				if (TrueGameSkill >= SKILL_VERY_HARD) ATKfactWeap = 0.006;
+				if (owner.waterlevel >= 3) ATKfactWeap *= 0.75;
+				else if (owner.waterlevel == 2) ATKfactWeap *= 0.91667;
+				else if (owner.waterlevel == 1) ATKfactWeap *= 0.975;
 				
 				spbkpkmaxhealthcarry = MaxHealthTrue;
 				if (TrueGameSkill <= SKILL_VERY_EASY) spbkpkmaxhealthcarry = MaxHealthTrue * (1.375);
@@ -3236,8 +3281,8 @@ class PlayerStatItem : Inventory
 			double fact = (owner.CountInv("SpecialBackpackBonus") * spbkpkarmorbonus);
 			BMaxArmor *= (1.0 + fact);
 			if (BMaxArmor > 0) ArmorRatio = double((ArmorAmt * 1.0) / (BMaxArmor * 1.0));
-			double ArmorEnc = 0.00;
 			double ArmorWeight;
+			ArmorEnc = 0.00;
 			if (owner.CountInv("TSArmorTier3Plus"))
 			{
 				if (A_CheckForHeiwa())
@@ -3317,19 +3362,18 @@ class PlayerStatItem : Inventory
 				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
 			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
+			
 			ArmorEnc *= kc_armorencumbrance;
+			ArmorEncL = ArmorEnc;
 			if (owner.waterlevel >= 3) ArmorEnc *= 1.25;
+			else if (owner.waterlevel == 2) ArmorEnc *= 1.08334;
+			else if (owner.waterlevel == 1) ArmorEnc *= 1.025;
 			
-			double lvlfact = 0.02;
-			if (skill <= 0) lvlfact = 0.04;
-			if (skill == 1) lvlfact = 0.035;
-			if (skill == 2) lvlfact = 0.03;
-			if (skill == 3) lvlfact = 0.025;
-			if (skill >= 4) lvlfact = 0.02;
-			if (A_CheckForHeiwa()) lvlfact *= 1.75;
-			if (owner.waterlevel >= 3) lvlfact *= 0.75;
+			double ArmorEncEft = (1.00 - (TruePlayerLevel * LVLfactArmr) - (TruePlayerATK * ATKfactArmr));
+			if (ArmorEncEft <= 0.25) ArmorEncEft = 0.25;
+			if (ArmorEncEft > 1.0) ArmorEncEft = 1.0;
+			ArmorEnc *= ArmorEncEft;
 			
-			if (ArmorEnc > 0.0) ArmorEnc *= (1.0 - (ActualLevel * lvlfact));
 			if (!owner.CountInv("KCPowerKampoul")) 
 			{
 				ArmorJumpZ -= ArmorEnc;
@@ -3498,6 +3542,11 @@ class PlayerStatItem : Inventory
 					if (TruePlayerLevel >= 120) BaseEncFactor *= (basebonus*basebonus*basebonus);
 				}
 			}
+			
+			double WeaponEncEft = (1.00 - (TruePlayerLevel * LVLfactWeap) - (TruePlayerATK * ATKfactWeap));
+			if (WeaponEncEft <= 0.25) WeaponEncEft = 0.25;
+			if (WeaponEncEft > 1.0) WeaponEncEft = 1.0;
+			if (BaseEncFactor < 0.0) BaseEncFactor *= WeaponEncEft;
 			WeaponJumpEx += BaseEncFactor;
 			
 			WeaponJumpEx *= kc_weaponencumbrance;
@@ -7918,7 +7967,6 @@ class PlayerStatItem : Inventory
 		}
 		
 		//
-		let MiscItem = PlayerStatItem(Owner.FindInventory("PlayerStatItem"));
 		int ArmorAmt = owner.CountInv(armorclasstype);
 		double ArmorRatio = 0.0;
 		int BMaxArmor = MaxHealthTrue;
@@ -7928,7 +7976,7 @@ class PlayerStatItem : Inventory
 		double armordiffmod = 1.00;
 		double ArmorFactor = 1.0;
 		double ArmorWeight;
-		ArmorM = 0;
+		ArmorEnc = 0.00;
 		if (owner.CountInv("TSArmorTier3Plus"))
 		{
 			if (A_CheckForHeiwa())
@@ -7942,7 +7990,7 @@ class PlayerStatItem : Inventory
 				if (berserked) ArmorWeight *= 0.875;
 			}
 			ArmorWeight *= armordiffmod;
-			ArmorM = ArmorWeight;
+			ArmorEnc = ArmorWeight;
 		}
 		else
 		if (owner.CountInv("TSArmorTier2"))
@@ -7958,7 +8006,7 @@ class PlayerStatItem : Inventory
 				if (berserked) ArmorWeight *= 0.875;
 			}
 			ArmorWeight *= armordiffmod;
-			ArmorM = ArmorWeight;
+			ArmorEnc = ArmorWeight;
 		}
 		else
 		if (owner.CountInv("TSArmorTier1"))
@@ -7974,7 +8022,7 @@ class PlayerStatItem : Inventory
 				if (berserked) ArmorWeight *= 0.875;
 			}
 			ArmorWeight *= armordiffmod;
-			ArmorM = ArmorWeight;
+			ArmorEnc = ArmorWeight;
 		}
 		else
 		{
@@ -8005,26 +8053,24 @@ class PlayerStatItem : Inventory
 				}
 			}
 			ArmorWeight *= armordiffmod;
-			ArmorM = (ArmorWeight * ArmorRatio);
+			ArmorEnc = (ArmorWeight * ArmorRatio);
 		}
-		if (kcdebug_speedcalcs) Console.Printf("ArmorM: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorM, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
+		if (kcdebug_speedcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
+		
+		ArmorEnc *= kc_armorencumbrance;
+		ArmorEncL = ArmorEnc;
+		if (owner.waterlevel >= 3) ArmorEnc *= 1.25;
+		else if (owner.waterlevel == 2) ArmorEnc *= 1.08334;
+		else if (owner.waterlevel == 1) ArmorEnc *= 1.025;
+		
+		double ArmorEncEft = (1.00 - (TruePlayerLevel * LVLfactArmr) - (TruePlayerATK * ATKfactArmr));
+		if (ArmorEncEft <= 0.25) ArmorEncEft = 0.25;
+		if (ArmorEncEft > 1.0) ArmorEncEft = 1.0;
+		ArmorEnc *= ArmorEncEft;
 
-		ArmorM *= kc_armorencumbrance;
-		ArmorML = ArmorM;
-		if (owner.waterlevel >= 3) ArmorM *= 1.25;
-		
-		double lvlfact = 0.02;
-		if (TrueGameSkill <= SKILL_VERY_EASY) lvlfact = 0.04;
-		if (TrueGameSkill == SKILL_EASY) lvlfact = 0.035;
-		if (TrueGameSkill == SKILL_NORMAL) lvlfact = 0.03;
-		if (TrueGameSkill == SKILL_HARD) lvlfact = 0.025;
-		if (TrueGameSkill >= SKILL_VERY_HARD) lvlfact = 0.02;
-		if (owner.waterlevel >= 3) lvlfact *= 0.75;
-		
-		if (ArmorM > 0.0) ArmorM *= (1.0 - (ActualLevel * lvlfact));
-		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), kc_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorM, ArmorML, kc_armorencumbrance, armordiffmod);
-		if (ArmorM < 0.0) ArmorM = 0.0;
-		ArmorFactor = (1.0 - ArmorM);
+		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), kc_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorEnc, ArmorEncL, kc_armorencumbrance, armordiffmod);
+		if (ArmorEnc < 0.0) ArmorEnc = 0.0;
+		ArmorFactor = (1.0 - ArmorEnc);
 		if (ArmorFactor > 1.00) ArmorFactor = 1.00;
 		if (!owner.CountInv("KCPowerKampoul")) 
 		{
@@ -8055,7 +8101,6 @@ class PlayerStatItem : Inventory
 				if (tempfactor2 >= 1.5) tempfactor2 = 1.5;
 				tempfactor1 *= tempfactor2;
 			}
-			WeaponFactorEx += tempfactor1;
 		}
 		if (weapon is "Glock21")
 		{
@@ -8065,6 +8110,7 @@ class PlayerStatItem : Inventory
 			
 			tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
 			if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+			tempfactor1 *= tempfactor2;
 		}
 		if (weapon is "BlasterPistol")
 		{
@@ -8083,12 +8129,13 @@ class PlayerStatItem : Inventory
 			}
 			tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 0.75)) ));
 			if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+			tempfactor1 *= tempfactor2;
 		}
 		if (weapon is "RiotGun")
 		{
 			if (A_CheckForHeiwa())
 			{
-				tempfactor1 = 0.125;
+				tempfactor1 = -0.125;
 				if (berserked) tempfactor1 *= 0.25;
 				if (owner.CountInv("RiotGunUpgrade")) tempfactor1 *= 0.75;
 				
@@ -8097,7 +8144,7 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				tempfactor1 = 0.01953125;
+				tempfactor1 = -0.01953125;
 				if (berserked) tempfactor1 *= 0.25;
 				if (owner.CountInv("RiotGunUpgrade")) tempfactor1 *= 0.75;
 				
@@ -8105,7 +8152,6 @@ class PlayerStatItem : Inventory
 				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "TommyGun")
 		{
@@ -8114,8 +8160,8 @@ class PlayerStatItem : Inventory
 			
 			if (A_CheckForHeiwa())
 			{
-				if (dualtommys) tempfactor1 = 0.225;
-									 else tempfactor1 = 0.1;
+				if (dualtommys) tempfactor1 = -0.225;
+									 else tempfactor1 = -0.1;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				
@@ -8129,8 +8175,8 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				if (dualtommys) tempfactor1 = 0.1125;
-									 else tempfactor1 = 0.05;
+				if (dualtommys) tempfactor1 = -0.1125;
+									 else tempfactor1 = -0.05;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				
@@ -8144,13 +8190,12 @@ class PlayerStatItem : Inventory
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "BlasterRifle")
 		{
 			if (A_CheckForHeiwa())
 			{
-				tempfactor1 = 0.1;
+				tempfactor1 = -0.1;
 				if (berserked) tempfactor1 *= 0.25;
 				
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / HeiwaWeapLevel) ));
@@ -8158,7 +8203,7 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				tempfactor1 = 0.05;
+				tempfactor1 = -0.05;
 				if (berserked) tempfactor1 *= 0.25;
 
 				if (owner.CountInv("BlasterRifleUpgrade")) tempfactor1 *= 0.667;
@@ -8167,13 +8212,12 @@ class PlayerStatItem : Inventory
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "Deviation")
 		{
 			if (A_CheckForHeiwa())
 			{
-				tempfactor1 = 0.3;
+				tempfactor1 = -0.3;
 
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2)) ));
@@ -8181,7 +8225,7 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				tempfactor1 = 0.2;
+				tempfactor1 = -0.2;
 									
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
@@ -8189,7 +8233,6 @@ class PlayerStatItem : Inventory
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "Devastator")
 		{
@@ -8198,8 +8241,8 @@ class PlayerStatItem : Inventory
 			
 			if (A_CheckForHeiwa())
 			{
-				if (dualdevs) tempfactor1 = 0.45;
-								 else tempfactor1 = 0.2;
+				if (dualdevs) tempfactor1 = -0.45;
+								 else tempfactor1 = -0.2;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				
@@ -8213,8 +8256,8 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				if (dualdevs) tempfactor1 = 0.225;
-								 else tempfactor1 = 0.1;
+				if (dualdevs) tempfactor1 = -0.225;
+								 else tempfactor1 = -0.1;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				
@@ -8228,7 +8271,6 @@ class PlayerStatItem : Inventory
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "TeslaCannon")
 		{
@@ -8237,8 +8279,8 @@ class PlayerStatItem : Inventory
 
 			if (A_CheckForHeiwa())
 			{
-				if (dualteslas) tempfactor1 = 0.2;
-									 else tempfactor1 = 0.125;
+				if (dualteslas) tempfactor1 = -0.2;
+									 else tempfactor1 = -0.125;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 1.25)) ));
@@ -8246,20 +8288,19 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				if (dualteslas) tempfactor1 = 0.05;
-									 else tempfactor1 = 0.01953125;
+				if (dualteslas) tempfactor1 = -0.05;
+									 else tempfactor1 = -0.01953125;
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
 				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
 		if (weapon is "BHGen")
 		{
 			if (A_CheckForHeiwa())
 			{
-				tempfactor1 = 0.5;
+				tempfactor1 = -0.5;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
@@ -8267,7 +8308,7 @@ class PlayerStatItem : Inventory
 			}
 			else
 			{
-				tempfactor1 = 0.375;
+				tempfactor1 = -0.375;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
@@ -8275,15 +8316,20 @@ class PlayerStatItem : Inventory
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
 			tempfactor1 *= tempfactor2;
-			WeaponFactorEx -= tempfactor1;
 		}
-		if (kcdebug_speedcalcs) Console.Printf("SpeedX [WeaponFactorEx]: %.8f, tempfactor1: %.8f, tempfactor2: %.8f", WeaponFactorEx, tempfactor1, tempfactor2);
+		
+		double WeaponEncEft = (1.00 - (TruePlayerLevel * LVLfactWeap) - (TruePlayerATK * ATKfactWeap));
+		if (WeaponEncEft <= 0.25) WeaponEncEft = 0.25;
+		if (WeaponEncEft > 1.0) WeaponEncEft = 1.0;
+		if (tempfactor1 < 0.0) tempfactor1 *= WeaponEncEft;
+		WeaponFactorEx += tempfactor1;
 		
 		WeaponFactorEx *= kc_weaponencumbrance;
 		WeaponFactor += WeaponFactorEx;
+		
 		Speed *= WeaponFactor;
 		HUDSpeed *= WeaponFactor;
-		if (kcdebug_speedcalcs) Console.Printf("SpeedX [WeaponEquipped]: %.8f", WeaponFactor);
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [WeaponFactor]: %.8f, [WeaponFactorEx]: %.8f, tempfactor1: %.8f, tempfactor2: %.8f, WeaponEncEft: %.8f", WeaponFactor, WeaponFactorEx, tempfactor1, tempfactor2, WeaponEncEft);
 		//
 		double NewSpdFct = spdfct;
 		if (sielsgracetrueactivations > 0)

@@ -1777,8 +1777,8 @@ class KCPlayerPawn : PlayerPawn
 					double armordiffmod = 1.00;
 					if (MiscItem)
 					{
-						double ArmorEnc = (MiscItem.ArmorML * 1.25);
-						if (kcdebug_playermove) Console.Printf("\c[gold](DDPlayPawn)\c- ArmorEnc: %.8f (%.8f)", ArmorEnc, MiscItem.ArmorML);
+						double ArmorEnc = (MiscItem.ArmorEncL * 1.25);
+						if (kcdebug_playermove) Console.Printf("\c[gold](DDPlayPawn)\c- ArmorEnc: %.8f (%.8f)", ArmorEnc, MiscItem.ArmorEncL);
 						if (waterlevel >= 2)
 						{
 							ArmorEnc *= 1.5;
@@ -5458,8 +5458,8 @@ class EVP_Footsteps : Actor
 			if (KCPlayPawn)
 			{
 				oldfstpitch = fstpitch;
-				double ArmorEnc; // = (MiscItem.ArmorML * (0.0625 * random(randompick(11,12,12,12,12),randompick(14,14,14,14,15))));
-				//if (kcdebug_footsteps1) Console.Printf("\c[gold](EVP_Footsteps)\c- ArmorEnc: %.8f (%.8f)", ArmorEnc, MiscItem.ArmorML, WeaponFactorEx);
+				double ArmorEnc; // = (MiscItem.ArmorEncL * (0.0625 * random(randompick(11,12,12,12,12),randompick(14,14,14,14,15))));
+				//if (kcdebug_footsteps1) Console.Printf("\c[gold](EVP_Footsteps)\c- ArmorEnc: %.8f (%.8f)", ArmorEnc, MiscItem.ArmorEncL, WeaponFactorEx);
 				double lvlfact = 0.02;
 				if (skill <= 0) lvlfact = 0.04;
 				if (skill == 1) lvlfact = 0.035;
