@@ -2725,32 +2725,35 @@ class KCPlayerPawn : PlayerPawn
 				np = "TSArmorTier3Plus";
 				nq = "TimeSeraphBangle";
 				
-				double TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
+				double TSTicDmgMult = 20;
+				
+				double TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.5,TSTicDmgMult));
 				if (skill <= 0) 
 				{
-					TSTicDmg = (olddmg * frandom(TICRATE*0.25,TICRATE));
+					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.25,TSTicDmgMult));
 					TSTicDmg *= frandom(0.5,1.5);
 				}
 				if (skill == 1) 
 				{
-					TSTicDmg = (olddmg * frandom(TICRATE*0.375,TICRATE));
+					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.375,TSTicDmgMult));
 					TSTicDmg *= frandom(0.75,1.75);
 				}
 				if (skill == 2) 
 				{
-					TSTicDmg = (olddmg * frandom(TICRATE*0.5,TICRATE));
+					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.5,TSTicDmgMult));
 					TSTicDmg *= frandom(1.00,2.00);
 				}
 				if (skill == 3) 
 				{
-					TSTicDmg = (olddmg * frandom(TICRATE*0.625,TICRATE));
+					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.625,TSTicDmgMult));
 					TSTicDmg *= frandom(1.25,2.25);
 				}
 				if (skill >= 4) 
 				{
-					TSTicDmg = (olddmg * frandom(TICRATE*0.75,TICRATE));
+					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.75,TSTicDmgMult));
 					TSTicDmg *= frandom(1.5,2.5);
 				}
+				if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (start vs olddmg): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.083334,0.125);
 				if (CountInv(np)) TSTicDmg *= frandom(0.010421875,0.015625);
@@ -2765,10 +2768,7 @@ class KCPlayerPawn : PlayerPawn
 					double tsaeffectiveness = (1.0 / kc_tsaeffectiveness);
 					TSTicDmg *= kc_tsadmgfactor;
 					TSTicDmg *= (1.0 / kc_tsaeffectiveness);
-					if (TSTicDmg < (1 * kc_tsadmgfactor * tsaeffectiveness)) TSTicDmg = (1 * kc_tsadmgfactor * tsaeffectiveness);
-					if (TSTicDmg > (10000 * kc_tsadmgfactor * tsaeffectiveness)) TSTicDmg = (10000 * kc_tsadmgfactor * tsaeffectiveness);
 				}
-				
 				
 				if (mod == 'Drowning' && 
 						!A_CheckInvuln() &&
@@ -2858,7 +2858,7 @@ class KCPlayerPawn : PlayerPawn
 							}
 							if (CountInv(no)) A_SetInventory(no,0);
 						}
-						if (kcdebug_playerdamagemobj && TSTicDmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg: %.8f", TSTicDmg);
+						if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (final vs olddmg): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
 					}
 				}
 				else
@@ -2872,8 +2872,10 @@ class KCPlayerPawn : PlayerPawn
 					A_StopSound(544);
 					A_StartSound("tsarmor/elemabsb",554,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					A_StartSound(abssound,544,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
+					
 					if (CountInv(nn)) 
 					{
+						double absorbboost = (frandompick(1.0,1.25) * 1.75);
 						A_StopSound(553);
 						A_StopSound(543);
 						A_StopSound(552);
@@ -2882,32 +2884,33 @@ class KCPlayerPawn : PlayerPawn
 						A_StartSound(abssound,543,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.3334,1.667));
 						A_StartSound("tsarmor/elemabsb",552,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
 						A_StartSound(abssound,542,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.1667,1.5));
-						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+						MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 						if (random(1,2) <= 1)
 						{
-							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+							MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 							if (random(1,3) <= 1)
 							{
-								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+								MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 								if (random(1,4) <= 1)
 								{
-									MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(1.0,1.25));
+									MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 								}
 							}
 						}
 					}
 					else
 					{
-						MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+						double absorbboost = (frandompick(0.2,0.25) * 1.75);
+						MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 						if (random(1,2) <= 1)
 						{
-							MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+							MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 							if (random(1,3) <= 1)
 							{
-								MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+								MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 								if (random(1,4) <= 1)
 								{
-									MiscItem.TimeArmorEnergyTics += (TSTicDmg * frandompick(0.2,0.25));
+									MiscItem.TimeArmorEnergyTics += (TSTicDmg * absorbboost);
 								}
 							}
 						}
@@ -2919,12 +2922,10 @@ class KCPlayerPawn : PlayerPawn
 					{
 						TSTicDmg *= kc_tsaeabfactor;
 						TSTicDmg *= kc_tsaeffectiveness;
-						if (TSTicDmg < 1) TSTicDmg = 1;
-						if (TSTicDmg > 10000) TSTicDmg = 10000;
 					}
 				}
 				TSADmgFinal = TSTicDmg;
-				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f");
+				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f", TSADmgFinal);
 				
 				// TSA Post-Pro
 				if (TSADmgFinal > 0)
@@ -4265,7 +4266,12 @@ class KCPlayerPawn : PlayerPawn
 					}
 					else
 					{
-						if (health > 0) A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,(frandom(0.5,0.75) * kc_playernodmgvol),ATTN_NORM);
+						if (health > 0) 
+						{
+							double nodmgvol = (frandom(0.5,0.75) * kc_playernodmgvol);
+							if ((playtooktsadamage || playabsorbtsadamage)) nodmgvol *= frandom(0.25,0.33);
+							A_StartSound("Player/TookNoDamage",199,CHANF_DEFAULT,nodmgvol,ATTN_NORM);
+						}
 						combatlogmsg.AppendFormat("\c[white]No Damage \c-");
 					}
 					if (kcdebug_dmgdiffdebug)

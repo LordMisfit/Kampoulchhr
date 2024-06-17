@@ -5276,6 +5276,7 @@ class KC_EventHandler : EventHandler
 												 (MiscItem.totalcompleted * allkillsfactorkmsp) + 
 												 (MiscItem.totalcompleted * allsecretsfactorkmsp) + 
 												 (MiscItem.totalcompleted * allitemsfactorkmsp));
+						luckbase *= (1.00 + (MiscItem.sielsgraceactivations * frandom(2.25,3.75)));
 						luckbase *= kc_luckfactor;
 						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
