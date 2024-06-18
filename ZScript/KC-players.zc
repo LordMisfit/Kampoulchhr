@@ -1825,10 +1825,6 @@ class KCPlayerPawn : PlayerPawn
 						if (PlayerWeapon is "FistMarine") weaponsinkfactor *= 1.0;
 						if (PlayerWeapon is "FistHeiwa" || 
 								PlayerWeapon is "KnifeHeiwa") weaponsinkfactor *= 1.0;
-						else
-						{
-							weaponsinkfactor *= 1.875;
-						}
 						weaponsinkfactor *= kc_weaponencumbrance;
 						weaponsinkfactor += 1.00;
 						if (kcdebug_playermove) Console.Printf("\c[sapphire]weaponsinkfactor: %.8f, sinkspeed: %.8f [tic: %d]", weaponsinkfactor, sinkspeed, gametic);

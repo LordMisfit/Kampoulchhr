@@ -2549,8 +2549,13 @@ class KCArmor : BasicArmor
 					if (weapon is "FistHeiwa" &&
 							PlayPawn.CountInv("FistPlayerBlockItem"))
 					{
-						savebase = frandompick(0.225,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.275);
-						if (savebase >= 0.275) savebase = 0.275;
+						savebase = frandompick(0.2,0.225,0.225,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.275,0.275,0.3);
+						
+						if (MiscItem.TruePlayerLevel >= 120) savebase *= 2.0;
+						else if (MiscItem.TruePlayerLevel >= 90) savebase *= 1.75;
+						else if (MiscItem.TruePlayerLevel >= 60) savebase *= 1.5;
+						else if (MiscItem.TruePlayerLevel >= 30) savebase *= 1.25;
+						if (savebase >= 0.6) savebase = 0.6;
 					}
 				}
 				saved *= (1.0 - savebase);

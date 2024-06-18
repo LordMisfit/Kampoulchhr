@@ -1670,10 +1670,18 @@ class PlayerStatItem : Inventory
 							{
 								if (weapon is "FistHeiwa")
 								{
-									if (owner.CountInv("FistPlayerBlock")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.25); 
-									if (owner.CountInv("FistPlayerBlock2")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 1.5);
-									if (owner.CountInv("FistPlayerBlock3")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 2.0); 
-									if (owner.CountInv("FistPlayerBlock4")) inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * 3.0); 
+									double fistboost = 1.00;
+									if (owner.CountInv("FistPlayerBlock")) fistboost = 1.25;
+									if (owner.CountInv("FistPlayerBlock2")) fistboost = 1.5;
+									if (owner.CountInv("FistPlayerBlock3")) fistboost = 2.0;
+									if (owner.CountInv("FistPlayerBlock4")) fistboost = 3.0;
+									
+									if (TruePlayerLevel >= 120) fistboost *= 1.5;
+									else if (TruePlayerLevel >= 90) fistboost *= 1.375;
+									else if (TruePlayerLevel >= 60) fistboost *= 1.25;
+									else if (TruePlayerLevel >= 30) fistboost *= 1.125;
+									
+									inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * fistboost);
 								}
 								else
 								{
@@ -1887,10 +1895,18 @@ class PlayerStatItem : Inventory
 							{
 								if (weapon is "FistHeiwa")
 								{
-									if (owner.CountInv("FistPlayerBlock")) inc = ceil(inc * (frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556)) * 0.8);
-									if (owner.CountInv("FistPlayerBlock2")) inc = ceil(inc * (frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556)) * 0.6666666666666667); 
-									if (owner.CountInv("FistPlayerBlock3")) inc = ceil(inc * (frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556)) * 0.5); 
-									if (owner.CountInv("FistPlayerBlock4")) inc = ceil(inc * (frandompick[statitem](0.8334,0.7693,0.7693,0.7143,0.7143,0.7143,0.6667,0.6667,0.6667,0.6667,0.625,0.625,0.625,0.5882,0.5882,0.5556)) * 0.3333333333333334); 
+									double fistboost = 1.00;
+									if (owner.CountInv("FistPlayerBlock")) fistboost = (1.0 / 1.25);
+									if (owner.CountInv("FistPlayerBlock2")) fistboost = (1.0 / 1.5);
+									if (owner.CountInv("FistPlayerBlock3")) fistboost = (1.0 / 2.0);
+									if (owner.CountInv("FistPlayerBlock4")) fistboost = (1.0 / 3.0);
+									
+									if (TruePlayerLevel >= 120) fistboost *= (1.0 / 1.5);
+									else if (TruePlayerLevel >= 90) fistboost *= (1.0 / 1.375);
+									else if (TruePlayerLevel >= 60) fistboost *= (1.0 / 1.25);
+									else if (TruePlayerLevel >= 30) fistboost *= (1.0 / 1.125);
+									
+									inc = ceil(inc * (frandompick[statitem](1.2,1.3,1.3,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.8)) * fistboost);
 								}
 								else
 								{
@@ -2959,19 +2975,28 @@ class PlayerStatItem : Inventory
 					 weapon is "FistHeiwa") && 
 					owner.CountInv("FistPlayerBlockItem"))
 			{
+				double fistboost = 1.00;
 				if (weapon is "FistMarine")
 				{
-					if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 2;
-					if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 2.667;
-					if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 4;
-					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 7.5;
+					if (Owner.CountInv("FistPlayerBlock"))  fistboost *= 2;
+					if (Owner.CountInv("FistPlayerBlock2")) fistboost *= 2.667;
+					if (Owner.CountInv("FistPlayerBlock3")) fistboost *= 4;
+					if (Owner.CountInv("FistPlayerBlock4")) fistboost *= 7.5;
+					
+					TotalMass *= fistboost;
 				}
 				else if (weapon is "FistHeiwa")
 				{
-					if (Owner.CountInv("FistPlayerBlock"))  TotalMass *= 5;
-					if (Owner.CountInv("FistPlayerBlock2")) TotalMass *= 6.667;
-					if (Owner.CountInv("FistPlayerBlock3")) TotalMass *= 10;
-					if (Owner.CountInv("FistPlayerBlock4")) TotalMass *= 17.5;
+					if (Owner.CountInv("FistPlayerBlock"))  fistboost *= 5;
+					if (Owner.CountInv("FistPlayerBlock2")) fistboost *= 6.667;
+					if (Owner.CountInv("FistPlayerBlock3")) fistboost *= 10;
+					if (Owner.CountInv("FistPlayerBlock4")) fistboost *= 17.5;
+					
+					if (TruePlayerLevel >= 120) fistboost *= 1.5;
+					else if (TruePlayerLevel >= 90) fistboost *= 1.375;
+					else if (TruePlayerLevel >= 60) fistboost *= 1.25;
+					else if (TruePlayerLevel >= 30) fistboost *= 1.125;
+					TotalMass *= fistboost;
 				}
 			}
 			// Fist Blocks
@@ -8727,8 +8752,20 @@ class PlayerDashJump : Inventory
 		if (weapon is "FistHeiwa" &&
 				owner.CountInv("FistPlayerBlockItem")) 
 		{
-			if (berserked) DashSpdMul *= frandom(0.9375,1.0);
-								else DashSpdMul *= frandom(0.46875,0.53125);
+			double fistboost = 1.0;
+			if (berserked) fistboost = frandom(0.9375,1.0);
+								else fistboost = frandom(0.46875,0.53125);
+
+			double fistboostext = (1.0 - fistboost);
+			if (TruePlayerLevel >= 120) fistboostext *= 1.0;
+			else if (TruePlayerLevel >= 90) fistboostext *= 0.75;
+			else if (TruePlayerLevel >= 60) fistboostext *= 0.5;
+			else if (TruePlayerLevel >= 30) fistboostext *= 0.25;
+			else fistboostext *= 0.0;
+			fistboost += fistboostext;
+			if (fistboost > 1.000) fistboost = 1.000;
+			
+			DashSpdMul *= fistboost;
 		}
 
 		DashSpeed *= DashSpdMul;
@@ -8809,73 +8846,58 @@ class PlayerDashJump : Inventory
 				weapon is "FistHeiwa" ||
 				weapon is "KnifeHeiwa")
 		{
-			if (kc_expgains)
+			if (weapon is "FistHeiwa" &&
+					!owner.CountInv("FistPlayerBlockItem")) 
 			{
-				if (berserked) 
+				if (kc_expgains)
 				{
-					DashCost -= 4;
-					MaxDashCooldown -= randompick[statitem](1,1,2);
-					if (weapon is "FistHeiwa" ||
-							weapon is "KnifeHeiwa") 
+					if (berserked) 
 					{
-						DashCost -= 5;
-						MaxDashCooldown -= randompick[statitem](2,2,3);
+						DashCost -= 4;
+						MaxDashCooldown -= randompick[statitem](1,1,2);
+						if (weapon is "FistHeiwa" ||
+								weapon is "KnifeHeiwa") 
+						{
+							DashCost -= 5;
+							MaxDashCooldown -= randompick[statitem](2,2,3);
+						}
 					}
-				}
-				else 
-				{
-					DashCost -= 3;
-					MaxDashCooldown -= 1;
-					if (weapon is "FistHeiwa" ||
-							weapon is "KnifeHeiwa") 
+					else 
 					{
 						DashCost -= 3;
-						MaxDashCooldown -= randompick[statitem](0,1,1);
+						MaxDashCooldown -= 1;
+						if (weapon is "FistHeiwa" ||
+								weapon is "KnifeHeiwa") 
+						{
+							DashCost -= 3;
+							MaxDashCooldown -= randompick[statitem](0,1,1);
+						}
 					}
 				}
-			}
-			else
-			{
-				if (berserked) 
+				else
 				{
-					DashCost -= 7;
-					MaxDashCooldown -= randompick[statitem](2,2,3);
-					if (weapon is "FistHeiwa" ||
-							weapon is "KnifeHeiwa") 
+					if (berserked) 
 					{
-						DashCost -= 8;
-						MaxDashCooldown -= randompick[statitem](3,4,5);
+						DashCost -= 7;
+						MaxDashCooldown -= randompick[statitem](2,2,3);
+						if (weapon is "FistHeiwa" ||
+								weapon is "KnifeHeiwa") 
+						{
+							DashCost -= 8;
+							MaxDashCooldown -= randompick[statitem](3,4,5);
+						}
 					}
-				}
-				else 
-				{
-					DashCost -= 5;
-					MaxDashCooldown -= randompick[statitem](1,2,2);
-					if (weapon is "FistHeiwa" ||
-							weapon is "KnifeHeiwa") 
+					else 
 					{
 						DashCost -= 5;
-						MaxDashCooldown -= randompick[statitem](1,2,3);
+						MaxDashCooldown -= randompick[statitem](1,2,2);
+						if (weapon is "FistHeiwa" ||
+								weapon is "KnifeHeiwa") 
+						{
+							DashCost -= 5;
+							MaxDashCooldown -= randompick[statitem](1,2,3);
+						}
 					}
-				}
-			}
-		}
-		else
-		{
-			if (kc_expgains)
-			{
-				if (berserked) 
-				{
-					DashCost -= 2;
-					MaxDashCooldown -= randompick[statitem](0,0,1);
-				}
-			}
-			else
-			{
-				if (berserked) 
-				{
-					DashCost -= 4;
-					MaxDashCooldown -= randompick[statitem](1,2,3);
 				}
 			}
 		}
@@ -9576,6 +9598,10 @@ class PlayerDashJump : Inventory
 						{
 							DashDmg += (random[statitem](4,6) + ((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(1.25,1.6667));
 							DashDmg *= random[statitem](1,3);
+							if (TruePlayerLevel >= 120) DashDmg *= 1.5;
+							else if (TruePlayerLevel >= 90) DashDmg *= 1.375;
+							else if (TruePlayerLevel >= 60) DashDmg *= 1.25;
+							else if (TruePlayerLevel >= 30) DashDmg *= 1.125;
 						}
 						if (weapon is "FistMarine") 
 						{
@@ -9591,7 +9617,14 @@ class PlayerDashJump : Inventory
 							weapon is "FistMarine") &&
 							owner.CountInv("FistPlayerBlockItem"))
 					{
-						if (weapon is "FistHeiwa") DashRad += (owner.radius * 1.375) + frandom[statitem](-0.15,0.15);
+						if (weapon is "FistHeiwa") 
+						{
+							DashRad += (owner.radius * 1.375) + frandom[statitem](-0.15,0.15);
+							if (TruePlayerLevel >= 120) DashRad *= 1.25;
+							else if (TruePlayerLevel >= 90) DashRad *= 1.1875;
+							else if (TruePlayerLevel >= 60) DashRad *= 1.125;
+							else if (TruePlayerLevel >= 30) DashRad *= 1.0625;
+						}
 						if (weapon is "FistMarine") DashRad += (owner.radius * 1.125) + frandom[statitem](-0.05,0.05);
 					}
 					if (owner.waterlevel == 1) DashRad *= 1.25;
@@ -9629,7 +9662,12 @@ class PlayerDashJump : Inventory
 					if (weapon is "FistHeiwa" &&
 							owner.CountInv("FistPlayerBlockItem"))
 					{
-						if (random[statitem](1,16) <= 15)
+						int chance = 60;
+						if (TruePlayerLevel >= 120) chance = 64;
+						else if (TruePlayerLevel >= 90) chance = 63;
+						else if (TruePlayerLevel >= 60) chance = 62;
+						else if (TruePlayerLevel >= 30) chance = 61;
+						if (random[statitem](1,64) <= chance)
 						{
 							shtackle = true;
 						}
@@ -9640,7 +9678,13 @@ class PlayerDashJump : Inventory
 					if (weapon is "FistHeiwa" &&
 							owner.CountInv("FistPlayerBlockItem"))
 					{
-						if (random[statitem](1,64) <= random[statitem](48,54))
+						int chance = random[statitem](192,216);
+						if (TruePlayerLevel >= 120) chance = random[statitem](224,248);
+						else if (TruePlayerLevel >= 90) chance = random[statitem](216,240);
+						else if (TruePlayerLevel >= 60) chance = random[statitem](208,232);
+						else if (TruePlayerLevel >= 30) chance = random[statitem](200,224);
+
+						if (random[statitem](1,256) <= chance)
 						{
 							shtackle = true;
 						}
@@ -9658,6 +9702,10 @@ class PlayerDashJump : Inventory
 					{
 						DashDmg += (random[statitem](2,3) + ((TruePlayerATK * 1.25) + (TruePlayerSPD * 0.3125) + (ActualLevel * 0.625)) * frandom(0.125,0.16675));
 						DashDmg *= random[statitem](1,3);
+						if (TruePlayerLevel >= 120) DashDmg *= 1.5;
+						else if (TruePlayerLevel >= 90) DashDmg *= 1.375;
+						else if (TruePlayerLevel >= 60) DashDmg *= 1.25;
+						else if (TruePlayerLevel >= 30) DashDmg *= 1.125;
 					}
 					if (weapon is "FistMarine") 
 					{
@@ -9668,7 +9716,20 @@ class PlayerDashJump : Inventory
 					if (owner.waterlevel == 2) DashDmg *= 1.125;
 					if (owner.waterlevel >= 3) DashDmg *= 1.1875;
 					DashRad = (owner.radius * 1.3125) + frandom[statitem](-0.375,0.375);
-					DashRad += (owner.radius * 1.1875) + frandom[statitem](-0.075,0.075);
+					if ((weapon is "FistHeiwa" || 
+							weapon is "FistMarine") &&
+							owner.CountInv("FistPlayerBlockItem"))
+					{
+						if (weapon is "FistHeiwa") 
+						{
+							DashRad += (owner.radius * 1.09375) + frandom[statitem](-0.0375,0.0375);
+							if (TruePlayerLevel >= 120) DashRad *= 1.25;
+							else if (TruePlayerLevel >= 90) DashRad *= 1.1875;
+							else if (TruePlayerLevel >= 60) DashRad *= 1.125;
+							else if (TruePlayerLevel >= 30) DashRad *= 1.0625;
+						}
+						if (weapon is "FistMarine") DashRad += (owner.radius * 1.03125) + frandom[statitem](-0.0125,0.0125);
+					}
 					if (owner.waterlevel == 1) DashRad *= 1.125;
 					if (owner.waterlevel == 2) DashRad *= 1.25;
 					if (owner.waterlevel >= 3) DashRad *= 1.375;
