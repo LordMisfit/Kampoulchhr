@@ -369,7 +369,17 @@ class CompatVulnItem : PlaceholderItem
 				}
 			}
 			
+			if (mod == 'Translocator') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
+			
+			if (PhobosAir(inflictor) || PhobosAir(source))
+			{
+				string nm = "CCards_Actor_Ghost"; 
+				if (owner.CountInv(nm))
+				{
+					ActorDefenseIgnoreFactor += ((random(30,32) * 0.03125) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+			}
 			
 			if (surprisehit) 
 			{
@@ -559,7 +569,7 @@ class CompatVulnItem : PlaceholderItem
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
 				
-				string nm = "CCards_Actor_StoneDeath";
+				nm = "CCards_Actor_StoneDeath";
 				string nn = "CCards_Actor_MysteryEgg";
 				if (source && 
 						prevtarget != source && 
@@ -590,9 +600,9 @@ class CompatVulnItem : PlaceholderItem
 								inflictor.GetClassName() == "ImpalerMissile2" ||
 								inflictor.GetClassName() == "ImpalerMissile3"))
 						{
-							damage *= frandompick(2.0000,2.50);
+							newdamage *= frandompick(2.0000,2.50);
 						}
-						else damage *= frandompick(1.3334,1.50);
+						else newdamage *= frandompick(1.3334,1.50);
 					}
 					else
 					{
@@ -604,12 +614,23 @@ class CompatVulnItem : PlaceholderItem
 								inflictor.GetClassName() == "ImpalerMissile2" ||
 								inflictor.GetClassName() == "ImpalerMissile3"))
 						{
-							damage *= frandompick(1.5000,1.75);
+							newdamage *= frandompick(1.5000,1.75);
 						}
-						else damage *= frandompick(1.1667,1.25);
+						else newdamage *= frandompick(1.1667,1.25);
 					}
 					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), newdamage, initdmg);
 				}
+				
+				string nm = "CCards_Actor_Ghost"; 
+				if (owner.CountInv(nm)) 
+				{
+					if ((inflictor && PhobosAir(inflictor)) ||
+							(source && PhobosAir(source)))
+					{
+						damage *= randompick(24,32,32,36,36,36,40,40,48);
+					}
+				}
+				
 				//
 				bool criticalhit = false;
 				int CritRoll;

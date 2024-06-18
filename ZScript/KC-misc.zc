@@ -7313,6 +7313,17 @@ class PlayerStatItem : Inventory
 		basedeffct *= kc_pdeffactor;
 		if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
 		{
+			bool dmgflrtype = false;
+			if ((damageType == 'Slime' || 
+					damageType == 'Lava' || 
+					damageType == 'Magma' || 
+					(playeractor && playeractor.tookflrdmg) || 
+					damageType == 'Drowning' || 
+					damageType == 'Falling'))
+			{
+				dmgflrtype = true;
+			}
+			
 			double tempdeffactor = basedeffct;
 			
 			// Level
@@ -7350,12 +7361,7 @@ class PlayerStatItem : Inventory
 				if (Owner.CountInv("EWShieldDefendMode")) temp2 = ((0.433 + (HellWarriorShieldLevel * 0.0433)) + (HellWarriorShieldLevel * 0.005));
 				if (Owner.CountInv("EWShieldDefendModeExtra")) temp3 = ((0.4866 + (HellWarriorShieldLevel * 0.04866)) + (HellWarriorShieldLevel * 0.001));
 				
-				if ((damageType == 'Slime' || 
-						 damageType == 'Lava' || 
-						 damageType == 'Magma' || 
-						(playeractor && playeractor.tookflrdmg) || 
-						 damageType == 'Drowning' || 
-						 damageType == 'Falling'))
+				if (dmgflrtype)
 				{
 					double rand = (random[statitem](0,5) * 0.05);
 					if (berserked) rand = (random[statitem](2,5) * 0.05);
@@ -7384,210 +7390,224 @@ class PlayerStatItem : Inventory
 			BerserkFactorblock = frandompick[statitem2](0.25,0.334,0.334,0.334,0.5,0.5,0.5,0.5,0.5,0.5,0.667,0.667,0.667,0.75);
 			double BaseBlockFactor1 = 0.5;
 			double BaseBlockFactor2 = 0.5;
-			if (Owner.CountInv("FistPlayerBlock")) 
+			if (!dmgflrtype)
 			{
-				UsingFistBlock++;
-				if (UsingFistBlock) 
+				if (Owner.CountInv("FistPlayerBlock")) 
+				{
+					UsingFistBlock++;
+					if (UsingFistBlock) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseBlockFactor1 = 0.25;
+							BaseBlockFactor2 = 0.25;
+						}
+						else
+						{
+							BaseBlockFactor1 = 0.5;
+							BaseBlockFactor2 = 0.5;
+						}
+						PlayerFistBlockFactor *= BaseBlockFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					}
+				}
+				if (Owner.CountInv("FistPlayerBlock2")) 
+				{
+					UsingFistBlock++;
+					if (UsingFistBlock)
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseBlockFactor1 = 0.1875;
+							BaseBlockFactor2 = 0.1875;
+						}
+						else
+						{
+							BaseBlockFactor1 = 0.375;
+							BaseBlockFactor2 = 0.375;
+						}
+						PlayerFistBlockFactor *= BaseBlockFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					}
+				}
+				if (Owner.CountInv("FistPlayerBlock3")) 
+				{
+					UsingFistBlock++;
+					if (UsingFistBlock) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseBlockFactor1 = 0.125;
+							BaseBlockFactor2 = 0.125;
+						}
+						else
+						{
+							BaseBlockFactor1 = 0.25;
+							BaseBlockFactor2 = 0.25;
+						}
+						PlayerFistBlockFactor *= BaseBlockFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					}
+				}
+				if (Owner.CountInv("FistPlayerBlock4")) 
+				{
+					UsingFistBlock++;
+					if (UsingFistBlock) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseBlockFactor1 = 0.06125;
+							BaseBlockFactor2 = 0.06125;
+						}
+						else
+						{
+							BaseBlockFactor1 = 0.125;
+							BaseBlockFactor2 = 0.125;
+						}
+						PlayerFistBlockFactor *= BaseBlockFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					}
+				}
+				if (Owner.CountInv("FistPlayerBlockExtra") && UsingFistBlock) 
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseBlockFactor1 = 0.25;
-						BaseBlockFactor2 = 0.25;
+						BaseBlockFactor1 = 0.05;
+						BaseBlockFactor2 = 0.05;
 					}
 					else
 					{
-						BaseBlockFactor1 = 0.5;
-						BaseBlockFactor2 = 0.5;
+						BaseBlockFactor1 = 0.1;
+						BaseBlockFactor2 = 0.1;
 					}
 					PlayerFistBlockFactor *= BaseBlockFactor1;
 					if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					if (Owner.CountInv("FistPlayerBlockExtra2"))
+					{
+						PlayerFistBlockFactor *= BaseBlockFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
+					}
 				}
+				if (PlayerFistBlockFactor < 1.00 && UsingFistBlock && Owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) PlayerFistBlockFactor *= BerserkFactorblock;
+				if (!UsingFistBlock) PlayerFistBlockFactor = 1.00;
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - FistBlock): %.8f", PlayerFistBlockFactor);
 			}
-			if (Owner.CountInv("FistPlayerBlock2")) 
+			else
 			{
-				UsingFistBlock++;
-				if (UsingFistBlock)
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseBlockFactor1 = 0.1875;
-						BaseBlockFactor2 = 0.1875;
-					}
-					else
-					{
-						BaseBlockFactor1 = 0.375;
-						BaseBlockFactor2 = 0.375;
-					}
-					PlayerFistBlockFactor *= BaseBlockFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
-				}
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - FistBlock): [IGNORED - dmgflrtype]");
 			}
-			if (Owner.CountInv("FistPlayerBlock3")) 
-			{
-				UsingFistBlock++;
-				if (UsingFistBlock) 
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseBlockFactor1 = 0.125;
-						BaseBlockFactor2 = 0.125;
-					}
-					else
-					{
-						BaseBlockFactor1 = 0.25;
-						BaseBlockFactor2 = 0.25;
-					}
-					PlayerFistBlockFactor *= BaseBlockFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
-				}
-			}
-			if (Owner.CountInv("FistPlayerBlock4")) 
-			{
-				UsingFistBlock++;
-				if (UsingFistBlock) 
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseBlockFactor1 = 0.06125;
-						BaseBlockFactor2 = 0.06125;
-					}
-					else
-					{
-						BaseBlockFactor1 = 0.125;
-						BaseBlockFactor2 = 0.125;
-					}
-					PlayerFistBlockFactor *= BaseBlockFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
-				}
-			}
-			if (Owner.CountInv("FistPlayerBlockExtra") && UsingFistBlock) 
-			{
-				if (A_CheckForHeiwa())
-				{
-					BaseBlockFactor1 = 0.05;
-					BaseBlockFactor2 = 0.05;
-				}
-				else
-				{
-					BaseBlockFactor1 = 0.1;
-					BaseBlockFactor2 = 0.1;
-				}
-				PlayerFistBlockFactor *= BaseBlockFactor1;
-				if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
-				if (Owner.CountInv("FistPlayerBlockExtra2"))
-				{
-					PlayerFistBlockFactor *= BaseBlockFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerFistBlockFactor *= BaseBlockFactor2;
-				}
-			}
-			if (PlayerFistBlockFactor < 1.00 && UsingFistBlock && Owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) PlayerFistBlockFactor *= BerserkFactorblock;
-			if (!UsingFistBlock) PlayerFistBlockFactor = 1.00;
-			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - FistBlock): %.8f", PlayerFistBlockFactor);
 			
 			double PlayerKnifeSwingFactor = 1.00;
 			int UsingKnifeSwing = 0;
 			BerserkFactorSwing = frandompick[statitem2](0.25,0.334,0.334,0.334,0.5,0.5,0.5,0.5,0.5,0.5,0.667,0.667,0.667,0.75);
 			double BaseSwingFactor1 = 0.5;
 			double BaseSwingFactor2 = 0.5;
-			if (Owner.CountInv("KnifePlayerSwing")) 
+			if (!dmgflrtype)
 			{
-				UsingKnifeSwing++;
-				if (UsingKnifeSwing) 
+				if (Owner.CountInv("KnifePlayerSwing")) 
+				{
+					UsingKnifeSwing++;
+					if (UsingKnifeSwing) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseSwingFactor1 = 0.25;
+							BaseSwingFactor2 = 0.25;
+						}
+						else
+						{
+							BaseSwingFactor1 = 0.5;
+							BaseSwingFactor2 = 0.5;
+						}
+						PlayerKnifeSwingFactor *= BaseSwingFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					}
+				}
+				if (Owner.CountInv("KnifePlayerSwing2")) 
+				{
+					UsingKnifeSwing++;
+					if (UsingKnifeSwing)
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseSwingFactor1 = 0.1875;
+							BaseSwingFactor2 = 0.1875;
+						}
+						else
+						{
+							BaseSwingFactor1 = 0.375;
+							BaseSwingFactor2 = 0.375;
+						}
+						PlayerKnifeSwingFactor *= BaseSwingFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					}
+				}
+				if (Owner.CountInv("KnifePlayerSwing3")) 
+				{
+					UsingKnifeSwing++;
+					if (UsingKnifeSwing) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseSwingFactor1 = 0.125;
+							BaseSwingFactor2 = 0.125;
+						}
+						else
+						{
+							BaseSwingFactor1 = 0.25;
+							BaseSwingFactor2 = 0.25;
+						}
+						PlayerKnifeSwingFactor *= BaseSwingFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					}
+				}
+				if (Owner.CountInv("KnifePlayerSwing4")) 
+				{
+					UsingKnifeSwing++;
+					if (UsingKnifeSwing) 
+					{
+						if (A_CheckForHeiwa())
+						{
+							BaseSwingFactor1 = 0.06125;
+							BaseSwingFactor2 = 0.06125;
+						}
+						else
+						{
+							BaseSwingFactor1 = 0.125;
+							BaseSwingFactor2 = 0.125;
+						}
+						PlayerKnifeSwingFactor *= BaseSwingFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					}
+				}
+				if (Owner.CountInv("KnifePlayerSwingExtra") && UsingKnifeSwing) 
 				{
 					if (A_CheckForHeiwa())
 					{
-						BaseSwingFactor1 = 0.25;
-						BaseSwingFactor2 = 0.25;
+						BaseSwingFactor1 = 0.05;
+						BaseSwingFactor2 = 0.05;
 					}
 					else
 					{
-						BaseSwingFactor1 = 0.5;
-						BaseSwingFactor2 = 0.5;
+						BaseSwingFactor1 = 0.1;
+						BaseSwingFactor2 = 0.1;
 					}
 					PlayerKnifeSwingFactor *= BaseSwingFactor1;
 					if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					if (Owner.CountInv("KnifePlayerSwing2"))
+					{
+						PlayerKnifeSwingFactor *= BaseSwingFactor1;
+						if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
+					}
 				}
+				if (PlayerKnifeSwingFactor < 1.00 && UsingKnifeSwing && Owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) PlayerKnifeSwingFactor *= BerserkFactorSwing;
+				if (!UsingKnifeSwing) PlayerKnifeSwingFactor = 1.00;
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - KnifeSwing): %.8f", PlayerKnifeSwingFactor);
 			}
-			if (Owner.CountInv("KnifePlayerSwing2")) 
+			else
 			{
-				UsingKnifeSwing++;
-				if (UsingKnifeSwing)
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseSwingFactor1 = 0.1875;
-						BaseSwingFactor2 = 0.1875;
-					}
-					else
-					{
-						BaseSwingFactor1 = 0.375;
-						BaseSwingFactor2 = 0.375;
-					}
-					PlayerKnifeSwingFactor *= BaseSwingFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
-				}
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - KnifeSwing): [IGNORED - dmgflrtype]");
 			}
-			if (Owner.CountInv("KnifePlayerSwing3")) 
-			{
-				UsingKnifeSwing++;
-				if (UsingKnifeSwing) 
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseSwingFactor1 = 0.125;
-						BaseSwingFactor2 = 0.125;
-					}
-					else
-					{
-						BaseSwingFactor1 = 0.25;
-						BaseSwingFactor2 = 0.25;
-					}
-					PlayerKnifeSwingFactor *= BaseSwingFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
-				}
-			}
-			if (Owner.CountInv("KnifePlayerSwing4")) 
-			{
-				UsingKnifeSwing++;
-				if (UsingKnifeSwing) 
-				{
-					if (A_CheckForHeiwa())
-					{
-						BaseSwingFactor1 = 0.06125;
-						BaseSwingFactor2 = 0.06125;
-					}
-					else
-					{
-						BaseSwingFactor1 = 0.125;
-						BaseSwingFactor2 = 0.125;
-					}
-					PlayerKnifeSwingFactor *= BaseSwingFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
-				}
-			}
-			if (Owner.CountInv("KnifePlayerSwingExtra") && UsingKnifeSwing) 
-			{
-				if (A_CheckForHeiwa())
-				{
-					BaseSwingFactor1 = 0.05;
-					BaseSwingFactor2 = 0.05;
-				}
-				else
-				{
-					BaseSwingFactor1 = 0.1;
-					BaseSwingFactor2 = 0.1;
-				}
-				PlayerKnifeSwingFactor *= BaseSwingFactor1;
-				if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
-				if (Owner.CountInv("KnifePlayerSwing2"))
-				{
-					PlayerKnifeSwingFactor *= BaseSwingFactor1;
-					if (CheckMeleeDamageTypes(damageType)) PlayerKnifeSwingFactor *= BaseSwingFactor2;
-				}
-			}
-			if (PlayerKnifeSwingFactor < 1.00 && UsingKnifeSwing && Owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) PlayerKnifeSwingFactor *= BerserkFactorSwing;
-			if (!UsingKnifeSwing) PlayerKnifeSwingFactor = 1.00;
-			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - KnifeSwind): %.8f", PlayerKnifeSwingFactor);
 			
 			// Translocatior
 			double TranslocatorFactor = 1.00;
@@ -7599,54 +7619,61 @@ class PlayerStatItem : Inventory
 			
 			// Weapons
 			double WeaponFactor = 1.00;
-			if (weapon is "FistMarine" ||
-					weapon is "FistHeiwa")
+			if (!dmgflrtype)
 			{
-				if (!UsingFistBlock)
+				if (weapon is "FistMarine" ||
+						weapon is "FistHeiwa")
+				{
+					if (!UsingFistBlock)
+					{
+						if (berserked) WeaponFactor = 1.125;
+											else WeaponFactor = 1.25;
+					}
+					else
+					{
+						if (weapon is "FistHeiwa")
+						{
+							if (berserked) WeaponFactor = 0.125;
+												else WeaponFactor = 0.5;
+						}
+						else
+						{
+							if (berserked) WeaponFactor = 0.625;
+												else WeaponFactor = 0.75;
+						}
+					}
+				}
+				if (weapon is "KnifeHeiwa")
 				{
 					if (berserked) WeaponFactor = 1.125;
 										else WeaponFactor = 1.25;
 				}
-				else
+				nm = "ImpalerXBow"; if (weapon is nm) 
 				{
-					if (weapon is "FistHeiwa")
-					{
-						if (berserked) WeaponFactor = 0.125;
-											else WeaponFactor = 0.5;
-					}
-					else
-					{
-						if (berserked) WeaponFactor = 0.625;
-											else WeaponFactor = 0.75;
-					}
+					double temp = (0.875 - (TruePlayerLevel * 0.005));
+					if (temp < 0.625) temp = 0.625;
+					WeaponFactor = temp;
 				}
+				nm = "DualImpalerXBow"; if (weapon is nm) 
+				{
+					double temp = (0.75 - (TruePlayerLevel * 0.01));
+					if (temp < 0.25) temp = 0.25;
+					WeaponFactor = temp;
+				}
+				nm = "ScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.125;
+				nm = "DualScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.25;
+				
+				nm = "PopcornGunNew"; if (weapon is nm) WeaponFactor = 0.9375;
+				nm = "GoreBalloonNew"; if (weapon is nm) WeaponFactor = 1.25;
+				nm = "ClownGrenadeNew"; if (weapon is nm) WeaponFactor = 1.125;
+				nm = "GutFlingerNew"; if (weapon is nm) WeaponFactor = 0.96875;
+				nm = "GasRocketLauncherNew"; if (weapon is nm) WeaponFactor = 0.875;
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - WeaponEquipped): %.8f", WeaponFactor);
 			}
-			if (weapon is "KnifeHeiwa")
+			else
 			{
-				if (berserked) WeaponFactor = 1.125;
-									else WeaponFactor = 1.25;
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - WeaponEquipped): [IGNORED - dmgflrtype]");
 			}
-			nm = "ImpalerXBow"; if (weapon is nm) 
-			{
-				double temp = (0.875 - (TruePlayerLevel * 0.005));
-				if (temp < 0.625) temp = 0.625;
-				WeaponFactor = temp;
-			}
-			nm = "DualImpalerXBow"; if (weapon is nm) 
-			{
-				double temp = (0.75 - (TruePlayerLevel * 0.01));
-				if (temp < 0.25) temp = 0.25;
-				WeaponFactor = temp;
-			}
-			nm = "ScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.125;
-			nm = "DualScepterOfSouls"; if (weapon is nm) WeaponFactor = 1.25;
-			
-			nm = "PopcornGunNew"; if (weapon is nm) WeaponFactor = 0.9375;
-			nm = "GoreBalloonNew"; if (weapon is nm) WeaponFactor = 1.25;
-			nm = "ClownGrenadeNew"; if (weapon is nm) WeaponFactor = 1.125;
-			nm = "GutFlingerNew"; if (weapon is nm) WeaponFactor = 0.96875;
-			nm = "GasRocketLauncherNew"; if (weapon is nm) WeaponFactor = 0.875;
-			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - WeaponEquipped): %.8f", WeaponFactor);
 
 			// Difficulty Level
 			double SkillFactor = 1.00;

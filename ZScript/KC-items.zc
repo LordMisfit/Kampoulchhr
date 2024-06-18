@@ -2492,6 +2492,8 @@ class KCArmor : BasicArmor
 		
 		KCPlayerPawn PlayPawn;
 		PlayPawn = KCPlayerPawn(owner);
+		actor weapon = PlayPawn.player.ReadyWeapon;
+		
 		if (PlayPawn)
 		{
 			SavePercent *= (1.0 - PlayPawn.PlayerArmorIgnoreFactor);
@@ -2544,10 +2546,15 @@ class KCArmor : BasicArmor
 				savebase = 0.00;
 				if (MiscItem)
 				{
-					if (savebase >= 0.75) savebase = 0.75;
+					if (weapon is "FistHeiwa" &&
+							PlayPawn.CountInv("FistPlayerBlockItem"))
+					{
+						savebase = frandompick(0.225,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.275);
+						if (savebase >= 0.275) savebase = 0.275;
+					}
 				}
 				saved *= (1.0 - savebase);
-				//if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Wine]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Misc]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
 			
 			if (Amount < saved)

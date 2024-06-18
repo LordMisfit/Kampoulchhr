@@ -105,8 +105,35 @@ class KC_EventHandler : EventHandler
 			string nm, nn, no, np, nq, nr, ns, nt;
 			ThinkerIterator it;
 			
+			
 			if (A_CheckKCTimeFreeze())
 			{
+				/*
+				nm = "CCards_Actor_Cannibalism";
+				ns = "KC_CCards_Actor_EatenCorpses";
+				nt = "CCards_Actor_EatenCorpses";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm)) 
+					{
+						Console.Printf("\c[HeiwaDeluge](%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d])", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
+						if (mo.CountInv(nt) < 4)
+						{
+							if (mo.CountInv(ns) == 0)
+							{
+								mo.SetInventory(ns,mo.CountInv(nt));
+								mo.SetInventory(nt,4);
+							}
+						}
+						Console.Printf("\c[HeiwaDeluge]{{%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d]}}", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
+					}
+				}
+				*/
+				
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -176,6 +203,29 @@ class KC_EventHandler : EventHandler
 			}
 			else
 			{
+				/*
+				nm = "CCards_Actor_Cannibalism";
+				ns = "KC_CCards_Actor_EatenCorpses";
+				nt = "CCards_Actor_EatenCorpses";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm)) 
+					{
+						Console.Printf("\c[HeiwaChamosis](%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d])", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
+						if (mo.CountInv(ns) < 4)
+						{
+							mo.SetInventory(nt,mo.CountInv(ns));
+							mo.SetInventory(ns,0);
+						}
+						Console.Printf("\c[HeiwaChamosis]{{%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d]}}", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
+					}
+				}
+				*/
+				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -2115,6 +2165,10 @@ class KC_EventHandler : EventHandler
 			if (A_CheckKCTimeFreeze())
 			{
 				nm = "CCards_Actor_Shockwave"; 
+				{
+					if (spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+				}
+				nm = "CCards_Actor_Cannibalism"; 
 				{
 					if (spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
 				}

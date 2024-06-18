@@ -2863,6 +2863,11 @@ class KCPlayerPawn : PlayerPawn
 				}
 				else
 				{
+					if (TSTicDmg) 
+					{
+						TSTicDmg *= kc_tsaeabfactor;
+						TSTicDmg *= kc_tsaeffectiveness;
+					}
 					string abssound = "";
 					if (temperateshield == 1) abssound = "tsarmor/fireabsb";
 					if (temperateshield == 2) abssound = "tsarmor/iceabsb";
@@ -2918,11 +2923,6 @@ class KCPlayerPawn : PlayerPawn
 					if (MiscItem.TimeArmorEnergyTics >= MiscItem.TimeArmorEnergyMaxTics) MiscItem.TimeArmorEnergyTics = MiscItem.TimeArmorEnergyMaxTics;
 					if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- [Attack is pure temperate: no damage dealt at all] TSTicAdd: %.8f", TSTicDmg);
 					TSTicDmg *= -1;
-					if (TSTicDmg) 
-					{
-						TSTicDmg *= kc_tsaeabfactor;
-						TSTicDmg *= kc_tsaeffectiveness;
-					}
 				}
 				TSADmgFinal = TSTicDmg;
 				if (kcdebug_playerdamagemobj) Console.Printf("TSADmgFinal: %.8f", TSADmgFinal);
@@ -2978,7 +2978,8 @@ class KCPlayerPawn : PlayerPawn
 			if (mod == 'DashingBG') PlayerDefenseIgnoreFactor += (0.375 * (1.00 - PlayerDefenseIgnoreFactor));
 			if (mod == 'DashingSD') PlayerDefenseIgnoreFactor += (0.375 * (1.00 - PlayerDefenseIgnoreFactor));
 
-			if (inflictor == null && source == null)
+			if (inflictor == null && 
+					source == null)
 			{
 			}
 			else

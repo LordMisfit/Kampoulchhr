@@ -1683,6 +1683,15 @@ mixin class MonsterCollider
 			if (mod == 'Translocator') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			
+			if (PhobosAir(inflictor) || PhobosAir(source))
+			{
+				string nm = "CCards_Actor_Ghost"; 
+				if (CountInv(nm))
+				{
+					ActorDefenseIgnoreFactor += ((random(30,32) * 0.03125) * (1.00 - ActorDefenseIgnoreFactor));
+				}
+			}
+
 			if (surprisehit) 
 			{
 				nm = "SonicNail";
@@ -2076,6 +2085,16 @@ mixin class MonsterCollider
 				bCANPUSHWALLS == false &&
 				bSHOOTABLE == false) isCCardsGhost = true;
 		
+		nm = "CCards_Actor_Ghost"; 
+		if (CountInv(nm) || isCCardsGhost) 
+		{
+			if ((inflictor && PhobosAir(inflictor)) ||
+					(source && PhobosAir(source)))
+			{
+				damage *= randompick(24,32,32,36,36,36,40,40,48);
+			}
+		}
+		
 		[inflictor, source, damage, mod, flags, angle, angvstype] = CheckMonType(inflictor,source,damage,mod,flags,angle);
 		if (damage <= -1) return -1;
 
@@ -2280,13 +2299,11 @@ mixin class MonsterCollider
 		if (kcdebug_actordmgdisplays && inflictor) Console.Printf("(\c[green]%s\c-): dmginflictor: \c[brick]%p\c- (\c[red]%s\c-)", GetClassName(), inflictor, inflictor.GetClassName());
 		bool isaghost;
 		nm = "CCards_Actor_Ghost"; 
+		if (CountInv(nm)) 
 		{
-			if (CountInv(nm)) 
-			{
-				A_SetInventory("CCardGhostMarker",1);
-				isaghost = true;
-				if (kcdebug_actordmgdisplays) Console.Printf("CCardGhostMarker: %d [health: %d], isaghost: %d", CountInv("CCardGhostMarker"), health, isaghost);
-			}
+			A_SetInventory("CCardGhostMarker",1);
+			isaghost = true;
+			if (kcdebug_actordmgdisplays) Console.Printf("CCardGhostMarker: %d [health: %d], isaghost: %d", CountInv("CCardGhostMarker"), health, isaghost);
 		}
 		nm = "CCards_Actor_HasRespawned"; if (CountInv(nm)) A_SetInventory("CCardRespawnedMarker",1);
 		nm = "CCards_Actor_AssassinBuff"; if (CountInv(nm)) A_SetInventory("CCardAssassinMarker",1);
