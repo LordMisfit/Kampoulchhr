@@ -108,31 +108,19 @@ class KC_EventHandler : EventHandler
 			
 			if (A_CheckKCTimeFreeze())
 			{
-				/*
 				nm = "CCards_Actor_Cannibalism";
-				ns = "KC_CCards_Actor_EatenCorpses";
-				nt = "CCards_Actor_EatenCorpses";
 				it = ThinkerIterator.Create("Actor");
 				while (mo = Actor(it.Next()))
 				{
 					if (mo && 
 							mo.bISMONSTER && 
 							mo.health > 0 &&
-							mo.CountInv(nm)) 
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_Cannibalism")) 
 					{
-						Console.Printf("\c[HeiwaDeluge](%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d])", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
-						if (mo.CountInv(nt) < 4)
-						{
-							if (mo.CountInv(ns) == 0)
-							{
-								mo.SetInventory(ns,mo.CountInv(nt));
-								mo.SetInventory(nt,4);
-							}
-						}
-						Console.Printf("\c[HeiwaDeluge]{{%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d]}}", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
+						mo.SetInventory(nm,0);
 					}
 				}
-				*/
 				
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
@@ -203,28 +191,21 @@ class KC_EventHandler : EventHandler
 			}
 			else
 			{
-				/*
 				nm = "CCards_Actor_Cannibalism";
-				ns = "KC_CCards_Actor_EatenCorpses";
-				nt = "CCards_Actor_EatenCorpses";
 				it = ThinkerIterator.Create("Actor");
 				while (mo = Actor(it.Next()))
 				{
 					if (mo && 
 							mo.bISMONSTER && 
 							mo.health > 0 &&
-							mo.CountInv(nm)) 
+							mo.CountInv("KC_CCards_Actor_Cannibalism")) 
 					{
-						Console.Printf("\c[HeiwaChamosis](%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d])", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
-						if (mo.CountInv(ns) < 4)
+						if (mo.CountInv(nm) <= 0)
 						{
-							mo.SetInventory(nt,mo.CountInv(ns));
-							mo.SetInventory(ns,0);
+							mo.SetInventory(nm,1);
 						}
-						Console.Printf("\c[HeiwaChamosis]{{%s [%p, HP: %d] [corpses: %d / 4 (%d)] [tic: %d]}}", mo.GetClassName(), mo, mo.health, mo.CountInv(nt), mo.CountInv(ns), gametic);
 					}
 				}
-				*/
 				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
@@ -249,6 +230,19 @@ class KC_EventHandler : EventHandler
 			if ((level.time >= 3 && level.time <= 35) ||
 					(((level.time - 35) % 70) == 0))
 			{
+				nm = "CCards_Actor_Cannibalism";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm)) 
+					{
+						mo.SetInventory("KC_CCards_Actor_Cannibalism",1);
+					}
+				}
+				
 				nm = "CCards_Actor_PlushWeapon1";
 				if (player.CountInv(nm))
 				{
