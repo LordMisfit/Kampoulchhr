@@ -5624,11 +5624,32 @@ class PlayerStatItem : Inventory
 						}
 						if (A_CheckForHeiwa())
 						{
-							if (PlayerLevel == (A_GetKnifeSpd() * 0.75))
+							int knifelevelmod = (A_GetKnifeSpd() * 0.75);
+							int numberknifes;
+							let FoundKnife = KnifeHeiwa(owner.FindInventory("KnifeHeiwa"));
+							if (FoundKnife)
 							{
-								LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
-								LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
-								LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
+								numberknifes = (PlayerLevel / knifelevelmod);
+							}
+							//Console.Printf("numberknifes: %d", numberknifes);
+							if (PlayerLevel != 0 &&
+									PlayerLevel % knifelevelmod == 0)
+							{
+								if (numberknifes >= 2)
+								{
+									LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife Throw <ALT-FIRE \c[green][");
+									LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
+									LevelUpMsg.AppendFormat("\c[green]]\c[gold]> can now allow\n you to throw up to %d knifes at once. Press <USER4 \c[green][", numberknifes);
+									LevelUpMsg.AppendFormat(ReturnKeyBind1("+user4"));
+									LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to cycle the amount of knives thrown!");
+								}
+								else
+								if (numberknifes == 1)
+								{
+									LevelUpMsg.AppendFormat("\n\n\c[gold]Heiwa's Knife can now be used with <ALT-FIRE \c[green][");
+									LevelUpMsg.AppendFormat(ReturnKeyBind1("+altattack"));
+									LevelUpMsg.AppendFormat("\c[green]]\c[gold]>\n to throw magically replicated copies for an MP cost!");
+								}
 								
 								if (!owner.CountInv("SilentLevelUp")) owner.A_StartSound("misc/skilllvl",102,CHANF_DEFAULT,frandom[statitem](0.6,0.75),ATTN_NORM,frandom[statitem](1.25,1.5));
 							}
