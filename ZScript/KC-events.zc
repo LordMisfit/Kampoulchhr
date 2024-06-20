@@ -192,6 +192,13 @@ class KC_EventHandler : EventHandler
 					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 				}
 				
+				nm = "CCards_Actor_SpawnPod";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
 				nm = "CCards_Actor_MiasmaEffect";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -240,6 +247,13 @@ class KC_EventHandler : EventHandler
 				}
 				
 				nm = "CCards_Actor_HauntedGround";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_SpawnPod";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
@@ -2199,6 +2213,12 @@ class KC_EventHandler : EventHandler
 			}
 			
 			nm = "CCards_Actor_HauntedGround";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+			
+			nm = "CCards_Actor_SpawnPod";
 			if (spawnname == nm)
 			{
 				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
