@@ -128,7 +128,7 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo) 
 					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 					}
 				}
 
@@ -168,14 +168,35 @@ class KC_EventHandler : EventHandler
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_FairyLight";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_AngelWings";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_HauntedGround";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 				}
 				
 				nm = "CCards_Actor_MiasmaEffect";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 				}
 				
 				nm = "CCards_Actor_AttentionNoise";
@@ -184,7 +205,7 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo)
 					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 						mo.A_StopSound(7);
 					}
 				}
@@ -218,11 +239,32 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
+				nm = "CCards_Actor_HauntedGround";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_FairyLight";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_AngelWings";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+
 				nm = "CCards_Actor_MiasmaEffect";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 				}
 			}
 			
@@ -230,6 +272,7 @@ class KC_EventHandler : EventHandler
 			if ((level.time >= 3 && level.time <= 35) ||
 					(((level.time - 35) % 70) == 0))
 			{
+
 				nm = "CCards_Actor_Cannibalism";
 				it = ThinkerIterator.Create("Actor");
 				while (mo = Actor(it.Next()))
@@ -2142,6 +2185,24 @@ class KC_EventHandler : EventHandler
 			}
 			nm = "CCards_Actor_MaestroBuster"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
 			nm = "CCards_Actor_PilotedMechPlasma"; if (spawnname == nm) spawnee.DamageType = 'Plasma';
+			
+			nm = "CCards_Actor_AngelWings";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+			
+			nm = "CCards_Actor_FairyLight";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+			
+			nm = "CCards_Actor_HauntedGround";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
 
 			nm = "CCards_Actor_PriestPorridge"; 
 			if (spawnname == nm)
