@@ -1182,7 +1182,7 @@ class PlayerGUTS : PlayerStatPlaceholder { }
 class PlayerLUCK : PlayerStatPlaceholder { }
 
 class sielsgracecooldown : PlayerStatPlaceholder { }
-class sielsgraceluckcooldown : EmptyPowerup 
+class sielsgraceluckcooldown : EmptyPowerup
 { 
 	int EffectTics2;
 	int Dire;
@@ -1192,6 +1192,14 @@ class sielsgraceluckcooldown : EmptyPowerup
 	double ticpiece;
 	mixin TimerCheck;
 	string texname;
+	default
+	{
+		Powerup.Duration 2147483645;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
 	override void Tick()
 	{
 		int baseinc = 12;
