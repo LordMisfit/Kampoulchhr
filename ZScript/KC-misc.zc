@@ -8867,8 +8867,7 @@ class PlayerDashJump : Inventory
 				weapon is "FistHeiwa" ||
 				weapon is "KnifeHeiwa")
 		{
-			if (weapon is "FistHeiwa" &&
-					!owner.CountInv("FistPlayerBlockItem")) 
+			if (!owner.CountInv("FistPlayerBlockItem")) 
 			{
 				if (kc_expgains)
 				{
@@ -8922,6 +8921,7 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
+		
 		if (weapon is "RiotGun")
 		{
 			if (A_CheckForHeiwa())
