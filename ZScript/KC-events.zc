@@ -199,6 +199,20 @@ class KC_EventHandler : EventHandler
 					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 				}
 				
+				nm = "CCards_Actor_SafeSpawner";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_HotStartSpawner";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
 				nm = "CCards_Actor_HauntedGround";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -268,6 +282,20 @@ class KC_EventHandler : EventHandler
 				}
 				
 				nm = "CCards_Actor_NoxiousBurst";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_SafeSpawner";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+				}
+				
+				nm = "CCards_Actor_HotStartSpawner";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
@@ -2247,6 +2275,18 @@ class KC_EventHandler : EventHandler
 			}
 			
 			nm = "CCards_Actor_NoxiousBurst";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+			
+			nm = "CCards_Actor_SafeSpawner";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+				
+			nm = "CCards_Actor_HotStartSpawner";
 			if (spawnname == nm)
 			{
 				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
