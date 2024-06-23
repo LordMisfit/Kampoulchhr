@@ -2777,13 +2777,86 @@ mixin class MonsterCollider
 			miracle = false;
 		}
 		
-		if (((initdmg > 0 && ret == 0) || bINVULNERABLE || bNODAMAGE))
+		
+		bool checkmusic = true;
+		bool domusic = false;
+		if (ExplosiveBarrelNew(self) || ExplosiveBarrel(self) || ExplosiveBarrel2(self) || Pod(self)) checkmusic = false;
+		if (ret > 0 && checkmusic)
 		{
+			if (FoundPlayer) 
+			{
+				if (!bFRIENDLY) domusic = true;
+			}
+			else
+			{
+				if (bFRIENDLY)
+				{
+					if (source && source.bISMONSTER && !source.bFRIENDLY) domusic = true;
+					if (inflictor && inflictor.bISMONSTER && !inflictor.bFRIENDLY) domusic = true;
+				}
+				else
+				{
+					if (source && source.bISMONSTER && source.bFRIENDLY) domusic = true;
+					if (inflictor && inflictor.bISMONSTER && inflictor.bFRIENDLY) domusic = true;
+				}
+			}
+			if (domusic) A_DynamicMusic(forcedplay:true);
+		}
+		
+		if (checkmusic && ((initdmg > 0 && ret == 0) || bINVULNERABLE || bNODAMAGE))
+		{
+			domusic = false;
+			if (FoundPlayer) 
+			{
+				if (!bFRIENDLY) domusic = true;
+			}
+			else
+			{
+				if (bFRIENDLY)
+				{
+					if (source && source.bISMONSTER && !source.bFRIENDLY) domusic = true;
+					if (inflictor && inflictor.bISMONSTER && !inflictor.bFRIENDLY) domusic = true;
+				}
+				else
+				{
+					if (source && source.bISMONSTER && source.bFRIENDLY) domusic = true;
+					if (inflictor && inflictor.bISMONSTER && inflictor.bFRIENDLY) domusic = true;
+				}
+			}
+			if (domusic) A_DynamicMusic(forcedplay:true);
+			
 			bool showdmglog;
 			int tempdmgval = 10000;
 			double tempdmgfactor = damagefactor;
 			damagefactor = 1.0;
 			int moddedDMG = ApplyDamageFactor(mod, tempdmgval);
+			if (shieldtype > 0)
+			{
+				/*
+				if (shieldtype == 1) moddedDMG *= 0.0625;
+				if (shieldtype == 2) moddedDMG *= 0.03125;
+				if (shieldtype == 3) moddedDMG *= hndmthslddmg;
+				if (shieldtype >= 1 && shieldtype <= 2)
+				{
+					if (Teacher_VokterClone(self))
+					{
+						if (target && ((source && source == target) || (inflictor && inflictor == target)))
+						{
+							//Console.Printf("@#@");
+							int basetauntchance = 1;
+							int basetauntchancemax = 8;
+							if (mod == 'Zap') basetauntchance *= random(2,3);
+							if (mod == 'Cricket') basetauntchancemax *= random(2,3);
+							if (random(1,basetauntchancemax) <= basetauntchance)
+							{
+								A_StopSound(CHAN_VOICE);
+								A_StartSound("vokter/shieldtaunt",CHAN_VOICE);
+							}
+						}
+					}
+				}
+				*/
+			}
 			damagefactor = tempdmgfactor;
 			double outputdmgfactor = 1.0;
 			outputdmgfactor *= moddedDMG;

@@ -164,76 +164,6 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
-				nm = "CCards_Actor_Confetti";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_FairyLight";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_AngelWings";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_GasPod";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_NoxiousBurst";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_SafeSpawner";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_HotStartSpawner";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_HauntedGround";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_SpawnPod";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_MiasmaEffect";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -273,163 +203,182 @@ class KC_EventHandler : EventHandler
 						mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
 					}
 				}
-				
-				nm = "CCards_Actor_GasPod";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_NoxiousBurst";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_SafeSpawner";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_HotStartSpawner";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_HauntedGround";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_SpawnPod";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_FairyLight";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-				
-				nm = "CCards_Actor_AngelWings";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
-
-				nm = "CCards_Actor_MiasmaEffect";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-				}
 			}
 			
-
-			if ((level.time >= 3 && level.time <= 35) ||
-					(((level.time - 35) % 70) == 0))
+			if (level.time >= 3)
 			{
-
-				nm = "CCards_Actor_Cannibalism";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
+				// 1 Sec TimeFreeze Checks
+				if ((((level.time - 35) % 35) == 0))
 				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm)) 
+					nm = "CCards_Actor_GasPod";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
 					{
-						mo.SetInventory("KC_CCards_Actor_Cannibalism",1);
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_NoxiousBurst";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_SafeSpawner";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_HotStartSpawner";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_AnnoyingDevil";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_HauntedGround";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_SpawnPod";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_Confetti";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_FairyLight";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_AngelWings";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+					}
+					
+					nm = "CCards_Actor_MiasmaEffect";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 					}
 				}
 				
-				nm = "CCards_Actor_PlushWeapon1";
-				if (player.CountInv(nm))
+				// 2 Second Checks
+				if ((((level.time - 35) % 70) == 0))
 				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx1",1);
-					player.A_SetInventory(nm,0);
+					nm = "CCards_Actor_Cannibalism";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_Cannibalism",1);
+						}
+					}
+					
+					nm = "CCards_Actor_PlushWeapon1";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx1",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon2";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx2",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon3";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx3",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon4";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx4",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon5";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx5",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon6";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx6",1);
+						player.A_SetInventory(nm,0);
+					}
+					nm = "CCards_Actor_PlushWeapon7";
+					if (player.CountInv(nm))
+					{
+						player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
+						player.A_SetInventory(nm,0);
+					}
 				}
-				nm = "CCards_Actor_PlushWeapon2";
-				if (player.CountInv(nm))
+				
+				// 5 second checks
+				if ((((level.time - 35) % 175) == 0))
 				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx2",1);
-					player.A_SetInventory(nm,0);
-				}
-				nm = "CCards_Actor_PlushWeapon3";
-				if (player.CountInv(nm))
-				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx3",1);
-					player.A_SetInventory(nm,0);
-				}
-				nm = "CCards_Actor_PlushWeapon4";
-				if (player.CountInv(nm))
-				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx4",1);
-					player.A_SetInventory(nm,0);
-				}
-				nm = "CCards_Actor_PlushWeapon5";
-				if (player.CountInv(nm))
-				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx5",1);
-					player.A_SetInventory(nm,0);
-				}
-				nm = "CCards_Actor_PlushWeapon6";
-				if (player.CountInv(nm))
-				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx6",1);
-					player.A_SetInventory(nm,0);
-				}
-				nm = "CCards_Actor_PlushWeapon7";
-				if (player.CountInv(nm))
-				{
-					player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
-					player.A_SetInventory(nm,0);
-				}
-			}
+					ThinkerIterator it;
 
-			if ((level.time >= 3 && level.time <= 35) ||
-					(((level.time - 35) % 175) == 0))
-			{
-				ThinkerIterator it;
+					nm = "CCards_Actor_BigStomach";
+					nm = "CCards_Actor_SwapCurse";
+					//
+					nm = "CCards_Actor_PriestPorridge";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						mo.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+						mo.Destroy();
+					}
+					nm = "CCards_Actor_HotPriestPorridge";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						mo.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+						mo.Destroy();
+					}
 
-				nm = "CCards_Actor_BigStomach";
-				nm = "CCards_Actor_SwapCurse";
-				//
-				nm = "CCards_Actor_PriestPorridge";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					mo.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
-					mo.Destroy();
-				}
-				nm = "CCards_Actor_HotPriestPorridge";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					mo.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
-					mo.Destroy();
-				}
-
-				nm = "CCards_Actor_MonsterDisguise";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
-					if (!mo.bISMONSTER) mo.bISMONSTER = true; // hehehehe >:V
-					if (kcdebug_worldtick) Console.Printf("LOLE [%p, %s]", mo, mo.GetClassName());
+					nm = "CCards_Actor_MonsterDisguise";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
+						if (!mo.bISMONSTER) mo.bISMONSTER = true; // hehehehe >:V
+						if (kcdebug_worldtick) Console.Printf("LOLE [%p, %s]", mo, mo.GetClassName());
+					}
 				}
 			}
 		}
@@ -2287,6 +2236,12 @@ class KC_EventHandler : EventHandler
 			}
 				
 			nm = "CCards_Actor_HotStartSpawner";
+			if (spawnname == nm)
+			{
+				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
+			}
+				
+			nm = "CCards_Actor_AnnoyingDevil";
 			if (spawnname == nm)
 			{
 				if (spawnee && spawnee.bNOTIMEFREEZE) spawnee.bNOTIMEFREEZE = false;
