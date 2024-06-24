@@ -2917,6 +2917,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) specialtype += 4096;
 				nm = "CCards_Actor_HasRespawned"; if (victim.CountInv(nm)) specialtype += 8192;
 				nm = "LostSoulEvit2"; if (victim.GetClassName() == nm) specialtype += 16384;
+				nm = "CCards_Actor_Horror"; if (victim.GetClassName() == nm) specialtype += 32768;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -4588,7 +4589,8 @@ class KC_EventHandler : EventHandler
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
-					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 0.4;
 					if (maxchance < (kc_inventorydroprate14 * minmultlevel)) maxchance = (kc_inventorydroprate14 * minmultlevel);
@@ -4659,7 +4661,8 @@ class KC_EventHandler : EventHandler
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
-					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (maxchance < (kc_inventorydroprate6 * minmultlevel)) maxchance = (kc_inventorydroprate6 * minmultlevel);
@@ -4675,7 +4678,8 @@ class KC_EventHandler : EventHandler
 							temp *= 2.5;
 						}
 						int randrollmax = 32;
-						nm = "CCards_Actor_Maestro"; if (vict == nm) randrollmax /= 8;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) randrollmax /= 16;
+						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= 8;
 						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) randrollmax *= 4;
 						int randroll = random(1,randrollmax);
 						if (randroll <= temp) // Weapons
@@ -4840,6 +4844,13 @@ class KC_EventHandler : EventHandler
 							{
 								temp *= random(2,3);
 								ammodrops *= random(2,4);
+								if (random(1,4) <= 1) randroll2 = random(1,128);
+							}
+							nm = "CCards_Actor_Horror"; 
+							if (vict == nm) 
+							{
+								temp *= randompick(2,2,2,3);
+								ammodrops *= random(1,2);
 								if (random(1,4) <= 1) randroll2 = random(1,128);
 							}
 							nm = "CCards_Actor_MiniMonsterPowerup"; 
@@ -5708,6 +5719,9 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_Bane"; if (victim.GetClassName() == nm) specialtype += 1024;
 				nm = "CCards_Actor_Maestro"; if (victim.GetClassName() == nm) specialtype += 2048;
 				nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) specialtype += 4096;
+				nm = "CCards_Actor_HasRespawned"; if (victim.CountInv(nm)) specialtype += 8192;
+				nm = "LostSoulEvit2"; if (victim.GetClassName() == nm) specialtype += 16384;
+				nm = "CCards_Actor_Horror"; if (victim.GetClassName() == nm) specialtype += 32768;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -5821,6 +5835,7 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 2048) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_Maestro
 						if (specialtype & 4096) ExpGain *= frandompick(0.125,0.25); // CCards_Actor_MiniMonsterPowerup
 						if (specialtype & 8192) ExpGain *= frandompick(0.375,0.625); // CCards_Actor_HasRespawned
+						if (specialtype & 32768) ExpGain *= frandompick(2.5,3.125); // CCards_Actor_Horror
 						nm = "CCards_Actor_BorrowedTimeBuff";
 						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
 						nm = "CCards_Actor_Cursed"; if (victim.CountInv(nm)) ExpGain *= frandom(1.125,1.25);

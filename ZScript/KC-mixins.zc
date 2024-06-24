@@ -2577,6 +2577,49 @@ mixin class MonsterCollider
 		//*******
 		//*******
 		//*******
+		// Checks for if you're fighting a Serpent Rider boss
+		if (mod != 'Sigil' || mod != 'Massacre' || mod != 'Telefrag') // Make sure the Sigil can deal full damage and ignores this resistance entirely :V
+		{
+			if (kcdebug_actordmgdisplays) Console.Printf("(\c[green]%s\c-) Check for Serpent Rider", GetClassName());
+			let SerpentRider = DSparilUnmountedNew(self);
+			let SerpentRider2 = KoraxNew(self);
+			//let SerpentRider3 = EidolonNew(self); // LUL I wish >.>;
+			int prevdmg = damage;
+			if (SerpentRider || SerpentRider2) // || SerpentRider3
+			{
+				if (kcdebug_actordmgdisplays) Console.Printf("(\c[green]%s\c-) Serpent Rider", GetClassName());
+				// If D'Sparil is hit by Cherry Bombs or Korax is hit by Cricket Balls, IGNORE their increasing resistances entirely :V
+				if ((SerpentRider && mod != 'CherryBomb') || (SerpentRider2 && mod != 'Cricket'))
+				{
+					if (kcdebug_actordmgdisplays && SerpentRider) Console.Printf("(\c[green]%s\c-) D'Spari (Wasn't hit by Cherry Bomb)", GetClassName());
+					if (kcdebug_actordmgdisplays && SerpentRider2) Console.Printf("(\c[green]%s\c-) Korax (Wasn't hit by Cricket Ball)", GetClassName());
+					let SerpRide = Actor(self);
+					if (SerpRide)
+					{
+						if (health < ((SpawnHealth() + Stamina) >> 1)) // <50%
+						{
+							if (health < ((SpawnHealth() + Stamina) >> 4)) // <6.25%
+							{
+								if (health < ((SpawnHealth() + Stamina) >> 9)) // <0.1953125%
+								{
+									damage *= 0.125;
+								}
+								else
+								{
+									damage *= 0.25;
+								}
+							}
+							else
+							{
+								damage *= 0.50;
+							}
+						}
+					}
+					if (kcdebug_actordmgdisplays) Console.Printf("(\c[green]%s\c-) Serpent Rider [Damage Resist Buff]: %d (%d)", GetClassName(), damage, prevdmg);
+				}
+			}
+		}
+		
 		int predmginr = damage;
 		// (Partial) Defense Ignoring Attacks
 		double prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;

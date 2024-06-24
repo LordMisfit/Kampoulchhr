@@ -5236,69 +5236,84 @@ class RandomModpack : CustomInventoryExt
 		Spawn:
 			TNT1 A 0 Bright NoDelay
 			{
-				actor playera = players[0].mo;
+				ThinkerIterator RMPackFinder = ThinkerIterator.Create("RandomModpack");
 				bool spawned;
 				actor mo;
-				for (int i = 0; i < 16; i++)
+				RandomModpack mo2;
+				int numfound = 0;
+				while (mo = Actor(RMPackFinder.Next()))
 				{
-					int rand = random(1,5);
-					//Console.Printf("i: %d / 16, rand: %d / 5", i, rand);
-					if (rand <= 1)
-					{
-						if (!playera.CountInv("TommyGunUpgrade"))
-						{
-							[spawned, mo] = A_SpawnItemEx("TommyGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-							self.Destroy();
-							break;
-						}
-					}
-					if (rand == 2)
-					{
-						if (!playera.CountInv("BlasterRifleUpgrade"))
-						{
-							[spawned, mo] = A_SpawnItemEx("BlasterRifleModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-							self.Destroy();
-							break;
-						}
-					}
-					if (rand == 3)
-					{
-						if (!playera.CountInv("BlasterPistolUpgrade"))
-						{
-							[spawned, mo] = A_SpawnItemEx("BlasterPistolModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-							self.Destroy();
-							break;
-						}
-					}
-					if (rand == 4)
-					{
-						if (!playera.CountInv("RiotGunUpgrade"))
-						{
-							[spawned, mo] = A_SpawnItemEx("RiotGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-							self.Destroy();
-							break;
-						}
-					}
-					if (rand >= 5)
-					{
-						if (!playera.CountInv("DevastatorUpgrade"))
-						{
-							[spawned, mo] = A_SpawnItemEx("DevastatorModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-							self.Destroy();
-							break;
-						}
-					}
+					mo2 = RandomModpack(mo);
+					if (mo2 != self) numfound++;
 				}
-				if (!(playera.CountInv("BlasterRifleUpgrade") ||
-							playera.CountInv("TommyGunUpgrade") ||
-							playera.CountInv("BlasterPistolUpgrade") ||
-							playera.CountInv("DevastatorUpgrade")))
+				
+				if (numfound >= 4)
 				{
-					A_SpawnItemEx("RandomModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-					self.Destroy();
+					actor playera = players[0].mo;
+					for (int i = 0; i < 16; i++)
+					{
+						int rand = random(1,5);
+						//Console.Printf("i: %d / 16, rand: %d / 5", i, rand);
+						if (rand <= 1)
+						{
+							if (!playera.CountInv("TommyGunUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("TommyGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+						if (rand == 2)
+						{
+							if (!playera.CountInv("BlasterRifleUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("BlasterRifleModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+						if (rand == 3)
+						{
+							if (!playera.CountInv("BlasterPistolUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("BlasterPistolModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+						if (rand == 4)
+						{
+							if (!playera.CountInv("RiotGunUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("RiotGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+						if (rand >= 5)
+						{
+							if (!playera.CountInv("DevastatorUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("DevastatorModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+					}
+					
+					if (!(playera.CountInv("BlasterRifleUpgrade") ||
+								playera.CountInv("TommyGunUpgrade") ||
+								playera.CountInv("BlasterPistolUpgrade") ||
+								playera.CountInv("RiotGunUpgrade") ||
+								playera.CountInv("DevastatorUpgrade")))
+					{
+						A_SpawnItemEx("RandomModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+						self.Destroy();
+					}
 				}
 			}
-			stop;
+			TNT1 A 1 Bright;
+			loop;
 	}
 }
 

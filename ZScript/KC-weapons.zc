@@ -7831,12 +7831,16 @@ class TommyGun : MarineWeapon
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("TommyGun")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("TommyGunModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("TommyGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							A_Destroy();
+							if (!playera.CountInv("TommyGunModPack"))
+							{
+								A_SpawnItemEx("TommyGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								A_Destroy();
+							}
 						}
 						else
 						{
@@ -8762,7 +8766,7 @@ class DevastatorGenerator : CustomInventoryExt
 	States
 	{ 
 		Spawn: 
-			DVGG A 4
+			DVGG A 4 NoDelay
 			{
 				int chance = 32;
 				if (bDROPPED) chance = 192;
@@ -8771,12 +8775,16 @@ class DevastatorGenerator : CustomInventoryExt
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("Devastator")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("DevastatorModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("DevastatorModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							self.Destroy();
+							if (!playera.CountInv("DevastatorModPack"))
+							{
+								A_SpawnItemEx("DevastatorModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								self.Destroy();
+							}
 						}
 					}
 				}
@@ -13854,12 +13862,16 @@ Class BlasterPickup : CustomInventoryExt
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterPistol")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("BlasterPistolModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							self.Destroy();
+							if (!playera.CountInv("BlasterPistolModPack"))
+							{
+								A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								self.Destroy();
+							}
 						}
 					}
 				}
@@ -13929,7 +13941,7 @@ Class BlasterPistol : MarineWeapon
 	States
 	{
 		Spawn:
-			BLAP A 4
+			BLAP A 4 NoDelay
 			{
 				int chance = 32;
 				if (bDROPPED) chance = 192;
@@ -13938,12 +13950,16 @@ Class BlasterPistol : MarineWeapon
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterPistol")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("BlasterPistolModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							A_Destroy();
+							if (!playera.CountInv("BlasterPistolModPack"))
+							{
+								A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								A_Destroy();
+							}
 						}
 					}
 				}
@@ -15066,7 +15082,7 @@ class Riotgun : MarineWeapon
 			RIOT C 4 A_WeaponReady(invoker.WeapFlagsTemp);
 			Goto Ready;
 		Spawn:
-			SW30 Z 4
+			SW30 Z 4 NoDelay
 			{
 				int chance = 32;
 				if (bDROPPED) chance = 192;
@@ -15075,12 +15091,16 @@ class Riotgun : MarineWeapon
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("RiotGun")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("RiotGunModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("RiotGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							A_Destroy();
+							if (!playera.CountInv("RiotGunModPack"))
+							{
+								A_SpawnItemEx("RiotGunModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								A_Destroy();
+							}
 						}
 					}
 				}
@@ -16988,7 +17008,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 			}
 			Goto LightDone;
 		Spawn:
-			E11B A 4
+			E11B A 4 NoDelay
 			{
 				int chance = 32;
 				if (bDROPPED) chance = 192;
@@ -16997,12 +17017,16 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterRifle")) 
 				{
-					if (random(1,chance) <= 1 && !invoker.modpackspawnattempt)
+					if (!invoker.modpackspawnattempt)
 					{
-						if (!playera.CountInv("BlasterRifleModPack"))
+						Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, chance);
+						if (random(1,chance) <= 1)
 						{
-							A_SpawnItemEx("BlasterRifleModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
-							A_Destroy();
+							if (!playera.CountInv("BlasterRifleModPack"))
+							{
+								A_SpawnItemEx("BlasterRifleModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								A_Destroy();
+							}
 						}
 					}
 				}
