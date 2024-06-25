@@ -497,6 +497,7 @@ class KampoulSphere : CustomInventoryExt
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int leveltick = level.time % 72;
 		if (!HeiwaPlayer(playera))
 		{
 			bool spawned;
@@ -509,6 +510,15 @@ class KampoulSphere : CustomInventoryExt
 				invl = InvulnerabilitySphere2(mo);
 				if (invl) invl.timestrength = 3;
 			}
+		}
+		if (leveltick == 0)
+		{
+			A_StopSound(CHAN_5);
+			A_StopSound(CHAN_6);
+			A_StopSound(CHAN_7);
+			A_StartSound("kampoulsphere/pulse",CHAN_5,CHANF_DEFAULT);
+			A_StartSound("kampoulsphere/pulse",CHAN_6,CHANF_DEFAULT);
+			A_StartSound("kampoulsphere/pulse",CHAN_7,CHANF_DEFAULT);
 		}
 		super.Tick();
 	}
