@@ -516,9 +516,15 @@ class KampoulSphere : CustomInventoryExt
 			A_StopSound(CHAN_5);
 			A_StopSound(CHAN_6);
 			A_StopSound(CHAN_7);
+			A_StopSound(8);
+			A_StopSound(9);
+			A_StopSound(10);
 			A_StartSound("kampoulsphere/pulse",CHAN_5,CHANF_DEFAULT);
 			A_StartSound("kampoulsphere/pulse",CHAN_6,CHANF_DEFAULT);
 			A_StartSound("kampoulsphere/pulse",CHAN_7,CHANF_DEFAULT);
+			A_StartSound("kampoulsphere/pulse",8,CHANF_DEFAULT);
+			A_StartSound("kampoulsphere/pulse",9,CHANF_DEFAULT);
+			A_StartSound("kampoulsphere/pulse",10,CHANF_DEFAULT);
 		}
 		super.Tick();
 	}
@@ -2145,7 +2151,7 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 						}
 					}
 				}
-
+				
 				int basesecs = 60;
 				if (HeiwaPlayer(playera)) basesecs *= 1.5; // If playing as Heiwa, Invis gives 90 seconds instead of 60
 				if (!playera.CountInv("KCPowerInvisibility"))
@@ -2543,10 +2549,18 @@ class KCArmor : BasicArmor
 				oldsaved = saved;
 				savebase = 0.0;
 				int BKPKBonus;
-				if (PlayPawn) BKPKBonus = PlayPawn.CountInv("SpecialBackpackBonus");
-				if (BKPKBonus > 0) savebase += (BKPKBonus * frandom(0.01,0.05));
-				savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
-				if (savebase >= (0.10 * BKPKBonus)) savebase = (0.10 * BKPKBonus);
+				if (PlayPawn) 
+				{
+					BKPKBonus = PlayPawn.CountInv("SpecialBackpackBonus");
+					if (BKPKBonus > 0) 
+					{
+						double maxsavebase = frandompick(0.75,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,1.0);
+						savebase += (BKPKBonus * frandom(0.01,0.05));
+						savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+						if (savebase >= (0.10 * BKPKBonus)) savebase = (0.10 * BKPKBonus);
+						if (savebase >= maxsavebase) savebase = maxsavebase;
+					}
+				}
 				saved *= (1.0 - savebase);
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Special]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
@@ -3932,8 +3946,23 @@ class DoubleSphere : CustomInventoryExt
 		Pickup:
 			TNT1 A 0 
 			{
-				A_GiveInventory("PowerDouble");
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				A_StartSound("buff/atkup",205);
+				
+				int basesecs = 30;
+				if (HeiwaPlayer(playera)) basesecs *= 1.5; // If playing as Heiwa, Invis gives 90 seconds instead of 60
+				if (!playera.CountInv("PowerDouble"))
+				{
+					playera.SetInventory("PowerDouble",1);
+					let DoubleItem = PowerDouble(playera.FindInventory("PowerDouble"));
+					if (DoubleItem) DoubleItem.EffectTics = basesecs * TICRATE;
+				}
+				else
+				{
+					let DoubleItem = PowerDouble(playera.FindInventory("PowerDouble"));
+					if (DoubleItem) DoubleItem.EffectTics += basesecs * TICRATE;
+				}
 			}
 			Stop;
 	}
@@ -3961,8 +3990,23 @@ class GuardSphere : CustomInventoryExt
 		Pickup:
 			TNT1 A 0
 			{
-				A_GiveInventory("PowerGuard");
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				A_StartSound("buff/defup",205);
+				
+				int basesecs = 30;
+				if (HeiwaPlayer(playera)) basesecs *= 1.5; // If playing as Heiwa, Invis gives 90 seconds instead of 60
+				if (!playera.CountInv("PowerGuard"))
+				{
+					playera.SetInventory("PowerGuard",1);
+					let GuardItem = PowerGuard(playera.FindInventory("PowerGuard"));
+					if (GuardItem) GuardItem.EffectTics = basesecs * TICRATE;
+				}
+				else
+				{
+					let GuardItem = PowerGuard(playera.FindInventory("PowerGuard"));
+					if (GuardItem) GuardItem.EffectTics += basesecs * TICRATE;
+				}
 			}
 			Stop;
 	}
@@ -3990,8 +4034,23 @@ class HasteSphere : CustomInventoryExt
 		Pickup:
 			TNT1 A 0
 			{
-				A_GiveInventory("PowerHaste");
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				A_StartSound("buff/spdup",205);
+				
+				int basesecs = 30;
+				if (HeiwaPlayer(playera)) basesecs *= 1.5; // If playing as Heiwa, Invis gives 90 seconds instead of 60
+				if (!playera.CountInv("PowerHaste"))
+				{
+					playera.SetInventory("PowerHaste",1);
+					let HasteItem = PowerHaste(playera.FindInventory("PowerHaste"));
+					if (HasteItem) HasteItem.EffectTics = basesecs * TICRATE;
+				}
+				else
+				{
+					let HasteItem = PowerHaste(playera.FindInventory("PowerHaste"));
+					if (HasteItem) HasteItem.EffectTics += basesecs * TICRATE;
+				}
 			}
 			Stop;
 	}

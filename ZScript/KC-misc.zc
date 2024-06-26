@@ -1309,7 +1309,13 @@ class PlayerStatItem : Inventory
 			if (owner.health > 0 &&
 					sielsgraceluckcooldown)
 			{
-				sielsgraceluckcooldown--;
+				if ((owner.CountInv("KCPowerKampoul") && 
+						 timestopactivetics > 0 &&
+						 random(1,4) <= 3)) { }
+				else 
+				{
+					sielsgraceluckcooldown--;
+				}
 				owner.A_SetInventory("sielsgraceluckcooldown",sielsgraceluckcooldown);
 			}
 			if (sielsgraceactive)

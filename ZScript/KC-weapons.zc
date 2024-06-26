@@ -11550,6 +11550,7 @@ class DMBTrail2 : DMBTrail
 
 class BlackHole : KCProjectile
 {
+	int dyntimerinc;
 	default
 	{
 		Projectile;
@@ -11571,6 +11572,8 @@ class BlackHole : KCProjectile
 	
 	void A_BHoleAOE()
 	{
+		dyntimerinc++;
+		if (dyntimerinc % 3) A_DynamicMusic();
 		int basedmg = random(7,9);
 		int basedamrad = 180;
 		int baseforce = -360;
@@ -11606,7 +11609,11 @@ class BlackHole : KCProjectile
 	States
 	{
 		Spawn:
-			TNT1 A 0 A_CountDown();
+			TNT1 A 0 
+			{
+				A_CountDown();
+				A_DynamicMusic();
+			}
 			TNT1 A 0 A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP);
 			BHOL A 1 Bright Light("BHOLE_1") A_BHoleAOE();
 			BHOL B 1 Bright Light("BHOLE_1") A_BHoleAOE();
@@ -11659,6 +11666,8 @@ class BlackHoleMini : BlackHole
 	
 	void A_BHoleAOE()
 	{
+		dyntimerinc++;
+		if (dyntimerinc % 5) A_DynamicMusic();
 		int basedmg = randompick(3,4,4,4,5);
 		int basedamrad = 90;
 		int baseforce = -180;
@@ -11694,7 +11703,11 @@ class BlackHoleMini : BlackHole
 	States
 	{
 		Spawn:
-			TNT1 A 0 A_CountDown();
+			TNT1 A 0 
+			{
+				A_CountDown();
+				A_DynamicMusic();
+			}
 			TNT1 A 0 A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP,0.75,ATTN_NORM,frandom(1.25,1.5));
 			BHOL A 1 Bright Light("MINIBHOLE_1") A_BHoleAOE();
 			BHOL B 1 Bright Light("MINIBHOLE_1") A_BHoleAOE();
@@ -11758,6 +11771,8 @@ class BlackHole2 : BlackHole
 	
 	void A_BHoleAOE()
 	{
+		dyntimerinc++;
+		if (dyntimerinc % 2) A_DynamicMusic();
 		int basedmg = random(15,17);
 		int basedamrad = 360;
 		int baseforce = -720;
@@ -11793,8 +11808,12 @@ class BlackHole2 : BlackHole
 	States
 	{
 		Spawn:
-			TNT1 A 0 A_CountDown();
-			TNT1 A 0 A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP);
+			TNT1 A 0 
+			{
+				A_CountDown();
+				A_DynamicMusic();
+				A_StartSound("BHole/Suck",CHAN_VOICE,CHANF_LOOP);
+			}
 			BHOL A 1 Bright Light("HUGEBHOLE_1") A_BHoleAOE();
 			BHOL B 1 Bright Light("HUGEBHOLE_1") A_BHoleAOE();
 			BHOL C 1 Bright Light("HUGEBHOLE_1") A_BHoleAOE();
@@ -15279,6 +15298,7 @@ class KnifeHeiwa : MarineWeapon
 		if (TruePlayerLevel >= (levelbase * 8)) mpcostreduce += 1;
 		mpcostreduce *= 0.625;
 		invoker.throwmpcost -= mpcostreduce;
+		invoker.throwmpcost = int(invoker.throwmpcost);
 		if (invoker.throwmpcost < 1) invoker.throwmpcost = 1;
 		if (invoker.knifespertoss < 1) invoker.knifespertoss = 1;
 		if (invoker.knifespertoss > invoker.maxthrowableknives) invoker.knifespertoss = invoker.maxthrowableknives;
