@@ -107,6 +107,17 @@ class CompatVulnItem : PlaceholderItem
 		double basedmgfactor = owner.DamageFactor;
 		double ActorDefenseIgnoreFactor = 0.00;
 		string infl, sour;
+		bool isholosentry;
+		int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+		if (owner.bSOLID == false &&
+				owner.bBRIGHT == true &&
+				((owner.alpha == 0.5 && owner.GetRenderStyle() == STYLE_ADD) ||
+				(owner.alpha == 0.0 && owner.GetRenderStyle() == STYLE_NONE)) &&
+				d != -1)
+		{
+			isholosentry = true;
+		}
+
 		if (inflictor) infl = inflictor.GetClassName();
 		if (source) sour = source.GetClassName();
 		if (inflictor == null && source == null)
@@ -245,6 +256,12 @@ class CompatVulnItem : PlaceholderItem
 				if (infl == "Blaster_RifleShot") PlasmaFactor = frandom(0.3375,0.4125);
 				if (infl == "Blaster_RifleShotRipper") PlasmaFactor = frandom(0.45,0.55);
 				ActorDefenseIgnoreFactor += (PlasmaFactor * (1.00 - ActorDefenseIgnoreFactor));
+				
+				if (isholosentry)
+				{
+					PlasmaFactor = frandom(0.5,0.6);
+					ActorDefenseIgnoreFactor += (PlasmaFactor * (1.00 - ActorDefenseIgnoreFactor));
+				}
 			}
 			double BulletFactor = frandom(0.1125,0.1375);
 			// Bullet/Pellet
@@ -317,6 +334,12 @@ class CompatVulnItem : PlaceholderItem
 				}
 
 				ActorDefenseIgnoreFactor += (BHoleFactor * (1.00 - ActorDefenseIgnoreFactor));
+				
+				if (isholosentry)
+				{
+					BHoleFactor = frandom(0.875,0.9);
+					ActorDefenseIgnoreFactor += (BHoleFactor * (1.00 - ActorDefenseIgnoreFactor));
+				}
 			}
 			
 			double RailFactor = frandom(0.3,0.334);
