@@ -518,10 +518,21 @@ class CompatVulnItem : PlaceholderItem
 					}
 					
 					bool isaghost;
+					bool isholosentry;
+					int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+					if (owner.bSOLID == false &&
+							owner.bBRIGHT == true &&
+							((owner.alpha == 0.5 && owner.GetRenderStyle() == STYLE_ADD) ||
+							 (owner.alpha == 0.0 && owner.GetRenderStyle() == STYLE_NONE)) &&
+							d != -1) 
+					{
+						isholosentry = true;
+					}
 					nm = "CCards_Actor_Ghost"; 
 					nn = "CCards_Actor_AchillesCurse"; 
 					if (!(owner.CountInv(nm) || 
-								owner.CountInv(nn)))
+								owner.CountInv(nn) ||
+								isholosentry))
 					{
 						if (MiscItem && MiscItem.timestopactivetics > 0)
 						{

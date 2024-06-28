@@ -2095,6 +2095,34 @@ mixin class MonsterCollider
 			}
 		}
 		
+		bool isholosentry;
+		int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+		if (bSOLID == false &&
+				bBRIGHT == true &&
+				((alpha == 0.5 && GetRenderStyle() == STYLE_ADD) ||
+				 (alpha == 0.0 && GetRenderStyle() == STYLE_NONE)) &&
+				 d != -1) 
+		{
+			isholosentry = true;
+		}
+		
+		if (isholosentry)
+		{
+			if (mod == 'Plasma')
+			{
+				damage *= frandompick(2,2.5);
+			}
+			if (mod == 'Electric' || 
+					mod == 'Electricity' || 
+					mod == 'Thunder' || 
+					mod == 'ShockFloor' || 
+					mod == 'Lightning' || 
+					mod == 'Shock')
+			{
+				damage *= frandompick(4,5);
+			}
+		}
+		
 		[inflictor, source, damage, mod, flags, angle, angvstype] = CheckMonType(inflictor,source,damage,mod,flags,angle);
 		if (damage <= -1) return -1;
 
@@ -2518,8 +2546,19 @@ mixin class MonsterCollider
 			bool isaghost;
 			nm = "CCards_Actor_Ghost"; 
 			nn = "CCards_Actor_AchillesCurse"; 
+			bool isholosentry;
+			int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
+			if (bSOLID == false &&
+					bBRIGHT == true &&
+					((alpha == 0.5 && GetRenderStyle() == STYLE_ADD) ||
+					(alpha == 0.0 && GetRenderStyle() == STYLE_NONE)) &&
+					d != -1)
+			{
+				isholosentry = true;
+			}
 			if (!(CountInv(nm) || 
-						CountInv(nn)))
+						CountInv(nn) ||
+						isholosentry))
 			{
 				if (MiscItem && MiscItem.timestopactivetics > 0)
 				{
