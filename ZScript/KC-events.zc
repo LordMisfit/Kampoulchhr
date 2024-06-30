@@ -122,6 +122,20 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
+				nm = "CCards_Actor_EnlightenmentThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
+					{
+						mo.SetInventory(nm,0);
+					}
+				}
+				
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -185,6 +199,22 @@ class KC_EventHandler : EventHandler
 							mo.bISMONSTER && 
 							mo.health > 0 &&
 							mo.CountInv("KC_CCards_Actor_Cannibalism")) 
+					{
+						if (mo.CountInv(nm) <= 0)
+						{
+							mo.SetInventory(nm,1);
+						}
+					}
+				}
+				
+				nm = "CCards_Actor_EnlightenmentThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
 					{
 						if (mo.CountInv(nm) <= 0)
 						{
@@ -301,6 +331,19 @@ class KC_EventHandler : EventHandler
 								mo.CountInv(nm)) 
 						{
 							mo.SetInventory("KC_CCards_Actor_Cannibalism",1);
+						}
+					}
+					
+					nm = "CCards_Actor_EnlightenmentThrower";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_EnlightenmentThrower",1);
 						}
 					}
 					
