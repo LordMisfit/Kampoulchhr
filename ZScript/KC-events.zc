@@ -71,6 +71,61 @@ class KC_EventHandler : EventHandler
 		return Level;
 	}
 	
+	void A_TimeFreezeCCardsWorldTickCheck_TF(string nm, string nn)
+	{
+		Actor mo;
+		ThinkerIterator it;
+		it = ThinkerIterator.Create("Actor");
+		while (mo = Actor(it.Next()))
+		{
+			if (mo && 
+					mo.bISMONSTER && 
+					mo.health > 0 &&
+					mo.CountInv(nm) &&
+					mo.CountInv(nn)) 
+			{
+				mo.SetInventory(nm,0);
+			}
+		}
+	}
+
+	void A_TimeFreezeCCardsWorldTickCheck_NTF(string nm, string nn)
+	{
+		Actor mo;
+		ThinkerIterator it;
+		it = ThinkerIterator.Create("Actor");
+		while (mo = Actor(it.Next()))
+		{
+			if (mo && 
+					mo.bISMONSTER && 
+					mo.health > 0 &&
+					mo.CountInv(nn)) 
+			{
+				if (mo.CountInv(nm) <= 0)
+				{
+					mo.SetInventory(nm,1);
+				}
+			}
+		}
+	}
+	
+	void A_TimeFreezeCCardsWorldTickCheck_Giver(string nm, string nn)
+	{
+		Actor mo;
+		ThinkerIterator it;
+		it = ThinkerIterator.Create("Actor");
+		while (mo = Actor(it.Next()))
+		{
+			if (mo && 
+					mo.bISMONSTER && 
+					mo.health > 0 &&
+					mo.CountInv(nm)) 
+			{
+				mo.SetInventory(nn,1);
+			}
+		}
+	}
+	
 	override void WorldTick()
 	{
 		actor player = players[0].mo;
@@ -142,89 +197,19 @@ class KC_EventHandler : EventHandler
 			
 			if (A_CheckKCTimeFreeze())
 			{
-				nm = "CCards_Actor_Cannibalism";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_Cannibalism")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
-				
-				nm = "CCards_Actor_EnlightenmentThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
-				
-				nm = "CCards_Actor_GrenadeThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_GrenadeThrower")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
-				
-				nm = "CCards_Actor_SurgeBombThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_SurgeBombThrower")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
-				
-				nm = "CCards_Actor_EggThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_EggThrower")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
-				
-				nm = "CCards_Actor_UnholyWaterThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv(nm) &&
-							mo.CountInv("KC_CCards_Actor_UnholyWaterThrower")) 
-					{
-						mo.SetInventory(nm,0);
-					}
-				}
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_Cannibalism","KC_CCards_Actor_Cannibalism");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_EnlightenmentThrower","KC_CCards_Actor_EnlightenmentThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_GrenadeThrower","KC_CCards_Actor_GrenadeThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_SurgeBombThrower","KC_CCards_Actor_SurgeBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_EggThrower","KC_CCards_Actor_EggThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_UnholyWaterThrower","KC_CCards_Actor_UnholyWaterThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_SmokeBombThrower","KC_CCards_Actor_SmokeBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_BlastBombThrower","KC_CCards_Actor_BlastBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_NoxiousBombThrower","KC_CCards_Actor_NoxiousBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_PumpkinBombThrower","KC_CCards_Actor_PumpkinBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_MoldingClayThrower","KC_CCards_Actor_MoldingClayThrower");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
+				A_TimeFreezeCCardsWorldTickCheck_TF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
@@ -281,101 +266,19 @@ class KC_EventHandler : EventHandler
 			}
 			else
 			{
-				nm = "CCards_Actor_Cannibalism";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_Cannibalism")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
-				
-				nm = "CCards_Actor_EnlightenmentThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
-				
-				nm = "CCards_Actor_GrenadeThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_GrenadeThrower")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
-				
-				nm = "CCards_Actor_SurgeBombThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_SurgeBombThrower")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
-				
-				nm = "CCards_Actor_EggThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_EggThrower")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
-				
-				nm = "CCards_Actor_UnholyWaterThrower";
-				it = ThinkerIterator.Create("Actor");
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && 
-							mo.bISMONSTER && 
-							mo.health > 0 &&
-							mo.CountInv("KC_CCards_Actor_UnholyWaterThrower")) 
-					{
-						if (mo.CountInv(nm) <= 0)
-						{
-							mo.SetInventory(nm,1);
-						}
-					}
-				}
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_Cannibalism","KC_CCards_Actor_Cannibalism");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_EnlightenmentThrower","KC_CCards_Actor_EnlightenmentThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_GrenadeThrower","KC_CCards_Actor_GrenadeThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_SurgeBombThrower","KC_CCards_Actor_SurgeBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_EggThrower","KC_CCards_Actor_EggThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_UnholyWaterThrower","KC_CCards_Actor_UnholyWaterThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_SmokeBombThrower","KC_CCards_Actor_SmokeBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_BlastBombThrower","KC_CCards_Actor_BlastBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_NoxiousBombThrower","KC_CCards_Actor_NoxiousBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_PumpkinBombThrower","KC_CCards_Actor_PumpkinBombThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_MoldingClayThrower","KC_CCards_Actor_MoldingClayThrower");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
+				A_TimeFreezeCCardsWorldTickCheck_NTF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
@@ -475,83 +378,19 @@ class KC_EventHandler : EventHandler
 				// 2 Second Checks
 				if ((((level.time - 35) % 70) == 0))
 				{
-					nm = "CCards_Actor_Cannibalism";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_Cannibalism",1);
-						}
-					}
-					
-					nm = "CCards_Actor_EnlightenmentThrower";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_EnlightenmentThrower",1);
-						}
-					}
-					
-					nm = "CCards_Actor_UnholyWaterThrower";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_UnholyWaterThrower",1);
-						}
-					}
-					
-					nm = "CCards_Actor_GrenadeThrower";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_GrenadeThrower",1);
-						}
-					}
-					
-					nm = "CCards_Actor_SurgeBombThrower";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_SurgeBombThrower",1);
-						}
-					}
-					
-					nm = "CCards_Actor_EggThrower";
-					it = ThinkerIterator.Create("Actor");
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && 
-								mo.bISMONSTER && 
-								mo.health > 0 &&
-								mo.CountInv(nm)) 
-						{
-							mo.SetInventory("KC_CCards_Actor_EggThrower",1);
-						}
-					}
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_Cannibalism","KC_CCards_Actor_Cannibalism");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_EnlightenmentThrower","KC_CCards_Actor_EnlightenmentThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_UnholyWaterThrower","KC_CCards_Actor_UnholyWaterThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_GrenadeThrower","KC_CCards_Actor_GrenadeThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_SurgeBombThrower","KC_CCards_Actor_SurgeBombThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_EggThrower","KC_CCards_Actor_EggThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_SmokeBombThrower","KC_CCards_Actor_SmokeBombThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_BlastBombThrower","KC_CCards_Actor_BlastBombThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_NoxiousBombThrower","KC_CCards_Actor_NoxiousBombThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_PumpkinBombThrower","KC_CCards_Actor_PumpkinBombThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_MoldingClayThrower","KC_CCards_Actor_MoldingClayThrower");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
+					A_TimeFreezeCCardsWorldTickCheck_Giver("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 					
 					nm = "CCards_Actor_PlushWeapon1";
 					if (player.CountInv(nm))
