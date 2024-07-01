@@ -3176,6 +3176,10 @@ class KCPlayerPawn : PlayerPawn
 		if (((inflictor && HellKnight(inflictor)) || 
 				(source && HellKnight(source))) &&
 				Mod == 'melee') damage *= 0.5;
+		bool voidportal = false;
+		if (mod == "Railgun" && 
+				((inflictor && inflictor.GetClassName() == "CCards_Boss_RomeroDamagePuff") || 
+				(source && source.GetClassName() == "CCards_Actor_VoidStepPortal"))) voidportal = true;
 		bool miasmaeffect = false;
 		if (mod == "CardPoison" && 
 				((inflictor && inflictor.GetClassName() == "CCards_Actor_MiasmaEffect") || 
@@ -3751,6 +3755,12 @@ class KCPlayerPawn : PlayerPawn
 			}
 		}
 		
+		if (voidportal)
+		{
+			damage = 0;
+			return 0;
+		}
+		
 		olddmg = damage;
 		if (flags & DMG_EXPLOSION || 
 				mod == 'Explosive' || 
@@ -3787,7 +3797,6 @@ class KCPlayerPawn : PlayerPawn
 					damage = 0;
 					return 0;
 				}
-				
 			}
 			else
 			{

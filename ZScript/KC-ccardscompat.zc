@@ -504,7 +504,7 @@ class KC_CCards_Actor_EatenCorpses : PlaceHolderItem
 	}
 }
 
-class KC_CCards_Actor_Cannibalism : PlaceHolderItem
+class KC_CCards_TimeFreezeCheckItem : PlaceHolderItem
 {
 	Default
 	{
@@ -512,18 +512,9 @@ class KC_CCards_Actor_Cannibalism : PlaceHolderItem
 	}
 }
 
-class KC_CCards_Actor_EnlightenmentThrower : PlaceHolderItem
-{
-	Default
-	{
-		inventory.maxamount 1;
-	}
-}
-
-class KC_CCards_Actor_UnholyWaterThrower : PlaceHolderItem
-{
-	Default
-	{
-		inventory.maxamount 1;
-	}
-}
+class KC_CCards_Actor_Cannibalism : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_EnlightenmentThrower : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_UnholyWaterThrower : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_GrenadeThrower : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_EggThrower : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_SurgeBombThrower : KC_CCards_TimeFreezeCheckItem { }

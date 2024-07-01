@@ -170,6 +170,48 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
+				nm = "CCards_Actor_GrenadeThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_GrenadeThrower")) 
+					{
+						mo.SetInventory(nm,0);
+					}
+				}
+				
+				nm = "CCards_Actor_SurgeBombThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_SurgeBombThrower")) 
+					{
+						mo.SetInventory(nm,0);
+					}
+				}
+				
+				nm = "CCards_Actor_EggThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_EggThrower")) 
+					{
+						mo.SetInventory(nm,0);
+					}
+				}
+				
 				nm = "CCards_Actor_UnholyWaterThrower";
 				it = ThinkerIterator.Create("Actor");
 				while (mo = Actor(it.Next()))
@@ -263,6 +305,54 @@ class KC_EventHandler : EventHandler
 							mo.bISMONSTER && 
 							mo.health > 0 &&
 							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
+					{
+						if (mo.CountInv(nm) <= 0)
+						{
+							mo.SetInventory(nm,1);
+						}
+					}
+				}
+				
+				nm = "CCards_Actor_GrenadeThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv("KC_CCards_Actor_GrenadeThrower")) 
+					{
+						if (mo.CountInv(nm) <= 0)
+						{
+							mo.SetInventory(nm,1);
+						}
+					}
+				}
+				
+				nm = "CCards_Actor_SurgeBombThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv("KC_CCards_Actor_SurgeBombThrower")) 
+					{
+						if (mo.CountInv(nm) <= 0)
+						{
+							mo.SetInventory(nm,1);
+						}
+					}
+				}
+				
+				nm = "CCards_Actor_EggThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv("KC_CCards_Actor_EggThrower")) 
 					{
 						if (mo.CountInv(nm) <= 0)
 						{
@@ -421,6 +511,45 @@ class KC_EventHandler : EventHandler
 								mo.CountInv(nm)) 
 						{
 							mo.SetInventory("KC_CCards_Actor_UnholyWaterThrower",1);
+						}
+					}
+					
+					nm = "CCards_Actor_GrenadeThrower";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_GrenadeThrower",1);
+						}
+					}
+					
+					nm = "CCards_Actor_SurgeBombThrower";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_SurgeBombThrower",1);
+						}
+					}
+					
+					nm = "CCards_Actor_EggThrower";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_EggThrower",1);
 						}
 					}
 					
