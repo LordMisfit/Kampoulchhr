@@ -73,6 +73,8 @@ class KC_EventHandler : EventHandler
 	
 	override void WorldTick()
 	{
+		actor player = players[0].mo;
+		
 		// LDL
 		ThinkerIterator ldlit = ThinkerIterator.Create("Actor");
 		Actor ldlmo;
@@ -87,6 +89,38 @@ class KC_EventHandler : EventHandler
 						ldlmo.A_GiveInventory("LDLegendaryMonsterVisualEffectMaker",1);
 					}
 					if (kcdebug_worldtick) Console.Printf("LDL Check [%p, %s]", ldlmo, ldlmo.GetClassName());
+				}
+			}
+		}
+
+		// TimeFreezeTargetChecker
+		ThinkerIterator tftit = ThinkerIterator.Create("Actor");
+		Actor tftmo;
+		while (tftmo = Actor(tftit.Next()))
+		{
+			if (tftmo.bISMONSTER && tftmo.health > 0)
+			{
+				if (A_CheckKCTimeFreeze())
+				{
+				}
+				else
+				{
+					if (tftmo.target)
+					{
+						if (tftmo.CountInv("TimeFreezeHasNoTarget") > 0) tftmo.A_SetInventory("TimeFreezeHasNoTarget",0);
+						if (tftmo.target != player)
+						{
+							tftmo.A_SetInventory("TimeFreezeHasATarget",1);
+						}
+						else
+						{
+							if (tftmo.CountInv("TimeFreezeHasATarget") > 0) tftmo.A_SetInventory("TimeFreezeHasATarget",0);
+						}
+					}
+					else
+					{
+						tftmo.A_SetInventory("TimeFreezeHasNoTarget",1);
+					}
 				}
 			}
 		}
@@ -131,6 +165,20 @@ class KC_EventHandler : EventHandler
 							mo.health > 0 &&
 							mo.CountInv(nm) &&
 							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
+					{
+						mo.SetInventory(nm,0);
+					}
+				}
+				
+				nm = "CCards_Actor_UnholyWaterThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv(nm) &&
+							mo.CountInv("KC_CCards_Actor_UnholyWaterThrower")) 
 					{
 						mo.SetInventory(nm,0);
 					}
@@ -215,6 +263,22 @@ class KC_EventHandler : EventHandler
 							mo.bISMONSTER && 
 							mo.health > 0 &&
 							mo.CountInv("KC_CCards_Actor_EnlightenmentThrower")) 
+					{
+						if (mo.CountInv(nm) <= 0)
+						{
+							mo.SetInventory(nm,1);
+						}
+					}
+				}
+				
+				nm = "CCards_Actor_UnholyWaterThrower";
+				it = ThinkerIterator.Create("Actor");
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && 
+							mo.bISMONSTER && 
+							mo.health > 0 &&
+							mo.CountInv("KC_CCards_Actor_UnholyWaterThrower")) 
 					{
 						if (mo.CountInv(nm) <= 0)
 						{
@@ -344,6 +408,19 @@ class KC_EventHandler : EventHandler
 								mo.CountInv(nm)) 
 						{
 							mo.SetInventory("KC_CCards_Actor_EnlightenmentThrower",1);
+						}
+					}
+					
+					nm = "CCards_Actor_UnholyWaterThrower";
+					it = ThinkerIterator.Create("Actor");
+					while (mo = Actor(it.Next()))
+					{
+						if (mo && 
+								mo.bISMONSTER && 
+								mo.health > 0 &&
+								mo.CountInv(nm)) 
+						{
+							mo.SetInventory("KC_CCards_Actor_UnholyWaterThrower",1);
 						}
 					}
 					

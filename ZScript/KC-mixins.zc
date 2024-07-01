@@ -2164,7 +2164,7 @@ mixin class MonsterCollider
 		nn = "CCards_Actor_MysteryEgg";
 		bool surprisehit = false;
 		if (source && 
-				target != source && 
+				(target != source || CountInv("TimeFreezeHasNoTarget") || CountInv("TimeFreezeHasATarget")) && 
 				(PlayerPawn(source) || source.bFRIENDLY) && 
 				!bFRIENDLY && 
 				!ExplosiveBarrel(self) && 
@@ -2342,8 +2342,8 @@ mixin class MonsterCollider
 						SMASH2.scale.x = (scalebase * self.scale.x);
 						SMASH2.scale.y = (scalebase * self.scale.y);
 						if (SMASH2.target != self) SMASH2.target = self;
-						if (SMASH2.height < (height * heightmult)) SMASH2.height = (height * heightmult);
-						SMASH2.initheight = (height * heightmult);
+						if (SMASH2.height < (self.default.height * heightmult)) SMASH2.height = (self.default.height * heightmult);
+						SMASH2.initheight = (self.default.height * heightmult);
 					}
 				}
 			}
