@@ -268,6 +268,20 @@ class KC_EventHandler : EventHandler
 						}
 					}
 				}
+				nm = "KC_CCards_Actor_BladeTrap2";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						if (mo.CountInv("KC_CCards_Actor_BladeTrap") <= 0)
+						{
+							mo.A_StopSound(6);
+							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",1);
+						}
+					}
+				}
 				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
@@ -317,6 +331,21 @@ class KC_EventHandler : EventHandler
 				}
 				
 				nm = "CCards_Actor_BladeTrap";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
+						if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
+						{
+							mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
+							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",0);
+						}
+					}
+				}
+
+				nm = "KC_CCards_Actor_BladeTrap2";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
 				{
@@ -2333,6 +2362,13 @@ class KC_EventHandler : EventHandler
 				}
 			}
 			
+			nm = "CCards_Actor_BladeTrap"; 
+			if (spawnname == nm) 
+			{
+				spawnee.A_SpawnItemEx("KC_CCards_Actor_BladeTrap2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,spawnee.tid);
+				spawnee.Destroy();
+			}
+
 			nm = "CCards_Actor_CardExplosiveBarrel"; 
 			if (spawnname == nm) 
 			{

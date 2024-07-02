@@ -527,5 +527,120 @@ class KC_CCards_Actor_MoldingClayThrower : KC_CCards_TimeFreezeCheckItem { }
 class KC_CCards_Actor_BarrelToss : KC_CCards_TimeFreezeCheckItem { }
 class KC_CCards_Actor_WebBombThrower : KC_CCards_TimeFreezeCheckItem { }
 //
-class KC_CCards_Actor_BladeTrap : KC_CCards_TimeFreezeCheckItem { }
 class KC_CCards_Actor_AttentionNoise : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_BladeTrap : KC_CCards_TimeFreezeCheckItem { }
+class KC_CCards_Actor_BladeTrap2 : KCBaseZSC
+{
+	Default
+	{
+		-SOLID;
+		-NOBLOCKMONST;
+		+NOTARGET;
+		+EXTREMEDEATH;
+		+NOTELEPORT;
+		scale 0.57;
+		speed 6;
+		radius 28;
+		height 64;
+		gravity 3.0;
+		obituary "%o was sliced to pieces by a spinning blade trap.";
+	}
+
+	uint pausetimer;
+	bool hasseen;
+
+	states
+	{
+		Spawn:
+			C_F6 NOPQRSTUV 2;
+			loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
+	}
+
+	override void Tick()
+	{
+		if (A_CheckKCTimeFreeze())
+		{
+			Super.Tick();
+			return;
+		}
+		
+		if (Level.Time % 15 == 0 && !hasseen)
+		{
+			if (!CheckIfSeen())
+			{
+				hasseen = true;
+			}
+		}
+		if (Level.Time % 5 == 0)
+		{
+			if (!CheckSightOrRange(512, true))
+			{
+				BlockThingsIterator bti = BlockThingsIterator.Create(self, 5);
+		
+				while (bti.Next())
+				{
+					let next = bti.Thing;
+
+					if (Distance3D(next) < 63 && next.health > 0 && next.bSHOOTABLE)
+					{
+						if (next.player)
+						{
+							A_StartSound("corruptioncards/bladetraphit", slot:CHAN_7, volume:0.7);
+							next.DamageMobj(self, self, 3 * random(1, 3), "Melee", 0);
+							next.A_ScaleVelocity(0.5);
+							next.A_ChangeVelocity(random(-5, 5), random(-5, 5), 0, CVF_RELATIVE);
+							next.BloodSplatter(next.pos + (random(-next.radius, next.radius), random(-next.radius, next.radius), random(0, next.height)) , angle);
+						}
+						else
+						{
+							if (!hasseen)
+							{
+								continue;
+							}
+							A_StartSound("corruptioncards/bladetraphit", slot:CHAN_7, volume:0.3);
+							uint f = 0;
+							if (random(0, 5) > 0)
+							{
+								f = DMG_NO_PAIN;
+							}
+							next.DamageMobj(self, self, 3 * random(1, 3), "Melee", f);
+							next.BloodSplatter(next.pos + (random(-next.radius, next.radius), random(-next.radius, next.radius), random(0, next.height)) , angle);
+						}
+					}
+				}
+			}
+
+			if (CheckProximity("TeleportDest", 64))
+			{
+				Destroy();
+				return;
+			}
+		}
+
+		if (pausetimer > 0)
+		{
+			pausetimer--;
+			Super.Tick();
+			return;
+		}
+
+		Vector2 newpos = Vec2Angle(9, angle);
+
+		if(TryMove(newpos, PCM_NOACTORS))
+		{
+			SetOrigin((newpos.x, newpos.y, pos.z), true);
+		}
+		else
+		{
+			angle += 180;
+			pausetimer = 40;
+		}
+
+		Super.Tick();
+	}
+}

@@ -109,6 +109,16 @@ class KCBaseZSC : Actor
 		return UOHYM;
 	}
 	
+	bool A_CheckKCTimeFreeze()
+	{
+		bool freeze = false;
+		actor playera = players[0].mo;
+		if ((playera.CountInv("KCTimeFreezer1") ||
+				 playera.CountInv("KCTimeFreezer2") ||
+				 playera.CountInv("KCTimeFreezer3"))) freeze = true;
+		return freeze;
+	}
+	
 	action bool A_CheckBerserk()
 	{
 		bool check = false;
