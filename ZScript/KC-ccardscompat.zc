@@ -563,6 +563,9 @@ class KC_CCards_Actor_BladeTrap2 : KCBaseZSC
 
 	override void Tick()
 	{
+		// Main difference in KC's version allows Heiwa's Time Freeze to completely shut down 
+		// the Tick() function of the blade traps, thus they stop moving AND damaging you while
+		// time is frozen :V
 		if (A_CheckKCTimeFreeze())
 		{
 			Super.Tick();
@@ -631,7 +634,7 @@ class KC_CCards_Actor_BladeTrap2 : KCBaseZSC
 
 		Vector2 newpos = Vec2Angle(9, angle);
 
-		if(TryMove(newpos, PCM_NOACTORS))
+		if (TryMove(newpos, PCM_NOACTORS))
 		{
 			SetOrigin((newpos.x, newpos.y, pos.z), true);
 		}
