@@ -2020,6 +2020,33 @@ class KCPlayerPawn : PlayerPawn
 												translation, level.GetChecksum());
 			}
 			
+			if (Wads.CheckNumForName("KC-EVI2", Wads.ns_global, -1, true) != -1)
+			{
+				let armor = KCArmor(self.FindInventory("KCArmor"));
+				let armor2 = BasicArmor(self.FindInventory("BasicArmor"));
+				if (armor == null)
+				{
+					if (armor2)
+					{
+						armor = KCArmor(Spawn("KCArmor"));
+						armor.BecomeItem();
+						armor.Amount = armor2.amount;
+						self.AddInventory(armor);
+						armor2.Amount = 0;
+						armor2 = null;
+					}
+				}
+				else
+				{
+					if (armor2)
+					{
+						armor.Amount += armor2.amount;
+						armor2.Amount = 0;
+						armor2 = null;
+					}
+				}
+			}
+			
 			//
 			string nm;
 			if (A_CheckKCTimeFreeze())		

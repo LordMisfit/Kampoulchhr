@@ -2633,7 +2633,7 @@ class KCArmor : BasicArmor
 
 class KCArmorBonus : BasicArmorBonus
 {
-	int A_CheckMaxArmor(int SaveAmount)
+	int A_CheckMaxArmor(int SaveAmount) // BasicArmorBonus
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
@@ -2750,7 +2750,7 @@ class KCArmorBonus : BasicArmorBonus
 
 class KCArmorPickup : BasicArmorPickup
 {
-	int A_CheckMaxArmor(int SaveAmount)
+	int A_CheckMaxArmor(int SaveAmount) // KCArmorPickup
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
