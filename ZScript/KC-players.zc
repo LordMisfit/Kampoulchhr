@@ -2045,6 +2045,28 @@ class KCPlayerPawn : PlayerPawn
 						armor2 = null;
 					}
 				}
+				
+				let invuln = KCPowerInvuln(self.FindInventory("KCPowerInvuln"));
+				let invuln2 = PowerInvulnerable(self.FindInventory("PowerInvulnerable"));
+				if (invuln == null)
+				{
+					if (invuln2)
+					{
+						invuln = KCPowerInvuln(Spawn("KCPowerInvuln"));
+						invuln.BecomeItem();
+						self.AddInventory(invuln);
+						invuln.EffectTics += invuln2.EffectTics;
+						invuln2.EffectTics = 0;
+					}
+				}
+				else
+				{
+					if (invuln2)
+					{
+						invuln.EffectTics += invuln2.EffectTics;
+						invuln2.EffectTics = 0;
+					}
+				}
 			}
 			
 			//

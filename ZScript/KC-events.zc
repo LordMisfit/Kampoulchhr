@@ -1021,8 +1021,11 @@ class KC_EventHandler : EventHandler
 			string spawnname = spawnee.GetClassName();
 			string nm, nn, no, np, nq, nr, ns, nt;
 			bool isCCardsMini = false;
-			nm = "CCards_Actor_MiniMonsterPowerup"; 
+			bool isCCardsMiniAv = false;
+			nm = "CCards_Actor_MiniMonsterPowerup";
+			nn = "CCards_Token_MiniAvenger";
 			if (spawnee.CountInv(nm)) isCCardsMini = true;
+			if (spawnee.CountInv(nn)) isCCardsMiniAv = true;
 			
 			double hpmulti, atkmulti, defmulti, spdmulti, massmulti;
 			double hpmulti2, atkmulti2, defmulti2, spdmulti2, massmulti2;
@@ -1312,7 +1315,11 @@ class KC_EventHandler : EventHandler
 						mult *= 0.9;
 						mult *= (1.0 + (0.125 * monsterrating));
 						mult *= truemultbase;
-						if (isCCardsMini) mult *= 0.5;
+						if (isCCardsMini) 
+						{
+							if (isCCardsMiniAv) mult *= 0.875;
+														 else mult *= 0.5;
+						}
 						if (kcdebug_monsterscaling) Console.Printf("\c[red]mult [pre-attack]: %.8f\c-, FRIENDLY?: %d, monsterrating: %d", mult, spawnee.bFRIENDLY, monsterrating);
 
 						// Attack
@@ -1379,7 +1386,11 @@ class KC_EventHandler : EventHandler
 						mult2 *= (random(2,4) * 0.9);
 						mult2 *= (1.0 + ((random(5,10) * 0.0125) * monsterrating));
 						mult2 *= truemultbase;
-						if (isCCardsMini) mult2 *= 0.5;
+						if (isCCardsMini) 
+						{
+							if (isCCardsMiniAv) mult2 *= 0.875;
+														 else mult2 *= 0.5;
+						}
 						
 						MapCheck = globalvars.MapsFinished;
 						
