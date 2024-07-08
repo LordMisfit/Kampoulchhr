@@ -1318,13 +1318,14 @@ class HellClericDVDS : KCCreature
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; } else { bAVOIDMELEE = false; }
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
 				user_fastchasetimer++;
-				if (user_fastchasetimer >= 1 && user_fastchasetimer <= 2) { user_fastchasetimermax = 16; }
-				if (user_fastchasetimer >= 3 && user_fastchasetimer <= 4) { user_fastchasetimermax = 4; }
-				if (user_fastchasetimer >= 5 && user_fastchasetimer <= 6) { user_fastchasetimermax = 8; }
-				if (user_fastchasetimer >= 7 && user_fastchasetimer <= 8) { user_fastchasetimermax = 2; }
+				if (user_fastchasetimer >= 1 && user_fastchasetimer <= 2) { user_fastchasetimermax = 32; }
+				if (user_fastchasetimer >= 3 && user_fastchasetimer <= 4) { user_fastchasetimermax = 8; }
+				if (user_fastchasetimer >= 5 && user_fastchasetimer <= 6) { user_fastchasetimermax = 16; }
+				if (user_fastchasetimer >= 7 && user_fastchasetimer <= 8) { user_fastchasetimermax = 4; }
 				if (user_fastchasetimer >= 8) { user_fastchasetimer = 0; }
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_fastchasetimermax /= 2; }
-				if (random(1,user_fastchasetimermax) == 1) 
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(240,2,true,self)) { user_fastchasetimermax /= 4; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_fastchasetimermax /= 2; }
+				if (random(1,user_fastchasetimermax) == 1 && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP)) 
 				{
 					A_KCChase("Melee","Missile", CHF_FASTCHASE | CHF_NIGHTMAREFAST); 
 				}
