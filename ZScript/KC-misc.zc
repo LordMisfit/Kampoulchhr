@@ -9393,6 +9393,9 @@ class PlayerDashJump : Inventory
 		{
 			DashCost *= 0.2;
 			MaxDashCooldown *= 0.4;
+			
+			if (DashCost <= 1) DashCost = 1;
+			if (MaxDashCooldown <= 1) MaxDashCooldown = 1;
 		}
 		
 		

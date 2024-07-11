@@ -512,6 +512,23 @@ class KC_CCards_TimeFreezeCheckItem : PlaceHolderItem
 	}
 }
 
+class KC_CCards_MiscCheckItem : PlaceHolderItem
+{
+	Default
+	{
+		inventory.maxamount 1;
+	}
+}
+
+class KC_CCards_Actor_9LivesCurse : KC_CCards_MiscCheckItem { }
+class KC_CCards_Actor_9LivesCounter : KC_CCards_MiscCheckItem
+{
+	Default
+	{
+		inventory.maxamount 9;
+	}
+}
+
 class KC_CCards_Actor_Cannibalism : KC_CCards_TimeFreezeCheckItem { }
 class KC_CCards_Actor_FrankensteinTools : KC_CCards_TimeFreezeCheckItem { }
 class KC_CCards_Actor_EnlightenmentThrower : KC_CCards_TimeFreezeCheckItem { }

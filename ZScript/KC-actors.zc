@@ -57,6 +57,9 @@ class KCBaseZSC : Actor
 	int nightmarephaserand;
 	int nightmarealphatimeroffset;
 	
+	bool ninelivescurse;
+	int nineliveslifecount;
+
 	default
 	{
 		+CASTSPRITESHADOW;
@@ -4556,7 +4559,8 @@ class KCCreature : KCBaseZSC
 	void A_KCPain(int type = 0, int value1 = 0, int value2 = 0, int value3 = 0, int value4 = 0, int value5 = 0, int value6 = 0)
 	{
 		int user_monsterlevel = CountInv("MonsterLevel");
-		A_Pain();
+		if (GetClassName() == "ChaingunDemon") A_StartSound("blooddemon/pain", 0, CHAN_BODY, 1.0, ATTN_NORM, frandompick(0.80,0.825,0.85));
+																			else A_Pain();
 		
 		if (type == 0)
 		{
