@@ -16822,10 +16822,12 @@ class KnifePuffNoSound : KnifePuff
 
 class BlasterRifle : MarineWeapon // DoomWeapon 2001
 {
+	int firetype;
 	int shotcount;
 	int freeshot;
 	int flashspeed, altflashspeed;
 	bool modpackspawnattempt;
+	
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -16851,7 +16853,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 	States
 	{
 		Ready:
-			E11G ABCDCB 6 A_WeaponReady();
+			E11G ABCDCB 6 A_WeaponReady(WRF_ALLOWUSER4);
 			Loop;
 		Deselect:
 			E11G A 1 A_Lower(12);
@@ -16862,14 +16864,14 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		Fire:
 			E11G A 3
 			{
+				int tic = 3;
 				invoker.freeshot = 0;
-				A_SetTics(3);
 				if (CountInv("BlasterRifleUpgrade"))
 				{
 					if (random(1,3) <= 1) 
 					{
-						if (random(1,12) <= 1) A_SetTics(2);
-															else A_SetTics(1);
+						if (random(1,12) <= 1) tic = 2;
+															else tic = 1;
 					}
 					if (random(1,10) <= 1) invoker.freeshot++;
 				}
@@ -16877,6 +16879,8 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				{
 					if (random(1,100) <= 1) invoker.freeshot++;
 				}
+				if (invoker.firetype >= 1) tic += randompick(0,1,1,1,1,1,2);
+				A_SetTics(tic);
 			}
 			E11F A 4
 			{
@@ -16889,17 +16893,34 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else invoker.flashspeed = 3;
 					}
 				}
+				if (invoker.firetype >= 1) invoker.flashspeed += randompick(0,1,1,1,1,1,2);
 				A_SetTics(invoker.flashspeed);
 				A_GunFlash("Flash");
 				A_StartSound("weapons/blasterrifle",CHAN_WEAPON);
 				string shottype = "Blaster_RifleShot";
 				double recoil = frandom(0.05,0.075);
-
-				if (CountInv("BlasterRifleUpgrade")) 
+				
+				if (invoker.firetype <= 0)
 				{
-					shottype = "Blaster_RifleShotRipper";
-					recoil = frandom(0.01667,0.025);
-					A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					shottype = "Blaster_RifleShot";
+					recoil = frandom(0.05,0.075);
+					if (CountInv("BlasterRifleUpgrade")) 
+					{
+						shottype = "Blaster_RifleShotRipper";
+						recoil = frandom(0.01667,0.025);
+						A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					}
+				}
+				else
+				{
+					shottype = "Blaster_RifleShotWeak";
+					recoil = frandom(0.0125,0.01875);
+					if (CountInv("BlasterRifleUpgrade")) 
+					{
+						shottype = "Blaster_RifleShotRipperWeak";
+						recoil = frandom(0.041667,0.0625);
+						A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					}
 				}
 				A_FireProjectile(shottype);
 				A_Recoil(recoil);
@@ -16908,15 +16929,17 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 			}
 			E11G A 3 
 			{
-				A_SetTics(3);
+				int tic = 3;
 				if (CountInv("BlasterRifleUpgrade"))
 				{
 					if (random(1,3) <= 1) 
 					{
-						if (random(1,12) <= 1) A_SetTics(2);
-															else A_SetTics(1);
+						if (random(1,12) <= 1) tic = 2;
+															else tic = 1;
 					}
 				}
+				if (invoker.firetype >= 1) tic += randompick(0,1,1,1,1,1,2);
+				A_SetTics(tic);
 				A_ReFire();
 			}
 			Goto Ready;
@@ -16958,15 +16981,17 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		AltFire2:
 			E11G A 2
 			{
-				A_SetTics(2);
+				int tic = 2;
 				if (CountInv("BlasterRifleUpgrade"))
 				{
 					if (random(1,6) <= 1) 
 					{
-						if (random(1,24) <= 1) A_SetTics(0);
-															else A_SetTics(1);
+						if (random(1,24) <= 1) tic = 0;
+															else tic = 1;
 					}
 				}
+				if (invoker.firetype >= 1) tic += randompick(0,1,1,1,1,1,2);
+				A_SetTics(tic);
 			}
 			E11F A 3
 			{
@@ -16979,6 +17004,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else invoker.altflashspeed = 2;
 					}
 				}
+				if (invoker.firetype >= 1) invoker.altflashspeed += randompick(0,1,1,1,1,1,2);
 				A_SetTics(invoker.altflashspeed);
 
 				A_GunFlash("AltFlash");
@@ -16986,16 +17012,36 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				string shottype = "Blaster_RifleShot";
 				double recoil = frandom(0.075,0.1125);
 
-				if (CountInv("BlasterRifleUpgrade")) 
+				if (invoker.firetype <= 0)
 				{
-					shottype = "Blaster_RifleShotRipper";
-					recoil = frandom(0.025,0.0375);
-					A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					shottype = "Blaster_RifleShot";
+					if (CountInv("BlasterRifleUpgrade")) 
+					{
+						shottype = "Blaster_RifleShotRipper";
+						recoil = frandom(0.025,0.0375);
+						A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					}
 				}
+				else
+				{
+					shottype = "Blaster_RifleShotWeak";
+					if (CountInv("BlasterRifleUpgrade")) 
+					{
+						shottype = "Blaster_RifleShotRipperWeak";
+						recoil = frandom(0.00625,0.009375);
+						A_StartSound("weapons/blasterrifle",CHAN_BODY,CHANF_DEFAULT,0.8,ATTN_NORM,frandom(0.9,1.2));
+					}
+				}
+
 				for (int i = 0; i < invoker.shotcount; i++)
 				{
-					double ang = (random(-20,20) * 0.2);
-					double pch = (random(-20,20) * 0.2);
+					double ang = (random(-16,16) * 0.16);
+					double pch = (random(-16,16) * 0.16);
+					if (invoker.firetype >= 1)
+					{
+						ang = (random(-20,20) * 0.2);
+						pch = (random(-20,20) * 0.2);
+					}
 					if (CountInv("BlasterRifleUpgrade"))
 					{
 						double accmod = frandompick(0.4,0.45,0.45,0.5,0.5,0.5,0.5,0.5,0.5,0.55,0.55,0.6);
@@ -17008,8 +17054,11 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 					A_IncGunKiaiCounter((randompick(0,1,1,1,1,1,1,1,1,2) * random(4,6)));
 				}
 				A_Recoil(recoil);
-				A_TakeInventory("Cell",invoker.shotcount,TIF_NOTAKEINFINITE);
-				if (invoker.freeshot) A_GiveInventory("Cell",invoker.freeshot);
+				if (invoker.firetype <= 0)
+				{
+					A_TakeInventory("Cell",invoker.shotcount,TIF_NOTAKEINFINITE);
+					if (invoker.freeshot) A_GiveInventory("Cell",invoker.freeshot);
+				}
 			}
 			E11G A 0 A_ReFire("AltFire");
 			Goto Ready;
@@ -17027,6 +17076,36 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				A_Light2();
 			}
 			Goto LightDone;
+		
+		
+		// Fire Mode
+		User4:
+			E11G A 0
+			{
+				let globalvars = KCGlobalVariables.Get();
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				
+				A_StopSound(CHAN_6);
+				A_StartSound("weapons/blstrpst3",CHAN_6);
+				if (invoker.firetype == 0)
+				{
+					invoker.firetype = 1;
+					A_Print("Never Consume Cells [all shots are weakened by default]");
+				}
+				else
+				if (invoker.firetype == 1)
+				{
+					invoker.firetype = 0;
+					A_Print("Default to using Cells first");
+				}
+			}
+			E11G A 8
+			{
+				A_SetTics(random(8,12));
+			}
+			goto Ready;
+
 		Spawn:
 			E11B A 4 NoDelay
 			{
@@ -17087,8 +17166,43 @@ class Blaster_RifleShot : KCFastProjectile
 			BLAS AA 1 BRIGHT; //A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
 			loop;
 		Death:
-			TNT1 AAA 0 A_SpawnItemEx("Blaster_RifleShot_Hit");
-			TNT1 A 35;
+			TNT1 AAA 0 BRIGHT A_SpawnItemEx("Blaster_RifleShot_Hit");
+			TNT1 A 35 BRIGHT;
+			Stop;
+	}
+}
+
+class Blaster_RifleShotWeak : Blaster_RifleShot
+{
+	default
+	{
+		PROJECTILE;
+		ProjectileKickback 5;
+		Radius 1;
+		Height 2;
+		Scale 0.2;
+		Speed 20.8; // 26;
+		DamageFunction ((randompick(3,4,4,4,5,5,5,5,5,5,5,5,6,6,6,7) * random(randompick(1,1,1,2,2,3),randompick(6,7,7,8,8,8))) / 5);
+		Obituary "%o got blasted by %k, like the rebel scum %g is!";
+		SeeSound "";
+		Scale 0.2;
+		Decal "BulletChip";
+		DamageType "Plasma";
+		MissileType "Blaster_RifleShot_TrailWeak";
+		MissileHeight 8;
+		//SeeSound "weapons/blstrpst";
+		DeathSound "weapons/blstrhit";
+		RenderStyle "Add";
+	}
+	
+	States
+	{
+		Spawn:
+			BLAS AA 1 BRIGHT; //A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
+			loop;
+		Death:
+			TNT1 A 0 BRIGHT A_SpawnItemEx("Blaster_RifleShot_HitWeak");
+			TNT1 A 35 BRIGHT;
 			Stop;
 	}
 }
@@ -17122,8 +17236,43 @@ class Blaster_RifleShotRipper : SingleDamageFastRipper
 			BLAS AA 1 BRIGHT; //A_SpawnProjectile("Blaster_RifleShot_Trail", 0, 0, 0, -2, 0);
 			loop;
 		Death:
-			TNT1 AAA 0 A_SpawnItemEx("Blaster_RifleShot_Hit");
-			TNT1 A 35;
+			TNT1 AAA 0 BRIGHT A_SpawnItemEx("Blaster_RifleShot_Hit");
+			TNT1 A 35 BRIGHT;
+			Stop;
+	}
+}
+
+class Blaster_RifleShotRipperWeak : Blaster_RifleShotRipper
+{
+	default
+	{
+		PROJECTILE;
+		ProjectileKickback 5;
+		Radius 2;
+		Height 4;
+		Scale 0.25;
+		Speed 41.6; // 26;
+		DamageFunction ((randompick(4,4,5,5,5,5,5,5,5,5,6,6,6,6,7,7) * random(randompick(1,1,2,2,3,3),randompick(7,7,7,8,8,9)) / 5));
+		Obituary "%o got blasted by %k, like the rebel scum %g is!";
+		SeeSound "";
+		Scale 0.2;
+		Decal "BulletChip";
+		DamageType "Plasma";
+		MissileType "Blaster_RifleShot_TrailWeak";
+		MissileHeight 8;
+		//SeeSound "weapons/blstrpst";
+		DeathSound "weapons/blstrhit";
+		RenderStyle "Add";
+	}
+	
+	States
+	{
+		Spawn:
+			BLAS AA 1 BRIGHT; //A_SpawnProjectile("Blaster_RifleShot_TrailWeak", 0, 0, 0, -2, 0);
+			loop;
+		Death:
+			TNT1 A 0 BRIGHT A_SpawnItemEx("Blaster_RifleShot_HitWeak");
+			TNT1 A 35 BRIGHT;
 			Stop;
 	}
 }
@@ -17133,7 +17282,17 @@ class Blaster_RifleShot_Hit : RedParticleFountain
 	States
 	{
 		Spawn:
-			TNT1 A 16;
+			TNT1 A 16 BRIGHT;
+			Stop;
+	}
+}
+
+class Blaster_RifleShot_HitWeak : RedParticleFountain
+{
+	States
+	{
+		Spawn:
+			TNT1 A 16 BRIGHT;
 			Stop;
 	}
 }
@@ -17151,8 +17310,27 @@ class Blaster_RifleShot_Trail : KCBaseZSC
 	States
 	{
 		Spawn:
-			TNT1 A 1;
-			BLAS A 2;
+			TNT1 A 1 BRIGHT;
+			BLAS A 2 BRIGHT;
+			Stop;
+	}
+}
+
+class Blaster_RifleShot_TrailWeak : Blaster_RifleShot_Trail
+{
+	default
+	{
+		+NOGRAVITY;
+		+NOCLIP;
+		Speed 1;
+		Translation "112:127=171:191";
+		Scale 0.2;
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 1 BRIGHT;
+			BLAS A 2 BRIGHT;
 			Stop;
 	}
 }
