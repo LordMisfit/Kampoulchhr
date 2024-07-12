@@ -3987,6 +3987,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "BlasterPistol" ||
 					PlayerWeapon is "RiotGun" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
+					PlayerWeapon is "BlasterRifle" ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
 					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
@@ -4008,6 +4009,7 @@ class KCStatusBarMain : BaseStatusBar
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
 																												else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
+				else if (PlayerWeapon is "BlasterRifle") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
 				else if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]CHANGE ATTACK\c-");
 				else if (PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators"))
 				{
