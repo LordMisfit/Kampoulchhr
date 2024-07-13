@@ -572,6 +572,7 @@ class KC_EventHandler : EventHandler
 	void ProjSetSpeed(actor spawnee)
 	{
 		double spdfactor, oldspdfactor;
+		int TrueGameSkill = skill;
 		
 		if (Level.MapName != "TITLEMAP")
 		{
@@ -581,7 +582,9 @@ class KC_EventHandler : EventHandler
 				{
 					if (spawnee.target)
 					{
-						if (spawnee.target.bISMONSTER && !PlayerPawn(spawnee.target) && spawnee.target.default.speed != 0)
+						if (spawnee.target.bISMONSTER && 
+								!PlayerPawn(spawnee.target) && 
+								spawnee.target.default.speed != 0)
 						{
 							spdfactor = spawnee.target.speed / spawnee.target.default.speed;
 							oldspdfactor = spdfactor;
