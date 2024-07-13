@@ -237,7 +237,7 @@ class KC_EventHandler : EventHandler
 						mo.Destroy();
 					}
 				}
-
+				
 				nm = "CCards_Actor_RainDamager";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -283,6 +283,13 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
+				nm = "CCards_Actor_Confetti";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
+				}
+				
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
 				while (mo = Actor(it.Next()))
@@ -321,7 +328,7 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo)
 					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
+						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
 						if (mo.CountInv("KC_CCards_Actor_AttentionNoise"))
 						{
 							mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
@@ -336,7 +343,7 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo)
 					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
+						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
 						if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
 						{
 							mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
@@ -351,7 +358,7 @@ class KC_EventHandler : EventHandler
 				{
 					if (mo)
 					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == true;
+						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
 						if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
 						{
 							mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
@@ -363,8 +370,8 @@ class KC_EventHandler : EventHandler
 			
 			if (level.time >= 3)
 			{
-				bool KCCardsPlaceHolderCheck = false;
-				if (level.time >= 3 && level.time <= 35) KCCardsPlaceHolderCheck = true;
+				bool CardsPlaceHolderCheck = false;
+				if (level.time >= 3 && level.time <= 35) CardsPlaceHolderCheck = true;
 
 				// 1 Sec TimeFreeze Checks
 				if ((((level.time - 35) % 35) == 0))
@@ -450,7 +457,7 @@ class KC_EventHandler : EventHandler
 				// 2 Second Checks
 				if ((((level.time - 35) % 70) == 0))
 				{
-					KCCardsPlaceHolderCheck = true;
+					CardsPlaceHolderCheck = true;
 					
 					nm = "CCards_Actor_PlushWeapon1";
 					if (player.CountInv(nm))
@@ -499,7 +506,7 @@ class KC_EventHandler : EventHandler
 				// 5 second checks
 				if ((((level.time - 35) % 175) == 0))
 				{
-					KCCardsPlaceHolderCheck = true;
+					CardsPlaceHolderCheck = true;
 					
 					nm = "CCards_Actor_BigStomach";
 					nm = "CCards_Actor_SwapCurse";
@@ -529,7 +536,7 @@ class KC_EventHandler : EventHandler
 					}
 				}
 				
-				if (KCCardsPlaceHolderCheck)
+				if (CardsPlaceHolderCheck)
 				{
 					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCurse","KC_CCards_Actor_9LivesCurse");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCounter","KC_CCards_Actor_9LivesCounter");
@@ -549,6 +556,7 @@ class KC_EventHandler : EventHandler
 					A_TmFrzCCardWTick_Giver("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				}
+				
 			}
 		}
 	}
@@ -1305,12 +1313,28 @@ class KC_EventHandler : EventHandler
 						if (spawnname ~== "PennywiseBoss") LevelCheck += random(23,45);
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [actor-check: %s]: %d (Previous: %d), monsterrating: %d", spawnname, LevelCheck, PreviousLevelCheck, monsterrating);
 						
+						if (gameinfo.GameType == GAME_Doom)
+						{
+							if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1 && level.GetChecksum() == "c50823f3e0b0504a403e0574af3f68e3")
+							{
+								if (spawnee.TID == 251)
+								{
+									PreviousLevelCheck = LevelCheck;
+									LevelCheck *= 2;
+									if (dydudebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
+								}
+							}
+						}
 						PreviousLevelCheck = LevelCheck;
 						LevelCheck = clamp(LevelCheck, 0, 2000);
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [final calc]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
 						levelee = true;
 					}
 					
+					//
+					if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+					{
+					}
 					//
 					
 					[spawnee, spawnname, LevelCheck] = CheckLevelTweaks(spawnee,spawnname,LevelCheck);
@@ -1462,6 +1486,23 @@ class KC_EventHandler : EventHandler
 						if (MapCheck >= 151 && MapCheck <= 175) baseatkmulti2 *= 1.75;
 						if (MapCheck >= 176 && MapCheck <= 200) baseatkmulti2 *= 1.875;
 						if (MapCheck >= 201) baseatkmulti2 *= 2.0;
+						
+						if (ninelivescurse)
+						{
+							if (nineliveslifecount >= 9)
+							{
+								baseatkmulti2 *= (1.00 + (random(nineliveslifecount/2,nineliveslifecount) * frandom(0.125,0.1667)));
+							}
+							else
+							if (nineliveslifecount >= 4 && nineliveslifecount <= 8)
+							{
+								baseatkmulti2 *= (1.00 + (random(nineliveslifecount/2,nineliveslifecount) * frandom(0.0625,0.08334)));
+							}
+							else
+							{
+								baseatkmulti2 *= (1.00 + (random(nineliveslifecount/2,nineliveslifecount) * frandom(0.03125,0.041667)));
+							}
+						}
 						atkmulti2 = baseatkmulti2;
 						//
 						if (kcdebug_monsterscaling) Console.Printf("atkmulti2: %.8f", atkmulti2);
@@ -3135,7 +3176,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCardAssassinMarker"; if (victim.CountInv(nm)) specialtype += 2;
 				nm = "CCardRespawnedMarker"; if (victim.CountInv(nm)) specialtype += 4;
 				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
-				nm = "CCards_Actor_9LivesCurse"; if (victim.CountInv(nm)) specialtype += 16;
+				nm = "KC_CCards_Actor_9LivesCurse"; if (victim.CountInv(nm)) specialtype += 16;
 				nm = "CCards_Actor_PilotedMech"; if (victim.CountInv(nm)) specialtype += 32;
 				nm = "CCards_Actor_Spider"; if (victim.GetClassName() == nm) specialtype += 128;
 				nm = "CCards_SpookySkeleton"; if (victim.GetClassName() == nm) specialtype += 256;
@@ -3694,7 +3735,7 @@ class KC_EventHandler : EventHandler
 				}
 				KCCVict = KCCreature(victim);
 			}
-
+			
 			bool ninelivescurse;
 			int nineliveslifecount;
 			nm = "KC_CCards_Actor_9LivesCurse"; 
@@ -3712,8 +3753,6 @@ class KC_EventHandler : EventHandler
 				if (MiscItem.sielsgraceluckcooldown > 0) sielgraceluckboost *= frandompick(2.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,7.5);
 				if (MiscItem.sielsgracetrueactivations > 0) sielgraceluckboost *= (1.0 + (MiscItem.sielsgracetrueactivations * 0.1));
 			}
-			int armorbonusrolls;
-			int healthbonusrolls;
 			
 			int Kills = playera.CountInv("KillsCount");
 			// Drop Tables
@@ -3734,6 +3773,8 @@ class KC_EventHandler : EventHandler
 			int lvldivider;
 			int basechance;
 			int maxchance;
+			int armorbonusrolls;
+			int healthbonusrolls;
 			int bossdropmulti = randompick(randompick(1,2,2),3,3,3,3,3,3,3,3,randompick(4,4,5));
 			if (specialtype & 8 || // CCards' Ancient One Boss V:
 					specialtype & 256 || // CCards' Agitated Revenant V:
@@ -3795,7 +3836,8 @@ class KC_EventHandler : EventHandler
 				Console.Printf("\c[brick]skillmult:\c- %.8f", skillmult);
 				Console.Printf("\c[brick]sielgraceluckboost:\c- %.8f", sielgraceluckboost);
 			}
-
+			
+			if (waslegendary) skillmult *= frandom(0.334,0.4585);
 			bool candropitems = false;
 			if (specialtype) candropitems = true;
 			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
@@ -5997,7 +6039,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCardAssassinMarker"; if (victim.CountInv(nm)) specialtype += 2;
 				nm = "CCardRespawnedMarker"; if (victim.CountInv(nm)) specialtype += 4;
 				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
-				nm = "CCards_Actor_9LivesCurse"; if (victim.CountInv(nm)) specialtype += 16;
+				nm = "KC_CCards_Actor_9LivesCurse"; if (victim.CountInv(nm)) specialtype += 16;
 				nm = "CCards_Actor_PilotedMech"; if (victim.CountInv(nm)) specialtype += 32;
 				nm = "CCards_Actor_Spider"; if (victim.GetClassName() == nm) specialtype += 128;
 				nm = "CCards_SpookySkeleton"; if (victim.GetClassName() == nm) specialtype += 256;
@@ -6095,8 +6137,8 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 8) ExpGain *= frandompick(7.5,12.5); // CCards_Actor_TheAncientOne
 						if (specialtype & 16) 
 						{
-							ExpGain *= frandompick(0.75,1.25); // CCards_Actor_9LivesCurse
-							nm = "CCards_Actor_9LivesCounter";
+							ExpGain *= frandompick(0.75,1.25); // KC_CCards_Actor_9LivesCurse
+							nm = "KC_CCards_Actor_9LivesCounter";
 							if (victim.CountInv(nm))
 							{
 								int lives = victim.CountInv(nm);
