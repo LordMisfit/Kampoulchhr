@@ -1016,6 +1016,45 @@ class KC_EventHandler : EventHandler
 		if (checkee)
 		{
 			string spawnname = checkee.GetClassName();
+			if (Wads.CheckNumForName("KC-EXDAY", Wads.ns_global, -1, true) != -1)
+			{
+				nm = "Toilet"; if (spawnname == nm) exception = true;
+				nm = "Shower"; if (spawnname == nm) exception = true;
+				nm = "FaucetWater"; if (spawnname == nm) exception = true;
+				nm = "WaterActivation"; if (spawnname == nm) exception = true;
+				nm = "LoveTrainSounds"; if (spawnname == nm) exception = true;
+				nm = "VaseBrown"; if (spawnname == nm) exception = true;
+				nm = "ReflectionStaticGreen"; if (spawnname == nm) exception = true;
+				nm = "PalmTreeTop"; if (spawnname == nm) exception = true;
+				nm = "PalmTreeWood1"; if (spawnname == nm) exception = true;
+				nm = "JungleTreePart"; if (spawnname == nm) exception = true;
+				nm = "SeekingThunder"; if (spawnname == nm) exception = true;
+				nm = "MeteorCaster"; if (spawnname == nm) exception = true;
+				nm = "DecorativeSkullA"; if (spawnname == nm) exception = true;
+				nm = "DecorativeSkullB"; if (spawnname == nm) exception = true;
+				nm = "DecorativeSkullC"; if (spawnname == nm) exception = true;
+				nm = "DecorativeSkullD"; if (spawnname == nm) exception = true;
+				nm = "GreenCar"; if (spawnname == nm) exception = true;
+				nm = "BlueCar"; if (spawnname == nm) exception = true;
+				nm = "RedCar"; if (spawnname == nm) exception = true;
+				nm = "GrayCar"; if (spawnname == nm) exception = true;
+				nm = "RandomCarSP"; if (spawnname == nm) exception = true;
+				nm = "FuckedUpCar"; if (spawnname == nm) exception = true;
+				nm = "CarColisionExtra"; if (spawnname == nm) exception = true;
+				nm = "EndFirstLevel"; if (spawnname == nm) exception = true;
+				nm = "ImpaledSkulls"; if (spawnname == nm) exception = true;
+				nm = "BDECRedLightWall1"; if (spawnname == nm) exception = true;
+				nm = "BDECBlueLightWall"; if (spawnname == nm) exception = true;
+				nm = "BDECBlueLightWall1"; if (spawnname == nm) exception = true;
+				nm = "BDECyellowLightWall"; if (spawnname == nm) exception = true;
+				nm = "BDECyellowLightWall1"; if (spawnname == nm) exception = true;
+				nm = "BDECwhiteLightWall"; if (spawnname == nm) exception = true;
+				nm = "BDECwhiteLightWall1"; if (spawnname == nm) exception = true;
+				nm = "BDecMap16SecretExit"; if (spawnname == nm) exception = true;
+				nm = "BDecMap20SecretExit"; if (spawnname == nm) exception = true;
+				nm = "D2MAP13SecretExit"; if (spawnname == nm) exception = true;
+				nm = "BDECSpecimenTank"; if (spawnname == nm) exception = true;
+			}
 		}
 		return exception;
 	}
@@ -1332,7 +1371,7 @@ class KC_EventHandler : EventHandler
 					}
 					
 					//
-					if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1)
+					if (A_CheckBlooM())
 					{
 					}
 					//
@@ -6118,7 +6157,7 @@ class KC_EventHandler : EventHandler
 																		else ExpGain *= (frandom(0.3,0.45) * frandompick(0.75,0.875,1.0,1.125,1.25));
 						}
 						
-						if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1) 
+						if (A_CheckBlooM()) 
 						{
 							if (vict == "ChtonBloom") ExpGain *= random(8,12);
 							ExpGain *= frandompick(1.25,1.375,1.375,1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
