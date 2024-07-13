@@ -808,7 +808,7 @@ class CompatVulnItem : PlaceholderItem
 						double heightmult = frandompick(0.9375,1.0,1.0625,1.125,1.125,1.25,1.25,1.25,1.25,1.25);
 						actor SMASH;
 						bool success;
-						[success, SMASH] = owner.A_SpawnItemEx("SMAAAASH",0.0,0.0,(owner.height * heightmult),0.0,0.0,0.0,SXF_NOCHECKPOSITION|SXF_SETTARGET,0,0);
+						[success, SMASH] = owner.A_SpawnItemEx("SMAAAASH",0.0,0.0,(owner.default.height * heightmult),0.0,0.0,0.0,SXF_NOCHECKPOSITION|SXF_SETTARGET,0,0);
 						if (success && SMASH)
 						{
 							SMAAAASH SMASH2;
