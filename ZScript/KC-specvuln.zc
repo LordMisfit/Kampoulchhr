@@ -445,6 +445,7 @@ class CompatVulnItem : PlaceholderItem
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		double firstdmgfactor;
+		string nm, nn, no, np;
 
 		if (owner)
 		{
@@ -460,6 +461,7 @@ class CompatVulnItem : PlaceholderItem
 				int angvstype;
 				bool surprisehit;
 				bool wasblastedimpact;
+				//
 
 				KCPlayerPawn FoundPlayer;
 				FoundPlayer = KCPlayerPawn(source);
@@ -596,6 +598,16 @@ class CompatVulnItem : PlaceholderItem
 						else TOTALFactor *= 1.125;
 					}
 				}
+				
+				found = false;
+				//if (!found) TOTALFactor *= GetDoomResistances(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetAfterDoomResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetBloodResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetBloodResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetMiscResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetMiscResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
+				//if (!found) TOTALFactor *= GetCCardsResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+				
 				newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 				lastTOTALFactor = TOTALFactor;
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c- (%s): post-damage: %d, damagetype: %s, TOTALFactor: %.8f", ownername, newdamage, damageType, TOTALFactor);
@@ -603,8 +615,29 @@ class CompatVulnItem : PlaceholderItem
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
 				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
 				
+				bool domusic = false;
+				if (!FoundPlayer) FoundPlayer = KCPlayerPawn(inflictor);
+				if (FoundPlayer)
+				{
+					if (!owner.bFRIENDLY) domusic = true;
+				}
+				else
+				{
+					if (owner.bFRIENDLY)
+					{
+						if (source && source.bISMONSTER && !source.bFRIENDLY) domusic = true;
+						if (inflictor && inflictor.bISMONSTER && !inflictor.bFRIENDLY) domusic = true;
+					}
+					else
+					{
+						if (source && source.bISMONSTER && source.bFRIENDLY) domusic = true;
+						if (inflictor && inflictor.bISMONSTER && inflictor.bFRIENDLY) domusic = true;
+					}
+				}
+				if (domusic) A_DynamicMusic(forcedplay:true);
+				
 				nm = "CCards_Actor_StoneDeath";
-				string nn = "CCards_Actor_MysteryEgg";
+				nn = "CCards_Actor_MysteryEgg";
 				if (source && 
 						(prevtarget != source || owner.CountInv("TimeFreezeHasNoTarget") || owner.CountInv("TimeFreezeHasATarget")) && 
 						(PlayerPawn(source) || source.bFRIENDLY) && 
