@@ -6111,6 +6111,19 @@ class KC_EventHandler : EventHandler
 						nm = "CCards_Actor_AssassinBuff";
 						if (waslegendary ||
 								victim.CountInv(nm)) ExpGain *= 1.25;
+						if (A_CheckUOHYM()) 
+						{
+									 if (specialtype & 32) ExpGain *= (frandom(3.2,4.8) * frandompick(0.875,1.0,1.0,1.0,1.125));
+							else if (specialtype & 16) ExpGain *= (frandom(0.8,1.2) * frandompick(0.875,1.0,1.0,1.0,1.125));
+																		else ExpGain *= (frandom(0.3,0.45) * frandompick(0.75,0.875,1.0,1.125,1.25));
+						}
+						
+						if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1) 
+						{
+							if (vict == "ChtonBloom") ExpGain *= random(8,12);
+							ExpGain *= frandompick(1.25,1.375,1.375,1.5,1.5,1.5,1.5,1.5,1.625,1.625,1.75);
+						}
+
 						if (monsterrating)
 						{
 							if (waslegendary ||
@@ -6313,9 +6326,9 @@ class KC_EventHandler : EventHandler
 								int ExpNew = playera.CountInv("ExpPts");
 								int ExpNeeded = playera.CountInv("ExpPtsNeeded");
 								int PlayerLevel = playera.CountInv("PlayerLevel");
-								if (kc_showexpgains) Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
-								if (kc_showexpgains)
+								if (kc_showexpgains && ExpGain)
 								{
+									Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
 									MiscItem.KillComboCount += 1;
 									MiscItem.EXPGainHUDAmt += ExpGain;
 									if (MiscItem.EXPGainHUDTimer <= 0) MiscItem.EXPGainHUDTimer = 105;
@@ -6344,6 +6357,7 @@ class KC_EventHandler : EventHandler
 						// BUILD-style oneliner for kills [optional]
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
+						nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) playoneliner = false;
 						if (!playerkill) playoneliner = false;
 						
 						if (kcdebug_worlddied) Console.Printf("playoneliner: %d", playoneliner);
@@ -6375,12 +6389,12 @@ class KC_EventHandler : EventHandler
 									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
 									if (playera.CountInv("LowHealth")) basechance *= 1.5;
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
-									if (waslegendary) basechance *= 5;
+									if (waslegendary || victim.CountInv(nm)) basechance *= 5;
 									
 									if (victim.bBOSS) basechance *= 8;
 									if (playera && A_CheckBerserk(playera)) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
 									int maxchance = 256;
-									if (waslegendary) maxchance *= 0.25;
+									if (waslegendary || victim.CountInv(nm)) maxchance *= 0.25;
 									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
 									if (random(1,maxchance) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 									{
