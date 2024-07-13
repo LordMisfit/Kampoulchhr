@@ -6095,6 +6095,12 @@ class KC_EventHandler : EventHandler
 							if (mastor.bFRIENDLY || PlayerPawn(mastor)) giveexp = true;
 							if (kcdebug_worlddied) Console.Printf("mastor: %s [%d]", mast, mastor.bFRIENDLY);
 						}
+						if (EvilWarriorShieldBall(inflicter) && playerkill && MiscItem)
+						{
+							MiscItem.EWShieldKills++;
+							if (kcdebug_worlddied) Console.Printf("MiscItem.EWShieldKills: %d [inflicter]", MiscItem.EWShieldKills);
+						}
+						nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) giveexp = false;
 						if (kcdebug_worlddied) Console.Printf("playerkill: %d, allykill: %d", playerkill, allykill);
 						
 						if ((playerkill || allykill) && MiscItem)
