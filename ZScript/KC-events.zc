@@ -2719,11 +2719,30 @@ class KC_EventHandler : EventHandler
 				bool practicetarget;
 				if (PracticeTarget(spawnee) || PracticeTarget2(spawnee)) practicetarget = true;
 
+				KCCreature NightmareCreature;
+				NightmareCreature = KCCreature(spawnee);
+				if (NightmareCreature)
+				{
+					// Nightmare Monster Controls
+					if (NightmareSpectre(NightmareCreature) ||
+							NightmareBloodSpectre(NightmareCreature))
+					{
+						NightmareCreature.nightmarealphatimeroffset = random(-34,34);
+						NightmareCreature.nightmarephaserand = random(0,6);
+					}
+				}
+
 				// Tags
 				double spdfactor;
 				
 				// Hell Ground
 				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && spawnname == "TechPillar") spawnee.SetTag("Netherhell Imp");
+
+				// BlooM
+				if (A_CheckBlooM()) spawnee.A_SetInventory("PlayingBlooM",1);
+				
+				// StrangeAeons
+				if (Wads.CheckNumForName("EE-STAEONS", Wads.ns_global, -1, true) != -1) spawnee.A_SetInventory("PlayingStrangeAeons",1);
 
 				// SiGiL
 				if (level.GetChecksum() == '61b546375618d619ab39eafd28f03c87' ||
@@ -2837,7 +2856,6 @@ class KC_EventHandler : EventHandler
 					spawnee.Destroy();
 				}
 				
-				//
 				bool specialenemy = false;
 				bool ispeasant = false;
 				// Strife Peasants
@@ -2875,7 +2893,7 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) basehealth *= 16;
 					if (Skill == 3) basehealth *= 18;
 					if (Skill >= 4) basehealth *= 20;
-					//spawnee.health = basehealth;
+					spawnee.health = basehealth;
 				}
 				
 				nn = "ArchangelusB"; extracheck = nm;
@@ -2892,7 +2910,7 @@ class KC_EventHandler : EventHandler
 					if (Skill == 2) basehealth *= 16;
 					if (Skill == 3) basehealth *= 18;
 					if (Skill >= 4) basehealth *= 20;
-					//spawnee.health = basehealth;
+					spawnee.health = basehealth;
 				}
 
 				// ?????????? ??'s ???????????
