@@ -5088,22 +5088,42 @@ class KC_EventHandler : EventHandler
 						nm = "CCards_Actor_Maestro"; if (vict == nm) randrollmax /= 16;
 						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= 8;
 						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) randrollmax *= 4;
+						
 						int randroll = random(1,randrollmax);
 						if (randroll <= temp) // Weapons
 						{
 							double rand = 1.0;
-							user_type = random(1,13);
-							if (!playera.CountInv("Translocator")) user_type = random(0,13);
-							if (A_CheckForHeiwaPlayer()) 
-							{
-								if (!playera.CountInv("Translocator")) user_type = random(0,18);
-								user_type = random(1,18);
-							}
+							int minval = 1;
+							int maxval = 13;
+							if (!(playera.CountInv("Translocator") || playera.CountInv("DustBlower"))) minval = 0;
+							if (A_CheckForHeiwaPlayer()) maxval = 18;
+							
+							user_type = random(minval,maxval);
 							droptype = "BackPack2";
 							if (user_type == 0) 
 							{
-								droptype = "Translocator";
-								if (playera.CountInv(droptype)) droptype = "SpecialBackpack";
+								if (!playera.CountInv("Translocator"))
+								{
+									if (!playera.CountInv("DustBlower"))
+									{
+										int usertype = randompick(1,1,1,1,1,1,1,1,1,2);
+										if (usertype <= 1) droptype = "Translocator";
+										if (usertype <= 2) droptype = "DustBlower";
+									}
+									else droptype = "Translocator";
+									if (playera.CountInv(droptype)) droptype = "SpecialBackpack";
+								}
+								else
+								{
+									if (!playera.CountInv("Translocator"))
+									{
+										int usertype = randompick(1,1,1,1,1,1,1,1,1,2);
+										if (usertype <= 1) droptype = "DustBlower";
+										if (usertype <= 2) droptype = "Translocator";
+									}
+									else droptype = "DustBlower";
+									if (playera.CountInv(droptype)) droptype = "SpecialBackpack";
+								}
 							}
 							if (user_type == 1) 
 							{
