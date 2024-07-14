@@ -2387,6 +2387,7 @@ class KC_EventHandler : EventHandler
 		int PLuck;
 		if (MiscItem) PLuck = MiscItem.PlayerLUCK;
 		KCCreature KCC;
+		int TrueGameSkill = skill;
 		
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np, nq, nr, ns, nt;
@@ -2632,7 +2633,6 @@ class KC_EventHandler : EventHandler
 					if (YellowSkull(invspawnee) || BlueSkull(invspawnee) || RedSkull(invspawnee)) invspawnee.PickupSound = "getskullkey";
 				}
 				string invspawnname = invspawnee.GetClassName();
-				string nm, nn, no, np, nq, nr, ns, nt;
 				
 				nm = "KDIZDGreenKey";
 				nn = "KDIZDSilverKey";
