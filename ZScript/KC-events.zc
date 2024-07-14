@@ -2946,7 +2946,7 @@ class KC_EventHandler : EventHandler
 				if (playera.CountInv("PlayingAugerZenith") && (BossBrain(spawnee) || BossBrainNew(spawnee))) specialenemy = true;
 				// Keeps the Romero Heads in Hell Ground MAP07 from being too strong. :P
 				if (level.GetChecksum() == 'dc9933f75206c48826563ee6ba6c069a' && (BossBrain(spawnee))) specialenemy = true;
-
+				
 				if (DoomImp(spawnee)) spawnee.PainSound = "imp/pain";
 				if (LostSoul(spawnee)) 
 				{
@@ -3114,7 +3114,11 @@ class KC_EventHandler : EventHandler
 			
 			if (spawnee)
 			{
-				if (!KCCreature(spawnee))
+				if (KCCreature(spawnee) || 
+						PlayerPawn(spawnee))
+				{
+				}
+				else
 				{
 					string sndname = "Resurrection/Evil";
 					if (spawnee.bISMONSTER && !spawnee.bFRIENDLY)
@@ -3160,12 +3164,15 @@ class KC_EventHandler : EventHandler
 	
 	override void WorldThingDamaged(WorldEvent e)
 	{
+		int TrueGameSkill = skill;
 		if (Level.MapName != "TITLEMAP")
 		{
 			if (kcdebug_hitsounds) Console.Printf("hitsounds (WorldThingDamaged check)");
 			actor playera = players[0].mo;
 			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			let globalvars = KCGlobalVariables.Get();
+			//
+			//
 			actor victim = e.Thing;
 			actor source = e.DamageSource;
 			actor inflicter = e.inflictor;
@@ -3437,7 +3444,8 @@ class KC_EventHandler : EventHandler
 				outputdmgfactor *= moddedDMG;
 				outputdmgfactor /= tempdmgval;
 				bool playwsounds = true;
-				if (mod == 'SilentMassacre') playwsounds = false;
+				if (vict != "PracticeTarget" || vict != "PracticeTarget2" || vict != "BowlingPin" || vict != "OldPipe") playwsounds = true;
+				nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) playwsounds = false;
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playwsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playwsounds = false;
 				if (isCCardsIllusion) playwsounds = false;
@@ -3726,6 +3734,12 @@ class KC_EventHandler : EventHandler
 		Super.WorldThingDamaged(e);
 	}
 	
+	int A_DropCheckMiscGames(int basechance)
+	{
+		if (A_CheckUOHYM()) basechance *= 4;
+		return basechance;
+	}
+	
 	int A_UOHYMDropCheck(int droptimes)
 	{
 		if (A_CheckUOHYM() && random(1,6) <= 1 && droptimes > 1) 
@@ -3741,6 +3755,7 @@ class KC_EventHandler : EventHandler
 		class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 		string nm, nn, no, np, nq, nr, ns, nt;
 		
+		int TrueGameSkill = skill;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
@@ -3901,7 +3916,9 @@ class KC_EventHandler : EventHandler
 			bool candropitems = false;
 			if (specialtype) candropitems = true;
 			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
-			if (Computer(victim) ||
+			if (PracticeTarget(victim) || 
+					PracticeTarget2(victim) || 
+					Computer(victim) ||
 					ExplosiveBarrel(victim) ||
 					Pod(victim) ||
 					Piston(victim) ||
@@ -3929,8 +3946,8 @@ class KC_EventHandler : EventHandler
 														 else candropitems = false;
 				}
 			}
-			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
 			if (A_CheckUOHYM() && random(1,6) <= 1) candropitems = false;
+			if (kcdebug_worlddied) Console.Printf("candropitems: %d", candropitems);
 			
 			double minmultlevel = 0.25;
 			if (A_CheckUOHYM()) minmultlevel *= 2;
@@ -4915,6 +4932,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) basedropdiv *= random(4,8);
 					
 					
 					// Hexen Monsters
@@ -4924,7 +4942,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-					
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) basedropdiv *= random(4,8);
 					
 					// Strife Monsters
 					basedropdiv = 512;
@@ -4935,6 +4953,7 @@ class KC_EventHandler : EventHandler
 					luckbase *= kc_luckfactor;
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basedropdiv -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) basedropdiv *= random(4,8);
 				}
 				
 				// Mana
@@ -5967,6 +5986,39 @@ class KC_EventHandler : EventHandler
 						}
 					}
 				}
+			}
+			
+			// Special Actor Conditions
+			if (vict == "ZBell")
+			{
+				int typesdrop = 1;
+			}
+			
+			// Mapset Specific Things
+			nm = "Balloon_Black"; extracheck = nm; 
+			if (vict == extracheck)
+			{
+			}
+			nm = "Balloon"; extracheck = nm; 
+			nn = "BallTarg"; extracheck2 = nn; 
+			no = "Balloon_Red"; extracheck3 = no; 
+			np = "Balloon_Red2"; extracheck4 = np; 
+			if (vict == extracheck || vict == extracheck2 || vict == extracheck3 || vict == extracheck4)
+			{
+			}
+			nm = "Balloon_Yellow"; extracheck = nm; 
+			nn = "BallYel"; extracheck2 = nn; 
+			if (vict == extracheck || vict == extracheck2)
+			{
+			}
+			nm = "Balloon_Green"; extracheck = nm; 
+			nn = "BallGreen"; extracheck2 = nn; 
+			if (vict == extracheck || vict == extracheck2)
+			{
+			}
+			nm = "Balloon_Blue"; extracheck = nm; 
+			if (vict == extracheck)
+			{
 			}
 		}
 		
