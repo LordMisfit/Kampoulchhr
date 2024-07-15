@@ -168,6 +168,7 @@ class PlayerStatItem : Inventory
 	int HPDmgHUDAmt, APDmgHUDAmt, TSADmgHUDAmt;
 	int HPRecHUDAmt, APRecHUDAmt, TSARecHUDAmt;
 	int EXPGainHUDTimer, EXPGainHUDAmt;
+	int EXPGainHUDTimerMax;
 	int KillComboCount;
 	
 	int HPHUDShakeTime, APHUDShakeTime, TSAHUDShakeTime;
@@ -1447,6 +1448,7 @@ class PlayerStatItem : Inventory
 			else
 			{
 				EXPGainHUDAmt = 0;
+				if (EXPGainHUDTimerMax != 1) EXPGainHUDTimerMax = 1;
 				if (KillComboCount) KillComboCount = 0;
 			}
 			if (MaxHPIncTimer > 0) MaxHPIncTimer--; else MaxHPIncAmt = 0;

@@ -1363,7 +1363,7 @@ class KC_EventHandler : EventHandler
 								{
 									PreviousLevelCheck = LevelCheck;
 									LevelCheck *= 2;
-									if (dydudebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
+									if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
 								}
 							}
 						}
@@ -6152,6 +6152,7 @@ class KC_EventHandler : EventHandler
 	
 	override void WorldThingDied(WorldEvent e)
 	{
+		int TrueGameSkill = skill;
 		if (Level.MapName != "TITLEMAP")
 		{
 			actor playera = players[0].mo;
@@ -6231,8 +6232,6 @@ class KC_EventHandler : EventHandler
 			
 			// Specific Foes [1]
 			
-			//
-			
 			if (MiscItem)
 			{
 				PLuck = MiscItem.PlayerLUCK;
@@ -6247,7 +6246,6 @@ class KC_EventHandler : EventHandler
 			
 			class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
 			string nm, nn, no, np, nq, nr, ns, nt;
-			
 			
 			if (victim && 
 					!victim.CountInv("E1M8ExitRoomMonster") && 
@@ -6284,7 +6282,8 @@ class KC_EventHandler : EventHandler
 					if (victim.bISMONSTER) specialtype2 += 64;
 				}
 				if (kcdebug_worlddied) Console.Printf("[%s] SpecialType [WorldDied]: %d, %d", vict, specialtype, specialtype2);
-
+				
+				//
 				if (!(KCPlayerPawn(victim)) || 
 						 (victim.bCOUNTKILL || specialtype || specialtype2))
 				{
@@ -6298,20 +6297,30 @@ class KC_EventHandler : EventHandler
 						{
 							if (PlayerPawn(inflicter)) playerkill = true;
 							else if (inflicter.bFRIENDLY) allykill = true;
-							if (inflicter.bFRIENDLY || PlayerPawn(inflicter)) giveexp = true;
+							if (inflicter.bFRIENDLY || PlayerPawn(inflicter)) 
+							{
+								//
+								giveexp = true;
+							}
 							if (kcdebug_worlddied) Console.Printf("inflictor: %s [%d]", infl, inflicter.bFRIENDLY);
 						}
+						else
 						if (source) 
 						{
 							if (PlayerPawn(source)) playerkill = true;
 							else if (source.bFRIENDLY) allykill = true;
-							if (source.bFRIENDLY || PlayerPawn(source)) giveexp = true;
+							if (source.bFRIENDLY || PlayerPawn(source))
+							{
+								//
+								giveexp = true;
+							}
 							if (kcdebug_worlddied) Console.Printf("source: %s [%d]", sour, source.bFRIENDLY);
 						}
 						if (mastor) 
 						{
 							if (PlayerPawn(mastor)) playerkill = true;
 							else if (mastor.bFRIENDLY) allykill = true;
+							//
 							if (mastor.bFRIENDLY || PlayerPawn(mastor)) giveexp = true;
 							if (kcdebug_worlddied) Console.Printf("mastor: %s [%d]", mast, mastor.bFRIENDLY);
 						}
@@ -6406,7 +6415,11 @@ class KC_EventHandler : EventHandler
 						if (specialtype & 8192) ExpGain *= frandompick(0.375,0.625); // CCards_Actor_HasRespawned
 						if (specialtype & 32768) ExpGain *= frandompick(2.5,3.125); // CCards_Actor_Horror
 						nm = "CCards_Actor_BorrowedTimeBuff";
-						if (victim.CountInv(nm) && mod == 'Suck') ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
+						if (victim.CountInv(nm) && mod == 'Suck') 
+						{
+							if (waslegendary || victim.CountInv(nm)) ExpGain *= frandom(1.0625,1.25);
+							ExpGain *= frandompick(0.125,0.1667,0.1667,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.3,0.3,0.3,0.3334,0.3334,0.375);
+						}
 						if (specialtype & 65536) if (victim.CountInv(nm)) ExpGain *= frandom(1.25,1.5); // CCards_Actor_Cursed
 						if (specialtype & 131072) if (victim.CountInv(nm)) ExpGain *= frandom(9.0,10.0); // CCards_Actor_FleaCurse
 						if (MiscItem && MiscItem.IQPieces > 0) 
@@ -6551,14 +6564,35 @@ class KC_EventHandler : EventHandler
 									Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
 									MiscItem.KillComboCount += 1;
 									MiscItem.EXPGainHUDAmt += ExpGain;
-									if (MiscItem.EXPGainHUDTimer <= 0) MiscItem.EXPGainHUDTimer = 105;
+									if (MiscItem.EXPGainHUDTimer <= 0) 
+									{
+										MiscItem.EXPGainHUDTimer = 105;
+										MiscItem.EXPGainHUDTimerMax = MiscItem.EXPGainHUDTimer;
+									}
 									else
 									{
 										MiscItem.EXPGainHUDTimer += 35;
-										if (MiscItem.EXPGainHUDTimer < 105 && ExpGain > (EXPFullReq * 0.05)) MiscItem.EXPGainHUDTimer = 105;
-										if (MiscItem.EXPGainHUDTimer < 175 && ExpGain > (EXPFullReq * 0.10)) MiscItem.EXPGainHUDTimer = 175;
-										if (MiscItem.EXPGainHUDTimer < 245 && ExpGain > (EXPFullReq * 0.25)) MiscItem.EXPGainHUDTimer = 245;
-										if (MiscItem.EXPGainHUDTimer > 280) MiscItem.EXPGainHUDTimer = 280;
+										MiscItem.EXPGainHUDTimerMax += 35;
+										if (MiscItem.EXPGainHUDTimer < 105 && ExpGain > (EXPFullReq * 0.05)) 
+										{
+											MiscItem.EXPGainHUDTimer = 105;
+											MiscItem.EXPGainHUDTimerMax = MiscItem.EXPGainHUDTimer;
+										}
+										if (MiscItem.EXPGainHUDTimer < 175 && ExpGain > (EXPFullReq * 0.10)) 
+										{
+											MiscItem.EXPGainHUDTimer = 175;
+											MiscItem.EXPGainHUDTimerMax = MiscItem.EXPGainHUDTimer;
+										}
+										if (MiscItem.EXPGainHUDTimer < 245 && ExpGain > (EXPFullReq * 0.25)) 
+										{
+											MiscItem.EXPGainHUDTimer = 245;
+											MiscItem.EXPGainHUDTimerMax = MiscItem.EXPGainHUDTimer;
+										}
+										if (MiscItem.EXPGainHUDTimer > 280) 
+										{
+											MiscItem.EXPGainHUDTimer = 280;
+											MiscItem.EXPGainHUDTimerMax = MiscItem.EXPGainHUDTimer;
+										}
 									}
 								}
 							}
@@ -6611,6 +6645,7 @@ class KC_EventHandler : EventHandler
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
 									if (waslegendary || victim.CountInv(nm)) basechance *= 5;
 									
+									if (infl == "FistPuff" || infl == "UppercutPuff" || infl == "KickPuff" || infl == "KickPuffNoThrust") basechance *= frandompick(3.5,4,4.5);
 									if (victim.bBOSS) basechance *= 8;
 									if (playera && A_CheckBerserk(playera)) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
 									int maxchance = 256;
@@ -6698,7 +6733,9 @@ class KC_EventHandler : EventHandler
 					if (KCC && KCC.user_dontdroprandomstuff) { }
 					else
 					{
-						if (mod != 'Crush' || mod != 'Falling' || !exception) 
+						if (mod != 'Crush' || 
+								mod != 'Falling' || 
+								!exception) 
 						{
 							[PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill] = A_KillDropTables(PLuck, TrueLuck, victim, inflicter, source, mastor, specialtype, monsterrating, playerkill, allykill);
 						}
@@ -6735,6 +6772,7 @@ class KC_EventHandler : EventHandler
 		let globalvars = KCGlobalVariables.Get();
 		
 		int levelnums = level.levelnum;
+		
 		
 		// DynMus Reset
 		if (MiscItem)
@@ -7024,7 +7062,6 @@ class KC_EventHandler : EventHandler
 		if (e.Name == "AAAX")   
 		{
 			int key1, key2;
-			
 			
 			if (!paused)
 			{
@@ -7393,6 +7430,13 @@ class ItemData
 
 class KC_StaticEventHandler : StaticEventHandler
 {
+	bool A_CheckBlooM()
+	{
+		bool BlooM = false;
+		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1) BlooM = true;
+		return BlooM;
+	}
+	
 	// So I don't forget, a lot of the code in this for keeping things on Resets is from DevilBlackDeath's "Inventory Keeper" minimod. A lot of the comments below are his on the effects. :V
 	struct PlayerInvData
 	{
@@ -7640,7 +7684,8 @@ class KC_StaticEventHandler : StaticEventHandler
 						// Not checking for level-specific stuff like keys as this
 						// seems to be automatically invalidated
 						if (item is 'HellWarriorShieldLevel' ||
-								item is 'WeaponUpgradeItem')
+								item is 'WeaponUpgradeItem' ||
+								item is 'BaseModPack')
 						{
 							if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]ManageWeapons [12a - 'Weapon' Type Found]: i: %d, %s", i, item.GetClassName());
 							p.RemoveInventory(item);
@@ -7850,7 +7895,8 @@ class KC_StaticEventHandler : StaticEventHandler
 				}
 				if (!keepWeaponUpgrades &&
 						(item is 'HellWarriorShieldLevel' ||
-						 item is 'WeaponUpgradeItem'))
+						 item is 'WeaponUpgradeItem' ||
+						 item is 'BaseModPack'))
 				{
 					keepinv = false;
 					if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]RestoreItemsState [4a - Weapon Upgrade Check  [!keepWeaponUpgrades]: \c[red]not saved\c[blue]]:\c- i: %d, %s", i, item.GetClassName());
@@ -7974,7 +8020,8 @@ class KC_StaticEventHandler : StaticEventHandler
 					else
 					if (!keepWeaponUpgrades &&
 							(item is 'HellWarriorShieldLevel' ||
-							 item is 'WeaponUpgradeItem'))
+							 item is 'WeaponUpgradeItem' ||
+							 item is 'BaseModPack'))
 					{
 						if (kcdebug_resetinventorydebug) Console.Printf("\c[blue]MakeInventoryUndroppable [5c - keepWeaponUpgrades off]: \c-%s", item.GetClassName());
 						item.bUndroppable = false;
@@ -8062,15 +8109,48 @@ class KC_StaticEventHandler : StaticEventHandler
 		array<string> allSF;
 		StringTable.Localize("$STEP_FLATS").Split(allSF,":");
 		Console.Printf("Default Footsteps TXT Loaded [Eventside]");
-		/*
 		StringTable.Localize("$STEP_FLATSOTEX").Split(allSF,":");
 		Console.Printf("OTex Footsteps TXT Loaded [Eventside]");
-		*/
 		// Other CompatPacks
 		if (Wads.CheckNumForName("KC-AUGZEN", Wads.ns_global, -1, true) != -1) 
 		{
 			StringTable.Localize("$STEP_FLATSAUGZEN").Split(allSF,":");
 			Console.Printf("AUGER;ZENITH Footsteps TXT Loaded");
+		}
+		if (A_CheckBlooM())
+		{
+			StringTable.Localize("$STEP_FLATSBLOOM").Split(allSF,":");
+			Console.Printf("BlooM Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSCIRCUS2").Split(allSF,":");
+			Console.Printf("Circus2 Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-KDIZD", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSKDIZD").Split(allSF,":");
+			Console.Printf("KDIZD Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-TCOTDA", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSTCOTDA").Split(allSF,":");
+			Console.Printf("TCOTDA Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-TUTNT", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSTUTNT").Split(allSF,":");
+			Console.Printf("Ultimate Torment and Torture Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
+			Console.Printf("Unfamiliar Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSSTAEONS").Split(allSF,":");
+			Console.Printf("Strange Aeons Footsteps TXT Loaded");
 		}
 		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
 		{
@@ -8086,6 +8166,11 @@ class KC_StaticEventHandler : StaticEventHandler
 		{
 			StringTable.Localize("$STEP_FLATSHELLG").Split(allSF,":");
 			Console.Printf("Hell Ground Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSUOHYM").Split(allSF,":");
+			Console.Printf("UOHYM TXT Loaded");
 		}
 		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
 		{
@@ -8148,12 +8233,23 @@ class KC_StaticEventHandler : StaticEventHandler
 				if (texname == "STEP1" || 
 						texname == "STEP2" || 
 						texname == "STEP3" ||
-					texname == "A-DAN1" ||
-					texname == "A-DAN2" ||
-					texname == "A-DAN3" ||
-					texname == "A-DAN4" ||
-					texname == "A-DAN5" ||
-					texname == "GRNROCK") textfound = -1;
+						texname == "A-DAN1" ||
+						texname == "A-DAN2" ||
+						texname == "A-DAN3" ||
+						texname == "A-DAN4" ||
+						texname == "A-DAN5" ||
+						texname == "GRNROCK") textfound = -1;
+				else
+				if (texname == "A-BRICK2" ||
+						texname == "A-BROCK1" ||
+						texname == "A-BROCK2" ||
+						texname == "A-CAMO3A" ||
+						texname == "A-DBRI1") textfound = -1; 
+				else
+				if (texname == "A-CAMO1" ||
+						texname == "A-CAMO1A" ||
+						texname == "A-CAMO2A" ||
+						texname == "A-CAMO2C") textfound = -1; 
 				else nofsttxts++;
 			}
 			
@@ -8171,7 +8267,6 @@ class KC_StaticEventHandler : StaticEventHandler
 					damagetyp == 'Burn' ||
 					damagetyp == 'Inferno' ||
 					damagetyp == 'Lava') damagetyp = 'Magma';
-
 			if (damagetyp == 'Slime' || 
 					damagetyp == 'None' || 
 					damagetyp == '')
@@ -8208,7 +8303,6 @@ class KC_StaticEventHandler : StaticEventHandler
 			if (initdamagetyp != damagetyp) level.Sectors[i].damagetype = damagetyp;
 			if (kcdebug_worldloaded) Console.Printf("    \czFireFloorAdjuster\c-: %d / %d (%s to %s)", i, l, initdamagetyp, damagetyp);
 			
-			
 			if (kcdebug_footsteps1 || kcdebug_footsteps2)
 			{
 				String SecPrint = "Sector #: ";
@@ -8225,6 +8319,103 @@ class KC_StaticEventHandler : StaticEventHandler
 		{
 			if (kcdebug_footsteps1 || kcdebug_footsteps2) playera.A_StartSound("step/squeaky1",1002);
 			Console.Printf("# of textures found with no footstep definitions [\cy%s\c-]: \c[red]%d\c-", level.mapname, nofsttxts);
+		}
+		
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- WorldLoaded() activated");
+		// This will be done only by the first player entering
+		// Restoring undroppable and untossable stats for all inventory items !
+		// VERY IMPORTANT to keep the intended behaviour of all items/weapons/...
+		RestoreItemsState();
+
+		// Once we're done loading a level, regardless of what happened beforehand,
+		// this is not a new game anymore ! Also we're done restoring anything, so clear arrays
+		isNewGame = false;
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]WorldLoaded [2 - isNewGame to false]\c-: %d", isNewGame);
+
+		// World is loaded, everything is done, no players to restore, safe cleanup in prevision of next level
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			playerNeedsRestore[i] = false;
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]WorldLoaded [3 - playerNeedsRestore to false]\c-: i: %d", i);
+		}
+	}
+	
+	override void WorldUnloaded(WorldEvent e)
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- WorldUnloaded() activated");
+		// World is unloaded from save, we don't restore inventory, and this is not a new game
+		if (e.IsSaveGame)
+		{
+			isNewGame = false;
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]WorldUnLoaded [2a - IsSaveGame to false]\c-: %d", isNewGame);
+			
+			// Try to reset the resurrection queue on a save reload (after dying) to circumvent a major issue with the base Universal Keeper mod. - Misfit
+			for (int i = 0; i < MAXPLAYERS; i++) 
+			{
+				if (kcdebug_resetinventorydebug) Console.Printf("\c[green]WorldUnLoaded (clear resurrect queue) [3 - player#]\c-: %d", i);
+				ResetResurrectionQueue(i);
+			}
+		}
+		/* This is a new game, all future world loads are level exits except for saves (above)
+		 and new games (in which case isNewGame will be true again) */
+		else if (!isNewGame) 
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]WorldUnLoaded [2b - !isNewGame]\c-");
+			/* We manually remove all weapons and give back a default inventory
+			   Later on we give back the correct amount of said inventory, as some mods'
+			   default inventories may include inventory item that will get stacked here */
+			ManageWeapons();
+
+			/* Key Checking - Misfit Added :V */
+			ManageKeys();
+			
+			/* Manage Health - Misfit Added :V */
+			ManageHealth();
+
+			// We make all inventory undroppable so ResetInventory can't do its job
+			MakeInventoryUndroppable();
+
+			/* We resurrect dead players no matter what (EVEN if we did get here from
+			   a new game or savegame the player entity would be replaced by a new one
+			   after the load ! */
+			ResurrectPlayers();
+			BackupInventories();
+		}
+	}
+
+	override void PlayerEntered(PlayerEvent e)
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- PlayerEntered() activated");
+		RestorePlayerInvState(e.playerNumber);
+	}
+
+	override void PlayerRespawned(PlayerEvent e)
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- PlayerRespawned() activated");
+		ResetResurrectionQueue(e.playerNumber);
+	}
+
+	override void PlayerDied(PlayerEvent e)
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- PlayerDied() activated");
+		if (playeringame[e.playerNumber] && players[e.playerNumber].mo != null)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]PlayerDied [2 - playersToResurrect]\c: %d", e.playerNumber);
+			playersToResurrect.Push(e.playerNumber);
+		}
+	}
+	
+	override void NewGame()
+	{
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]ResetInventory:\c- NewGame() activated");
+		isNewGame = true;
+		dropBlockers.Clear();
+		if (kcdebug_resetinventorydebug) Console.Printf("\c[green]NewGame [2 - isNewGame]\c-: %d", isNewGame);
+
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (kcdebug_resetinventorydebug) Console.Printf("\c[green]NewGame [3 - playerNeedsRestore]\c-: i: %d", i);
+			playerNeedsRestore[i] = false;
 		}
 	}
 }
