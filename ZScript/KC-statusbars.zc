@@ -2312,6 +2312,20 @@ class KCStatusBarMain : BaseStatusBar
 				*/
 				
 				DrawBar("EXPNOTCH", "EXPNOTCE", lgpiece, 32, (168, -1+ycorrection), 1, 1, 0, 0.875);
+				int basecombotimer = 0;
+				int basecombotimermax = 0;
+				if (MiscItem) 
+				{
+					basecombotimer = MiscItem.EXPGainHUDTimer;
+					basecombotimermax = MiscItem.EXPGainHUDTimerMax;
+				}
+				if (basecombotimer && 
+						basecombotimermax > 0)
+				{
+					int lgpiece2 = ((basecombotimer * 32) / basecombotimermax);
+					//Console.Printf("lgpiece2: %d, basecombotimer: %d / %d", lgpiece2, basecombotimer, basecombotimermax);
+					DrawBar("EXPCONOT", "EXPCONOE", lgpiece2, 32, (168, -1+ycorrection), 0, SHADER_HORZ, 0, 1.0);
+				}
 
 				LVLGraphic = "LVL";
 				if (CPlayerPawn.GetClassName() == "KCPlayer") LVLGraphic.AppendFormat("G");
