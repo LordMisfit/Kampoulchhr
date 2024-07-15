@@ -4989,6 +4989,8 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate14;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.5;
 					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -5061,6 +5063,8 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate6;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.75;
 					if (A_CheckUOHYM()) basechance *= 8;
 					luckbase = 0.25 + (monsterrating * 0.0625);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -5292,8 +5296,11 @@ class KC_EventHandler : EventHandler
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Ammo Drop [Attempt]: %d / 16 [%d]", temp, randroll2);
 								if (randroll2 <= temp) 
 								{
-									user_type = random(1,13);
-									if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
+									int minval = 1;
+									int maxval = 13;
+									if (A_CheckForHeiwaPlayer()) maxval = 17;
+
+									user_type = random(minval,maxval);
 									if (user_type == 1) droptype = "ClipBoxNew";
 									if (user_type == 2) droptype = "ClipBoxNew";
 									if (user_type == 3) droptype = "ShellBoxNew";
@@ -5315,7 +5322,11 @@ class KC_EventHandler : EventHandler
 								}
 								else
 								{
-									user_type = random(1,13);
+									int minval = 1;
+									int maxval = 13;
+									if (A_CheckForHeiwaPlayer()) maxval = 17;
+
+									user_type = random(minval,maxval);
 									if (A_CheckForHeiwaPlayer()) user_type = random(1,17);
 									if (user_type == 1) droptype = "ClipNew";
 									if (user_type == 2) droptype = "ClipNew";
@@ -5381,6 +5392,8 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate7;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.875;
 					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.5 + (monsterrating * 0.125);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -5388,6 +5401,9 @@ class KC_EventHandler : EventHandler
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 1.75;
 					if (maxchance < (kc_inventorydroprate7 * minmultlevel)) maxchance = (kc_inventorydroprate7 * minmultlevel);
 					
@@ -5435,6 +5451,8 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate8;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.625;
 					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 1.0 + (monsterrating * 0.25);
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
@@ -5442,10 +5460,13 @@ class KC_EventHandler : EventHandler
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (i > 0) maxchance *= 5;
 					if (maxchance < (kc_inventorydroprate8 * minmultlevel)) maxchance = (kc_inventorydroprate8 * minmultlevel);
-
+					
 					int rollrand = random(1,maxchance);
 					if (rollrand <= 1)
 					{
@@ -5466,6 +5487,16 @@ class KC_EventHandler : EventHandler
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses [Attempt]");
 						armorbonusrolls = 1;
 						
+						// If Spawned via Fractal Chooks, Pain Elementals
+						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned))
+						{
+							armorbonusrolls /= 2;
+							if (armorbonusrolls < 1)
+							{
+								if (random(1,4) <= 1) armorbonusrolls = 1;
+																 else armorbonusrolls = 0;
+							}
+						}
 						// Armor Bonus Drops
 						if (armorbonusrolls > 0)
 						{
@@ -5478,7 +5509,11 @@ class KC_EventHandler : EventHandler
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
@@ -5487,6 +5522,16 @@ class KC_EventHandler : EventHandler
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [armor]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
 					
 					healthbonusrolls = (randompick(0,0,0,1,1,1,1,2) + (TruePlayerLevel * 0.03125));
+					// If Spawned via Fractal Chooks, Pain Elementals
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned))
+					{
+						healthbonusrolls /= 2;
+						if (healthbonusrolls < 1)
+						{
+							if (random(1,4) <= 1) healthbonusrolls = 1;
+															 else healthbonusrolls = 0;
+						}
+					}
 					// Health Bonuses
 					if (healthbonusrolls > 0)
 					{
@@ -5517,6 +5562,7 @@ class KC_EventHandler : EventHandler
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
+				lvldivider = 70;
 				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
 				if (inflicter && ((source && KCPlayerPawn(source))))
@@ -5535,15 +5581,22 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate1;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.5;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.0625 + (monsterrating * 0.015625); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (maxchance < (kc_inventorydroprate1 * minmultlevel)) maxchance = (kc_inventorydroprate1 * minmultlevel);
-
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [primaryinv]: %d (%d)", maxchance, basechance);
+					
 					int randroll = random(1,maxchance);
 					if (randroll <= 1)
 					{
@@ -5551,14 +5604,6 @@ class KC_EventHandler : EventHandler
 						double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 						double raredropsndvol = frandom(1.75,2.25);
 						int raredropsndchannel = randompick(191,192,222,223,264,265);
-						//victim.A_StartSound("misc/spawn",raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-						//user_type = random(1,145);
-						//if (user_type >= 1 && user_type <= 60) { victim.A_SpawnItemEx("CherryBombPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-						//if (user_type >= 61 && user_type <= 100) { victim.A_SpawnItemEx("SpinnerPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-						//if (user_type >= 101 && user_type <= 125) { victim.A_SpawnItemEx("BRocketPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-						//if (user_type >= 126 && user_type <= 140) { victim.A_SpawnItemEx("PopperPickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-						//if (user_type >= 141 && user_type <= 144) { victim.A_SpawnItemEx("SnakePickup",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
-						//if (user_type >= 145) { victim.A_SpawnItemEx("KilletanteEffigy",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION); }
 					}
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [primaryinv]: {%d vs %d} (%d) \c[orange][%d / %d]", randroll, maxchance, basechance, (i+1), droptimes);
 					
@@ -5566,12 +5611,18 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate2;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.5;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 0.5 + (monsterrating * 0.125); // (512)
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (maxchance < (kc_inventorydroprate2 * minmultlevel)) maxchance = (kc_inventorydroprate2 * minmultlevel);
 
@@ -5589,14 +5640,21 @@ class KC_EventHandler : EventHandler
 					basechance = kc_inventorydroprate3;
 					basechance *= kc_inventorydropratemulti;
 					basechance *= skillmult;
+					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+					if (A_CheckBlooM()) basechance *= 0.5;
+					if (A_CheckUOHYM()) basechance *= 2;
 					luckbase = 2.0 + (monsterrating * 0.5); // (512) 
 					luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 					luckbase *= kc_luckfactor;
 					luckbase *= sielgraceluckboost;
 					if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 					maxchance = basechance;
+					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
 					if (maxchance < (kc_inventorydroprate3 * minmultlevel)) maxchance = (kc_inventorydroprate3 * minmultlevel);
+					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [secondaryinv]: %d (%d)", maxchance, basechance);
 
 					rollrand = random(1,maxchance);
 					if (rollrand <= 1)
@@ -5707,6 +5765,9 @@ class KC_EventHandler : EventHandler
 							if (tsawarmuptier >= 5) basechance *= tsatierbasemult;
 						}
 						basechance *= skillmult;
+						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+						if (A_CheckBlooM()) basechance *= 0.5;
+						if (A_CheckUOHYM()) basechance *= 2;
 						double basediv = 0.5;
 						double basediv2 = 0.125;
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare, pre tf check]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
@@ -5796,69 +5857,65 @@ class KC_EventHandler : EventHandler
 						}
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare, post tf check]: (%d) (basediv: %.8f, 2: %.8f) \c[orange][%d / %d], timefreezes: %d", basechance, basediv, basediv2, (i+1), droptimes, timefreezes);
 						luckbase = 3.0 + (monsterrating * 0.75); // (682.66667)
+						if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
+						if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
+						if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
 						if (A_CheckForHeiwaPlayer()) luckbase *= 1.143;
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_tsaluckfactor;
 						luckbase *= 1.0 + (sielgraceluckboost * 0.0625);
-						if (MiscItem)
+						if (MiscItem.TimeArmorRelicsOwned <= 2)
 						{
-							if (MiscItem.TimeArmorRelicsOwned <= 0) luckbase = 3.0 + (monsterrating * 0.75);
-							if (MiscItem.TimeArmorRelicsOwned == 1) luckbase = 4.2 + (monsterrating * 1.05);
-							if (MiscItem.TimeArmorRelicsOwned >= 2) luckbase = 5.6 + (monsterrating * 1.4);
-							luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
-							luckbase *= kc_tsaluckfactor;
-							luckbase *= 1.0 + (sielgraceluckboost * 0.0625);
+							int TSATrueLuck;
+							int PLevel = TruePlayerLevel;
+							if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
+							if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
+							if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
+							if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
+							if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
+							TSATrueLuck *= kc_pluckfactor;
+							if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+							if (basechance < 1) basechance = 1;
+							maxchance = basechance;
+							nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(4,8);
+							nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(2,4);
+							nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(8,16);
+							if (i > 0) maxchance *= 16;
+							if (maxchance < (kc_inventorydroprate5 * tsaminmultlevel)) maxchance = (kc_inventorydroprate5 * tsaminmultlevel);
 							
-							if (MiscItem.TimeArmorRelicsOwned <= 2)
+							rollrand = random(1,maxchance);
+							if (rollrand <= 1)
 							{
-								int TSATrueLuck;
-								int PLevel = TruePlayerLevel;
-								if (skill <= 0) TSATrueLuck = random((PLevel*2.25),(PLevel*3));
-								if (skill == 1) TSATrueLuck = random((PLevel*1.875),(PLevel*3));
-								if (skill == 2) TSATrueLuck = random((PLevel*1.5),(PLevel*3));
-								if (skill == 3) TSATrueLuck = random((PLevel*1.125),(PLevel*3));
-								if (skill >= 4) TSATrueLuck = random((PLevel*0.75),(PLevel*3));
-								TSATrueLuck *= kc_pluckfactor;
-								if (PLuck || PLevel) basechance -= ((TrueLuck + TSATrueLuck) * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
-								if (basechance < 1) basechance = 1;
-								maxchance = basechance;
-								if (i > 0) maxchance *= 16;
-								if (maxchance < (kc_inventorydroprate5 * tsaminmultlevel)) maxchance = (kc_inventorydroprate5 * tsaminmultlevel);
-								
-								rollrand = random(1,maxchance);
-								if (rollrand <= 1)
-								{
-									if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]Extremely Rare Drop [success]");
-									double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-									double raredropsndvol = frandom(1.75,2.25);
-									int raredropsndchannel = randompick(193,194,224,225,266,267);
-									string raredropsndname = "ultrarareitem/spawn";
-									victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]Extremely Rare Drop [success]");
+								double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								double raredropsndvol = frandom(1.75,2.25);
+								int raredropsndchannel = randompick(193,194,224,225,266,267);
+								string raredropsndname = "ultrarareitem/spawn";
+								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
 
-									raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
-									raredropsndvol = frandom(1.75,2.25);
-									raredropsndchannel = randompick(293,294,324,325,366,367);
-									raredropsndname = "tsarmor/spawn";
-									victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
-									
-									bool spawned;
-									actor TSArtifact;
-									[spawned, TSArtifact] = victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
-									if (spawned && 
-											TSArtifact && 
-											MiscItem)
+								raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+								raredropsndvol = frandom(1.75,2.25);
+								raredropsndchannel = randompick(293,294,324,325,366,367);
+								raredropsndname = "tsarmor/spawn";
+								victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+								
+								bool spawned;
+								actor TSArtifact;
+								[spawned, TSArtifact] = victim.A_SpawnItemEx("TSArtifactSpawner",0.0,0.0,0.0,0.0,0.0,0.0,SXF_NOCHECKPOSITION);
+								if (spawned && 
+										TSArtifact && 
+										MiscItem)
+								{
+									if (A_CheckForHeiwaPlayer() || 
+											random(1,8) <= 7)
 									{
-										if (A_CheckForHeiwaPlayer() || 
-												random(1,8) <= 7)
-										{
-											MiscItem.TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
-													 if (random(1,8) <= 5 && !A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
-											else if (random(1,8) <= 1 && A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
-										}
+										MiscItem.TSArtifactSpawnCooldown += (kc_tsadropcooldown * TICRATE);
+												 if (random(1,8) <= 5 && !A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
+										else if (random(1,8) <= 1 && A_CheckForHeiwaPlayer()) MiscItem.TSArtifactSpawnCooldown *= 1.5;
 									}
 								}
-								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 							}
+							if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[heiwadeluge]maxchance [extremerare]: {%d vs %d} (%d) \c[orange][%d / %d], timefreezes: %d", rollrand, maxchance, basechance, (i+1), droptimes, timefreezes);
 						}
 					}
 					
@@ -5872,6 +5929,9 @@ class KC_EventHandler : EventHandler
 						basechance = kc_inventorydroprate10;
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
+						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+						if (A_CheckBlooM()) basechance *= 0.5;
+						if (A_CheckUOHYM()) basechance *= 2;
 						luckbase = 1.0 + (monsterrating * 0.125); // (512) 
 						luckbase *= (0.25 + 
 												 (MiscItem.totalcompleted * allcompletefactorkmsp) + 
@@ -5883,11 +5943,15 @@ class KC_EventHandler : EventHandler
 						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate10 * minmultlevel)) maxchance = (kc_inventorydroprate10 * minmultlevel);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [kmsphere]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 
-						if (random(1,maxchance) <= 1)
+						rollrand = random(1,maxchance);
+						if (rollrand <= 1)
 						{
 							double raredropsndpitch = frandompick(0.50,0.75,1.0,1.0625,1.125);
 							double raredropsndvol = frandom(1.75,2.25);
@@ -5910,6 +5974,9 @@ class KC_EventHandler : EventHandler
 						basechance = kc_inventorydroprate12;
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
+						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+						if (A_CheckBlooM()) basechance *= 0.5;
+						if (A_CheckUOHYM()) basechance *= 2;
 						luckbase = 1.9375 + (monsterrating * 0.3875); // (512) 
 						if (victim.bBOSS) // Boss-flagged monsters have a much higher chance to drop a Capsule as their initial drop
 						{
@@ -5929,10 +5996,15 @@ class KC_EventHandler : EventHandler
 						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate12 * minmultlevel)) maxchance = (kc_inventorydroprate12 * minmultlevel);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
-						if (random(1,maxchance) <= 1)
+						
+						rollrand = random(1,maxchance);
+						if (rollrand <= 1)
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 							double raredropsndvol = frandom(1.75,2.25);
@@ -5965,26 +6037,42 @@ class KC_EventHandler : EventHandler
 							playera.CountInv("SpecialBackpackBonus") < 25)
 					{
 						basechance = kc_inventorydroprate13;
-						if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
+						if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= 0.334;
+						else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= 0.5;
+						else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
 						luckbase = 1.0 + (monsterrating * 0.5); // (4096)
-						if (playera.CountInv("SpecialBackpackBonus") > 0) luckbase = 1.25 + (monsterrating * 0.625);
+						if (playera.CountInv("SpecialBackpackBonus") > 20) luckbase = 1.75 + (monsterrating * 0.875);
+						else if (playera.CountInv("SpecialBackpackBonus") > 10) luckbase = 1.5 + (monsterrating * 0.75);
+						else if (playera.CountInv("SpecialBackpackBonus") > 0) luckbase = 1.25 + (monsterrating * 0.625);
 						if (victim.bBOSS)
 						{
-							basechance *= 0.5;
-							luckbase *= 2.0;
+							if (playera.CountInv("SpecialBackpackBonus") > 0)
+							{
+								basechance *= 0.5;
+								luckbase *= 2.0;
+							}
+							else
+							{
+								basechance *= 0.1;
+								luckbase *= 10.0;
+							}
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
 						luckbase *= sielgraceluckboost;
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(8,16);
+						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(4,8);
+						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(1,2);
 						if (i > 0) maxchance *= 16;
 						if (maxchance < (kc_inventorydroprate13 * minmultlevel)) maxchance = (kc_inventorydroprate13 * minmultlevel);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [spbkpk]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
-					
-						if (random(1,maxchance) <= 1)
+						
+						rollrand = random(1,maxchance);
+						if (rollrand <= 1)
 						{
 							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
 							double raredropsndvol = frandom(1.75,2.25);
