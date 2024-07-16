@@ -4509,8 +4509,36 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 			}
 			else
 			{
-				droptype = "Translocator";
-				if (playera.CountInv(droptype)) spawnweapon = true;
+				if (!playera.CountInv("Translocator"))
+				{
+					if (!playera.CountInv("DustBlower"))
+					{
+						if (random(1,4) <= 3)
+						{
+							droptype = "Translocator";
+							if (playera.CountInv(droptype)) spawnweapon = true;
+						}
+						else
+						{
+							droptype = "DustBlower";
+							if (playera.CountInv(droptype)) spawnweapon = true;
+						}
+					}
+					else
+					{
+						droptype = "Translocator";
+						if (playera.CountInv(droptype)) spawnweapon = true;
+					}
+				}
+				else
+				{
+					if (!playera.CountInv("DustBlower"))
+					{
+						droptype = "DustBlower";
+						if (playera.CountInv(droptype)) spawnweapon = true;
+					}
+					else spawnweapon = true;
+				}
 			}
 			
 			if (spawnweapon)
@@ -4773,7 +4801,10 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 				}
 			}
 		}
-		if (kcdebug_weaponspawners) Console.Printf ("\c[fire][ChainsawSpawner]\c- type: %d, user_type: %d, [%s]", type, user_type, droptype);
+		if (kcdebug_weaponspawners) 
+		{
+			Console.Printf ("\c[fire][ChainsawSpawner]\c- type: %d, user_type: %d, [%s]", type, user_type, droptype);
+		}
 		[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 		if (mo) { mo.bDROPPED = bDROPPED; }
 		Destroy();
@@ -4798,30 +4829,68 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 						if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Not Dropped - KCPlayer");
 						if (playera.CountInv("ChainsawMarine"))
 						{
-							if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [has]");
+							if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [has] - KCPlayer");
 							if (random(1,4) <= 1)
 							{
-								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator [has Chainsaw]");
-								droptype = "Translocator";
+								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [has Chainsaw] - KCPlayer");
+								if (!playera.CountInv("Translocator"))
+								{
+									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [no Translocator] - KCPlayer");
+									if (!playera.CountInv("DustBlower"))
+									{
+										if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [no Translocator, no Dust Blower] - KCPlayer");
+										if (random(1,4) <= 3) droptype = "Translocator";
+																			else droptype = "DustBlower";
+									}
+									else
+									{
+										if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [no Translocator, has Dust Blower] - KCPlayer");
+										droptype = "Translocator";
+									}
+								}
+								else
+								{
+									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [Has Translocator, no Dust Blower] - KCPlayer");
+									droptype = "DustBlower";
+								}
 								[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 								if (mo) { mo.bDROPPED = bDROPPED; }
 								Destroy();
 							}
 							else
 							{
-								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [has Chainsaw]");
+								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [has Chainsaw] - KCPlayer");
 								invoker.A_SpawnOtherWeapon(0);
 							}
 						}
 						else
 						{
-							if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [hasn't]");
-							if (!playera.CountInv("Translocator"))
+							if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [hasn't] - KCPlayer");
+							if (!(playera.CountInv("Translocator") &&
+										playera.CountInv("DustBlower")))
 							{
 								if (random(1,4) <= 1)
 								{
-									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator [hasn't Chainsaw]");
-									droptype = "Translocator";
+									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator [hasn't Chainsaw] - KCPlayer");
+									if (!playera.CountInv("Translocator"))
+									{
+										if (!playera.CountInv("DustBlower"))
+										{
+											if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [no Translocator, no Dust Blower] - KCPlayer");
+											if (random(1,4) <= 3) droptype = "Translocator";
+																				else droptype = "DustBlower";
+										}
+										else
+										{
+											if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [no Translocator, has Dust Blower] - KCPlayer");
+											droptype = "Translocator";
+										}
+									}
+									else
+									{
+										if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Translocator/DustBlower [Translocator, NO Dust Blower] - KCPlayer");
+										droptype = "DustBlower";
+									}
 									[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 									if (mo) { mo.bDROPPED = bDROPPED; }
 									Destroy();
@@ -4829,12 +4898,12 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 								else
 								if (random(1,8) <= 1)
 								{
-									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [hasn't Chainsaw]");
+									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [hasn't Chainsaw] - KCPlayer");
 									invoker.A_SpawnOtherWeapon(0);
 								}
 								else
 								{
-									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon: ChainsawMarine [1]");
+									if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon: ChainsawMarine [1] - KCPlayer");
 									droptype = "ChainsawMarine";
 									[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 									if (mo) { mo.bDROPPED = bDROPPED; }
@@ -4844,12 +4913,12 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 							else
 							if (random(1,8) <= 1)
 							{
-								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [hasn't Chainsaw (2)]");
+								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon [hasn't Chainsaw (2)] - KCPlayer");
 								invoker.A_SpawnOtherWeapon(0);
 							}
 							else
 							{
-								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon: ChainsawMarine [2]");
+								if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- SpawnOtherWeapon: ChainsawMarine [2] - KCPlayer");
 								droptype = "ChainsawMarine";
 								[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 								if (mo) { mo.bDROPPED = bDROPPED; }
@@ -4866,7 +4935,7 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 				}
 				else
 				{
-					if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [2]");
+					if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- ChainsawMarine [DROPPED]");
 					droptype = "ChainsawMarine";
 					[spawned, mo] = A_SpawnItemEx(droptype,flags:SXF_NOCHECKPOSITION,tid:tid);
 					if (mo) { mo.bDROPPED = bDROPPED; }
