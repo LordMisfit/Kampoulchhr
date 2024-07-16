@@ -382,6 +382,30 @@ class KC_EventHandler : EventHandler
 				bool CardsPlaceHolderCheck = false;
 				if (level.time >= 3 && level.time <= 35) CardsPlaceHolderCheck = true;
 
+				// 0.057 Sec TimeFreeze Checks
+				if ((((level.time - 35) % 2) == 0))
+				{
+					nm = "CCards_Actor_JewelEnchantment";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo) 
+						{
+							if (player.CountInv("TimeSeraphVisor") &&
+									player.CountInv("TimeSeraphBangle"))
+							{
+								mo.health = 1;
+								mo.bSHOOTABLE = true;
+							}
+							else
+							{
+								mo.health = 1000;
+								mo.bSHOOTABLE = false;
+							}
+						}
+					}
+				}
+				
 				// 1 Sec TimeFreeze Checks
 				if ((((level.time - 35) % 35) == 0))
 				{
@@ -549,7 +573,7 @@ class KC_EventHandler : EventHandler
 				{
 					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCurse","KC_CCards_Actor_9LivesCurse");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCounter","KC_CCards_Actor_9LivesCounter");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_MonsterGodMode","KC_CCards_Actor_MonsterGodMode",type);
+					A_TmFrzCCardWTick_Giver("CCards_Actor_MonsterGodMode","KC_CCards_Actor_MonsterGodMode");
 					A_TmFrzCCardWTick_G3n(0);
 				}
 				
