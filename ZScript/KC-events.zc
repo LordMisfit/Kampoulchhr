@@ -213,6 +213,7 @@ class KC_EventHandler : EventHandler
 				A_TmFrzCCardWTick_TF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				A_TmFrzCCardWTick_TF("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
 				A_TmFrzCCardWTick_TF("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
+				A_TmFrzCCardWTick_TF("CCards_Actor_LethalityCurse","KC_CCards_Actor_LethalityCurse");
 
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
@@ -325,6 +326,7 @@ class KC_EventHandler : EventHandler
 				A_TmFrzCCardWTick_NTF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				A_TmFrzCCardWTick_NTF("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
 				A_TmFrzCCardWTick_NTF("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
+				A_TmFrzCCardWTick_NTF("CCards_Actor_LethalityCurse","KC_CCards_Actor_LethalityCurse");
 
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
@@ -561,6 +563,7 @@ class KC_EventHandler : EventHandler
 					A_TmFrzCCardWTick_Giver("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
+					A_TmFrzCCardWTick_Giver("CCards_Actor_LethalityCurse","KC_CCards_Actor_LethalityCurse");
 				}
 
 			}
@@ -3827,10 +3830,6 @@ class KC_EventHandler : EventHandler
 				if (ninelivescurse && victim.CountInv(nn)) nineliveslifecount = (victim.CountInv(nn) + 1);
 				if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[brick]ninelivescurse:\c- %d, \c[blue]nineliveslifecount:\c- %d", ninelivescurse, nineliveslifecount);
 			}
-			
-			bool nukecurse;
-			nn = "CCards_Actor_NuclearCurse"; 
-			if (victim.CountInv(nm)) nukecurse = true;
 
 			double sielgraceluckboost = 1.0;
 			if (MiscItem)
@@ -3908,6 +3907,31 @@ class KC_EventHandler : EventHandler
 				}
 			}
 
+			nm = "CCards_Actor_NuclearCurse"; 
+			if (victim.CountInv(nm))
+			{
+				bossdropmulti *= frandom(4,5);
+				skillmult *= frandom(0.2,0.25);
+			}
+			nm = "CCards_Actor_ClownCarCurse";
+			if (victim.CountInv(nm))
+			{
+				bossdropmulti *= frandom(4,5);
+				skillmult *= frandom(0.2,0.25);
+			}
+			nm = "CCards_Actor_DuplicationCurse";
+			if (victim.CountInv(nm))
+			{
+				bossdropmulti *= frandom(4,5);
+				skillmult *= frandom(0.2,0.25);
+			}
+			nm = "CCards_Actor_LethalityCurse";
+			if (victim.CountInv(nm))
+			{
+				bossdropmulti *= frandom(2,2.5);
+				skillmult *= frandom(0.4,0.5);
+			}
+			
 			nm = "CCards_Actor_AssassinBuff";
 			if (waslegendary ||
 					victim.CountInv(nm))
