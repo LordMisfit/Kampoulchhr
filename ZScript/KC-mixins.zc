@@ -1000,7 +1000,7 @@ mixin class MonsterCollider
 	string nm, nn, no, np;
 	
 	const HeiwaHPBoostTimerMult = 2.5;
-
+	
 	bool CheckTimeFreeze()
 	{
 		bool check = false;
@@ -1013,6 +1013,13 @@ mixin class MonsterCollider
 			check = true;
 		}
 		return check;
+	}
+	
+	bool A_CheckUOHYM1()
+	{
+		bool UOHYM = false;
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
+		return UOHYM;
 	}
 	
 	int A_GetPlayerLvl2(int type = 0)
@@ -1044,7 +1051,60 @@ mixin class MonsterCollider
 		}
 	}
 	
-	
+	void A_DynamicMusic(int timerset = 200, int matktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
+	{
+		timerset *= kc_dynmustimescale;
+		bool changemusic;
+		actor dmtarget;
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (MiscItem && MiscItem.DynMusSetUsed == 1004) timerset *= 2.0;
+		if (checkres && bFRIENDLY) return;
+		
+		if (A_CheckUOHYM1())
+		{
+		}
+		else
+		{
+			int tempdynmusictype = kc_dynamicmusic;
+			int tutlevelmin = 1801;
+			int tutlevelmax = 1804;
+			if (level.levelnum >= tutlevelmin && level.levelnum <= tutlevelmax) tempdynmusictype = 3;
+			
+			if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [%s]", self.GetClassName());
+			// Uses the mod's own system
+			dmtarget = target;
+			if (kcdebug_dynmusdisplays && tempdynmusictype && dmtarget && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [target: %s]", dmtarget.GetClassName());
+
+			if (dmtarget)
+			{
+				if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [dmtarget: %s]", dmtarget.GetClassName());
+				if (((bFRIENDLY == true || self == player) && dmtarget.bFRIENDLY == false) ||
+						 (bFRIENDLY == false && (dmtarget.bFRIENDLY == true || dmtarget == player))) changemusic = true;
+			}
+			if (matktype == 11) // Suicide Bomber type call
+			{
+				if (dmtarget && Distance3D(dmtarget) > 1024) changemusic = false;
+			}
+			if (forcedplay) changemusic = true;
+			if (tempdynmusictype && changemusic)
+			{
+				if (dmtarget && (dmtarget.bBOSS && !dmtarget.bFRIENDLY) || (!self.bFRIENDLY && self.bBOSS && dmtarget == player)) timerset *= 2.5;
+				if (MiscItem)
+				{
+					if (kc_deathmusic && player.health <= 0)
+					{
+					}
+					else
+					{
+						MiscItem.DynMusActCall = true;
+						if (MiscItem.DynMusFightTimer < timerset) MiscItem.DynMusFightTimer = timerset;
+					}
+				}
+			}
+		}
+	}
+
 	void A_RecoverHUD(int recovery, int type, bool acculmuatepulse)
 	{
 		if (kcdebug_hudrecdmgdisplays) Console.Printf("A_RecoverHUD called");
@@ -1190,6 +1250,7 @@ mixin class MonsterCollider
 						if (RevivedMonster.timesrevivedperdiabloist < maxtimesrevivedperdiab)
 						{
 							if (other.GetClassName() == "ArchvileNew") { if (kc_diabsressurectviles) { ResSucceed = true; } else { ResSucceed = false; } }
+							else if (other.GetClassName() == "ArchvileClassic") { if (kc_diabsressurectdiabs) { ResSucceed = true; } else { ResSucceed = false; } }
 							else if (other.GetClassName() == "Diabloist") { if (kc_diabsressurectdiabs) { ResSucceed = true; } else { ResSucceed = false; } }
 							else if (other.GetClassName() == "CyberdemonNew") { if (kc_diabsressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
 							else if (other.GetClassName() == "Annihilator") { if (kc_diabsressurectcybers) { ResSucceed = true; } else { ResSucceed = false; } }
@@ -1343,67 +1404,6 @@ mixin class MonsterCollider
 		return true;
 	}
 	
-	bool A_CheckUOHYM1()
-	{
-		bool UOHYM = false;
-		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) UOHYM = true;
-		return UOHYM;
-	}
-	
-	void A_DynamicMusic(int timerset = 200, int matktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
-	{
-		timerset *= kc_dynmustimescale;
-		bool changemusic;
-		actor dmtarget;
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		if (MiscItem && MiscItem.DynMusSetUsed == 1004) timerset *= 2.0;
-		if (checkres && bFRIENDLY) return;
-		
-		if (A_CheckUOHYM1())
-		{
-		}
-		else
-		{
-			int tempdynmusictype = kc_dynamicmusic;
-			int tutlevelmin = 1801;
-			int tutlevelmax = 1804;
-			if (level.levelnum >= tutlevelmin && level.levelnum <= tutlevelmax) tempdynmusictype = 3;
-			
-			if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [%s]", self.GetClassName());
-			// Uses the mod's own system
-			dmtarget = target;
-			if (kcdebug_dynmusdisplays && tempdynmusictype && dmtarget && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [target: %s]", dmtarget.GetClassName());
-
-			if (dmtarget)
-			{
-				if (kcdebug_dynmusdisplays && tempdynmusictype && !forcedplay) Console.Printf("DynMusActionAttempt (monsterside) [dmtarget: %s]", dmtarget.GetClassName());
-				if (((bFRIENDLY == true || self == player) && dmtarget.bFRIENDLY == false) ||
-						 (bFRIENDLY == false && (dmtarget.bFRIENDLY == true || dmtarget == player))) changemusic = true;
-			}
-			if (matktype == 11) // Suicide Bomber type call
-			{
-				if (dmtarget && Distance3D(dmtarget) > 1024) changemusic = false;
-			}
-			if (forcedplay) changemusic = true;
-			if (tempdynmusictype && changemusic)
-			{
-				if (dmtarget && (dmtarget.bBOSS && !dmtarget.bFRIENDLY) || (!self.bFRIENDLY && self.bBOSS && dmtarget == player)) timerset *= 2.5;
-				if (MiscItem)
-				{
-					if (kc_deathmusic && player.health <= 0)
-					{
-					}
-					else
-					{
-						MiscItem.DynMusActCall = true;
-						if (MiscItem.DynMusFightTimer < timerset) MiscItem.DynMusFightTimer = timerset;
-					}
-				}
-			}
-		}
-	}
-
 	// Damage Tracking
 	int initdmg;
 	double, double, double A_DefenseIgnoreFactor(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle, bool wasblastedimpact, bool surprisehit, int angvstype)
@@ -1564,8 +1564,26 @@ mixin class MonsterCollider
 					PlasmaFactor = frandom(0.28125,0.34375);
 					if (source && source.CountInv("BlasterPistolUpgrade")) PlasmaFactor *= 1.75;
 				}
-				if (infl == "Blaster_RifleShot") PlasmaFactor = frandom(0.3375,0.4125);
-				if (infl == "Blaster_RifleShotRipper") PlasmaFactor = frandom(0.45,0.55);
+				if (infl == "Blaster_RifleShot") 
+				{
+					PlasmaFactor = frandom(0.3375,0.4125);
+					if (source && source.CountInv("BlasterRifleUpgrade")) PlasmaFactor *= 1.75;
+				}
+				if (infl == "Blaster_RifleShotRipper") 
+				{
+					PlasmaFactor = frandom(0.45,0.55);
+					if (source && source.CountInv("BlasterRifleUpgrade")) PlasmaFactor *= 1.75;
+				}
+				if (infl == "Blaster_RifleShotWeak") 
+				{
+					PlasmaFactor = frandom(0.0675,0.0825);
+					if (source && source.CountInv("BlasterRifleUpgrade")) PlasmaFactor *= 1.75;
+				}
+				if (infl == "Blaster_RifleShotRipperWeak") 
+				{
+					PlasmaFactor = frandom(0.09,0.11);
+					if (source && source.CountInv("BlasterRifleUpgrade")) PlasmaFactor *= 1.75;
+				}
 				ActorDefenseIgnoreFactor += (PlasmaFactor * (1.00 - ActorDefenseIgnoreFactor));
 				
 				if (isholosentry)
@@ -1581,7 +1599,10 @@ mixin class MonsterCollider
 				if (infl == "KCTommyGunTracer" && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor = frandom(0.225,0.275);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
-
+			
+			double WhistleFactor = 0.75;
+			if (inflictor && PlayerWhistle(inflictor) || source && PlayerWhistle(source)) ActorDefenseIgnoreFactor += (WhistleFactor * (1.00 - ActorDefenseIgnoreFactor));
+			
 			double BarrelFactor = 0.50;
 			if (skill <= 0) BarrelFactor = 1.0;
 			if (skill == 1) BarrelFactor = 0.75;
