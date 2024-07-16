@@ -4821,7 +4821,14 @@ class ChainsawSpawner : WeaponSpawner replaces Chainsaw
 				string droptype = "Backpack";
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-				if (!bDROPPED)
+				bool truedropped = false;
+				if (bDROPPED) 
+				{
+					if (random(1,4) <= 1) truedropped = false;
+													 else truedropped = true;
+				}
+				if (kcdebug_weaponspawners) Console.Printf("truedropped: %d", truedropped);
+				if (!truedropped)
 				{
 					if (kcdebug_weaponspawners) Console.Printf("\c[fire][ChainsawSpawner]\c- Not Dropped");
 					if (playera.GetClassName() == "KCPlayer")

@@ -212,6 +212,7 @@ class KC_EventHandler : EventHandler
 				A_TmFrzCCardWTick_TF("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
 				A_TmFrzCCardWTick_TF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				A_TmFrzCCardWTick_TF("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
+				A_TmFrzCCardWTick_TF("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
 
 				nm = "CCards_Actor_Shockwave";
 				it = ThinkerIterator.Create(nm);
@@ -323,6 +324,7 @@ class KC_EventHandler : EventHandler
 				A_TmFrzCCardWTick_NTF("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
 				A_TmFrzCCardWTick_NTF("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 				A_TmFrzCCardWTick_NTF("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
+				A_TmFrzCCardWTick_NTF("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
 
 				nm = "CCards_Actor_AttentionNoise";
 				it = ThinkerIterator.Create(nm);
@@ -558,6 +560,7 @@ class KC_EventHandler : EventHandler
 					A_TmFrzCCardWTick_Giver("CCards_Actor_BarrelToss","KC_CCards_Actor_BarrelToss");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_WebBombThrower","KC_CCards_Actor_WebBombThrower");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_HighVoltage","KC_CCards_Actor_HighVoltage");
+					A_TmFrzCCardWTick_Giver("CCards_Actor_Rocketeer","KC_CCards_Actor_Rocketeer");
 				}
 
 			}
@@ -3824,6 +3827,10 @@ class KC_EventHandler : EventHandler
 				if (ninelivescurse && victim.CountInv(nn)) nineliveslifecount = (victim.CountInv(nn) + 1);
 				if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[brick]ninelivescurse:\c- %d, \c[blue]nineliveslifecount:\c- %d", ninelivescurse, nineliveslifecount);
 			}
+			
+			bool nukecurse;
+			nn = "CCards_Actor_NuclearCurse"; 
+			if (victim.CountInv(nm)) nukecurse = true;
 
 			double sielgraceluckboost = 1.0;
 			if (MiscItem)
