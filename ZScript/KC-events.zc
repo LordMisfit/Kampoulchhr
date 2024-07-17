@@ -7175,6 +7175,92 @@ class KC_EventHandler : EventHandler
 		return false;
 	}
 
+	void A_SpawnTFAfterImage(actor tf, int type)
+	{
+		if (type <= 0)
+		{
+			// Clears previous Images first
+			PlayerAfterimageTimeFreeze mo;
+			ThinkerIterator it;
+			it = ThinkerIterator.Create("PlayerAfterimageTimeFreeze");
+			while (mo = PlayerAfterimageTimeFreeze(it.Next()))
+			{
+				if (mo)
+				{
+					mo.Destroy();
+				}
+			}
+
+			// Clears previous Images first
+			PlayerAfterimageTimeFreezeFull mo2;
+			ThinkerIterator it2;
+			it2 = ThinkerIterator.Create("PlayerAfterimageTimeFreezeFull");
+			while (mo2 = PlayerAfterimageTimeFreezeFull(it.Next()))
+			{
+				if (mo2)
+				{
+					mo2.Destroy();
+				}
+			}
+
+			// Spawns a Time-Freeze Image where the player froze time
+			bool spawned;
+			actor timefreezeaftimg;
+			[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreeze", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+			if (timefreezeaftimg)
+			{
+				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
+				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
+				//timefreezeaftimg.pos.x = tf.pos.x;
+				//timefreezeaftimg.pos.y = tf.pos.y;
+				//timefreezeaftimg.pos.z = tf.pos.z;
+				timefreezeaftimg.master = tf;
+				timefreezeaftimg.alpha = (tf.alpha * 0.75);
+			}
+			[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+			if (timefreezeaftimg)
+			{
+				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
+				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
+				//timefreezeaftimg.pos.x = tf.pos.x;
+				//timefreezeaftimg.pos.y = tf.pos.y;
+				//timefreezeaftimg.pos.z = tf.pos.z;
+				timefreezeaftimg.master = tf;
+				timefreezeaftimg.alpha = (tf.alpha * 0.375);
+			}
+		}
+		else
+		{
+			int basefade = random(10,14);
+			int basefade2 = (basefade*2 + random(-1,1));
+			
+			PlayerAfterimageTimeFreeze mo;
+			ThinkerIterator it;
+			it = ThinkerIterator.Create("PlayerAfterimageTimeFreeze");
+			while (mo = PlayerAfterimageTimeFreeze(it.Next()))
+			{
+				if (mo)
+				{
+					mo.SetStateLabel('Death');
+					mo.basefade = basefade;
+					mo.internaltimermax = basefade2;
+				}
+			}
+			PlayerAfterimageTimeFreezeFull mo2;
+			ThinkerIterator it2;
+			it2 = ThinkerIterator.Create("PlayerAfterimageTimeFreezeFull");
+			while (mo2 = PlayerAfterimageTimeFreezeFull(it.Next()))
+			{
+				if (mo2)
+				{
+					mo2.SetStateLabel('Death');
+					mo2.basefade = basefade;
+					mo2.internaltimermax = basefade2;
+				}
+			}
+		}
+	}
+
 	override void NetworkProcess(ConsoleEvent e)
 	{
 		Actor playera = players[consoleplayer].mo;
@@ -7312,6 +7398,7 @@ class KC_EventHandler : EventHandler
 										playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE);
 										playera.A_StartSound("TimeFreezeOffensiveIn",219,CHANF_DEFAULT,0.875,ATTN_NONE);
 										Console.Printf("Offensive Time Freeze Activated");
+										A_SpawnTFAfterImage(playera,0);
 									}
 									else
 									{
@@ -7345,6 +7432,7 @@ class KC_EventHandler : EventHandler
 										playera.A_StartSound("TimeFreezeIn4",216,CHANF_DEFAULT,0.875,ATTN_NONE);
 										playera.A_StartSound("TimeFreezeNeutralIn",219,CHANF_DEFAULT,0.875,ATTN_NONE);
 										Console.Printf("Neutral Time Freeze Activated");
+										A_SpawnTFAfterImage(playera,0);
 									}
 									else
 									{
@@ -7385,6 +7473,7 @@ class KC_EventHandler : EventHandler
 										{
 											Console.Printf("Time Freeze Activated");
 										}
+										A_SpawnTFAfterImage(playera,0);
 									}
 									else
 									{
@@ -7437,6 +7526,7 @@ class KC_EventHandler : EventHandler
 								{
 									Console.Printf("Time Freeze Cut Short");
 								}
+								A_SpawnTFAfterImage(playera,1);
 							}
 							else
 							if (playera.CountInv("KCTimeFreezer2"))
@@ -7452,6 +7542,7 @@ class KC_EventHandler : EventHandler
 								playera.A_SetInventory("KCTimeCooldown2",1);
 								playera.A_StartSound("TimeFreezeNeutralOut",219,CHANF_DEFAULT,0.875,ATTN_NONE);
 								Console.Printf("Neutral Time Freeze Cut Short");
+								A_SpawnTFAfterImage(playera,1);
 							}
 							else
 							if (playera.CountInv("KCTimeFreezer3"))
@@ -7467,6 +7558,7 @@ class KC_EventHandler : EventHandler
 								playera.A_SetInventory("KCTimeCooldown3",1);
 								playera.A_StartSound("TimeFreezeOffensiveOut",219,CHANF_DEFAULT,0.875,ATTN_NONE);
 								Console.Printf("Offensive Time Freeze Cut Short");
+								A_SpawnTFAfterImage(playera,1);
 							}
 
 						}

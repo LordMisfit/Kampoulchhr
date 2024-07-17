@@ -5356,8 +5356,110 @@ class HeiwaPlayer : KCPlayerPawn
 	}
 }
 
+// TODO: Freezing time leaves an image in the player's spot when freeze activates, to give
+// them a more exact knowledge of their position change when time resumes.
+class PlayerAfterimageTimeFreeze : KCBaseZSC
+{
+	int internaltimer, internaltimermax;
+	double fadespeed;
+	int basefade;
+	actor playerreplacetarg;
+	
+	default
+	{
+		RenderStyle "AddStencil";
+		StencilColor "Purple";
+		Scale 1.0;
+		Alpha 1.0;
+		Health 100;
+		+NOGRAVITY;
+		+NODAMAGE;
+		+NOPAIN;
+		+INVULNERABLE;
+		+BUDDHA;
+		+DONTBLAST;
+		+DONTMORPH;
+		+DONTSQUASH;
+		+DONTRIP;
+		+DONTDRAIN;
+		+NOTIMEFREEZE;
+		+ALLOWTHRUFLAGS;
+		+THRUGHOST;
+		+THRUACTORS;
+		+THRUSPECIES;
+		+NOTELEPORT;
+		
+		+NOBLOCKMAP;
+	}
+	states
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+			}
+		Idle:
+			"####" "#" 1 BRIGHT
+			{
+			}
+			loop;
+		Death:
+			"####" "#" 0 BRIGHT
+			{
+				if (!basefade) basefade = random(10,14);
+				if (master) A_FadeTo(master.alpha);
+				fadespeed = (1.0/basefade);
+				if (!internaltimermax) internaltimermax = (basefade*2 + random(-1,1));
+			}
+		DeathLoop:
+			"####" "#" 1 BRIGHT
+			{
+				A_FadeOut(fadespeed);
+				if (alpha <= 0.0001) A_FadeTo(0.0001);
+				internaltimer++;
+				if (internaltimer >= internaltimermax) Destroy();
+			}
+			loop;
+			
+	}
+}
+
+class PlayerAfterimageTimeFreezeFull : PlayerAfterimageTimeFreeze
+{
+	default
+	{
+		RenderStyle "Add";
+		StencilColor "None";
+		-NOBLOCKMAP;
+	}
+	states
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				if (master) playerreplacetarg = master;
+			}
+		Idle:
+			"####" "#" 1
+			{
+			}
+			loop;
+	}
+}
+
 class EVP_Footsteps : Actor
 {
+	const SKILL_VERY_EASY = 0;
+	const SKILL_EASY = 1;
+	const SKILL_NORMAL = 2;
+	const SKILL_HARD = 3;
+	const SKILL_VERY_HARD = 4;
+	const SKILL_EXTREME = 5;
+	const SKILL_HORRIBLE = 6;
+	const SKILL_IMPOSSIBLE = 7;
+	const SKILL_OMEGA = 8;
+	
+	int TrueGameSkill;
+	
 	PlayerPawn plr;
 
 	int tickCounter;
@@ -5378,15 +5480,48 @@ class EVP_Footsteps : Actor
 		array<string> allSF;
 		StringTable.Localize("$STEP_FLATS").Split(allSF,":");
 		Console.Printf("Default Footsteps TXT Loaded");
-		/*
 		StringTable.Localize("$STEP_FLATSOTEX").Split(allSF,":");
 		Console.Printf("OTex Footsteps TXT Loaded");
-		*/
 		// Other CompatPacks
 		if (Wads.CheckNumForName("KC-AUGZEN", Wads.ns_global, -1, true) != -1) 
 		{
 			StringTable.Localize("$STEP_FLATSAUGZEN").Split(allSF,":");
 			Console.Printf("AUGER;ZENITH Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-BLOOM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSBLOOM").Split(allSF,":");
+			Console.Printf("BlooM Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSCIRCUS2").Split(allSF,":");
+			Console.Printf("Circus2 Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-KDIZD", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSKDIZD").Split(allSF,":");
+			Console.Printf("KDIZD Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-TCOTDA", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSTCOTDA").Split(allSF,":");
+			Console.Printf("TCOTDA Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-TUTNT", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSTUTNT").Split(allSF,":");
+			Console.Printf("Ultimate Torment and Torture Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
+			Console.Printf("Unfamiliar Footsteps TXT Loaded");
+		}
+		if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
+		{
+			StringTable.Localize("$STEP_FLATSSTAEONS").Split(allSF,":");
+			Console.Printf("Strange Aeons Footsteps TXT Loaded");
 		}
 		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
 		{
@@ -5408,6 +5543,12 @@ class EVP_Footsteps : Actor
 			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
 			Console.Printf("Unfamiliar Footsteps TXT Loaded");
 		}
+		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1) 
+		{
+			StringTable.Localize("$STEP_FLATSUOHYM").Split(allSF,":");
+			Console.Printf("UOHYM TXT Loaded");
+		}
+		
 		
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)
 		{
@@ -5437,7 +5578,11 @@ class EVP_Footsteps : Actor
 		int Level = 0;
 		if (MiscItem)
 		{
-			if (kc_expgains) Level = MiscItem.PlayerLevel;
+			if (kc_expgains)
+			{
+				if (type == 0) Level = MiscItem.PlayerLevel;
+				if (type >= 1) Level = MiscItem.TruePlayerLevel;
+			}
 		}
 		if (kcdebug_playerlevelchecks) Console.Printf("\c[green](%s) \c[gold](A_CheckActualLevel - KCPlayerPawn)\c- PlayerLevel: %d [%d]", GetClassName(), level, gametic);
 		return Level;
@@ -5575,6 +5720,35 @@ class EVP_Footsteps : Actor
 				sndnamed = "step/metal/a";
 				nulltext = true;
 			}
+			if (texname == "STEP1" ||
+					texname == "STEP2" ||
+					texname == "STEP3" ||
+					texname == "A-DAN1" ||
+					texname == "A-DAN2" ||
+					texname == "A-DAN3" ||
+					texname == "A-DAN4" ||
+					texname == "A-DAN5") 
+			{
+				sndnamed = "step/metal/a";
+				nulltext = true;
+			}
+			if (texname == "A-BRICK2" ||
+					texname == "A-BROCK1" ||
+					texname == "A-BROCK2" ||
+					texname == "A-CAMO3A" ||
+					texname == "A-DBRI1") 
+			{
+				sndnamed = "step/hard";
+				nulltext = true;
+			}
+			if (texname == "A-CAMO1" ||
+					texname == "A-CAMO1A" ||
+					texname == "A-CAMO2A" ||
+					texname == "A-CAMO2C")
+			{
+				sndnamed = "step/grass";
+				nulltext = true;
+			}
 			if (kcdebug_footsteps1 || kcdebug_footsteps2) sndname = idx != fs_textures.Size() ? fs_sndinfo[idx] : sndnamed;
 			int dupe1chance = 6;
 			int dupe2chance = 4;
@@ -5701,10 +5875,8 @@ class EVP_Footsteps : Actor
 		{
 			// poll for movement
 			tickCounter = 3;
-			/*
 			if (plr.CountInv("DashTics")) tickCounter = random(6,9);
 															 else tickCounter = 3;
-			*/
 		}
 		if (!isrunning) tickCounter *= 1.75;
 		if (kc_footstepcounttype) tickCounter = plr.CountInv("IsStepping");
