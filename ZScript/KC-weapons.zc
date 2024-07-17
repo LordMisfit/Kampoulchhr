@@ -16898,7 +16898,7 @@ class KnifePuffNoSound : KnifePuff
 
 class BlasterRifle : MarineWeapon // DoomWeapon 2001
 {
-	int firetype;
+	int firetype, truefiretype;
 	int shotcount;
 	int shotnum;
 	int freeshot;
@@ -16919,19 +16919,20 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 0;
-		Weapon.AmmoUse2 0;
-		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Cell";
+		Weapon.AmmoUse2 0;
 		Weapon.AmmoType2 "Cell";
+		Weapon.AmmoGive 20;
 		Weapon.SlotNumber 4;
 		Inventory.PickupMessage "You got the \cxE-11 Blaster Rifle\c-! \cx[Slot 4]\c-";
+		+WEAPON.AMMO_OPTIONAL;
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
 	action void A_ShotSpeedTier(int firetype)
 	{
 		int thresholder = 5;
-		if (invoker.firetype >= 1)
+		if (invoker.truefiretype >= 1)
 		{
 			if (firetype >= 1) thresholder = 24;
 										else thresholder = 15;
@@ -16953,7 +16954,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 	action int A_ShotSpeedTicInput(int tic)
 	{
 		int oldtic = tic;
-		if (invoker.firetype <= 0)
+		if (invoker.truefiretype <= 0)
 		{
 			if (CountInv("BlasterRifleUpgrade"))
 			{
@@ -17024,6 +17025,11 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				A_ShotSpeedTier(0);
 				int tic = 3;
 				tic = A_ShotSpeedTicInput(tic);
+				if (invoker.firetype <= 0)
+				{
+					invoker.truefiretype = invoker.firetype;
+					if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
+				}
 				
 				invoker.freeshot = 0;
 				if (CountInv("BlasterRifleUpgrade"))
@@ -17039,7 +17045,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				{
 					if (random(1,100) <= 1) invoker.freeshot++;
 				}
-				if (invoker.firetype >= 1) 
+				if (invoker.truefiretype >= 1) 
 				{
 					if (CountInv("BlasterRifleUpgrade")) tic += randompick(0,1,1,1,1,1,2);
 																					else tic += randompick(0,0,0,1,1,1,1);
@@ -17060,7 +17066,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else invoker.flashspeed -= 1;
 					}
 				}
-				if (invoker.firetype >= 1) 
+				if (invoker.truefiretype >= 1) 
 				{
 					if (CountInv("BlasterRifleUpgrade")) invoker.flashspeed += randompick(0,1,1,1,1,1,2);
 																					else invoker.flashspeed += randompick(0,0,0,1,1,1,1);
@@ -17073,7 +17079,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				double recoil = frandom(0.05,0.075);
 				invoker.shotnum++;
 				
-				if (invoker.firetype <= 0)
+				if (invoker.truefiretype <= 0)
 				{
 					shottype = "Blaster_RifleShot";
 					recoil = frandom(0.05,0.075);
@@ -17098,7 +17104,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				A_FireProjectile(shottype);
 				A_Recoil(recoil);
 				A_IncGunKiaiCounter((randompick(0,1,1,1,1,2) * random(3,5)));
-				if (invoker.firetype <= 0)
+				if (invoker.truefiretype <= 0)
 				{
 					A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
 					if (invoker.freeshot) A_GiveInventory("Cell",invoker.freeshot);
@@ -17117,7 +17123,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else tic -= 1;
 					}
 				}
-				if (invoker.firetype >= 1) 
+				if (invoker.truefiretype >= 1) 
 				{
 					if (CountInv("BlasterRifleUpgrade")) tic += randompick(0,1,1,1,1,1,2);
 																					else tic += randompick(0,0,0,1,1,1,1);
@@ -17169,18 +17175,33 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 						if (random(1,100) <= 1) invoker.freeshot++;
 					}
 				}
-				if (CountInv("Cell") >= invoker.shotcount || 
-						A_CheckInfiniteAmmo()) 
+				
+				if (invoker.firetype <= 0)
 				{
-					return resolvestate("AltFire2");
-				}
-				else
-				if (CountInv("Cell") > 0)
-				{
-					invoker.shotcount = CountInv("Cell");
-					return resolvestate("AltFire2");
+					invoker.truefiretype = invoker.firetype;
+					if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
+					//Console.Printf("invoker.truefiretype: %d", invoker.truefiretype);
 				}
 				
+				if (invoker.truefiretype <= 0)
+				{
+					if (CountInv("Cell") >= invoker.shotcount || 
+							A_CheckInfiniteAmmo()) 
+					{
+						return resolvestate("AltFire2");
+					}
+					else
+					if (CountInv("Cell") > 0)
+					{
+						invoker.shotcount = CountInv("Cell");
+						return resolvestate("AltFire2");
+					}
+					return resolvestate(null);
+				}
+				else
+				{
+					return resolvestate("AltFire2");
+				}
 				return resolvestate(null);
 			}
 			goto Ready;
@@ -17198,7 +17219,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else tic -= 1;
 					}
 				}
-				if (invoker.firetype >= 1) 
+				if (invoker.truefiretype >= 1) 
 				{
 					if (CountInv("BlasterRifleUpgrade")) tic += randompick(0,1,1,1,1,1,2);
 																					else tic += randompick(0,0,0,1,1,1,1);
@@ -17219,7 +17240,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 															else invoker.altflashspeed -= 1;
 					}
 				}
-				if (invoker.firetype >= 1) 
+				if (invoker.truefiretype >= 1) 
 				{
 					if (CountInv("BlasterRifleUpgrade")) invoker.altflashspeed += randompick(0,1,1,1,1,1,2);
 																					else invoker.altflashspeed += randompick(0,0,0,1,1,1,1);
@@ -17233,7 +17254,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				string shottype = "Blaster_RifleShot";
 				double recoil = frandom(0.075,0.1125);
 
-				if (invoker.firetype <= 0)
+				if (invoker.truefiretype <= 0)
 				{
 					shottype = "Blaster_RifleShot";
 					if (CountInv("BlasterRifleUpgrade")) 
@@ -17258,7 +17279,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				{
 					double ang = (random(-16,16) * 0.16);
 					double pch = (random(-16,16) * 0.16);
-					if (invoker.firetype >= 1)
+					if (invoker.truefiretype >= 1)
 					{
 						ang = (random(-20,20) * 0.2);
 						pch = (random(-20,20) * 0.2);
@@ -17275,7 +17296,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 					A_IncGunKiaiCounter((randompick(0,1,1,1,1,1,1,1,1,2) * random(4,6)));
 				}
 				A_Recoil(recoil);
-				if (invoker.firetype <= 0)
+				if (invoker.truefiretype <= 0)
 				{
 					A_TakeInventory("Cell",invoker.shotcount,TIF_NOTAKEINFINITE);
 					if (invoker.freeshot) A_GiveInventory("Cell",invoker.freeshot);
