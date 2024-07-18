@@ -193,6 +193,10 @@ class KC_EventHandler : EventHandler
 			{
 				if (A_CheckKCTimeFreeze())
 				{
+					if (tftmo.target == player)
+					{
+						tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
+					}
 				}
 				else
 				{
@@ -205,7 +209,10 @@ class KC_EventHandler : EventHandler
 						}
 						else
 						{
-							if (tftmo.CountInv("TimeFreezeHasATarget") > 0) tftmo.A_SetInventory("TimeFreezeHasATarget",0);
+							if (tftmo.CountInv("TimeFreezeHasATarget") > 0) 
+							{
+								tftmo.A_SetInventory("TimeFreezeHasATarget",0);
+							}
 						}
 					}
 					else
@@ -7195,7 +7202,7 @@ class KC_EventHandler : EventHandler
 			PlayerAfterimageTimeFreezeFull mo2;
 			ThinkerIterator it2;
 			it2 = ThinkerIterator.Create("PlayerAfterimageTimeFreezeFull");
-			while (mo2 = PlayerAfterimageTimeFreezeFull(it.Next()))
+			while (mo2 = PlayerAfterimageTimeFreezeFull(it2.Next()))
 			{
 				if (mo2)
 				{
@@ -7231,7 +7238,7 @@ class KC_EventHandler : EventHandler
 		}
 		else
 		{
-			int basefade = random(10,14);
+			int basefade = random(15,21);
 			int basefade2 = (basefade*2 + random(-1,1));
 			
 			PlayerAfterimageTimeFreeze mo;
@@ -7249,7 +7256,7 @@ class KC_EventHandler : EventHandler
 			PlayerAfterimageTimeFreezeFull mo2;
 			ThinkerIterator it2;
 			it2 = ThinkerIterator.Create("PlayerAfterimageTimeFreezeFull");
-			while (mo2 = PlayerAfterimageTimeFreezeFull(it.Next()))
+			while (mo2 = PlayerAfterimageTimeFreezeFull(it2.Next()))
 			{
 				if (mo2)
 				{
@@ -8509,6 +8516,13 @@ class KC_StaticEventHandler : StaticEventHandler
 					}
 					if (texname == "FLAT22" ||
 							texname_c == "FLAT22") damagetyp = 'Shock';
+					if (d != Wads.CheckNumForName("KC-AUGZEN", Wads.ns_global, -1, true))
+					{
+						if (texname == "D_4000" ||
+								texname == "D_4001" ||
+								texname == "SLIME16") damagetyp = 'Shock';
+						if (texname == "FLOOR7_4") damagetyp = 'Magma';
+					}
 				}
 			}
 			if (damagetyp == 'Ice') damagetyp = 'IceWater';

@@ -463,9 +463,43 @@ class KCPlayerPawn : PlayerPawn
 			}
 			if (kcdebug_playerpos)
 			{
-				Console.Printf("\c[fire]cursector: %d, damagetype: %s, floorz: %.4f, floorpic: %s, ceilingz: %.4f, ceilingpic: %s, dropoffz: %.4f, special: %d, flags: %d, [tic: %d]", cursector.Index(), cursector.damagetype, floorz, texman.GetName(floorpic), ceilingz, texman.GetName(ceilingpic), dropoffz, self.curSector.special, self.curSector.flags, gametic);
-				if (cursector.Index() != ceilingsector.Index()) Console.Printf("  \c[sapphire]ceilingsector: %d, damagetype: %s, floorpic: %s, ceilingpic: %s [tic: %d]", ceilingsector.Index(), ceilingsector.damagetype, texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
-				if (cursector.Index() != floorsector.Index()) Console.Printf("  \c[sapphire]floorsector: %d, damagetype: %s, floorpic: %s, ceilingpic: %s [tic: %d]", floorsector.Index(), floorsector.damagetype, texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
+				string playerposdebug;
+				playerposdebug.AppendFormat("\c[fire]cursector: %d, ", cursector.Index());
+									if (cursector.damagetype == 'Slime') playerposdebug.AppendFormat("\c[green]");
+				else if (cursector.damagetype == 'ShockFloor') playerposdebug.AppendFormat("\c[yellow]");
+				else if (cursector.damagetype == 'IceWater')	 playerposdebug.AppendFormat("\c[sapphire]");
+				else if (cursector.damagetype == 'Magma')			 playerposdebug.AppendFormat("\c[orange]");
+																									else playerposdebug.AppendFormat("\c[white]");
+				playerposdebug.AppendFormat("damagetype: %s,\c= ", cursector.damagetype);
+				playerposdebug.AppendFormat("\c[brown]floorz: %.4f, floorpic: %s,\c- \c[gold]ceilingz: %.4f, ceilingpic: %s, \c[fire]dropoffz: %.4f, special: %d, flags: %d, [tic: %d]", floorz, texman.GetName(floorpic), ceilingz, texman.GetName(ceilingpic), dropoffz, self.curSector.special, self.curSector.flags, gametic);
+				Console.Printf(playerposdebug);
+
+				if (cursector.Index() != ceilingsector.Index()) 
+				{
+					playerposdebug = "";
+					playerposdebug.AppendFormat("  \c[sapphire]ceilingsector: %d, ", ceilingsector.Index());
+										if (ceilingsector.damagetype == 'Slime') playerposdebug.AppendFormat("\c[green]");
+					else if (ceilingsector.damagetype == 'ShockFloor') playerposdebug.AppendFormat("\c[yellow]");
+					else if (ceilingsector.damagetype == 'IceWater')	 playerposdebug.AppendFormat("\c[sapphire]");
+					else if (ceilingsector.damagetype == 'Magma')			 playerposdebug.AppendFormat("\c[orange]");
+																										else playerposdebug.AppendFormat("\c[white]");
+					playerposdebug.AppendFormat("damagetype: %s, ", ceilingsector.damagetype);
+					playerposdebug.AppendFormat("\c[sapphire]floorpic: %s, ceilingpic: %s [tic: %d]", texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
+					Console.Printf(playerposdebug);
+				}
+				if (cursector.Index() != floorsector.Index()) 
+				{
+					playerposdebug = "";
+					playerposdebug.AppendFormat("  \c[sapphire]floorsector: %d, ", floorsector.Index());
+										if (floorsector.damagetype == 'Slime') playerposdebug.AppendFormat("\c[green]");
+					else if (floorsector.damagetype == 'ShockFloor') playerposdebug.AppendFormat("\c[yellow]");
+					else if (floorsector.damagetype == 'IceWater')	 playerposdebug.AppendFormat("\c[sapphire]");
+					else if (floorsector.damagetype == 'Magma')			 playerposdebug.AppendFormat("\c[orange]");
+																										else playerposdebug.AppendFormat("\c[white]");
+					playerposdebug.AppendFormat("damagetype: %s, ", floorsector.damagetype);
+					playerposdebug.AppendFormat("\c[sapphire]floorpic: %s, ceilingpic: %s [tic: %d]", texman.GetName(floorpic), texman.GetName(ceilingpic), gametic);
+					Console.Printf(playerposdebug);
+				}
 			}
 			/*
 			double posf;
@@ -5387,10 +5421,13 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		+THRUGHOST;
 		+THRUACTORS;
 		+THRUSPECIES;
+		+MTHRUSPECIES;
 		+NOTELEPORT;
 		
 		+NOBLOCKMAP;
+		Species "Players";
 	}
+
 	states
 	{
 		Spawn:
@@ -5413,9 +5450,10 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		DeathLoop:
 			"####" "#" 1 BRIGHT
 			{
-				A_FadeOut(fadespeed);
+				A_FadeOut(fadespeed,FTF_CLAMP);
 				if (alpha <= 0.0001) A_FadeTo(0.0001);
 				internaltimer++;
+				//Console.Printf("internaltimer: %d / %d", internaltimer, internaltimermax);
 				if (internaltimer >= internaltimermax) Destroy();
 			}
 			loop;
@@ -5430,7 +5468,10 @@ class PlayerAfterimageTimeFreezeFull : PlayerAfterimageTimeFreeze
 		RenderStyle "Add";
 		StencilColor "None";
 		-NOBLOCKMAP;
+		+SHOOTABLE;
+		+NONSHOOTABLE;
 	}
+	
 	states
 	{
 		Spawn:
