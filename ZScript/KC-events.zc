@@ -7184,6 +7184,8 @@ class KC_EventHandler : EventHandler
 
 	void A_SpawnTFAfterImage(actor tf, int type)
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (type <= 0)
 		{
 			// Clears previous Images first
@@ -7218,29 +7220,40 @@ class KC_EventHandler : EventHandler
 			{
 				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
 				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
-				//timefreezeaftimg.pos.x = tf.pos.x;
-				//timefreezeaftimg.pos.y = tf.pos.y;
-				//timefreezeaftimg.pos.z = tf.pos.z;
 				timefreezeaftimg.master = tf;
 				timefreezeaftimg.alpha = (tf.alpha * 0.75);
+				
+				PlayerAfterimageTimeFreeze timefreezeaftimg2;
+				timefreezeaftimg2 = PlayerAfterimageTimeFreeze(timefreezeaftimg);
+				if (timefreezeaftimg2)
+				{
+					timefreezeaftimg2.tfmaster = tf;
+					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
+					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
+					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.75);
+				}
 			}
 			[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
 			if (timefreezeaftimg)
 			{
 				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
 				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
-				//timefreezeaftimg.pos.x = tf.pos.x;
-				//timefreezeaftimg.pos.y = tf.pos.y;
-				//timefreezeaftimg.pos.z = tf.pos.z;
 				timefreezeaftimg.master = tf;
 				timefreezeaftimg.alpha = (tf.alpha * 0.375);
+				
+				PlayerAfterimageTimeFreezeFull timefreezeaftimg2;
+				timefreezeaftimg2 = PlayerAfterimageTimeFreezeFull(timefreezeaftimg);
+				if (timefreezeaftimg2)
+				{
+					timefreezeaftimg2.tfmaster = tf;
+					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
+					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
+					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.375);
+				}
 			}
 		}
 		else
 		{
-			int basefade = random(15,21);
-			int basefade2 = (basefade*2 + random(-1,1));
-			
 			PlayerAfterimageTimeFreeze mo;
 			ThinkerIterator it;
 			it = ThinkerIterator.Create("PlayerAfterimageTimeFreeze");
@@ -7249,8 +7262,8 @@ class KC_EventHandler : EventHandler
 				if (mo)
 				{
 					mo.SetStateLabel('Death');
-					mo.basefade = basefade;
-					mo.internaltimermax = basefade2;
+					if (!mo.basefade) mo.basefade = MiscItem.tfaftimgbasefade;
+					if (!mo.internaltimermax) mo.internaltimermax = MiscItem.tfaftimgbasefade2;
 				}
 			}
 			PlayerAfterimageTimeFreezeFull mo2;
@@ -7261,8 +7274,8 @@ class KC_EventHandler : EventHandler
 				if (mo2)
 				{
 					mo2.SetStateLabel('Death');
-					mo2.basefade = basefade;
-					mo2.internaltimermax = basefade2;
+					if (!mo2.basefade) mo2.basefade = MiscItem.tfaftimgbasefade;
+					if (!mo2.internaltimermax) mo2.internaltimermax = MiscItem.tfaftimgbasefade2;
 				}
 			}
 		}

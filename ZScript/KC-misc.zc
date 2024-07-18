@@ -16,6 +16,9 @@ class PlayerStatItem : Inventory
 	// 3 - ??????
 	// 4 - ??????
 	
+	int tfaftimgbasefade;
+	int tfaftimgbasefade2;
+	
 	int hamonrippletier;
 	int nagareflowtier;
 	int moonlightcovergirlACT;
@@ -962,6 +965,21 @@ class PlayerStatItem : Inventory
 				}
 				
 				// Misc
+				tfaftimgbasefade = random(10,14);
+				if (A_CheckTimeFreeze())
+				{
+					tfaftimgbasefade = random(10,14);
+					int tfaftimgbasefadeext;
+					tfaftimgbasefadeext += (TruePlayerLevel * 0.2);
+					if (owner.CountInv("KCTimeFreezer1")) tfaftimgbasefadeext += (timefreeze1timesused * 0.025);
+					if (owner.CountInv("KCTimeFreezer2")) tfaftimgbasefadeext += (timefreeze2timesused * 0.05);
+					if (owner.CountInv("KCTimeFreezer3")) tfaftimgbasefadeext += (timefreeze3timesused * 0.025);
+					tfaftimgbasefadeext *= frandom(1.0,1.4);
+					tfaftimgbasefade += tfaftimgbasefadeext;
+				}
+				tfaftimgbasefade2 = ((tfaftimgbasefade * 2) + random(-1,1));
+				//Console.Printf("tfaftimgbasefade: %d, tfaftimgbasefade2: %d", tfaftimgbasefade, tfaftimgbasefade2);
+				
 				weapon = owner.player.ReadyWeapon;
 				
 				PlayerWaterLevel = owner.waterlevel;

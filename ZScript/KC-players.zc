@@ -5397,7 +5397,8 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 	int internaltimer, internaltimermax;
 	double fadespeed;
 	int basefade;
-	actor playerreplacetarg;
+	actor playerreplacetarg, tfmaster;
+	double basealpha2;
 	
 	default
 	{
@@ -5427,7 +5428,18 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		+NOBLOCKMAP;
 		Species "Players";
 	}
-
+	
+	void A_CheckPlayerDist(double dist = 128)
+	{
+		Console.Printf("[%s] A_CheckPlayerDist [gametic: %d]", GetClassName(), gametic);
+		if (tfmaster)
+		{
+			if (Distance3D(tfmaster) <= dist) alpha = (basealpha2 * 0.125);
+																	 else alpha = (basealpha2);
+			Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
+		}
+	}
+	
 	states
 	{
 		Spawn:
@@ -5437,15 +5449,20 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		Idle:
 			"####" "#" 1 BRIGHT
 			{
+				//Console.Printf("@!$@!#");
+				//A_CheckPlayerDist(128);
 			}
 			loop;
 		Death:
 			"####" "#" 0 BRIGHT
 			{
-				if (!basefade) basefade = random(10,14);
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (!basefade) basefade = MiscItem.tfaftimgbasefade;
 				if (master) A_FadeTo(master.alpha);
+				else if (tfmaster) A_FadeTo(tfmaster.alpha);
 				fadespeed = (1.0/basefade);
-				if (!internaltimermax) internaltimermax = (basefade*2 + random(-1,1));
+				if (!internaltimermax) internaltimermax = MiscItem.tfaftimgbasefade2;
 			}
 		DeathLoop:
 			"####" "#" 1 BRIGHT
@@ -5470,20 +5487,6 @@ class PlayerAfterimageTimeFreezeFull : PlayerAfterimageTimeFreeze
 		-NOBLOCKMAP;
 		+SHOOTABLE;
 		+NONSHOOTABLE;
-	}
-	
-	states
-	{
-		Spawn:
-			TNT1 A 0 NoDelay
-			{
-				if (master) playerreplacetarg = master;
-			}
-		Idle:
-			"####" "#" 1
-			{
-			}
-			loop;
 	}
 }
 
