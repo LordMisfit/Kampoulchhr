@@ -5399,6 +5399,7 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 	int basefade;
 	actor playerreplacetarg, tfmaster;
 	double basealpha2;
+	bool fadeaway;
 	
 	default
 	{
@@ -5434,10 +5435,16 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		Console.Printf("[%s] A_CheckPlayerDist [gametic: %d]", GetClassName(), gametic);
 		if (tfmaster)
 		{
-			if (Distance3D(tfmaster) <= dist) alpha = (basealpha2 * 0.125);
+			if (Distance3D(tfmaster) <= dist) alpha = (basealpha2 * 0.03125);
 																	 else alpha = (basealpha2);
 			Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
 		}
+	}
+	
+	override void Tick()
+	{
+		if (!fadeaway) A_CheckPlayerDist(16);
+		Super.Tick();
 	}
 	
 	states
@@ -5456,6 +5463,7 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		Death:
 			"####" "#" 0 BRIGHT
 			{
+				fadeaway = true;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (!basefade) basefade = MiscItem.tfaftimgbasefade;
@@ -5467,6 +5475,7 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 		DeathLoop:
 			"####" "#" 1 BRIGHT
 			{
+				fadeaway = true;
 				A_FadeOut(fadespeed,FTF_CLAMP);
 				if (alpha <= 0.0001) A_FadeTo(0.0001);
 				internaltimer++;

@@ -7228,6 +7228,7 @@ class KC_EventHandler : EventHandler
 				if (timefreezeaftimg2)
 				{
 					timefreezeaftimg2.tfmaster = tf;
+					timefreezeaftimg2.fadeaway = false;
 					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
 					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
 					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.75);
@@ -7246,6 +7247,7 @@ class KC_EventHandler : EventHandler
 				if (timefreezeaftimg2)
 				{
 					timefreezeaftimg2.tfmaster = tf;
+					timefreezeaftimg2.fadeaway = false;
 					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
 					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
 					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.375);
@@ -7262,6 +7264,7 @@ class KC_EventHandler : EventHandler
 				if (mo)
 				{
 					mo.SetStateLabel('Death');
+					mo.fadeaway = true;
 					if (!mo.basefade) mo.basefade = MiscItem.tfaftimgbasefade;
 					if (!mo.internaltimermax) mo.internaltimermax = MiscItem.tfaftimgbasefade2;
 				}
@@ -7274,6 +7277,7 @@ class KC_EventHandler : EventHandler
 				if (mo2)
 				{
 					mo2.SetStateLabel('Death');
+					mo2.fadeaway = true;
 					if (!mo2.basefade) mo2.basefade = MiscItem.tfaftimgbasefade;
 					if (!mo2.internaltimermax) mo2.internaltimermax = MiscItem.tfaftimgbasefade2;
 				}
