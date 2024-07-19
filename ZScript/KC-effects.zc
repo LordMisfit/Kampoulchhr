@@ -4597,3 +4597,140 @@ class TimeFreezeHasAPlayerTarget : PlaceHolderItem
 		if (Owner == NULL) Destroy();
 	}
 }
+
+class TimeFreezeHasAPlayerTracer : PlaceHolderItem
+{
+	int winddown;
+	actor prevptracer;
+	actor tfaftimgtracer;
+	bool hasNOTARGETSWITCH;
+	Default
+	{
+		inventory.maxamount 1;
+	}
+	
+	override void Tick()
+	{
+		bool maindebug = kcdebug_timefreezeafterimage;
+		actor playera = players[0].mo;
+		if (owner && playera)
+		{
+			if (maindebug) Console.Printf("owner: [%p - %s], playera: [%p - %s]", owner, owner.GetClassName(), playera, playera.GetClassName());
+			
+			bool TimeItem = false;
+			if (playera.CountInv("KCTimeFreezer") ||
+					playera.CountInv("KCTimeFreezer1") ||
+					playera.CountInv("KCTimeFreezer2") ||
+					playera.CountInv("KCTimeFreezer3")) TimeItem = true;
+			
+			if (TimeItem)
+			{
+				if (winddown <= 0)
+				{
+					hasNOTARGETSWITCH = owner.bNOTARGETSWITCH;
+					if (owner.tracer)
+					{
+						if (owner.tracer == playera)
+						{
+							if (maindebug) Console.Printf("owner's target: %p [%s]", owner.tracer, owner.tracer.GetClassName());
+							winddown = ((random(15,21) * 2) + random(-1,1));
+							if (owner.bBOSS) winddown *= frandom(0.667,0.834);
+							if (playera) prevptracer = playera;
+											else prevptracer = owner.tracer;
+							if (maindebug) Console.Printf("owner's target is player: prevptracer: %p [%p]", prevptracer, target);
+							
+							PlayerAfterimageTimeFreezeFull mo2;
+							ThinkerIterator it2;
+							it2 = ThinkerIterator.Create("PlayerAfterimageTimeFreezeFull");
+							while (mo2 = PlayerAfterimageTimeFreezeFull(it2.Next()))
+							{
+								if (mo2)
+								{
+									if (!tfaftimgtracer) tfaftimgtracer = mo2;
+																	else break;
+								}
+								
+							}
+						}
+					}
+				}
+				else
+				{
+					if (tfaftimgtracer) 
+					{
+						owner.tracer = tfaftimgtracer;
+						if (!hasNOTARGETSWITCH) owner.bNOTARGETSWITCH = true;
+					}
+				}
+			}
+			else
+			{
+				if (winddown > 0) 
+				{
+					string debug;
+					debug.AppendFormat("\c[sapphire]winddown [%p - %s]: %d\c-", owner, owner.GetClassName(), winddown);
+					if (owner.tracer) debug.AppendFormat(", \c[fire]target: [%p - %s]\c-", owner.tracer, owner.tracer.GetClassName());
+					if (prevptracer) debug.AppendFormat(", \c[HeiwaChamosis]prevptracer: [%p - %s]\c-", prevptracer, prevptracer.GetClassName());
+					if (tfaftimgtracer) debug.AppendFormat(", \c[HeiwaDeluge]tfaftimgtracer: [%p - %s]\c-", tfaftimgtracer, tfaftimgtracer.GetClassName());
+					debug.AppendFormat(", gametic: %d\c-", gametic);
+					if (maindebug) Console.Printf(debug);
+					
+					if (winddown % 1 == 0)
+					{
+						if (owner.tracer)
+						{
+							if (owner.tracer == prevptracer)
+							{
+								if (maindebug) Console.Printf("\c[brick]owner.tracer == prevptracer, gametic: %d", gametic);
+								if (tfaftimgtracer) 
+								{
+									if (owner.tracer != tfaftimgtracer) 
+									{
+										owner.tracer = tfaftimgtracer;
+										if (maindebug && owner.tracer == tfaftimgtracer) Console.Printf("\c[green]tfaftimgtracer: %d", gametic);
+										if (!hasNOTARGETSWITCH) owner.bNOTARGETSWITCH = true;
+									}
+								}
+								else 
+								{
+									if (maindebug) Console.Printf("\c[brick]no tfaftimgtracer: destroy - %d", gametic);
+									if (prevptracer && owner.tracer != prevptracer) owner.tracer = prevptracer;
+									if (!hasNOTARGETSWITCH) owner.bNOTARGETSWITCH = false;
+									Destroy();
+								}
+							}
+							else
+							if (owner.tracer == tfaftimgtracer)
+							{
+								if (maindebug) Console.Printf("\c[green]owner.tracer == tfaftimgtracer, gametic: %d", gametic);
+							}
+						}
+						else
+						{
+							if (!hasNOTARGETSWITCH) owner.bNOTARGETSWITCH = false;
+							Destroy();
+						}
+					}
+					winddown--;
+				}
+			}
+			
+			if (winddown <= 0) 
+			{
+				if (owner)
+				{
+					if (owner.tracer) 
+					{
+						if (prevptracer && owner.tracer != prevptracer) owner.tracer = prevptracer;
+					}
+					if (!hasNOTARGETSWITCH) owner.bNOTARGETSWITCH = false;
+				}
+				Destroy();
+			}
+		}
+		else Destroy();
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+	}
+}

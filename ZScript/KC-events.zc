@@ -189,6 +189,33 @@ class KC_EventHandler : EventHandler
 		Actor tftmo;
 		while (tftmo = Actor(tftit.Next()))
 		{
+			if (tftmo.bMISSILE && 
+					tftmo.bSEEKERMISSILE && 
+					tftmo.tracer)
+			{
+				if (A_CheckKCTimeFreeze())
+				{
+					if (player.GetClassName() == "HeiwaPlayer")
+					{
+						if (tftmo.tracer == player)
+						{
+							if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") <= 0) 
+							{
+								tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",1);
+								if (kcdebug_timefreezeafterimage) Console.Printf("\c[green]tftmo: %p [%s], given TimeFreezeHasAPlayerTracer item!", tftmo, tftmo.GetClassName());
+							}
+						}
+					}
+					else
+					{
+						if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") > 0) 
+						{
+							tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",0);
+						}
+					}
+				}
+			}
+			
 			if (tftmo.bISMONSTER && tftmo.health > 0)
 			{
 				if (A_CheckKCTimeFreeze())
@@ -200,7 +227,7 @@ class KC_EventHandler : EventHandler
 							if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") <= 0) 
 							{
 								tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
-								if (kcdebug_timefreezeafterimage) Console.Printf("tftmo: %p [%s], given TimeFreezeHasAPlayerTarget item!", tftmo, tftmo.GetClassName());
+								if (kcdebug_timefreezeafterimage) Console.Printf("\c[darkgreen]tftmo: %p [%s], given TimeFreezeHasAPlayerTarget item!", tftmo, tftmo.GetClassName());
 							}
 						}
 					}
