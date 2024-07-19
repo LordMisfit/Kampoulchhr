@@ -193,9 +193,23 @@ class KC_EventHandler : EventHandler
 			{
 				if (A_CheckKCTimeFreeze())
 				{
-					if (tftmo.target == player)
+					if (player.GetClassName() == "HeiwaPlayer")
 					{
-						tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
+						if (tftmo.target == player)
+						{
+							if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") <= 0) 
+							{
+								tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
+								if (kcdebug_timefreezeafterimage) Console.Printf("tftmo: %p [%s], given TimeFreezeHasAPlayerTarget item!", tftmo, tftmo.GetClassName());
+							}
+						}
+					}
+					else
+					{
+						if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") > 0) 
+						{
+							tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",0);
+						}
 					}
 				}
 				else
@@ -7211,46 +7225,49 @@ class KC_EventHandler : EventHandler
 					mo2.Destroy();
 				}
 			}
-
-			// Spawns a Time-Freeze Image where the player froze time
-			bool spawned;
-			actor timefreezeaftimg;
-			[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreeze", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
-			if (timefreezeaftimg)
+			
+			if (playera.GetClassName() == "HeiwaPlayer")
 			{
-				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
-				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
-				timefreezeaftimg.master = tf;
-				timefreezeaftimg.alpha = (tf.alpha * 0.75);
-				
-				PlayerAfterimageTimeFreeze timefreezeaftimg2;
-				timefreezeaftimg2 = PlayerAfterimageTimeFreeze(timefreezeaftimg);
-				if (timefreezeaftimg2)
+				// Spawns a Time-Freeze Image where the player froze time
+				bool spawned;
+				actor timefreezeaftimg;
+				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreeze", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+				if (timefreezeaftimg)
 				{
-					timefreezeaftimg2.tfmaster = tf;
-					timefreezeaftimg2.fadeaway = false;
-					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
-					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
-					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.75);
+					timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
+					timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
+					timefreezeaftimg.master = tf;
+					timefreezeaftimg.alpha = (tf.alpha * 0.75);
+					
+					PlayerAfterimageTimeFreeze timefreezeaftimg2;
+					timefreezeaftimg2 = PlayerAfterimageTimeFreeze(timefreezeaftimg);
+					if (timefreezeaftimg2)
+					{
+						timefreezeaftimg2.tfmaster = tf;
+						timefreezeaftimg2.fadeaway = false;
+						timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
+						timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
+						timefreezeaftimg2.basealpha2 = (tf.alpha * 0.75);
+					}
 				}
-			}
-			[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
-			if (timefreezeaftimg)
-			{
-				timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
-				timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
-				timefreezeaftimg.master = tf;
-				timefreezeaftimg.alpha = (tf.alpha * 0.375);
-				
-				PlayerAfterimageTimeFreezeFull timefreezeaftimg2;
-				timefreezeaftimg2 = PlayerAfterimageTimeFreezeFull(timefreezeaftimg);
-				if (timefreezeaftimg2)
+				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+				if (timefreezeaftimg)
 				{
-					timefreezeaftimg2.tfmaster = tf;
-					timefreezeaftimg2.fadeaway = false;
-					timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
-					timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
-					timefreezeaftimg2.basealpha2 = (tf.alpha * 0.375);
+					timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
+					timefreezeaftimg.A_SetScale(tf.scale.x,tf.scale.y,false);
+					timefreezeaftimg.master = tf;
+					timefreezeaftimg.alpha = (tf.alpha * 0.375);
+					
+					PlayerAfterimageTimeFreezeFull timefreezeaftimg2;
+					timefreezeaftimg2 = PlayerAfterimageTimeFreezeFull(timefreezeaftimg);
+					if (timefreezeaftimg2)
+					{
+						timefreezeaftimg2.tfmaster = tf;
+						timefreezeaftimg2.fadeaway = false;
+						timefreezeaftimg2.basefade = MiscItem.tfaftimgbasefade;
+						timefreezeaftimg2.internaltimermax = MiscItem.tfaftimgbasefade2;
+						timefreezeaftimg2.basealpha2 = (tf.alpha * 0.375);
+					}
 				}
 			}
 		}

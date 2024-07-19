@@ -5432,18 +5432,52 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 	
 	void A_CheckPlayerDist(double dist = 128)
 	{
-		Console.Printf("[%s] A_CheckPlayerDist [gametic: %d]", GetClassName(), gametic);
+		actor playera = players[0].mo;
+		actor targ;
+		int closeto = 0;
+		//Console.Printf("[%s] A_CheckPlayerDist [gametic: %d]", GetClassName(), gametic);
 		if (tfmaster)
 		{
-			if (Distance3D(tfmaster) <= dist) alpha = (basealpha2 * 0.03125);
-																	 else alpha = (basealpha2);
-			Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
+			targ = tfmaster;
+			//Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
 		}
+		else
+		if (master)
+		{
+			targ = master;
+			//Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
+		}
+		else
+		if (playera)
+		{
+			targ = playera;
+			//Console.Printf("alpha: %.8f, basealpha2: %.8f", alpha, basealpha2);
+		}
+		
+		if (targ)
+		{
+			if (Distance3D(targ) <= (dist/8)) closeto = 4;
+			else if (Distance3D(targ) <= (dist/4)) closeto = 3;
+			else if (Distance3D(targ) <= (dist/2)) closeto = 2;
+			else if (Distance3D(targ) <= dist) closeto = 1;
+		}
+		
+		if (closeto >= 4) alpha = (basealpha2 * 0.00390625);
+		else if (closeto == 3) alpha = (basealpha2 * 0.015625);
+		else if (closeto == 2) alpha = (basealpha2 * 0.0625);
+		else if (closeto == 1) alpha = (basealpha2 * 0.25);
+		else if (closeto <= 0) alpha = (basealpha2);
 	}
 	
 	override void Tick()
 	{
-		if (!fadeaway) A_CheckPlayerDist(16);
+		actor playera = players[0].mo;
+		if (playera.GetClassName() != "HeiwaPlayer") Destroy();
+		if (!fadeaway) 
+		{
+			if (playera) A_CheckPlayerDist((playera.radius*2));
+							else A_CheckPlayerDist(32);
+		}
 		Super.Tick();
 	}
 	
@@ -5479,7 +5513,7 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 				A_FadeOut(fadespeed,FTF_CLAMP);
 				if (alpha <= 0.0001) A_FadeTo(0.0001);
 				internaltimer++;
-				//Console.Printf("internaltimer: %d / %d", internaltimer, internaltimermax);
+				if (kcdebug_timefreezeafterimage) Console.Printf("internaltimer: %d / %d", internaltimer, internaltimermax);
 				if (internaltimer >= internaltimermax) Destroy();
 			}
 			loop;

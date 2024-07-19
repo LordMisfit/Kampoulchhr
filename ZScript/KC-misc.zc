@@ -965,20 +965,18 @@ class PlayerStatItem : Inventory
 				}
 				
 				// Misc
-				tfaftimgbasefade = random(10,14);
-				if (A_CheckTimeFreeze())
-				{
-					tfaftimgbasefade = random(10,14);
-					int tfaftimgbasefadeext;
-					tfaftimgbasefadeext += (TruePlayerLevel * 0.2);
-					if (owner.CountInv("KCTimeFreezer1")) tfaftimgbasefadeext += (timefreeze1timesused * 0.025);
-					if (owner.CountInv("KCTimeFreezer2")) tfaftimgbasefadeext += (timefreeze2timesused * 0.05);
-					if (owner.CountInv("KCTimeFreezer3")) tfaftimgbasefadeext += (timefreeze3timesused * 0.025);
-					tfaftimgbasefadeext *= frandom(1.0,1.4);
-					tfaftimgbasefade += tfaftimgbasefadeext;
-				}
-				tfaftimgbasefade2 = ((tfaftimgbasefade * 1.5) + random(-1,1));
-				//Console.Printf("tfaftimgbasefade: %d, tfaftimgbasefade2: %d", tfaftimgbasefade, tfaftimgbasefade2);
+				tfaftimgbasefade = 10;
+
+				int tfaftimgbasefadeext;
+				tfaftimgbasefadeext += (TruePlayerLevel * 0.2);
+				tfaftimgbasefadeext += (timefreeze1timesused * 0.025);
+				tfaftimgbasefadeext += (timefreeze2timesused * 0.05);
+				tfaftimgbasefadeext += (timefreeze3timesused * 0.025);
+				tfaftimgbasefadeext *= frandompick(0.167,0.167,0.167,0.167,0.167,0.167,0.167,0.167,0.167,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.25,0.25,0.25,0.25,0.334,0.334,0.334,0.5);
+				tfaftimgbasefade += tfaftimgbasefadeext;
+				tfaftimgbasefade *= frandom(1.0,1.4);
+				tfaftimgbasefade2 = ((tfaftimgbasefade * 2) + random(-1,1));
+				if (kcdebug_timefreezeafterimage) Console.Printf("\c[HeiwaDeluge]tfaftimgbasefade: %d, tfaftimgbasefade2: %d", tfaftimgbasefade, tfaftimgbasefade2);
 				
 				weapon = owner.player.ReadyWeapon;
 				
