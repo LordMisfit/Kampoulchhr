@@ -1873,12 +1873,17 @@ class KCPowerStrength : PowerStrength
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				if (TimeItem)
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
 				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
 					while (ticpiece >= 10)
 					{
 						EffectTics--;
