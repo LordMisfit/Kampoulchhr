@@ -216,7 +216,8 @@ class KC_EventHandler : EventHandler
 				}
 			}
 			
-			if (tftmo.bISMONSTER && tftmo.health > 0)
+			if (tftmo.bISMONSTER && 
+					tftmo.health > 0)
 			{
 				if (A_CheckKCTimeFreeze())
 				{
@@ -8584,6 +8585,8 @@ class KC_StaticEventHandler : StaticEventHandler
 								texname == "SLIME16") damagetyp = 'Shock';
 						if (texname == "D_1004" ||
 								texname == "D_1011" ||
+								texname == "CEIL5_6" ||
+								texname == "FLOOR6_2" ||
 								texname == "FLOOR7_1" ||
 								texname == "FLOOR7_4") damagetyp = 'Magma';
 					}
