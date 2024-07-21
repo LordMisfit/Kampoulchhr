@@ -160,6 +160,7 @@ class KC_EventHandler : EventHandler
 		A_TmFrzCCardWTick_General("CCards_Actor_IncinerateCurse","KC_CCards_Actor_IncinerateCurse",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_NinjaBuff","KC_CCards_Actor_NinjaBuff",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_ForbiddenGaze","KC_CCards_Actor_ForbiddenGaze",type);
+		A_TmFrzCCardWTick_General("CCards_Actor_Transmogrifier","KC_CCards_Actor_Transmogrifier",type);
 	}
 
 	override void WorldTick()
@@ -219,6 +220,33 @@ class KC_EventHandler : EventHandler
 			if (tftmo.bISMONSTER && 
 					tftmo.health > 0)
 			{
+				if (player.CountInv("TimeSeraphVisor"))
+				{
+					if (tftmo.CountInv("KC_CCards_Actor_NuclearCurse"))
+					{
+						if (level.time % randompick(2,3,3,4,4,4,4,4,4,5,5,6))
+						{
+							bool spawned;
+							actor nukeaftimg;
+							double spawnvel = 1.25;
+							double spdvel = 2.5;
+							[spawned, nukeaftimg] = tftmo.A_SpawnItemEx("MonsterCCardsNukeFlash", frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel), frandom(-spdvel,spdvel),frandom(-spdvel,spdvel),frandom(-spdvel,spdvel), 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+							if (nukeaftimg)
+							{
+								nukeaftimg.A_SetSize(tftmo.radius,tftmo.height,false);
+								nukeaftimg.A_SetScale(tftmo.scale.x,tftmo.scale.y,false);
+								nukeaftimg.master = tftmo;
+								nukeaftimg.alpha = (tftmo.alpha * 0.75);
+							}
+							MonsterCCardsNukeFlash nukeaftimg2;
+							nukeaftimg2 = MonsterCCardsNukeFlash(nukeaftimg);
+							if (nukeaftimg2)
+							{
+								nukeaftimg2.fadespeed = (nukeaftimg.alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
+							}
+						}
+					}
+				}
 				if (A_CheckKCTimeFreeze())
 				{
 					if (player.GetClassName() == "HeiwaPlayer")
@@ -625,6 +653,7 @@ class KC_EventHandler : EventHandler
 					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCounter","KC_CCards_Actor_9LivesCounter");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_MonsterGodMode","KC_CCards_Actor_MonsterGodMode");
 					A_TmFrzCCardWTick_Giver("CCards_Actor_QuadDamage","KC_CCards_Actor_QuadDamage");
+					A_TmFrzCCardWTick_Giver("CCards_Actor_NuclearCurse","KC_CCards_Actor_NuclearCurse");
 					A_TmFrzCCardWTick_G3n(0);
 				}
 				

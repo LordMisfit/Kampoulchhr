@@ -1322,6 +1322,7 @@ class PowerNoDrown : PowerProtection
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -1510,6 +1511,7 @@ class KCPowerIronFeet : PowerIronFeet
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -1670,6 +1672,7 @@ class PowerIronFeet2 : PowerIronFeet
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -1722,11 +1725,27 @@ class KCPowerInvisibility : PowerInvisibility
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -1775,11 +1794,27 @@ class KCPowerInvuln : PowerInvulnerable
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -2336,6 +2371,7 @@ class KCPowerLightAmp : PowerLightAmp
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -2876,12 +2912,29 @@ class KCPowerSpread1 : Powerup
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
+			if (owner.CountInv("KCPowerSpread2")) Destroy();
+			else
 			if (!A_CheckNoTimer())
 			{
-				if (owner.CountInv("KCPowerSpread2")) Destroy();
-				else EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -2920,11 +2973,27 @@ class KCPowerSpread2 : Powerup
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -3004,6 +3073,7 @@ class KCPowerKampoul : Powerup
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (owner.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(owner))
@@ -3188,11 +3258,27 @@ class PowerDouble : PowerDamage
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -3244,6 +3330,7 @@ class PowerHalve : PowerDamage
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3307,11 +3394,27 @@ class PowerGuard : PowerProtection
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -3369,6 +3472,7 @@ class PowerWeaken : PowerProtection
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3761,11 +3865,27 @@ class PowerHaste : PowerSpeedTimeCheck
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -3806,6 +3926,7 @@ class PowerSlow : PowerSpeedTimeCheck
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
@@ -3852,11 +3973,27 @@ class PowerTerror : PowerFrightener
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let TimeItem = KCTimeFreezer(playera.FindInventory("KCTimeFreezer"));
+		let KCItem = KCPowerKampoul(playera.FindInventory("KCPowerKampoul"));
 		if (owner)
 		{
 			if (!A_CheckNoTimer())
 			{
-				EffectTics--;
+				if ((playera.CountInv("KCTimeFreezer1") ||
+						 playera.CountInv("KCTimeFreezer2") ||
+						 playera.CountInv("KCTimeFreezer3"))) 
+				{
+					if (KCItem) ticpiece += (frandompick(9,10,10,10,10,10,10,10,10,10) * 0.125);
+								 else ticpiece += frandompick(9,10,10,10,10,10,10,10,10,10);
+					while (ticpiece >= 10)
+					{
+						EffectTics--;
+						ticpiece -= 10;
+					}
+				}
+				else
+				{
+					EffectTics--;
+				}
 			}
 		}
 		
@@ -4737,5 +4874,69 @@ class TimeFreezeHasAPlayerTracer : PlaceHolderItem
 		
 		// Powerups cannot exist outside an inventory
 		if (Owner == NULL) Destroy();
+	}
+}
+
+class MonsterCCardsNukeFlash : KCBaseZSC
+{
+	int internaltimer, internaltimermax;
+	double fadespeed;
+	int basefade;
+	actor playerreplacetarg, tfmaster;
+	double basealpha2;
+	bool fadeaway;
+	
+	default
+	{
+		RenderStyle "AddStencil";
+		StencilColor "Green";
+		Scale 1.0;
+		Alpha 1.0;
+		Health 100;
+		+DONTTHRUST;
+		+NOBLOOD;
+		+NOGRAVITY;
+		+NODAMAGE;
+		+NOPAIN;
+		+INVULNERABLE;
+		+BUDDHA;
+		+DONTBLAST;
+		+DONTMORPH;
+		+DONTSQUASH;
+		+DONTRIP;
+		+DONTDRAIN;
+		+NOTIMEFREEZE;
+		+ALLOWTHRUFLAGS;
+		+THRUGHOST;
+		+THRUACTORS;
+		+THRUSPECIES;
+		+MTHRUSPECIES;
+		+NOTELEPORT;
+		+NOCLIP;
+		
+		+NOBLOCKMAP;
+		Species "Players";
+	}
+	
+	override void Tick()
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("TimeSeraphVisor")) Destroy();
+		Super.Tick();
+	}
+	
+	states
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				if (!fadespeed) fadespeed = (alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
+			}
+		Idle:
+			"####" "#" 1 BRIGHT
+			{
+				A_FadeOut(fadespeed,FTF_REMOVE);
+			}
+			loop;
 	}
 }
