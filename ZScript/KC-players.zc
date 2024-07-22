@@ -5474,11 +5474,22 @@ class PlayerAfterimageTimeFreeze : KCBaseZSC
 	override void Tick()
 	{
 		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 		if (playera.GetClassName() != "HeiwaPlayer") Destroy();
-		if (!fadeaway) 
+		if (!fadeaway)
 		{
-			if (playera) A_CheckPlayerDist((playera.radius*2));
-							else A_CheckPlayerDist(32);
+			if (A_CheckKCTimeFreeze())
+			{
+				if (playera) A_CheckPlayerDist((playera.radius*2));
+								else A_CheckPlayerDist(32);
+			}
+			else
+			{
+				SetStateLabel('Death');
+				fadeaway = true;
+				if (!basefade) basefade = MiscItem.tfaftimgbasefade;
+				if (!internaltimermax) internaltimermax = MiscItem.tfaftimgbasefade2;
+			}
 		}
 		Super.Tick();
 	}

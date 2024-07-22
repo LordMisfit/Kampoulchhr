@@ -53,6 +53,13 @@ class KC_EventHandler : EventHandler
 		return BlooM;
 	}
 
+	bool A_CheckCCards()
+	{
+		bool CCards = false;
+		if (Wads.CheckNumForName("CCards", Wads.ns_global, -1, true) != -1) CCards = true;
+		return CCards;
+	}
+
 	int A_GetPlayerLevel(int type = 0)
 	{
 		actor player = players[0].mo;
@@ -187,6 +194,7 @@ class KC_EventHandler : EventHandler
 		}
 
 		// TimeFreezeTargetChecker
+		
 		ThinkerIterator tftit = ThinkerIterator.Create("Actor");
 		Actor tftmo;
 		while (tftmo = Actor(tftit.Next()))
@@ -223,31 +231,35 @@ class KC_EventHandler : EventHandler
 			{
 				if (player.CountInv("TimeSeraphVisor"))
 				{
-					if (tftmo.CountInv("KC_CCards_Actor_NuclearCurse"))
+					if (A_CheckCCards())
 					{
-						if (level.time % randompick(2,3,3,4,4,4,4,4,4,5,5,6))
+						if (tftmo.CountInv("KC_CCards_Actor_NuclearCurse"))
 						{
-							bool spawned;
-							actor nukeaftimg;
-							double spawnvel = 1.25;
-							double spdvel = 2.5;
-							[spawned, nukeaftimg] = tftmo.A_SpawnItemEx("MonsterCCardsNukeFlash", frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel), frandom(-spdvel,spdvel),frandom(-spdvel,spdvel),frandom(-spdvel,spdvel), 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
-							if (nukeaftimg)
+							if (level.time % randompick(2,3,3,4,4,4,4,4,4,5,5,6))
 							{
-								nukeaftimg.A_SetSize(tftmo.radius,tftmo.height,false);
-								nukeaftimg.A_SetScale(tftmo.scale.x,tftmo.scale.y,false);
-								nukeaftimg.master = tftmo;
-								nukeaftimg.alpha = (tftmo.alpha * 0.75);
-							}
-							MonsterCCardsNukeFlash nukeaftimg2;
-							nukeaftimg2 = MonsterCCardsNukeFlash(nukeaftimg);
-							if (nukeaftimg2)
-							{
-								nukeaftimg2.fadespeed = (nukeaftimg.alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
+								bool spawned;
+								actor nukeaftimg;
+								double spawnvel = 1.25;
+								double spdvel = 2.5;
+								[spawned, nukeaftimg] = tftmo.A_SpawnItemEx("MonsterCCardsNukeFlash", frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel), frandom(-spdvel,spdvel),frandom(-spdvel,spdvel),frandom(-spdvel,spdvel), 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+								if (nukeaftimg)
+								{
+									nukeaftimg.A_SetSize(tftmo.radius,tftmo.height,false);
+									nukeaftimg.A_SetScale(tftmo.scale.x,tftmo.scale.y,false);
+									nukeaftimg.master = tftmo;
+									nukeaftimg.alpha = (tftmo.alpha * 0.75);
+								}
+								MonsterCCardsNukeFlash nukeaftimg2;
+								nukeaftimg2 = MonsterCCardsNukeFlash(nukeaftimg);
+								if (nukeaftimg2)
+								{
+									nukeaftimg2.fadespeed = (nukeaftimg.alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
+								}
 							}
 						}
 					}
 				}
+				
 				if (A_CheckKCTimeFreeze())
 				{
 					if (player.GetClassName() == "HeiwaPlayer")
@@ -295,10 +307,9 @@ class KC_EventHandler : EventHandler
 		}
 
 		// CCards
-		int d = Wads.CheckNumForName("CCARDS", Wads.ns_global, -1, true);
-		if (d != -1)
+		if (A_CheckCCards())
 		{
-			if (kcdebug_worldtick) Console.Printf("[CCards lump found] d: %d [time: %d]", d, level.time);
+			if (kcdebug_worldtick) Console.Printf("[CCards lump found] [time: %d]", level.time);
 			let globalvars = KCGlobalVariables.Get();
 			globalvars.PlayingCCards = true;
 			actor player = players[0].mo;
