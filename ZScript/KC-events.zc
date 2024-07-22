@@ -161,6 +161,7 @@ class KC_EventHandler : EventHandler
 		A_TmFrzCCardWTick_General("CCards_Actor_NinjaBuff","KC_CCards_Actor_NinjaBuff",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_ForbiddenGaze","KC_CCards_Actor_ForbiddenGaze",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_Transmogrifier","KC_CCards_Actor_Transmogrifier",type);
+		A_TmFrzCCardWTick_General("CCards_Actor_EssenceCycle","KC_CCards_Actor_EssenceCycle",type);
 	}
 
 	override void WorldTick()
@@ -7288,7 +7289,7 @@ class KC_EventHandler : EventHandler
 				// Spawns a Time-Freeze Image where the player froze time
 				bool spawned;
 				actor timefreezeaftimg;
-				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreeze", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreeze", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA | SXF_TRANSFERTRANSLATION);
 				if (timefreezeaftimg)
 				{
 					timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
@@ -7307,7 +7308,7 @@ class KC_EventHandler : EventHandler
 						timefreezeaftimg2.basealpha2 = (tf.alpha * 0.75);
 					}
 				}
-				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+				[spawned, timefreezeaftimg] = tf.A_SpawnItemEx("PlayerAfterimageTimeFreezeFull", 0,0,0, 0,0,0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA | SXF_TRANSFERTRANSLATION);
 				if (timefreezeaftimg)
 				{
 					timefreezeaftimg.A_SetSize(tf.radius,tf.height,false);
