@@ -8518,6 +8518,7 @@ class PlayerDashJump : Inventory
 	int itemtimer;
 	string nm, nn, no, np, nq, nr;
 	
+	int IsMorphed, WasMorphed, WasMorphProj;
 	int DashTimer;
 	int TrueGameSkill;
 	actor weapon;
@@ -8839,8 +8840,21 @@ class PlayerDashJump : Inventory
 		MDTicCeiling *= shldmdtmult;
 		if (MaxDashTics > MDTicCeiling) MaxDashTics = MDTicCeiling;
 		
+		double BaseFactor = 1.0;
+		double BaseMul = (0.004375 * 1.03125);
+		double tempspdfactor = BaseMul;
+		if (A_CheckForHeiwa()) tempspdfactor *= 0.334;
+		BaseMul *= 1.0;
+		if (IsMorphed == 1) BaseMul *= 3;
+		BaseMul *= kc_pspdfactor;
+		if (kc_expgains)
+		{
+			if (kc_extraatkdefspd) BaseFactor *= (1.00 + (TruePlayerLevel * tempspdfactor) + (TruePlayerSPD * BaseMul));
+												else BaseFactor *= (1.00 + (TruePlayerLevel * tempspdfactor));
+		}
+
 		double DashSpdMul = 1.00;
-		DashSpeed = (25 + (ActualLevel * 0.03125));
+		DashSpeed = (25 * BaseFactor);
 		if (Owner.waterlevel == 1) DashSpdMul *= 0.9375;
 		if (Owner.waterlevel == 2) DashSpdMul *= 0.875;
 		if (Owner.waterlevel >= 3) DashSpdMul *= 0.75;
@@ -8873,7 +8887,6 @@ class PlayerDashJump : Inventory
 			}
 			else DashSpeed *= 1.03125;
 		}
-		if (kcdebug_showdashinformation) Console.Printf("DashSpeed: %.8f", DashSpeed);
 		
 		if (A_CheckForHeiwa())
 		{
@@ -8906,35 +8919,42 @@ class PlayerDashJump : Inventory
 		
 		if (owner.CountInv("PowerHaste"))
 		{
+			DashSpeed *= 1.334;
 			DashCost *= 0.75;
 			MaxDashCooldown *= 0.375;
 		}
 		if (owner.CountInv("PowerSlow"))
 		{
+			DashSpeed *= 0.75;
 			DashCost *= 1.3334;
 			MaxDashCooldown *= 1.6667;
 		}
 		
 		if (owner.CountInv("NormalHealth")) 
 		{
+			DashSpeed *= 1.0;
 			DashCost *= 1.0;
 			MaxDashCooldown *= 1.0;
 		}
 		if (owner.CountInv("DecentHealth")) 
 		{
+			DashSpeed *= 0.8888888888888889;
 			DashCost *= 1.125;
 			MaxDashCooldown *= 1.1875;
 		}
 		if (owner.CountInv("LowHealth")) 
 		{
+			DashSpeed *= 0.8;
 			DashCost *= 1.25;
 			MaxDashCooldown *= 1.375;
 		}
 		if (owner.CountInv("CriticalHealth"))
 		{
+			DashSpeed *= 0.67;
 			DashCost *= 1.5;
 			MaxDashCooldown *= 1.75;
 		}
+		if (kcdebug_showdashinformation) Console.Printf("DashSpeed: %.8f", DashSpeed);
 		if (kcdebug_showdashinformation) Console.Printf("DashCost [post powerup/health checks]: %d", DashCost);
 		
 		if (weapon is "FistMarine" || 
@@ -9440,8 +9460,6 @@ class PlayerDashJump : Inventory
 			if (DashCost <= 1) DashCost = 1;
 			if (MaxDashCooldown <= 1) MaxDashCooldown = 1;
 		}
-		
-		
 		
 		bool doubletapdash = GetCVar("kc_doubledash");
 		if (kcdebug_showdashinformation) Console.Printf("DashCost [start]: %d, DashCooldown: %d", DashCost, MaxDashCooldown);
