@@ -8841,7 +8841,7 @@ class PlayerDashJump : Inventory
 		if (MaxDashTics > MDTicCeiling) MaxDashTics = MDTicCeiling;
 		
 		double BaseFactor = 1.0;
-		double BaseMul = (0.004375 * 1.03125);
+		double BaseMul = 0.004375;
 		double tempspdfactor = BaseMul;
 		if (A_CheckForHeiwa()) tempspdfactor *= 0.334;
 		BaseMul *= 1.0;
@@ -8853,8 +8853,8 @@ class PlayerDashJump : Inventory
 												else BaseFactor *= (1.00 + (TruePlayerLevel * tempspdfactor));
 		}
 
-		double DashSpdMul = 1.00;
-		DashSpeed = (25 * BaseFactor);
+		double DashSpdMul = (1.00 * BaseFactor);
+		DashSpeed = (25 + (ActualLevel * 0.03125));
 		if (Owner.waterlevel == 1) DashSpdMul *= 0.9375;
 		if (Owner.waterlevel == 2) DashSpdMul *= 0.875;
 		if (Owner.waterlevel >= 3) DashSpdMul *= 0.75;
