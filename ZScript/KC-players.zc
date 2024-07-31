@@ -2024,6 +2024,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		else
 		{
+			let globalvars = KCGlobalVariables.Get();
 			ActualLevel = A_CheckActualLevel(1);
 			buttons = GetPlayerInput(INPUT_BUTTONS);
 			if (kcdebug_showvoodoodoll) Console.Printf("Player [Tick] - \c[gold]H: %d, R: %d, M: %d, \c[sapphire]Sx: %4f, Sy: %4f, \c[fire]PosX: %d, PosY: %d, PosZ: %d", height, radius, mass, scale.x, scale.y, pos.x, pos.y, pos.z);
@@ -2042,7 +2043,6 @@ class KCPlayerPawn : PlayerPawn
 				TruePlayerDEF = 0;
 				TruePlayerSPD = 0;
 			}
-			let globalvars = KCGlobalVariables.Get();
 			if (kcdebug_mapinfo)
 			{
 				Console.Printf("Player Age [tics]: %d, levelnum: \cx%d\c-, cluster: \cx%d\c-, clusterflags: \cx%d\c-, NextMap: \cy%s\c-, NextSecretMap: \cy%s\c-,\ntime: \cx%d\c-, maptime: \cx%d\c-, totaltime: \cx%d\c-, starttime: \cx%d\c-, partime: \cx%d\c-, sucktime: \cx%d\c-,\nlevelname: \cy%s\c-, mapname: \cy%s\c-, \ngravity: \cx%.8f\c-, aircontrol: \cx%.8f\c-, airfriction: \cx%.8f\c-, \cxTranslation #:\c- %d, \cyMapCheckSum:\cx %s", 
@@ -2281,7 +2281,44 @@ class KCPlayerPawn : PlayerPawn
 			
 			if (MiscItem) MiscItem.GetSpeedFactor();
 			isvoodoodoll = false;
+			
+			//
+			if (level.time == 8 && 
+					(globalvars && globalvars.MapsFinished > 0) &&
+					health > 0)
+			{
+				if (random(1,8) <= 1)
+				{
+					if (MiscItem && MiscItem.CanTalkUnderwater)
+					{
+						double maskpitch = 1.00;
+						if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+						string voicenm;
+						double voicevol = frandom(1.25,1.75);
+						if (A_CheckBerserk()) voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
+						int randvoice = random(1,1);
+						if (randvoice == 1)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(2.094 * TICRATE));
+							voicenm = "Heiwa/IsThisGonnaLetUp"; //
+							Console.Printf("\c[HeiwaChamosis]'Hhhg... is this -EVER- gonna let up...?'\c-"); //
+						}
+						//
+						//
+						//
+						if (randvoice > 0)
+						{
+							A_StopSound(CHAN_VOICE);
+							A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch);
+							MiscItem.OneLinerCooldown += (frandom(1.75,3.0) * TICRATE);
+						}
+					}
+				}
+			}
+			
+			
 		}
+		
 		
 		// Check AimTarget() for special stuff :P
 		if (AimTarget())
