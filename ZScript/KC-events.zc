@@ -6870,61 +6870,80 @@ class KC_EventHandler : EventHandler
 										double voicevol = frandom(1.25,1.75);
 										if (playera && A_CheckBerserk(playera))  voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 										int randvoice = random(1,9);
-										if (randvoice == 1)
+										if (victim.GetClassName() == "GermanDog")
 										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.000 * TICRATE));
-											voicenm = "Heiwa/GoToHell"; //
-											Console.Printf("\c[HeiwaChamosis]'Go to Hell!!'\c-"); //
+											randvoice = random(1,2);
+											if (randvoice == 1)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.525 * TICRATE));
+												voicenm = "HeiwaPain23"; //
+												Console.Printf("\c[HeiwaChamosis]'DAMN!!'\c-"); //
+											}
+											if (randvoice == 2)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.849 * TICRATE));
+												voicenm = "Heiwa/ThisIsTerrible"; //
+												Console.Printf("\c[HeiwaChamosis]'This is terrible!'\c-"); //
+											}
 										}
-										if (randvoice == 2)
+										else
 										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.218 * TICRATE));
-											voicenm = "Heiwa/HereReward"; //
-											Console.Printf("\c[HeiwaChamosis]'Here's your 'reward'!'\c-"); //
+											if (randvoice == 1)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.000 * TICRATE));
+												voicenm = "Heiwa/GoToHell"; //
+												Console.Printf("\c[HeiwaChamosis]'Go to Hell!!'\c-"); //
+											}
+											if (randvoice == 2)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.218 * TICRATE));
+												voicenm = "Heiwa/HereReward"; //
+												Console.Printf("\c[HeiwaChamosis]'Here's your 'reward'!'\c-"); //
+											}
+											if (randvoice == 3)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.184 * TICRATE));
+												voicenm = "Heiwa/HearUCry"; //
+												Console.Printf("\c[HeiwaChamosis]'Let me hear you cry!'\c-"); //
+											}
+											if (randvoice == 4)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.077 * TICRATE));
+												voicenm = "Heiwa/HowULikeThat"; //
+												Console.Printf("\c[HeiwaChamosis]'How'd you like that!?'\c-"); //
+											}
+											if (randvoice == 5)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.15 * TICRATE));
+												voicenm = "Heiwa/UWantMore"; //
+												Console.Printf("\c[HeiwaChamosis]'Oh, you want more?!'\c-"); //
+											}
+											if (randvoice == 6)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.479 * TICRATE));
+												voicenm = "Heiwa/ISaidMove"; //
+												Console.Printf("\c[HeiwaChamosis]'I said -'MOVE'-!!'\c-"); //
+											}
+											if (randvoice == 7)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.541 * TICRATE));
+												voicenm = "Heiwa/UInMyWay"; //
+												Console.Printf("\c[HeiwaChamosis]'You're in my way!'\c-"); //
+											}
+											if (randvoice == 8)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.591 * TICRATE));
+												voicenm = "Heiwa/HeyShutMouth"; //
+												Console.Printf("\c[HeiwaChamosis]'Hey! Shut your mouth!'\c-"); //
+											}
+											if (randvoice == 9)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.117 * TICRATE));
+												voicenm = "Heiwa/WontHoldBack"; //
+												Console.Printf("\c[HeiwaChamosis]'I won't hold back!'\c-"); //
+											}
+											if (kcdebug_worlddied) Console.Printf("One-Liner: %d", randvoice);
 										}
-										if (randvoice == 3)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.184 * TICRATE));
-											voicenm = "Heiwa/HearUCry"; //
-											Console.Printf("\c[HeiwaChamosis]'Let me hear you cry!'\c-"); //
-										}
-										if (randvoice == 4)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.077 * TICRATE));
-											voicenm = "Heiwa/HowULikeThat"; //
-											Console.Printf("\c[HeiwaChamosis]'How'd you like that!?'\c-"); //
-										}
-										if (randvoice == 5)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.15 * TICRATE));
-											voicenm = "Heiwa/UWantMore"; //
-											Console.Printf("\c[HeiwaChamosis]'Oh, you want more?!'\c-"); //
-										}
-										if (randvoice == 6)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.479 * TICRATE));
-											voicenm = "Heiwa/ISaidMove"; //
-											Console.Printf("\c[HeiwaChamosis]'I said -'MOVE'-!!'\c-"); //
-										}
-										if (randvoice == 7)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.541 * TICRATE));
-											voicenm = "Heiwa/UInMyWay"; //
-											Console.Printf("\c[HeiwaChamosis]'You're in my way!'\c-"); //
-										}
-										if (randvoice == 8)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.591 * TICRATE));
-											voicenm = "Heiwa/HeyShutMouth"; //
-											Console.Printf("\c[HeiwaChamosis]'Hey! Shut your mouth!'\c-"); //
-										}
-										if (randvoice == 9)
-										{
-											MiscItem.OneLinerTimerCool = ceil(int(1.117 * TICRATE));
-											voicenm = "Heiwa/WontHoldBack"; //
-											Console.Printf("\c[HeiwaChamosis]'I won't hold back!'\c-"); //
-										}
-										if (kcdebug_worlddied) Console.Printf("One-Liner: %d", randvoice);
 										//
 										//
 										//
@@ -8438,67 +8457,67 @@ class KC_StaticEventHandler : StaticEventHandler
 		if (Wads.CheckNumForName("KC-AUGZEN", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSAUGZEN").Split(allSF,":");
-			Console.Printf("AUGER;ZENITH Footsteps TXT Loaded");
+			Console.Printf("AUGER;ZENITH Footsteps TXT Loaded [Eventside]");
 		}
 		if (A_CheckBlooM())
 		{
 			StringTable.Localize("$STEP_FLATSBLOOM").Split(allSF,":");
-			Console.Printf("BlooM Footsteps TXT Loaded");
+			Console.Printf("BlooM Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSCIRCUS2").Split(allSF,":");
-			Console.Printf("Circus2 Footsteps TXT Loaded");
+			Console.Printf("Circus2 Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-KDIZD", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSKDIZD").Split(allSF,":");
-			Console.Printf("KDIZD Footsteps TXT Loaded");
+			Console.Printf("KDIZD Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-TCOTDA", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSTCOTDA").Split(allSF,":");
-			Console.Printf("TCOTDA Footsteps TXT Loaded");
+			Console.Printf("TCOTDA Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-TUTNT", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSTUTNT").Split(allSF,":");
-			Console.Printf("Ultimate Torment and Torture Footsteps TXT Loaded");
+			Console.Printf("Ultimate Torment and Torture Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
-			Console.Printf("Unfamiliar Footsteps TXT Loaded");
+			Console.Printf("Unfamiliar Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSSTAEONS").Split(allSF,":");
-			Console.Printf("Strange Aeons Footsteps TXT Loaded");
+			Console.Printf("Strange Aeons Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-EPIC2", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSEPIC2").Split(allSF,":");
-			Console.Printf("Epic2 Footsteps TXT Loaded");
+			Console.Printf("Epic2 Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-EXDAY", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSEXTDAY").Split(allSF,":");
-			Console.Printf("Extermination Day Footsteps TXT Loaded");
+			Console.Printf("Extermination Day Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-HELLG", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSHELLG").Split(allSF,":");
-			Console.Printf("Hell Ground Footsteps TXT Loaded");
+			Console.Printf("Hell Ground Footsteps TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-UOHYM", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSUOHYM").Split(allSF,":");
-			Console.Printf("UOHYM TXT Loaded");
+			Console.Printf("UOHYM TXT Loaded [Eventside]");
 		}
 		if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1)
 		{
 			StringTable.Localize("$STEP_FLATSUNFAM").Split(allSF,":");
-			Console.Printf("Unfamiliar Footsteps TXT Loaded");
+			Console.Printf("Unfamiliar Footsteps TXT Loaded [Eventside]");
 		}
 
 		for (int j = allSF.Size() - 1; j >= 0; j -= 1)

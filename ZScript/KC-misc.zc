@@ -8858,6 +8858,21 @@ class PlayerDashJump : Inventory
 		if (Owner.waterlevel == 1) DashSpdMul *= 0.9375;
 		if (Owner.waterlevel == 2) DashSpdMul *= 0.875;
 		if (Owner.waterlevel >= 3) DashSpdMul *= 0.75;
+		
+		UserCmd cmd = Owner.player.cmd;
+		if (Owner.vel.z <= 0)
+		{
+			if (Owner.CountInv("TSArmorTier3Plus") || 
+					Owner.CountInv("TSArmorTier2")) 
+			{
+				if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH) 
+				{
+					if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) DashSpdMul *= 2.0;
+																													 else DashSpdMul *= 1.5;
+				}
+			}
+		}
+		
 		if (weapon is "FistHeiwa" &&
 				owner.CountInv("FistPlayerBlockItem")) 
 		{
