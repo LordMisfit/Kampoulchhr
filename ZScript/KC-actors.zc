@@ -2406,9 +2406,10 @@ class KCEffectProjectile : KCProjectile
 		{
 			if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile - A_StatusEffectChecker:)\c- master == player");
 			
-			if (playera.CountInv("TSArmorTier3Plus") > 0) user_ailmentmaxchance *= 1000000;
-			else if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= 10000;
-			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= 100;
+			double tsadefbasemulti = 0.1;
+					 if (playera.CountInv("TSArmorTier3Plus") > 0) user_ailmentmaxchance *= (((kc_tsadefensebase * tsadefbasemulti) * (kc_tsadefensebase * tsadefbasemulti) * (kc_tsadefensebase * tsadefbasemulti)) * kc_tsaeffectiveness);
+			else if (playera.CountInv("TSArmorTier2") > 0) user_ailmentmaxchance *= (((kc_tsadefensebase * tsadefbasemulti) * (kc_tsadefensebase * tsadefbasemulti)) * kc_tsaeffectiveness);
+			else if (playera.CountInv("TSArmorTier1") > 0) user_ailmentmaxchance *= ((kc_tsadefensebase * tsadefbasemulti) * kc_tsaeffectiveness);
 			
 			if (playera.CountInv("EWShieldIdleMode") > 0) 
 			{
