@@ -109,6 +109,10 @@ class kc_ListMenuNote : ListMenuItem
 		quote.AppendFormat("Punches, Uppercuts and Kicks will \c[brick]briefly slow you down a lot\c[green] while performing them, though as your level increases, this is less prominent up to around \c[white]Level 40\c[green] or so, where the slowdown vanishes entirely.");
 		add(quote);
 		
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("Use of Time Freeze will leave an afterimage of yourself as you were at the moment of the freeze. This can be used to gauge your position for memory of your last location. It will additionally briefly confuse any enemies who have you as their current \c[orange]target\c[green], making them \c[HeiwaDeluge]briefly target the afterimage for a brief couple of moments after your freeze ends\c[green].");
+		add(quote);
+		
 		/*
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat("Some of your weapons melee attacks are -silent- vs classic Doom's fist. Not ALWAYS, but it's likely due to this you can end up not triggering monster closet ambushes. If you want/need to try to wake these closets up, hit ");
