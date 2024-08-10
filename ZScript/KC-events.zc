@@ -334,6 +334,36 @@ class KC_EventHandler : EventHandler
 						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
 					}
 				}
+				
+				nm = "CCards_Actor_SpiderFX";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						mo.Destroy();
+					}
+				}
+				
+				nm = "CCards_Actor_FlightFX";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						mo.Destroy();
+					}
+				}
+				
+				nm = "CCards_Actor_PetChain";
+				it = ThinkerIterator.Create(nm);
+				while (mo = Actor(it.Next()))
+				{
+					if (mo)
+					{
+						mo.Destroy();
+					}
+				}
 
 				nm = "CCards_Actor_AttentionDebuff";
 				it = ThinkerIterator.Create(nm);
