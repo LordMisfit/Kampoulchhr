@@ -56,7 +56,7 @@ class KC_EventHandler : EventHandler
 	bool A_CheckCCards()
 	{
 		bool CCards = false;
-		if (Wads.CheckNumForName("CCards", Wads.ns_global, -1, true) != -1) CCards = true;
+		if (Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true) != -1) CCards = true;
 		return CCards;
 	}
 
@@ -175,533 +175,567 @@ class KC_EventHandler : EventHandler
 	override void WorldTick()
 	{
 		actor player = players[0].mo;
-
-		// LDL
-		ThinkerIterator ldlit = ThinkerIterator.Create("Actor");
-		Actor ldlmo;
-		while (ldlmo = Actor(ldlit.Next()))
+		
+		bool doldl = false;
+		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1) 
 		{
-			if (ldlmo.bISMONSTER && ldlmo.health > 0)
+			if (level.time % 8 == 0) doldl = true;
+													else doldl = false;
+		}
+		else doldl = true;
+		
+		if (doldl)
+		{
+			if (kcdebug_worldtick) Console.Printf("doldl");
+			// LDL
+			ThinkerIterator ldlit = ThinkerIterator.Create("Actor");
+			Actor ldlmo;
+			while (ldlmo = Actor(ldlit.Next()))
 			{
-				if (ldlmo.CountInv("LDLegendaryMonsterTracker"))
+				if (ldlmo.bISMONSTER && ldlmo.health > 0)
 				{
-					if (ldlmo.CountInv("LDLegendaryMonsterTransformed"))
+					if (ldlmo.CountInv("LDLegendaryMonsterVisualEffectMaker") <= 0)
 					{
-						ldlmo.A_GiveInventory("LDLegendaryMonsterVisualEffectMaker",1);
+						if (ldlmo.CountInv("LDLegendaryMonsterTracker"))
+						{
+							if (ldlmo.CountInv("LDLegendaryMonsterTransformed"))
+							{
+								ldlmo.A_GiveInventory("LDLegendaryMonsterVisualEffectMaker",1);
+							}
+							if (kcdebug_worldtick) Console.Printf("LDL Check [%p, %s] (tic: %d)", ldlmo, ldlmo.GetClassName(), level.time);
+						}
 					}
-					if (kcdebug_worldtick) Console.Printf("LDL Check [%p, %s]", ldlmo, ldlmo.GetClassName());
 				}
 			}
 		}
 
-		// TimeFreezeTargetChecker
 		
-		ThinkerIterator tftit = ThinkerIterator.Create("Actor");
-		Actor tftmo;
-		while (tftmo = Actor(tftit.Next()))
+		bool dotft = false;
+		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1) 
 		{
-			if (tftmo.bMISSILE && 
-					tftmo.bSEEKERMISSILE && 
-					tftmo.tracer)
+			if (level.time % 4 == 0) dotft = true;
+													else dotft = false;
+		}
+		else dotft = true;
+		
+		if (dotft)
+		{
+			if (kcdebug_worldtick) Console.Printf("dotft");
+			// TimeFreezeTargetChecker
+			ThinkerIterator tftit = ThinkerIterator.Create("Actor");
+			Actor tftmo;
+			while (tftmo = Actor(tftit.Next()))
 			{
-				if (A_CheckKCTimeFreeze())
+				if (tftmo.bMISSILE && 
+						tftmo.bSEEKERMISSILE && 
+						tftmo.tracer)
 				{
-					if (player.GetClassName() == "HeiwaPlayer")
+					if (A_CheckKCTimeFreeze())
 					{
-						if (tftmo.tracer == player)
+						if (player.GetClassName() == "HeiwaPlayer")
 						{
-							if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") <= 0) 
+							if (tftmo.tracer == player)
 							{
-								tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",1);
-								if (kcdebug_timefreezeafterimage) Console.Printf("\c[green]tftmo: %p [%s], given TimeFreezeHasAPlayerTracer item!", tftmo, tftmo.GetClassName());
+								if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") <= 0) 
+								{
+									tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",1);
+									if (kcdebug_timefreezeafterimage) Console.Printf("\c[green]tftmo: %p [%s], given TimeFreezeHasAPlayerTracer item!", tftmo, tftmo.GetClassName());
+								}
 							}
 						}
-					}
-					else
-					{
-						if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") > 0) 
+						else
 						{
-							tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",0);
-						}
-					}
-				}
-			}
-			
-			if (tftmo.bISMONSTER && 
-					tftmo.health > 0)
-			{
-				if (player.CountInv("TimeSeraphVisor"))
-				{
-					if (A_CheckCCards())
-					{
-						if (tftmo.CountInv("KC_CCards_Actor_NuclearCurse"))
-						{
-							if (level.time % randompick(2,3,3,4,4,4,4,4,4,5,5,6))
+							if (tftmo.CountInv("TimeFreezeHasAPlayerTracer") > 0) 
 							{
-								bool spawned;
-								actor nukeaftimg;
-								double spawnvel = 1.25;
-								double spdvel = 2.5;
-								[spawned, nukeaftimg] = tftmo.A_SpawnItemEx("MonsterCCardsNukeFlash", frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel), frandom(-spdvel,spdvel),frandom(-spdvel,spdvel),frandom(-spdvel,spdvel), 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
-								if (nukeaftimg)
-								{
-									nukeaftimg.A_SetSize(tftmo.radius,tftmo.height,false);
-									nukeaftimg.A_SetScale(tftmo.scale.x,tftmo.scale.y,false);
-									nukeaftimg.master = tftmo;
-									nukeaftimg.alpha = (tftmo.alpha * 0.75);
-								}
-								MonsterCCardsNukeFlash nukeaftimg2;
-								nukeaftimg2 = MonsterCCardsNukeFlash(nukeaftimg);
-								if (nukeaftimg2)
-								{
-									nukeaftimg2.fadespeed = (nukeaftimg.alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
-								}
+								tftmo.A_SetInventory("TimeFreezeHasAPlayerTracer",0);
 							}
 						}
 					}
 				}
 				
-				if (A_CheckKCTimeFreeze())
+				if (tftmo.bISMONSTER && 
+						tftmo.health > 0)
 				{
-					if (player.GetClassName() == "HeiwaPlayer")
+					if (player.CountInv("TimeSeraphVisor"))
 					{
-						if (tftmo.target == player)
+						if (A_CheckCCards())
 						{
-							if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") <= 0) 
+							if (tftmo.CountInv("KC_CCards_Actor_NuclearCurse"))
 							{
-								tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
-								if (kcdebug_timefreezeafterimage) Console.Printf("\c[darkgreen]tftmo: %p [%s], given TimeFreezeHasAPlayerTarget item!", tftmo, tftmo.GetClassName());
+								if (level.time % randompick(2,3,3,4,4,4,4,4,4,5,5,6))
+								{
+									bool spawned;
+									actor nukeaftimg;
+									double spawnvel = 1.25;
+									double spdvel = 2.5;
+									[spawned, nukeaftimg] = tftmo.A_SpawnItemEx("MonsterCCardsNukeFlash", frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel),frandom(-spawnvel,spawnvel), frandom(-spdvel,spdvel),frandom(-spdvel,spdvel),frandom(-spdvel,spdvel), 0, SXF_NOCHECKPOSITION | SXF_TRANSFERSPRITEFRAME |  SXF_TRANSFERSCALE | SXF_TRANSFERALPHA);
+									if (nukeaftimg)
+									{
+										nukeaftimg.A_SetSize(tftmo.radius,tftmo.height,false);
+										nukeaftimg.A_SetScale(tftmo.scale.x,tftmo.scale.y,false);
+										nukeaftimg.master = tftmo;
+										nukeaftimg.alpha = (tftmo.alpha * 0.75);
+									}
+									MonsterCCardsNukeFlash nukeaftimg2;
+									nukeaftimg2 = MonsterCCardsNukeFlash(nukeaftimg);
+									if (nukeaftimg2)
+									{
+										nukeaftimg2.fadespeed = (nukeaftimg.alpha * frandompick(0.0834,0.10,0.10,0.10,0.125));
+									}
+								}
 							}
 						}
 					}
-					else
+					
+					if (A_CheckKCTimeFreeze())
 					{
-						if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") > 0) 
+						if (player.GetClassName() == "HeiwaPlayer")
 						{
-							tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",0);
-						}
-					}
-				}
-				else
-				{
-					if (tftmo.target)
-					{
-						if (tftmo.CountInv("TimeFreezeHasNoTarget") > 0) tftmo.A_SetInventory("TimeFreezeHasNoTarget",0);
-						if (tftmo.target != player)
-						{
-							tftmo.A_SetInventory("TimeFreezeHasATarget",1);
+							if (tftmo.target == player)
+							{
+								if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") <= 0) 
+								{
+									tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",1);
+									if (kcdebug_timefreezeafterimage) Console.Printf("\c[darkgreen]tftmo: %p [%s], given TimeFreezeHasAPlayerTarget item!", tftmo, tftmo.GetClassName());
+								}
+							}
 						}
 						else
 						{
-							if (tftmo.CountInv("TimeFreezeHasATarget") > 0) 
+							if (tftmo.CountInv("TimeFreezeHasAPlayerTarget") > 0) 
 							{
-								tftmo.A_SetInventory("TimeFreezeHasATarget",0);
+								tftmo.A_SetInventory("TimeFreezeHasAPlayerTarget",0);
 							}
 						}
 					}
 					else
 					{
-						tftmo.A_SetInventory("TimeFreezeHasNoTarget",1);
+						if (tftmo.target)
+						{
+							if (tftmo.CountInv("TimeFreezeHasNoTarget") > 0) tftmo.A_SetInventory("TimeFreezeHasNoTarget",0);
+							if (tftmo.target != player)
+							{
+								tftmo.A_SetInventory("TimeFreezeHasATarget",1);
+							}
+							else
+							{
+								if (tftmo.CountInv("TimeFreezeHasATarget") > 0) 
+								{
+									tftmo.A_SetInventory("TimeFreezeHasATarget",0);
+								}
+							}
+						}
+						else
+						{
+							tftmo.A_SetInventory("TimeFreezeHasNoTarget",1);
+						}
 					}
 				}
 			}
 		}
 
 		// CCards
-		if (A_CheckCCards())
+		if (Wads.CheckNumForName("KC-CIRCUS2", Wads.ns_global, -1, true) != -1) 
 		{
-			if (kcdebug_worldtick) Console.Printf("[CCards lump found] [time: %d]", level.time);
-			let globalvars = KCGlobalVariables.Get();
-			globalvars.PlayingCCards = true;
-			actor player = players[0].mo;
-			if (player && !player.CountInv("PlayingCCards")) player.A_SetInventory("PlayingCCards",1);
-
-			Actor mo;
-			string nm, nn, no, np, nq, nr, ns, nt;
-			ThinkerIterator it;
-
-
-			if (A_CheckKCTimeFreeze())
+			if (kcdebug_worldtick) Console.Printf("Circus 2 - Don't run CCards Checks even if it's detected");
+		}
+		else
+		{
+			if (A_CheckCCards())
 			{
-				A_TmFrzCCardWTick_G3n(1);
+				if (kcdebug_worldtick) Console.Printf("[CCDAILIES lump found] [time: %d]", level.time);
+				let globalvars = KCGlobalVariables.Get();
+				globalvars.PlayingCCards = true;
+				actor player = players[0].mo;
+				if (player && !player.CountInv("PlayingCCards")) player.A_SetInventory("PlayingCCards",1);
 
-				nm = "CCards_Actor_Shockwave";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-				}
-				
-				nm = "CCards_Actor_SpiderFX";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						mo.Destroy();
-					}
-				}
-				
-				nm = "CCards_Actor_FlightFX";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						mo.Destroy();
-					}
-				}
-				
-				nm = "CCards_Actor_PetChain";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						mo.Destroy();
-					}
-				}
+				Actor mo;
+				string nm, nn, no, np, nq, nr, ns, nt;
+				ThinkerIterator it;
 
-				nm = "CCards_Actor_AttentionDebuff";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (mo.target) mo.target == null;
-						if (mo.tracer) mo.tracer == null;
-						for (int i = 0; i < 12; i++)
-						{
-							mo.A_StopSound(i);
-						}
-						mo.Destroy();
-					}
-				}
 
-				nm = "CCards_Actor_RainDamager";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
+				if (A_CheckKCTimeFreeze())
 				{
-					if (mo)
-					{
-						if (mo.target) mo.target == null;
-						if (mo.tracer) mo.tracer == null;
-						for (int i = 0; i < 12; i++)
-						{
-							mo.A_StopSound(i);
-						}
-						mo.Destroy();
-					}
-				}
+					A_TmFrzCCardWTick_G3n(1);
 
-				nm = "CCards_Actor_BladeTrap";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-						if (mo.CountInv("KC_CCards_Actor_BladeTrap") <= 0)
-						{
-							mo.A_StopSound(6);
-							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",1);
-						}
-					}
-				}
-				nm = "KC_CCards_Actor_BladeTrap2";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-						if (mo.CountInv("KC_CCards_Actor_BladeTrap") <= 0)
-						{
-							mo.A_StopSound(6);
-							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",1);
-						}
-					}
-				}
-
-				nm = "CCards_Actor_Confetti";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
-				}
-
-				nm = "CCards_Actor_AttentionNoise";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-						if (mo.CountInv("KC_CCards_Actor_AttentionNoise") <= 0)
-						{
-							mo.A_StopSound(7);
-							mo.A_SetInventory("KC_CCards_Actor_AttentionNoise",1);
-						}
-					}
-				}
-			}
-			else
-			{
-				A_TmFrzCCardWTick_G3n(2);
-
-				nm = "CCards_Actor_AttentionNoise";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
-						if (mo.CountInv("KC_CCards_Actor_AttentionNoise"))
-						{
-							mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
-							mo.A_SetInventory("KC_CCards_Actor_AttentionNoise",0);
-						}
-					}
-				}
-
-				nm = "CCards_Actor_BladeTrap";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
-						if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
-						{
-							mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
-							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",0);
-						}
-					}
-				}
-
-				nm = "KC_CCards_Actor_BladeTrap2";
-				it = ThinkerIterator.Create(nm);
-				while (mo = Actor(it.Next()))
-				{
-					if (mo)
-					{
-						if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
-						if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
-						{
-							mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
-							mo.A_SetInventory("KC_CCards_Actor_BladeTrap",0);
-						}
-					}
-				}
-			}
-
-			if (level.time >= 3)
-			{
-				bool CardsPlaceHolderCheck = false;
-				if (level.time >= 3 && level.time <= 35) CardsPlaceHolderCheck = true;
-
-				// 0.057 Sec TimeFreeze Checks
-				if ((((level.time - 35) % 2) == 0))
-				{
-					nm = "CCards_Actor_JewelEnchantment";
+					nm = "CCards_Actor_Shockwave";
 					it = ThinkerIterator.Create(nm);
 					while (mo = Actor(it.Next()))
 					{
-						if (mo) 
+						if (mo)
 						{
-							if (player.CountInv("TimeSeraphVisor") &&
-									player.CountInv("TimeSeraphBangle"))
+							if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+					}
+					
+					nm = "CCards_Actor_SpiderFX";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							mo.Destroy();
+						}
+					}
+					
+					nm = "CCards_Actor_FlightFX";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							mo.Destroy();
+						}
+					}
+					
+					nm = "CCards_Actor_PetChain";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							mo.Destroy();
+						}
+					}
+
+					nm = "CCards_Actor_AttentionDebuff";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							if (mo.target) mo.target == null;
+							if (mo.tracer) mo.tracer == null;
+							for (int i = 0; i < 12; i++)
 							{
-								mo.health = 1;
-								mo.bSHOOTABLE = true;
+								mo.A_StopSound(i);
 							}
-							else
+							mo.Destroy();
+						}
+					}
+
+					nm = "CCards_Actor_RainDamager";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							if (mo.target) mo.target == null;
+							if (mo.tracer) mo.tracer == null;
+							for (int i = 0; i < 12; i++)
 							{
-								mo.health = 1000;
-								mo.bSHOOTABLE = false;
+								mo.A_StopSound(i);
+							}
+							mo.Destroy();
+						}
+					}
+
+					nm = "CCards_Actor_BladeTrap";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
+					{
+						if (mo)
+						{
+							if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+							if (mo.CountInv("KC_CCards_Actor_BladeTrap") <= 0)
+							{
+								mo.A_StopSound(6);
+								mo.A_SetInventory("KC_CCards_Actor_BladeTrap",1);
 							}
 						}
 					}
-				}
-				
-				// 1 Sec TimeFreeze Checks
-				if ((((level.time - 35) % 35) == 0))
-				{
-					nm = "CCards_Actor_GasPod";
+					nm = "KC_CCards_Actor_BladeTrap2";
 					it = ThinkerIterator.Create(nm);
 					while (mo = Actor(it.Next()))
 					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_NoxiousBurst";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_SafeSpawner";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_HotStartSpawner";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_AnnoyingDevil";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_HauntedGround";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_SpawnPod";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						if (mo)
+						{
+							if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+							if (mo.CountInv("KC_CCards_Actor_BladeTrap") <= 0)
+							{
+								mo.A_StopSound(6);
+								mo.A_SetInventory("KC_CCards_Actor_BladeTrap",1);
+							}
+						}
 					}
 
 					nm = "CCards_Actor_Confetti";
 					it = ThinkerIterator.Create(nm);
 					while (mo = Actor(it.Next()))
 					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE == false;
 					}
 
-					nm = "CCards_Actor_FairyLight";
+					nm = "CCards_Actor_AttentionNoise";
 					it = ThinkerIterator.Create(nm);
 					while (mo = Actor(it.Next()))
 					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_AngelWings";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
-					}
-
-					nm = "CCards_Actor_MiasmaEffect";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
-					{
-						if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						if (mo)
+						{
+							if (mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+							if (mo.CountInv("KC_CCards_Actor_AttentionNoise") <= 0)
+							{
+								mo.A_StopSound(7);
+								mo.A_SetInventory("KC_CCards_Actor_AttentionNoise",1);
+							}
+						}
 					}
 				}
-
-				// 2 Second Checks
-				if ((((level.time - 35) % 70) == 0))
+				else
 				{
-					CardsPlaceHolderCheck = true;
+					A_TmFrzCCardWTick_G3n(2);
 
-					nm = "CCards_Actor_PlushWeapon1";
-					if (player.CountInv(nm))
+					nm = "CCards_Actor_AttentionNoise";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
 					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx1",1);
-						player.A_SetInventory(nm,0);
+						if (mo)
+						{
+							if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
+							if (mo.CountInv("KC_CCards_Actor_AttentionNoise"))
+							{
+								mo.A_StartSound("corruptioncards/parade", CHAN_7, CHANF_LOOPING, 0.2, 0.7);
+								mo.A_SetInventory("KC_CCards_Actor_AttentionNoise",0);
+							}
+						}
 					}
-					nm = "CCards_Actor_PlushWeapon2";
-					if (player.CountInv(nm))
+
+					nm = "CCards_Actor_BladeTrap";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
 					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx2",1);
-						player.A_SetInventory(nm,0);
+						if (mo)
+						{
+							if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
+							if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
+							{
+								mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
+								mo.A_SetInventory("KC_CCards_Actor_BladeTrap",0);
+							}
+						}
 					}
-					nm = "CCards_Actor_PlushWeapon3";
-					if (player.CountInv(nm))
+
+					nm = "KC_CCards_Actor_BladeTrap2";
+					it = ThinkerIterator.Create(nm);
+					while (mo = Actor(it.Next()))
 					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx3",1);
-						player.A_SetInventory(nm,0);
-					}
-					nm = "CCards_Actor_PlushWeapon4";
-					if (player.CountInv(nm))
-					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx4",1);
-						player.A_SetInventory(nm,0);
-					}
-					nm = "CCards_Actor_PlushWeapon5";
-					if (player.CountInv(nm))
-					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx5",1);
-						player.A_SetInventory(nm,0);
-					}
-					nm = "CCards_Actor_PlushWeapon6";
-					if (player.CountInv(nm))
-					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx6",1);
-						player.A_SetInventory(nm,0);
-					}
-					nm = "CCards_Actor_PlushWeapon7";
-					if (player.CountInv(nm))
-					{
-						player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
-						player.A_SetInventory(nm,0);
+						if (mo)
+						{
+							if (!mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = true;
+							if (mo.CountInv("KC_CCards_Actor_BladeTrap"))
+							{
+								mo.A_StartSound("corruptioncards/bladetrap", slot:CHAN_6, flags:CHANF_LOOP, volume:0.5);
+								mo.A_SetInventory("KC_CCards_Actor_BladeTrap",0);
+							}
+						}
 					}
 				}
 
-				// 5 second checks
-				if ((((level.time - 35) % 175) == 0))
+				if (level.time >= 3)
 				{
-					CardsPlaceHolderCheck = true;
+					bool CardsPlaceHolderCheck = false;
+					if (level.time >= 3 && level.time <= 35) CardsPlaceHolderCheck = true;
 
-					nm = "CCards_Actor_BigStomach";
-					nm = "CCards_Actor_SwapCurse";
-					//
-					nm = "CCards_Actor_PriestPorridge";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
+					// 0.057 Sec TimeFreeze Checks
+					if ((((level.time - 35) % 2) == 0))
 					{
-						mo.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
-						mo.Destroy();
+						nm = "CCards_Actor_JewelEnchantment";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo) 
+							{
+								if (player.CountInv("TimeSeraphVisor") &&
+										player.CountInv("TimeSeraphBangle"))
+								{
+									mo.health = 1;
+									mo.bSHOOTABLE = true;
+								}
+								else
+								{
+									mo.health = 1000;
+									mo.bSHOOTABLE = false;
+								}
+							}
+						}
 					}
-					nm = "CCards_Actor_HotPriestPorridge";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
+					
+					// 1 Sec TimeFreeze Checks
+					if ((((level.time - 35) % 35) == 0))
 					{
-						mo.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
-						mo.Destroy();
+						nm = "CCards_Actor_GasPod";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_NoxiousBurst";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_SafeSpawner";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_HotStartSpawner";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_AnnoyingDevil";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_HauntedGround";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_SpawnPod";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_Confetti";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_FairyLight";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_AngelWings";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
+
+						nm = "CCards_Actor_MiasmaEffect";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo && mo.bNOTIMEFREEZE) mo.bNOTIMEFREEZE = false;
+						}
 					}
 
-					nm = "CCards_Actor_MonsterDisguise";
-					it = ThinkerIterator.Create(nm);
-					while (mo = Actor(it.Next()))
+					// 2 Second Checks
+					if ((((level.time - 35) % 70) == 0))
 					{
-						if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
-						if (!mo.bISMONSTER) mo.bISMONSTER = true; // hehehehe >:V
-						if (kcdebug_worldtick) Console.Printf("LOLE [%p, %s]", mo, mo.GetClassName());
+						CardsPlaceHolderCheck = true;
+
+						nm = "CCards_Actor_PlushWeapon1";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx1",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon2";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx2",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon3";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx3",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon4";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx4",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon5";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx5",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon6";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx6",1);
+							player.A_SetInventory(nm,0);
+						}
+						nm = "CCards_Actor_PlushWeapon7";
+						if (player.CountInv(nm))
+						{
+							player.A_SetInventory("CCards_Actor_PlushWeaponEx7",1);
+							player.A_SetInventory(nm,0);
+						}
 					}
+
+					// 5 second checks
+					if ((((level.time - 35) % 175) == 0))
+					{
+						CardsPlaceHolderCheck = true;
+
+						nm = "CCards_Actor_BigStomach";
+						nm = "CCards_Actor_SwapCurse";
+						//
+						nm = "CCards_Actor_PriestPorridge";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							mo.A_SpawnItemEx("KC_CCards_Actor_PriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+							mo.Destroy();
+						}
+						nm = "CCards_Actor_HotPriestPorridge";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							mo.A_SpawnItemEx("KC_CCards_Actor_HotPriestPorridge",flags:SXF_NOCHECKPOSITION,tid:mo.tid);
+							mo.Destroy();
+						}
+
+						nm = "CCards_Actor_MonsterDisguise";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo.bNORADIUSDMG) mo.bNORADIUSDMG = false; // hahahaha V:<
+							if (!mo.bISMONSTER) mo.bISMONSTER = true; // hehehehe >:V
+							if (kcdebug_worldtick) Console.Printf("LOLE [%p, %s]", mo, mo.GetClassName());
+						}
+					}
+
+					if (CardsPlaceHolderCheck)
+					{
+						A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCurse","KC_CCards_Actor_9LivesCurse");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCounter","KC_CCards_Actor_9LivesCounter");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_MonsterGodMode","KC_CCards_Actor_MonsterGodMode");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_QuadDamage","KC_CCards_Actor_QuadDamage");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_NuclearCurse","KC_CCards_Actor_NuclearCurse");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_AbominationCurse","KC_CCards_Actor_AbominationCurse");
+						A_TmFrzCCardWTick_Giver("CCards_Actor_Dexterity","KC_CCards_Actor_Dexterity");
+						A_TmFrzCCardWTick_G3n(0);
+					}
+					
 				}
-
-				if (CardsPlaceHolderCheck)
-				{
-					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCurse","KC_CCards_Actor_9LivesCurse");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_9LivesCounter","KC_CCards_Actor_9LivesCounter");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_MonsterGodMode","KC_CCards_Actor_MonsterGodMode");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_QuadDamage","KC_CCards_Actor_QuadDamage");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_NuclearCurse","KC_CCards_Actor_NuclearCurse");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_AbominationCurse","KC_CCards_Actor_AbominationCurse");
-					A_TmFrzCCardWTick_Giver("CCards_Actor_Dexterity","KC_CCards_Actor_Dexterity");
-					A_TmFrzCCardWTick_G3n(0);
-				}
-				
 			}
 		}
 	}
