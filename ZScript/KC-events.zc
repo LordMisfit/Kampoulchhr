@@ -8946,3 +8946,16 @@ class EVP_FootstepsInit : EventHandler
 		}
 	}
 }
+
+// Secret Fixer Event [by Kzer-za] (for fixing the "issue" with needing to stand on the 
+// ground of secret-flagged sectors to get credit for them)
+class SecretFixerGiver : EventHandler
+{
+	override void WorldThingSpawned(Worldevent event)
+	{
+		if (event.thing && event.thing is "PlayerPawn")
+		{
+			event.thing.GiveInventory("SecretFixer", 1);
+		}
+	}
+}
