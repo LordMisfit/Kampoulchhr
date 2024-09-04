@@ -50,8 +50,7 @@ class Incinerator : MarineWeapon
 					let psp = player.FindPSprite(OverlayID());
 					if (psp)
 					{
-						if (invoker.FireMode >= 1) psp.frame = 6;
-																	else psp.frame = 2;
+						psp.frame = 2;
 					}
 				}
 				A_IncineratorFire();
@@ -233,12 +232,76 @@ class IncineratorFlame : KCProjectile
 }
 
 // Kampoulchhr's unique spin on the Incinerator: giving it Icy Flames :V
-class IncineratorFrostFlame : IncineratorFlame
+class IncineratorFrostFlame : KCProjectile
 {
+	Vector2 defscale;
+
+	static const color partColors[] = 
+	{
+		"bcc3df",
+		"8a96c7",
+		"6877b5",
+		"5061a8"
+	};	
+	
 	default
 	{
 		Tag "Incinerator FrostFlame";
+		Projectile;
+		Radius 13;
+		Height 8;
+		Damage 5;
+		Speed 40;
+		ExplosionDamage 5;
+		ExplosionRadius 64;
+		+FORCERADIUSDMG
+		+BRIGHT
+		RenderStyle 'Add';
 		DamageType "Ice";
+		Alpha 0.75;
+	}
+
+	// Randomly mirror the sprite and randomize
+	// its scale a bit to add more variety:
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		bSPRITEFLIP = random[incin](0,1);
+		scale *= frandom[incin](0.7, 1);
+		defscale = scale; //record scale after randomization
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+		// When the projectile dies, it sets its scale to 33%
+		// of what it was. During death we'll gradually bring it back to scale:
+		if (!isFrozen() && !bMissile)
+		{
+			scale.x = clamp(scale.x += 0.05, 0, defscale.x);
+			scale.y = clamp(scale.y += 0.05, 0, defscale.y);
+			// And we'll also raise its sprite every 2 tics:
+			if (GetAge() % 2 == 0)
+			{
+				spriteoffset.y -= 1;
+			}
+			if (alpha >= default.alpha)
+			{
+				FSpawnParticleParams p;
+				p.lifetime = random[incin](30, 40);
+				p.size = random[incin](3, 6);
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.vel = (0, 0, frandom[incin](0.4, 0.6));
+				p.accel.z = (-p.vel.z / p.lifetime);
+				double vofs = 45 - (24 - frame*2); //the earlier in the animation, the lower the particles spawn.
+				p.pos = level.Vec3Offset(pos, (frandom(-8, 8), frandom(-8, 8), 15 + frandom(0, vofs)));
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+				level.SpawnParticle(p);
+			}
+		}
 	}
 	
 	action void A_IncineratorExplode()
