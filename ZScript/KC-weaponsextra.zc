@@ -3,6 +3,8 @@ class UnmakerKC : MarineWeapon { }
 
 class Incinerator : MarineWeapon
 {
+	int FireMode;
+
 	Default
 	{
 		Tag "Incinerator";
@@ -10,13 +12,14 @@ class Incinerator : MarineWeapon
 		Weapon.AmmoType1 'Cell';
 		Weapon.AmmoUse1 1;
 		Weapon.AmmoGive1 50;
-		Inventory.PickupMessage "$ID24_GOTINCINERATOR";
+		Inventory.PickupMessage "Picked up the \c[fire]Incinerator\c-! \cx[Slot 6]\c-";
 	}
 
 	action void A_IncineratorFire()
 	{
 		A_StartSound("DoomRR/incinerator/fire", CHAN_WEAPON);
-		A_FireProjectile('IncineratorFlame');
+		if (invoker.FireMode >= 1) A_FireProjectile('IncineratorFlame');
+													else A_FireProjectile('IncineratorFrostFlame');
 		A_Overlay(PSP_FLASH, "Flash");
 		A_OverlayFlags(PSP_FLASH, PSPF_RenderStyle|PSPF_ForceAlpha, true);
 		A_OverlayRenderStyle(PSP_FLASH, STYLE_Add);
@@ -112,6 +115,7 @@ class IncineratorFlame : KCProjectile
 		+FORCERADIUSDMG
 		+BRIGHT
 		RenderStyle 'Add';
+		DamageType "Fire";
 		Alpha 0.75;
 	}
 
@@ -157,6 +161,11 @@ class IncineratorFlame : KCProjectile
 			}
 		}
 	}
+	
+	action void A_IncineratorExplode()
+	{
+		A_Explode(5,64,XF_HURTSOURCE,false,0,0,0,"","Fire");
+	}
 
 	States
 	{
@@ -179,19 +188,74 @@ class IncineratorFlame : KCProjectile
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
-			IFLR A 3 A_Explode;
+			IFLR A 3 A_IncineratorExplode();
 			IFLR B 3;
-			IFLR C 2 A_Explode;
+			IFLR C 2 A_IncineratorExplode();
 			IFLR D 4;
-			IFLR E 2 A_Explode;
+			IFLR E 2 A_IncineratorExplode();
 			IFLR F 4;
 			IFLR G 2 A_StartSound("DoomRR/IncineratorFlame/fizzle");
-			IFLR H 2 A_Explode();
+			IFLR H 2 A_IncineratorExplode();
 			IFLR I 4;
-			IFLR J 2 A_Explode();
+			IFLR J 2 A_IncineratorExplode();
 			IFLR K 2;
-			IFLR L 2 A_Explode();
+			IFLR L 2 A_IncineratorExplode();
 			IFLR L 2
+			{
+				A_FadeOut(0.1);
+			}
+			wait;
+	}
+}
+
+// Kampoulchhr's unique spin on the Incinerator: giving it Icy Flames :V
+class IncineratorFrostFlame : IncineratorFlame
+{
+	default
+	{
+		Tag "Incinerator FrostFlame";
+		DamageType "Ice";
+	}
+	
+	action void A_IncineratorExplode()
+	{
+		A_Explode(5,64,XF_HURTSOURCE,false,0,0,0,"","Ice");
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 2;
+			IFLF A 1;
+			IFLF B 2 A_StartSound("DoomRR/incinerator/burn");
+			IFLF CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
+			stop;
+		Death:
+			// The death sequence uses modified sprites made from the original
+			// with the TEXTURES lump. Again, Arch-Vile-style flickering
+			// between current and previous flame that the original sequence
+			// had is rather hard on the eyes and not particularly pretty.
+			// I added extra sprites from the Spawn sequence, and with added
+			// scale and spriteoffset changes it appears smoother.
+			TNT1 A 0 
+			{
+				A_StartSound("DoomRR/IncineratorFlame/death");
+				scale *= 0.3;
+				alpha = default.alpha;
+			}
+			IFLI A 3 A_IncineratorExplode();
+			IFLI B 3;
+			IFLI C 2 A_IncineratorExplode();
+			IFLI D 4;
+			IFLI E 2 A_IncineratorExplode();
+			IFLI F 4;
+			IFLI G 2 A_StartSound("DoomRR/IncineratorFlame/fizzle");
+			IFLI H 2 A_IncineratorExplode();
+			IFLI I 4;
+			IFLI J 2 A_IncineratorExplode();
+			IFLI K 2;
+			IFLI L 2 A_IncineratorExplode();
+			IFLI L 2
 			{
 				A_FadeOut(0.1);
 			}
@@ -203,27 +267,27 @@ class IncineratorFlame : KCProjectile
 // but it's also referred to as Heatwave Generator
 // in DECOHACK.
 
-class Heatwave : MarineWeapon
+class CalamityBlade : MarineWeapon
 {
-	int heatwaveCharge;
+	int CalamityCharge;
 
 	Default
 	{
 		Tag "Calamity Blade";
-		Inventory.PickupMessage "$ID24_GOTCALAMITYBLADE";
+		Inventory.PickupMessage "Picked up the \c[fire]Calamity Blade\c-! Hot Damn! \cx[Slot 7]\c-";
 		Weapon.SlotNumber 7;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoUse 10;
 		Weapon.AmmoGive 100;
 	}
 
-	action void A_FireIncinerator()
+	action void A_FireCalamityBlade()
 	{
-		A_StartSound("DoomRR/heatwave/fire", CHAN_WEAPON);
+		A_StartSound("DoomRR/calamityblade/fire", CHAN_WEAPON);
 		A_GunFlash("FlashEnd");
 
 		double angle = 5;
-		switch (invoker.heatwaveCharge)
+		switch (invoker.CalamityCharge)
 		{
 		case 2:
 			angle = 12.5;
@@ -249,10 +313,10 @@ class Heatwave : MarineWeapon
 		for (double ang = -angle; ang <= angle; ang += 5.0)
 		{
 			// Since autoaim is handled manually, we'll need FPF_NOAUTOAIM:
-			A_FireProjectile("HeatWaveRipper", ang, useammo: false, flags: FPF_NOAUTOAIM, pitch: DeltaAngle(pitch, projPitch));
+			A_FireProjectile("CalamityRipper", ang, useammo: false, flags: FPF_NOAUTOAIM, pitch: DeltaAngle(pitch, projPitch));
 		}
 
-		invoker.heatwaveCharge = 0;
+		invoker.CalamityCharge = 0;
 		A_ClearRefire();
 	}
 
@@ -264,7 +328,7 @@ class Heatwave : MarineWeapon
 		Ready:
 			HETG A 1 
 			{
-				invoker.heatwaveCharge = 0;
+				invoker.CalamityCharge = 0;
 				A_WeaponReady();
 			}
 			loop;
@@ -275,23 +339,23 @@ class Heatwave : MarineWeapon
 			HETG A 1 A_Raise;
 			loop;
 		Fire:
-			HETG A 20
+			HETG A 15
 			{
 				if (invoker.DepleteAmmo(false))
 				{
-					invoker.heatwaveCharge++;
+					invoker.CalamityCharge++;
 					A_GunFlash();
-					A_StartSound("DoomRR/heatwave/charge", CHAN_WEAPON);
+					A_StartSound("DoomRR/calamityblade/charge", CHAN_WEAPON);
 				}
 			}
 			TNT1 A 0 
 			{
-				if (invoker.heatwaveCharge < 5 && invoker.CheckAmmo(PrimaryFire, false))
+				if (invoker.CalamityCharge < 5 && invoker.CheckAmmo(PrimaryFire, false))
 				{
 					A_ReFire();
 				}
 			}
-			HETF A 3 A_FireIncinerator;
+			HETF A 3 A_FireCalamityBlade;
 			HETF B 5;
 			HETG DCB 4;
 			TNT1 A 0 A_ReFire;
@@ -309,7 +373,7 @@ class Heatwave : MarineWeapon
 			TNT1 A 0
 			{
 				A_OverlayRenderStyle(OverlayID(), STYLE_Add);
-				return invoker.FindStateByString("FlashCharge"..clamp(invoker.heatwaveCharge, 1,5));
+				return invoker.FindStateByString("FlashCharge"..clamp(invoker.CalamityCharge, 1,5));
 			}
 		FlashCharge1:
 			HETC A 6 bright;
@@ -334,7 +398,7 @@ class Heatwave : MarineWeapon
 	}
 }
 
-class HeatWaveRipper : KCProjectile
+class CalamityRipper : KCProjectile
 {
 	static const color partColors[] =
 	{
@@ -346,7 +410,7 @@ class HeatWaveRipper : KCProjectile
 
 	Default
 	{
-		Tag "Heatwave Ripper";
+		Tag "Calamity Blade Ripper";
 		Projectile;
 		Damage 10;
 		Speed 20;
@@ -355,7 +419,7 @@ class HeatWaveRipper : KCProjectile
 		+RIPPER
 		+BRIGHT
 		RenderStyle 'Add';
-		Deathsound "DoomRR/heatwave/explode";
+		Deathsound "DoomRR/calamityblade/explode";
 	}
 
 	States
