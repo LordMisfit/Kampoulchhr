@@ -3269,30 +3269,6 @@ class KCStatusBarMain : BaseStatusBar
 		baseinc = 2;
 		x -= baseinc;
 		y -= baseinc;
-		wsname = "PlasmaRifleMarine";
-		wsammoname = "Cell";
-		ammotype = CPlayerPawn.FindInventory(wsammoname);
-		if (ammotype)
-		{
-			trueammocurrent = ammotype.Amount;
-			trueammomax = ammotype.maxAmount;
-		}
-		if (CPlayerPawn.CountInv(wsname))
-		{
-			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
-
-			wsnum = 6;
-			if (wsweapon is wsname)
-			{
-				wsalpha = wsalphadefault2;
-				wsscale = wsscaledefault2;
-			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
-			wsalpha = wsalphadefault;
-			wsscale = wsscaledefault;
-		}
-		x += (baseinc * 2);
-		y += (baseinc * 2);
 		wsname = "TeslaCannon";
 		wsammoname = "Bolts";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
@@ -3315,6 +3291,38 @@ class KCStatusBarMain : BaseStatusBar
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
+		x += (baseinc * 2);
+		y += (baseinc * 2);
+		if (A_CheckForHeiwa())
+		{
+			wsname = "Incinerator";
+			wsammoname = "Cell"; // "FuelAmmo";
+		}
+		else
+		{
+			wsname = "PlasmaRifleMarine";
+			wsammoname = "Cell";
+		}
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (ammotype)
+		{
+			trueammocurrent = ammotype.Amount;
+			trueammomax = ammotype.maxAmount;
+		}
+		if (CPlayerPawn.CountInv(wsname))
+		{
+			[AmmoRatio, wsfontclr] = DrawFSHUDWSlotsAmmoRatio(AmmoRatio, trueammocurrent, trueammomax, 0);
+
+			wsnum = 6;
+			if (wsweapon is wsname)
+			{
+				wsalpha = wsalphadefault2;
+				wsscale = wsscaledefault2;
+			}
+			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			wsalpha = wsalphadefault;
+			wsscale = wsscaledefault;
+		}
 		x -= baseinc;
 		y -= baseinc;
 
@@ -3324,7 +3332,7 @@ class KCStatusBarMain : BaseStatusBar
 		baseinc = 2;
 		x -= baseinc;
 		y -= baseinc;
-		wsname = "BFG9000Marine";
+		wsname = "BHGen";
 		wsammoname = "Cell";
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (ammotype)
@@ -3348,8 +3356,16 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		x += (baseinc * 2);
 		y += (baseinc * 2);
-		wsname = "BHGen";
-		wsammoname = "Cell";
+		if (A_CheckForHeiwa())
+		{
+			wsname = "CalamityBlade";
+			wsammoname = "Cell"; // "FuelAmmo";
+		}
+		else
+		{
+			wsname = "BFG9000Marine";
+			wsammoname = "Cell";
+		}
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
 		if (ammotype)
 		{
@@ -4035,6 +4051,8 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
 					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
+					PlayerWeapon is "Incinerator" ||
+					PlayerWeapon is "CalamityBlade" ||
 					PlayerWeapon is "BHGen" ||
 					PlayerWeapon is "ImpalerXBow")
 			{
@@ -4066,6 +4084,8 @@ class KCStatusBarMain : BaseStatusBar
 																													 else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
 				else if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]CHANGE ALT-FIRE MODE\c-");
+				else if (PlayerWeapon is "Incinerator") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
+				else if (PlayerWeapon is "CalamityBlade") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
