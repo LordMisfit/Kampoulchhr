@@ -1,6 +1,8 @@
 class SigilKC : MarineWeapon replaces Sigil { }
 class UnmakerKC : MarineWeapon { }
 
+// Incinerator from Legacy of Rust, created originally by Xaser Acheron, ported originally
+// to ZScript by Agent Ash/Jekyll Grim.
 class Incinerator : MarineWeapon
 {
 	int FireMode;
@@ -27,7 +29,7 @@ class Incinerator : MarineWeapon
 
 	action void A_IncineratorFire()
 	{
-		A_StartSound("DoomRR/incinerator/fire", CHAN_WEAPON);
+		A_StartSound("incinerator/fire", CHAN_WEAPON);
 		if (invoker.FireMode >= 1) A_FireProjectile('IncineratorFrostFlame');
 													else A_FireProjectile('IncineratorFlame');
 		A_Overlay(PSP_FLASH, "Flash");
@@ -118,14 +120,14 @@ class Incinerator : MarineWeapon
 			{
 				if (invoker.FireMode == 0)
 				{
-					A_StartSound("DoomRR/calamityblade/charge",0);
+					A_StartSound("calamityblade/charge",0);
 					A_Print("FrostFlame Mode");
 					invoker.FireMode = 1;
 				}
 				else
 				if (invoker.FireMode == 1)
 				{
-					A_StartSound("DoomRR/calamityblade/charge",0);
+					A_StartSound("calamityblade/charge",0);
 					A_Print("Flame Mode");
 					invoker.FireMode = 0;
 				}
@@ -221,7 +223,7 @@ class IncineratorFlame : KCProjectile
 		Spawn:
 			TNT1 A 2;
 			IFLM A 1;
-			IFLM B 2 A_StartSound("DoomRR/incinerator/burn");
+			IFLM B 2 A_StartSound("incinerator/burn");
 			IFLM CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
 		Death:
@@ -233,7 +235,7 @@ class IncineratorFlame : KCProjectile
 			// scale and spriteoffset changes it appears smoother.
 			TNT1 A 0 
 			{
-				A_StartSound("DoomRR/IncineratorFlame/death");
+				A_StartSound("IncineratorFlame/death");
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
@@ -243,7 +245,7 @@ class IncineratorFlame : KCProjectile
 			IFLR D 4;
 			IFLR E 2 A_IncineratorExplode();
 			IFLR F 4;
-			IFLR G 2 A_StartSound("DoomRR/IncineratorFlame/fizzle");
+			IFLR G 2 A_StartSound("IncineratorFlame/fizzle");
 			IFLR H 2 A_IncineratorExplode();
 			IFLR I 4;
 			IFLR J 2 A_IncineratorExplode();
@@ -340,7 +342,7 @@ class IncineratorFrostFlame : KCFrostMissile
 		Spawn:
 			TNT1 A 2;
 			IFLF A 1;
-			IFLF B 2 A_StartSound("DoomRR/incinerator/burn");
+			IFLF B 2 A_StartSound("incinerator/burn");
 			IFLF CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
 		Death:
@@ -352,7 +354,7 @@ class IncineratorFrostFlame : KCFrostMissile
 			// scale and spriteoffset changes it appears smoother.
 			TNT1 A 0 
 			{
-				A_StartSound("DoomRR/IncineratorFlame/death");
+				A_StartSound("IncineratorFlame/death");
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
@@ -362,7 +364,7 @@ class IncineratorFrostFlame : KCFrostMissile
 			IFLI D 4;
 			IFLI E 2 A_IncineratorExplode();
 			IFLI F 4;
-			IFLI G 2 A_StartSound("DoomRR/IncineratorFlame/fizzle");
+			IFLI G 2 A_StartSound("IncineratorFlame/fizzle");
 			IFLI H 2 A_IncineratorExplode();
 			IFLI I 4;
 			IFLI J 2 A_IncineratorExplode();
@@ -380,6 +382,8 @@ class IncineratorFrostFlame : KCFrostMissile
 // but it's also referred to as Heatwave Generator
 // in DECOHACK.
 
+// Originally made by Xaser Acheron and Roger Berrones and ported originally to ZScript
+// by Agent Ash/Jekyll Grim
 class CalamityBlade : MarineWeapon
 {
 	int CalamityCharge;
@@ -396,7 +400,7 @@ class CalamityBlade : MarineWeapon
 
 	action void A_FireCalamityBlade()
 	{
-		A_StartSound("DoomRR/calamityblade/fire", CHAN_WEAPON);
+		A_StartSound("calamityblade/fire", CHAN_WEAPON);
 		A_GunFlash("FlashEnd");
 
 		double angle = 5;
@@ -458,7 +462,7 @@ class CalamityBlade : MarineWeapon
 				{
 					invoker.CalamityCharge++;
 					A_GunFlash();
-					A_StartSound("DoomRR/calamityblade/charge", CHAN_WEAPON);
+					A_StartSound("calamityblade/charge", CHAN_WEAPON);
 				}
 			}
 			TNT1 A 0 
@@ -532,7 +536,7 @@ class CalamityRipper : KCProjectile
 		+RIPPER
 		+BRIGHT
 		RenderStyle 'Add';
-		Deathsound "DoomRR/calamityblade/explode";
+		Deathsound "calamityblade/explode";
 	}
 
 	States
