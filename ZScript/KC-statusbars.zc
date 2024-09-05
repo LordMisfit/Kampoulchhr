@@ -1323,11 +1323,11 @@ class KCStatusBarMain : BaseStatusBar
 			temp = "Glock21";
 			if (PlayerWeapon is temp)
 			{
-				let Glock = Glock21(CPlayerPawn.FindInventory("Glock21"));
-				if (Glock)
+				let Glk21 = Glock21(CPlayerPawn.FindInventory("Glock21"));
+				if (Glk21)
 				{
 					int jx, jy;
-					if (Glock.ammomode == 0)
+					if (Glk21.ammomode == 0)
 					{
 						jx = -30;
 						jy = -82; // -76;
@@ -1338,12 +1338,12 @@ class KCStatusBarMain : BaseStatusBar
 					jy = -24;
 					int clipsize = 12;
 					if (MiscItem) clipsize = MiscItem.glockclipsize1;
-					int clipleft = (clipsize - Glock.clipamt);
-					if (Glock.ammomode == 0) 
+					int clipleft = (clipsize - Glk21.clipamt);
+					if (Glk21.ammomode == 0) 
 					{
 						clipsize = 20;
 						if (MiscItem) clipsize = MiscItem.glockclipsize2;
-						clipleft = (clipsize - Glock.clipamt2);
+						clipleft = (clipsize - Glk21.clipamt2);
 					}
 					int ClipRatio;
 					if (clipsize > 0) 
@@ -4007,6 +4007,18 @@ class KCStatusBarMain : BaseStatusBar
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
+			// Weapon Pointers
+			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
+			let Glk21 = Glock21(CPlayerPawn.FindInventory("Glock21"));
+			let BstP = BlasterPistol(CPlayerPawn.FindInventory("BlasterPistol"));
+			let RitGn = RiotGun(CPlayerPawn.FindInventory("RiotGun"));
+			let BlsR = BlasterRifle(CPlayerPawn.FindInventory("BlasterRifle"));
+			let Incn = Incinerator(CPlayerPawn.FindInventory("Incinerator"));
+			let BHGn = BHGen(CPlayerPawn.FindInventory("BHGen"));
+			let CalB = CalamityBlade(CPlayerPawn.FindInventory("CalamityBlade"));
+			let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
+			let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
+			
 			// Reload
 			LegendStr = "";
 			if (PlayerWeapon is "Glock21")
@@ -4029,7 +4041,6 @@ class KCStatusBarMain : BaseStatusBar
 			
 			bool KnifeAltUsable = false;
 			int numberknifes;
-			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
 			if (FoundKnife && MiscItem)
 			{
 				if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
@@ -4052,7 +4063,6 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
 					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "Incinerator" ||
-					PlayerWeapon is "CalamityBlade" ||
 					PlayerWeapon is "BHGen" ||
 					PlayerWeapon is "ImpalerXBow")
 			{
@@ -4085,7 +4095,6 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				else if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]CHANGE ALT-FIRE MODE\c-");
 				else if (PlayerWeapon is "Incinerator") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
-				else if (PlayerWeapon is "CalamityBlade") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
@@ -4093,6 +4102,7 @@ class KCStatusBarMain : BaseStatusBar
 			// Primary Fires
 			LegendStr = "";
 			if (PlayerWeapon is "Translocator" ||
+					(PlayerWeapon is "CalamityBlade" && (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 1)) ||
 					PlayerWeapon is "SawThrower")
 			{
 				LY += LYInc;
@@ -4101,7 +4111,6 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					LY -= LYInc;
 					LegendStr = "";
-					let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
 					if (SawT && SawT.revtimes >= 20)
 					{
 						LY += LYInc;
@@ -4109,9 +4118,25 @@ class KCStatusBarMain : BaseStatusBar
 						LegendStr.AppendFormat(" = \c[blue]LAUNCH SUPER-REVVED SAW BLADE\c-");
 					}
 				}
+				if (PlayerWeapon is "CalamityBlade") 
+				{
+					if (CalB)
+					{
+						if (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 1)
+						{
+							if (CalB.CalamityCharge >= 10)
+							{
+								LegendStr.AppendFormat(" = \c[blue]SHOOT MAIN-FIRE [RELEASE KEY]\c-");
+							}
+							else
+							{
+								LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~10 CELLS/CHARGE]\c-");
+							}
+						}
+					}
+				}
 				if (PlayerWeapon is "Translocator") 
 				{
-					let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
 					if (TrsLoc)
 					{
 						if (TrsLoc.beacon != null) 
@@ -4145,6 +4170,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "TeslaCannon" ||
 					PlayerWeapon is "BFG9000Marine" ||
 					PlayerWeapon is "BHGen" ||
+					(PlayerWeapon is "CalamityBlade" && (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 2)) ||
 					PlayerWeapon is "Translocator" ||
 					PlayerWeapon is "ImpalerXBow" ||
 					PlayerWeapon is "SawThrower")
@@ -4175,16 +4201,31 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");
 				if (PlayerWeapon is "BHGen") 
 				{
-					let BHGn = BHGen(CPlayerPawn.FindInventory("BHGen"));
 					if (BHGn)
 					{
 						if (BHGn.altshottype >= 1) LegendStr.AppendFormat(" = \c[blue]MINI BLACK-HOLE [~25 CELLS]\c-");
 																	else LegendStr.AppendFormat(" = \c[blue]MEGA BLACK-HOLE [~125 CELLS]\c-");
 					}
 				}
+				if (PlayerWeapon is "CalamityBlade") 
+				{
+					if (CalB)
+					{
+						if (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 2)
+						{
+							if (CalB.CalamityCharge >= 5)
+							{
+								LegendStr.AppendFormat(" = \c[blue]SHOOT SMALL-FIRE [RELEASE KEY]\c-");
+							}
+							else
+							{
+								LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~3 CELLS/CHARGE]\c-");
+							}
+						}
+					}
+				}
 				if (PlayerWeapon is "Translocator") 
 				{
-					let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
 					if (TrsLoc)
 					{
 						if (TrsLoc.beacon != null) LegendStr.AppendFormat(" = \c[orange]RECALL TELEBEACON\c-");
