@@ -5382,7 +5382,7 @@ class KC_EventHandler : EventHandler
 							int minval = 1;
 							int maxval = 13;
 							if (!(playera.CountInv("Translocator") || playera.CountInv("DustBlower"))) minval = 0;
-							if (A_CheckForHeiwaPlayer()) maxval = 18;
+							if (A_CheckForHeiwaPlayer()) maxval = 20;
 
 							user_type = random(minval,maxval);
 							droptype = "BackPack2";
@@ -5528,6 +5528,16 @@ class KC_EventHandler : EventHandler
 								droptype = "EvilWarriorShield";
 								if (playera.CountInv(droptype)) droptype = "BackPack2";
 							}
+							if (user_type == 19)
+							{
+								droptype = "Incinerator";
+								if (playera.CountInv(droptype)) droptype = "BackPack2";
+							}
+							if (user_type == 20)
+							{
+								droptype = "CalamityBlade";
+								if (playera.CountInv(droptype)) droptype = "BackPack2";
+							}
 							if (droptype == "BackPack2" && random(1,16) <= 1) droptype = "CombatPack";
 							if (!(droptype == "BackPack2" ||
 									droptype == "CombatPack"))
@@ -5580,7 +5590,7 @@ class KC_EventHandler : EventHandler
 								{
 									int minval = 1;
 									int maxval = 13;
-									if (A_CheckForHeiwaPlayer()) maxval = 17;
+									if (A_CheckForHeiwaPlayer()) maxval = 20;
 
 									user_type = random(minval,maxval);
 									if (user_type == 1) droptype = "ClipBoxNew";
@@ -5601,6 +5611,8 @@ class KC_EventHandler : EventHandler
 									if (user_type == 16) droptype = "ShellBoxNew";
 									if (user_type == 17) droptype = "CellPackNew";
 									if (user_type == 18) droptype = "PikeAmmoBig";
+									if (user_type == 19) droptype = "CellPackNew";
+									if (user_type == 20) droptype = "CellPackNew";
 								}
 								else
 								{
@@ -5628,6 +5640,8 @@ class KC_EventHandler : EventHandler
 									if (user_type == 16) droptype = "ShellNew";
 									if (user_type == 17) droptype = "CellNew";
 									if (user_type == 18) droptype = "PikeAmmo";
+									if (user_type == 19) droptype = "CellNew";
+									if (user_type == 20) droptype = "CellNew";
 								}
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[darkgreen]Ammo Drop\c- - user_type: %d [%s] [%d / %d]", user_type, droptype, (i2+1), ammodrops);

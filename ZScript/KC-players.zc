@@ -3127,6 +3127,16 @@ class KCPlayerPawn : PlayerPawn
 				double RailFactor = frandom(0.3,0.334);
 				if (mod == 'Railgun') PlayerDefenseIgnoreFactor += (RailFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				
+				double IncineratorFactor = 0.0;
+				if (IncineratorFrostFlame(inflictor) || IncineratorFrostFlame(source) ||
+						IncineratorFlame(inflictor) || IncineratorFlame(source)) PlayerDefenseIgnoreFactor += (frandom(0.3,0.33) * (1.00 - PlayerDefenseIgnoreFactor));
+				if (IncineratorFrostFlameBig(inflictor) || IncineratorFrostFlameBig(source) ||
+						IncineratorFlameBig(inflictor) || IncineratorFlameBig(source)) PlayerDefenseIgnoreFactor += (frandom(0.75,0.825) * (1.00 - PlayerDefenseIgnoreFactor));
+				
+				double CalamityFactor = 0.0;
+				if (CalamityRipperSmall(inflictor) || CalamityRipperSmall(source)) PlayerDefenseIgnoreFactor += (frandom(0.2,0.22) * (1.00 - PlayerDefenseIgnoreFactor));
+				if (CalamityRipper(inflictor) || CalamityRipper(source)) PlayerDefenseIgnoreFactor += (frandom(0.63,0.693) * (1.00 - PlayerDefenseIgnoreFactor));
+				
 				double HWShieldFactor = 0.125;
 				if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
 						HellWarriorBall2(inflictor) || HellWarriorBall2(source)) PlayerDefenseIgnoreFactor += (HWShieldFactor * (1.00 - PlayerDefenseIgnoreFactor));

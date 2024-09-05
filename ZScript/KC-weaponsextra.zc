@@ -240,8 +240,28 @@ class IncineratorFlame : KCProjectile
 	States
 	{
 		Spawn:
-			TNT1 A 2;
-			IFLM A 1;
+			TNT1 A 2 NoDelay
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(0);
+				}
+			}
+			IFLM A 1
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(3);
+				}
+			}
 			IFLM B 2 A_StartSound("incinerator/burn");
 			IFLM CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
@@ -357,8 +377,28 @@ class IncineratorFlameBig : IncineratorFlame
 	States
 	{
 		Spawn:
-			TNT1 A 2;
-			IFLM A 1;
+			TNT1 A 2 NoDelay
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(0);
+				}
+			}
+			IFLM A 1
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(3);
+				}
+			}
 			IFLM B 2 A_StartSound("incinerator/burn");
 			IFLM CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
@@ -476,8 +516,28 @@ class IncineratorFrostFlame : KCFrostMissile
 	States
 	{
 		Spawn:
-			TNT1 A 2;
-			IFLF A 1;
+			TNT1 A 2 NoDelay
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(0);
+				}
+			}
+			IFLF A 1
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(3);
+				}
+			}
 			IFLF B 2 A_StartSound("incinerator/burn");
 			IFLF CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
@@ -592,8 +652,28 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 	States
 	{
 		Spawn:
-			TNT1 A 2;
-			IFLF A 1;
+			TNT1 A 2 NoDelay
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(0);
+				}
+			}
+			IFLF A 1
+			{
+				actor playera = players[0].mo;
+				if (playera.CountInv("KCTimeFreezer") ||
+						playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3"))
+				{
+					A_SetTics(3);
+				}
+			}
 			IFLF B 2 A_StartSound("incinerator/burn");
 			IFLF CDEFGH 2 A_FadeOut(0.1, FTF_Clamp);
 			stop;
@@ -678,13 +758,32 @@ class CalamityBlade : MarineWeapon
 		// Here instead we calculate the autoaim-affected slope with BulletSlope()
 		// and then just unconditinally apply it to all projectiles, so if they
 		// do get autoaimed, they'll be autoaimed together:
+		actor BombShotsB, BombShots;
 		double projPitch = BulletSlope();
 		string firetype = "CalamityRipper";
 		if (type >= 1) firetype = "CalamityRipperSmall";
 		for (double ang = -angle; ang <= angle; ang += 5.0)
 		{
 			// Since autoaim is handled manually, we'll need FPF_NOAUTOAIM:
-			A_FireProjectile(firetype, ang, useammo: false, flags: FPF_NOAUTOAIM, pitch: DeltaAngle(pitch, projPitch));
+			[BombShotsB, BombShots] = A_FireProjectile(firetype, ang, useammo: false, flags: FPF_NOAUTOAIM, pitch: DeltaAngle(pitch, projPitch));
+			if (BombShots)
+			{
+				CalamityRipper BS1;
+				CalamityRipperSmall BS2;
+				BS1 = CalamityRipper(BombShots);
+				if (BS1)
+				{
+					BS1.defenseignorefactor = (0.125 * invoker.CalamityCharge);
+				}
+				else
+				{
+					BS2 = CalamityRipperSmall(BombShots);
+					if (BS2)
+					{
+						BS2.defenseignorefactor = (0.0625 * invoker.CalamityCharge);
+					}
+				}
+			}
 		}
 		
 		invoker.CalamityCharge = 0;
@@ -853,7 +952,7 @@ class CalamityRipper : KCProjectile
 	{
 		Tag "Calamity Blade Ripper";
 		Projectile;
-		Damage 10;
+		DamageFunction (40 * random(1,2));
 		Speed 20;
 		Radius 16;
 		Height 8;
@@ -935,7 +1034,7 @@ class CalamityRipperSmall : KCProjectile
 	{
 		Tag "Calamity Blade Ripper";
 		Projectile;
-		Damage 5;
+		DamageFunction (20 * random(1,2));
 		Speed 30;
 		Radius 12;
 		Height 6;

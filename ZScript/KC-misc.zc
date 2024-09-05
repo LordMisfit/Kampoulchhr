@@ -3593,10 +3593,20 @@ class PlayerStatItem : Inventory
 				}
 				if (berserked) BaseEncFactor *= 0.25;
 			}
+			if (weapon is "Incinerator")
+			{
+				BaseEncFactor = -0.09375;
+				if (berserked) BaseEncFactor *= 0.25;
+			}
 			if (weapon is "BHGen")
 			{
 				if (A_CheckForHeiwa()) BaseEncFactor -= 0.25;
 													else BaseEncFactor -= 0.1875;
+				if (berserked) BaseEncFactor *= 0.25;
+			}
+			if (weapon is "CalamityBlade")
+			{
+				BaseEncFactor -= 0.1667;
 				if (berserked) BaseEncFactor *= 0.25;
 			}
 			If (weapon is "EvilWarriorShield")
@@ -8448,6 +8458,15 @@ class PlayerStatItem : Inventory
 			}
 			tempfactor1 *= tempfactor2;
 		}
+		if (weapon is "Incinerator")
+		{
+			tempfactor1 = -0.1875;
+			
+			if (berserked) tempfactor1 *= 0.25;
+			tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 / (HeiwaWeapLevel * 1.25)) ));
+			if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+			tempfactor1 *= tempfactor2;
+		}
 		if (weapon is "BHGen")
 		{
 			if (A_CheckForHeiwa())
@@ -8456,6 +8475,27 @@ class PlayerStatItem : Inventory
 				
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+			}
+			else
+			{
+				tempfactor1 = -0.375;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
+			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+		}
+		if (weapon is "CalamityBlade")
+		{
+			if (A_CheckForHeiwa())
+			{
+				tempfactor1 = -0.334;
+				
+				if (berserked) tempfactor1 *= 0.25;
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.5)) ));
 				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
 			else
@@ -9311,6 +9351,19 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
+		if (weapon is "Incinerator")
+		{
+			if (!berserked) 
+			{
+				DashCost *= 1.40625;
+				MaxDashCooldown *= 1.171874999999999;
+			}
+			else
+			{
+				DashCost *= 1.203125;
+				MaxDashCooldown *= 1.0859375;
+			}
+		}
 		if (weapon is "BHGen")
 		{
 			if (A_CheckForHeiwa())
@@ -9338,6 +9391,19 @@ class PlayerDashJump : Inventory
 					DashCost *= 1.09375;
 					MaxDashCooldown *= 1.03125;
 				}
+			}
+		}
+		if (weapon is "CalamityBlade")
+		{
+			if (!berserked) 
+			{
+				DashCost *= 1.25;
+				MaxDashCooldown *= 1.0833333333333333;
+			}
+			else
+			{
+				DashCost *= 1.125;
+				MaxDashCooldown *= 1.0416666666666667;
 			}
 		}
 		if (weapon is "EvilWarriorShield")
