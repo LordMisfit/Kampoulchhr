@@ -2142,7 +2142,15 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 					int randvoice = random(1,5);
 					if (MiscItem.OneLinerTimerCool <= 0)
 					{
-						if (randvoice >= 4)
+						if (randvoice >= 2 && randvoice <= 3)
+						{
+							MiscItem.OneLinerTimerCool = ceil(int(1.402 * TICRATE));
+							voicenm = "Heiwa/JustTryToHitMe"; //
+							Console.Printf("\c[HeiwaChamosis]Just Try And Hit Me!\c-"); //
+							playera.A_StopSound(CHAN_VOICE);
+							playera.A_StartSound(voicenm,CHAN_VOICE,CHANF_DEFAULT,voicevol,ATTN_NORM,maskpitch); 
+						}
+						if (randvoice >= 4 && randvoice <= 5)
 						{
 							MiscItem.OneLinerTimerCool = ceil(int(1.541 * TICRATE));
 							voicenm = "Heiwa/ThatsSus"; //
