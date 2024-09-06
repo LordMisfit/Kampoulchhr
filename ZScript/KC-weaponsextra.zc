@@ -749,9 +749,13 @@ class CalamityBlade : MarineWeapon
 	{
 		A_StartSound("calamityblade/fire", CHAN_WEAPON);
 		A_GunFlash("FlashEnd");
+		if (type >= 1) A_GunFlash("FlashEndAlt");
 
-		double angle = (5 + ((invoker.CalamityCharge - 1) * 7.5));
-		if (type >= 1) angle = (5 + ((invoker.CalamityCharge - 1) * 5.0));
+		double angfactor = 5.0;
+		if (type >= 1) angfactor = 3.33334;
+
+		double angle = (angfactor + ((invoker.CalamityCharge - 1) * 7.5));
+		if (type >= 1) angle = (angfactor + ((invoker.CalamityCharge - 1) * 5.0));
 
 		// In Legacy of Rust vertical autoaim is completely disabled for Heatwave,
 		// presumably to prevent situations where a part of the "wave" is autoaimed
@@ -763,7 +767,7 @@ class CalamityBlade : MarineWeapon
 		double projPitch = BulletSlope();
 		string firetype = "CalamityRipper";
 		if (type >= 1) firetype = "CalamityRipperSmall";
-		for (double ang = -angle; ang <= angle; ang += 5.0)
+		for (double ang = -angle; ang <= angle; ang += angfactor)
 		{
 			// Since autoaim is handled manually, we'll need FPF_NOAUTOAIM:
 			[BombShotsB, BombShots] = A_FireProjectile(firetype, ang, useammo: false, flags: FPF_NOAUTOAIM, pitch: DeltaAngle(pitch, projPitch));
@@ -806,10 +810,10 @@ class CalamityBlade : MarineWeapon
 			}
 			loop;
 		Deselect:
-			HETG A 1 A_Lower;
+			HETG A 1 A_Lower(12);
 			loop;
 		Select:
-			HETG A 1 A_Raise;
+			HETG A 1 A_Raise(12);
 			loop;
 		Fire:
 			HETG A 20
@@ -865,18 +869,18 @@ class CalamityBlade : MarineWeapon
 			TNT1 A 0 A_ReFire;
 			goto Ready;
 		AltFire:
-			HETG A 10
+			HETG A 8
 			{
 				invoker.CalamityFireType = 2;
 				if (invoker.CalamityCharge >= 5)
 				{
-					A_SetTics(2);
+					A_SetTics(1);
 					if (invoker.CalamityFlashTics <= 0) 
 					{
 						A_GunFlash();
 						A_StartSound("calamityblade/charge", CHAN_WEAPON, CHANF_DEFAULT, 0.25, ATTN_NORM, 1.125);
 					}
-					if (invoker.CalamityFlashTics >= 5) invoker.CalamityFlashTics = 0;
+					if (invoker.CalamityFlashTics >= 8) invoker.CalamityFlashTics = 0;
 																				 else invoker.CalamityFlashTics++;
 				}
 				else
@@ -885,7 +889,6 @@ class CalamityBlade : MarineWeapon
 					{
 						invoker.CalamityCharge++;
 						A_GunFlash();
-						A_StartSound("calamityblade/charge", CHAN_WEAPON);
 						A_StartSound("calamityblade/charge", CHAN_WEAPON, CHANF_DEFAULT, 1.0, ATTN_NORM, 1.25);
 					}
 				}
@@ -921,13 +924,26 @@ class CalamityBlade : MarineWeapon
 			TNT1 A 0 A_ReFire;
 			goto Ready;
 	
-		FlashEnd:
-			HETD A 3 bright
+		FlashEnd: // 8/20
+			HETD A 1 bright
 			{
 				A_OverlayRenderStyle(OverlayID(), STYLE_Add);
 				A_Light1;
 			}
 			HETD B 5 bright A_Light2;
+			goto LightDone;
+		FlashEndAlt: // 4.4/11
+			HETD A 1 bright
+			{
+				A_SetTics(randompick(1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2));
+				A_OverlayRenderStyle(OverlayID(), STYLE_Add);
+				A_Light1;
+			}
+			HETD B 3 bright 
+			{
+				A_SetTics(randompick(2,3,3,3));
+				A_Light2;
+			}
 			goto LightDone;
 		Flash:
 			TNT1 A 0
