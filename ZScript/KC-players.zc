@@ -3440,11 +3440,6 @@ class KCPlayerPawn : PlayerPawn
 			if (mod == 'ZBloodBullet') mod = "Hitscan";
 			if (mod == 'Axe') mod = "Chop";
 			if (mod == 'SpecialFire') mod = 'Fire';
-			if (CountInv("PlayingCCards") && mod == 'BaneMelee') 
-			{
-				mod = 'Melee';
-				damage *= 1.5;
-			}
 			if (mod == 'Flare') 
 			{
 				mod = "Fire";
@@ -3463,6 +3458,14 @@ class KCPlayerPawn : PlayerPawn
 			//		(inflictor && inflictor.CountInv("lolewatdisdo"))) damage *= frandompick(1.1875,1.375,1.375,1.375,1.375,1.375,1.375,1.375,1.375,1.75);
 			//if ((source && source.CountInv("gimmesacrificelule")) || 
 			//		(inflictor && inflictor.CountInv("gimmesacrificelule"))) damage *= frandompick(1.25,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2.0);
+		}
+		if (CountInv("PlayingCCards")) 
+		{
+			if (mod == 'BaneMelee')
+			{
+				mod = 'Melee';
+				damage *= 1.5;
+			}
 		}
 
 		/*
@@ -3641,6 +3644,28 @@ class KCPlayerPawn : PlayerPawn
 		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
 		if (source == null) sour = "NONE"; else sour = source.GetClassName();
 		
+		if (sour == "CCards_Actor_VolcanicTrapBurstDamage" ||
+				infl == "CCards_Actor_VolcanicTrapBurstDamage")
+		{
+			mod = 'Fire';
+		}
+		
+		if (sour == "BlackBearNew" || infl == "BlackBearNew")
+		{
+			mod = 'Melee';
+			flags |= DMG_THRUSTLESS;
+			flags &= ~DMG_EXPLOSION;
+			if (kcdebug_playerdamagemobj) Console.Printf("BlackBear 'Explosion'");
+		}
+		
+		if (sour == "JSkull_Image1" || sour == "JSkull_Image2" || sour == "JSkull_Image3" ||
+				infl == "JSkull_Image1" || infl == "JSkull_Image2" || infl == "JSkull_Image3")
+		{
+			flags &= ~DMG_NO_ARMOR;
+			flags &= ~DMG_NO_PROTECT;
+			if (kcdebug_playerdamagemobj) Console.Printf("Jumping Skull Afterimage");
+		}
+
 		if (mod == 'PSI') 
 		{
 			olddmg = damage;

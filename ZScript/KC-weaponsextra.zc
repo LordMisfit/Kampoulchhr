@@ -930,7 +930,10 @@ class CalamityBlade : MarineWeapon
 				A_OverlayRenderStyle(OverlayID(), STYLE_Add);
 				A_Light1;
 			}
-			HETD B 5 bright A_Light2;
+			HETD B 5 bright 
+			{
+				A_Light2;
+			}
 			goto LightDone;
 		FlashEndAlt: // 4.4/11
 			HETD A 1 bright
@@ -1120,15 +1123,15 @@ class CalamityRipperSmall : KCProjectile
 			HETB AABBCC 1
 			{
 				FSpawnParticleParams p;
-				p.lifetime = 9;
-				p.size = 15;
+				p.lifetime = randompick(6,7,7,7,7,7,7,7); // 11
+				p.size = randompick(11,11,11,12); // 18
 				p.sizestep = -p.size / p.lifetime;
 				p.style = STYLE_Add;
 				p.flags = SPF_FULLBRIGHT;
 				p.startalpha = alpha;
 				p.fadestep = -1;
 				p.pos.z = pos.z;
-				double hofs = -15;
+				double hofs = -9.375; // -15;
 				double step = (abs(hofs)*2) / 4;
 				for (double d = hofs; d <= -hofs; d += step)
 				{
@@ -1143,15 +1146,15 @@ class CalamityRipperSmall : KCProjectile
 			TNT1 A 0
 			{
 				FSpawnParticleParams p;
-				p.lifetime = frandom[incin](20, 29);
-				p.size = 15;
+				p.lifetime = frandom[incin](15.625,21.875);
+				p.size = randompick(11,11,11,12); // 18
 				p.sizestep = -p.size / p.lifetime;
 				p.style = STYLE_Add;
 				p.flags = SPF_FULLBRIGHT;
 				p.startalpha = alpha;
 				p.fadestep = -1;
 				p.pos.z = pos.z;
-				double hofs = -15;
+				double hofs = -9.375; // -15;
 				double step = (abs(hofs)*2) / 4;
 				for (double d = hofs; d <= -hofs; d += step)
 				{
