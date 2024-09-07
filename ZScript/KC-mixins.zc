@@ -423,6 +423,7 @@ mixin class StunItems
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Bonk")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Breakfast")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Zap")) || 
+			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Magic")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Chop")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Cricket")) || 
 			owner.InStateSequence(owner.curstate,owner.ResolveState("Pain.Lead")) || 
@@ -2077,7 +2078,7 @@ mixin class MonsterCollider
 		{
 			if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 			{
-				if (mod == 'Zap' || mod == 'Ice') damage *= 2;
+				if (mod == 'Zap' || mod == 'Magic' || mod == 'Ice') damage *= 2;
 			}
 		}
 		KCPlayerPawn playpawn;
@@ -2991,7 +2992,7 @@ mixin class MonsterCollider
 							//Console.Printf("@#@");
 							int basetauntchance = 1;
 							int basetauntchancemax = 8;
-							if (mod == 'Zap') basetauntchance *= random(2,3);
+							if (mod == 'Zap' || mod == 'Magic') basetauntchance *= random(2,3);
 							if (mod == 'Cricket') basetauntchancemax *= random(2,3);
 							if (random(1,basetauntchancemax) <= basetauntchance)
 							{

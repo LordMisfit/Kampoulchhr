@@ -550,6 +550,29 @@ class KC_EventHandler : EventHandler
 								{
 									mo.health = 1;
 									mo.bSHOOTABLE = true;
+									mo.bNOBLOOD = true;
+									mo.bDONTGIB = true;
+								}
+								else
+								{
+									mo.health = 1000;
+									mo.bSHOOTABLE = false;
+									mo.bNOBLOOD = true;
+									mo.bDONTGIB = true;
+								}
+							}
+						}
+						nm = "CCards_Actor_RandomJewelEnchantment";
+						it = ThinkerIterator.Create(nm);
+						while (mo = Actor(it.Next()))
+						{
+							if (mo) 
+							{
+								if (player.CountInv("TimeSeraphVisor") &&
+										player.CountInv("TimeSeraphBangle"))
+								{
+									mo.health = 1;
+									mo.bSHOOTABLE = true;
 								}
 								else
 								{
@@ -6588,6 +6611,16 @@ class KC_EventHandler : EventHandler
 				{
 					int monsterrating = victim.CountInv("MonsterRating");
 					if (!victim.CountInv("DedMonsterFlag") && !sv_monsterrespawn) victim.A_SetInventory("DedMonsterFlag",1);
+					
+					if (victim.GetClassName() == "CCards_Actor_JewelEnchantment" ||
+							victim.GetClassName() == "CCards_Actor_RandomJewelEnchantment")
+					{
+						if (source && PlayerPawn(source))
+						{
+							victim.Destroy();
+							if (kcdebug_worlddied) Console.Printf("\c[purple]Attack: %s, \c[brick]Attacker: %s", infl, sour);
+						}
+					}
 
 					if (kcdebug_worlddied) Console.Printf("\c[purple]Attack: %s, \c[brick]Attacker: %s", infl, sour);
 					if ((victim.bCOUNTKILL || specialtype || specialtype2) && !victim.bFRIENDLY && (inflicter || source))
