@@ -178,12 +178,13 @@ class IncineratorFlame : KCProjectile
 		Projectile;
 		Radius 13;
 		Height 8;
-		Damage 5;
+		DamageFunction (10 * random(1,4));
 		Speed 40;
 		ExplosionDamage 5;
 		ExplosionRadius 64;
-		+FORCERADIUSDMG
-		+BRIGHT
+		+FORCERADIUSDMG;
+		+NODAMAGETHRUST;
+		+BRIGHT;
 		RenderStyle 'Add';
 		DamageType "Fire";
 		Alpha 0.75;
@@ -278,16 +279,16 @@ class IncineratorFlame : KCProjectile
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
-			IFLR A 3 A_IncineratorExplode(10);
+			IFLR A 3 A_IncineratorExplode(5);
 			IFLR B 3;
-			IFLR C 2 A_IncineratorExplode(9);
+			IFLR C 2 A_IncineratorExplode(5);
 			IFLR D 4;
-			IFLR E 2 A_IncineratorExplode(8);
+			IFLR E 2 A_IncineratorExplode(5);
 			IFLR F 4;
 			IFLR G 2 A_StartSound("IncineratorFlame/fizzle");
-			IFLR H 2 A_IncineratorExplode(7);
+			IFLR H 2 A_IncineratorExplode(5);
 			IFLR I 4;
-			IFLR J 2 A_IncineratorExplode(6);
+			IFLR J 2 A_IncineratorExplode(5);
 			IFLR K 2;
 			IFLR L 2 A_IncineratorExplode(5);
 			IFLR L 2
@@ -314,12 +315,13 @@ class IncineratorFlameBig : IncineratorFlame
 		Projectile;
 		Radius 13;
 		Height 8;
-		Damage 20;
+		DamageFunction (40 * random(1,4));
 		Speed 40;
 		ExplosionDamage 25;
 		ExplosionRadius 64;
-		+FORCERADIUSDMG
-		+BRIGHT
+		+FORCERADIUSDMG;
+		+NODAMAGETHRUST;
+		+BRIGHT;
 		RenderStyle 'Add';
 		DamageType "Fire";
 		Alpha 0.75;
@@ -415,18 +417,18 @@ class IncineratorFlameBig : IncineratorFlame
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
-			IFLR A 3 A_IncineratorExplode(25);
+			IFLR A 3 A_IncineratorExplode(20);
 			IFLR B 3;
-			IFLR C 2 A_IncineratorExplode(24);
+			IFLR C 2 A_IncineratorExplode(20);
 			IFLR D 4;
-			IFLR E 2 A_IncineratorExplode(22);
+			IFLR E 2 A_IncineratorExplode(20);
 			IFLR F 4;
 			IFLR G 2 A_StartSound("IncineratorFlame/fizzle");
-			IFLR H 2 A_IncineratorExplode(21);
+			IFLR H 2 A_IncineratorExplode(20);
 			IFLR I 4;
-			IFLR J 2 A_IncineratorExplode(19);
+			IFLR J 2 A_IncineratorExplode(20);
 			IFLR K 2;
-			IFLR L 2 A_IncineratorExplode(18);
+			IFLR L 2 A_IncineratorExplode(20);
 			IFLR L 2
 			{
 				A_FadeOut(0.1);
@@ -454,12 +456,13 @@ class IncineratorFrostFlame : KCFrostMissile
 		Projectile;
 		Radius 13;
 		Height 8;
-		Damage 5;
+		DamageFunction (10 * random(1,4));
 		Speed 40;
 		ExplosionDamage 5;
 		ExplosionRadius 64;
-		+FORCERADIUSDMG
-		+BRIGHT
+		+FORCERADIUSDMG;
+		+NODAMAGETHRUST;
+		+BRIGHT;
 		RenderStyle 'Add';
 		DamageType "Ice";
 		Alpha 0.75;
@@ -554,16 +557,16 @@ class IncineratorFrostFlame : KCFrostMissile
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
-			IFLI A 3 A_IncineratorExplode(10);
+			IFLI A 3 A_IncineratorExplode(5);
 			IFLI B 3;
-			IFLI C 2 A_IncineratorExplode(9);
+			IFLI C 2 A_IncineratorExplode(5);
 			IFLI D 4;
-			IFLI E 2 A_IncineratorExplode(8);
+			IFLI E 2 A_IncineratorExplode(5);
 			IFLI F 4;
 			IFLI G 2 A_StartSound("IncineratorFlame/fizzle");
-			IFLI H 2 A_IncineratorExplode(7);
+			IFLI H 2 A_IncineratorExplode(5);
 			IFLI I 4;
-			IFLI J 2 A_IncineratorExplode(6);
+			IFLI J 2 A_IncineratorExplode(5);
 			IFLI K 2;
 			IFLI L 2 A_IncineratorExplode(5);
 			IFLI L 2
@@ -590,12 +593,13 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 		Projectile;
 		Radius 13;
 		Height 8;
-		Damage 20;
+		DamageFunction (40 * random(1,4));
 		Speed 40;
 		ExplosionDamage 25;
 		ExplosionRadius 64;
-		+FORCERADIUSDMG
-		+BRIGHT
+		+FORCERADIUSDMG;
+		+NODAMAGETHRUST;
+		+BRIGHT;
 		RenderStyle 'Add';
 		DamageType "Ice";
 		Alpha 0.75;
@@ -690,18 +694,18 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 				scale *= 0.3;
 				alpha = default.alpha;
 			}
-			IFLI A 3 A_IncineratorExplode(25);
+			IFLI A 3 A_IncineratorExplode(20);
 			IFLI B 3;
-			IFLI C 2 A_IncineratorExplode(24);
+			IFLI C 2 A_IncineratorExplode(20);
 			IFLI D 4;
-			IFLI E 2 A_IncineratorExplode(22);
+			IFLI E 2 A_IncineratorExplode(20);
 			IFLI F 4;
 			IFLI G 2 A_StartSound("IncineratorFlame/fizzle");
-			IFLI H 2 A_IncineratorExplode(21);
+			IFLI H 2 A_IncineratorExplode(20);
 			IFLI I 4;
-			IFLI J 2 A_IncineratorExplode(19);
+			IFLI J 2 A_IncineratorExplode(20);
 			IFLI K 2;
-			IFLI L 2 A_IncineratorExplode(18);
+			IFLI L 2 A_IncineratorExplode(20);
 			IFLI L 2
 			{
 				A_FadeOut(0.1);
@@ -1029,6 +1033,7 @@ class CalamityRipper : KCProjectile
 		Height 8;
 		+RIPPER;
 		+BRIGHT;
+		+NODAMAGETHRUST;
 		+DONTREFLECT;
 		RenderStyle 'Add';
 		Deathsound "calamityblade/explode";
@@ -1113,6 +1118,7 @@ class CalamityRipperSmall : KCProjectile
 		Scale 0.625;
 		+RIPPER;
 		+BRIGHT;
+		+NODAMAGETHRUST;
 		+DONTREFLECT;
 		RenderStyle 'Add';
 		Deathsound "calamityblade/explode";
