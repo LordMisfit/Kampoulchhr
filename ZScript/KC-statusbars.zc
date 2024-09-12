@@ -1264,6 +1264,12 @@ class KCStatusBarMain : BaseStatusBar
 				frameprefix = "RGMD";
 				if (CPlayerPawn.CountInv("RiotGunUpgrade")) usesmodpack = true;
 			}
+			temp = "CalamityBlade";
+			if (PlayerWeapon is temp)
+			{
+				frameprefix = "CBMD";
+				if (CPlayerPawn.CountInv("CalamityBladeUpgrade")) usesmodpack = true;
+			}
 			if (usesmodpack)
 			{
 				int jx, jy;

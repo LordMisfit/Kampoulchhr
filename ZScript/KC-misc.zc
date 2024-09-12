@@ -921,7 +921,11 @@ class PlayerStatItem : Inventory
 						}
 						if (kcheiwa_startincinerator) owner.A_SetInventory("Incinerator",1);
 						if (kcheiwa_startbhgen) owner.A_SetInventory("BHGen",1);
-						if (kcheiwa_startcalamityblade) owner.A_SetInventory("CalamityBlade",1);
+						if (kcheiwa_startcalamityblade) 
+						{
+							owner.A_SetInventory("CalamityBlade",1);
+							if (kcheiwa_startcalamityblade >= 2) owner.A_SetInventory("CalamityBladeUpgrade",1);
+						}
 						if (kcheiwa_starttransloc) owner.A_SetInventory("Translocator",1);
 						if (kcheiwa_startsawthrower) owner.A_SetInventory("SawThrower",1);
 						if (kcheiwa_startimpaler) owner.A_SetInventory("ImpalerXBow",1);
@@ -3609,6 +3613,8 @@ class PlayerStatItem : Inventory
 			if (weapon is "CalamityBlade")
 			{
 				BaseEncFactor -= 0.1667;
+				if (owner.CountInv("CalamityBladeUpgrade")) BaseEncFactor *= 0.25;
+				
 				if (berserked) BaseEncFactor *= 0.25;
 			}
 			If (weapon is "EvilWarriorShield")
@@ -8476,6 +8482,7 @@ class PlayerStatItem : Inventory
 				tempfactor1 = -0.5;
 				
 				if (berserked) tempfactor1 *= 0.25;
+
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
 				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
 			}
@@ -8495,6 +8502,7 @@ class PlayerStatItem : Inventory
 			if (A_CheckForHeiwa())
 			{
 				tempfactor1 = -0.334;
+				if (owner.CountInv("CalamityBladeUpgrade")) tempfactor1 *= 0.25;
 				
 				if (berserked) tempfactor1 *= 0.25;
 				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.5)) ));

@@ -5298,6 +5298,44 @@ class DevastatorModpack : BaseModPack
 	}
 }
 
+class CalamityBladeModPack : BaseModPack
+{
+	default
+	{
+		Tag "Calamity Blade Modpack";
+		Inventory.Icon "CBMDA0";
+		Inventory.PickupMessage "You picked up a Calamity Blade Mod Pack.";
+	}
+	
+	override void PostBeginPlay()
+	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("CalamityBladeUpgrade") && !self.grabbed)
+		{
+			A_SpawnItemEx("RandomModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+			self.Destroy();
+		}
+		super.PostBeginPlay();
+	}
+	
+	States
+	{
+		Spawn:
+			CBMD ABCDCB 3 Bright;
+			CBMD ABCDCB 3 Bright;
+			CBMD E 5 Bright;
+			Loop;
+			
+		Pickup:
+			TNT1 A 0 
+			{
+				A_GiveInventory("CalamityBladeUpgrade",1);
+				invoker.grabbed = true;
+			}
+			Stop;
+	}
+}
+
 class RandomModpack : CustomInventoryExt
 {
 	default
@@ -5368,11 +5406,20 @@ class RandomModpack : CustomInventoryExt
 								break;
 							}
 						}
-						if (rand >= 5)
+						if (rand == 5)
 						{
 							if (!playera.CountInv("DevastatorUpgrade"))
 							{
 								[spawned, mo] = A_SpawnItemEx("DevastatorModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								self.Destroy();
+								break;
+							}
+						}
+						if (rand >= 6)
+						{
+							if (!playera.CountInv("CalamityBladeUpgrade"))
+							{
+								[spawned, mo] = A_SpawnItemEx("CalamityBladeModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
 								self.Destroy();
 								break;
 							}
@@ -5383,7 +5430,8 @@ class RandomModpack : CustomInventoryExt
 								playera.CountInv("TommyGunUpgrade") ||
 								playera.CountInv("BlasterPistolUpgrade") ||
 								playera.CountInv("RiotGunUpgrade") ||
-								playera.CountInv("DevastatorUpgrade")))
+								playera.CountInv("DevastatorUpgrade") ||
+								playera.CountInv("CalamityBladeUpgrade")))
 					{
 						A_SpawnItemEx("RandomModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
 						self.Destroy();

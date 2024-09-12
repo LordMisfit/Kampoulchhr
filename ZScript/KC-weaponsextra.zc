@@ -727,6 +727,12 @@ class CalamityBlade : MarineWeapon
 	int CalamityCharge;
 	int CalamityFireType;
 	int CalamityFlashTics;
+	
+	int CalamityFireModeType;
+	// 0 - Default [Cells]
+	// 1 - ????? (needs Mod Pack)
+	// 2 - ????? (needs Mod Pack)
+	// 3 - ????? (needs Mod Pack)
 
 	Default
 	{
@@ -1085,6 +1091,154 @@ class CalamityRipper : KCProjectile
 	}
 }
 
+class CalamityRipperType1 : CalamityRipper
+{
+	static const color partColors[] =
+	{
+		"78598c",
+		"9479a6",
+		"a28ab1",
+		"b8a5c4"
+	};
+
+	Default
+	{
+		Tag "Calamity Blade Ripper";
+		DamageType "PSI";
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay A_FaceMovementDirection;
+			HETP AABBCC 1
+			{
+				FSpawnParticleParams p;
+				p.lifetime = 11;
+				p.size = 18;
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					level.SpawnParticle(p);
+				}
+			}
+			loop;
+		Death:
+			TNT1 A 0
+			{
+				FSpawnParticleParams p;
+				p.lifetime = frandom[incin](25, 35);
+				p.size = 18;
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					for (int i = 0; i < 2; i++)
+					{
+						p.vel = (0, 0, frandom[incin](2.5, 4.5)) * randompick[incin](-1, 1);
+						p.accel.z = (-p.vel.z / p.lifetime);
+						level.SpawnParticle(p);
+					}
+				}
+			}
+			HETP DEFGHI 3;
+			stop;
+	}
+}
+
+class CalamityRipperType2 : CalamityRipper
+{
+	static const color partColors[] =
+	{
+		"4248ff",
+		"6d72ff",
+		"8286ff",
+		"a1a4ff"
+	};
+
+	Default
+	{
+		Tag "Calamity Blade Ripper";
+		DamageType "Magic";
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay A_FaceMovementDirection;
+			HETM AABBCC 1
+			{
+				FSpawnParticleParams p;
+				p.lifetime = 11;
+				p.size = 18;
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					level.SpawnParticle(p);
+				}
+			}
+			loop;
+		Death:
+			TNT1 A 0
+			{
+				FSpawnParticleParams p;
+				p.lifetime = frandom[incin](25, 35);
+				p.size = 18;
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					for (int i = 0; i < 2; i++)
+					{
+						p.vel = (0, 0, frandom[incin](2.5, 4.5)) * randompick[incin](-1, 1);
+						p.accel.z = (-p.vel.z / p.lifetime);
+						level.SpawnParticle(p);
+					}
+				}
+			}
+			HETM DEFGHI 3;
+			stop;
+	}
+}
+
 class CalamityRipperSmall : KCProjectile
 {
 	static const color partColors[] =
@@ -1166,6 +1320,154 @@ class CalamityRipperSmall : KCProjectile
 				}
 			}
 			HETB DEFGHI 3;
+			stop;
+	}
+}
+
+class CalamityRipperSmallType1 : CalamityRipperSmall
+{
+	static const color partColors[] =
+	{
+		"78598c",
+		"9479a6",
+		"a28ab1",
+		"b8a5c4"
+	};
+
+	Default
+	{
+		Tag "Calamity Blade Ripper";
+		DamageType "PSI";
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay A_FaceMovementDirection;
+			HETP AABBCC 1
+			{
+				FSpawnParticleParams p;
+				p.lifetime = randompick(6,7,7,7,7,7,7,7); // 11
+				p.size = randompick(11,11,11,12); // 18
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -9.375; // -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					level.SpawnParticle(p);
+				}
+			}
+			loop;
+		Death:
+			TNT1 A 0
+			{
+				FSpawnParticleParams p;
+				p.lifetime = frandom[incin](15.625,21.875);
+				p.size = randompick(11,11,11,12); // 18
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -9.375; // -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					for (int i = 0; i < 2; i++)
+					{
+						p.vel = (0, 0, frandom[incin](2.5, 4.5)) * randompick[incin](-1, 1);
+						p.accel.z = (-p.vel.z / p.lifetime);
+						level.SpawnParticle(p);
+					}
+				}
+			}
+			HETP DEFGHI 3;
+			stop;
+	}
+}
+
+class CalamityRipperSmallType2 : CalamityRipperSmall
+{
+	static const color partColors[] =
+	{
+		"4248ff",
+		"6d72ff",
+		"8286ff",
+		"a1a4ff"
+	};
+
+	Default
+	{
+		Tag "Calamity Blade Ripper";
+		DamageType "Magic";
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay A_FaceMovementDirection;
+			HETM AABBCC 1
+			{
+				FSpawnParticleParams p;
+				p.lifetime = randompick(6,7,7,7,7,7,7,7); // 11
+				p.size = randompick(11,11,11,12); // 18
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -9.375; // -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					level.SpawnParticle(p);
+				}
+			}
+			loop;
+		Death:
+			TNT1 A 0
+			{
+				FSpawnParticleParams p;
+				p.lifetime = frandom[incin](15.625,21.875);
+				p.size = randompick(11,11,11,12); // 18
+				p.sizestep = -p.size / p.lifetime;
+				p.style = STYLE_Add;
+				p.flags = SPF_FULLBRIGHT;
+				p.startalpha = alpha;
+				p.fadestep = -1;
+				p.pos.z = pos.z;
+				double hofs = -9.375; // -15;
+				double step = (abs(hofs)*2) / 4;
+				for (double d = hofs; d <= -hofs; d += step)
+				{
+					p.color1 = partColors[ random[incin](0, partColors.Size()-1) ];
+					Vector2 ofs = Actor.RotateVector((0, d), angle);
+					p.pos.xy = level.Vec2Offset(pos.xy, ofs);
+					for (int i = 0; i < 2; i++)
+					{
+						p.vel = (0, 0, frandom[incin](2.5, 4.5)) * randompick[incin](-1, 1);
+						p.accel.z = (-p.vel.z / p.lifetime);
+						level.SpawnParticle(p);
+					}
+				}
+			}
+			HETM DEFGHI 3;
 			stop;
 	}
 }
