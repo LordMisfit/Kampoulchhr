@@ -3134,8 +3134,17 @@ class KCPlayerPawn : PlayerPawn
 						IncineratorFlameBig(inflictor) || IncineratorFlameBig(source)) PlayerDefenseIgnoreFactor += (frandom(0.75,0.825) * (1.00 - PlayerDefenseIgnoreFactor));
 				
 				double CalamityFactor = 0.0;
-				if (CalamityRipperSmall(inflictor) || CalamityRipperSmall(source)) PlayerDefenseIgnoreFactor += (frandom(0.2,0.22) * (1.00 - PlayerDefenseIgnoreFactor));
-				if (CalamityRipper(inflictor) || CalamityRipper(source)) PlayerDefenseIgnoreFactor += (frandom(0.63,0.693) * (1.00 - PlayerDefenseIgnoreFactor));
+				if ((inflictor && inflictor.CountInv("CalamityBladeUpgrade")) || 
+						(source && source.CountInv("CalamityBladeUpgrade")))
+				{
+					if (CalamityRipperSmall(inflictor) || CalamityRipperSmall(source)) PlayerDefenseIgnoreFactor += (frandom(0.3,0.33) * (1.00 - PlayerDefenseIgnoreFactor));
+					if (CalamityRipper(inflictor) || CalamityRipper(source)) PlayerDefenseIgnoreFactor += (frandom(0.945,1.00) * (1.00 - PlayerDefenseIgnoreFactor));
+				}
+				else
+				{
+					if (CalamityRipperSmall(inflictor) || CalamityRipperSmall(source)) PlayerDefenseIgnoreFactor += (frandom(0.2,0.22) * (1.00 - PlayerDefenseIgnoreFactor));
+					if (CalamityRipper(inflictor) || CalamityRipper(source)) PlayerDefenseIgnoreFactor += (frandom(0.63,0.693) * (1.00 - PlayerDefenseIgnoreFactor));
+				}
 				
 				double HWShieldFactor = 0.125;
 				if (EvilWarriorShieldBall(inflictor) || EvilWarriorShieldBall(source) ||
