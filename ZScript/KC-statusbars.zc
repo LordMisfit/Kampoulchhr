@@ -1455,6 +1455,39 @@ class KCStatusBarMain : BaseStatusBar
 					DrawString(mKCLFont, FormatNumber(upgrades, 1), (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, font.cr_gray, FontAlpha, FontWrapWidth, FontLineSpace, FontScale);
 				}
 			}
+			temp = "CalamityBlade";
+			if (PlayerWeapon is temp)
+			{
+				let CalB = CalamityBlade(CPlayerPawn.FindInventory("CalamityBlade"));
+				if (CalB)
+				{
+					if (MiscItem)
+					{
+						usealtammo = 0;
+						if (CPlayerPawn.CountInv("CalamityBladeUpgrade") > 0)
+						{
+							if (CalB.CalamityFireModeType <= 0)
+							{
+								usealtammo = 0;
+							}
+							else
+							if (CalB.CalamityFireModeType == 1)
+							{
+								altammo = MiscItem.CurrentPsychicPoints; // / EWS.shieldmagiccost;
+								altammomax = MiscItem.MaxPsychicPoints; // / EWS.shieldmagiccost;
+								usealtammo = 2;
+							}
+							else
+							if (CalB.CalamityFireModeType >= 2)
+							{
+								altammo = MiscItem.CurrentMagicPoints; // / EWS.shieldmagiccost;
+								altammomax = MiscItem.MaxMagicPoints; // / EWS.shieldmagiccost;
+								usealtammo = 1;
+							}
+						}
+					}
+				}
+			}
 			temp = "BHGen";
 			if (PlayerWeapon is temp)
 			{
@@ -1528,6 +1561,7 @@ class KCStatusBarMain : BaseStatusBar
 				
 				if (usealtammo == 0) DrawInventoryIcon(ammo1, (-14, -4));
 				if (usealtammo == 1) DrawImage("MAGIICON", (-14, -4), 0, wsalpha, (-1, -1), (0.5, 0.5)); 
+				if (usealtammo == 2) DrawImage("PSIICON", (-14, -4), 0, wsalpha, (-1, -1), (0.5, 0.5)); 
 				if (usealtammo == 0)
 				{
 					if (CPlayerPawn.CountInv("BackpackTier2")) DrawString(mKCLFont, FormatNumber(trueammocurrent, 3), (x+4, y-1), DI_TEXT_ALIGN_RIGHT, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
