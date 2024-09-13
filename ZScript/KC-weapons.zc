@@ -6576,7 +6576,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 			droptypespecial = "TeslaCannon";
 			droptypeammo = "Bolts";
 			droptypeammobig = "BoltsLarge";
-			if (random(1,3) <= 1)
+			if (random(1,random(2,2,3,3,3)) <= 1)
 			{
 				droptypespecial = "Incinerator";
 				droptypeammo = "CellNew";
@@ -6901,7 +6901,11 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		if (A_CheckForHeiwa())
 		{
 			droptypespecial = "BHGen";
-			if (random(1,3) <= 1) droptypespecial = "CalamityBlade";
+			if (random(1,random(2,2,3,3,3)) <= 1)
+			{
+				droptypespecial = "CalamityBlade";
+			}
+
 			droptypeammo = "CellNew";
 			droptypeammobig = "CellPackNew";
 			if (bDROPPED)
