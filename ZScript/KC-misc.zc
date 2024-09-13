@@ -923,7 +923,7 @@ class PlayerStatItem : Inventory
 						if (kcheiwa_startbhgen) owner.A_SetInventory("BHGen",1);
 						if (kcheiwa_startcalamityblade) 
 						{
-							owner.A_SetInventory("CalamityBlade",1);
+							if (kcheiwa_startcalamityblade == 1 || kcheiwa_startcalamityblade == 3) owner.A_SetInventory("CalamityBlade",1);
 							if (kcheiwa_startcalamityblade >= 2) owner.A_SetInventory("CalamityBladeUpgrade",1);
 						}
 						if (kcheiwa_starttransloc) owner.A_SetInventory("Translocator",1);

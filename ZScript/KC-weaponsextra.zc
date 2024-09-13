@@ -761,7 +761,7 @@ class CalamityBlade : MarineWeapon
 
 	action void A_ChargeCalamityBlade(int type, int ammoused)
 	{
-		Console.Printf("A_ChargeCalamityBlade - type: %d, ammoused: %d [gametic: %d]", type, ammoused, gametic);
+		//Console.Printf("A_ChargeCalamityBlade - type: %d, ammoused: %d [gametic: %d]", type, ammoused, gametic);
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
@@ -823,7 +823,7 @@ class CalamityBlade : MarineWeapon
 
 	action int A_CheckCBladeAmmo(int type)
 	{
-		Console.Printf("A_CheckCBladeAmmo - type: %d, [gametic: %d]", type, gametic);
+		//Console.Printf("A_CheckCBladeAmmo - type: %d, [gametic: %d]", type, gametic);
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
@@ -833,6 +833,7 @@ class CalamityBlade : MarineWeapon
 			if (CountInv("CalamityBladeUpgrade") > 0) 
 			{
 				ammoused = 6;
+				if (invoker.CalamityFireModeType >= 1) ammoused = 10;
 			}
 			else 
 			{
@@ -844,40 +845,41 @@ class CalamityBlade : MarineWeapon
 			if (CountInv("CalamityBladeUpgrade") > 0) 
 			{
 				ammoused = 2;
+				if (invoker.CalamityFireModeType >= 1) ammoused = 3;
 			}
 			else 
 			{
 				ammoused = 3;
 			}
 		}
-		if (invoker.CalamityFireModeType >= 1) ammoused *= 1.5;
+		//if (invoker.CalamityFireModeType >= 1) ammoused *= 1.5;
 		return ammoused;
 	}
 
 	action state A_CheckCBladeAmmo2(int type, int ammoused)
 	{
-		Console.Printf("A_CheckCBladeAmmo2 - type: %d, ammoused: %d [gametic: %d]", type, ammoused, gametic);
+		//Console.Printf("A_CheckCBladeAmmo2 - type: %d, ammoused: %d [gametic: %d]", type, ammoused, gametic);
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
-		Console.Printf("CalamityCharge: %d", invoker.CalamityCharge);
+		//Console.Printf("CalamityCharge: %d", invoker.CalamityCharge);
 		if (invoker.CalamityCharge <= 0)
 		{
 			if (invoker.CalamityFireModeType <= 0 && (playera && playera.CountInv("Cell") < ammoused)) 
 			{
-				Console.Printf("0");
+				//Console.Printf("0");
 				return resolvestate("Ready");
 			}
 			else
 			if (invoker.CalamityFireModeType == 1 && (MiscItem && MiscItem.CurrentPsychicPoints < ammoused)) 
 			{
-				Console.Printf("1");
+				//Console.Printf("1");
 				return resolvestate("Ready");
 			}
 			else
 			if (invoker.CalamityFireModeType >= 2 && (MiscItem && MiscItem.CurrentMagicPoints < ammoused)) 
 			{
-				Console.Printf("2");
+				//Console.Printf("2");
 				return resolvestate("Ready");
 			}
 			return resolvestate(null);
@@ -950,11 +952,22 @@ class CalamityBlade : MarineWeapon
 					BS1.defenseignorefactor = (0.125 * invoker.CalamityCharge);
 					if (CountInv("CalamityBladeUpgrade")) 
 					{
-						BS1.defenseignorefactor = (0.1875 * invoker.CalamityCharge);
-						BS1.A_ScaleVelocity(1.375);
-						BS1.basedmg1 = 60;
-						BS1.basedmg2 = 66;
-						BS1.basedmg3 = 72;
+						if (invoker.CalamityFireModeType >= 1)
+						{
+							BS1.defenseignorefactor = (0.28125 * invoker.CalamityCharge);
+							BS1.A_ScaleVelocity(1.1875);
+							BS1.basedmg1 = 60;
+							BS1.basedmg2 = 66;
+							BS1.basedmg3 = 72;
+						}
+						else
+						{
+							BS1.defenseignorefactor = (0.140625 * invoker.CalamityCharge);
+							BS1.A_ScaleVelocity(1.375);
+							BS1.basedmg1 = 50;
+							BS1.basedmg2 = 55;
+							BS1.basedmg3 = 60;
+						}
 					}
 				}
 				else
@@ -965,11 +978,22 @@ class CalamityBlade : MarineWeapon
 						BS2.defenseignorefactor = (0.0625 * invoker.CalamityCharge);
 						if (CountInv("CalamityBladeUpgrade")) 
 						{
-							BS2.defenseignorefactor = (0.09375 * invoker.CalamityCharge);
-							BS2.A_ScaleVelocity(1.25);
-							BS2.basedmg1 = 20;
-							BS2.basedmg2 = 23;
-							BS2.basedmg3 = 27;
+							if (invoker.CalamityFireModeType >= 1)
+							{
+								BS2.defenseignorefactor = (0.140625 * invoker.CalamityCharge);
+								BS2.A_ScaleVelocity(1.125);
+								BS2.basedmg1 = 20;
+								BS2.basedmg2 = 23;
+								BS2.basedmg3 = 27;
+							}
+							else
+							{
+								BS2.defenseignorefactor = (0.0703125 * invoker.CalamityCharge);
+								BS2.A_ScaleVelocity(1.25);
+								BS2.basedmg1 = 18;
+								BS2.basedmg2 = 20;
+								BS2.basedmg3 = 23;
+							}
 						}
 					}
 				}
@@ -989,7 +1013,7 @@ class CalamityBlade : MarineWeapon
 			CBLD A 4
 			{
 				int modpackdropchance = 4; // 16
-				if (bDROPPED) modpackdropchance = 24; // 96
+				if (bDROPPED) modpackdropchance = 16; // 96
 				let globalvars = KCGlobalVariables.Get();
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));

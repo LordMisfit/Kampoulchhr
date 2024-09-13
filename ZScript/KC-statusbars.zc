@@ -4104,6 +4104,7 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					PlayerWeapon is "Incinerator" ||
 					PlayerWeapon is "BHGen" ||
+					(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) ||
 					PlayerWeapon is "ImpalerXBow")
 			{
 				LY += LYInc;
@@ -4134,6 +4135,7 @@ class KCStatusBarMain : BaseStatusBar
 																													 else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
 				else if (PlayerWeapon is "BHGen") LegendStr.AppendFormat(" = \c[blue]CHANGE ALT-FIRE MODE\c-");
+				else if (PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE\c-");
 				else if (PlayerWeapon is "Incinerator") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
