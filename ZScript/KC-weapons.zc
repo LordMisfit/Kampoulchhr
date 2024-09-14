@@ -17066,11 +17066,8 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				A_ShotSpeedTier(0);
 				int tic = 3;
 				tic = A_ShotSpeedTicInput(tic);
-				if (invoker.firetype <= 0)
-				{
-					invoker.truefiretype = invoker.firetype;
-					if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
-				}
+				invoker.truefiretype = invoker.firetype;
+				if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
 				
 				invoker.freeshot = 0;
 				if (CountInv("BlasterRifleUpgrade"))
@@ -17217,12 +17214,9 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 					}
 				}
 				
-				if (invoker.firetype <= 0)
-				{
-					invoker.truefiretype = invoker.firetype;
-					if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
-					//Console.Printf("invoker.truefiretype: %d", invoker.truefiretype);
-				}
+				invoker.truefiretype = invoker.firetype;
+				if (CountInv("Cell") <= 0) invoker.truefiretype = 1;
+				//Console.Printf("invoker.truefiretype: %d, invoker.firetype: %d", invoker.truefiretype, invoker.firetype);
 				
 				if (invoker.truefiretype <= 0)
 				{

@@ -98,6 +98,12 @@ OptionValue "StartWeaponSingle"
 	1, "Yes"
 }
 
+OptionValue "StartWeaponSingleYesDefault"
+{
+	0, "No"
+	1, "Yes [DEFAULT]"
+}
+
 OptionValue "StartWeaponSingleWMod"
 {
 	0, "No [DEFAULT]"
@@ -331,7 +337,7 @@ OptionMenu "KC-HeiwaSpecific"
 	KCOption "Starts w/ Time Seraph's Pocket Watch?",		"Determines if Heiwa starts a new game with the Time Seraph's Pocket Watch [and access to the Level 2 Time Seraph's Armor, though only IF you also have the Charm, otherwise the watch by itself doesn't allow access to the armor].",		"kcheiwa_startwatch", 				"StartTSArtifact"
 	KCOption "Starts w/ Time Seraph's Bangle?",		"Determines if Heiwa starts a new game with the Time Seraph's Bangle [and access to the Time Seraph's Visor].",		"kcheiwa_startbangle", 				"StartTSArtifact"
 	StaticText " "
-	KCOption "Starts w/ Knife?",		"Determines if Heiwa starts a new game with her knife.",		"kcheiwa_startknife", 				"StartWeaponSingle"
+	KCOption "Starts w/ Knife?",		"Determines if Heiwa starts a new game with her knife.",		"kcheiwa_startknife", 				"StartWeaponSingleYesDefault"
 	KCOption "Starts w/ Glock 21?",		"Determines if Heiwa starts a new game with the Glock 21 Pistol.",		"kcheiwa_startglock", 				"StartWeaponSingle"
 	KCOption "Starts w/ Blaster Pistol[s]?",		"Determines if Heiwa starts a new game with one or two Blaster Pistols.",		"kcheiwa_startblaster", 				"StartWeaponDualWMod"
 	KCOption "Starts w/ Riot Gun?",		"Determines if Heiwa starts a new game with the Riot Gun.",		"kcheiwa_startriotgun", 				"StartWeaponSingleWMod"
