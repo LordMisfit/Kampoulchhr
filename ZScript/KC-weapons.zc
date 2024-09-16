@@ -14432,6 +14432,8 @@ Class PistolBlast : SingleDamageRipper
 	override void Tick()
 	{
 		A_CalcDmg();
+		if (random(1,256) <= random(36,45)) bFORCEPAIN = true;
+																	 else bFORCEPAIN = false;
 		super.Tick();
 	}
 	
@@ -14496,6 +14498,8 @@ Class PistolBlastWeak : PistolBlast
 	override void Tick()
 	{
 		A_CalcDmg();
+		if (random(1,256) <= random(12,15)) bFORCEPAIN = true;
+																	 else bFORCEPAIN = false;
 		super.Tick();
 	}
 	
@@ -14504,7 +14508,7 @@ Class PistolBlastWeak : PistolBlast
 		Spawn:
 			PLSS AABB 1 NoDelay Bright 
 			{
-				if (user_fuse % 2) A_SpawnItemEx ("BlastTrailWeak", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERSCALE|SXF_TRANSFERTRANSLATION);
+				if (user_fuse % 2) A_SpawnItemEx("BlastTrailWeak", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERSCALE|SXF_TRANSFERTRANSLATION);
 				user_fuse++;
 				if (user_fuse >= user_fusemax) return resolvestate("DeathFizzle");
 				return resolvestate(null);
