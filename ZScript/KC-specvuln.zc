@@ -5376,7 +5376,7 @@ class CompatVulnItem : PlaceholderItem
 							(InStateSequence(owner.curstate,ResolveState("Idle")) && Heresiarch(owner)))
 					{
 						owner.A_SetInventory("JustSurprised",1);
-						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+						if (kc_hitweaksounds && owner.health > 0) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
 						nm = "SonicNail";
 						if (inflictor && 
 								(inflictor.GetClassName() == nm ||

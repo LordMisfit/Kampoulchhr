@@ -139,16 +139,15 @@ class Incinerator : MarineWeapon
 		User4:
 			FLMG A 0
 			{
+				A_StartSound("IncineratorFlame/burn",0);
 				if (invoker.FireMode == 0)
 				{
-					A_StartSound("calamityblade/charge",0);
 					A_Print("FrostFlame Mode");
 					invoker.FireMode = 1;
 				}
 				else
 				if (invoker.FireMode == 1)
 				{
-					A_StartSound("calamityblade/charge",0);
 					A_Print("Flame Mode");
 					invoker.FireMode = 0;
 				}
