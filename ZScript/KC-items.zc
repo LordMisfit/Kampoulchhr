@@ -2002,8 +2002,22 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				
 					playera.health = CurrentHealth;
 				}
-				playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
-				
+				let armr = KCArmor(playera.FindInventory("KCArmor"));
+				if (armr)
+				{
+					if (armr.amount >= (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE))
+					{
+						playera.A_GiveInventory("KCHeavyArmorForMegasphere", 1); //A_MegaSphereArmor();
+					}
+					else
+					{
+						playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
+					}
+				}
+				else
+				{
+					playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
+				}
 				
 				if (CurrentPsychicPoints < MaxPPLimit)
 				{
@@ -3416,9 +3430,13 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		Armor.SaveAmount 200;
 	}
 	
-	override void BeginPlay()
+	void CheckArmorGiveVal()
 	{
 		actor playera = players[0].mo;
+		let armor = KCArmor(playera.FindInventory("KCArmor"));
+		textureid aicon;
+		if (armor) aicon = armor.icon;
+
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
@@ -3427,40 +3445,22 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 			}
-			if (MiscItem.darmortype >= 3) 
-			{
-				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
-				SaveAmount = A_CheckMaxArmor(SaveAmount);
-			}
 		}
 		else
 		{
 			SaveAmount = BLUEARMORVALINT;
 		}
+	}
+	
+	override void BeginPlay()
+	{
+		CheckArmorGiveVal();
 		super.BeginPlay();
 	}
 	
 	override void Tick()
 	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		if (MiscItem)
-		{
-			if (MiscItem.darmortype <= 2) 
-			{
-				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
-				SaveAmount = A_CheckMaxArmor(SaveAmount);
-			}
-			if (MiscItem.darmortype >= 3) 
-			{
-				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
-				SaveAmount = A_CheckMaxArmor(SaveAmount);
-			}
-		}
-		else
-		{
-			SaveAmount = BLUEARMORVALINT;
-		}
+		CheckArmorGiveVal();
 		super.Tick();
 	}
 }
@@ -3660,6 +3660,50 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 	}
 }
 
+class KCHeavyArmorForMegasphere : KCArmorPickup
+{
+	default
+	{
+		Inventory.Icon "HEVAB0";
+		Armor.SavePercent 87.5;
+		Armor.SaveAmount 425;
+	}
+	
+	void CheckArmorGiveVal()
+	{
+		actor playera = players[0].mo;
+		let armor = KCArmor(playera.FindInventory("KCArmor"));
+		textureid aicon;
+		if (armor) aicon = armor.icon;
+
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			if (MiscItem.darmortype <= 3) 
+			{
+				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
+			}
+		}
+		else
+		{
+			SaveAmount = REDARMORVALINT;
+		}
+	}
+	
+	override void BeginPlay()
+	{
+		CheckArmorGiveVal();
+		super.BeginPlay();
+	}
+	
+	override void Tick()
+	{
+		CheckArmorGiveVal();
+		super.Tick();
+	}
+}
+
 class KCHeavyArmor : KCArmorPickup
 {
 	mixin HUDRecovery;
@@ -3672,7 +3716,7 @@ class KCHeavyArmor : KCArmorPickup
 		Inventory.Icon "HEVAB0";
 		Inventory.Pickupsound "GetArmorFull";
 		Armor.SavePercent 87.5;
-		Armor.SaveAmount 350;
+		Armor.SaveAmount 425;
 	}
 	
 	override void Tick()
