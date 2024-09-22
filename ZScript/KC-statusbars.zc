@@ -1667,7 +1667,6 @@ class KCStatusBarMain : BaseStatusBar
 				//DrawString(mKCLFont, FormatNumber(CurrentMagicPoints, 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				DrawImage("HLCRICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.5, 0.5));
 				
-				//Console.Printf("hudarmortype: %d", hudarmortype);
 				double percent = (HellcoreOverheatLevel * 100 / 1000000);
 				string HCLRPer = "";
 				HCLRPer.AppendFormat("%.2f", percent);
@@ -1707,7 +1706,6 @@ class KCStatusBarMain : BaseStatusBar
 				DrawString(mKCLFont, FormatNumber(mMPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				DrawImage("MAGIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.5, 0.5));
 				
-				//Console.Printf("hudarmortype: %d", hudarmortype);
 				string MaxMPS = " / ";
 				MaxMPS.AppendFormat("%d", MaxMagicPoints);
 				DrawString(mKCMFont, MaxMPS, (94+1, (yinc-16)+1+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
@@ -1745,7 +1743,6 @@ class KCStatusBarMain : BaseStatusBar
 				DrawString(mKCLFont, FormatNumber(mPPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
 				DrawImage("PSIICON", (20, (yinc-1)+ycorrection), 0, fontalpha, (-1, -1), (0.625, 0.625));
 				
-				//Console.Printf("hudarmortype: %d", hudarmortype);
 				string MaxPPS = " / ";
 				MaxPPS.AppendFormat("%d", MaxPsychicPoints);
 				DrawString(mKCMFont, MaxPPS, (94+1, (yinc-16)+1+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
@@ -1877,6 +1874,7 @@ class KCStatusBarMain : BaseStatusBar
 			if (MiscItem) hudarmortype = MiscItem.darmortype2;
 			if (hudarmortype == 1) fontclr = font.cr_green;
 			if (hudarmortype == 2) fontclr = font.cr_lightblue;
+			if (hudarmortype == 3) fontclr = font.cr_brick;
 			if (CPlayer.mo.CountInv("TSArmorTier1") || 
 					CPlayer.mo.CountInv("TSArmorTier2") || 
 					CPlayer.mo.CountInv("TSArmorTier3Plus"))
@@ -1888,6 +1886,7 @@ class KCStatusBarMain : BaseStatusBar
 			int MaxArmor;
 			if (hudarmortype == 1) MaxArmor = MiscItem.MaxHealthTrue;
 			if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * 2);
+			if (hudarmortype == 3) MaxArmor = (MiscItem.MaxHealthTrue * 3.35);
 			double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
 			MaxArmor *= (1.0 + fact);
 
@@ -1908,9 +1907,16 @@ class KCStatusBarMain : BaseStatusBar
 													else DrawBar("APNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 				}
 				else
+				if (hudarmortype == 2)
 				{
 					if (lgpiece2 >= 101) DrawBar("APNOTCH4", "APNOTCH3", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
 													else DrawBar("APNOTCH3", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
+				}
+				else
+				if (hudarmortype == 3)
+				{
+					if (lgpiece2 >= 101) DrawBar("APNOTCH6", "APNOTCH5", (lgpiece2 - 100), 100, mpos, 1, 1, 0, alpha:malpha);
+													else DrawBar("APNOTCH5", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, alpha:malpha);
 				}
 			}
 			
@@ -1930,6 +1936,7 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					if (hudarmortype == 1) MaxAPS.AppendFormat("100");
 					if (hudarmortype == 2) MaxAPS.AppendFormat("200");
+					if (hudarmortype == 3) MaxAPS.AppendFormat("335");
 				}
 				DrawString(mKCMFont, MaxAPS, (94+1+APDmgShakeX, (yinc-16)+1+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
 				DrawString(mKCMFont, MaxAPS, (94+APDmgShakeX, (yinc-16)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));

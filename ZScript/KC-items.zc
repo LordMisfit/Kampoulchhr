@@ -2877,9 +2877,14 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype >= 2) 
+			if (MiscItem.darmortype == 2) 
 			{
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
+			if (MiscItem.darmortype >= 3) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.35);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
@@ -3089,7 +3094,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				if (MiscItem)
 				{
 					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype2 >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
 				}
 			}
 			Loop;
@@ -3262,9 +3268,14 @@ class ArmorBonusBig : ArmorBonus2
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype >= 2) 
+			if (MiscItem.darmortype == 2) 
 			{
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
+			}
+			if (MiscItem.darmortype >= 3) 
+			{
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.35);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
@@ -3292,7 +3303,8 @@ class ArmorBonusBig : ArmorBonus2
 				if (MiscItem)
 				{
 					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype2 >= 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
 				}
 			}
 			Loop;
@@ -3738,6 +3750,201 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		Idle:
 			ARM2 A 6;
 			ARM2 B 6 Bright;
+			Loop;
+	}
+}
+
+class KCHeavyArmor : KCArmorPickup
+{
+	mixin HUDRecovery;
+	mixin TSASpawnCheck;
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.PickupMessage "Picked up the \c[red]heavy armor\c-"; // "Picked up the MegaArmor!";
+		Inventory.Icon "HEVAB0";
+		Inventory.Pickupsound "GetArmorFull";
+		Armor.SavePercent 87.5;
+		Armor.SaveAmount 335;
+	}
+	
+	override void Tick()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			SaveAmount = (MiscItem.MaxHealthTrue * 3.35);
+			SaveAmount = A_CheckMaxArmor(SaveAmount);
+		}
+		else
+		{
+			SaveAmount = 335;
+		}
+		super.Tick();
+	}
+	
+	override bool Use (bool pickup)
+	{
+		name armorclasstype = "KCArmor";
+		
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int PrevArmorAmt = Owner.CountInv(armorclasstype);
+		int PrevArmorType;
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);
+		
+		int SaveAmount = GetSaveAmount();
+		let armor = KCArmor(Owner.FindInventory(armorclasstype));
+		if (kcdebug_armordisplays) Console.Printf("SaveAmount: %d", SaveAmount);
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = KCArmor(Spawn(armorclasstype));
+			armor.BecomeItem ();
+			Owner.AddInventory (armor);
+		}
+		else
+		{
+			// If you already have more armor than this item gives you, you can't
+			// use it.
+			if (armor.Amount >= SaveAmount + armor.BonusCount)
+			{
+				return false;
+			}
+			// Don't use it if you're picking it up and already have some.
+			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+		}
+		
+		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+		armor.Amount = SaveAmount + armor.BonusCount;
+		armor.MaxAmount = SaveAmount;
+		armor.Icon = Icon;
+		armor.MaxAbsorb = MaxAbsorb;
+		armor.MaxFullAbsorb = MaxFullAbsorb;
+		armor.ArmorType = GetClassName();
+		armor.ActualSaveAmount = SaveAmount;
+		return true;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+				int timefreezes;
+				if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+				int basechance = (kc_inventorydroprate5 * 0.0625);
+				double skillmult = 1;
+				if (skill <= 0) skillmult = 0.667;
+				if (skill == 1) skillmult = 0.8;
+				if (skill == 2) skillmult = 1;
+				if (skill == 3) skillmult = 1.25;
+				if (skill >= 4) skillmult = 1.5;
+
+				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
+				{
+					if (!bDROPPED && timefreezes)
+					{
+						double basediv = 0.5;
+						double basediv2 = 0.125;
+						if ((playera.CountInv("KCTimeFreezer1") ||
+								 playera.CountInv("KCTimeFreezer2") ||
+								 playera.CountInv("KCTimeFreezer3")))
+						{
+							basediv = 0.5;
+							basediv2 = 0.125;
+						}
+						else
+						{
+							basediv = 0.9375;
+							basediv2 = 0.25;
+						}
+						if (MiscItem.TimeArmorRelicsOwned >= 1) 
+						{
+							basediv *= 2;
+							basediv2 *= 0.5;
+						}
+						if (MiscItem.TimeArmorRelicsOwned >= 2) 
+						{
+							basediv *= 2;
+							basediv2 *= 0.5;
+						}
+						if (timefreezes >= 20)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 40)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 80)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 160)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 320)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 640)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 1280)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 2560)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 5120)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 10240)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						if (timefreezes >= 20480)
+						{
+							basechance *= basediv;
+							basechance -= (timefreezes * basediv2);
+						}
+						int rollrand = random(1,basechance);
+						if (rollrand <= 1)
+						{
+							A_TSASpawnMessage();
+							Destroy();
+						}
+					}
+				}
+				bNOTIMEFREEZE = false;
+			}
+		Idle:
+			HEVA B 6;
+			HEVA A 6 Bright;
 			Loop;
 	}
 }

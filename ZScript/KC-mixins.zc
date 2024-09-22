@@ -127,6 +127,7 @@ mixin class HUDRecovery
 								icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
 						if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
 								icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+						if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 3.35);
 						
 						if (armmax)
 						{
@@ -255,6 +256,7 @@ mixin class HUDRecovery
 								icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
 						if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
 								icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
+						if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 3.35);
 						if (armmax)
 						{
 							int damagetakefactor = MiscItem.APDmgHUDAmt * 100 / armmax;

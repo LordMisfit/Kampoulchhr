@@ -3111,6 +3111,12 @@ class PlayerStatItem : Inventory
 					darmortype = 2;
 					darmortype2 = 2;
 				}
+				else
+				if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch))
+				{
+					darmortype = 3;
+					darmortype2 = 3;
+				}
 				if (owner.CountInv("TSArmorTier1") || 
 						owner.CountInv("TSArmorTier2") ||
 						owner.CountInv("TSArmorTier3Plus"))
@@ -3120,10 +3126,20 @@ class PlayerStatItem : Inventory
 					
 				if (darmortype > 0)
 				{
+					if (darmortype == 1)
+					{
+						Base *= 1.0;
+						BaseMulti *= 1.0;
+					}
 					if (darmortype == 2)
 					{
 						Base *= 2.0;
 						BaseMulti *= 2.0;
+					}
+					if (darmortype == 3)
+					{
+						Base *= 4.467;
+						BaseMulti *= 4.467;
 					}
 		
 					MassInc = floor(ArmorAmt * Base);
@@ -3429,6 +3445,11 @@ class PlayerStatItem : Inventory
 						ArmorWeight = 0.20;
 						if (berserked) ArmorWeight *= 0.4;
 					}
+					if (darmortype == 3) // Red Armor [Doom-type] (335% of HP max)
+					{
+						ArmorWeight = 0.225;
+						if (berserked) ArmorWeight *= 0.4;
+					}
 				}
 				else
 				{
@@ -3440,6 +3461,11 @@ class PlayerStatItem : Inventory
 					if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 					{
 						ArmorWeight = 0.15;
+						if (berserked) ArmorWeight *= 0.6;
+					}
+					if (darmortype == 3) // Red Armor [Doom-type] (335% of HP max)
+					{
+						ArmorWeight = 0.16875;
 						if (berserked) ArmorWeight *= 0.6;
 					}
 				}
@@ -7146,6 +7172,7 @@ class PlayerStatItem : Inventory
 					ArmorTier = armtier;
 					if (ArmorTier == 1) owner.A_GiveInventory("KCGreenArmor",1);
 					if (ArmorTier == 2) owner.A_GiveInventory("KCBlueArmor",1);
+					if (ArmorTier == 3) owner.A_GiveInventory("KCHeavyArmor",1);
 					if (ArmorTier > 0) 
 					{
 						owner.A_TakeInventory("KCArmor",(armsav-1));
@@ -8208,6 +8235,11 @@ class PlayerStatItem : Inventory
 					ArmorWeight = 0.20;
 					if (berserked) ArmorWeight *= 0.4;
 				}
+				if (darmortype == 3) // Blue Armor [Doom-type] (335% of HP max)
+				{
+					ArmorWeight = 0.225;
+					if (berserked) ArmorWeight *= 0.4;
+				}
 			}
 			else
 			{
@@ -8219,6 +8251,11 @@ class PlayerStatItem : Inventory
 				if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 				{
 					ArmorWeight = 0.15;
+					if (berserked) ArmorWeight *= 0.6;
+				}
+				if (darmortype == 3) // Red Armor [Doom-type] (335% of HP max)
+				{
+					ArmorWeight = 0.16875;
 					if (berserked) ArmorWeight *= 0.6;
 				}
 			}
