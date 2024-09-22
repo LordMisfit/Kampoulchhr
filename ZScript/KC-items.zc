@@ -2884,7 +2884,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 			}
 			if (MiscItem.darmortype >= 3) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.35);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.5);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
@@ -3275,7 +3275,7 @@ class ArmorBonusBig : ArmorBonus2
 			}
 			if (MiscItem.darmortype >= 3) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.35);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.5);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
@@ -3775,7 +3775,7 @@ class KCHeavyArmor : KCArmorPickup
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 3.35);
+			SaveAmount = (MiscItem.MaxHealthTrue * 3.5);
 			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
