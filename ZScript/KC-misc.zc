@@ -7061,7 +7061,7 @@ class PlayerStatItem : Inventory
 			ArmorDefValueDmgFlr += randompick[statitem](0,0,0,0,0,0,0,0,0,0,0,1,1);
 			ArmorDefValueHUD = 2 + armoradd;
 		}
-		if (armtier >= 2)
+		if (armtier == 2)
 		{
 			armoradd = ((ActualLevel * 0.0625) + (TruePlayerDEF * 0.0625));
 			
@@ -7069,6 +7069,15 @@ class PlayerStatItem : Inventory
 			ArmorDefValueCrush += randompick[statitem](1,1,2,2,3);
 			ArmorDefValueDmgFlr += randompick[statitem](0,0,0,0,0,0,0,0,1,1,2,2,3);
 			ArmorDefValueHUD = 5 + armoradd;
+		}
+		if (armtier >= 3)
+		{
+			armoradd = ((ActualLevel * 0.15625) + (TruePlayerDEF * 0.15625));
+			
+			ArmorDefValue += (random[statitem](9,14) + armoradd);
+			ArmorDefValueCrush += randompick[statitem](2,3,3,4,4);
+			ArmorDefValueDmgFlr += randompick[statitem](0,0,0,0,0,1,1,2,2,3,3,4,4);
+			ArmorDefValueHUD = 14 + armoradd;
 		}
 		double GuardVal = 2;
 		if (owner.CountInv("PowerGuard"))

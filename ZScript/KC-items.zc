@@ -2545,18 +2545,34 @@ class KCArmor : BasicArmor
 			int firstsaved = saved;
 			
 			int oldsaved = saved;
-			double savebase = 0.0;
+			double savebase = 0.00;
+			double savebasemax = 0.75;
 			if (MiscItem)
 			{
-				if (savebase >= 0.75) savebase = 0.75;
+				if (MiscItem.darmortype == 1) 
+				{
+					savebase = (random(1,8) * 0.0015625);
+					savebasemax = 0.75;
+				}
+				if (MiscItem.darmortype == 2) 
+				{
+					savebase = (random(2,8) * 0.00625);
+					savebasemax = 0.875;
+				}
+				if (MiscItem.darmortype == 3) 
+				{
+					savebase = (random(4,8) * 0.025);
+					savebasemax = 0.9375;
+				}
+				if (savebase >= savebasemax) savebase = savebasemax;
 			}
 			saved *= (1.0 - savebase);
-			//if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post IP]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post armortype]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			
 			if (random(1,16) <= (random(7,9) + (8 - (skill * 2)))) 
 			{
 				oldsaved = saved;
-				savebase = 0.0;
+				savebase = 0.00;
 				int BKPKBonus;
 				if (PlayPawn) 
 				{
@@ -2576,6 +2592,7 @@ class KCArmor : BasicArmor
 			
 			if (MiscItem)
 			{
+				oldsaved = saved;
 				savebase = 0.00;
 				if (MiscItem)
 				{

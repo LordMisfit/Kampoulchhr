@@ -4094,7 +4094,8 @@ class KCPlayerPawn : PlayerPawn
 					if (damage <= 0)
 					{
 						if (armortier == 1) damage = 1;
-						if (armortier == 2 && random(1,32) > 1) damage = 1;
+						if (armortier == 2 && random(1,16) > 1) damage = 1;
+						if (armortier == 3 && random(1,128) > 1) damage = 1;
 					}
 				}
 				else
@@ -4126,7 +4127,8 @@ class KCPlayerPawn : PlayerPawn
 					if (damage <= 0)
 					{
 						if (armortier == 1) damage = 1;
-						if (armortier == 2 && random(1,8) > 1) damage = 1;
+						if (armortier == 2 && random(1,4) > 1) damage = 1;
+						if (armortier == 3 && random(1,32) > 1) damage = 1;
 					}
 				}
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Raw Armor Def]: %d", damage, olddmg);
@@ -4221,6 +4223,11 @@ class KCPlayerPawn : PlayerPawn
 			{
 				damage *= frandom(0,0.625);
 				dmg1base = 87.5;
+			}
+			if (armortier == 3) 
+			{
+				damage *= frandom(0,0.125);
+				dmg1base = 96.875;
 			}
 			if (frandom(0.1,100.0) > dmg1base && damage < 1) damage = 1;
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [CCards Acid w/ Armor]: %d (%d)", damage, olddmg);

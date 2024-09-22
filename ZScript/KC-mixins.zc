@@ -1158,7 +1158,8 @@ mixin class MonsterCollider
 				{
 					int armmax;
 					if (MiscItem.armtier == 1) armmax = 100;
-					if (MiscItem.armtier >= 2) armmax = 200;
+					if (MiscItem.armtier == 2) armmax = 200;
+					if (MiscItem.armtier >= 3) armmax = 350;
 					if (armmax > 0)
 					{
 						if (MiscItem.APRecHUDAmt > 0 && recovery > 0)

@@ -4310,6 +4310,15 @@ class KC_EventHandler : EventHandler
 
 					double rand = 2.0;
 					string droptype;
+					if (vict ~== "ChaingunGuy" ||
+							vict ~== "ChaingunGuyNew" ||
+							vict ~== "ChaingunGuyClassic")
+					{
+						int basedropdiv2 = basedropdiv * 1.25;
+						if (i > 0) basedropdiv2 = basedropdiv * 12.5;
+						if (random(1,basedropdiv2) <= 1) victim.A_SpawnItemEx("KCHeavyArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+					}
+					
 					if (vict ~== "Zombieman" ||
 							vict ~== "ZombiemanNew" ||
 							vict ~== "ZombiemanClassic" ||
