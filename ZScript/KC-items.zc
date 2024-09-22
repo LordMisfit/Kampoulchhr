@@ -2887,28 +2887,28 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 0.01);
-			if (SaveAmount < 1) SaveAmount = 1;
+			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE);
+			if (SaveAmount < ARMORBONUS1MININT) SaveAmount = ARMORBONUS1MININT;
 			if (MiscItem.darmortype <= 1) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.darmortype == 2) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.darmortype >= 3) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.5);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
 		else
 		{
-			SaveAmount = 1;
-			MaxSaveAmount = 200;
+			SaveAmount = ARMORBONUS1MININT;
+			MaxSaveAmount = BLUEARMORVALINT;
 		}
 		KCArmorBonus.Tick();
 	}
@@ -2969,70 +2969,6 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		else
 		{
 			if (kcdebug_armordisplays) Console.Printf("armor.Amount: %d", armor.Amount);
-			/*
-			if (PrevArmorType == 0)
-			{
-				armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
-				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M0]: %.4f", armor.SavePercent);
-			}
-			if (PrevArmorType == 1)
-			{
-				if (armor.Amount > (ArmorItemMax1-1))
-				{
-					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNJ0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1]: %.4f", armor.SavePercent);
-				}
-				else 
-				{
-					if (armor.Amount >= ((ArmorItemMax1*0.5)-1))
-					{
-						if (armor.Icon != TexMan.checkForTexture("KGWNI0")) armor.Icon = TexMan.checkForTexture("KGWNI0");
-					}
-					//armor.SavePercent = clamp(50, 0, 100) / 100;
-					armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1-1]: %.4f", armor.SavePercent);
-				}
-			}
-			else
-			if (PrevArmorType == 2)
-			{
-				if (armor.Amount > (ArmorItemMax2-1))
-				{
-					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNK0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2]: %.4f", armor.SavePercent);
-				}
-				else
-				{
-					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNJ0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2-1]: %.4f", armor.SavePercent);
-				}
-			}
-			else
-			if (PrevArmorType == 3)
-			{
-				if (armor.Amount > (ArmorItemMax3-1))
-				{
-					armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNL0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3]: %.4f", armor.SavePercent);
-				}
-				else
-				{
-					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNK0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3-1]: %.4f", armor.SavePercent);
-				}
-			}
-			if (PrevArmorType == 4)
-			{
-				armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
-				armor.Icon = TexMan.checkForTexture("KGWNL0");
-				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M4]: %.4f", armor.SavePercent);
-			}
-			*/
 		}
 		
 		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
@@ -3178,69 +3114,6 @@ class ArmorBonusSilent : ArmorBonus2
 		{
 			armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
 			if (kcdebug_armordisplays) Console.Printf("armor.Amount: %d", armor.Amount);
-			/*
-			if (PrevArmorType == 0)
-			{
-				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M0]: %.4f", armor.SavePercent);
-			}
-			if (PrevArmorType == 1)
-			{
-				if (armor.Amount > (ArmorItemMax1-1))
-				{
-					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNJ0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1]: %.4f", armor.SavePercent);
-				}
-				else 
-				{
-					if (armor.Amount >= ((ArmorItemMax1*0.5)-1))
-					{
-						if (armor.Icon != TexMan.checkForTexture("KGWNI0")) armor.Icon = TexMan.checkForTexture("KGWNI0");
-					}
-					//armor.SavePercent = clamp(50, 0, 100) / 100;
-					armor.SavePercent = clamp(50.0, 0, 100.0) / 100.0;
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M1-1]: %.4f", armor.SavePercent);
-				}
-			}
-			else
-			if (PrevArmorType == 2)
-			{
-				if (armor.Amount > (ArmorItemMax2-1))
-				{
-					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNK0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2]: %.4f", armor.SavePercent);
-				}
-				else
-				{
-					armor.SavePercent = clamp(75.0, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNJ0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M2-1]: %.4f", armor.SavePercent);
-				}
-			}
-			else
-			if (PrevArmorType == 3)
-			{
-				if (armor.Amount > (ArmorItemMax3-1))
-				{
-					armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNL0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3]: %.4f", armor.SavePercent);
-				}
-				else
-				{
-					armor.SavePercent = clamp(87.5, 0, 100.0) / 100.0;
-					armor.Icon = TexMan.checkForTexture("KGWNK0");
-					if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M3-1]: %.4f", armor.SavePercent);
-				}
-			}
-			if (PrevArmorType == 4)
-			{
-				armor.SavePercent = clamp(93.75, 0, 100.0) / 100.0;
-				armor.Icon = TexMan.checkForTexture("KGWNL0");
-				if (kcdebug_armordisplays) Console.Printf("armor.SavePercent [M4]: %.4f", armor.SavePercent);
-			}
-			*/
 		}
 		
 		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
@@ -3278,28 +3151,28 @@ class ArmorBonusBig : ArmorBonus2
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 0.10);
-			if (SaveAmount < 10) SaveAmount = 10;
+			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE);
+			if (SaveAmount < ARMORBONUS2MININT) SaveAmount = ARMORBONUS2MININT;
 			if (MiscItem.darmortype <= 1) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 1);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.darmortype == 2) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 2);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.darmortype >= 3) 
 			{
-				MaxSaveAmount = (MiscItem.MaxHealthTrue * 3.5);
+				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 		}
 		else
 		{
-			SaveAmount = 10;
-			MaxSaveAmount = 200;
+			SaveAmount = ARMORBONUS2MININT;
+			MaxSaveAmount = BLUEARMORVALINT;
 		}
 		KCArmorBonus.Tick();
 	}
@@ -3351,12 +3224,12 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue);
+			SaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
-			SaveAmount = 100;
+			SaveAmount = GREENARMORVALINT;
 		}
 		super.Tick();
 	}
@@ -3549,12 +3422,20 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 2);
-			SaveAmount = A_CheckMaxArmor(SaveAmount);
+			if (MiscItem.darmortype <= 2) 
+			{
+				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
+			}
+			if (MiscItem.darmortype >= 3) 
+			{
+				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
+			}
 		}
 		else
 		{
-			SaveAmount = 200;
+			SaveAmount = BLUEARMORVALINT;
 		}
 		super.BeginPlay();
 	}
@@ -3565,12 +3446,20 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 2);
-			SaveAmount = A_CheckMaxArmor(SaveAmount);
+			if (MiscItem.darmortype <= 2) 
+			{
+				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
+			}
+			if (MiscItem.darmortype >= 3) 
+			{
+				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
+			}
 		}
 		else
 		{
-			SaveAmount = 200;
+			SaveAmount = BLUEARMORVALINT;
 		}
 		super.Tick();
 	}
@@ -3597,12 +3486,12 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 2);
+			SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
-			SaveAmount = 200;
+			SaveAmount = BLUEARMORVALINT;
 		}
 		super.Tick();
 	}
@@ -3792,12 +3681,12 @@ class KCHeavyArmor : KCArmorPickup
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * 3.5);
+			SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 			SaveAmount = A_CheckMaxArmor(SaveAmount);
 		}
 		else
 		{
-			SaveAmount = 350;
+			SaveAmount = REDARMORVALINT;
 		}
 		super.Tick();
 	}

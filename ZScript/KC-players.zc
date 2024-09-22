@@ -4221,13 +4221,13 @@ class KCPlayerPawn : PlayerPawn
 			}
 			if (armortier == 2) 
 			{
-				damage *= frandom(0,0.625);
-				dmg1base = 87.5;
+				damage *= frandom(0.250,0.625);
+				dmg1base = 75.0;
 			}
 			if (armortier == 3) 
 			{
-				damage *= frandom(0,0.125);
-				dmg1base = 96.875;
+				damage *= frandom(0.000,0.250);
+				dmg1base = 93.75;
 			}
 			if (frandom(0.1,100.0) > dmg1base && damage < 1) damage = 1;
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [CCards Acid w/ Armor]: %d (%d)", damage, olddmg);
@@ -4611,10 +4611,10 @@ class KCPlayerPawn : PlayerPawn
 				if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
 						icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
 						icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
-						icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+						icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
-						icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
-				if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 3.5);
+						icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
+				if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				if (armmax > 0)
 				{
 					int damagetakefactor = armdmg * 100 / armmax;

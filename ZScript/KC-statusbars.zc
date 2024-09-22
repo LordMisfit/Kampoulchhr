@@ -1884,9 +1884,9 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			int MaxArmor;
-			if (hudarmortype == 1) MaxArmor = MiscItem.MaxHealthTrue;
-			if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * 2);
-			if (hudarmortype == 3) MaxArmor = (MiscItem.MaxHealthTrue * 3.5);
+			if (hudarmortype == 1) MaxArmor = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
+			if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
+			if (hudarmortype == 3) MaxArmor = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 			double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
 			MaxArmor *= (1.0 + fact);
 
@@ -1934,9 +1934,9 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				else
 				{
-					if (hudarmortype == 1) MaxAPS.AppendFormat("100");
-					if (hudarmortype == 2) MaxAPS.AppendFormat("200");
-					if (hudarmortype == 3) MaxAPS.AppendFormat("350");
+					if (hudarmortype == 1) MaxAPS.AppendFormat("%d", GREENARMORVALINT);
+					if (hudarmortype == 2) MaxAPS.AppendFormat("%d", BLUEARMORVALINT);
+					if (hudarmortype == 3) MaxAPS.AppendFormat("%d", REDARMORVALINT);
 				}
 				DrawString(mKCMFont, MaxAPS, (94+1+APDmgShakeX, (yinc-16)+1+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, font.cr_black, (fontalpha*0.75), -1, 4, (1.25, 1.25));
 				DrawString(mKCMFont, MaxAPS, (94+APDmgShakeX, (yinc-16)+APDmgShakeY+ycorrection), DI_TEXT_ALIGN_LEFT, fontclr, fontalpha, -1, 4, (1.25, 1.25));

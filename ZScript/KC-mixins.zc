@@ -124,10 +124,10 @@ mixin class HUDRecovery
 						if (icon == TexMan.CheckForTexture("BON2A0", TexMan.TYPE_MiscPatch) ||
 								icon == TexMan.CheckForTexture("BON4A0", TexMan.TYPE_MiscPatch) ||
 								icon == TexMan.CheckForTexture("ARM1A0", TexMan.TYPE_MiscPatch) ||
-								icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = MiscItem.MaxHealthTrue;
+								icon == TexMan.CheckForTexture("SHLDA0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 						if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
-								icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 2);
-						if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * 3.5);
+								icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
+						if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 						
 						if (armmax)
 						{
@@ -1157,9 +1157,9 @@ mixin class MonsterCollider
 				if (acculmuatepulse && recovery > 0)
 				{
 					int armmax;
-					if (MiscItem.armtier == 1) armmax = 100;
-					if (MiscItem.armtier == 2) armmax = 200;
-					if (MiscItem.armtier >= 3) armmax = 350;
+					if (MiscItem.armtier == 1) armmax = GREENARMORVALINT;
+					if (MiscItem.armtier == 2) armmax = BLUEARMORVALINT;
+					if (MiscItem.armtier >= 3) armmax = REDARMORVALINT;
 					if (armmax > 0)
 					{
 						if (MiscItem.APRecHUDAmt > 0 && recovery > 0)
