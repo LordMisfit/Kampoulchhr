@@ -3057,7 +3057,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		Idle:
 			BON2 ABCDCB 6
 			{
-				framenum++;
+				int frametrue = framenum % 6;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
@@ -3065,31 +3065,32 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
 					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
 					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
-					if (framenum <= 1) 
+					if (frametrue == 0) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN1");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE1");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED1");
 					}
-					if (framenum == 2 || framenum == 6) 
+					if (frametrue == 1 || frametrue == 5) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN2");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE2");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED2");
 					}
-					if (framenum == 3 || framenum == 5) 
+					if (frametrue == 2 || framenum == 4) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN3");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE3");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED3");
 					}
-					if (framenum == 4) 
+					if (frametrue == 3) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN4");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE4");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED4");
 					}
 				}
+				framenum++;
 			}
 			Loop;
 	}
@@ -3228,7 +3229,7 @@ class ArmorBonusBig : ArmorBonus2
 		Idle:
 			BON4 AABBCCDDCCBB 3
 			{
-				framenum++;
+				int frametrue = framenum % 12;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
@@ -3236,33 +3237,34 @@ class ArmorBonusBig : ArmorBonus2
 					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
 					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
 					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
-					if (framenum >= 1 && framenum <= 2) 
+					if (frametrue >= 0 && frametrue <= 1) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN1");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE1");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED1");
 					}
-					if (framenum >= 3 && framenum <= 4 || 
-							framenum >= 11 && framenum <= 12) 
+					if (frametrue >= 2 && frametrue <= 3 || 
+							frametrue >= 10 && frametrue <= 11) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN2");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE2");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED2");
 					}
-					if (framenum >= 5 && framenum <= 6 || 
-							framenum >= 9 && framenum <= 10) 
+					if (frametrue >= 6 && frametrue <= 7 || 
+							frametrue >= 10 && frametrue <= 11) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN3");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE3");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED3");
 					}
-					if (framenum >= 7 && framenum <= 8) 
+					if (framenum >= 8 && framenum <= 9) 
 					{
 						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN4");
 						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE4");
 						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED4");
 					}
 				}
+				framenum++;
 			}
 			Loop;
 
