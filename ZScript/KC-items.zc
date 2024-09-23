@@ -2673,16 +2673,16 @@ class KCArmor : BasicArmor
 
 class KCArmorBonus : BasicArmorBonus
 {
-	int A_CheckMaxArmor(int SaveAmount) // BasicArmorBonus
+	int A_CheckMaxArmor(int fSaveAmount) // BasicArmorBonus
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			double fact = (playera.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
-			SaveAmount *= (1.0 + fact);
+			fSaveAmount *= (1.0 + fact);
 		}
-		return SaveAmount;
+		return fSaveAmount;
 	}
 	
 	override Inventory CreateCopy (Actor other)
@@ -2790,16 +2790,16 @@ class KCArmorBonus : BasicArmorBonus
 
 class KCArmorPickup : BasicArmorPickup
 {
-	int A_CheckMaxArmor(int SaveAmount) // KCArmorPickup
+	int A_CheckMaxArmor(int fSaveAmount) // KCArmorPickup
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			double fact = (playera.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
-			SaveAmount *= (1.0 + fact);
+			fSaveAmount *= (1.0 + fact);
 		}
-		return SaveAmount;
+		return fSaveAmount;
 	}
 	
 	override Inventory CreateCopy (Actor other)
@@ -2896,35 +2896,48 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		super.PostBeginPlay();
 	}
 	
-	override void Tick()
+	void GetSaveAmounts()
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE);
-			if (SaveAmount < ARMORBONUS1MININT) SaveAmount = ARMORBONUS1MININT;
-			if (MiscItem.darmortype <= 1) 
+			if (MiscItem.truearmortype <= 1) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * GREENARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype == 2) 
+			if (MiscItem.truearmortype == 2) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * BLUEARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype >= 3) 
+			if (MiscItem.truearmortype >= 3) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * REDARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
+			if (SaveAmount < ARMORBONUS1MININT) SaveAmount = ARMORBONUS1MININT;
+			if (kcdebug_armordisplays) Console.Printf("MiscItem.truearmortype: %d, SaveAmount: %d, MaxSaveAmount: %d", MiscItem.truearmortype, SaveAmount, MaxSaveAmount);
 		}
 		else
 		{
 			SaveAmount = ARMORBONUS1MININT;
 			MaxSaveAmount = BLUEARMORVALINT;
+			if (kcdebug_armordisplays) Console.Printf("SaveAmount: %d, MaxSaveAmount: %d", SaveAmount, MaxSaveAmount);
 		}
+	}
+	
+	override void Tick()
+	{
+		GetSaveAmounts();
 		KCArmorBonus.Tick();
 	}
 	
@@ -2936,7 +2949,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
-		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d", PrevArmorType, PrevArmorAmt);
+		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d, MaxSaveAmount: %d", PrevArmorType, PrevArmorAmt, MaxSaveAmount);
 
 		let armor = KCArmor(Owner.FindInventory(armorclasstype));
 		bool result = false;
@@ -2961,13 +2974,16 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 
 		if (saveAmount <= 0)
 		{ // If it can't give you anything, it's as good as used.
+			if (kcdebug_armordisplays) Console.Printf("saveAmount <= 0");
 			return BonusCount > 0 ? result : true;
 		}
 
 		// If you already have more armor than this item can give you, you can't
 		// use it.
+		if (kcdebug_armordisplays) Console.Printf("MaxSaveAmount: %d", MaxSaveAmount);
 		if (armor.Amount >= MaxSaveAmount + armor.BonusCount)
 		{
+			if (kcdebug_armordisplays) Console.Printf("armor.Amount (%d) >= MaxSaveAmount (%d) + armor.BonusCount (%d)", armor.Amount, MaxSaveAmount, armor.BonusCount);
 			return result;
 		}
 
@@ -2980,6 +2996,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 			armor.ArmorType = GetClassName();
 			armor.MaxFullAbsorb = MaxFullAbsorb;
 			armor.ActualSaveAmount = MaxSaveAmount;
+			if (kcdebug_armordisplays) Console.Printf("armor.Amount <= 0");
 		}
 		else
 		{
@@ -3062,32 +3079,32 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
-					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
+					if (MiscItem.truearmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.truearmortype == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.truearmortype >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
 					if (frametrue == 0) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN1");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE1");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED1");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN1");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE1");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED1");
 					}
 					if (frametrue == 1 || frametrue == 5) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN2");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE2");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED2");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN2");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE2");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED2");
 					}
 					if (frametrue == 2 || framenum == 4) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN3");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE3");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED3");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN3");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE3");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED3");
 					}
 					if (frametrue == 3) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN4");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE4");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED4");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","ARMORBONUSGREEN4");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","ARMORBONUSBLUE4");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","ARMORBONUSRED4");
 					}
 				}
 				framenum++;
@@ -3186,35 +3203,46 @@ class ArmorBonusBig : ArmorBonus2
 		Inventory.PickupSound "getarmorbonus";
 	}
 	
-	override void Tick()
+	void GetSaveAmountsBig()
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
 			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE);
-			if (SaveAmount < ARMORBONUS2MININT) SaveAmount = ARMORBONUS2MININT;
-			if (MiscItem.darmortype <= 1) 
+			if (MiscItem.truearmortype <= 1) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * GREENARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype == 2) 
+			if (MiscItem.truearmortype == 2) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * BLUEARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (MiscItem.darmortype >= 3) 
+			if (MiscItem.truearmortype >= 3) 
 			{
+				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * REDARMORVALDOUBLE);
+				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
+			if (SaveAmount < ARMORBONUS2MININT) SaveAmount = ARMORBONUS2MININT;
 		}
 		else
 		{
 			SaveAmount = ARMORBONUS2MININT;
 			MaxSaveAmount = BLUEARMORVALINT;
 		}
+	}
+	
+	override void Tick()
+	{
+		GetSaveAmountsBig();
 		KCArmorBonus.Tick();
 	}
 	
@@ -3234,34 +3262,34 @@ class ArmorBonusBig : ArmorBonus2
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (MiscItem)
 				{
-					if (MiscItem.darmortype2 <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
-					if (MiscItem.darmortype2 == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
-					if (MiscItem.darmortype2 >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
+					if (MiscItem.truearmortype <= 1) { A_SetTranslation("GreenArmorBonus"); } // If you have no Armor Class
+					if (MiscItem.truearmortype == 2) { A_SetTranslation("BlueArmorBonus"); } // If you have Blue Armor Class
+					if (MiscItem.truearmortype >= 3) { A_SetTranslation("RedArmorBonus"); } // If you have Red Armor Class
 					if (frametrue >= 0 && frametrue <= 1) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN1");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE1");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED1");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN1");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE1");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED1");
 					}
 					if (frametrue >= 2 && frametrue <= 3 || 
 							frametrue >= 10 && frametrue <= 11) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN2");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE2");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED2");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN2");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE2");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED2");
 					}
 					if (frametrue >= 6 && frametrue <= 7 || 
 							frametrue >= 10 && frametrue <= 11) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN3");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE3");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED3");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN3");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE3");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED3");
 					}
 					if (framenum >= 8 && framenum <= 9) 
 					{
-						if (MiscItem.darmortype2 <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN4");
-						if (MiscItem.darmortype2 == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE4");
-						if (MiscItem.darmortype2 >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED4");
+						if (MiscItem.truearmortype <= 1) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSGREEN4");
+						if (MiscItem.truearmortype == 2) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSBLUE4");
+						if (MiscItem.truearmortype >= 3) A_AttachLightDef("ArmorDLight","SUPERARMORBONUSRED4");
 					}
 				}
 				framenum++;
@@ -3495,7 +3523,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (MiscItem.darmortype <= 2) 
+			if (MiscItem.truearmortype <= 2) 
 			{
 				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
@@ -3734,7 +3762,7 @@ class KCHeavyArmorForMegasphere : KCArmorPickup
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (MiscItem.darmortype <= 3) 
+			if (MiscItem.truearmortype <= 3) 
 			{
 				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);

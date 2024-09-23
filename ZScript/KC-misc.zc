@@ -102,7 +102,7 @@ class PlayerStatItem : Inventory
 	bool heiwavhardmodifier;
 	double spbkpkarmorbonus, spbkpkmedibigbonus;
 	double tracerheight;
-	int darmortype, darmortype2;
+	int darmortype, darmortype2, truearmortype;
 	int IsMorphed, WasMorphed, WasMorphProj;
 	int MorphTimer;
 	int EvasionRate;
@@ -3092,6 +3092,7 @@ class PlayerStatItem : Inventory
 			double BaseMulti = 0.0002;
 			darmortype = 0;
 			darmortype2 = 0;
+			truearmortype = 0;
 			let armor = owner.FindInventory("KCArmor");
 			if (armor)
 			{
@@ -3103,6 +3104,7 @@ class PlayerStatItem : Inventory
 				{
 					darmortype = 1;
 					darmortype2 = 1;
+					truearmortype = 1;
 				}
 				else
 				if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
@@ -3110,12 +3112,14 @@ class PlayerStatItem : Inventory
 				{
 					darmortype = 2;
 					darmortype2 = 2;
+					truearmortype = 2;
 				}
 				else
 				if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch))
 				{
 					darmortype = 3;
 					darmortype2 = 3;
+					truearmortype = 3;
 				}
 				if (owner.CountInv("TSArmorTier1") || 
 						owner.CountInv("TSArmorTier2") ||
