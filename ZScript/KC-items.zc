@@ -2902,29 +2902,34 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE);
+			double mult1 = 1.00;
+			if (skill <= 0) mult1 = 1.50;
+			if (skill == 1) mult1 = 1.25;
+			if (skill == 2) mult1 = 1.00;
+			if (skill == 3) mult1 = 0.75;
+			if (skill >= 4) mult1 = 0.50;
+			SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS1DOUBLE * mult1));
 			if (MiscItem.truearmortype <= 1) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * GREENARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS1DOUBLE * mult1) * GREENARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.truearmortype == 2) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * BLUEARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS1DOUBLE * mult1) * BLUEARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.truearmortype >= 3) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS1DOUBLE * REDARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS1DOUBLE * mult1) * REDARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (SaveAmount < ARMORBONUS1MININT) SaveAmount = ARMORBONUS1MININT;
 			if (kcdebug_armordisplays) Console.Printf("MiscItem.truearmortype: %d, SaveAmount: %d, MaxSaveAmount: %d", MiscItem.truearmortype, SaveAmount, MaxSaveAmount);
 		}
 		else
@@ -2933,6 +2938,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 			MaxSaveAmount = BLUEARMORVALINT;
 			if (kcdebug_armordisplays) Console.Printf("SaveAmount: %d, MaxSaveAmount: %d", SaveAmount, MaxSaveAmount);
 		}
+		if (SaveAmount < ARMORBONUS1MININT) SaveAmount = ARMORBONUS1MININT;
 	}
 	
 	override void Tick()
@@ -3209,35 +3215,42 @@ class ArmorBonusBig : ArmorBonus2
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE);
+			double mult1 = 1.00;
+			if (skill <= 0) mult1 = 1.50;
+			if (skill == 1) mult1 = 1.25;
+			if (skill == 2) mult1 = 1.00;
+			if (skill == 3) mult1 = 0.75;
+			if (skill >= 4) mult1 = 0.50;
+
+			SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS2DOUBLE * mult1));
 			if (MiscItem.truearmortype <= 1) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * GREENARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS2DOUBLE * mult1) * GREENARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.truearmortype == 2) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * BLUEARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS2DOUBLE * mult1) * BLUEARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
 			if (MiscItem.truearmortype >= 3) 
 			{
-				SaveAmount = (MiscItem.MaxHealthTrue * ARMORBONUS2DOUBLE * REDARMORVALDOUBLE);
+				SaveAmount = (MiscItem.MaxHealthTrue * (ARMORBONUS2DOUBLE * mult1) * REDARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 				MaxSaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				MaxSaveAmount = A_CheckMaxArmor(MaxSaveAmount);
 			}
-			if (SaveAmount < ARMORBONUS2MININT) SaveAmount = ARMORBONUS2MININT;
 		}
 		else
 		{
 			SaveAmount = ARMORBONUS2MININT;
 			MaxSaveAmount = BLUEARMORVALINT;
 		}
+		if (SaveAmount < ARMORBONUS2MININT) SaveAmount = ARMORBONUS2MININT;
 	}
 	
 	override void Tick()

@@ -2698,6 +2698,18 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
+			if (inflictor && inflictor.bMISSILE)
+			{
+				if (inflictor.PoisonDamage > 0) inflictor.PoisonDamage = 0;
+				if (inflictor.PoisonDuration > 0) inflictor.PoisonDuration = 0;
+			}
+			if (source && source.bMISSILE)
+			{
+				if (source.PoisonDamage > 0) source.PoisonDamage = 0;
+				if (source.PoisonDuration > 0) source.PoisonDuration = 0;
+			}
+			
+			
 			double TSADmgFinal;
 			// Allows the Time Seraph's Armor to partially tank a CCards Nuke without being instant death :V
 			nm = "CCards_NukeExplosion";
@@ -4309,6 +4321,16 @@ class KCPlayerPawn : PlayerPawn
 			if (isvoodoodoll) return 0;
 			else
 			{
+				if (inflictor && inflictor.bMISSILE)
+				{
+					if (inflictor.PoisonDamage > 0) inflictor.PoisonDamage = 0;
+					if (inflictor.PoisonDuration > 0) inflictor.PoisonDuration = 0;
+				}
+				if (source && source.bMISSILE)
+				{
+					if (source.PoisonDamage > 0) source.PoisonDamage = 0;
+					if (source.PoisonDuration > 0) source.PoisonDuration = 0;
+				}
 				if (damage > 0 && random(1,16384) <= 1) damage = 1;
 																					 else damage = 0;
 				if (damage <= 0)
@@ -4689,6 +4711,8 @@ class KCPlayerPawn : PlayerPawn
 		if (PoisonFlags & PPD_ALLOWSTRIFEAUTOHEALTH) allowstrifeautohealth = true;
 		
 		actor target;
+		
+		if (A_CheckKCTimeFreeze()) return; // Do NOT deal direct damage with Poison, while still draining Poison Count in Frozen Time of Player's making :V
 		
 		if (player == null)
 		{
