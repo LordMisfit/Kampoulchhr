@@ -3371,7 +3371,6 @@ class KC_EventHandler : EventHandler
 		int TrueGameSkill = skill;
 		if (Level.MapName != "TITLEMAP")
 		{
-			if (kcdebug_hitsounds) Console.Printf("hitsounds (WorldThingDamaged check)");
 			actor playera = players[0].mo;
 			let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 			let globalvars = KCGlobalVariables.Get();
@@ -3389,6 +3388,7 @@ class KC_EventHandler : EventHandler
 			int TruePlayerLevel = 0;
 			bool isCCardsIllusion = false;
 			if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+			if (kcdebug_hitsounds) Console.Printf("\c[gold]hitsounds (WorldThingDamaged check: %s)", victim.GetClassName());
 
 			if (kcdebug_worlddamaged)
 			{
@@ -3425,7 +3425,7 @@ class KC_EventHandler : EventHandler
 						victim.bFULLVOLDEATH == false &&
 						victim.bBOSS == false) isCCardsIllusion = true;
 
-				if (kcdebug_hitsounds) Console.Printf("hitsounds (victim check)");
+				if (kcdebug_hitsounds) Console.Printf("hitsounds (victim check: %s)", victim.GetClassName());
 				int oldhealth = victim.health;
 				string victname = victim.GetTag();
 				string atkrname = "(?)";
@@ -3631,7 +3631,7 @@ class KC_EventHandler : EventHandler
 					Console.Printf(comblog);
 				}
 
-				if (kcdebug_hitsounds) Console.Printf("hitsounds");
+				if (kcdebug_hitsounds) Console.Printf("\c[green]hitsounds [post comblog] (%s)", vict);
 				bool makesound;
 				string playedsound = "";
 				PlayerPawn playpawn;
@@ -3656,8 +3656,8 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playwsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playwsounds = false;
 				if (isCCardsIllusion) playwsounds = false;
-				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d", playwsounds);
 
+				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d (%s)", playwsounds, vict);
 				if (playwsounds)
 				{
 					if (initdmg > 0 && !(flags & DMG_NO_FACTOR))
@@ -3673,7 +3673,7 @@ class KC_EventHandler : EventHandler
 							if (kcdebug_hitsounds) Console.Printf("moddedDMG: %d (%.8f) (%s), playweaksound: %d, damagefactor: %.8f", moddedDMG, outputdmgfactor, mod, playweaksound, victim.damagefactor);
 						}
 					}
-					if (kcdebug_hitsounds) Console.Printf("playweaksound: %d", playweaksound);
+					if (kcdebug_hitsounds) Console.Printf("playweaksound: %d (%s)", playweaksound, vict);
 
 					string weakplayedsound = "";
 					if (kc_hitweaksounds && victim.bISMONSTER && playweaksound != 0 && victim.CountInv("TempNoWeakSound") <= 0)
@@ -3728,6 +3728,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdthsounds = false;
 				if (isCCardsIllusion) playdthsounds = false;
 
+				if (kcdebug_hitsounds) Console.Printf("playdthsounds: %d (%s)", playdthsounds, vict);
 				if (playdthsounds)
 				{
 					if (victim.health <= 0 && kc_q3aqckillsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2))
@@ -3849,14 +3850,25 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdmgsounds = false;
 				if (isCCardsIllusion) playdmgsounds = false;
 
+				if (kcdebug_hitsounds) Console.Printf("playdmgsounds: %d (%s)", playdmgsounds, vict);
 				if (playdmgsounds)
 				{
-					if (kc_q3aqchitsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2 || BossBrainNew(victim)) && victim.CountInv("TempNoHitSound") <= 0)
+					if (kcdebug_hitsounds) Console.Printf("playdmgsounds: 1");
+					if (kc_q3aqchitsounds2 && 
+							victim.bISMONSTER && 
+							(victim.bCOUNTKILL || 
+							specialtype || 
+							specialtype2 || 
+							BossBrainNew(victim)) && 
+							victim.CountInv("TempNoHitSound") <= 0)
 					{
+						if (kcdebug_hitsounds) Console.Printf("playdmgsounds: 2");
 						victim.A_SetInventory("TempNoHitSound",1);
 
 						if (source || inflicter)
 						{
+							if (kcdebug_hitsounds) Console.Printf("playdmgsounds: source|inflicter");
+							
 							if (kcdebug_hitsounds && source) Console.Printf("[hitsound] source: %s", source.GetClassName());
 							if (kcdebug_hitsounds && inflicter) Console.Printf("[hitsound] inflicter: %s", inflicter.GetClassName());
 							if (source) playpawn = PlayerPawn(source);

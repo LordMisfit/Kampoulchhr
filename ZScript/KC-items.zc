@@ -1,3 +1,47 @@
+class KCE1M1FirstMarineDrop : CustomInventoryExt
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 NoDelay bright
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				if (HeiwaPlayer(playera))
+				{
+					string spawntype = "Glock21";
+					int initspawn = randompick(5,6,6,7,7,7,8);
+					int initspawn2 = randompick(8,8,8,8,9,9,10);
+					double xoff, yoff, zoff, xvel, yvel, zvel;
+					xoff = 64.0;
+					yoff = 64.0;
+					zoff = 0.0;
+					xvel = 0.0;
+					yvel = 0.0;
+					zvel = 0.0;
+					if (random(1,(initspawn2*4)) <= (initspawn/2))
+					{
+						spawntype = "TommyGun";
+						if (random(1,initspawn2) >= initspawn) spawntype = "RiotGun";
+						xoff = 2.4;
+						yoff = 2.4;
+						zoff = 0.0;
+						xvel = 0.4;
+						yvel = 0.4;
+						zvel = 0.0;
+					}
+					else
+					{
+						spawntype = "Glock21";
+						if (random(1,initspawn2) >= initspawn) spawntype = "BlasterPistol";
+					}
+					A_SpawnItemEx(spawntype,frandom(frandom(-xoff*0.5,-xoff*1.0),frandom(xoff*0.5,xoff*1.0)),frandom(frandom(-yoff*0.5,-yoff*1.0),frandom(yoff*0.5,yoff*1.0)),frandom((zoff*0.5),(zoff*1.5)),frandom(-xvel,xvel),frandom(-yvel,yvel),frandom((zvel*0.5),(zvel*1.5)),0,SXF_NOCHECKPOSITION,0,tid);
+				}
+			}
+			stop;
+	}
+}
+
 class KCInvBarItem : CustomInventoryExt
 {
 	default
