@@ -5067,6 +5067,7 @@ class KCCreature : KCBaseZSC
 			target.A_StartSound("ghoul/psiattack", basesndchannel+2, CHANF_DEFAULT, soundvol, ATTN_NONE, 2.5);
 		}
 
+		damage = (random(randmin,randmax) * basedmg);
 		if (kc_monsterlevelenabledflags)
 		{
 			double inits = A_CheckMonsterLevelMult(frandompick(0.05,0.0625,0.0625,0.075,0.075,0.075,0.075,0.075,0.0875,0.0875,0.10),true,self);
