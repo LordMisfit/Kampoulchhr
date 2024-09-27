@@ -4118,6 +4118,7 @@ class KCPlayerPawn : PlayerPawn
 					{
 						if (MiscItem) baseflatdefense += MiscItem.BaseFlatDefValue;
 						flatdefense = random((baseflatdefense*0.5),baseflatdefense);
+						if (mod == 'PSI') flatdefense *= frandompick(0.25,0.5,0.5,0.5,0.5,0.5,0.75);
 						if (flags & !DMG_NO_ARMOR)
 						{
 							basearmorflat = 0;
