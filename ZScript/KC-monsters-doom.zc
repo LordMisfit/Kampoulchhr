@@ -8217,10 +8217,19 @@ class BetaLostSoul : LostSoulNew
 		DamageFactor "Zap", 1.5;
 	}
 	
-	void A_BetaSoulFastChaseCalc()
+	void A_BetaSoulFastChaseCalc(int type1)
 	{
 		A_FastChaseCalc(randompick(4,4,4,4,5,5,5,6),randompick(24,24,24,24,22,22,22,20)); // 3,24
-		if (random(1,256) <= user_fastchasechance) { A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1); } else { A_KCChase("Melee","Missile",0,1,3,1,1); }
+		if (random(1,256) <= user_fastchasechance) 
+		{
+			if (type1 >= 1) A_KCChase(null,null,CHF_FASTCHASE,1,3,1,1);
+								 else A_KCChase("Melee","Missile",CHF_FASTCHASE,1,3,1,1);
+		}
+		else
+		{
+			if (type1 >= 1) A_KCChase(null,null,0,1,3,1,1);
+								 else A_KCChase("Melee","Missile",0,1,3,1,1);
+		}
 		user_painfastchase = 0;
 	}
 	
@@ -8243,7 +8252,7 @@ class BetaLostSoul : LostSoulNew
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
 
-				A_BetaSoulFastChaseCalc();
+				A_BetaSoulFastChaseCalc(0);
 			}
 			Loop;
 		Missile:
@@ -8297,7 +8306,7 @@ class BetaLostSoul : LostSoulNew
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))
 				{
 					if (atkframe == 5) A_SpawnProjectile("BetaSoulFireball",22);
-					A_BetaSoulFastChaseCalc();
+					A_BetaSoulFastChaseCalc(1);
 				}
 			}
 			Goto See;
@@ -8366,6 +8375,8 @@ class BetaLostSoul : LostSoulNew
 
 class BetaSoulFireball : KCProjectile
 {
+	double firealpha;
+	double fireint;
 	Default
 	{
 		Tag "Ghoulish Soul's MiniBlast";
@@ -8387,9 +8398,27 @@ class BetaSoulFireball : KCProjectile
 	States
 	{
 		Spawn:
-			GBAL AB 2 BRIGHT;
+			GBAL AB 2 BRIGHT
+			{
+				fireint = GetAge() % 24;
+				if (fireint == 0) firealpha = 0.95;
+				if (fireint == 1 || fireint == 23) firealpha = 0.875;
+				if (fireint == 2 || fireint == 22) firealpha = 0.80;
+				if (fireint == 3 || fireint == 21) firealpha = 0.725;
+				if (fireint == 4 || fireint == 20) firealpha = 0.65;
+				if (fireint == 5 || fireint == 19) firealpha = 0.575;
+				if (fireint == 6 || fireint == 18) firealpha = 0.50;
+				if (fireint == 7 || fireint == 17) firealpha = 0.425;
+				if (fireint == 8 || fireint == 16) firealpha = 0.35;
+				if (fireint == 9 || fireint == 15) firealpha = 0.275;
+				if (fireint == 10 || fireint == 14) firealpha = 0.20;
+				if (fireint == 11 || fireint == 13) firealpha = 0.125;
+				if (fireint == 12) firealpha = 0.05;
+				A_SetRenderStyle(firealpha,STYLE_Add);
+			}
 			Loop;
 		Death:
+			GBAL C 3 BRIGHT A_SetRenderStyle(0.95,STYLE_Add);
 			GBAL C 3 BRIGHT;
 			APBX BCDE 3 BRIGHT;
 			Stop;
