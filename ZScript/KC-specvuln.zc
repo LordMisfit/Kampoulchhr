@@ -5390,7 +5390,7 @@ class CompatVulnItem : PlaceholderItem
 					}
 					else
 					{
-						if (kc_hitweaksounds) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+						if (kc_hitweaksounds && !owner.CountInv("DedMonsterFlag")) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
 						nm = "SonicNail";
 						if (inflictor && 
 								(inflictor.GetClassName() == nm ||

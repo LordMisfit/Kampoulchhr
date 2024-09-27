@@ -8283,24 +8283,24 @@ class BetaLostSoul : LostSoulNew
 				
 				if (atkframe == 5)
 				{
-					int basedmgorig = randompick(1,1,1,2,2,2,3,3,3,4);
+					int basedmgorig = randompick(1,1,1,1,1,2,2,2,2,3);
 					int basedmg = basedmgorig;
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) 
 					{
 						A_SetTics(2); 
-						basedmg += basedmgorig;
+						basedmg += (basedmgorig * 0.5);
 					}
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) 
 					{
 						A_SetTics(1); 
-						basedmg += basedmgorig;
+						basedmg += (basedmgorig * 0.5);
 					}
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) 
 					{
 						A_SetTics(randompick(0,1,1,1)); 
-						basedmg += basedmgorig;
+						basedmg += (basedmgorig * 0.5);
 					}
-					A_BetaSkullAttack(randompick(1,1,1,2,2,3),randompick(1,1,1,2,2,4),randompick(2,2,2,4,4,8));
+					A_BetaSkullAttack(basedmg,randompick(1,1,1,2,2,4),randompick(2,2,2,4,4,8));
 				}
 				
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self))

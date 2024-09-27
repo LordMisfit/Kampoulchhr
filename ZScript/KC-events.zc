@@ -3656,6 +3656,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playwsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playwsounds = false;
 				if (isCCardsIllusion) playwsounds = false;
+				if (victim.CountInv("DedMonsterFlag")) playwsounds = false;
 
 				if (kcdebug_hitsounds) Console.Printf("playwsounds: %d (%s)", playwsounds, vict);
 				if (playwsounds)
@@ -3727,6 +3728,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdthsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdthsounds = false;
 				if (isCCardsIllusion) playdthsounds = false;
+				if (victim.CountInv("DedMonsterFlag")) playdthsounds = false;
 
 				if (kcdebug_hitsounds) Console.Printf("playdthsounds: %d (%s)", playdthsounds, vict);
 				if (playdthsounds)
@@ -3849,6 +3851,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_StoneDeath"; if (vict == nm) playdmgsounds = false;
 				nm = "CCards_Actor_MysteryEgg"; if (vict == nm) playdmgsounds = false;
 				if (isCCardsIllusion) playdmgsounds = false;
+				if (victim.CountInv("DedMonsterFlag")) playdmgsounds = false;
 
 				if (kcdebug_hitsounds) Console.Printf("playdmgsounds: %d (%s)", playdmgsounds, vict);
 				if (playdmgsounds)

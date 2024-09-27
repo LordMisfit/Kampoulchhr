@@ -2229,7 +2229,7 @@ mixin class MonsterCollider
 				  (InStateSequence(curstate,ResolveState("Idle")) && (Heresiarch(self) || HeresiarchNew(self))))
 			{
 				A_SetInventory("JustSurprised",1);
-				if (kc_hitweaksounds && CountInv("DedMonsterFlag")) A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+				if (kc_hitweaksounds && !CountInv("DedMonsterFlag")) A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
 				nm = "SonicNail";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||
@@ -2243,7 +2243,7 @@ mixin class MonsterCollider
 			}
 			else
 			{
-				if (kc_hitweaksounds) A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+				if (kc_hitweaksounds && !CountInv("DedMonsterFlag")) A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
 				nm = "SonicNail";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||

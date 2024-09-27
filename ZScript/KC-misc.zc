@@ -247,6 +247,7 @@ class PlayerStatItem : Inventory
 	int BaseStartMaxPP;
 	int BaseStartMaxMP;
 
+	double ArmorHealthFactor;
 	int MaxHealthTrue;
 	int MaxHealthTrueRF;
 	int HealthLevelAdd;
@@ -1188,6 +1189,27 @@ class PlayerStatItem : Inventory
 		MPRegenTimerMax = 700;
 		MPDegenTimerMax = 700;
 		CurrentHealth = owner.player.mo.health;
+		double temp1 = ((CurrentHealth * 1.0) / (MaxHealthTrue * 1.0));
+		ArmorHealthFactor = 1.00 / temp1;
+		if (ArmorHealthFactor <= 3.3334) ArmorHealthFactor = 3.3334;
+		if (ArmorHealthFactor >= 1.0000) 
+		{
+			ArmorHealthFactor = 1.0000;
+			if (HealthRatio < 625)
+			{
+				ArmorHealthFactor = 1.1;
+				if (HealthRatio < 167)
+				{
+					ArmorHealthFactor = 1.225;
+					if (HealthRatio < 21)
+					{
+						ArmorHealthFactor = 1.5;
+					}
+				}
+			}
+		}
+		//Console.Printf("ArmorHealthFactor: %.8f, temp1: %.8f", ArmorHealthFactor, temp1);
+		
 		int HealthBonusAdd2 = HealthBonusAdd;
 		int HealthLevelAdd2 = HealthLevelAdd;
 		int VitalityPiecesAdd = floor(int(VitalityPieces));
@@ -3400,6 +3422,7 @@ class PlayerStatItem : Inventory
 					ArmorWeight = 0.075;
 					if (berserked) ArmorWeight *= 0.875;
 				}
+				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = ArmorWeight;
 			}
@@ -3416,6 +3439,7 @@ class PlayerStatItem : Inventory
 					ArmorWeight = 0.0625;
 					if (berserked) ArmorWeight *= 0.875;
 				}
+				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = ArmorWeight;
 			}
@@ -3432,6 +3456,7 @@ class PlayerStatItem : Inventory
 					ArmorWeight = 0.05;
 					if (berserked) ArmorWeight *= 0.875;
 				}
+				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = ArmorWeight;
 			}
@@ -3473,6 +3498,7 @@ class PlayerStatItem : Inventory
 						if (berserked) ArmorWeight *= 0.6;
 					}
 				}
+				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
@@ -8199,6 +8225,7 @@ class PlayerStatItem : Inventory
 				ArmorWeight = 0.075;
 				if (berserked) ArmorWeight *= 0.875;
 			}
+			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
 			ArmorEnc = ArmorWeight;
 		}
@@ -8215,6 +8242,7 @@ class PlayerStatItem : Inventory
 				ArmorWeight = 0.0625;
 				if (berserked) ArmorWeight *= 0.875;
 			}
+			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
 			ArmorEnc = ArmorWeight;
 		}
@@ -8231,6 +8259,7 @@ class PlayerStatItem : Inventory
 				ArmorWeight = 0.05;
 				if (berserked) ArmorWeight *= 0.875;
 			}
+			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
 			ArmorEnc = ArmorWeight;
 		}
@@ -8272,6 +8301,7 @@ class PlayerStatItem : Inventory
 					if (berserked) ArmorWeight *= 0.6;
 				}
 			}
+			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
 			ArmorEnc = (ArmorWeight * ArmorRatio);
 		}
