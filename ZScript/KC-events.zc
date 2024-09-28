@@ -7923,7 +7923,27 @@ class KC_EventHandler : EventHandler
 
 		super.RenderOverlay(e);
 	}
-
+	
+	// Attempt to port from Xortts' "Bullet Time X" mod its ability to affect map sectors 
+	// for time stop situations [incomplete for the moment and doesn't yet do anything. :V
+	void StopMovingSectors(bool applyStop)
+	{
+		bool freezeWorldActive;
+		Thinker thinkerSector;
+		ThinkerIterator sectorMovingList = ThinkerIterator.Create("SectorEffect", Thinker.STAT_SECTOREFFECT);
+		
+		while (thinkerSector = Thinker(sectorMovingList.Next()) ) // look for new SectorEffects or ticking ones
+		{
+			if (freezeWorldActive) // considering somewhere in the code this variable exists
+			{
+				thinkerSector.changeStatNum(Thinker.STAT_STATIC); 
+			}
+			else
+			{
+				thinkerSector.changeStatNum(Thinker.STAT_SECTOREFFECT); 
+			}
+		}
+	}
 }
 
 class ItemData
