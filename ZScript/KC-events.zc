@@ -7033,7 +7033,7 @@ class KC_EventHandler : EventHandler
 										string voicenm;
 										double voicevol = frandom(1.25,1.75);
 										if (playera && A_CheckBerserk(playera))  voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
-										int randvoice = random(1,9);
+										int randvoice = random(1,11);
 										if (victim.GetClassName() == "GermanDog")
 										{
 											randvoice = random(1,2);
@@ -7105,6 +7105,18 @@ class KC_EventHandler : EventHandler
 												MiscItem.OneLinerTimerCool = ceil(int(1.117 * TICRATE));
 												voicenm = "Heiwa/WontHoldBack"; //
 												Console.Printf("\c[HeiwaChamosis]'I won't hold back!'\c-"); //
+											}
+											if (randvoice == 10)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(1.245 * TICRATE));
+												voicenm = "Heiwa/DontMessWithMe"; //
+												Console.Printf("\c[HeiwaChamosis]'Don't mess with me!!'\c-"); //
+											}
+											if (randvoice == 11)
+											{
+												MiscItem.OneLinerTimerCool = ceil(int(0.766 * TICRATE));
+												voicenm = "Heiwa/SeeYa"; //
+												Console.Printf("\c[HeiwaChamosis]'See ya!'\c-"); //
 											}
 											if (kcdebug_worlddied) Console.Printf("One-Liner: %d", randvoice);
 										}

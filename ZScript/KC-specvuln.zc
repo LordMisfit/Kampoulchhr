@@ -5367,7 +5367,8 @@ class CompatVulnItem : PlaceholderItem
 						!KCUniqueBoss(owner) &&
 						owner.GetClassName() != nm &&
 						owner.GetClassName() != nn &&
-						!owner.bDORMANT)
+						!owner.bDORMANT &&
+						owner.bISMONSTER)
 				{
 					int initdmg = newdamage;
 					surprisehit = true;
