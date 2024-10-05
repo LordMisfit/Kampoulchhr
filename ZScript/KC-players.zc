@@ -3326,6 +3326,8 @@ class KCPlayerPawn : PlayerPawn
 		// Yes, actually BUFFING a CCards effect for once LUL :V
 		if (mod == 'CCShadow' && !A_CheckInvuln()) PlayerArmorIgnoreFactor = 1.00;
 		
+		if (PlayerArmorIgnoreFactor <= 0.0) PlayerArmorIgnoreFactor = 0.0;
+		if (PlayerArmorIgnoreFactor > 1.0) PlayerArmorIgnoreFactor = 1.0;
 		return PlayerArmorIgnoreFactor;
 	}
 	

@@ -14,6 +14,7 @@ class KCWeaponBase : Weapon
 	mixin InvWeaponShare;
 	mixin ActorStateReplace;
 	mixin HUDRecovery;
+	mixin ItemFallSpotCheck;
 	
 	int shottype;
 	int altshottype;
@@ -1247,20 +1248,7 @@ class KCWeaponBase : Weapon
 	override void Tick()
 	{
 		super.Tick();
-		Double Dbl;
-		Sector Sec;
-		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
-		if (pos.z <= Dbl && !owner)
-		{
-			if (cursector.damagetype == 'InstantDeath' ||
-					cursector.damagetype == 'Massacre')
-			{
-				if (bCOUNTITEM) level.total_items--;
-				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
-				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](EEWeapon)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
-				Destroy();
-			}
-		}
+		ItemFallCheck();
 	}
 	
 	// Fist Block Function

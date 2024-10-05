@@ -74,7 +74,13 @@ class CustomInventoryExt : CustomInventory
 	const HealItemBasePPBoostRatio2 = 18.75;
 	const HealItemBaseMPBoostRatio = 12.5;
 	const HealItemBaseMPBoostRatio2 = 18.75;
-
+	
+	/*
+	mixin InvWeaponShare;
+	mixin HUDRecovery;
+	mixin TimerCheck;
+	*/
+	mixin ItemFallSpotCheck;
 	string texname;
 	int user_type;
 	
@@ -283,20 +289,7 @@ class CustomInventoryExt : CustomInventory
 	override void Tick()
 	{
 		super.Tick();
-		Double Dbl;
-		Sector Sec;
-		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
-		if (pos.z <= Dbl && !owner)
-		{
-			if (cursector.damagetype == 'InstantDeath' ||
-					cursector.damagetype == 'Massacre')
-			{
-				if (bCOUNTITEM) level.total_items--;
-				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
-				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](CustomInventoryExt)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
-				Destroy();
-			}
-		}
+		ItemFallCheck();
 	}
 	
 	// ManaCube Pickup script
@@ -2717,6 +2710,7 @@ class KCArmor : BasicArmor
 
 class KCArmorBonus : BasicArmorBonus
 {
+	mixin ItemFallSpotCheck;
 	int A_CheckMaxArmor(int fSaveAmount) // BasicArmorBonus
 	{
 		actor playera = players[0].mo;
@@ -2807,20 +2801,7 @@ class KCArmorBonus : BasicArmorBonus
 	override void Tick()
 	{
 		super.Tick();
-		Double Dbl;
-		Sector Sec;
-		[Dbl,Sec] = CurSector.LowestFloorAt(Pos.XY);
-		if (pos.z <= Dbl && !owner)
-		{
-			if (cursector.damagetype == 'InstantDeath' ||
-					cursector.damagetype == 'Massacre')
-			{
-				if (bCOUNTITEM) level.total_items--;
-				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
-				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](KCArmorBonus)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
-				Destroy();
-			}
-		}
+		ItemFallCheck();
 	}
 	
 	Default
