@@ -147,7 +147,7 @@ class HereticImpNew : KCCreature // replaces HereticImp
 		+NOGRAVITY;
 		+SPAWNFLOAT;
 		+DONTOVERLAP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTHARMSPECIES;
 		Species "Gargoyle";
 		DamageFunction (0);
@@ -296,7 +296,7 @@ class HereticImpLeaderNew : HereticImpNew // replaces HereticImpLeader
 		DamageFactor "Ice", 2.0;
 		Painchance "Ice", 256;
 		Species "Gargoyle";
-		-MISSILEMORE;
+		MissileChanceMult 1.0; //-MISSILEMORE;
 		+DONTHARMSPECIES;
 		AttackSound "himp/leaderattack";
 		Translation "141:141=144:144", "145:160=145:153", "248:254=248:251", "66:94=66:80", "95:110=95:103";
@@ -587,7 +587,7 @@ class WatcherImp : HereticImpNew
 		+NOGRAVITY;
 		+SPAWNFLOAT;
 		+DONTOVERLAP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		SeeSound "himp/sight";
 		AttackSound "himp/attack";
 		PainSound "himp/pain";
@@ -1962,7 +1962,7 @@ class DeathKnight : KCCreature
 		+FLOORCLIP;
 		+NOTARGET;
 		+NORADIUSDMG;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+BOSS;
 		+DEFLECT;
 		+AVOIDMELEE;
@@ -2392,7 +2392,7 @@ class DKSword : KCProjectile // Death piece
 		PROJECTILE;
 		RenderStyle "Normal";
 		-NOGRAVITY;
-		+LOWGRAVITY;
+		Gravity 0.125;
 	}
 	
 	States
@@ -2422,7 +2422,7 @@ class DKShield : KCProjectile // Death piece
 		PROJECTILE;
 		RenderStyle "Normal";
 		-NOGRAVITY;
-		+LOWGRAVITY;
+		Gravity 0.125;
 	}
 	
 	States
@@ -4297,7 +4297,7 @@ class IceLich : KCCreature
 		+NOGRAVITY;
 		+NOBLOOD;
 		+FLOAT;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTBLAST;
 		+DONTMORPH;
 		+DONTSQUASH;
@@ -4798,8 +4798,9 @@ class BloodLich : KCCreature
 		+NOFEAR;
 		+SPAWNCEILING;
 		+FLOAT;
-		+MISSILEMORE;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.0625;
+		//+MISSILEEVENMORE;
+		//+MISSILEMORE;
 		+DONTBLAST;
 		+DONTMORPH;
 		+DONTRIP;
@@ -7431,7 +7432,7 @@ class Serpathor : KCCreature
 		+FLOORCLIP;
 		+DONTHARMCLASS;
 		+AVOIDMELEE;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		AttackSound "snake/attack";
 		SeeSound "snake/sight";
 		PainSound "snake/pain";

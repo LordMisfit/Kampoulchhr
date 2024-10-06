@@ -1331,7 +1331,7 @@ class KsawBolt : KCProjectile
 		+RIPPER;
 		+BLOODSPLATTER;
 		+STRIFEDAMAGE;
-		+HEXENBOUNCE;
+		BounceType "Hexen";
 		+BOUNCEONWALLS;
 		+BOUNCEONFLOORS;
 		+BOUNCEONCEILINGS;
@@ -5765,7 +5765,7 @@ class BloodDemonArm : KCCustomGib
 		Radius 8;
 		Height 8;
 		Speed 8;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+DROPOFF;
 		+Missile;
 	}
@@ -5790,7 +5790,7 @@ class BloodSpectreArm : KCCustomGib
 		Radius 8;
 		Height 8;
 		Speed 8;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+DROPOFF;
 		+Missile;
 	}
@@ -5815,7 +5815,7 @@ class NBloodSpectreArm : KCCustomGib
 		Radius 8;
 		Height 8;
 		Speed 8;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+DROPOFF;
 		+Missile;
 	}
@@ -7734,14 +7734,14 @@ class LostSoulNew : KCCreature
 		Painchance "Fist", 256; // Fist attacks have a +50% chance of stunning an enemy
 		Painchance "Kick", 256; // Kick attacks have a +150% chance of stunning an enemy
 		Monster;
-		+FLOAT
-		+NOGRAVITY
-		+MISSILEMORE
-		+DONTFALL
-		+NOICEDEATH
-		+ZDOOMTRANS 
-		+RETARGETAFTERSLAM
-		+ONLYSLAMSOLID
+		+FLOAT;
+		+NOGRAVITY;
+		MissileChanceMult 0.5; //+MISSILEMORE;
+		+DONTFALL;
+		+NOICEDEATH;
+		+ZDOOMTRANS;
+		+RETARGETAFTERSLAM;
+		+ONLYSLAMSOLID;
 		AttackSound "skull/melee";
 		PainSound "skull/pain";
 		DeathSound "skull/death";
@@ -7885,8 +7885,9 @@ class LostSoulAnnoying : LostSoulNew
 		Painchance "Ice", 256;
 		AttackSound "skull/melee2";
 		Obituary "%o was spooked by an annoying lost soul.";
-		+MISSILEEVENMORE;
-		-MISSILEMORE;
+		MissileChanceMult 0.5;
+		//+MISSILEEVENMORE;
+		//-MISSILEMORE;
 	}
 	
 	override void Tick()
@@ -8301,7 +8302,7 @@ class BetaLostSoul : LostSoulNew
 						randmin = 4;
 						randmax = 8;
 					}
-					double basedmgorig = randompick(1.0,1.2,1.4,1.6,1.8,2.0,2.25,2.5,2.75,3.0);
+					double basedmgorig = frandompick(1.0,1.2,1.4,1.6,1.8,2.0,2.25,2.5,2.75,3.0);
 					double basedmg = basedmgorig;
 					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) 
 					{
@@ -8536,7 +8537,7 @@ class RevenantNew : KCCreature
 		Painchance "Kick", 250; // Kick attacks have a +150% chance of stunning an enemy
 		Monster;
 		MeleeThreshold 196;
-		+MISSILEMORE 
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+FLOORCLIP
 		SeeSound "skeleton/sight";
 		PainSound "revenant/pain";
@@ -8862,7 +8863,7 @@ class DeathIncarnate : KCCreature
 		Painchance "Zap", 160;
 		MONSTER;
 		+FLOORCLIP;
-		+SHORTMISSILERANGE;
+		MaxTargetRange 896;
 		+DONTHARMCLASS;
 		+AVOIDMELEE;
 		SeeSound "monster/incsit";
@@ -9542,7 +9543,7 @@ class HellWarriorShield : KCBaseZSC
 		Radius 8;
 		Height 8;
 		Speed 6;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+DROPOFF;
 		+Missile;
 	}
@@ -10828,8 +10829,9 @@ class FusionArachnotron : ArachnotronNew
 		ACTIVESOUND "baby/active";
 		MONSTER;
 		+FLOORCLIP;
-		+MISSILEMORE;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.0625;
+		//+MISSILEMORE;
+		//+MISSILEEVENMORE;
 		Species "Arachnotron";
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
@@ -12627,7 +12629,7 @@ class Diabloist : KCCreature
 		+NOTARGET;
 		+NODROPOFF;
 		+NORADIUSDMG;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+DONTHARMCLASS;
 		+AVOIDMELEE;
@@ -13156,7 +13158,7 @@ class Cybruiser : KCCreature
 
 		Species "HellNoble";
 		+FLOORCLIP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
 		+BOSSDEATH;
@@ -13696,7 +13698,8 @@ class BruiserDemon : BaronOfHellNew
 		Species "HellNoble";
 		Monster;
 		+FLOORCLIP;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.125;
+		//+MISSILEEVENMORE;
 		+DONTHARMCLASS;
 		+AVOIDMELEE;
 		+BOSSDEATH;
@@ -14095,7 +14098,7 @@ class ArchonOfHell : BaronOfHellNew
 		DamageFactor "Fire", 0.4;
 		Species "HellNoble";
 		+FLOORCLIP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
 		+BOSSDEATH;
@@ -14594,7 +14597,7 @@ class PyroDemon : BaronofHellNew
 		MONSTER;
 		+NOTARGET;
 		+FLOORCLIP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+DONTHARMSPECIES;
 		+AVOIDMELEE;
 		+BOSSDEATH;
@@ -15128,8 +15131,8 @@ class PyroBall : KCProjectile
 		Obituary "%o was killed by a PyroBall.";
 		Alpha 0.7;
 		-NoGravity;
-		+DoomBounce;
-		+LowGravity;
+		BounceType "Doom";
+		Gravity 0.125;
 		+SeekerMissile;
 		Decal "RevenantScorch";
 		DamageType "Fire";
@@ -15273,7 +15276,7 @@ class RainCometNull : KCProjectile
 		PROJECTILE;
 		+FLOORCLIP;
 		+RIPPER;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+CEILINGHUGGER;
 		+DONTHARMSPECIES;
 		+NOSPRITESHADOW;
@@ -15456,7 +15459,7 @@ class Hierophant : KCCreature
 		Species "HellNoble";
 		+NOTARGET;
 		+FLOORCLIP;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+FLOAT;
 		+NOGRAVITY;
 		+DONTHARMSPECIES;
@@ -16056,7 +16059,7 @@ class CyberdemonNew : KCCreature
 		Monster;
 		MinMissileChance 160;
 		+BOSS 
-		+MISSILEMORE
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+FLOORCLIP
 		+NORADIUSDMG
 		+DONTMORPH
@@ -16387,7 +16390,7 @@ class ExplosionSmoke : KCBaseZSC
 		+CLIENTSIDEONLY;
 		+NOINTERACTION;
 		+NOGRAVITY;
-		+DOOMBOUNCE;
+		BounceType "Doom";
 		+THRUACTORS;
 		Health 99999;
 		BounceFactor 0.5;
@@ -16794,7 +16797,8 @@ class Annihilator : CyberdemonNew
 		+FLOORCLIP;
 		+NORADIUSDMG;
 		+BOSS;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.125;
+		//+MISSILEEVENMORE;
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
 		+BOSSDEATH;
@@ -17166,7 +17170,7 @@ class SpiderMastermindNew : KCCreature
 		Painchance "Kick", 100; // Kick attacks have a +150% chance of stunning an enemy
 		Monster;
 		+BOSS
-		+MISSILEMORE
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+FLOORCLIP
 		+NORADIUSDMG
 		+DONTMORPH
@@ -17439,7 +17443,8 @@ class Demolisher : SpiderMastermindNew
 		+NOTARGET;
 		+FLOORCLIP;
 		+BOSS;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.125;
+		//+MISSILEEVENMORE;
 		+NORADIUSDMG;
 		+AVOIDMELEE;
 		+DONTHARMSPECIES;
@@ -17913,7 +17918,7 @@ class HadesSphere : KCCreature
 		+DONTFALL;
 		+DONTHARMCLASS;
 		+DONTHARMSPECIES;
-		+LONGMELEERANGE;
+		MeleeThreshold 196;
 		+THRUSPECIES;
 		Species "HadesSphere";
 		SeeSound "monster/hadsit";
@@ -18205,7 +18210,7 @@ class HadesBolt : CacodemonBallNew
 		XScale 2.0;
 		ReactionTime 35;
 		+FLOORHUGGER;
-		+HEXENBOUNCE;
+		BounceType "Hexen";
 		+RIPPER;
 		-NOGRAVITY;
 		-STRIFEDAMAGE;
@@ -18254,7 +18259,7 @@ class HadesElemental : KCCreature
 		MONSTER;
 		+FLOAT;
 		+NOGRAVITY;
-		+MISSILEMORE;
+		MissileChanceMult 0.5; //+MISSILEMORE;
 		+NOTARGET;
 		+DONTHARMSPECIES;
 		+NORADIUSDMG;
@@ -18711,7 +18716,7 @@ class StormBolt : StormStrike1
 		XScale 2.0;
 		ReactionTime 35;
 		+FLOORHUGGER;
-		+HEXENBOUNCE;
+		BounceType "Hexen";
 		-NOGRAVITY;
 	}
 	
@@ -18876,7 +18881,8 @@ class HadesOverLord : KCCreature
 		+FLOORCLIP;
 		+NORADIUSDMG;
 		+NOTARGET;
-		+MISSILEEVENMORE;
+		MissileChanceMult 0.125;
+		//+MISSILEEVENMORE;
 		+FLOAT;
 		+NOGRAVITY;
 		+DONTFALL;
@@ -19226,7 +19232,7 @@ class OverFlesh1 : KCCustomGib
 		Radius 1;
 		Height 1;
 		PROJECTILE;
-		+LOWGRAVITY;
+		Gravity 0.125;
 		-NOGRAVITY;
 	}
 	

@@ -737,8 +737,7 @@ ACTOR SakuyaJackTheLudoBile
 	MinMissileChance 64
 	Mass 7000
 	Species SDM
-	+MISSILEMORE
-	+MISSILEEVENMORE
+	MissileChanceMult 0.0625
 	+INVULNERABLE
 	+NOPAIN
 	+DONTHURTSPECIES
@@ -1304,7 +1303,7 @@ ACTOR SakuyaNS2OrbBlue
   damage (10)
   Projectile
   +FORCEXYBILLBOARD
-  +DOOMBOUNCE
+  BounceType "Doom"
   BounceCount 2
   SeeSound "touhou/fire"
   DeathSound "touhou/hit"
@@ -1360,7 +1359,7 @@ ACTOR SakuyaNS2OrbRed
   YScale 1.5
   Projectile
   +FORCEXYBILLBOARD
-  +DOOMBOUNCE
+  BounceType "Doom"
   BounceCount 2
   SeeSound "touhou/fire"
   DeathSound "touhou/hit"
@@ -2712,7 +2711,7 @@ ACTOR SakuyaNS3Knife1 : SakuyaKnife1
 {
 	Speed 12
 	FastSpeed 20
-	+HEXENBOUNCE
+	BounceType "Hexen"
 	BounceCount 3
 	States
 	{
@@ -2725,7 +2724,7 @@ ACTOR SakuyaNS3Knife2 : SakuyaKnife2
 {
 	Speed 12
 	FastSpeed 20
-	+HEXENBOUNCE
+	BounceType "Hexen"
 	BounceCount 3
 	States
 	{
@@ -2750,8 +2749,7 @@ ACTOR SakuyaKillingDoll
   MinMissileChance 32
   Mass 7000
   Species SDM
-  +MISSILEMORE
-  +MISSILEEVENMORE
+	MissileChanceMult 0.0625
   +INVULNERABLE
   +NOPAIN
   +DONTHURTSPECIES
@@ -5299,7 +5297,7 @@ ACTOR SakuyaMisdirection
 
 ACTOR SakuyaMisdirectionKnife1 : SakuyaKnife1
 {
-	+HEXENBOUNCE
+	BounceType "Hexen"
 	BounceCount 2
 	States
 	{
