@@ -5172,514 +5172,517 @@ class CompatVulnItem : PlaceholderItem
 						ShieldPartBase(owner) ||
 						PlayerPawn(owner)) Destroy();
 			
-			firstdmgfactor = owner.DamageFactor;
-			ownername = owner.GetClassName();
-			if (passive && damage > 0) // If the owner of the item is the DEFENDER
+			if (owner)
 			{
-				int angvstype;
-				bool wasblastedimpact;
-				//
+				firstdmgfactor = owner.DamageFactor;
+				ownername = owner.GetClassName();
+				if (passive && damage > 0) // If the owner of the item is the DEFENDER
+				{
+					int angvstype;
+					bool wasblastedimpact;
+					//
 
-				KCPlayerPawn FoundPlayer;
-				FoundPlayer = KCPlayerPawn(source);
+					KCPlayerPawn FoundPlayer;
+					FoundPlayer = KCPlayerPawn(source);
 
-				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c-: pre-damage: %d, damagetype: %s", damage, damageType);
-				double TOTALFactor = 1.00;
-				// Time Stop
-				if (FoundPlayer) 
-				{
-					if (owner.CountInv("LDLegendaryMonsterTransformed"))
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c-: pre-damage: %d, damagetype: %s", damage, damageType);
+					double TOTALFactor = 1.00;
+					// Time Stop
+					if (FoundPlayer) 
 					{
-						nm = "SonicNail";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == "ImpalerMissile" ||
-								inflictor.GetClassName() == "ImpalerMissile2" ||
-								inflictor.GetClassName() == "ImpalerMissile3"))
+						if (owner.CountInv("LDLegendaryMonsterTransformed"))
 						{
-							TOTALFactor *= 5.0;
-						}
-						nm = "DeviationRocket";
-						nn = "DumbRocket";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == nn))
-						{
-							TOTALFactor *= 2.0;
-						}
-					}
-					
-					if (owner.bNORADIUSDMG)
-					{
-						nm = "DevastatorShot";
-						nn = "DevastatorShot2";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == nn) && 
-								inflictor.bFORCERADIUSDMG &&
-								flags & DMG_EXPLOSION)
-						{
-							TOTALFactor *= 0.25;
-						}
-						nm = "DeviationRocket";
-						nn = "DumbRocket";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == nn) && 
-								inflictor.bFORCERADIUSDMG &&
-								flags & DMG_EXPLOSION)
-						{
-							TOTALFactor *= 0.5;
-						}
-						nm = "TeslaBallBig";
-						nn = "TeslaBallBigDual";
-						no = "TeslaProjectile";
-						np = "TeslaProjectile2";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								 inflictor.GetClassName() == nn ||
-								 inflictor.GetClassName() == no ||
-								 inflictor.GetClassName() == np) && 
-								inflictor.bFORCERADIUSDMG &&
-								flags & DMG_EXPLOSION)
-						{
-							if (ownername == "EviternatusAnta" ||
-									ownername == "EviternatusBete" ||
-									ownername == "EviternatusCeph")
+							nm = "SonicNail";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == "ImpalerMissile" ||
+									inflictor.GetClassName() == "ImpalerMissile2" ||
+									inflictor.GetClassName() == "ImpalerMissile3"))
 							{
-								TOTALFactor *= 1.5;
+								TOTALFactor *= 5.0;
+							}
+							nm = "DeviationRocket";
+							nn = "DumbRocket";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == nn))
+							{
+								TOTALFactor *= 2.0;
 							}
 						}
-					}
-					
-					if (LostSoul(owner) || 
-							owner.GetClassName() == "LostSoul")
-					{
-						owner.bONLYSLAMSOLID = true;
-						if (owner.InStateSequence(owner.curstate,owner.ResolveState("Missile"))) TOTALFactor *= 2.0;
-					}
-					
-					bool isaghost;
-					bool isholosentry;
-					int d = Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true);
-					if (owner.bSOLID == false &&
-							owner.bBRIGHT == true &&
-							((owner.alpha == 0.5 && owner.GetRenderStyle() == STYLE_ADD) ||
-							 (owner.alpha == 0.0 && owner.GetRenderStyle() == STYLE_NONE)) &&
-							d != -1) 
-					{
-						isholosentry = true;
-					}
-					nm = "CCards_Actor_Ghost"; 
-					nn = "CCards_Actor_AchillesCurse"; 
-					if (!(owner.CountInv(nm) || 
-								owner.CountInv(nn) ||
-								isholosentry))
-					{
-						if (MiscItem && MiscItem.timestopactivetics > 0)
+						
+						if (owner.bNORADIUSDMG)
 						{
-							double factor1 = frandompick(0.2,0.25);
-							double factor2 = frandompick(0.6,0.75);
-							if (MiscItem.timestoptype == 1) // Defensive
+							nm = "DevastatorShot";
+							nn = "DevastatorShot2";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == nn) && 
+									inflictor.bFORCERADIUSDMG &&
+									flags & DMG_EXPLOSION)
 							{
-								TOTALFactor *= factor1;
-								if (damageType == 'Bullet' || 
-										damageType == 'Pellet' ||
-										damageType == 'Ripsaw' ||
-										damageType == 'SawShot' ||
-										damageType == 'Chainsaw' ||
-										damageType == 'Knife') TOTALFactor *= factor2;
-								owner.A_StopSound(14);
-								owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+								TOTALFactor *= 0.25;
 							}
-							if (MiscItem.timestoptype == 2) // Offensive
+							nm = "DeviationRocket";
+							nn = "DumbRocket";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == nn) && 
+									inflictor.bFORCERADIUSDMG &&
+									flags & DMG_EXPLOSION)
 							{
-								TOTALFactor /= factor1;
-								if (damageType == 'Bullet' || 
-										damageType == 'Pellet' ||
-										damageType == 'Ripsaw' ||
-										damageType == 'SawShot' ||
-										damageType == 'Chainsaw' ||
-										damageType == 'Knife') TOTALFactor /= factor2;
-								owner.A_StopSound(14);
-								owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+								TOTALFactor *= 0.5;
 							}
-						}
-					}
-					
-					if (FoundPlayer.CountInv("TimeSeraphVisor"))
-					{
-						if (FoundPlayer.CountInv("TSArmorTier3Plus")) TOTALFactor *= 1.8625;
-						else if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
-						else if (FoundPlayer.CountInv("TSArmorTier1")) TOTALFactor *= 1.2625;
-						else TOTALFactor *= 1.125;
-					}
-				}
-				
-				found = false;
-				if (!found) TOTALFactor *= GetDoomResistances(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetAfterDoomResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetBloodResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetBloodResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetMiscResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetMiscResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
-				if (!found) TOTALFactor *= GetCCardsResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
-				
-				newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
-				lastTOTALFactor = TOTALFactor;
-				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c- (%s): post-damage: %d, damagetype: %s, TOTALFactor: %.8f", ownername, newdamage, damageType, TOTALFactor);
-				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && source) Console.Printf("(source: \c[green]%p\c-) %s", source, source.GetClassName());
-				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
-				if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
-				
-				bool domusic = false;
-				if (!FoundPlayer) FoundPlayer = KCPlayerPawn(inflictor);
-				if (FoundPlayer)
-				{
-					if (!owner.bFRIENDLY) domusic = true;
-				}
-				else
-				{
-					if (owner.bFRIENDLY)
-					{
-						if (source && source.bISMONSTER && !source.bFRIENDLY) domusic = true;
-						if (inflictor && inflictor.bISMONSTER && !inflictor.bFRIENDLY) domusic = true;
-					}
-					else
-					{
-						if (source && source.bISMONSTER && source.bFRIENDLY) domusic = true;
-						if (inflictor && inflictor.bISMONSTER && inflictor.bFRIENDLY) domusic = true;
-					}
-				}
-				if (domusic) A_DynamicMusic(forcedplay:true);
-				
-				nm = "CCards_Actor_StoneDeath";
-				nn = "CCards_Actor_MysteryEgg";
-				if (source && 
-						(prevtarget != source || owner.CountInv("TimeFreezeHasNoTarget") || owner.CountInv("TimeFreezeHasATarget")) && 
-						(PlayerPawn(source) || source.bFRIENDLY) && 
-						!owner.bFRIENDLY && 
-						!ExplosiveBarrel(owner) && 
-						!ExplosiveBarrel2(owner) && 
-						!Pod(owner) &&
-						!PracticeTarget(owner) &&
-						!PracticeTarget2(owner) &&
-						!KCUniqueBoss(owner) &&
-						owner.GetClassName() != nm &&
-						owner.GetClassName() != nn &&
-						!owner.bDORMANT &&
-						owner.bISMONSTER)
-				{
-					int initdmg = newdamage;
-					surprisehit = true;
-					A_StopSound(32);
-					if (InStateSequence(owner.curstate,ResolveState("Spawn")) ||
-							(InStateSequence(owner.curstate,ResolveState("Idle")) && Heresiarch(owner)))
-					{
-						owner.A_SetInventory("JustSurprised",1);
-						if (kc_hitweaksounds && !owner.CountInv("DedMonsterFlag")) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-						nm = "SonicNail";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == "ImpalerMissile" ||
-								inflictor.GetClassName() == "ImpalerMissile2" ||
-								inflictor.GetClassName() == "ImpalerMissile3"))
-						{
-							newdamage *= frandompick(2.0000,2.50);
-						}
-						else newdamage *= frandompick(1.3334,1.50);
-					}
-					else
-					{
-						if (kc_hitweaksounds && !owner.CountInv("DedMonsterFlag")) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
-						nm = "SonicNail";
-						if (inflictor && 
-								(inflictor.GetClassName() == nm ||
-								inflictor.GetClassName() == "ImpalerMissile" ||
-								inflictor.GetClassName() == "ImpalerMissile2" ||
-								inflictor.GetClassName() == "ImpalerMissile3"))
-						{
-							newdamage *= frandompick(1.5000,1.75);
-						}
-						else newdamage *= frandompick(1.1667,1.25);
-					}
-					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), newdamage, initdmg);
-				}
-				
-				string nm = "CCards_Actor_Ghost"; 
-				if (owner.CountInv(nm)) 
-				{
-					if ((inflictor && PhobosAir(inflictor)) ||
-							(source && PhobosAir(source)))
-					{
-						damage *= randompick(24,32,32,36,36,36,40,40,48);
-					}
-				}
-				
-				//
-				bool criticalhit = false;
-				int CritRoll;
-				int TruePlayerLevel;
-				if (MiscItem && kc_expgains) TruePlayerLevel = MiscItem.PlayerLevel;
-				if (FoundPlayer) 
-				{
-					int bosscritres = 75;
-					if (FoundPlayer.CountInv("TimeSeraphVisor")) 
-					{
-						if (FoundPlayer.CountInv("TSArmorTier3Plus")) bosscritres *= 0.0334;
-						else if (FoundPlayer.CountInv("TSArmorTier2")) bosscritres *= 0.1;
-						else if (FoundPlayer.CountInv("TSArmorTier1")) bosscritres *= 0.25;
-						else bosscritres *= 0.625;
-					}
-					
-					if (FoundPlayer.CountInv("DealCriticalHit"))
-					{
-						criticalhit = true;
-						if (owner.bBOSS && random(1,100) <= bosscritres) 
-						{
-							criticalhit = false;
-							if (source == FoundPlayer || inflictor == FoundPlayer)
+							nm = "TeslaBallBig";
+							nn = "TeslaBallBigDual";
+							no = "TeslaProjectile";
+							np = "TeslaProjectile2";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									 inflictor.GetClassName() == nn ||
+									 inflictor.GetClassName() == no ||
+									 inflictor.GetClassName() == np) && 
+									inflictor.bFORCERADIUSDMG &&
+									flags & DMG_EXPLOSION)
 							{
-								If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 0)
+								if (ownername == "EviternatusAnta" ||
+										ownername == "EviternatusBete" ||
+										ownername == "EviternatusCeph")
 								{
-									if (!criticalhit && random(1,16) <= 15) criticalhit = true;
+									TOTALFactor *= 1.5;
 								}
 							}
 						}
+						
+						if (LostSoul(owner) || 
+								owner.GetClassName() == "LostSoul")
+						{
+							owner.bONLYSLAMSOLID = true;
+							if (owner.InStateSequence(owner.curstate,owner.ResolveState("Missile"))) TOTALFactor *= 2.0;
+						}
+						
+						bool isaghost;
+						bool isholosentry;
+						int d = Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true);
+						if (owner.bSOLID == false &&
+								owner.bBRIGHT == true &&
+								((owner.alpha == 0.5 && owner.GetRenderStyle() == STYLE_ADD) ||
+								 (owner.alpha == 0.0 && owner.GetRenderStyle() == STYLE_NONE)) &&
+								d != -1) 
+						{
+							isholosentry = true;
+						}
+						nm = "CCards_Actor_Ghost"; 
+						nn = "CCards_Actor_AchillesCurse"; 
+						if (!(owner.CountInv(nm) || 
+									owner.CountInv(nn) ||
+									isholosentry))
+						{
+							if (MiscItem && MiscItem.timestopactivetics > 0)
+							{
+								double factor1 = frandompick(0.2,0.25);
+								double factor2 = frandompick(0.6,0.75);
+								if (MiscItem.timestoptype == 1) // Defensive
+								{
+									TOTALFactor *= factor1;
+									if (damageType == 'Bullet' || 
+											damageType == 'Pellet' ||
+											damageType == 'Ripsaw' ||
+											damageType == 'SawShot' ||
+											damageType == 'Chainsaw' ||
+											damageType == 'Knife') TOTALFactor *= factor2;
+									owner.A_StopSound(14);
+									owner.A_StartSound("misc/hitreducedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+								}
+								if (MiscItem.timestoptype == 2) // Offensive
+								{
+									TOTALFactor /= factor1;
+									if (damageType == 'Bullet' || 
+											damageType == 'Pellet' ||
+											damageType == 'Ripsaw' ||
+											damageType == 'SawShot' ||
+											damageType == 'Chainsaw' ||
+											damageType == 'Knife') TOTALFactor /= factor2;
+									owner.A_StopSound(14);
+									owner.A_StartSound("misc/hitboostedtime",203,CHANF_DEFAULT,1.0,ATTN_NONE,frandompick(0.5,0.625,0.78125));
+								}
+							}
+						}
+						
+						if (FoundPlayer.CountInv("TimeSeraphVisor"))
+						{
+							if (FoundPlayer.CountInv("TSArmorTier3Plus")) TOTALFactor *= 1.8625;
+							else if (FoundPlayer.CountInv("TSArmorTier2")) TOTALFactor *= 1.45;
+							else if (FoundPlayer.CountInv("TSArmorTier1")) TOTALFactor *= 1.2625;
+							else TOTALFactor *= 1.125;
+						}
+					}
+					
+					found = false;
+					if (!found) TOTALFactor *= GetDoomResistances(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetAfterDoomResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetBloodResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetBloodResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetMiscResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetMiscResistances2(damage, damageType, newdamage, passive, inflictor, source, flags);
+					if (!found) TOTALFactor *= GetCCardsResistances1(damage, damageType, newdamage, passive, inflictor, source, flags);
+					
+					newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+					lastTOTALFactor = TOTALFactor;
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("\c[sapphire]CompatVulnItem\c- (%s): post-damage: %d, damagetype: %s, TOTALFactor: %.8f", ownername, newdamage, damageType, TOTALFactor);
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && source) Console.Printf("(source: \c[green]%p\c-) %s", source, source.GetClassName());
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && inflictor) Console.Printf("(inflictor: \c[green]%p\c-) %s", inflictor, inflictor.GetClassName());
+					if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs) && prevtarget) Console.Printf("(owner.target: \c[green]%p\c-) %s", prevtarget, prevtarget.GetClassName());
+					
+					bool domusic = false;
+					if (!FoundPlayer) FoundPlayer = KCPlayerPawn(inflictor);
+					if (FoundPlayer)
+					{
+						if (!owner.bFRIENDLY) domusic = true;
 					}
 					else
 					{
-						If (MiscItem)
+						if (owner.bFRIENDLY)
 						{
-							CritRoll = MiscItem.CritRoll;
-							if (MiscItem.CritRoll <= 1) 
+							if (source && source.bISMONSTER && !source.bFRIENDLY) domusic = true;
+							if (inflictor && inflictor.bISMONSTER && !inflictor.bFRIENDLY) domusic = true;
+						}
+						else
+						{
+							if (source && source.bISMONSTER && source.bFRIENDLY) domusic = true;
+							if (inflictor && inflictor.bISMONSTER && inflictor.bFRIENDLY) domusic = true;
+						}
+					}
+					if (domusic) A_DynamicMusic(forcedplay:true);
+					
+					nm = "CCards_Actor_StoneDeath";
+					nn = "CCards_Actor_MysteryEgg";
+					if (source && 
+							(prevtarget != source || owner.CountInv("TimeFreezeHasNoTarget") || owner.CountInv("TimeFreezeHasATarget")) && 
+							(PlayerPawn(source) || source.bFRIENDLY) && 
+							!owner.bFRIENDLY && 
+							!ExplosiveBarrel(owner) && 
+							!ExplosiveBarrel2(owner) && 
+							!Pod(owner) &&
+							!PracticeTarget(owner) &&
+							!PracticeTarget2(owner) &&
+							!KCUniqueBoss(owner) &&
+							owner.GetClassName() != nm &&
+							owner.GetClassName() != nn &&
+							!owner.bDORMANT &&
+							owner.bISMONSTER)
+					{
+						int initdmg = newdamage;
+						surprisehit = true;
+						A_StopSound(32);
+						if (InStateSequence(owner.curstate,ResolveState("Spawn")) ||
+								(InStateSequence(owner.curstate,ResolveState("Idle")) && Heresiarch(owner)))
+						{
+							owner.A_SetInventory("JustSurprised",1);
+							if (kc_hitweaksounds && !owner.CountInv("DedMonsterFlag")) owner.A_StartSound("Misc/WeaknessHitMid", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+							nm = "SonicNail";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == "ImpalerMissile" ||
+									inflictor.GetClassName() == "ImpalerMissile2" ||
+									inflictor.GetClassName() == "ImpalerMissile3"))
 							{
-								criticalhit = true;
-								if (owner.bBOSS && random(1,100) <= bosscritres) 
+								newdamage *= frandompick(2.0000,2.50);
+							}
+							else newdamage *= frandompick(1.3334,1.50);
+						}
+						else
+						{
+							if (kc_hitweaksounds && !owner.CountInv("DedMonsterFlag")) owner.A_StartSound("Misc/WeaknessHit", 32, CHANF_DEFAULT, (kc_hitweaksoundvol * frandom(0.75,1.25)), ATTN_NONE, 0.67);
+							nm = "SonicNail";
+							if (inflictor && 
+									(inflictor.GetClassName() == nm ||
+									inflictor.GetClassName() == "ImpalerMissile" ||
+									inflictor.GetClassName() == "ImpalerMissile2" ||
+									inflictor.GetClassName() == "ImpalerMissile3"))
+							{
+								newdamage *= frandompick(1.5000,1.75);
+							}
+							else newdamage *= frandompick(1.1667,1.25);
+						}
+						if ((kcdebug_actordmgdisplays || kcdebug_defensebuffs)) Console.Printf("(\c[green]%s\c-) surprisehit: damage: %d (initdmg: %d)", GetClassName(), newdamage, initdmg);
+					}
+					
+					string nm = "CCards_Actor_Ghost"; 
+					if (owner.CountInv(nm)) 
+					{
+						if ((inflictor && PhobosAir(inflictor)) ||
+								(source && PhobosAir(source)))
+						{
+							damage *= randompick(24,32,32,36,36,36,40,40,48);
+						}
+					}
+					
+					//
+					bool criticalhit = false;
+					int CritRoll;
+					int TruePlayerLevel;
+					if (MiscItem && kc_expgains) TruePlayerLevel = MiscItem.PlayerLevel;
+					if (FoundPlayer) 
+					{
+						int bosscritres = 75;
+						if (FoundPlayer.CountInv("TimeSeraphVisor")) 
+						{
+							if (FoundPlayer.CountInv("TSArmorTier3Plus")) bosscritres *= 0.0334;
+							else if (FoundPlayer.CountInv("TSArmorTier2")) bosscritres *= 0.1;
+							else if (FoundPlayer.CountInv("TSArmorTier1")) bosscritres *= 0.25;
+							else bosscritres *= 0.625;
+						}
+						
+						if (FoundPlayer.CountInv("DealCriticalHit"))
+						{
+							criticalhit = true;
+							if (owner.bBOSS && random(1,100) <= bosscritres) 
+							{
+								criticalhit = false;
+								if (source == FoundPlayer || inflictor == FoundPlayer)
 								{
-									criticalhit = false;
-									if (source == FoundPlayer || inflictor == FoundPlayer)
+									If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 0)
 									{
-										If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 0)
+										if (!criticalhit && random(1,16) <= 15) criticalhit = true;
+									}
+								}
+							}
+						}
+						else
+						{
+							If (MiscItem)
+							{
+								CritRoll = MiscItem.CritRoll;
+								if (MiscItem.CritRoll <= 1) 
+								{
+									criticalhit = true;
+									if (owner.bBOSS && random(1,100) <= bosscritres) 
+									{
+										criticalhit = false;
+										if (source == FoundPlayer || inflictor == FoundPlayer)
 										{
-											if (!criticalhit && random(1,16) <= 15) criticalhit = true;
+											If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 0)
+											{
+												if (!criticalhit && random(1,16) <= 15) criticalhit = true;
+											}
 										}
 									}
 								}
 							}
 						}
+						if (kcdebug_actordmgdisplays && MiscItem) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): Critbase: %d / %d", GetClassName(), MiscItem.CritChance, CritRoll);
+						if (FoundPlayer.CountInv("CheatCrit") || FoundPlayer.CountInv("CheatCritUltimate")) criticalhit = true;
 					}
-					if (kcdebug_actordmgdisplays && MiscItem) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): Critbase: %d / %d", GetClassName(), MiscItem.CritChance, CritRoll);
-					if (FoundPlayer.CountInv("CheatCrit") || FoundPlayer.CountInv("CheatCritUltimate")) criticalhit = true;
-				}
-				if (criticalhit && (damageType == 'BlackHole' && random(1,8) <= 7)) criticalhit = false;
-				
-				int initdmg = newdamage;
-				if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): initdmg vs Damage: %d vs %d (damageType: %s, damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damageType, owner.DamageFactor);
-				double critdmgmulti = 4.0 + (0.02 * random(-10,10));
-				if (criticalhit && !owner.bINVULNERABLE)
-				{
-					int crittype = 1;
-					if (!(ExplosiveBarrel(owner) ||
-								ExplosiveBarrel2(owner) ||
-								ExplosiveBarrelNew(owner) ||
-								Pod(self)))
+					if (criticalhit && (damageType == 'BlackHole' && random(1,8) <= 7)) criticalhit = false;
+					
+					int initdmg = newdamage;
+					if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [SpecVuln] (\c[green]%s\c-): initdmg vs Damage: %d vs %d (damageType: %s, damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damageType, owner.DamageFactor);
+					double critdmgmulti = 4.0 + (0.02 * random(-10,10));
+					if (criticalhit && !owner.bINVULNERABLE)
 					{
-						owner.A_SetInventory("TookCriticalHit",1);
-						if (source == FoundPlayer || inflictor == FoundPlayer)
+						int crittype = 1;
+						if (!(ExplosiveBarrel(owner) ||
+									ExplosiveBarrel2(owner) ||
+									ExplosiveBarrelNew(owner) ||
+									Pod(self)))
 						{
-							bool supercrit = false;
-							If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 1)
+							owner.A_SetInventory("TookCriticalHit",1);
+							if (source == FoundPlayer || inflictor == FoundPlayer)
 							{
-								MiscItem.MortalBlowCritBoostTimer = randompick(0,1,1,1,1,1,1,1,1,2);
-								supercrit = true;
-							}
-							else
-							if (FoundPlayer.CountInv("CheatCritUltimate")) supercrit = true;
-							
-							if (supercrit)
-							{
-								critdmgmulti *= (7.5 + (0.0375 * random(-10,10)));
-								owner.A_StartSound("misc/critsnd2", 216, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.625,0.9375));
-								owner.A_StartSound("misc/critsnd2", 217, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.9375,1.0625));
-								crittype = 2;
-							}
-							nm = "CCards_Actor_FirebluTotemDefBuff";
-							if (owner.CountInv(nm))
-							{
-								if (FoundPlayer.CountInv("TimeSeraphVisor"))
+								bool supercrit = false;
+								If (MiscItem && MiscItem.MortalBlowCritBoostTimer > 1)
 								{
-									if (supercrit) critdmgmulti *= 100;
-														else critdmgmulti *= 25;
+									MiscItem.MortalBlowCritBoostTimer = randompick(0,1,1,1,1,1,1,1,1,2);
+									supercrit = true;
 								}
 								else
+								if (FoundPlayer.CountInv("CheatCritUltimate")) supercrit = true;
+								
+								if (supercrit)
 								{
-									if (supercrit) critdmgmulti *= 20;
-														else critdmgmulti *= 5;
+									critdmgmulti *= (7.5 + (0.0375 * random(-10,10)));
+									owner.A_StartSound("misc/critsnd2", 216, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.625,0.9375));
+									owner.A_StartSound("misc/critsnd2", 217, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, frandom(0.9375,1.0625));
+									crittype = 2;
+								}
+								nm = "CCards_Actor_FirebluTotemDefBuff";
+								if (owner.CountInv(nm))
+								{
+									if (FoundPlayer.CountInv("TimeSeraphVisor"))
+									{
+										if (supercrit) critdmgmulti *= 100;
+															else critdmgmulti *= 25;
+									}
+									else
+									{
+										if (supercrit) critdmgmulti *= 20;
+															else critdmgmulti *= 5;
+									}
 								}
 							}
-						}
-						newdamage *= critdmgmulti;
-						if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [Mixin] (\c[green]%s\c-): Critical Hit Dealth: %d vs %d (damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damagefactor);
-		
-						double heightmult = frandompick(0.9375,1.0,1.0625,1.125,1.125,1.25,1.25,1.25,1.25,1.25);
-						actor SMASH;
-						bool success;
-						if (!owner.CountInv("DedMonsterFlag"))
-						{
-							owner.A_StartSound("misc/critsnd2", 218, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, 1.0);
-							[success, SMASH] = owner.A_SpawnItemEx("SMAAAASH",0.0,0.0,(owner.default.height * heightmult),0.0,0.0,0.0,SXF_NOCHECKPOSITION|SXF_SETTARGET,0,0);
-							if (success && SMASH)
+							newdamage *= critdmgmulti;
+							if (kcdebug_actordmgdisplays) Console.Printf("DamageMobj [Mixin] (\c[green]%s\c-): Critical Hit Dealth: %d vs %d (damagefactor: %.8f)", GetClassName(), initdmg, newdamage, damagefactor);
+			
+							double heightmult = frandompick(0.9375,1.0,1.0625,1.125,1.125,1.25,1.25,1.25,1.25,1.25);
+							actor SMASH;
+							bool success;
+							if (!owner.CountInv("DedMonsterFlag"))
 							{
-								SMAAAASH SMASH2;
-								SMASH2 = SMAAAASH(SMASH);
-								if (SMASH2)
+								owner.A_StartSound("misc/critsnd2", 218, CHANF_DEFAULT, frandom(0.75,1.25), ATTN_NONE, 1.0);
+								[success, SMASH] = owner.A_SpawnItemEx("SMAAAASH",0.0,0.0,(owner.default.height * heightmult),0.0,0.0,0.0,SXF_NOCHECKPOSITION|SXF_SETTARGET,0,0);
+								if (success && SMASH)
 								{
-									double scalebase = frandom(0.875,1.125);
-									if (crittype >= 2) scalebase = frandom(1.25,1.50);
-									SMASH2.scale.x = (scalebase * owner.scale.x);
-									SMASH2.scale.y = (scalebase * owner.scale.y);
-									if (SMASH2.target != owner) SMASH2.target = owner;
-									if (SMASH2.height < (owner.default.height * heightmult)) SMASH2.height = (owner.default.height * heightmult);
-									SMASH2.initheight = (owner.default.height * heightmult);
+									SMAAAASH SMASH2;
+									SMASH2 = SMAAAASH(SMASH);
+									if (SMASH2)
+									{
+										double scalebase = frandom(0.875,1.125);
+										if (crittype >= 2) scalebase = frandom(1.25,1.50);
+										SMASH2.scale.x = (scalebase * owner.scale.x);
+										SMASH2.scale.y = (scalebase * owner.scale.y);
+										if (SMASH2.target != owner) SMASH2.target = owner;
+										if (SMASH2.height < (owner.default.height * heightmult)) SMASH2.height = (owner.default.height * heightmult);
+										SMASH2.initheight = (owner.default.height * heightmult);
+									}
 								}
 							}
 						}
 					}
-				}
-				//
-				if (inflictor)
-				{
-					if ((KnifePuff(inflictor) || KnifePuffNoSound(inflictor) || damageType == 'Knife') && newdamage > 0) owner.A_SetInventory("JustKnifed",1);
-					if ((KickPuff(inflictor) || KickPuffNoThrust(inflictor) || damageType == 'Kick') && newdamage > 0) owner.A_SetInventory("JustKicked",1);
-					if ((UppercutPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustUppercutted",1);
-					if ((FistPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustPunched",1);
-					if (damageType == 'DashingSD' && newdamage > 0) owner.A_SetInventory("JustShieldDashed",1);
-				}
-				//
-				wasblastedimpact = false;
-				if (inflictor == null && source == null && damageType == 'Melee') 
-				{
-					wasblastedimpact = true;
-					if (owner.bBLASTED && random(1,20) <= 19) 
+					//
+					if (inflictor)
 					{
-						newdamage *= 0.0625;
-						owner.bBLASTED = false;
+						if ((KnifePuff(inflictor) || KnifePuffNoSound(inflictor) || damageType == 'Knife') && newdamage > 0) owner.A_SetInventory("JustKnifed",1);
+						if ((KickPuff(inflictor) || KickPuffNoThrust(inflictor) || damageType == 'Kick') && newdamage > 0) owner.A_SetInventory("JustKicked",1);
+						if ((UppercutPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustUppercutted",1);
+						if ((FistPuff(inflictor) && damageType == 'Fist') && newdamage > 0) owner.A_SetInventory("JustPunched",1);
+						if (damageType == 'DashingSD' && newdamage > 0) owner.A_SetInventory("JustShieldDashed",1);
 					}
-					else
+					//
+					wasblastedimpact = false;
+					if (inflictor == null && source == null && damageType == 'Melee') 
 					{
-						newdamage *= 0.25;
+						wasblastedimpact = true;
+						if (owner.bBLASTED && random(1,20) <= 19) 
+						{
+							newdamage *= 0.0625;
+							owner.bBLASTED = false;
+						}
+						else
+						{
+							newdamage *= 0.25;
+						}
+						if (owner.vel.x != 0.0) owner.vel.x *= 0.1;
+						if (owner.vel.y != 0.0) owner.vel.y *= 0.1;
+						if (kcdebug_actordmgdisplays && wasblastedimpact) Console.Printf("(\c[green]%s\c-) (\czwasblastedimpact?: %d", owner.GetClassName(), wasblastedimpact);
 					}
-					if (owner.vel.x != 0.0) owner.vel.x *= 0.1;
-					if (owner.vel.y != 0.0) owner.vel.y *= 0.1;
-					if (kcdebug_actordmgdisplays && wasblastedimpact) Console.Printf("(\c[green]%s\c-) (\czwasblastedimpact?: %d", owner.GetClassName(), wasblastedimpact);
-				}
-				
-				int predmginr = newdamage;
-				// (Partial) Defense Ignoring Attacks
-				double prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
-				[prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor] = A_DefenseIgnoreFactor(inflictor, source, damage, damagetype, flags, angle, wasblastedimpact, surprisehit, angvstype);
-				if (kcdebug_actordmgdisplays) Console.Printf("ActorDefenseIgnoreFactor: %.8f", ActorDefenseIgnoreFactor);
-
-				// Defense Checks
-				if (damageType == 'Crush' && !inflictor && !source)
-				{
-					double basecrushdmgfact;
-					if (PowerStrength(owner.FindInventory("PowerStrength")) || KCPowerStrength(owner.FindInventory("KCPowerStrength")))
-					{
-						basecrushdmgfact = frandompick(25,33.4,33.4,50,50,50,50,50,50,66.7,66.7,75);
-					}
-					else
-					{
-						basecrushdmgfact = frandompick(75,87.5,87.5,100,100,100,100,100,100,112.5,112.5,125);
-					}
-					newdamage *= double(basecrushdmgfact / (owner.mass * frandompick(0.25,0.334,0.334,0.5,0.5,0.5,0.5,0.5,0.667,0.667,0.75)));
-					newdamage *= (basecrushdmgfact * 0.01);
-					if (newdamage <= (predmginr * 0.334)) newdamage = (predmginr * 0.334);
-					if (newdamage >= (predmginr * 3)) newdamage = (predmginr * 3);
 					
-					if (kcdebug_actordmgdisplays && newdamage > 0)
-					{
-						Console.Printf("    (\czActor Defensive Input [Crush]\c-: \cydmg = %d\c, prevdmg: %d, basecrushdmgfact: %.8f, mass: %d)", newdamage, predmginr, basecrushdmgfact, owner.mass);
-					}
-				}
+					int predmginr = newdamage;
+					// (Partial) Defense Ignoring Attacks
+					double prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
+					[prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor] = A_DefenseIgnoreFactor(inflictor, source, damage, damagetype, flags, angle, wasblastedimpact, surprisehit, angvstype);
+					if (kcdebug_actordmgdisplays) Console.Printf("ActorDefenseIgnoreFactor: %.8f", ActorDefenseIgnoreFactor);
 
-				//******************************
-				//*This ignores damage factors *
-				//******************************
-				if (ActorDefenseIgnoreFactor > 1.00) ActorDefenseIgnoreFactor = 1.00;
-				prevDamageFactor = owner.DamageFactor;
-				if (owner.DamageFactor < 1.00) 
-				{
-					if (criticalhit) 
+					// Defense Checks
+					if (damageType == 'Crush' && !inflictor && !source)
 					{
-						ActorDefenseIgnoreFactor = 1.00;
-						double temp1;
-						if (playera.CountInv("KCTimeFreezer1"))
+						double basecrushdmgfact;
+						if (PowerStrength(owner.FindInventory("PowerStrength")) || KCPowerStrength(owner.FindInventory("KCPowerStrength")))
 						{
-							temp1 = (ActorDefenseIgnoreFactor * 0.75);
-							ActorDefenseIgnoreFactor -= temp1;
+							basecrushdmgfact = frandompick(25,33.4,33.4,50,50,50,50,50,50,66.7,66.7,75);
+						}
+						else
+						{
+							basecrushdmgfact = frandompick(75,87.5,87.5,100,100,100,100,100,100,112.5,112.5,125);
+						}
+						newdamage *= double(basecrushdmgfact / (owner.mass * frandompick(0.25,0.334,0.334,0.5,0.5,0.5,0.5,0.5,0.667,0.667,0.75)));
+						newdamage *= (basecrushdmgfact * 0.01);
+						if (newdamage <= (predmginr * 0.334)) newdamage = (predmginr * 0.334);
+						if (newdamage >= (predmginr * 3)) newdamage = (predmginr * 3);
+						
+						if (kcdebug_actordmgdisplays && newdamage > 0)
+						{
+							Console.Printf("    (\czActor Defensive Input [Crush]\c-: \cydmg = %d\c, prevdmg: %d, basecrushdmgfact: %.8f, mass: %d)", newdamage, predmginr, basecrushdmgfact, owner.mass);
 						}
 					}
 
-					if (ActorDefenseIgnoreFactor > 0.00)
+					//******************************
+					//*This ignores damage factors *
+					//******************************
+					if (ActorDefenseIgnoreFactor > 1.00) ActorDefenseIgnoreFactor = 1.00;
+					prevDamageFactor = owner.DamageFactor;
+					if (owner.DamageFactor < 1.00) 
 					{
-						int predmg = newdamage;
-						double newdmgfct = (prevDamageFactor + ((1.00 - prevDamageFactor) * ActorDefenseIgnoreFactor));
-						double dmgmul = double(newdmgfct / prevDamageFactor);
-						newdamage *= dmgmul;
-						//owner.DamageFactor += ((1.00 - owner.DamageFactor) * ActorDefenseIgnoreFactor); 
-						if (kcdebug_actordmgdisplays && damage > 0)
+						if (criticalhit) 
 						{
-							Console.Printf("newdmgfct: %.8f, prevDamageFactor: %.8f, dmgmul: %.8f (predmg: %d vs damage: %d)", newdmgfct, prevDamageFactor, dmgmul, predmg, newdamage);
-							if (ActorDefenseIgnoreFactor > 0.00) Console.Printf("    (\czActor Defensive Input [Def Ignoring]\c-: \caDefenseIgnoreFactor = %.8f\c-, \cadmgfactor = %.8f\c-, \caprevdmgfactor = %.8f\c-, \cypredmg = %d\c-, \cydmg = %d\c- (Monster Actor))", ActorDefenseIgnoreFactor, owner.DamageFactor, prevDamageFactor, predmg, damage);
-																							else Console.Printf("    (\czActor Defensive Input [Def Ignoring]\c-: \caSKIPPED\c-, \cydmg = %d\c-)", predmg);
-						}
-					}
-				}
-				
-				// Healing from Punching/Kicking Practice Targets ala SW
-				if (PracticeTarget(owner) || PracticeTarget2(owner))
-				{
-					if ((damageType == 'Fist' || damageType == 'Kick'))
-					{
-						if (!(flags & DMG_EXPLOSION))
-						{
-							double multfactorHP = 1.0;
-							int randbonusincreaseHP = randompick(3,3,4) * frandom(3.75,5.25) * frandom(0.5,1.5);
-							if (damageType == 'Fist' && damageType == "UppercutPuff") multfactorHP *= frandompick(1.125,1.1875);
-							if (damageType == 'Kick') multfactorHP *= frandompick(1.0834,1.1667);
-							randbonusincreaseHP *= multfactorHP;
-							if (criticalhit) randbonusincreaseHP *= critdmgmulti;
-							if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
-							if (MiscItem) 
+							ActorDefenseIgnoreFactor = 1.00;
+							double temp1;
+							if (playera.CountInv("KCTimeFreezer1"))
 							{
-								int HPRegenBoostTimeAmt = randbonusincreaseHP;
-								if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
-								MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
+								temp1 = (ActorDefenseIgnoreFactor * 0.75);
+								ActorDefenseIgnoreFactor -= temp1;
 							}
-							
-							KCPlayerPawn playpawn;
-							playpawn = FoundPlayer;
-							if (playpawn)
+						}
+
+						if (ActorDefenseIgnoreFactor > 0.00)
+						{
+							int predmg = newdamage;
+							double newdmgfct = (prevDamageFactor + ((1.00 - prevDamageFactor) * ActorDefenseIgnoreFactor));
+							double dmgmul = double(newdmgfct / prevDamageFactor);
+							newdamage *= dmgmul;
+							//owner.DamageFactor += ((1.00 - owner.DamageFactor) * ActorDefenseIgnoreFactor); 
+							if (kcdebug_actordmgdisplays && damage > 0)
 							{
-								int prehealth = playpawn.player.mo.health;
-								int phealmax;
+								Console.Printf("newdmgfct: %.8f, prevDamageFactor: %.8f, dmgmul: %.8f (predmg: %d vs damage: %d)", newdmgfct, prevDamageFactor, dmgmul, predmg, newdamage);
+								if (ActorDefenseIgnoreFactor > 0.00) Console.Printf("    (\czActor Defensive Input [Def Ignoring]\c-: \caDefenseIgnoreFactor = %.8f\c-, \cadmgfactor = %.8f\c-, \caprevdmgfactor = %.8f\c-, \cypredmg = %d\c-, \cydmg = %d\c- (Monster Actor))", ActorDefenseIgnoreFactor, owner.DamageFactor, prevDamageFactor, predmg, damage);
+																								else Console.Printf("    (\czActor Defensive Input [Def Ignoring]\c-: \caSKIPPED\c-, \cydmg = %d\c-)", predmg);
+							}
+						}
+					}
+					
+					// Healing from Punching/Kicking Practice Targets ala SW
+					if (PracticeTarget(owner) || PracticeTarget2(owner))
+					{
+						if ((damageType == 'Fist' || damageType == 'Kick'))
+						{
+							if (!(flags & DMG_EXPLOSION))
+							{
+								double multfactorHP = 1.0;
+								int randbonusincreaseHP = randompick(3,3,4) * frandom(3.75,5.25) * frandom(0.5,1.5);
+								if (damageType == 'Fist' && damageType == "UppercutPuff") multfactorHP *= frandompick(1.125,1.1875);
+								if (damageType == 'Kick') multfactorHP *= frandompick(1.0834,1.1667);
+								randbonusincreaseHP *= multfactorHP;
+								if (criticalhit) randbonusincreaseHP *= critdmgmulti;
+								if (kcdebug_regenpenaltydisplay) Console.Printf("HPBonusTimeAdd: %d", randbonusincreaseHP);
 								if (MiscItem) 
 								{
-									phealmax = MiscItem.MaxHealthTrue;
-									phealmax *= (1.0 + (TruePlayerLevel * 0.005));
-									if (phealmax > MiscItem.MaxHealthTrue * 2.0) phealmax = (MiscItem.MaxHealthTrue * 2.0);
+									int HPRegenBoostTimeAmt = randbonusincreaseHP;
+									if (HeiwaPlayer(playera)) HPRegenBoostTimeAmt *= HeiwaHPBoostTimerMult;
+									MiscItem.HPRegenBoostTimer += HPRegenBoostTimeAmt;
 								}
-								if ((prehealth < phealmax) && random(1,16) <= random(7,9))
+								
+								KCPlayerPawn playpawn;
+								playpawn = FoundPlayer;
+								if (playpawn)
 								{
-									int targhealamt = (randompick(1,1,1,1,1,1,1,1,1,1,1,2) * critdmgmulti * multfactorHP);
-									prehealth += targhealamt;
-									//A_RecoverHUD(targhealamt, 0, true);
-									//if ((dvds_showdamagemessages & 1) && targhealamt > 0) A_PrintHealingMessage(playpawn, targhealamt);
-									//Console.Printf("prehealth: %d, phealmax: %d, targhealamt: %d", prehealth, phealmax, targhealamt);
-									if (prehealth > phealmax) prehealth = phealmax;
-									playpawn.player.mo.health = playpawn.player.health = prehealth;
+									int prehealth = playpawn.player.mo.health;
+									int phealmax;
+									if (MiscItem) 
+									{
+										phealmax = MiscItem.MaxHealthTrue;
+										phealmax *= (1.0 + (TruePlayerLevel * 0.005));
+										if (phealmax > MiscItem.MaxHealthTrue * 2.0) phealmax = (MiscItem.MaxHealthTrue * 2.0);
+									}
+									if ((prehealth < phealmax) && random(1,16) <= random(7,9))
+									{
+										int targhealamt = (randompick(1,1,1,1,1,1,1,1,1,1,1,2) * critdmgmulti * multfactorHP);
+										prehealth += targhealamt;
+										//A_RecoverHUD(targhealamt, 0, true);
+										//if ((dvds_showdamagemessages & 1) && targhealamt > 0) A_PrintHealingMessage(playpawn, targhealamt);
+										//Console.Printf("prehealth: %d, phealmax: %d, targhealamt: %d", prehealth, phealmax, targhealamt);
+										if (prehealth > phealmax) prehealth = phealmax;
+										playpawn.player.mo.health = playpawn.player.health = prehealth;
+									}
 								}
 							}
 						}
