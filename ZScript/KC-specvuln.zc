@@ -5357,7 +5357,8 @@ class CompatVulnItem : PlaceholderItem
 					
 					nm = "CCards_Actor_StoneDeath";
 					nn = "CCards_Actor_MysteryEgg";
-					if (source && 
+					if (Level.MapName != "TITLEMAP" &&
+							source && 
 							(prevtarget != source || owner.CountInv("TimeFreezeHasNoTarget") || owner.CountInv("TimeFreezeHasATarget")) && 
 							(PlayerPawn(source) || source.bFRIENDLY) && 
 							!owner.bFRIENDLY && 

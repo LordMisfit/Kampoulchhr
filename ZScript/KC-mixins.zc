@@ -2207,7 +2207,8 @@ mixin class MonsterCollider
 		nm = "CCards_Actor_StoneDeath";
 		nn = "CCards_Actor_MysteryEgg";
 		bool surprisehit = false;
-		if (source && 
+		if (Level.MapName != "TITLEMAP" &&
+				source && 
 				(target != source || CountInv("TimeFreezeHasNoTarget") || CountInv("TimeFreezeHasATarget")) && 
 				(PlayerPawn(source) || source.bFRIENDLY) && 
 				!bFRIENDLY && 
