@@ -975,6 +975,7 @@ class DevastatorShot : KCProjectile
 	int expdmg, exprad, expfullrad;
 	default
 	{
+		Tag "Stinger Missile";
 		Radius 4;
 		Height 4;
 		Speed 24;
@@ -1031,6 +1032,7 @@ class DevastatorShot2 : DevastatorShot
 {
 	default
 	{
+		Tag "Stinger Missile";
 		Speed 42;
 		Scale 0.1;
 		DamageFunction (randompick(26,32,32,32,38,38,38,38,38,38,38,38,34,44,44,50));
@@ -1072,6 +1074,7 @@ class SawPuff : KCPuff
 {
 	default
 	{
+		Tag "Saw Ripper";
 		DamageType "Ripsaw";
 		+PUFFGETSOWNER;
 		+PUFFONACTORS;
@@ -1104,6 +1107,7 @@ class SawPlayerPuff : SawPuff
 {
 	default
 	{
+		Tag "Saw Ripper";
 		Species "Players";
 		+MTHRUSPECIES;
 		+THRUSPECIES;
@@ -1117,6 +1121,7 @@ class SawShot : KCProjectile
 {
 	default
 	{
+		Tag "Flying Saw Ripper";
 		Radius 4;
 		Height 2;
 		Speed 32;
@@ -1177,6 +1182,7 @@ class SSawShot : Sawshot
 {
 	default
 	{
+		Tag "Ultra Flying Saw Ripper";
 		Radius 4;
 		Height 2;
 		Speed 48;
@@ -1283,6 +1289,7 @@ class ImpalerMissile : SingleDamageFastRipper
 {
 	default
 	{
+		Tag "Impaler Bolt";
 		PROJECTILE;
 		+BLOODSPLATTER;
 		+NOEXTREMEDEATH;
@@ -1375,6 +1382,7 @@ class ImpalerMissile2 : SingleDamageFastRipper
 {
 	default
 	{
+		Tag "Mini Impaler Bolt";
 		PROJECTILE;
 		+BLOODSPLATTER;
 		+NOEXTREMEDEATH;
@@ -1468,6 +1476,7 @@ class ImpalerMissile3 : SingleDamageFastRipper
 {
 	default
 	{
+		Tag "Mini Impaler Bolt";
 		PROJECTILE;
 		+BLOODSPLATTER;
 		+NOEXTREMEDEATH;
