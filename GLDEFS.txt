@@ -148,6 +148,14 @@ object BlurSphere2
 	Frame PINS { Light BLURSPHERE }
 }
 
+PulseLight INVULNSPHERE
+{
+	Color 0.445 0.933 0.386
+	Size 40
+	SecondarySize 48
+	Interval 2.0
+	Offset 0 0 0
+}
 object InvulnerabilitySphere
 {
 	Frame PINV { Light INVULNSPHERE }
@@ -2717,4 +2725,34 @@ object HasteSphere
 	frame HASTA { light HasteSphere1 }
 	frame HASTB { light HasteSphere2 }
 	frame HASTC { light HasteSphere3 }
+}
+
+pulselight PikeAmmo
+{
+	color 0.73828125 0.20703125 0.98828125
+	size 16
+	secondarysize 32
+	interval 2.0
+	attenuate 1
+	//dontlightself 1
+}
+
+pulselight PikeAmmoBig
+{
+	color 0.73828125 0.20703125 0.98828125
+	size 28
+	secondarysize 56
+	interval 1.334
+	attenuate 1
+	//dontlightself 1
+}
+
+object PikeAmmo
+{
+	Frame SCPA { Light PikeAmmo }
+}
+
+object PikeAmmoBig
+{
+	Frame SCPA { Light PikeAmmoBig }
 }
