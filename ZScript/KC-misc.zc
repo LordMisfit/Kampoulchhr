@@ -1140,6 +1140,8 @@ class PlayerStatItem : Inventory
 				//*******************
 				owner.player.health = owner.player.mo.health = CurrentHealth;
 				owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+				owner.A_SetInventory("PlayerMaxPP",MaxPsychicPoints);
+				owner.A_SetInventory("PlayerMaxMP",MaxMagicPoints);
 				
 				tracerheight = (owner.height * 0.5);
 				
@@ -4287,6 +4289,8 @@ class PlayerStatItem : Inventory
 			}
 		}
 		owner.A_SetInventory("PlayerMaxHP",MaxHealthTrue);
+		owner.A_SetInventory("PlayerMaxPP",MaxPsychicPoints);
+		owner.A_SetInventory("PlayerMaxMP",MaxMagicPoints);
 		if (itemtimer <= 2) owner.A_SetInventory("ExpPts",globalvars.Experience);
 		
 		weapon = owner.player.ReadyWeapon;

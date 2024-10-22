@@ -169,7 +169,7 @@ class KCStatusBarMain : BaseStatusBar
 		EXPtick = CPlayerPawn.CountInv("ExpPtsNeeded") * tickinc;
 		if (EXPtick < 1) EXPtick = 1;
 		if (EXPtick != prevEXPtick) mEXPInterpolator = DynamicValueInterpolator.Create(CPlayerPawn.CountInv("ExpPts"), 0.25, 1, EXPTick);
-		//Console.Printf("HealthTick: %d [%d], ArmorTick %d [%d], EXPTick %d [%d]", healthtick, prevhealthtick, armortick, prevarmortick, EXPtick, prevEXPtick);
+		//Console.Printf("tickinc: %.8f, HealthTick: %d [%d], PPtick: %d [%d], MPtick: %d [%d], ArmorTick %d [%d], EXPTick %d [%d]", tickinc, healthtick, prevhealthtick, PPtick, prevPPtick, MPtick, prevMPtick, armortick, prevarmortick, EXPtick, prevEXPtick);
 		
 		mHealthInterpolator.Update(CPlayerPawn.health);
 		if (MiscItem)
