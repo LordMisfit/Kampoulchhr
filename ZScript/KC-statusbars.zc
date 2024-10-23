@@ -1398,7 +1398,7 @@ class KCStatusBarMain : BaseStatusBar
 					int jx, jy;
 					jx = -13; // -20;
 					jy = -24;
-					int clipsize = 4;
+					int clipsize = RitGn.MaxRiotClipCounter;
 					int clipleft = (clipsize - RitGn.RiotClipCounter);
 					int ClipRatio;
 					if (clipsize > 0) 
@@ -2989,6 +2989,67 @@ class KCStatusBarMain : BaseStatusBar
 		return AmmoRatio, wsfontclr;
 	}
 	
+	vector2 DrawFSHUDWeapModPackScaling(vector2 wsscale)
+	{
+		int ScaleTimer = level.time % 70;
+		int scaledir = 0;
+		double scalealt = 0.0;
+		double scalealtbase = 0.005;
+		if (ScaleTimer == 0) 
+		{
+			if (scaledir == 0) scaledir = 1;
+										else scaledir = 0;
+			scalealt = 0.0;
+		}
+		if (ScaleTimer == 1 || ScaleTimer == 69) scalealt = 0.005;
+		if (ScaleTimer == 2 || ScaleTimer == 68) scalealt = 0.01;
+		if (ScaleTimer == 3 || ScaleTimer == 67) scalealt = 0.015;
+		if (ScaleTimer == 4 || ScaleTimer == 66) scalealt = 0.02;
+		if (ScaleTimer == 5 || ScaleTimer == 65) scalealt = 0.025;
+		if (ScaleTimer == 6 || ScaleTimer == 64) scalealt = 0.03;
+		if (ScaleTimer == 7 || ScaleTimer == 63) scalealt = 0.035;
+		if (ScaleTimer == 8 || ScaleTimer == 62) scalealt = 0.04;
+		if (ScaleTimer == 9 || ScaleTimer == 61) scalealt = 0.045;
+		if (ScaleTimer == 10 || ScaleTimer == 60) scalealt = 0.05;
+		if (ScaleTimer == 11 || ScaleTimer == 59) scalealt = 0.055;
+		if (ScaleTimer == 12 || ScaleTimer == 58) scalealt = 0.06;
+		if (ScaleTimer == 13 || ScaleTimer == 57) scalealt = 0.065;
+		if (ScaleTimer == 14 || ScaleTimer == 56) scalealt = 0.07;
+		if (ScaleTimer == 15 || ScaleTimer == 55) scalealt = 0.075;
+		if (ScaleTimer == 16 || ScaleTimer == 54) scalealt = 0.08;
+		if (ScaleTimer == 17 || ScaleTimer == 53) scalealt = 0.085;
+		if (ScaleTimer == 18 || ScaleTimer == 52) scalealt = 0.09;
+		if (ScaleTimer == 19 || ScaleTimer == 51) scalealt = 0.095;
+		if (ScaleTimer == 20 || ScaleTimer == 50) scalealt = 0.10;
+		if (ScaleTimer == 21 || ScaleTimer == 49) scalealt = 0.105;
+		if (ScaleTimer == 22 || ScaleTimer == 48) scalealt = 0.11;
+		if (ScaleTimer == 23 || ScaleTimer == 47) scalealt = 0.115;
+		if (ScaleTimer == 24 || ScaleTimer == 46) scalealt = 0.12;
+		if (ScaleTimer == 25 || ScaleTimer == 45) scalealt = 0.125;
+		if (ScaleTimer == 26 || ScaleTimer == 44) scalealt = 0.13;
+		if (ScaleTimer == 27 || ScaleTimer == 43) scalealt = 0.135;
+		if (ScaleTimer == 28 || ScaleTimer == 42) scalealt = 0.14;
+		if (ScaleTimer == 29 || ScaleTimer == 41) scalealt = 0.145;
+		if (ScaleTimer == 30 || ScaleTimer == 40) scalealt = 0.15;
+		if (ScaleTimer == 31 || ScaleTimer == 39) scalealt = 0.155;
+		if (ScaleTimer == 32 || ScaleTimer == 38) scalealt = 0.16;
+		if (ScaleTimer == 33 || ScaleTimer == 37) scalealt = 0.165;
+		if (ScaleTimer == 34 || ScaleTimer == 36) scalealt = 0.17;
+		if (ScaleTimer == 35) scalealt = 0.175;
+		scalealt *= 0.5;
+		if (scaledir == 0)
+		{
+			wsscale.x -= scalealt;
+			wsscale.y -= scalealt;
+		}
+		if (scaledir == 1)
+		{
+			wsscale.x += scalealt;
+			wsscale.y += scalealt;
+		}
+		return wsscale;
+	}
+	
 	int, int, int, int, int, int, string, string DrawFSHUDWeaponSlots(int x, int y, int VisiblePlayerLevel, int CurrHealth, int PlayerMaxHP, int AmmoRatio, string wsname, string wsammoname)
 	{
 		KCPlayerPawn CPlayerPawn;
@@ -3146,6 +3207,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "BlasterPistol" &&
 					CPlayerPawn.CountInv("BlasterPistolUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else
@@ -3236,6 +3298,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "RiotGun" &&
 					CPlayerPawn.CountInv("RiotGunUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else
@@ -3278,6 +3341,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "BlasterRifle" &&
 					CPlayerPawn.CountInv("BlasterRifleUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else
@@ -3311,6 +3375,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "TommyGun" &&
 					CPlayerPawn.CountInv("TommyGunUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else
@@ -3376,6 +3441,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "Devastator" &&
 					CPlayerPawn.CountInv("DevastatorUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else
@@ -3494,10 +3560,53 @@ class KCStatusBarMain : BaseStatusBar
 			wsammoname = "Cell";
 		}
 		ammotype = CPlayerPawn.FindInventory(wsammoname);
-		if (ammotype)
+		let CalB = CalamityBlade(CPlayerPawn.FindInventory("CalamityBlade"));
+		int temptype2 = 0;
+		int CBladeMPCost;
+		int CBladePPCost;
+		int CBleveltimemod = 21;
+		int CBleveltimethird = (CBleveltimemod * 1 / 3);
+		int CBleveltimesthird = (CBleveltimemod * 2 / 3);
+		ammotype = CPlayerPawn.FindInventory(wsammoname);
+		if (CPlayerPawn.CountInv("CalamityBladeUpgrade"))
 		{
-			trueammocurrent = ammotype.Amount;
-			trueammomax = ammotype.maxAmount;
+			if (CalB && MiscItem)
+			{
+				//Console.Printf("level.time: %d / %d", level.time % CBleveltimemod, CBleveltimemod);
+				if (level.time % CBleveltimemod >= CBleveltimesthird)
+				{
+					trueammocurrent = int(MiscItem.CurrentMagicPoints);
+					trueammomax = int(MiscItem.MaxMagicPoints);
+					//Console.Printf("[magic] %d / %d", trueammocurrent, trueammomax);
+					temptype2 = 0;
+				}
+				else
+				if (level.time % CBleveltimemod >= CBleveltimethird)
+				{
+					trueammocurrent = int(MiscItem.CurrentPsychicPoints);
+					trueammomax = int(MiscItem.MaxPsychicPoints);
+					//Console.Printf("[psi] %d / %d", trueammocurrent, trueammomax);
+					temptype2 = 0;
+				}
+				else
+				{
+					if (ammotype)
+					{
+						trueammocurrent = ammotype.Amount;
+						trueammomax = ammotype.maxAmount;
+						//Console.Printf("[cell] %d / %d", trueammocurrent, trueammomax);
+						temptype2 = 0;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (ammotype)
+			{
+				trueammocurrent = ammotype.Amount;
+				trueammomax = ammotype.maxAmount;
+			}
 		}
 		if (CPlayerPawn.CountInv(wsname))
 		{
@@ -3513,6 +3622,7 @@ class KCStatusBarMain : BaseStatusBar
 					wsname == "CalamityBlade" &&
 					CPlayerPawn.CountInv("CalamityBladeUpgrade")) //mKCLFont2
 			{
+				wsscale = DrawFSHUDWeapModPackScaling(wsscale);
 				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
 			}
 			else

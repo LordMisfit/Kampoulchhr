@@ -1600,7 +1600,7 @@ mixin class MonsterCollider
 			// Bullet/Pellet
 			if (mod == 'Bullet') 
 			{ 
-				if (infl == "KCTommyGunTracer" && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor = frandom(0.225,0.275);
+				if ((infl == "KCTommyGunRipTracer" || infl == "KCTommyGunTracer") && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			

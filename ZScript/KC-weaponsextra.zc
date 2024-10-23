@@ -1027,6 +1027,8 @@ class CalamityBlade : MarineWeapon
 				int modpackdropchance = 4; // 16
 				if (bDROPPED) modpackdropchance = 16; // 96
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.00625,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("CalamityBlade")) 

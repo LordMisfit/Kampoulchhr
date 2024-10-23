@@ -3114,8 +3114,16 @@ class KCGlockTracer : KCBulletTracerSingleRipper
 	}
 }
 
-
 class KCTommyGunTracer : KCBulletTracer
+{
+	int fuse;
+	default
+	{
+		Tag "Tommy Gun Shot";
+	}
+}
+
+class KCTommyGunRipTracer : SingleDamageRipper
 {
 	int fuse;
 	default

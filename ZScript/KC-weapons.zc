@@ -232,6 +232,16 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
+	action double GetModPackChanceAlter(double levelmult = 0.025, double minlvl = 0.25, double maxlvl = 1.25)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		double dropbasechance = 1.00 - (globalvars.MapsFinished * levelmult);
+		if (Wads.CheckNumForName("KC-PSXDM", Wads.ns_global, -1, true) != -1) minlvl *= 0.25;
+		if (dropbasechance <= minlvl) dropbasechance = minlvl;
+		if (dropbasechance >= maxlvl) dropbasechance = maxlvl;
+		return dropbasechance;
+	}
+	
 	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
 	{
 		string LegendStr = "";
@@ -7804,7 +7814,11 @@ class TommyGun : MarineWeapon
 			double origang = playera.angle;
 			double randpitch = shotpitch;
 			double randangle = shotangle;
-			[BombShotsB, BombShots] = A_FireProjectile("KCTommyGunTracer",frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
+			string shottype = "KCTommyGunTracer";
+			if (CountInv("TommyGunUpgrade") > 0 && random(1,16) <= 1) shottype = "KCTommyGunRipTracer";
+			else if (random(1,256) <= 1) shottype = "KCTommyGunRipTracer";
+			else shottype = "KCTommyGunTracer";
+			[BombShotsB, BombShots] = A_FireProjectile(shottype,frandom(-randangle,randangle),false,0,shotheight,FPF_NOAUTOAIM,frandom(-randpitch,randpitch));
 			A_SetBulletTracerDmg(BombShotsB, BombShots, (randdmg), 'Bullet', frandom(0.05,0.1));
 		}
 	}
@@ -7920,6 +7934,8 @@ class TommyGun : MarineWeapon
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("TommyGun")) 
@@ -8856,6 +8872,16 @@ class DevastatorGenerator : CustomInventoryExt
 		Inventory.PickupMessage "Picked up a \caDevastator Weapon\c-! \cx[Slot 5]\c-";
 	}
 	
+	action double GetModPackChanceAlter(double levelmult = 0.025, double minlvl = 0.25, double maxlvl = 1.25)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		double dropbasechance = 1.00 - (globalvars.MapsFinished * levelmult);
+		if (Wads.CheckNumForName("KC-PSXDM", Wads.ns_global, -1, true) != -1) minlvl *= 0.25;
+		if (dropbasechance <= minlvl) dropbasechance = minlvl;
+		if (dropbasechance >= maxlvl) dropbasechance = maxlvl;
+		return dropbasechance;
+	}
+	
 	States
 	{ 
 		Spawn: 
@@ -8864,6 +8890,8 @@ class DevastatorGenerator : CustomInventoryExt
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("Devastator")) 
@@ -13973,7 +14001,17 @@ Class BlasterPickup : CustomInventoryExt
 		if (CountInv("BlasterPistol")) msg = "You got a \cuBlaster Pistol\c-! \c[gold]Can Now Dual Wield!\c- \cx[Slot 2]\c-";
 		return msg;
 	}
-
+	
+	action double GetModPackChanceAlter(double levelmult = 0.025, double minlvl = 0.25, double maxlvl = 1.25)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		double dropbasechance = 1.00 - (globalvars.MapsFinished * levelmult);
+		if (Wads.CheckNumForName("KC-PSXDM", Wads.ns_global, -1, true) != -1) minlvl *= 0.25;
+		if (dropbasechance <= minlvl) dropbasechance = minlvl;
+		if (dropbasechance >= maxlvl) dropbasechance = maxlvl;
+		return dropbasechance;
+	}
+	
 	States
 	{
 		Spawn:
@@ -13982,6 +14020,8 @@ Class BlasterPickup : CustomInventoryExt
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterPistol")) 
@@ -14070,6 +14110,8 @@ Class BlasterPistol : MarineWeapon
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterPistol")) 
@@ -14653,6 +14695,7 @@ class Riotgun : MarineWeapon
 {
 	bool modpackspawnattempt;
 	int RiotClipCounter;
+	int MaxRiotClipCounter;
 	int SWRiotMode;
 	int WeapFlagsTemp;
 	bool riotmod;
@@ -14705,6 +14748,8 @@ class Riotgun : MarineWeapon
 		invoker.riotmod = false;
 		actor playera = players[0].mo;
 		if (playera.CountInv("RiotGunUpgrade")) invoker.riotmod = true;
+		if (invoker.riotmod) invoker.MaxRiotClipCounter = 16;
+										else invoker.MaxRiotClipCounter = 4;
 	}
 	
 	action void A_RiotShooter(int type = 0)
@@ -14803,7 +14848,7 @@ class Riotgun : MarineWeapon
 			TNT1 A 0 
 			{
 				A_CheckRiotModPack();
-				invoker.RiotClipCounter -= 4;
+				invoker.RiotClipCounter -= invoker.MaxRiotClipCounter;
 				if (invoker.RiotClipCounter < 0) invoker.RiotClipCounter = 0;
 			}
 			TNT1 A 0 
@@ -14859,7 +14904,7 @@ class Riotgun : MarineWeapon
 			TNT1 A 0 
 			{
 				A_CheckReload();
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 			RIOT D 1 Bright 
@@ -14941,7 +14986,7 @@ class Riotgun : MarineWeapon
 			RIOT A 0 A_CheckReload();
 			TNT1 A 0 
 			{
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload");
 				return resolvestate(null);
 			}
 			Goto Ready;
@@ -14950,7 +14995,7 @@ class Riotgun : MarineWeapon
 			TNT1 A 0 
 			{
 				A_CheckRiotModPack();
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 			RITO D 1 Bright 
@@ -14987,7 +15032,7 @@ class Riotgun : MarineWeapon
 			{
 				A_CheckRiotModPack();
 				A_CheckReload();
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
@@ -15024,7 +15069,7 @@ class Riotgun : MarineWeapon
 			{
 				A_CheckRiotModPack();
 				A_CheckReload();
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
@@ -15061,7 +15106,7 @@ class Riotgun : MarineWeapon
 			{
 				A_CheckRiotModPack();
 				A_CheckReload();
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 		
@@ -15098,7 +15143,7 @@ class Riotgun : MarineWeapon
 			{
 				A_CheckRiotModPack();
 				A_CheckForReload(4, "Reload2");
-				if (invoker.RiotClipCounter >= 4) return resolvestate("Reload2");
+				if (invoker.RiotClipCounter >= invoker.MaxRiotClipCounter) return resolvestate("Reload2");
 				return resolvestate(null);
 			}
 			Goto Ready;
@@ -15141,7 +15186,7 @@ class Riotgun : MarineWeapon
 			}
 			TNT1 A 0 
 			{
-				invoker.RiotClipCounter -= 4;
+				invoker.RiotClipCounter -= invoker.MaxRiotClipCounter;
 				if (invoker.RiotClipCounter < 0) invoker.RiotClipCounter = 0;
 			}
 			Goto Ready;
@@ -15177,7 +15222,7 @@ class Riotgun : MarineWeapon
 			RITO A 1 offset(-1, 32) A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 
 			{
-				invoker.RiotClipCounter -= 4;
+				invoker.RiotClipCounter -= invoker.MaxRiotClipCounter;
 				if (invoker.RiotClipCounter < 0) invoker.RiotClipCounter = 0;
 			}
 			Goto Ready;
@@ -15215,6 +15260,8 @@ class Riotgun : MarineWeapon
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("RiotGun")) 
@@ -17407,6 +17454,8 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				int modpackdropchance = 16; // 32
 				if (bDROPPED) modpackdropchance = 64; // 192;
 				let globalvars = KCGlobalVariables.Get();
+				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
+				modpackdropchance *= dropbasechance;
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (playera.CountInv("BlasterRifle")) 
