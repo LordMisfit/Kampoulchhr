@@ -102,7 +102,7 @@ class KCStatusBarMain : BaseStatusBar
 		mKCMFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft, 1, 1);
 		fnt = "INDEXFONT_KCL";
 		mKCLFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), Mono_CellLeft, 1, 1);
-		fnt = "INDEXFONT_KCL";
+		fnt = "INDEXFONT_KCL_S";
 		mKCLFont2 = HUDFont.Create(fnt, 0, false, 1, 1);
 
 		diparms = InventoryBarState.Create();
@@ -3142,7 +3142,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "BlasterPistol" &&
+					CPlayerPawn.CountInv("BlasterPistolUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
@@ -3223,7 +3232,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "RiotGun" &&
+					CPlayerPawn.CountInv("RiotGunUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
@@ -3256,7 +3274,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "BlasterRifle" &&
+					CPlayerPawn.CountInv("BlasterRifleUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
@@ -3280,7 +3307,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "TommyGun" &&
+					CPlayerPawn.CountInv("TommyGunUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
@@ -3336,7 +3372,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "Devastator" &&
+					CPlayerPawn.CountInv("DevastatorUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
@@ -3464,7 +3509,16 @@ class KCStatusBarMain : BaseStatusBar
 				wsalpha = wsalphadefault2;
 				wsscale = wsscaledefault2;
 			}
-			DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			if (A_CheckForHeiwa() && 
+					wsname == "CalamityBlade" &&
+					CPlayerPawn.CountInv("CalamityBladeUpgrade")) //mKCLFont2
+			{
+				DrawString(mKCLFont2, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
+			else
+			{
+				DrawString(mKCLFont, FormatNumber((wsnum%10)), (x, y), wsflags, wsfontclr, wsalpha, -1, 4, wsscale);
+			}
 			wsalpha = wsalphadefault;
 			wsscale = wsscaledefault;
 		}
