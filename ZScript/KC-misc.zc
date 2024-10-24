@@ -429,12 +429,12 @@ class PlayerStatItem : Inventory
 		sielsgracecooldown = sielsgracecooldownbase;
 		double levelbasis = 0.20;
 				 if (TruePlayerLevel <= 5) levelbasis = 0.20;
-		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) sielsgracecooldown *= 0.375;
-		else if (TruePlayerLevel >= 21 && TruePlayerLevel <= 50) sielsgracecooldown *= 0.625;
-		else if (TruePlayerLevel >= 51 && TruePlayerLevel <= 100) sielsgracecooldown *= 1.125;
-		else if (TruePlayerLevel >= 101 && TruePlayerLevel <= 200) sielsgracecooldown *= 1.75;
-		else if (TruePlayerLevel >= 201 && TruePlayerLevel <= 500) sielsgracecooldown *= 2.5;
-		else if (TruePlayerLevel >= 501) sielsgracecooldown *= 4.875;
+		else if (TruePlayerLevel >= 6 && TruePlayerLevel <= 20) levelbasis = 0.375;
+		else if (TruePlayerLevel >= 21 && TruePlayerLevel <= 50) levelbasis = 0.625;
+		else if (TruePlayerLevel >= 51 && TruePlayerLevel <= 100) levelbasis = 1.125;
+		else if (TruePlayerLevel >= 101 && TruePlayerLevel <= 200) levelbasis = 1.75;
+		else if (TruePlayerLevel >= 201 && TruePlayerLevel <= 500) levelbasis = 2.5;
+		else if (TruePlayerLevel >= 501) levelbasis = 4.875;
 		sielsgracecooldown *= (1.0 + ((TruePlayerLevel) * levelbasis));
 
 		double activationbasis = 0.015625;
