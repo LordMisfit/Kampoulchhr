@@ -4901,6 +4901,11 @@ class CompatVulnItem : PlaceholderItem
 					mod == 'CC_Firecracker' || 
 					flags & DMG_EXPLOSION) 
 			{
+				if (infl == "DevastatorShot" || 
+						infl == "DevastatorShot2") 
+				{
+					if (source && source.CountInv("DevastatorUpgrade")) ExplosivesFactor = frandompick(0.875,0.8889,0.9375);
+				}
 				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			double RSawFactor = frandom(0.225,0.275);
@@ -4963,6 +4968,7 @@ class CompatVulnItem : PlaceholderItem
 			if (mod == 'Bullet') 
 			{ 
 				if ((infl == "KCTommyGunRipTracer" || infl == "KCTommyGunTracer") && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
+				if ((infl == "SWRiotBulletRip" || infl == "SWRiotBullet") && (source && source.CountInv("RiotGunUpgrade") > 0)) BulletFactor *= randompick(1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			

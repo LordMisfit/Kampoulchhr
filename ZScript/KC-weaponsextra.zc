@@ -1025,7 +1025,11 @@ class CalamityBlade : MarineWeapon
 			CBLD A 4
 			{
 				int modpackdropchance = 4; // 16
-				if (bDROPPED) modpackdropchance = 16; // 96
+				if (bDROPPED)
+				{
+					modpackdropchance = 16; // 192;
+					if (random(1,64) <= 1) modpackdropchance = 8;
+				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.00625,0.25,1.25);
 				modpackdropchance *= dropbasechance;

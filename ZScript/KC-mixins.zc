@@ -1518,6 +1518,8 @@ mixin class MonsterCollider
 				ActorDefenseIgnoreFactor += (PlushFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			
+			double RocketFactor = frandompick(0.625,0.6667,0.75);
+			
 			double ExplosivesFactor = frandompick(0.625,0.6667,0.75);
 			// Suicide Bombers/Kamikaze Enemy Attacks/RockBomb Shards
 			nm = "SuicideBomber";
@@ -1539,8 +1541,14 @@ mixin class MonsterCollider
 					mod == 'CC_Firecracker' || 
 					flags & DMG_EXPLOSION) 
 			{
+				if (infl == "DevastatorShot" || 
+						infl == "DevastatorShot2") 
+				{
+					if (source && source.CountInv("DevastatorUpgrade")) ExplosivesFactor = frandompick(0.875,0.8889,0.9375);
+				}
 				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
+			
 			double RSawFactor = frandom(0.225,0.275);
 			if (mod == 'Ripsaw' || mod == 'SawShot')
 			{
@@ -1601,6 +1609,7 @@ mixin class MonsterCollider
 			if (mod == 'Bullet') 
 			{ 
 				if ((infl == "KCTommyGunRipTracer" || infl == "KCTommyGunTracer") && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
+				if ((infl == "SWRiotBulletRip" || infl == "SWRiotBullet") && (source && source.CountInv("RiotGunUpgrade") > 0)) BulletFactor *= randompick(1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			
@@ -3497,6 +3506,16 @@ mixin class InvWeaponShare
 	const spread2pitch2 = 7.5;
 	const spread2height1 = 0.0;
 	const spread2height2 = 0.0;
+	
+	action double GetModPackChanceAlter(double levelmult = 0.025, double minlvl = 0.25, double maxlvl = 1.25)
+	{
+		let globalvars = KCGlobalVariables.Get();
+		double dropbasechance = 1.00 - (globalvars.MapsFinished * levelmult);
+		if (Wads.CheckNumForName("KC-PSXDM", Wads.ns_global, -1, true) != -1) minlvl *= 0.25;
+		if (dropbasechance <= minlvl) dropbasechance = minlvl;
+		if (dropbasechance >= maxlvl) dropbasechance = maxlvl;
+		return dropbasechance;
+	}
 	
 	//===========================================================================
 	//
