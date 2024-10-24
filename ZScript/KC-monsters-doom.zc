@@ -8249,9 +8249,9 @@ class BetaLostSoul : LostSoulNew
 			{
 				A_UnSetDmgWeaknesses();
 				A_RemoveLight("BetaSoulLgt");
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { bAVOIDMELEE = true; }
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(4); }
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(3); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
 
 				A_BetaSoulFastChaseCalc(0);
 			}
@@ -8278,8 +8278,8 @@ class BetaLostSoul : LostSoulNew
 				if (atkframe == 6) A_AttachLightDef("BetaSoulLgt","GhoulAttack4");
 
 				A_LostSoulChargeWeakness();
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
-				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(150,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(2); }
 				A_FaceTarget();
 				
 				if (atkframe == 5)
@@ -8304,17 +8304,17 @@ class BetaLostSoul : LostSoulNew
 					}
 					double basedmgorig = frandompick(1.0,1.2,1.4,1.6,1.8,2.0,2.25,2.5,2.75,3.0);
 					double basedmg = basedmgorig;
-					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) 
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(37,38),2,true,self)) 
 					{
 						A_SetTics(2); 
 						basedmg += (basedmgorig * 0.5);
 					}
-					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) 
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) 
 					{
 						A_SetTics(1); 
 						basedmg += (basedmgorig * 0.334);
 					}
-					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) 
+					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(random(112,113),2,true,self)) 
 					{
 						A_SetTics(randompick(0,1,1,1)); 
 						basedmg += (basedmgorig * 0.25);
@@ -8404,7 +8404,7 @@ class BetaSoulFireball : KCProjectile
 		Scale 0.95;
 		Speed 22.5;
 		FastSpeed 45;
-		DamageFunction (randompick(1,1,1,1,1,2,2,2,2,3));
+		DamageFunction (randompick(1,1,1,1,1,2,2,2,2,3) * (random(1,4) * 2));
 		Projectile;
 		+RANDOMIZE
 		RenderStyle "Add";
