@@ -3186,9 +3186,10 @@ class KCPlayerPawn : PlayerPawn
 			if (BuffFactor > 0.00) PlayerDefenseIgnoreFactor = (PlayerDefenseIgnoreFactor * (1.00 - BuffFactor));
 		}
 		
-		if (mod == 'PSI') 
+		double PSIFactor = frandompick(0.625,0.75,0.75,0.75,0.75,0.75,0.875);
+		if (mod == 'PSI')
 		{
-			//
+			PlayerDefenseIgnoreFactor += (PSIFactor * (1.00 - PlayerDefenseIgnoreFactor));
 		}
 		
 		// CCards Shadows Ignore all Defense
@@ -3723,6 +3724,33 @@ class KCPlayerPawn : PlayerPawn
 			{
 				damage *= frandompick(0.004,0.004,0.04,0.04,0.04,0.04,0.4,0.4);
 				weapcheck = randompick(1,1,1,1,0);
+			}
+			if (weapon is "CalamityBlade")
+			{
+				let CalB = CalamityBlade(FindInventory("CalamityBlade"));
+				if (CalB)
+				{
+					if (CountInv("CalamityBladeUpgrade"))
+					{
+						if (CalB.CalamityFireModeType == 1) // PSI
+						{
+							damage *= 0.1;
+							weapcheck = true;
+						}
+						else
+						if (CalB.CalamityFireModeType == 2) // Magic
+						{
+							damage *= 0.55;
+							weapcheck = randompick(1,1,1,0,0);
+						}
+						else
+						if (CalB.CalamityFireModeType == 3) // ?????
+						{
+							damage *= 0.775;
+							weapcheck = randompick(1,0,0,0,0);
+						}
+					}
+				}
 			}
 			/*
 			if (weapon is "KCSigil") 

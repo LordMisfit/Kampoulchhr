@@ -1549,6 +1549,12 @@ mixin class MonsterCollider
 				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			
+			double PSIFactor = frandompick(0.625,0.75,0.75,0.75,0.75,0.75,0.875);
+			if (mod == 'PSI')
+			{
+				ActorDefenseIgnoreFactor += (PSIFactor * (1.00 - ActorDefenseIgnoreFactor));
+			}
+
 			double RSawFactor = frandom(0.225,0.275);
 			if (mod == 'Ripsaw' || mod == 'SawShot')
 			{
