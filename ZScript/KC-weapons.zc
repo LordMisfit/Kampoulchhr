@@ -9377,8 +9377,8 @@ class ImpalerXBow : MarineWeapon
 		{
 			if (CountInv("ImpalerBowZoom") <= 0)
 			{
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.015625));
-				if (dmgfactor >= 2.0) dmgfactor = 2.0;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.0078125));
+				if (dmgfactor >= 5.0) dmgfactor = 5.0;
 				dmgfactor2 = 1.0;
 			}
 			else
@@ -9386,36 +9386,36 @@ class ImpalerXBow : MarineWeapon
 			{
 				BombShots.speed *= 1.25;
 				BombShots.A_ScaleVelocity(1.25);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.0234375));
-				if (dmgfactor >= 3.0) dmgfactor = 3.0;
-				dmgfactor2 = 1.1875;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.01171875));
+				if (dmgfactor >= 7.5) dmgfactor = 7.5;
+				dmgfactor2 = 1.5625;
 			}
 			else
 			if (CountInv("ImpalerBowZoom") == 2) 
 			{
 				BombShots.speed *= 1.5;
 				BombShots.A_ScaleVelocity(1.5);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
-				if (dmgfactor >= 4.0) dmgfactor = 4.0;
-				dmgfactor2 = 1.375;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.015625));
+				if (dmgfactor >= 10.0) dmgfactor = 10.0;
+				dmgfactor2 = 1.875;
 			}
 			else
 			if (CountInv("ImpalerBowZoom") == 3)
 			{
 				BombShots.speed *= 2.0;
 				BombShots.A_ScaleVelocity(2.0);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.0625));
-				if (dmgfactor >= 8.0) dmgfactor = 8.0;
-				dmgfactor2 = 1.75;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
+				if (dmgfactor >= 20.0) dmgfactor = 20.0;
+				dmgfactor2 = 2.5;
 			}
 			else
 			if (CountInv("ImpalerBowZoom") >= 4)
 			{
 				BombShots.speed *= 4.0;
 				BombShots.A_ScaleVelocity(4.0);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.125));
-				if (dmgfactor >= 16.0) dmgfactor = 16.0;
-				dmgfactor2 = 2.5;
+				dmgfactor = (1.0 + (TruePlayerLevel * 0.0625));
+				if (dmgfactor >= 40.0) dmgfactor = 40.0;
+				dmgfactor2 = 5.0;
 			}
 			
 			basedmg *= dmgfactor;
@@ -9434,8 +9434,8 @@ class ImpalerXBow : MarineWeapon
 		if (CountInv("ImpalerBowZoom") <= 0) newbase *= 1.0;
 		if (CountInv("ImpalerBowZoom") == 1) newbase *= frandom(0.75,0.875);
 		if (CountInv("ImpalerBowZoom") == 2) newbase *= frandom(0.50,0.75);
-		if (CountInv("ImpalerBowZoom") == 3) newbase *= frandom(0.25,0.625);
-		if (CountInv("ImpalerBowZoom") >= 4) newbase *= frandom(0.00,0.50);
+		if (CountInv("ImpalerBowZoom") == 3) newbase *= frandom(0.25,0.50);
+		if (CountInv("ImpalerBowZoom") >= 4) newbase *= frandom(0.00,0.25);
 		int TruePlayerLevel = invoker.ActualLevel;
 		newbase *= (1.0 - (TruePlayerLevel * (frandompick(0.0375,0.05,0.05,0.05,0.0625) * frandompick(0.5,1,1,1,1,1,1,2))));
 		if ((newbase > 0.00 && base <= 0.00) || 
