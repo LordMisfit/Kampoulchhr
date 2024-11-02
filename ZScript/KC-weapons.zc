@@ -15265,12 +15265,20 @@ class Riotgun : MarineWeapon
 			}
 			RITO A 1 A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 { invoker.SWRiotMode = 1; }
-			RITO A 3 A_WeaponReady(invoker.WeapFlagsTemp);
+			RITO A 3 
+			{
+				if (invoker.riotmod) A_SetTics(random(1,2));
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			Goto Ready;
 		RiotOff:
 			RIOT C 1 A_WeaponReady(invoker.WeapFlagsTemp);
 			TNT1 A 0 { invoker.SWRiotMode = 0; }
-			RIOT C 4 A_WeaponReady(invoker.WeapFlagsTemp);
+			RIOT C 4 
+			{
+				if (invoker.riotmod) A_SetTics(2);
+				A_WeaponReady(invoker.WeapFlagsTemp);
+			}
 			Goto Ready;
 		Spawn:
 			SW30 Z 4 NoDelay
