@@ -2547,7 +2547,7 @@ class KCPlayerPawn : PlayerPawn
 			breathdirection = 0;
 			breathframe = 0;
 			A_SetScale(basexscale,baseyscale*scaleymulti);
-			if (kcdebug_playerbreathedisplays) Console.Printf("(A_APPBreatheReset [End], tic: %d)", gametic);
+			if (kcdebug_playerbreathedisplays) Console.Printf("(A_APPBreatheReset [End], scale.x: %.8f [%.8f], scale.y: %.8f [%.8f], tic: %d)", scale.x, default.scale.x, scale.y, default.scale.y, gametic);
 		}
 	}
 	
@@ -2625,7 +2625,7 @@ class KCPlayerPawn : PlayerPawn
 			}
 			A_SetScale(basexscale,baseyscale*scaleymulti);
 			
-			if (kcdebug_playerbreathedisplays) Console.Printf("(A_APPBreathe [End], tic: %d)", gametic);
+			if (kcdebug_playerbreathedisplays) Console.Printf("(A_APPBreathe [End], scale.x: %.8f [%.8f], scale.y: %.8f [%.8f], tic: %d)", scale.x, default.scale.x, scale.y, default.scale.y, gametic);
 		}
 	}
 	
@@ -5435,8 +5435,8 @@ class HeiwaPlayer : KCPlayerPawn
 		Player.ForwardMove 2.125, 1.0625;
 		Player.SideMove 2.125, 1.0625;
 		Species "Players";
-		//XScale 0.8125;
-		//YScale 0.9107142857142857;
+		XScale 1.0;
+		YScale 0.9444444444444444; // 0.9107142857142857;
 		Tag "'Heiwa'";
 		+PLAYERPAWN.NOTHRUSTWHENINVUL;
 		+NOTIMEFREEZE; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V

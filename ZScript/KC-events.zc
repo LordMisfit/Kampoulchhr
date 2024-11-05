@@ -171,6 +171,7 @@ class KC_EventHandler : EventHandler
 		A_TmFrzCCardWTick_General("CCards_Actor_ForbiddenGazeToken","KC_CCards_Actor_ForbiddenGazeToken",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_Transmogrifier","KC_CCards_Actor_Transmogrifier",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_EssenceCycle","KC_CCards_Actor_EssenceCycle",type);
+		//A_TmFrzCCardWTick_General("CCards_Actor_LeapAbility","KC_CCards_Actor_LeapAbility",type);
 	}
 
 	override void WorldTick()
@@ -3469,6 +3470,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_SpecialistDamageResist"; if (victim.CountInv(nm)) specialtype += 262144;
 				nm = "KC_CCards_Actor_AbominationCurse"; if (victim.CountInv(nm)) specialtype += 524288;
 				nm = "KC_CCards_Actor_Dexterity"; if (victim.CountInv(nm)) specialtype += 1048576;
+				nm = "KC_CCards_Actor_LeapAbility"; if (victim.CountInv(nm)) specialtype += 2097152;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -4112,6 +4114,11 @@ class KC_EventHandler : EventHandler
 				skillmult *= 0.9523809523809524;
 			}
 			if (specialtype & 1048576) // KC_CCards_Actor_Dexterity
+			{
+				bossdropmulti *= 1.125;
+				skillmult *= 0.8888888888888889;
+			}
+			if (specialtype & 2097152) // KC_CCards_Actor_LeapAbility
 			{
 				bossdropmulti *= 1.125;
 				skillmult *= 0.8888888888888889;
@@ -6624,6 +6631,7 @@ class KC_EventHandler : EventHandler
 				nm = "CCards_Actor_SpecialistDamageResist"; if (victim.CountInv(nm)) specialtype += 262144;
 				nm = "KC_CCards_Actor_AbominationCurse"; if (victim.CountInv(nm)) specialtype += 524288;
 				nm = "KC_CCards_Actor_Dexterity"; if (victim.CountInv(nm)) specialtype += 1048576;
+				nm = "KC_CCards_Actor_LeapAbility"; if (victim.CountInv(nm)) specialtype += 2097152;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
