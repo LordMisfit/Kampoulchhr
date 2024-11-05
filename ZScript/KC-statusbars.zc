@@ -1760,6 +1760,7 @@ class KCStatusBarMain : BaseStatusBar
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		int MaxHealthTrue = 100;
+		int CurrHealth = CPlayer.health;
 		if (MiscItem && MiscItem.MaxHealthTrue > 0) MaxHealthTrue = MiscItem.MaxHealthTrue;
 		
 		int HealthColor = font.CR_brick;
@@ -1778,6 +1779,76 @@ class KCStatusBarMain : BaseStatusBar
 		int lgpiece2 = ((mHealthInterpolator.GetValue() * 100) / MaxHealthTrue);
 		if (lgpiece2 >= 101) DrawBar("HPNOTCH2", "HPNOTCH1", (lgpiece2 - 100), 100, mpos, 1, 1, 0, 0.875);
 										else DrawBar("HPNOTCH1", "BLMET100", lgpiece, 100, mpos, 1, 1, 0, 0.875);
+										
+		// Regen Bar
+		int gentimer = 0;
+		int gentimermax = 0;
+		int gentype = 0;
+		double regenalphadiffinc = 0.0142857142857143;
+		double regenalpha = (1.00 - (regenalphadiffinc * 35));
+		double regenalphadiff = 0.0;
+		int lvltimer = level.time % 70;
+		if (lvltimer == 0) regenalphadiff = 0.0;
+		if (lvltimer == 1 || lvltimer == 69) regenalphadiff = (regenalphadiffinc*1);
+		if (lvltimer == 2 || lvltimer == 68) regenalphadiff = (regenalphadiffinc*2);
+		if (lvltimer == 3 || lvltimer == 67) regenalphadiff = (regenalphadiffinc*3);
+		if (lvltimer == 4 || lvltimer == 66) regenalphadiff = (regenalphadiffinc*4);
+		if (lvltimer == 5 || lvltimer == 65) regenalphadiff = (regenalphadiffinc*5);
+		if (lvltimer == 6 || lvltimer == 64) regenalphadiff = (regenalphadiffinc*6);
+		if (lvltimer == 7 || lvltimer == 63) regenalphadiff = (regenalphadiffinc*7);
+		if (lvltimer == 8 || lvltimer == 62) regenalphadiff = (regenalphadiffinc*8);
+		if (lvltimer == 9 || lvltimer == 61) regenalphadiff = (regenalphadiffinc*9);
+		if (lvltimer == 10 || lvltimer == 60) regenalphadiff = (regenalphadiffinc*10);
+		if (lvltimer == 11 || lvltimer == 59) regenalphadiff = (regenalphadiffinc*11);
+		if (lvltimer == 12 || lvltimer == 58) regenalphadiff = (regenalphadiffinc*12);
+		if (lvltimer == 13 || lvltimer == 57) regenalphadiff = (regenalphadiffinc*13);
+		if (lvltimer == 14 || lvltimer == 56) regenalphadiff = (regenalphadiffinc*14);
+		if (lvltimer == 15 || lvltimer == 55) regenalphadiff = (regenalphadiffinc*15);
+		if (lvltimer == 16 || lvltimer == 54) regenalphadiff = (regenalphadiffinc*16);
+		if (lvltimer == 17 || lvltimer == 53) regenalphadiff = (regenalphadiffinc*17);
+		if (lvltimer == 18 || lvltimer == 52) regenalphadiff = (regenalphadiffinc*18);
+		if (lvltimer == 19 || lvltimer == 51) regenalphadiff = (regenalphadiffinc*19);
+		if (lvltimer == 20 || lvltimer == 50) regenalphadiff = (regenalphadiffinc*20);
+		if (lvltimer == 21 || lvltimer == 49) regenalphadiff = (regenalphadiffinc*21);
+		if (lvltimer == 22 || lvltimer == 48) regenalphadiff = (regenalphadiffinc*22);
+		if (lvltimer == 23 || lvltimer == 47) regenalphadiff = (regenalphadiffinc*23);
+		if (lvltimer == 24 || lvltimer == 46) regenalphadiff = (regenalphadiffinc*24);
+		if (lvltimer == 25 || lvltimer == 45) regenalphadiff = (regenalphadiffinc*25);
+		if (lvltimer == 26 || lvltimer == 44) regenalphadiff = (regenalphadiffinc*26);
+		if (lvltimer == 27 || lvltimer == 43) regenalphadiff = (regenalphadiffinc*27);
+		if (lvltimer == 28 || lvltimer == 42) regenalphadiff = (regenalphadiffinc*28);
+		if (lvltimer == 29 || lvltimer == 41) regenalphadiff = (regenalphadiffinc*29);
+		if (lvltimer == 30 || lvltimer == 40) regenalphadiff = (regenalphadiffinc*30);
+		if (lvltimer == 31 || lvltimer == 39) regenalphadiff = (regenalphadiffinc*31);
+		if (lvltimer == 32 || lvltimer == 38) regenalphadiff = (regenalphadiffinc*32);
+		if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
+		if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
+		if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+		if (MiscItem)
+		{
+			if (CurrHealth > MaxHealthTrue)
+			{
+				gentimer = MiscItem.HPDegenTimer;
+				gentimermax = MiscItem.HPDegenTimerMax;
+				gentype = 1;
+			}
+			else
+			if (CurrHealth < MaxHealthTrue)
+			{
+				gentimer = MiscItem.HPRegenTimer;
+				gentimermax = MiscItem.HPRegenTimerMax;
+				gentype = 0;
+			}
+		}
+		if (gentimer && 
+				gentimermax > 0 &&
+				CurrHealth > 0)
+		{
+			int lgpiece3 = ((gentimer * 100) / gentimermax);
+			if (gentype >= 1) lgpiece3 = (100 - ((gentimer * 100) / gentimermax));
+			//Console.Printf("lgpiece3: %d, gentimer: %d / %d, regenalpha: %.8f", lgpiece3, gentimer, gentimermax, (regenalpha+regenalphadiff));
+			DrawBar("HPRGNOT", "HPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, (regenalpha+regenalphadiff));
+		}
 
 		// Show Current Health
 		inventory berserk = CPlayer.mo.FindInventory("PowerStrength");
