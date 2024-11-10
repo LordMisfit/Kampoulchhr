@@ -6304,7 +6304,15 @@ class KC_EventHandler : EventHandler
 						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
 						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
 						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
-						if (i > 0) maxchance *= 16;
+						if (MiscItem.TimeArmorRelicsOwned >= 3) 
+						{
+							maxchance /= random(4,8);
+							if (i > 0) maxchance *= random(4,8);
+						}
+						else
+						{
+							if (i > 0) maxchance *= 16;
+						}
 						if (maxchance < (kc_inventorydroprate10 * minmultlevel)) maxchance = (kc_inventorydroprate10 * minmultlevel);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [kmsphere]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 
@@ -6425,7 +6433,15 @@ class KC_EventHandler : EventHandler
 						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(8,16);
 						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(4,8);
 						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(1,2);
-						if (i > 0) maxchance *= 16;
+						if (MiscItem.TimeArmorRelicsOwned >= 3) 
+						{
+							maxchance /= random(4,8);
+							if (i > 0) maxchance *= random(4,8);
+						}
+						else
+						{
+							if (i > 0) maxchance *= 16;
+						}
 						if (maxchance < (kc_inventorydroprate13 * minmultlevel)) maxchance = (kc_inventorydroprate13 * minmultlevel);
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [spbkpk]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 
@@ -6859,16 +6875,22 @@ class KC_EventHandler : EventHandler
 								}
 
 								double BaseExpMultiBonus2 = 1.0;
-								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus2 += 0.125;
-								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus2 += 0.125;
-								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus2 += 0.25;
+								if (playera.CountInv("TimeSeraphBangle")) 
+								{
+									BaseExpMultiBonus2 += 0.25;
+									if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus2 += 0.125;
+									if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus2 += 0.125;
+								}
 								BaseExpMultiBonus *= BaseExpMultiBonus2;
 							}
 							else
 							{
-								if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.25;
-								if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
-								if (playera.CountInv("TimeSeraphBangle")) BaseExpMultiBonus += 0.5;
+								if (playera.CountInv("TimeSeraphBangle")) 
+								{
+									BaseExpMultiBonus += 0.5;
+									if (playera.CountInv("TimeSeraphCharm")) BaseExpMultiBonus += 0.25;
+									if (playera.CountInv("TimeSeraphPocketWatch")) BaseExpMultiBonus += 0.25;
+								}
 							}
 						}
 						ExpGain *= BaseExpMultiBonus;

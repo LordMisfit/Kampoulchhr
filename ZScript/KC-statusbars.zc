@@ -2609,17 +2609,79 @@ class KCStatusBarMain : BaseStatusBar
 				DrawBar("EXPNOTCH", "EXPNOTCE", lgpiece, 32, (168, -1+ycorrection), 1, 1, 0, 0.875);
 				int basecombotimer = 0;
 				int basecombotimermax = 0;
+				int killcombo = 0;
 				if (MiscItem) 
 				{
 					basecombotimer = MiscItem.EXPGainHUDTimer;
 					basecombotimermax = MiscItem.EXPGainHUDTimerMax;
+					killcombo = MiscItem.KillComboCount;
 				}
 				if (basecombotimer && 
-						basecombotimermax > 0)
+						basecombotimermax > 0 &&
+						killcombo > 0)
 				{
+					double regenalphadiffinc = 0.0142857142857143;
+					double regenalpha = (1.00 - (regenalphadiffinc * 35));
+					double regenalphadiff = 0.0;
+					int lvltimer = level.time % 70;
+					if (lvltimer == 0) regenalphadiff = 0.0;
+					if (lvltimer == 1 || lvltimer == 69) regenalphadiff = (regenalphadiffinc*1);
+					if (lvltimer == 2 || lvltimer == 68) regenalphadiff = (regenalphadiffinc*2);
+					if (lvltimer == 3 || lvltimer == 67) regenalphadiff = (regenalphadiffinc*3);
+					if (lvltimer == 4 || lvltimer == 66) regenalphadiff = (regenalphadiffinc*4);
+					if (lvltimer == 5 || lvltimer == 65) regenalphadiff = (regenalphadiffinc*5);
+					if (lvltimer == 6 || lvltimer == 64) regenalphadiff = (regenalphadiffinc*6);
+					if (lvltimer == 7 || lvltimer == 63) regenalphadiff = (regenalphadiffinc*7);
+					if (lvltimer == 8 || lvltimer == 62) regenalphadiff = (regenalphadiffinc*8);
+					if (lvltimer == 9 || lvltimer == 61) regenalphadiff = (regenalphadiffinc*9);
+					if (lvltimer == 10 || lvltimer == 60) regenalphadiff = (regenalphadiffinc*10);
+					if (lvltimer == 11 || lvltimer == 59) regenalphadiff = (regenalphadiffinc*11);
+					if (lvltimer == 12 || lvltimer == 58) regenalphadiff = (regenalphadiffinc*12);
+					if (lvltimer == 13 || lvltimer == 57) regenalphadiff = (regenalphadiffinc*13);
+					if (lvltimer == 14 || lvltimer == 56) regenalphadiff = (regenalphadiffinc*14);
+					if (lvltimer == 15 || lvltimer == 55) regenalphadiff = (regenalphadiffinc*15);
+					if (lvltimer == 16 || lvltimer == 54) regenalphadiff = (regenalphadiffinc*16);
+					if (lvltimer == 17 || lvltimer == 53) regenalphadiff = (regenalphadiffinc*17);
+					if (lvltimer == 18 || lvltimer == 52) regenalphadiff = (regenalphadiffinc*18);
+					if (lvltimer == 19 || lvltimer == 51) regenalphadiff = (regenalphadiffinc*19);
+					if (lvltimer == 20 || lvltimer == 50) regenalphadiff = (regenalphadiffinc*20);
+					if (lvltimer == 21 || lvltimer == 49) regenalphadiff = (regenalphadiffinc*21);
+					if (lvltimer == 22 || lvltimer == 48) regenalphadiff = (regenalphadiffinc*22);
+					if (lvltimer == 23 || lvltimer == 47) regenalphadiff = (regenalphadiffinc*23);
+					if (lvltimer == 24 || lvltimer == 46) regenalphadiff = (regenalphadiffinc*24);
+					if (lvltimer == 25 || lvltimer == 45) regenalphadiff = (regenalphadiffinc*25);
+					if (lvltimer == 26 || lvltimer == 44) regenalphadiff = (regenalphadiffinc*26);
+					if (lvltimer == 27 || lvltimer == 43) regenalphadiff = (regenalphadiffinc*27);
+					if (lvltimer == 28 || lvltimer == 42) regenalphadiff = (regenalphadiffinc*28);
+					if (lvltimer == 29 || lvltimer == 41) regenalphadiff = (regenalphadiffinc*29);
+					if (lvltimer == 30 || lvltimer == 40) regenalphadiff = (regenalphadiffinc*30);
+					if (lvltimer == 31 || lvltimer == 39) regenalphadiff = (regenalphadiffinc*31);
+					if (lvltimer == 32 || lvltimer == 38) regenalphadiff = (regenalphadiffinc*32);
+					if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
+					if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
+					if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+					
 					int lgpiece2 = ((basecombotimer * 32) / basecombotimermax);
-					//Console.Printf("lgpiece2: %d, basecombotimer: %d / %d", lgpiece2, basecombotimer, basecombotimermax);
-					DrawBar("EXPCONOT", "EXPCONOE", lgpiece2, 32, (168, -1+ycorrection), 0, SHADER_HORZ, 0, 1.0);
+					string killmsgcolor = "EXPCONOT";
+					if (killcombo > 1)
+					{
+						killmsgcolor = "EXPNOTGR";
+						if (killcombo > 10 && killcombo < 21) killmsgcolor = "EXPNOTLB";
+						if (killcombo > 20 && killcombo < 36) killmsgcolor = "EXPNOTCR";
+						if (killcombo > 35 && killcombo < 61) killmsgcolor = "EXPNOTCY";
+						if (killcombo > 60 && killcombo < 101) killmsgcolor = "EXPNOTBR";
+						if (killcombo > 100 && killcombo < 201) killmsgcolor = "EXPNOTOR";
+						if (killcombo > 200 && killcombo < 501) killmsgcolor = "EXPNOTGO";
+						if (killcombo > 500) 
+						{
+							killmsgcolor = "EXPNOTH2";
+							int killmsgflashtimer = level.time % 40;
+							if (killmsgflashtimer >= 0 && killmsgflashtimer <= 9 || 
+									killmsgflashtimer >= 20 && killmsgflashtimer <= 29) killmsgcolor = "EXPNOTH1";
+						}
+					}
+					//Console.Printf("lgpiece2: %d, basecombotimer: %d / %d, killcombo: %d, killmsgcolor: %s, regenalpha: %.8f", lgpiece2, basecombotimer, basecombotimermax, killcombo, killmsgcolor, regenalpha);
+					DrawBar(killmsgcolor, "EXPCONOE", lgpiece2, 32, (168, -1+ycorrection), 0, SHADER_HORZ, 0, regenalpha);
 				}
 
 				LVLGraphic = "LVL";
