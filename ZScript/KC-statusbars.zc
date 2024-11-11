@@ -1750,6 +1750,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
 				if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
 				if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+				regenalpha = (regenalpha+regenalphadiff);
 				/*
 				if (CurrentMagicPoints > MaxMagicPoints)
 				{
@@ -1770,7 +1771,7 @@ class KCStatusBarMain : BaseStatusBar
 					int lgpiece3 = ((gentimer * 100) / gentimermax);
 					if (gentype >= 1) lgpiece3 = (100 - ((gentimer * 100) / gentimermax));
 					//Console.Printf("lgpiece3: %d, gentimer: %d / %d, regenalpha: %.8f", lgpiece3, gentimer, gentimermax, (regenalpha+regenalphadiff));
-					DrawBar(notchtype, "MPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, (regenalpha+regenalphadiff));
+					DrawBar(notchtype, "MPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, regenalpha);
 				}
 				
 				DrawString(mKCLFont, FormatNumber(mMPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
@@ -1857,6 +1858,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
 				if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
 				if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+				regenalpha = (regenalpha+regenalphadiff);
 				/*
 				if (CurrentPsychicPoints > MaxPsychicPoints)
 				{
@@ -1877,7 +1879,7 @@ class KCStatusBarMain : BaseStatusBar
 					int lgpiece3 = ((gentimer * 100) / gentimermax);
 					if (gentype >= 1) lgpiece3 = (100 - ((gentimer * 100) / gentimermax));
 					//Console.Printf("lgpiece3: %d, gentimer: %d / %d, regenalpha: %.8f", lgpiece3, gentimer, gentimermax, (regenalpha+regenalphadiff));
-					DrawBar(notchtype, "PPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, (regenalpha+regenalphadiff));
+					DrawBar(notchtype, "PPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, regenalpha);
 				}
 				
 				DrawString(mKCLFont, FormatNumber(mPPInterpolator.GetValue(), 4), (44, (yinc-19)+ycorrection), 0, fontclr, fontalpha, -1, 4, (1.5, 1.5));
@@ -1965,6 +1967,7 @@ class KCStatusBarMain : BaseStatusBar
 		if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
 		if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
 		if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+		regenalpha = (regenalpha+regenalphadiff);
 		if (MiscItem)
 		{
 			if (MiscItem.HPRegenBoostTimer > 0) notchtype = "HPRGNOT2";
@@ -1987,8 +1990,8 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				int lgpiece3 = ((gentimer * 100) / gentimermax);
 				if (gentype >= 1) lgpiece3 = (100 - ((gentimer * 100) / gentimermax));
-				//Console.Printf("lgpiece3: %d, gentimer: %d / %d, regenalpha: %.8f", lgpiece3, gentimer, gentimermax, (regenalpha+regenalphadiff));
-				DrawBar(notchtype, "HPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, (regenalpha+regenalphadiff));
+				//Console.Printf("lgpiece3: %d, gentimer: %d / %d, regenalpha: %.8f, regenalphadiff: %.8f", lgpiece3, gentimer, gentimermax, regenalpha, regenalphadiff);
+				DrawBar(notchtype, "HPRGNOE", lgpiece3, 100, mpos, 0, SHADER_HORZ, 0, regenalpha);
 			}
 		}
 
@@ -2621,9 +2624,11 @@ class KCStatusBarMain : BaseStatusBar
 						killcombo > 0)
 				{
 					double regenalphadiffinc = 0.0142857142857143;
+					if (MiscItem.EXPGainHUDCooldownTimer) regenalphadiffinc *= 0.125;
 					double regenalpha = (1.00 - (regenalphadiffinc * 35));
 					double regenalphadiff = 0.0;
 					int lvltimer = level.time % 70;
+					if (MiscItem.EXPGainHUDCooldownTimer) lvltimer *= 4;
 					if (lvltimer == 0) regenalphadiff = 0.0;
 					if (lvltimer == 1 || lvltimer == 69) regenalphadiff = (regenalphadiffinc*1);
 					if (lvltimer == 2 || lvltimer == 68) regenalphadiff = (regenalphadiffinc*2);
@@ -2660,6 +2665,8 @@ class KCStatusBarMain : BaseStatusBar
 					if (lvltimer == 33 || lvltimer == 37) regenalphadiff = (regenalphadiffinc*33);
 					if (lvltimer == 34 || lvltimer == 36) regenalphadiff = (regenalphadiffinc*34);
 					if (lvltimer == 35) regenalphadiff = (regenalphadiffinc*35);
+					if (MiscItem.EXPGainHUDCooldownTimer) regenalphadiff *= 0.125;
+					regenalpha = (regenalpha+regenalphadiff);
 					
 					int lgpiece2 = ((basecombotimer * 32) / basecombotimermax);
 					string killmsgcolor = "EXPCONOT";

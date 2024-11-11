@@ -6968,6 +6968,21 @@ class KC_EventHandler : EventHandler
 									int tier5 = (420 * fact);
 									Console.Printf("\c[green]+%d EXP! \c[darkgreen][Have: %d / %d (Lvl: %d)] \c[red](Kills: %d)", ExpGain, ExpNew, ExpNeeded, PlayerLevel, Kills);
 									MiscItem.KillComboCount += 1;
+									
+									int EXPComboCoolDownGain;
+									int EXPComboCooldownHeathBase = (victim.SpawnHealth() + victim.Stamina);
+									if (MiscItem.EXPGainHUDCooldownTimer <= 0)
+									{
+										EXPComboCoolDownGain = (random(36,42) + (EXPComboCooldownHeathBase * 0.025));
+									}
+									else
+									{
+										if (victim.bBOSS) EXPComboCoolDownGain = (random(24,random(31,32)) + (EXPComboCooldownHeathBase * 0.01875));
+																 else EXPComboCoolDownGain = (random(18,21) + (EXPComboCooldownHeathBase * 0.0125));
+									}
+									if (victim.bBOSS) MiscItem.EXPGainHUDCooldownTimer *= random(5,8);
+									
+									MiscItem.EXPGainHUDCooldownTimer += EXPComboCoolDownGain;
 									MiscItem.EXPGainHUDAmt += ExpGain;
 									if (MiscItem.EXPGainHUDTimer <= 0)
 									{

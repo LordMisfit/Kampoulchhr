@@ -173,6 +173,7 @@ class PlayerStatItem : Inventory
 	int HPRecHUDAmt, APRecHUDAmt, TSARecHUDAmt;
 	int EXPGainHUDTimer, EXPGainHUDAmt;
 	int EXPGainHUDTimerMax;
+	int EXPGainHUDCooldownTimer;
 	int KillComboCount;
 	
 	int HPHUDShakeTime, APHUDShakeTime, TSAHUDShakeTime;
@@ -1491,37 +1492,51 @@ class PlayerStatItem : Inventory
 				TSAHUDPulseType = 0;
 				TSAHUDPulseTimeP = 0;
 			}
-			if (EXPGainHUDTimer > 0) 
+			if (EXPGainHUDCooldownTimer > 0)
 			{
-				int decrementmod = 1;
-				if (TruePlayerLevel >= 20) decrementmod = random(1,randompick(1,1,1,1,1,1,1,2));
-				if (TruePlayerLevel >= 40) decrementmod = random(1,randompick(1,1,1,1,1,1,2,2));
-				if (TruePlayerLevel >= 60) decrementmod = random(1,randompick(1,1,1,1,1,2,2,2));
-				if (TruePlayerLevel >= 80) decrementmod = random(1,randompick(1,1,1,1,2,2,2,2));
-				if (TruePlayerLevel >= 100) decrementmod = random(1,randompick(1,1,1,2,2,2,2,2));
-				if (TruePlayerLevel >= 120) decrementmod = random(1,randompick(1,1,2,2,2,2,2,2));
-				if (TruePlayerLevel >= 140) decrementmod = random(1,randompick(1,2,2,2,2,2,2,2));
-				if (TruePlayerLevel >= 160) decrementmod = random(1,randompick(2,2,2,2,2,2,2,2));
-				if (TruePlayerLevel >= 180) decrementmod = random(1,randompick(2,2,2,2,2,2,2,3));
-				if (TruePlayerLevel >= 200) decrementmod = random(1,randompick(2,2,2,2,2,2,3,3));
-				if (A_CheckTimeFreeze())
-				{
-					nm = "KCTimeFreezer1";
-					nn = "KCTimeFreezer2";
-					no = "KCTimeFreezer3";
-					if (owner.CountInv(nm)) decrementmod += 24;
-					if (owner.CountInv(nn)) decrementmod += 49;
-					if (owner.CountInv(no)) decrementmod += 99; 
-				}
-				
-				if (level.time % decrementmod == 0) EXPGainHUDTimer--;
-				if (kcdebug_misccooldowntimers) Console.Printf("decrementmod: %d, EXPGainHUDTimer: %d", decrementmod, EXPGainHUDTimer);
+				EXPGainHUDCooldownTimer--;
+				if (EXPGainHUDCooldownTimer >= 525) EXPGainHUDCooldownTimer = 525;
+				if (kcdebug_misccooldowntimers) Console.Printf("EXPGainHUDCooldownTimer: %d", EXPGainHUDCooldownTimer);
 			}
 			else
 			{
-				EXPGainHUDAmt = 0;
-				if (EXPGainHUDTimerMax != 1) EXPGainHUDTimerMax = 1;
-				if (KillComboCount) KillComboCount = 0;
+				EXPGainHUDCooldownTimer = 0;
+				if (EXPGainHUDTimer > 0)
+				{
+					int decrementmod = 1;
+					if (TruePlayerLevel >= 20) decrementmod = random(1,randompick(1,1,1,1,1,1,1,2));
+					if (TruePlayerLevel >= 40) decrementmod = random(1,randompick(1,1,1,1,1,1,2,2));
+					if (TruePlayerLevel >= 60) decrementmod = random(1,randompick(1,1,1,1,1,2,2,2));
+					if (TruePlayerLevel >= 80) decrementmod = random(1,randompick(1,1,1,1,2,2,2,2));
+					if (TruePlayerLevel >= 100) decrementmod = random(1,randompick(1,1,1,2,2,2,2,2));
+					if (TruePlayerLevel >= 120) decrementmod = random(1,randompick(1,1,2,2,2,2,2,2));
+					if (TruePlayerLevel >= 140) decrementmod = random(1,randompick(1,2,2,2,2,2,2,2));
+					if (TruePlayerLevel >= 160) decrementmod = random(1,randompick(2,2,2,2,2,2,2,2));
+					if (TruePlayerLevel >= 180) decrementmod = random(1,randompick(2,2,2,2,2,2,2,3));
+					if (TruePlayerLevel >= 200) decrementmod = random(1,randompick(2,2,2,2,2,2,3,3));
+					if (A_CheckTimeFreeze())
+					{
+						nm = "KCTimeFreezer1";
+						nn = "KCTimeFreezer2";
+						no = "KCTimeFreezer3";
+						if (owner.CountInv(nm)) decrementmod *= 25;
+						if (owner.CountInv(nn)) decrementmod *= 50;
+						if (owner.CountInv(no)) decrementmod *= 100; 
+					}
+					
+					if (level.time % decrementmod == 0) 
+					{
+						EXPGainHUDTimer--;
+					}
+					if (kcdebug_misccooldowntimers) Console.Printf("decrementmod: %d, EXPGainHUDTimer: %d", decrementmod, EXPGainHUDTimer);
+				}
+				else
+				{
+					EXPGainHUDAmt = 0;
+					if (EXPGainHUDTimerMax != 1) EXPGainHUDTimerMax = 1;
+					if (EXPGainHUDCooldownTimer) EXPGainHUDCooldownTimer = 0;
+					if (KillComboCount) KillComboCount = 0;
+				}
 			}
 			if (MaxHPIncTimer > 0) MaxHPIncTimer--; else MaxHPIncAmt = 0;
 			if (MaxDashIncTimer > 0) MaxDashIncTimer--; else MaxDashIncAmt = 0;
