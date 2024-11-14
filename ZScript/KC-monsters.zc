@@ -1191,6 +1191,7 @@ class HellClericBall : KCProjectile
 		SeeSound "imp/attack";
 		DeathSound "imp/shotx";
 		DamageType "Fire";
+		Obituary "%o was burned and flamed by a Hell Cleric.";
 	}
 	
 	override void PostBeginPlay()
@@ -1235,6 +1236,7 @@ class HellClericDarkBall : KCProjectile // DarkSeeker
 		SeeSound "imp/attack";
 		DeathSound "imp/shotx";
 		decal "DoomImpScorch";
+		Obituary "%o was burned and flamed by a Hell Cleric.";
 	}
 	
 	override void PostBeginPlay()
@@ -1286,14 +1288,22 @@ class HellClericDVDS : KCCreature
 		FastSpeed 16;
 		ReactionTime 8;
 		Painchance 24;
+		Painchance "Trample", 3; // Hell Clerics are more resistant to pain from Cyberdemon Stomps
+		Painchance "Stomp", 3; // Hell Clerics are more resistant to pain from Cyberdemon Stomps
 		Painchance "Melee", 3;
 		Painchance "Fist", 3;
 		Painchance "Kick", 16;
+		Painchance "Gauntlets", 3; // Hell Clerics are more resistant to pain from punches
+		Painchance "Chainsaw", 3; // Hell Clerics are more resistant to pain from punches
+		Painchance "Holy", 72; // Demons = +300% Pain Chance
+		Painchance "Magic", 120;
+		Damagefactor "Magic", 1.65;
+		DamageFactor "Crush", 0.4; // 3.2
+		DamageFactor "Holy", 2.5; // Demons = +250% Holy Damage
 		DamageFactor "Beats", 1.334;
 		DamageFactor "Cricket", 1.334;
 		DamageFactor "Lead", 1.334;
 		DamageFactor "Zap", 2.5;
-		DamageFactor "Magic", 2.5;
 		DamageFactor "Dust", 2.667;
 		DamageFactor "Breakfast", 1.5;
 		DamageFactor "CherryBomb", 0.875;
@@ -1305,9 +1315,14 @@ class HellClericDVDS : KCCreature
 		DamageFactor "Bonk", 0.4;
 		DamageFactor "Chop", 0.4;
 		DamageFactor "Suck", 0.4;
-		DamageFactor "Melee", 0.4;
+		Damagefactor "Stomp", 0.4; // Hell Clerics are pretty resistant to Stomps from Cyberdemon types
+		Damagefactor "Trample", 0.4; // Hell Clerics are pretty resistant to Stomps from Cyberdemon types
+		DamageFactor "Melee", 0.4; // Hell Clerics are pretty resistant to melee damage
 		DamageFactor "Fist", 0.4;
 		DamageFactor "Kick", 0.4;
+		DamageFactor "Gauntlets", 0.4; // Hell Clerics are pretty resistant to melee damage
+		DamageFactor "Sceptre", 0.4; // Hell Clerics are pretty resistant to melee damage
+		DamageFactor "Chainsaw", 0.4; // Hell Clerics are pretty resistant to melee damage
 		Monster;
 		+SOLID;
 		+FLOORCLIP;
