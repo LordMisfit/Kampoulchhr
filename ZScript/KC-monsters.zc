@@ -1183,7 +1183,7 @@ class HellClericBall : KCProjectile
 		Scale 1.25;
 		Speed 12;
 		FastSpeed 24;
-		DamageFunction ((32+(random(3,6)*random(9,16)))/4); // 15-32 per shot
+		DamageFunction (((32+(random(3,6)*random(9,16)))*0.25)*1.375); // 20-44 per shot
 		Projectile;
 		+RANDOMIZE;
 		RenderStyle "Add";
@@ -1196,13 +1196,13 @@ class HellClericBall : KCProjectile
 	override void PostBeginPlay()
 	{
 		KCProjectile.PostBeginPlay();
-		finaldamagedealt = A_CalcDamageFormula(((32+(random(3,6)*random(9,16)))*0.25),1,0.005,0.3334,0.1667,0.005);
+		finaldamagedealt = A_CalcDamageFormula((((32+(random(3,6)*random(9,16)))*0.25)*1.375),1,0.005,0.3334,0.1667,0.005);
 	}
 	
 	override void Tick()
 	{
 		KCProjectile.Tick();
-		finaldamagedealt = A_CalcDamageFormula(((32+(random(3,6)*random(9,16)))*0.25),1,0.005,0.3334,0.1667,0.005);
+		finaldamagedealt = A_CalcDamageFormula((((32+(random(3,6)*random(9,16)))*0.25)*1.375),1,0.005,0.3334,0.1667,0.005);
 	}
 	
 	states
@@ -1226,9 +1226,9 @@ class HellClericDarkBall : KCProjectile // DarkSeeker
 		Radius 8;
 		Height 6;
 		Scale 1.25;
-		Speed 24;
-		Fastspeed 48;
-		DamageFunction ((24+(random(4,7)*random(9,16)))/4); // 15-34 per shot
+		Speed 22.5; // 24
+		Fastspeed 45; // 48
+		DamageFunction (((24+(random(4,7)*random(9,16)))*0.25)*0.625); // 9-22 per shot
 		DamageType "Fire";
 		+SEEKERMISSILE;
 		PROJECTILE;
@@ -1240,13 +1240,13 @@ class HellClericDarkBall : KCProjectile // DarkSeeker
 	override void PostBeginPlay()
 	{
 		KCProjectile.PostBeginPlay();
-		finaldamagedealt = A_CalcDamageFormula(((24+(random(4,7)*random(9,16)))*0.25),1,0.005,0.3334,0.1667,0.005);
+		finaldamagedealt = A_CalcDamageFormula((((24+(random(4,7)*random(9,16)))*0.25)*0.625),1,0.005,0.3334,0.1667,0.005);
 	}
 	
 	override void Tick()
 	{
 		KCProjectile.Tick();
-		finaldamagedealt = A_CalcDamageFormula(((24+(random(4,7)*random(9,16)))*0.25),1,0.005,0.3334,0.1667,0.005);
+		finaldamagedealt = A_CalcDamageFormula((((24+(random(4,7)*random(9,16)))*0.25)*0.625),1,0.005,0.3334,0.1667,0.005);
 	}
 	
 	states
@@ -1273,6 +1273,7 @@ class HellClericDarkBall : KCProjectile // DarkSeeker
 }
 class HellClericDVDS : KCCreature
 {
+	int atkticoffset;
 	default
 	{
 		Tag "Hell Cleric";
@@ -1288,9 +1289,22 @@ class HellClericDVDS : KCCreature
 		Painchance "Melee", 3;
 		Painchance "Fist", 3;
 		Painchance "Kick", 16;
+		DamageFactor "Beats", 1.334;
+		DamageFactor "Cricket", 1.334;
+		DamageFactor "Lead", 1.334;
 		DamageFactor "Zap", 2.5;
+		DamageFactor "Magic", 2.5;
+		DamageFactor "Dust", 2.667;
+		DamageFactor "Breakfast", 1.5;
+		DamageFactor "CherryBomb", 0.875;
+		DamageFactor "Spinner", 0.875;
+		DamageFactor "BRocket", 0.875;
+		DamageFactor "Popper", 2.667;
 		DamageFactor "Fire", 0.75;
 		DamageFactor "Ice", 1.334;
+		DamageFactor "Bonk", 0.4;
+		DamageFactor "Chop", 0.4;
+		DamageFactor "Suck", 0.4;
 		DamageFactor "Melee", 0.4;
 		DamageFactor "Fist", 0.4;
 		DamageFactor "Kick", 0.4;
@@ -1351,19 +1365,30 @@ class HellClericDVDS : KCCreature
 			}
 			HELC E 4 
 			{
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
-
-				user_attacktype = random(1,2);
+				user_attacktype = randompick(1,1,1,1,1,2,2,2);
 				user_attacks = 0;
 				user_attackmax = 3;
+				if (user_attacktype >= 2) 
+				{
+					user_attackmax -= randompick(-1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1);
+					atkticoffset = randompick(0,0,0,1,1,1,1,1);
+				}
+				int tic = 4;
+				if (user_attacktype >= 2) tic += atkticoffset;
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { tic -= 1; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { tic -= 1;; }
+				
+				A_SetTics(tic);
 				A_FaceTarget();
 			}
 		MissileLoop:
 			HELC G 4 
 			{
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
-				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+				int tic = 4;
+				if (user_attacktype >= 2) tic += atkticoffset;
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { tic -= 1; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { tic -= 1;; }
+				A_SetTics(tic);
 				A_FaceTarget();
 
 				user_tempvar1 = 24;
@@ -1414,7 +1439,10 @@ class HellClericDVDS : KCCreature
 			}
 			HELC F 3 
 			{
-				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+				int tic = 4;
+				if (user_attacktype >= 2) tic += atkticoffset;
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(80,2,true,self)) { tic -= 1; }
+				A_SetTics(tic);
 				A_FaceTarget();
 			}
 			loop;

@@ -1558,6 +1558,68 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 	}
 }
 
+// A more "artifact" style version of the Berserk Pack [for Heretic/Hexen mode, etc]
+class BerserkSphere : Berserk2
+{
+	default
+	{
+		+FLOATBOB
+		+COUNTITEM
+		+DONTGIB
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.ADDITIVETIME
+		Inventory.PickupMessage "";
+		Inventory.PickupSound "";
+	}
+	States
+	{
+		Spawn:
+			BERS ABCDEFGH 3 Bright;
+			loop;
+		Pickup:
+			TNT1 A 0 
+			{
+				let MiscItem = PlayerStatItem(Player.mo.FindInventory("PlayerStatItem"));
+				int temp1 = player.mo.health;
+				int oldhealth = player.mo.health;
+				int prevtemp1 = temp1;
+				int temp4 = player.mo.CountInv("PlayerMaxHP");
+				int temp2 = (temp4 * 1.25);
+				int perc = 125;
+
+				int temp3 = temp4;
+				temp3 *= 1.00;
+				
+				if (temp1 < temp2)
+				{
+					temp1 += temp3;
+					if (temp1 > temp2) temp1 = temp2;
+					player.mo.health = player.health = temp1;
+					int healdiff = player.mo.health - oldhealth;
+					//if (healdiff) invoker.A_RecoverHUD(healdiff, 0, true);
+				}
+				//int AngerLevelNInc = randompick(1,1,1,1,2,2,2,3);
+				//player.mo.A_GiveInventory("AngerLevelEventN",AngerLevelNInc);
+				//player.mo.A_GiveInventory("AngerLevelEventNMin",AngerLevelNInc);
+				
+				/*
+				if (MiscItem && MiscItem.CanTalkUnderwater)
+				{
+					double maskpitch = 1.00;
+					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
+					A_StopSound(CHAN_VOICE);
+					A_StartSound("Dinah/Gotcha",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+				}
+				*/
+				A_SetBlend("f0 f0 f0",0.2,random(8,12));
+				if (HeiwaPlayer(Player.mo)) A_GiveBerserk(int(90 * TICRATE),false);
+															 else A_GiveBerserk(int(135 * TICRATE),false);
+			}
+			Stop;
+	}
+}
+
 // Doom Powerups
 class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 {
