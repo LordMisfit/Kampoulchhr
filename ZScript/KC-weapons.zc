@@ -16714,8 +16714,9 @@ class ThrownKnife : SingleDamageFastRipper
 			double scalebase = 1.0;
 			if (MiscItem) scalebase = 1.0 + ((TruePlayerLevel - 15) * scaling);
 			if (scalebase <= 1.0) scalebase = 1.0;
-			//BombShots.A_SetSize((BombShots.radius * scalebase),(BombShots.height * scalebase));
-			//Console.Printf("rad: %d [%d], hei: %d [%d]", BombShots.radius, oldrad, BombShots.height, oldhei);
+			BombShots.A_SetSize((BombShots.radius * scalebase),(BombShots.height * scalebase));
+			if (kcdebug_showvisibleshieldparts == 1 ||
+					kcdebug_showvisibleshieldparts >= 3) Console.Printf("rad: %d [%d], hei: %d [%d]", BombShots.radius, oldrad, BombShots.height, oldhei);
 			
 			ShieldPartBase SHmo;
 			SHmo = ShieldPartBase(BombShots);
@@ -16783,45 +16784,94 @@ class ThrownKnife : SingleDamageFastRipper
 	
 	void A_KnifeGenShieldPart()
 	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(player.FindInventory("PlayerStatItem"));
+		int TruePlayerLevel = A_GetPlayerLvlProj();
+		actor BombShotsB, BombShots;
+		bool success;
+		
 		double spread = frandompick(0.75,1.5,1.5,2.25,2.25,2.25,2.25,2.25,2.25,3.0,3.0,3.75) * 2.0;
 		double spread2 = (spread * 3.0);
-		double xoffset = 4;
+		double xoffset = 8;
 		double yoffset = 0;
 		double zoffset = -4.0;
-		double scaled = 0.0125;
+		double scaled = 0.03334; // 0.0125;
 		string type = "ThrownKnifeShieldPart";
 		if (berserked) 
 		{
 			type = "ThrownKnifeShieldPartBerserk";
-			xoffset = 4;
+			xoffset = 6;
 		}
 		
-		actor player = players[0].mo;
-		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
-		actor BombShotsB, BombShots;
-		bool success;
 		[success, BombShots] = A_SpawnItemEx(type,0,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
 		if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,0,0,zoffset);
+		[success, BombShots] = A_SpawnItemEx(type,-8,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+		if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,-8,0,zoffset);
+		[success, BombShots] = A_SpawnItemEx(type,8,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+		if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,8,0,zoffset);
+		if (TruePlayerLevel >= 45)
+		{
+			[success, BombShots] = A_SpawnItemEx(type,-16,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,-16,0,zoffset);
+			[success, BombShots] = A_SpawnItemEx(type,16,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,16,0,zoffset);
+		}
+
 		int piecechance = 1;
 		if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
 		if (random(1,6) <= piecechance)
 		{
-			[success, BombShots] = A_SpawnItemEx(type,-xoffset,0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
-			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,-xoffset,0,zoffset);
+			[success, BombShots] = A_SpawnItemEx(type,(-xoffset+0),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset+0),0,zoffset);
+			[success, BombShots] = A_SpawnItemEx(type,(-xoffset-8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset-8),0,zoffset);
+			[success, BombShots] = A_SpawnItemEx(type,(-xoffset+8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+			if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset+8),0,zoffset);
+			if (TruePlayerLevel >= 45)
+			{
+				[success, BombShots] = A_SpawnItemEx(type,(-xoffset-16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+				if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset-16),0,zoffset);
+				[success, BombShots] = A_SpawnItemEx(type,(-xoffset+16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+				if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset+16),0,zoffset);
+			}
+			
 			if (berserked) 
 			{
 				piecechance = 1;
 				if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
 				if (random(1,6) <= piecechance)
 				{
-					[success, BombShots] = A_SpawnItemEx(type,(-xoffset*2),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
-					if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset*2),0,zoffset);
+					[success, BombShots] = A_SpawnItemEx(type,((-xoffset*2)+0),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+					if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*2)+0),0,zoffset);
+					[success, BombShots] = A_SpawnItemEx(type,((-xoffset*2)-8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+					if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*2)-8),0,zoffset);
+					[success, BombShots] = A_SpawnItemEx(type,((-xoffset*2)+8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+					if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*2)+8),0,zoffset);
+					if (TruePlayerLevel >= 45)
+					{
+						[success, BombShots] = A_SpawnItemEx(type,((-xoffset*2)-16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*2)-16),0,zoffset);
+						[success, BombShots] = A_SpawnItemEx(type,((-xoffset*2)+16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*2)+16),0,zoffset);
+					}
+
 					piecechance = 1;
 					if (berserked) piecechance = randompick(2,2,3,3,3,3,4,4);
 					if (random(1,6) <= piecechance)
 					{
-						[success, BombShots] = A_SpawnItemEx(type,(-xoffset*3),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
-						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,(-xoffset*3),0,zoffset);
+						[success, BombShots] = A_SpawnItemEx(type,((-xoffset*3)+0),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*3)+0),0,zoffset);
+						[success, BombShots] = A_SpawnItemEx(type,((-xoffset*3)-8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*3)-8),0,zoffset);
+						[success, BombShots] = A_SpawnItemEx(type,((-xoffset*3)+8),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+						if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*3)+8),0,zoffset);
+						if (TruePlayerLevel >= 45)
+						{
+							[success, BombShots] = A_SpawnItemEx(type,((-xoffset*3)-16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+							if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*3)-16),0,zoffset);
+							[success, BombShots] = A_SpawnItemEx(type,((-xoffset*3)+16),0,zoffset,0.0,0.0,0.0,0,SXF_SETTARGET|SXF_NOCHECKPOSITION);
+							if (success) A_ThrownKnifeShieldSetup(BombShots,scaled,((-xoffset*3)+16),0,zoffset);
+						}
 					}
 				}
 			}
