@@ -496,6 +496,13 @@ class KCStatusBarMain : BaseStatusBar
 					if (TextSize >= 2) TextPosExtra = (1,2);
 					DrawString(parms.amountfont, FormatNumber(item.MaxAmount, 0, 10), TextPos + (boxsize.X * i, 0) + (-2,-2) + TextPosExtra, flags | DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD, ItemAlpha2);
 					
+					/*
+					if (TextSize <= 0) TextPosExtra = (0,0);
+					if (TextSize == 1) TextPosExtra = (1,0);
+					if (TextSize >= 2) TextPosExtra = (1,2);
+					DrawString(parms.amountfont, FormatNumber(CPlayerPawn.CountInv("SpecialBackpackBonus"), 0, 6), TextPos + (boxsize.X * i, 0) + (kcdebug_misc1,kcdebug_misc2) + TextPosExtra, flags | DI_TEXT_ALIGN_RIGHT, Font.CR_GRAY, ItemAlpha2);
+					*/
+					
 					TextPosExtra = (0,0);
 				}
 				else
@@ -537,7 +544,7 @@ class KCStatusBarMain : BaseStatusBar
 						if (TextSize == 1) TextPosExtra = (1,0);
 						if (TextSize >= 2) TextPosExtra = (1,2);
 						DrawString(parms.amountfont, FormatNumber(item.MaxAmount, 0, 10), TextPos + (boxsize.X * i, 0) + (-2,-2) + TextPosExtra, flags | DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD, ItemAlpha2);
-						
+
 						TextPosExtra = (0,0);
 					}
 					else
@@ -2099,10 +2106,10 @@ class KCStatusBarMain : BaseStatusBar
 				fontclr = font.cr_darkgray;
 			}
 			
-			int MaxArmor;
-			if (hudarmortype == 1) MaxArmor = (MiscItem.MaxHealthTrue * GREENARMORVALDOUBLE);
-			if (hudarmortype == 2) MaxArmor = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
-			if (hudarmortype == 3) MaxArmor = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
+			int MaxArmor = MiscItem.MaxHealthTrue;
+			if (hudarmortype == 1) MaxArmor *= GREENARMORVALDOUBLE;
+			if (hudarmortype == 2) MaxArmor *= BLUEARMORVALDOUBLE;
+			if (hudarmortype >= 3) MaxArmor *= REDARMORVALDOUBLE;
 			double fact = (CPlayer.mo.CountInv("SpecialBackpackBonus") * MiscItem.spbkpkarmorbonus);
 			MaxArmor *= (1.0 + fact);
 

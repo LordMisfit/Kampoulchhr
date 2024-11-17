@@ -5306,6 +5306,7 @@ class MediBag : CustomInventoryExt
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string itemname = GetClassName();
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -5313,6 +5314,16 @@ class MediBag : CustomInventoryExt
 			{
 				MaxAmount = MiscItem.spbkpkmaxhealthcarry;
 				InterHubAmount = MiscItem.spbkpkmaxhealthcarry;
+				
+				string tagg = "\c[cream]Special Backpack's Portable Medikit";
+				if (playera.CountInv("SpecialBackpackBonus") > 0)
+				{
+					if (playera.CountInv("SpecialBackpackBonus") >= 25) tagg.AppendFormat("\c[HeiwaDeluge]");
+																												 else tagg.AppendFormat("\c[HeiwaChamosis]");
+					tagg.AppendFormat(" [L%d]", playera.CountInv("SpecialBackpackBonus"));
+					tagg.AppendFormat("\c-: Stores Medikits and Stimpacks in raw HP energy units up to a certain limit.");
+				}
+				SetTag(tagg);
 			}
 			else Destroy();
 		}
