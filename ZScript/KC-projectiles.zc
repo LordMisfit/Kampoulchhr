@@ -1111,14 +1111,51 @@ class SawPlayerPuff : SawPuff
 		Species "Players";
 		+MTHRUSPECIES;
 		+THRUSPECIES;
-		+PUFFGETSOWNER
+		+PUFFGETSOWNER;
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
+	}
+	
+	void A_CheckSawT()
+	{
+		actor playera = players[0].mo;
+		if (target && target == playera)
+		{
+			let weapon = target.player.ReadyWeapon;
+			//Console.Printf("$#");
+			if (weapon is "SawThrower")
+			{
+				actor playera = players[0].mo;
+				let SawT = SawThrower(playera.FindInventory("SawThrower"));
+				if (SawT)
+				{
+					//Console.Printf("%p [%s] (A_CustomPunch)", pufftype, pufftype.GetClassName());
+					SawT.A_SawTDrainDurability(2);
+				}
+			}
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			PUFF A 4 Bright
+			{
+				A_CheckSawT();
+			}
+			PUFF B 4;
+		Melee:
+			PUFF CD 4
+			{
+				A_CheckSawT();
+			}
+			Stop;
 	}
 }
 
 class SawShot : KCProjectile
 {
+	double sawduraratio;
 	default
 	{
 		Tag "Flying Saw Ripper";
@@ -1126,7 +1163,7 @@ class SawShot : KCProjectile
 		Height 2;
 		Speed 32;
 		Scale 0.3;
-		DamageFunction (6 * random(3,6));
+		DamageFunction (finaldamagedealt);
 		+NOGRAVITY;
 		+DROPOFF;
 		+MISSILE;
@@ -1143,10 +1180,31 @@ class SawShot : KCProjectile
 		DamageType "SawShot";
 	}
 	
+	
+	
+	override void PostBeginPlay()
+	{
+		finaldamagedealt = 6 * random(3,6);
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		finaldamagedealt *= (2.5 - (sawduraratio * 1.5));
+		super.PostBeginPlay();
+	}
+	
+	override void Tick()
+	{
+		finaldamagedealt = 6 * random(3,6);
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		finaldamagedealt *= (2.5 - (sawduraratio * 1.5));
+		super.Tick();
+	}
+	
 	void A_SawRip()
 	{
 		A_SeekerMissile(90,90);
-		A_Explode(16,8,0,false,4,0,0,"","Sawshot");
+		int baseexpdmg = 16;
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		baseexpdmg *= (2.5 - (sawduraratio * 1.5));
+		A_Explode(baseexpdmg,8,0,false,4,0,0,"","Sawshot");
 	}
 	
 	States
@@ -1187,7 +1245,7 @@ class SSawShot : Sawshot
 		Height 2;
 		Speed 48;
 		Scale 0.3;
-		DamageFunction (8 * random(4,6));
+		DamageFunction (finaldamagedealt);
 		+NOGRAVITY;
 		+DROPOFF;
 		+MISSILE;
@@ -1210,10 +1268,29 @@ class SSawShot : Sawshot
 		DamageType "SawShot";
 	}
 	
+	override void PostBeginPlay()
+	{
+		finaldamagedealt = 8 * random(4,8);
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		finaldamagedealt *= (4.0 - (sawduraratio * 3));
+		super.PostBeginPlay();
+	}
+	
+	override void Tick()
+	{
+		finaldamagedealt = 8 * random(4,8);
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		finaldamagedealt *= (4.0 - (sawduraratio * 3));
+		super.Tick();
+	}
+	
 	void A_SawRip()
 	{
 		A_SeekerMissile(90,90);
-		A_Explode(24,8,0,false,4,0,0,"","Sawshot");
+		int baseexpdmg = 24;
+		if (sawduraratio < 0.00) sawduraratio = 0.00;
+		baseexpdmg *= (4.0 - (sawduraratio * 3));
+		A_Explode(baseexpdmg,8,0,false,4,0,0,"","Sawshot");
 	}
 	
 	States

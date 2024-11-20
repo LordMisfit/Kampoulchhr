@@ -1540,6 +1540,33 @@ class KCStatusBarMain : BaseStatusBar
 					DrawTexture(blimg, (jx, jy), DI_ITEM_OFFSETS|DI_TEXT_ALIGN_RIGHT, 0.75, (-1,-1), (0.375, 0.375)); // 51, -3
 				}
 			}
+			temp = "SawThrower";
+			if (PlayerWeapon is temp)
+			{
+				int sawdurability;
+				int sawmaxdurability = 1050;
+				int sawdurabilitypercent;
+				double sawmeterlength = 0.4; // 0.2 vertical, 0.4 horizontal
+				if (sawmeterlength > 1.5) sawmeterlength = 1.5;
+				dun = TexMan.CheckForTexture("SHLDUNIT", TexMan.TYPE_MiscPatch);
+				let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
+				if (SawT)
+				{
+					sawdurability = SawT.sawdurability;
+					sawmaxdurability = SawT.sawmaxdurability;
+					//Console.Printf("-sawdurability: %d / %d", sawdurability, sawmaxdurability);
+					
+					if (sawmaxdurability)
+					{
+						sawdurabilitypercent = sawdurability * 100 / sawmaxdurability;
+						int sawbarunits = sawdurabilitypercent * sawmeterlength;
+						for (int i; i < (100 * sawmeterlength); i++) DrawTexture(TexMan.CheckForTexture("BLAKUNIT", TexMan.TYPE_MiscPatch), (barx+i, bary), 0, HX_SHADOW);
+						for (int i; i < sawbarunits; i++) DrawTexture(dun, (barx+i, bary), 0, HX_SHADOW); // -46, -1
+						//Console.Printf("--sawdurability: %d / %d, sawmeterlength: %.4f, sawbarunits: %d, sawdurabilitypercent: %d", sawdurability, sawmaxdurability, sawmeterlength, sawbarunits, sawdurabilitypercent);
+					}
+					usealtammo = 0;
+				}
+			}
 			//GLKPENTR
 			
 			int trueammocurrent, trueammomax;

@@ -270,10 +270,8 @@ class KCWeaponBase : Weapon
 		if (waterlevel >= 3)
 		{
 			actor playera = players[0].mo;
-			if (playera.CountInv("KCTimeFreezer1"))
-			{
-				ticcheck *= frandom(4.0,5.0);
-			}
+			if (playera.CountInv("KCTimeFreezer1")) ticcheck *= frandom(4.0,5.0);
+			if (playera.CountInv("KCTimeFreezer3")) ticcheck *= frandom(0.2,0.25);
 		}
 		return ticcheck;
 	}
@@ -675,7 +673,23 @@ class KCWeaponBase : Weapon
 					t.linetarget.bFULLVOLACTIVE == false && 
 					t.linetarget.bFULLVOLDEATH == false &&
 					t.linetarget.bBOSS == false) isCCardsIllusion = true;
-
+			
+			if (weapon is "SawThrower" &&
+					!isCCardsIllusion)
+			{
+				actor playera = players[0].mo;
+				let SawT = SawThrower(playera.FindInventory("SawThrower"));
+				if (SawT)
+				{
+					if (pufftype == "SawPuff" || 
+							pufftype == "SawPlayerPuff")
+					{
+						//Console.Printf("%p [%s] (A_CustomPunch)", pufftype, pufftype.GetClassName());
+						SawT.A_SawTDrainDurability(1);
+					}
+				}
+			}
+			
 			if (lifesteal > 0 && 
 					!(t.linetarget.bDontDrain) && 
 					!isCCardsIllusion && 
@@ -9194,6 +9208,8 @@ class SawThrower : MarineWeapon
 	int sawrange;
 	int inputmode;
 	double meleerecoil;
+	int sawdurability, sawmaxdurability;
+	int sawduracount;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -9221,6 +9237,74 @@ class SawThrower : MarineWeapon
 		//Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
+	action void A_SawTSetMaxDurability()
+	{
+		invoker.revtimes = 0;
+		invoker.sawmaxdurability = 1050;
+	}
+	
+	action void A_SawTCheckDurability()
+	{
+		if (CountInv("Saws") > 0)
+		{
+			if (invoker.sawdurability <= 0)
+			{
+				invoker.sawdurability = invoker.sawmaxdurability;
+				A_TakeInventory("Saws",1);
+				A_StartSound("weapons/throwsawhit", 321, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawhit", 322, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawhit", 323, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawhit", 324, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawhit", 325, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawhit", 326, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+			}
+		}
+	}
+	
+	action void A_SawTDrainDurability(int type)
+	{
+		if (type <= 0)
+		{
+			invoker.sawduracount++;
+			if (invoker.sawduracount % randompick(4,5,5,5,6) == randompick(-1,-1,0,0,0,0,1,1,1,2)) invoker.sawdurability -= randompick(0,0,0,0,0,0,0,1,1,1);
+																																												else invoker.sawdurability -= randompick(0,0,0,0,0,0,0,0,0,1);
+		}
+		else
+		if (type >= 1)
+		{
+			actor playera = players[0].mo;
+			int temp = randompick(1,1,1,1,2,2,2,3,3,4);
+			if (type == 1) temp = randompick(1,1,1,1,2,2,2,3,3,4);
+			else if (type >= 2) temp = randompick(1,1,2,2,3,3,4,4,5,5);
+			
+			if (playera.CountInv("KCTimeFreezer1")) temp *= frandom(4.0,5.0);
+			if (playera.CountInv("KCTimeFreezer3")) temp *= frandom(0.2,0.25);
+			invoker.sawdurability -= temp;
+		}
+		A_SawTCheckDurability();
+	}
+	
+	action void A_SawTFireReplenishDurability()
+	{
+		if (CountInv("Saws") > 0) invoker.sawdurability = invoker.sawmaxdurability;
+												 else invoker.sawdurability = 0;
+	}
+	
+	action void A_SawTSetSawShotDura(actor BombShotsB, actor BombShots)
+	{
+		if (BombShots)
+		{
+			SawShot SawSht;
+			SawSht = SawShot(BombShots);
+			if (SawSht)
+			{
+				SawSht.sawduraratio = ((invoker.sawdurability * 1.0) / invoker.sawmaxdurability);
+				if (SawSht.sawduraratio > 1.0) SawSht.sawduraratio = 1.0;
+				//Console.Printf("sawduraratio: %.8f", SawSht.sawduraratio);
+			}
+		}
+	}
+	
 	States
 	{
 		Spawn:
@@ -9231,13 +9315,13 @@ class SawThrower : MarineWeapon
 			TSWG G 1 
 			{
 				A_WeaponReady();
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Ready+1;
 			TSWG A 1
 			{
 				A_WeaponReady();
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Ready+2;
 		Deselect:
@@ -9245,13 +9329,13 @@ class SawThrower : MarineWeapon
 			TSWG G 1
 			{
 				A_Lower(12);
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Deselect+1;
 			TSWG A 1
 			{
 				A_Lower(12);
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Deselect+2;
 		Select:
@@ -9259,13 +9343,13 @@ class SawThrower : MarineWeapon
 			TSWG G 1
 			{
 				A_Raise(12);
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Select+1;
 			TSWG A 1
 			{
 				A_Raise(12);
-				invoker.revtimes = 0;
+				A_SawTSetMaxDurability();
 			}
 			Goto Select+2;
 		Fire:
@@ -9275,7 +9359,13 @@ class SawThrower : MarineWeapon
 				invoker.A_KCAlertMonsters(256);
 			}
 			TSWG D 0 A_Recoil(1.5);
-			TSWG D 4 { A_FireProjectile("SawShot",0.0,true,0.0,0.0,FPF_NOAUTOAIM,0.0); }
+			TSWG D 4 
+			{
+				actor BombShotsB, BombShots;
+				[BombShotsB, BombShots] = A_FireProjectile("SawShot",0.0,true,0.0,0.0,FPF_NOAUTOAIM,0.0);
+				A_SawTSetSawShotDura(BombShotsB, BombShots);
+				A_SawTFireReplenishDurability();
+			}
 			TSWG D 5 A_Recoil(-1.5);
 			TSWG D 0 A_JumpIfNoAmmo(5);
 			TSWG E 4;
@@ -9302,12 +9392,14 @@ class SawThrower : MarineWeapon
 			TSWG BBC 3
 			{
 				A_CustomPunch((1*random(1,4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
+				A_SawTDrainDurability(0);
 				invoker.A_KCAlertMonsters(256);
 			}
 		AltRevUp2:
 			TSWG BB 1 
 			{
 				A_CustomPunch((1*random(random(1,2),4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
+				A_SawTDrainDurability(0);
 				invoker.A_KCAlertMonsters(288);
 			}
 			TSWG C 0 A_ReFire;
@@ -9352,11 +9444,13 @@ class SawThrower : MarineWeapon
 				invoker.A_KCAlertMonsters(320);
 				A_Recoil(-invoker.meleerecoil);
 
+				A_SawTDrainDurability(0);
 				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 			}
 			TSWG B 1 
 			{
+				A_SawTDrainDurability(0);
 				if (invoker.revtimes >= 20) A_SetTics(0);
 															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 			}
@@ -9365,6 +9459,7 @@ class SawThrower : MarineWeapon
 				invoker.A_KCAlertMonsters(320);
 				A_Recoil(invoker.meleerecoil);
 
+				A_SawTDrainDurability(0);
 				if (invoker.revtimes >= 20) A_CustomPunch((random(2,3)*random(2,4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 															 else A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 			}
@@ -9376,6 +9471,7 @@ class SawThrower : MarineWeapon
 				}
 				else 
 				{
+					A_SawTDrainDurability(0);
 					A_CustomPunch((2*random(random(1,2),4)),0,CPF_PULLIN,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 				}
 			}
@@ -9426,6 +9522,7 @@ class SawThrower : MarineWeapon
 			TSWG CCBBCC 1 
 			{
 				invoker.A_KCAlertMonsters(288);
+				A_SawTDrainDurability(0);
 				A_CustomPunch((2*random(random(1,2),4)),0,0,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 				invoker.revtimes *= 0.9;
 				A_Refire("AltRevUp2");
@@ -9433,6 +9530,7 @@ class SawThrower : MarineWeapon
 			TSWG BBBCCCBBB 1 
 			{
 				invoker.A_KCAlertMonsters(288);
+				A_SawTDrainDurability(0);
 				A_CustomPunch((random(1,2)*random(random(1,2),4)),0,0,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 				invoker.revtimes *= 0.8;
 				A_Refire("AltRevUp2");
@@ -9440,6 +9538,7 @@ class SawThrower : MarineWeapon
 			TSWG CCCCBBBB 1 
 			{
 				invoker.A_KCAlertMonsters(288);
+				A_SawTDrainDurability(0);
 				A_CustomPunch((1*random(random(1,2),4)),0,0,"SawPlayerPuff",invoker.sawrange,meleesound:"weapons/throwsawcut");
 				invoker.revtimes *= 0.6; 
 				A_Refire("AltRevUp");
@@ -9467,7 +9566,13 @@ class SawThrower : MarineWeapon
 				invoker.A_KCAlertMonsters(640);
 			}
 			TSWG D 0 A_Recoil(2.25);
-			TSWG D 4 { A_FireProjectile("SSawShot",0.0,true,0.0,0.0,FPF_NOAUTOAIM,0.0); }
+			TSWG D 4 
+			{ 
+				actor BombShotsB, BombShots;
+				[BombShotsB, BombShots] = A_FireProjectile("SSawShot",0.0,true,0.0,0.0,FPF_NOAUTOAIM,0.0);
+				A_SawTSetSawShotDura(BombShotsB, BombShots);
+				A_SawTFireReplenishDurability();
+			}
 			TSWG D 5 A_Recoil(-2.25);
 			TSWG D 0 A_JumpIfNoAmmo(5);
 			TSWG E 4
@@ -9492,7 +9597,7 @@ class SawThrower : MarineWeapon
 				{
 					if (invoker.revtimes >= 20)
 					{
-						invoker.revtimes = randompick(0,5,5,5,5,5,10,10,10,10,10,10,10,10,10,10,15,15,15,15,20);
+						invoker.revtimes = randompick(0,1,2,3,4,5,10,10,10,10,10,10,10,10,10,15,16,17,18,19,20);
 						return resolvestate("AltHold");
 					}
 					else
