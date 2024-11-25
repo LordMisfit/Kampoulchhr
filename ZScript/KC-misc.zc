@@ -6453,6 +6453,37 @@ class PlayerStatItem : Inventory
 			nt = "KnifePlayerSwingItem"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 			nt = "KnifePlayerSwingHold"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 		}
+		
+		let BlR = BlasterRifle(playeractor.FindInventory("BlasterRifle"));
+		if (BlR)
+		{
+			int baseinc = 5;
+			int basetimercap = 350;
+			if (BlR.spareshots < BlR.spareshotsmax)
+			{
+				if (BlR.firestate > 0) baseinc /= 5;
+				if (playeractor.CountInv("BlasterRifleUpgrade")) baseinc *= 5;
+				BlR.spareshotregentimer += baseinc;
+				if (BlR.spareshotregentimer > basetimercap)
+				{
+					BlR.spareshots++;
+					if (BlR.spareshots >= BlR.spareshotsmax)
+					{
+						BlR.spareshotregentimer = 0;
+					}
+					else
+					{
+						BlR.spareshotregentimer -= basetimercap;
+					}
+				}
+				//Console.Printf("\c[fire]firestate: %d\c-, baseinc: %d, \c[green]spareshotregentimer: %d / %d\c-, \c[sapphire]spareshots: %d / %d\c-", BlR.firestate, baseinc, BlR.spareshotregentimer, basetimercap, BlR.spareshots, BlR.spareshotsmax);
+			}
+			else
+			{
+				BlR.spareshotregentimer = 0;
+				if (BlR.spareshots > BlR.spareshotsmax) BlR.spareshots = BlR.spareshotsmax;
+			}
+		}
 	}
 	
 	
