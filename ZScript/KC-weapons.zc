@@ -9251,12 +9251,13 @@ class SawThrower : MarineWeapon
 			{
 				invoker.sawdurability = invoker.sawmaxdurability;
 				A_TakeInventory("Saws",1);
-				A_StartSound("weapons/throwsawhit", 321, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-				A_StartSound("weapons/throwsawhit", 322, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-				A_StartSound("weapons/throwsawhit", 323, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-				A_StartSound("weapons/throwsawhit", 324, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-				A_StartSound("weapons/throwsawhit", 325, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
-				A_StartSound("weapons/throwsawhit", 326, CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				A_StartSound("weapons/throwsawbreak", 521, CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+				A_StartSound("weapons/throwsawbreak", 522, CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.98,1.02));
+				A_StartSound("weapons/throwsawbreak", 523, CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.96,1.04));
+				A_StartSound("weapons/throwsawbreak", 524, CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.93,1.07));
+				A_StartSound("weapons/throwsawbreak", 525, CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.90,1.10));
+				A_StartSound("weapons/throwsawbreak", 526, CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.86,1.14));
+				//Console.Printf("#5@#$M");
 			}
 		}
 	}
@@ -9613,7 +9614,19 @@ class SawThrower : MarineWeapon
 			TSWG G 7;
 			TSWG G 0 A_CheckReload();
 			Goto Ready+2;
-
+			
+		SawBreakReload:
+			TSWG D 4;
+			TSWG D 5;
+			TSWG D 0 A_JumpIfNoAmmo(5);
+			TSWG E 4;
+			TSWG F 3;
+			TSWG A 3;
+			TSWG A 0 A_ReFire("AltRevUp");
+			Goto Ready;
+			TSWG G 7;
+			TSWG G 0 A_CheckReload();
+			Goto Ready+2;
 
 		// Fire Mode
 		User4:
@@ -19031,11 +19044,13 @@ class EvilWarriorShieldBall : KCProjectile
 
 class DustBlower : MarineWeapon
 {
+	bool blowing;
+	bool vaccing;
 	default
 	{
 		//$Category Weapons
 		//$Title "Dust Blower"
-
+		
 		Inventory.PickupSound "misc/w_pkup";
 		KCWeaponBase.PickupSound1Heiwa "";
 		KCWeaponBase.PickupSound2 "";
@@ -19061,6 +19076,8 @@ class DustBlower : MarineWeapon
 		Ready:
 			PDBZ B 1 
 			{
+				invoker.blowing = false;
+				invoker.vaccing = false;
 				A_WeaponReady(); 
 				A_StopSound(7); 
 			}
@@ -19068,18 +19085,32 @@ class DustBlower : MarineWeapon
 		Deselect:
 			PDBZ B 1 
 			{
+				invoker.blowing = false;
+				invoker.vaccing = false;
 				A_Lower(12); 
 				A_StopSound(7); 
 			}
 			Loop;
 		Select:
-			PDBZ B 1 A_Raise(12);
+			PDBZ B 1 
+			{
+				invoker.blowing = false;
+				invoker.vaccing = false;
+				A_Raise(12);
+			}
 			Loop;
 		Fire:
-			PDBZ B 2 A_OverlayOffset(PSP_WEAPON,4,37,WOF_INTERPOLATE);
+			PDBZ B 2 
+			{
+				invoker.blowing = true;
+				invoker.vaccing = false;
+				A_OverlayOffset(PSP_WEAPON,4,37,WOF_INTERPOLATE);
+			}
 		Hold:
 			PDBZ BBB 2
 			{
+				invoker.blowing = true;
+				invoker.vaccing = false;
 				if (waterlevel > 2)
 				{
 					A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
@@ -19094,8 +19125,48 @@ class DustBlower : MarineWeapon
 				A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
 			}
 			PDBZ B 2 A_ReFire;
-			PDBZ B 2 A_OverlayOffset(PSP_WEAPON,0,32,WOF_INTERPOLATE);
+			PDBZ B 2 
+			{
+				invoker.blowing = false;
+				invoker.vaccing = false;
+				A_OverlayOffset(PSP_WEAPON,0,32,WOF_INTERPOLATE);
+			}
 			Goto Ready;
+		/*
+		AltFire:
+			PDBZ B 2 
+			{
+				invoker.vaccing = true;
+				invoker.blowing = false;
+				A_OverlayOffset(PSP_WEAPON,4,37,WOF_INTERPOLATE);
+			}
+		AltHold:
+			PDBZ BBB 2
+			{
+				invoker.vaccing = true;
+				invoker.blowing = false;
+				if (waterlevel > 2)
+				{
+					A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
+					A_StartSound("weapons/airblow/underwater",7,CHANF_LOOPING,0.7);
+					A_ChangeVelocity(cos(pitch)*4,0,sin(pitch)*4,CVF_RELATIVE);
+				}
+				else
+				{
+					A_StartSound("weapons/airblow/surface",7,CHANF_LOOPING,0.7);
+					A_ChangeVelocity(cos(pitch)*0.5,0,sin(pitch)*1.1,CVF_RELATIVE);
+				}
+				A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+			}
+			PDBZ B 2 A_ReFire;
+			PDBZ B 2 
+			{
+				invoker.vaccing = true;
+				invoker.blowing = false;
+				A_OverlayOffset(PSP_WEAPON,0,32,WOF_INTERPOLATE);
+			}
+			Goto Ready;
+		*/
 	}
 }
 
