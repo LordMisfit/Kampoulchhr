@@ -6457,12 +6457,22 @@ class PlayerStatItem : Inventory
 		let BlR = BlasterRifle(playeractor.FindInventory("BlasterRifle"));
 		if (BlR)
 		{
+			if (playeractor.CountInv("BlasterRifleUpgrade")) BlR.spareshotsmax = 5;
+																									else BlR.spareshotsmax = 1;
 			int baseinc = 5;
 			int basetimercap = 350;
-			if (BlR.spareshots < BlR.spareshotsmax)
+			if (BlR.spareshots < BlR.spareshotsmax) 
 			{
 				if (BlR.firestate > 0) baseinc /= 5;
-				if (playeractor.CountInv("BlasterRifleUpgrade")) baseinc *= 5;
+				double chargevol = 0.25;
+				double chargepitch = 0.8;
+				if (playeractor.CountInv("BlasterRifleUpgrade")) 
+				{
+					baseinc *= 5;
+					chargevol = 0.4375;
+					chargepitch = 1.25;
+				}
+				playeractor.A_StartSound("weapons/blasterriflecharging",655,CHANF_LOOPING,chargevol,ATTN_NORM,chargepitch);
 				BlR.spareshotregentimer += baseinc;
 				if (BlR.spareshotregentimer > basetimercap)
 				{
@@ -6470,20 +6480,29 @@ class PlayerStatItem : Inventory
 					if (BlR.spareshots >= BlR.spareshotsmax)
 					{
 						BlR.spareshotregentimer = 0;
+						playeractor.A_StartSound("weapons/blasterriflecharge1",654,CHANF_DEFAULT,0.5625,ATTN_NORM,frandom(0.9,1.111));
 					}
 					else
 					{
 						BlR.spareshotregentimer -= basetimercap;
+						playeractor.A_StartSound("weapons/blasterriflecharge2",654,CHANF_DEFAULT,0.1875,ATTN_NORM,frandom(0.9,1.111));
 					}
 				}
 				//Console.Printf("\c[fire]firestate: %d\c-, baseinc: %d, \c[green]spareshotregentimer: %d / %d\c-, \c[sapphire]spareshots: %d / %d\c-", BlR.firestate, baseinc, BlR.spareshotregentimer, basetimercap, BlR.spareshots, BlR.spareshotsmax);
 			}
 			else
 			{
+				playeractor.A_StopSound(655);
 				BlR.spareshotregentimer = 0;
 				if (BlR.spareshots > BlR.spareshotsmax) BlR.spareshots = BlR.spareshotsmax;
 			}
 		}
+		else
+		{
+			playeractor.A_StopSound(654);
+			playeractor.A_StopSound(655);
+		}
+		
 	}
 	
 	

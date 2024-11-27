@@ -14413,6 +14413,7 @@ Class BlasterPistol : MarineWeapon
 	bool modpackspawnattempt;
 	
 	int spareshots;
+	int spareshotsmax;
 	int spareshotregentimer;
 	
 	//$Category Weapons
@@ -17470,9 +17471,6 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 	{
 		invoker.shotnum = 0;
 		invoker.firestate = 0;
-		invoker.spareshotsmax = 0;
-		if (CountInv("BlasterRifleUpgrade")) invoker.spareshotsmax = 5;
-																		else invoker.spareshotsmax = 1;
 	}
 	
 	action void A_ShotSpeedTier(int firetype)
