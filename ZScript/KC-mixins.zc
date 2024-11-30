@@ -340,6 +340,20 @@ mixin class HUDRecovery
 	}
 }
 
+mixin class GrabArmorItems
+{
+	void A_GrabArmorHUD()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem) 
+		{
+			MiscItem.ArmorGrabTimer += 35;
+			if (MiscItem.ArmorGrabTimer >= 35) MiscItem.ArmorGrabTimer = 35;
+		}
+	}
+}
+
 mixin class StunItems
 {
 	bool dideffect;
@@ -1614,6 +1628,8 @@ mixin class MonsterCollider
 			// Bullet/Pellet
 			if (mod == 'Bullet') 
 			{ 
+				if ((infl == "KCGlockTracer")) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
+				if ((infl == "KCGlockTracer2")) BulletFactor *= (randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5) + 1);
 				if ((infl == "KCTommyGunRipTracer" || infl == "KCTommyGunTracer") && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
 				if ((infl == "SWRiotBulletRip" || infl == "SWRiotBullet") && (source && source.CountInv("RiotGunUpgrade") > 0)) BulletFactor *= randompick(1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));
@@ -2767,6 +2783,7 @@ mixin class MonsterCollider
 		// (Partial) Defense Ignoring Attacks
 		double prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor;
 		[prevDamageFactor, basedmgfactor, ActorDefenseIgnoreFactor] = A_DefenseIgnoreFactor(inflictor, source, damage, mod, flags, angle, wasblastedimpact, surprisehit, angvstype);
+		if (kcdebug_actordmgdisplays) Console.Printf("ActorDefenseIgnoreFactor: %.8f", ActorDefenseIgnoreFactor);
 		
 		int predirdmg = damage;
 		prevDamageFactor = DamageFactor;

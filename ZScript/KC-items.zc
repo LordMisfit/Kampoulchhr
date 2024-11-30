@@ -2590,6 +2590,7 @@ class TerrorSphere : CustomInventoryExt
 // A specialized armor class for various armor types to allow future extra functions/features, maybe? V:
 class KCArmor : BasicArmor
 {
+	mixin GrabArmorItems;
 	Default
 	{
 		Inventory.Amount 0;
@@ -2805,7 +2806,9 @@ class KCArmor : BasicArmor
 
 class KCArmorBonus : BasicArmorBonus
 {
+	mixin GrabArmorItems;
 	mixin ItemFallSpotCheck;
+	
 	int A_CheckMaxArmor(int fSaveAmount) // BasicArmorBonus
 	{
 		actor playera = players[0].mo;
@@ -2820,6 +2823,7 @@ class KCArmorBonus : BasicArmorBonus
 	
 	override Inventory CreateCopy (Actor other)
 	{
+		actor playera = players[0].mo;
 		let copy = KCArmorBonus(Super.CreateCopy(other));
 		copy.SavePercent = SavePercent;
 		copy.SaveAmount = SaveAmount;
@@ -2834,6 +2838,8 @@ class KCArmorBonus : BasicArmorBonus
 	
 	override bool Use (bool pickup)
 	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		let armor = KCArmor(Owner.FindInventory("KCArmor"));
 		bool result = false;
 
@@ -2846,7 +2852,7 @@ class KCArmorBonus : BasicArmorBonus
 			armor.MaxAmount = MaxSaveAmount;
 			Owner.AddInventory (armor);
 		}
-
+		
 		if (BonusCount > 0 && armor.BonusCount < BonusMax)
 		{
 			armor.BonusCount = min(armor.BonusCount + BonusCount, BonusMax);
@@ -2910,6 +2916,9 @@ class KCArmorBonus : BasicArmorBonus
 
 class KCArmorPickup : BasicArmorPickup
 {
+	mixin GrabArmorItems;
+	mixin ItemFallSpotCheck;
+	
 	int A_CheckMaxArmor(int fSaveAmount) // KCArmorPickup
 	{
 		actor playera = players[0].mo;
@@ -3073,6 +3082,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d, PrevArmorAmt: %d, MaxSaveAmount: %d", PrevArmorType, PrevArmorAmt, MaxSaveAmount);
@@ -3135,6 +3145,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		int armordiff = Owner.CountInv(armorclasstype) - PrevArmorAmt;
 		if (kcdebug_armordisplays) Console.Printf("%d", Owner.CountInv(armorclasstype));
 		//if (armordiff) A_RecoverHUD(armordiff, 1, true);
+		A_GrabArmorHUD();
 		
 		return true;
 	}
@@ -3470,6 +3481,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);
@@ -3500,6 +3512,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 			}
 		}
 		
+		A_GrabArmorHUD();
 		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
 		armor.Amount = SaveAmount + armor.BonusCount;
 		armor.MaxAmount = SaveAmount;
@@ -3658,6 +3671,8 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		{
 			if (MiscItem.truearmortype <= 2) 
 			{
+				A_GrabArmorHUD();
+				
 				SaveAmount = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 			}
@@ -3748,6 +3763,7 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 			}
 		}
 		
+		A_GrabArmorHUD();
 		armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
 		armor.Amount = SaveAmount + armor.BonusCount;
 		armor.MaxAmount = SaveAmount;
@@ -3897,6 +3913,7 @@ class KCHeavyArmorForMegasphere : KCArmorPickup
 		{
 			if (MiscItem.truearmortype <= 3) 
 			{
+				A_GrabArmorHUD();
 				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
 				SaveAmount = A_CheckMaxArmor(SaveAmount);
 			}
@@ -3957,6 +3974,11 @@ class KCHeavyArmor : KCArmorPickup
 		
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (MiscItem) 
+		{
+			MiscItem.ArmorGrabTimer += 35;
+			if (MiscItem.ArmorGrabTimer >= 35) MiscItem.ArmorGrabTimer = 35;
+		}
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
 		if (kcdebug_armordisplays) Console.Printf("PrevArmorType: %d", PrevArmorType);

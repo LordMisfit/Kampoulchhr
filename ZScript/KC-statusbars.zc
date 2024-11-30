@@ -2157,7 +2157,12 @@ class KCStatusBarMain : BaseStatusBar
 		CPlayerPawn = KCPlayerPawn(CPlayer.mo);
 		let MiscItem = PlayerStatItem(CPlayerPawn.FindInventory("PlayerStatItem"));
 		int MaxHealthTrue;
-		if (MiscItem) MaxHealthTrue = MiscItem.MaxHealthTrue;
+		int ArmorGrabTimer;
+		if (MiscItem) 
+		{
+			ArmorGrabTimer = MiscItem.ArmorGrabTimer;
+			MaxHealthTrue = MiscItem.MaxHealthTrue;
+		}
 		int ivy = 0; // -22;
 		int hudarmortype;
 		let armor = CPlayer.mo.FindInventory("KCArmor");
@@ -2169,13 +2174,21 @@ class KCStatusBarMain : BaseStatusBar
 			if (hudarmortype == 1) fontclr = font.cr_green;
 			if (hudarmortype == 2) fontclr = font.cr_lightblue;
 			if (hudarmortype == 3) fontclr = font.cr_brick;
-			if (CPlayer.mo.CountInv("TSArmorTier1") || 
-					CPlayer.mo.CountInv("TSArmorTier2") || 
-					CPlayer.mo.CountInv("TSArmorTier3Plus"))
+			bool flicker = false;
+			if (ArmorGrabTimer % 24 >= 1 && ArmorGrabTimer % 24 <= 4) flicker = true;
+			if (ArmorGrabTimer % 24 >= 9 && ArmorGrabTimer % 24 <= 12) flicker = true;
+			if (ArmorGrabTimer % 24 >= 17 && ArmorGrabTimer % 24 <= 20) flicker = true;
+			if (!flicker)
 			{
-				fontalpha = 0.25;
-				fontclr = font.cr_darkgray;
+				if (CPlayer.mo.CountInv("TSArmorTier1") || 
+						CPlayer.mo.CountInv("TSArmorTier2") || 
+						CPlayer.mo.CountInv("TSArmorTier3Plus"))
+				{
+					fontalpha = 0.25;
+					fontclr = font.cr_darkgray;
+				}
 			}
+			else fontalpha = 0.875;
 			
 			int MaxArmor = MiscItem.MaxHealthTrue;
 			if (hudarmortype == 1) MaxArmor *= GREENARMORVALDOUBLE;
@@ -2191,9 +2204,13 @@ class KCStatusBarMain : BaseStatusBar
 				int lgpiece = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
 				int lgpiece2 = ((mArmorInterpolator.GetValue() * 100) / MaxArmor);
 				double malpha = 0.875;
-				if (CPlayer.mo.CountInv("TSArmorTier1") || 
-						CPlayer.mo.CountInv("TSArmorTier2") || 
-						CPlayer.mo.CountInv("TSArmorTier3Plus")) malpha *= 0.25;
+				if (!flicker)
+				{
+					if (CPlayer.mo.CountInv("TSArmorTier1") || 
+							CPlayer.mo.CountInv("TSArmorTier2") || 
+							CPlayer.mo.CountInv("TSArmorTier3Plus")) malpha *= 0.25;
+				}
+				else malpha = 0.765625;
 				
 				if (hudarmortype <= 1)
 				{

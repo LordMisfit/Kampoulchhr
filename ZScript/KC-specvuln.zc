@@ -4974,6 +4974,8 @@ class CompatVulnItem : PlaceholderItem
 			// Bullet/Pellet
 			if (mod == 'Bullet') 
 			{ 
+				if ((infl == "KCGlockTracer")) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
+				if ((infl == "KCGlockTracer2")) BulletFactor *= (randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5) + 1);
 				if ((infl == "KCTommyGunRipTracer" || infl == "KCTommyGunTracer") && (source && source.CountInv("TommyGunUpgrade") > 0)) BulletFactor *= randompick(2,2,2,2,3,3,3,3,3,3,4,4,4,4,5,5);
 				if ((infl == "SWRiotBulletRip" || infl == "SWRiotBullet") && (source && source.CountInv("RiotGunUpgrade") > 0)) BulletFactor *= randompick(1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4);
 				ActorDefenseIgnoreFactor += (BulletFactor * (1.00 - ActorDefenseIgnoreFactor));

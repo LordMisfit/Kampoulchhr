@@ -3101,6 +3101,7 @@ class KCGlockTracer : KCBulletTracerSingleRipper
 	default
 	{
 		Tag "Glock Shot";
+		Damagetype "Bullet";
 		+BLOODSPLATTER;
 	}
 
@@ -3116,12 +3117,23 @@ class KCGlockTracer : KCBulletTracerSingleRipper
 	}
 }
 
+class KCGlockTracer2 : KCBulletTracer
+{
+	default
+	{
+		Tag "Glock Shot";
+		Damagetype "Bullet";
+		+BLOODSPLATTER;
+	}
+}
+
 class KCTommyGunTracer : KCBulletTracer
 {
 	int fuse;
 	default
 	{
 		Tag "Tommy Gun Shot";
+		Damagetype "Bullet";
 		+BLOODSPLATTER;
 	}
 }
@@ -3132,6 +3144,7 @@ class KCTommyGunRipTracer : KCBulletTracerSingleRipper
 	default
 	{
 		Tag "Tommy Gun Shot";
+		Damagetype "Bullet";
 		+BLOODSPLATTER;
 	}
 }
