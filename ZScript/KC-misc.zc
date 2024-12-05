@@ -6506,6 +6506,7 @@ class PlayerStatItem : Inventory
 						BstP.spareshots = BstP.spareshotsmax;
 						BstP.spareshotregentimer = 0;
 						playeractor.A_StartSound("weapons/blasterpistolcharging",658,CHANF_DEFAULT,0.5625,ATTN_NORM,frandom(0.9,1.111));
+						if (DualCheck) playeractor.A_StartSound("weapons/blasterpistolcharging",659,CHANF_DEFAULT,0.5625,ATTN_NORM,frandom(0.9,1.111));
 					}
 					else
 					{

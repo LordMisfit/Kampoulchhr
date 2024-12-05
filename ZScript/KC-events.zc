@@ -7066,6 +7066,8 @@ class KC_EventHandler : EventHandler
 								if (basechance < 0) basechance = 0;
 								if (basechance > 0)
 								{
+									int killcombo;
+									killcombo = MiscItem.KillComboCount;
 									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
 									if (playera.CountInv("LowHealth")) basechance *= 1.5;
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
@@ -7074,6 +7076,15 @@ class KC_EventHandler : EventHandler
 									if (infl == "FistPuff" || infl == "UppercutPuff" || infl == "KickPuff" || infl == "KickPuffNoThrust") basechance *= frandompick(3.5,4,4.5);
 									if (victim.bBOSS) basechance *= 8;
 									if (playera && A_CheckBerserk(playera)) basechance *= frandompick(1.25,1.25,1.25,1.5,1.5,2);
+									if (killcombo > 5 && killcombo < 11) basechance *= 1.10;
+									if (killcombo > 10 && killcombo < 21) basechance *= 1.2125; // .1125
+									if (killcombo > 20 && killcombo < 36) basechance *= 1.3375; // .125
+									if (killcombo > 35 && killcombo < 61) basechance *= 1.475; // .1375
+									if (killcombo > 60 && killcombo < 101) basechance *= 1.625; // .15
+									if (killcombo > 100 && killcombo < 201) basechance *= 1.7875; // .1625
+									if (killcombo > 200 && killcombo < 501) basechance *= 1.9555; // .175
+									if (killcombo > 500) basechance *= 2.143; // .1875
+
 									int maxchance = 256;
 									if (waslegendary || victim.CountInv(nm)) maxchance *= 0.25;
 									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
