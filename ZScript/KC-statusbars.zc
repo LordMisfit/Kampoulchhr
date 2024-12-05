@@ -1384,15 +1384,60 @@ class KCStatusBarMain : BaseStatusBar
 			temp = "BlasterPistol";
 			if (PlayerWeapon is temp)
 			{
+				int shieldenergy;
+				int shieldenergymax = 1000;
+				int shieldenergypercent;
+				double shieldmeterlength = 0.4; // 0.2 vertical, 0.4 horizontal
+				if (shieldmeterlength > 1.5) shieldmeterlength = 1.5;
+				dun = TexMan.CheckForTexture("SHLDUNIT", TexMan.TYPE_MiscPatch);
+
 				let BstP = BlasterPistol(CPlayerPawn.FindInventory("BlasterPistol"));
 				if (BstP)
 				{
 					if (MiscItem)
 					{
+						shieldenergy = BstP.spareshotregentimer;
+						shieldenergymax = 350;
+						
+						if (shieldenergymax && (BstP.spareshots < BstP.spareshotsmax))
+						{
+							shieldenergypercent = shieldenergy * 100 / shieldenergymax;
+							int shieldbarunits = shieldenergypercent * shieldmeterlength;
+							for (int i; i < (100 * shieldmeterlength); i++) DrawTexture(TexMan.CheckForTexture("BLAKUNIT", TexMan.TYPE_MiscPatch), (barx+i, bary), 0, HX_SHADOW);
+							for (int i; i < shieldbarunits; i++) DrawTexture(dun, (barx+i, bary), 0, HX_SHADOW); // -46, -1
+						}
+						usealtammo = 0;
+						
 						if (BstP.altshottype >= 1)
 						{
 							lowpowermode = 1;
 						}
+					}
+					
+					int jx, jy;
+					jx = -13; // -20;
+					jy = -24;
+					int clipsize = BstP.spareshotsmax;
+					int clipleft = BstP.spareshots;
+					int ClipRatio;
+					if (clipsize > 0) 
+					{
+						ClipRatio = clipleft * 100 / clipsize;
+						if (ClipRatio <= 0) wsfontclr = font.cr_black;
+						else if (ClipRatio >= 0 && ClipRatio <= 9) wsfontclr = font.cr_darkred;
+						else if (ClipRatio >= 10 && ClipRatio <= 19) wsfontclr = font.cr_red;
+						else if (ClipRatio >= 20 && ClipRatio <= 29) wsfontclr = font.cr_brick;
+						else if (ClipRatio >= 30 && ClipRatio <= 39) wsfontclr = font.cr_orange;
+						else if (ClipRatio >= 40 && ClipRatio <= 49) wsfontclr = font.cr_yellow;
+						else if (ClipRatio >= 50 && ClipRatio <= 59) wsfontclr = font.cr_gold;
+						else if (ClipRatio >= 60 && ClipRatio <= 69) wsfontclr = font.cr_olive;
+						else if (ClipRatio >= 70 && ClipRatio <= 79) wsfontclr = font.cr_darkgreen;
+						else if (ClipRatio >= 80 && ClipRatio <= 89) wsfontclr = font.cr_green;
+						else if (ClipRatio >= 90 && ClipRatio <= 99) wsfontclr = font.cr_cyan;
+						else if (clipleft >= clipsize) wsfontclr = font.cr_sapphire;
+						else wsfontclr = font.cr_gray;
+						
+						DrawString(mKCSFont, FormatNumber(clipleft, 2), (jx, jy), DI_TEXT_ALIGN_CENTER, wsfontclr, wsalpha, -1, 4, (1.5, 1.5));
 					}
 				}
 			}	
@@ -2175,9 +2220,8 @@ class KCStatusBarMain : BaseStatusBar
 			if (hudarmortype == 2) fontclr = font.cr_lightblue;
 			if (hudarmortype == 3) fontclr = font.cr_brick;
 			bool flicker = false;
-			if (ArmorGrabTimer % 24 >= 1 && ArmorGrabTimer % 24 <= 4) flicker = true;
-			if (ArmorGrabTimer % 24 >= 9 && ArmorGrabTimer % 24 <= 12) flicker = true;
-			if (ArmorGrabTimer % 24 >= 17 && ArmorGrabTimer % 24 <= 20) flicker = true;
+			int flickerint = 8;
+			if (ArmorGrabTimer % flickerint >= 1 && ArmorGrabTimer % flickerint <= (flickerint / 2)) flicker = true;
 			if (!flicker)
 			{
 				if (CPlayer.mo.CountInv("TSArmorTier1") || 

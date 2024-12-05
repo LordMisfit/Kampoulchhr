@@ -2602,7 +2602,7 @@ class PlayerStatItem : Inventory
 			
 			if (tfcooldown > 0)
 			{
-				PerkFactor = randompick(random(937,938),1875,1875,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,3750,7500,7500,8750);
+				PerkFactor = randompick(1875,3750,3750,3750,7500,7500,7500,7500,7500,7500,7500,7500,7500,7500,7500,8750,8750,9375);
 				SkillFactor = (10000 - EvasionRate) * PerkFactor / 10000;
 				EvasionRate += SkillFactor;
 			}
@@ -6458,6 +6458,77 @@ class PlayerStatItem : Inventory
 			nt = "KnifePlayerSwingHold"; if (owner.CountInv(nt)) owner.A_SetInventory(nt,0);
 		}
 		
+		let BstP = BlasterPistol(playeractor.FindInventory("BlasterPistol"));
+		if (BstP)
+		{
+			bool DualCheck = false;
+			if (playeractor.CountInv("DualBlasterPistols") && !playeractor.CountInv("DualBlasterPistolsDisabled")) DualCheck = true;
+			if (DualCheck)
+			{
+				if (playeractor.CountInv("BlasterPistolUpgrade")) BstP.spareshotsmax = 6;
+																										 else BstP.spareshotsmax = 2;
+			}
+			else
+			{
+				if (playeractor.CountInv("BlasterPistolUpgrade")) BstP.spareshotsmax = 3;
+																										 else BstP.spareshotsmax = 1;
+			}
+			int baseinc = random(12,13);
+			if (level.time % 2 == 0) baseinc = 12;
+			if (level.time % 2 == 1) baseinc = 13;
+			int basetimercap = 350;
+			if (BstP.spareshots < BstP.spareshotsmax) 
+			{
+				if (BstP.firestate > 0) 
+				{
+					baseinc /= baseinc;
+					if (level.time % 2 == 1) baseinc = 0;
+				}
+				double chargevol = 0.9375;
+				double chargepitch1 = 0.87;
+				double chargepitch2 = 0.93;
+				if (playeractor.CountInv("BlasterPistolUpgrade")) 
+				{
+					baseinc *= 2.5;
+					chargevol = 1.25;
+					chargepitch1 = 1.149425287356322;
+					chargepitch2 = 1.075268817204301;
+				}
+				playeractor.A_StartSound("weapons/blasterpistolcharge1",656,CHANF_LOOPING,chargevol,ATTN_NORM,chargepitch1);
+				if (DualCheck) playeractor.A_StartSound("weapons/blasterpistolcharge2",657,CHANF_LOOPING,chargevol,ATTN_NORM,chargepitch2);
+				BstP.spareshotregentimer += baseinc;
+				if (BstP.spareshotregentimer > basetimercap)
+				{
+					BstP.spareshots++;
+					if (DualCheck) BstP.spareshots++;
+					if (BstP.spareshots >= BstP.spareshotsmax)
+					{
+						BstP.spareshots = BstP.spareshotsmax;
+						BstP.spareshotregentimer = 0;
+						playeractor.A_StartSound("weapons/blasterpistolcharging",658,CHANF_DEFAULT,0.5625,ATTN_NORM,frandom(0.9,1.111));
+					}
+					else
+					{
+						BstP.spareshotregentimer -= basetimercap;
+						//
+					}
+				}
+				//Console.Printf("\c[fire]firestate: %d\c-, baseinc: %d, \c[green]spareshotregentimer: %d / %d\c-, \c[sapphire]spareshots: %d / %d\c-", BstP.firestate, baseinc, BstP.spareshotregentimer, basetimercap, BstP.spareshots, BstP.spareshotsmax);
+			}
+			else
+			{
+				playeractor.A_StopSound(656);
+				playeractor.A_StopSound(657);
+				BstP.spareshotregentimer = 0;
+				if (BstP.spareshots > BstP.spareshotsmax) BstP.spareshots = BstP.spareshotsmax;
+			}
+		}
+		else
+		{
+			playeractor.A_StopSound(656);
+			playeractor.A_StopSound(657);
+		}
+
 		let BlR = BlasterRifle(playeractor.FindInventory("BlasterRifle"));
 		if (BlR)
 		{
@@ -6483,6 +6554,7 @@ class PlayerStatItem : Inventory
 					BlR.spareshots++;
 					if (BlR.spareshots >= BlR.spareshotsmax)
 					{
+						BlR.spareshots = BlR.spareshotsmax;
 						BlR.spareshotregentimer = 0;
 						playeractor.A_StartSound("weapons/blasterriflecharge1",654,CHANF_DEFAULT,0.5625,ATTN_NORM,frandom(0.9,1.111));
 					}
@@ -7922,7 +7994,7 @@ class PlayerStatItem : Inventory
 			double TranslocatorFactor = 1.00;
 			if (tfcooldown > 0)
 			{
-				TranslocatorFactor = frandompick(0.125,0.25,0.25,0.25,0.25,0.25,0.25,0.375);
+				TranslocatorFactor = frandompick(0.0625,0.125,0.125,0.125,0.125,0.125,0.125,0.25);
 				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - TranslocatorFactor): %.8f", TranslocatorFactor);
 			}
 			

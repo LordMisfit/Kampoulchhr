@@ -2432,102 +2432,6 @@ class KCWeaponBase : Weapon
 		}
 	}
 	
-	action void A_BlasterPistolShot()
-	{
-		actor playera = players[0].mo;
-		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-		string shotname = "PistolBlast";
-		double shotangle = 0.0;
-		double shotpitch = 0.0;
-		double shotheight = 3;
-		if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
-		{
-			shotname = "PistolBlastWeak";
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
-		}
-		else
-		{
-			shotname = "PistolBlast";
-			A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
-			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
-		}
-		
-		if (invoker.shottype >= 1)
-		{
-			double spreadfactor = 1.0;
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
-				if (spreadfactor < 0.334) spreadfactor = 0.334;
-			}
-			A_SetTics(1);
-			if (A_CheckForHeiwa() && MiscItem)
-			{
-				if (A_CheckBerserk())
-				{
-					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
-					if (spreadfactor < 0.1667) spreadfactor = 0.1667;
-				}
-				else
-				{
-					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.05));
-					if (spreadfactor < 0.04167) spreadfactor = 0.04167;
-				}
-			}
-			if (CountInv("BlasterPistolUpgrade")) spreadfactor *= 0.667;
-			
-			shotangle = (3.0 * spreadfactor);
-			shotpitch = (3.0 * spreadfactor);
-			shotheight = (frandom(-2.25,2.25) * spreadfactor);
-			double recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor);
-			if (CountInv("BlasterPistolUpgrade")) recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * (spreadfactor * spreadfactor));
-			A_Recoil(recl);
-		}
-		else
-		{
-			shotangle = 0.0;
-			shotpitch = 0.0;
-			shotheight = 0;
-		}
-		//Console.Printf("invoker.shottype: %d", invoker.shottype);
-		// if (CountInv("BlasterPistolUpgrade"))
-		bool spawned;
-		actor BombShots;
-		[spawned, BombShots] = A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
-		if (BombShots)
-		{
-			PistolBlast pistolshot;
-			pistolshot = PistolBlast(BombShots);
-			if (pistolshot)
-			{
-				if (CountInv("BlasterPistolUpgrade"))
-				{
-					if (!pistolshot.bRIPPER) pistolshot.bRIPPER = true;
-					if (PistolBlastWeak(pistolshot))
-					{
-						pistolshot.finaldamagedealt = (randompick(1,2,2,2,3,3,3) * random(4,randompick(5,7,9)));
-						double spdboost = frandompick(1.21875,1.25,1.25,1.25,1.25,1.25,1.25,1.28125);
-						pistolshot.A_ScaleVelocity(spdboost);
-						pistolshot.Speed *= spdboost;
-						if (random(1,4) <= 1) pistolshot.user_fusemax = random(52,53);
-														 else pistolshot.user_fusemax = random(48,57);
-					}
-					else
-					{
-						pistolshot.finaldamagedealt = (randompick(4,4,5,5) * random(4,randompick(5,7,9)));
-						double spdboost = frandompick(1.4375,1.5,1.5,1.5,1.5,1.5,1.5,1.5625);
-						pistolshot.A_ScaleVelocity(spdboost);
-						pistolshot.Speed *= spdboost;
-					}
-				}
-				else
-				{
-					if (pistolshot.bRIPPER) pistolshot.bRIPPER = false;
-				}
-			}
-		}
-	}
-	
 	States
 	{
 		GrandControlLayer: // layer -1000
@@ -13073,7 +12977,11 @@ Class Translocator : MarineWeapon
 							if (mo) mo.target = playera;
 							invoker.beacon.Destroy();
 							invoker.dummy.Destroy();
-							if (MiscItem) MiscItem.tfcooldown += random(31,39);
+							if (MiscItem) 
+							{
+								MiscItem.tfcooldown += random(45,59);
+								if (MiscItem.tfcooldown > 59) MiscItem.tfcooldown = 59;
+							}
 							A_GiveInventory("TLBeaconAmmo");
 							Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
 						}
@@ -14428,6 +14336,7 @@ Class BlasterPistol : MarineWeapon
 	int spareshots;
 	int spareshotsmax;
 	int spareshotregentimer;
+	int firestate;
 	
 	//$Category Weapons
 	//$Title "Blaster Pistol"
@@ -14467,6 +14376,111 @@ Class BlasterPistol : MarineWeapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (CountInv("DualBlasterPistols") && !CountInv("DualBlasterPistolsDisabled")) check = true;
 		return check;
+	}
+	
+	action void A_BlasterPistolShot()
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		string shotname = "PistolBlast";
+		double shotangle = 0.0;
+		double shotpitch = 0.0;
+		double shotheight = 3;
+		if (invoker.spareshots > 0)
+		{
+			invoker.spareshots--;
+			shotname = "PistolBlast";
+			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
+		}
+		else
+		{
+			if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
+			{
+				shotname = "PistolBlastWeak";
+				A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
+			}
+			else
+			{
+				shotname = "PistolBlast";
+				A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
+				A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
+			}
+		}
+		
+		if (invoker.shottype >= 1)
+		{
+			double spreadfactor = 1.0;
+			if (A_CheckForHeiwa() && MiscItem)
+			{
+				spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.0125));
+				if (spreadfactor < 0.334) spreadfactor = 0.334;
+			}
+			A_SetTics(1);
+			if (A_CheckForHeiwa() && MiscItem)
+			{
+				if (A_CheckBerserk())
+				{
+					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
+					if (spreadfactor < 0.1667) spreadfactor = 0.1667;
+				}
+				else
+				{
+					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.05));
+					if (spreadfactor < 0.04167) spreadfactor = 0.04167;
+				}
+			}
+			if (CountInv("BlasterPistolUpgrade")) spreadfactor *= 0.667;
+			
+			shotangle = (3.0 * spreadfactor);
+			shotpitch = (3.0 * spreadfactor);
+			shotheight = (frandom(-2.25,2.25) * spreadfactor);
+			double recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor);
+			if (CountInv("BlasterPistolUpgrade")) recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * (spreadfactor * spreadfactor));
+			A_Recoil(recl);
+		}
+		else
+		{
+			shotangle = 0.0;
+			shotpitch = 0.0;
+			shotheight = 0;
+		}
+		//Console.Printf("invoker.shottype: %d", invoker.shottype);
+		// if (CountInv("BlasterPistolUpgrade"))
+		bool spawned;
+		actor BombShots;
+		[spawned, BombShots] = A_FireProjectile(shotname, frandom(-shotangle,shotangle), 0, 0, (3.0+shotheight), 0, frandom(-shotangle,shotangle));
+		if (BombShots)
+		{
+			PistolBlast pistolshot;
+			pistolshot = PistolBlast(BombShots);
+			if (pistolshot)
+			{
+				if (CountInv("BlasterPistolUpgrade"))
+				{
+					if (!pistolshot.bRIPPER) pistolshot.bRIPPER = true;
+					if (PistolBlastWeak(pistolshot))
+					{
+						pistolshot.finaldamagedealt = (randompick(1,2,2,2,3,3,3) * random(4,randompick(5,7,9)));
+						double spdboost = frandompick(1.21875,1.25,1.25,1.25,1.25,1.25,1.25,1.28125);
+						pistolshot.A_ScaleVelocity(spdboost);
+						pistolshot.Speed *= spdboost;
+						if (random(1,4) <= 1) pistolshot.user_fusemax = random(52,53);
+														 else pistolshot.user_fusemax = random(48,57);
+					}
+					else
+					{
+						pistolshot.finaldamagedealt = (randompick(4,4,5,5) * random(4,randompick(5,7,9)));
+						double spdboost = frandompick(1.4375,1.5,1.5,1.5,1.5,1.5,1.5,1.5625);
+						pistolshot.A_ScaleVelocity(spdboost);
+						pistolshot.Speed *= spdboost;
+					}
+				}
+				else
+				{
+					if (pistolshot.bRIPPER) pistolshot.bRIPPER = false;
+				}
+			}
+		}
 	}
 	
 	States
@@ -14512,6 +14526,7 @@ Class BlasterPistol : MarineWeapon
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+				invoker.firestate = 0;
 			}
 			BLPS A 1 A_Raise(12);
 			Loop;
@@ -14522,6 +14537,7 @@ Class BlasterPistol : MarineWeapon
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+				invoker.firestate = 0;
 			}
 			BLPS A 1 
 			{
@@ -14536,6 +14552,7 @@ Class BlasterPistol : MarineWeapon
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (A_DualBPistolCheck()) A_Overlay(3,"LeftReady",false);
+				invoker.firestate = 0;
 			}
 			BLPS A 1 A_Lower(12);
 			Loop;
@@ -14567,32 +14584,41 @@ Class BlasterPistol : MarineWeapon
 		Fire:
 			BLPS A 0 
 			{
+				invoker.firestate = 1;
 				invoker.shottype = 0;
 			}
 			Goto FireRight2; //DryRight;
 		AltFire:
 			BLPS A 0 
 			{
+				invoker.firestate = 1;
 				invoker.shottype = 1;
 			}
 			Goto FireRight2; //DryRight;
 		FireRight2:
 			BLPS E 2 Bright
 			{
+				invoker.firestate = 1;
 				A_BlasterPistolShot();
 			}
-			BLPS B 1;
+			BLPS B 1
+			{
+				invoker.firestate = 1;
+			}
 			BLPS C 1
 			{
+				invoker.firestate = 1;
 				if (invoker.shottype >= 1) A_SetTics(0);
 				if (A_DualBPistolCheck()) A_Overlay(3,"LeftFire",false);
 			}
 			BLPS D 1
 			{
+				invoker.firestate = 1;
 				if (A_CheckBerserk()) A_SetTics(0);
 			}
 			BLPS CB 2
 			{
+				invoker.firestate = 1;
 				if (invoker.shottype >= 1) 
 				{
 					A_SetTics(1);
@@ -14603,9 +14629,13 @@ Class BlasterPistol : MarineWeapon
 					if (A_CheckBerserk()) A_SetTics(1);
 				}
 			}
-			BLPS A 0 A_Refire();
+			BLPS A 0 
+			{
+				A_Refire();
+			}
 			BLPS A 4
 			{
+				invoker.firestate = 0;
 				if (invoker.shottype >= 1) 
 				{
 					A_SetTics(2);
@@ -14677,6 +14707,7 @@ Class BlasterPistol : MarineWeapon
 		Reload:
 			BLPS A 0
 			{
+				invoker.firestate = 0;
 				let globalvars = KCGlobalVariables.Get();
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
@@ -14687,6 +14718,7 @@ Class BlasterPistol : MarineWeapon
 					if (playera.CountInv("DualBlasterPistolsDisabled"))
 					{
 						playera.A_SetInventory("DualBlasterPistolsDisabled",0);
+						invoker.spareshots *= 2;
 						A_Overlay(3,"LeftPrep",false);
 					}
 					else 
@@ -14711,6 +14743,7 @@ Class BlasterPistol : MarineWeapon
 		User4:
 			BLPS A 0
 			{
+				invoker.firestate = 0;
 				let globalvars = KCGlobalVariables.Get();
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));

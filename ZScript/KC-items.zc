@@ -3976,8 +3976,8 @@ class KCHeavyArmor : KCArmorPickup
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem) 
 		{
-			MiscItem.ArmorGrabTimer += 35;
-			if (MiscItem.ArmorGrabTimer >= 35) MiscItem.ArmorGrabTimer = 35;
+			MiscItem.ArmorGrabTimer += ARMORFLICKERTIMERBASE;
+			if (MiscItem.ArmorGrabTimer >= ARMORFLICKERTIMERBASE) MiscItem.ArmorGrabTimer = ARMORFLICKERTIMERBASE;
 		}
 		int PrevArmorAmt = Owner.CountInv(armorclasstype);
 		int PrevArmorType;
