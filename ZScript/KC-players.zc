@@ -3177,6 +3177,7 @@ class KCPlayerPawn : PlayerPawn
 						(source && source.CountInv("LDLegendaryMonsterTransformed"))) 
 				{
 					double LegendaryIgnoreDefenseFactor = 0.50;
+					if (CountInv("KCPowerKampoul")) LegendaryIgnoreDefenseFactor /= 25;
 					PlayerDefenseIgnoreFactor += (LegendaryIgnoreDefenseFactor * (1.00 - PlayerDefenseIgnoreFactor));
 				}
 			}
@@ -4285,6 +4286,33 @@ class KCPlayerPawn : PlayerPawn
 			}
 		}
 		
+		olddmg = damage;
+		if ((inflictor && inflictor.CountInv("LDLegendaryMonsterTransformed")) || 
+				(source && source.CountInv("LDLegendaryMonsterTransformed"))) 
+		{
+			if (CountInv("KCPowerKampoul")) 
+			{
+				damage /= 25;
+				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [LampoulSphere vs LDL Legendary]: %d (%d)", damage, olddmg);
+			}
+		}
+
+		olddmg = damage;
+		bool isTAO;
+		nm = "CCards_Actor_TheAncientOne";
+		if (sour == nm || 
+				infl == nm)
+		{
+			// Plays a Hard Counter to CCard's Ancient One, if Heiwa is in play. She will gain
+			// an increasing defensive buff against it in successive battles in the same game
+			// run (i.e. getting it as a perma-card). :V
+			if (MiscItem && A_CheckForHeiwa())
+			{
+				damage *= (1.0 / (1.0 + (MiscItem.CC_TAO_Kills * (frandom(0.475,0.525) + (MiscItem.CC_TAO_Kills * (frandom(CCTAOKILLBASEMULTMIN,CCTAOKILLBASEMULTMAX) * 0.5))))));
+			}
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [CCards Post TAO Damage]: %d (%d)", damage, olddmg);
+		}
+
 		olddmg = damage;
 		if (mod == "CardPoison" ||
 				mod == "CCardsPoison")

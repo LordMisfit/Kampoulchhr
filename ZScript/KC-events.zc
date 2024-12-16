@@ -6630,7 +6630,12 @@ class KC_EventHandler : EventHandler
 				nm = "CCardGhostMarker"; if (victim.CountInv(nm)) specialtype += 1;
 				nm = "CCardAssassinMarker"; if (victim.CountInv(nm)) specialtype += 2;
 				nm = "CCardRespawnedMarker"; if (victim.CountInv(nm)) specialtype += 4;
-				nm = "CCards_Actor_TheAncientOne"; if (victim.GetClassName() == nm) specialtype += 8;
+				nm = "CCards_Actor_TheAncientOne"; 
+				if (victim.GetClassName() == nm) 
+				{
+					specialtype += 8;
+					if (MiscItem) MiscItem.CC_TAO_Kills++;
+				}
 				nm = "KC_CCards_Actor_9LivesCurse"; if (victim.CountInv(nm)) specialtype += 16;
 				nm = "CCards_Actor_PilotedMech"; if (victim.CountInv(nm)) specialtype += 32;
 				nm = "CCards_Actor_Spider"; if (victim.GetClassName() == nm) specialtype += 128;

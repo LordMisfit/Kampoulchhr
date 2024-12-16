@@ -26,6 +26,14 @@ class CompatVulnItem : PlaceholderItem
 			if (owner.master) prevmaster = owner.master;
 		}
 	}
+
+	action bool A_CheckForHeiwa()
+	{
+		bool result = false;
+		actor playera = players[0].mo;
+		if (playera.GetClassName() == "HeiwaPlayer" || HeiwaPlayer(playera)) result = true;
+		return result;
+	}
 	
 	void A_DynamicMusic(int timerset = 200, int matktype = 0, bool bossfight = false, int bossmusic = -1, bool forcedplay = false, bool checkres = false)
 	{
@@ -5207,22 +5215,30 @@ class CompatVulnItem : PlaceholderItem
 					{
 						if (owner.CountInv("LDLegendaryMonsterTransformed"))
 						{
-							nm = "SonicNail";
-							if (inflictor && 
-									(inflictor.GetClassName() == nm ||
-									inflictor.GetClassName() == "ImpalerMissile" ||
-									inflictor.GetClassName() == "ImpalerMissile2" ||
-									inflictor.GetClassName() == "ImpalerMissile3"))
+							if ((source && source.CountInv("KCPowerKampoul")) || 
+									(inflictor && inflictor.CountInv("KCPowerKampoul"))) 
 							{
-								TOTALFactor *= 5.0;
+								TOTALFactor *= 25;
 							}
-							nm = "DeviationRocket";
-							nn = "DumbRocket";
-							if (inflictor && 
-									(inflictor.GetClassName() == nm ||
-									inflictor.GetClassName() == nn))
+							else
 							{
-								TOTALFactor *= 2.0;
+								nm = "SonicNail";
+								if (inflictor && 
+										(inflictor.GetClassName() == nm ||
+										inflictor.GetClassName() == "ImpalerMissile" ||
+										inflictor.GetClassName() == "ImpalerMissile2" ||
+										inflictor.GetClassName() == "ImpalerMissile3"))
+								{
+									TOTALFactor *= 5.0;
+								}
+								nm = "DeviationRocket";
+								nn = "DumbRocket";
+								if (inflictor && 
+										(inflictor.GetClassName() == nm ||
+										inflictor.GetClassName() == nn))
+								{
+									TOTALFactor *= 2.0;
+								}
 							}
 						}
 						
@@ -5276,6 +5292,19 @@ class CompatVulnItem : PlaceholderItem
 							if (owner.InStateSequence(owner.curstate,owner.ResolveState("Missile"))) TOTALFactor *= 2.0;
 						}
 						
+						bool isTAO;
+						nm = "CCards_Actor_TheAncientOne";
+						if (owner.GetClassName() == nm) isTAO = true;
+						if (isTAO)
+						{
+							// Plays a Hard Counter to CCard's Ancient One, if Heiwa is in play. She will gain
+							// an increasing attack buff against it in successive battles in the same game run
+							// (i.e. getting it as a perma-card). :V
+							if (MiscItem && A_CheckForHeiwa())
+							{
+								TOTALFactor *= (1.0 + (MiscItem.CC_TAO_Kills * (frandom(0.95,1.05) + (MiscItem.CC_TAO_Kills * frandom(CCTAOKILLBASEMULTMIN,CCTAOKILLBASEMULTMAX)))));
+							}
+						}
 						bool isaghost;
 						bool isholosentry;
 						int d = Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true);
@@ -5287,6 +5316,31 @@ class CompatVulnItem : PlaceholderItem
 						{
 							isholosentry = true;
 						}
+						if (isholosentry)
+						{
+							if (damageType == 'Plasma')
+							{
+								TOTALFactor *= frandompick(2,2.5);
+							}
+							if (damageType == 'Electric' || 
+									damageType == 'Electricity' || 
+									damageType == 'Thunder' || 
+									damageType == 'ShockFloor' || 
+									damageType == 'Lightning' || 
+									damageType == 'Shock')
+							{
+								TOTALFactor *= frandompick(4,5);
+							}
+							if (damageType == 'BlackHole')
+							{
+								TOTALFactor *= frandompick(8,10);
+							}
+							if (damageType == 'Translocator')
+							{
+								TOTALFactor *= frandompick(32,40);
+							}
+						}
+						
 						nm = "CCards_Actor_Ghost"; 
 						nn = "CCards_Actor_AchillesCurse"; 
 						if (!(owner.CountInv(nm) || 
