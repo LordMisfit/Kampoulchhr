@@ -3864,6 +3864,26 @@ class KCCreature : KCBaseZSC
 	//
 	//
 	
+	bool A_CheckKCTimeFreeze()
+	{
+		bool freeze = false;
+		actor playera = players[0].mo;
+		if ((playera.CountInv("KCTimeFreezer1") ||
+				 playera.CountInv("KCTimeFreezer2") ||
+				 playera.CountInv("KCTimeFreezer3"))) freeze = true;
+		return freeze;
+	}
+	
+	void A_TimeFreezeCheckPain()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
+	void A_TimeFreezeCheckDeath()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
 	bool A_CheckUOHYM()
 	{
 		bool UOHYM = false;

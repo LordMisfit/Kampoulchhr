@@ -84,10 +84,12 @@ class ChickenNew : KCCreature // replaces Chicken
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			CHKN D 5 A_Feathers();
 			CHKN C 5 A_KCPain();
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			CHKN E 6 A_Scream();
 			CHKN F 6 A_Feathers();
 			CHKN G 6;
@@ -237,24 +239,29 @@ class HereticImpNew : KCCreature // replaces HereticImp
 			IMPX A 0 A_GargDashCheck2();
 			Goto Charge+2;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,12,48);
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,12,48);
 			IMPX GG 3;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,12,48);
 			IMPX GGGG 3;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IMPX G 4 A_ImpDeath();
 			IMPX H 5;
 			Wait;
 		XDeath:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IMPX S 5 A_ImpXDeath1();
 			IMPX TU 5;
 			IMPX V 5 A_Gravity();
@@ -478,24 +485,29 @@ class PlagueImp : HereticImpLeaderNew
 			}
 			Loop;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,8,64);
 			goto See;	
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,8,64);
 			IMPX GG 3;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			IMPX G 3;
 			IMPX G 3 A_FloatPain(0,8,64);
 			IMPX GGGG 3;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IMPX G 4 A_ImpDeath();
 			IMPX H 5;
 			Wait;
 		XDeath:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IMPX S 5 A_ImpXDeath1();
 			IMPX TU 5;
 			IMPX V 5 A_Gravity();
@@ -739,24 +751,29 @@ class WatcherImp : HereticImpNew
 			}
 			goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			WATC G 3;
 			WATC G 3 A_FloatPain(0,6,96);
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			WATC G 3;
 			WATC G 3 A_FloatPain(0,6,96);
 			WATC GG 3;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			WATC G 3;
 			WATC G 3 A_FloatPain(0,6,96);
 			WATC GGGG 3;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			WATC G 4 A_ImpDeath();
 			WATC H 5;
 			Wait;
 		XDeath:
+			#### # 0 A_TimeFreezeCheckDeath();
 			WATC S 5 A_ImpXDeath1();
 			WATC TU 5;
 			WATC V 5 A_Gravity();
@@ -892,20 +909,24 @@ class MummyNew : KCCreature // replaces Mummy
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMM H 4;
 			MUMM H 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMM H 4;
 			MUMM H 4 A_KCPain();
 			MUMM HH 4;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMM H 4;
 			MUMM H 4 A_KCPain();
 			MUMM HHHH 4;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			MUMM I 5;
 			MUMM J 5 A_Scream();
 			MUMM K 5 A_SpawnItemEx("MummySoul", 0, 0, 10, 0, 0, 1);
@@ -1054,20 +1075,24 @@ class MummyLeaderNew : KCCreature // replaces MummyLeader
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMA H 4;
 			MUMA H 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMA H 4;
 			MUMA H 4 A_KCPain();
 			MUMA HH 4;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			MUMA H 4;
 			MUMA H 4 A_KCPain();
 			MUMA HHHH 4;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			MUMM I 5;
 			MUMM J 5 A_Scream();
 			MUMM K 5 A_SpawnItemEx("MummySoul", 0, 0, 10, 0, 0, 1);
@@ -1303,25 +1328,30 @@ class IceGolem : KCCreature
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM LL 4;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM LLLL 4;
 			Goto See;
 		Pain.Fire:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM L 4;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IGLM L 12;
 			IGLM L 0 A_SetTranslucent(1.0, 0);
 			IGLM L 1 A_IceGuyDie();
@@ -1539,25 +1569,30 @@ class FrostGolem : IceGolem
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM LL 4;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM LLLL 4;
 			Goto See;
 		Pain.Fire:
+			#### # 0 A_TimeFreezeCheckPain();
 			IGLM L 4;
 			IGLM L 4 A_KCPain();
 			IGLM L 4;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			IGLM L 12;
 			IGLM L 0 A_SetTranslucent(1.0, 0);
 			IGLM L 1 A_IceGuyDie();
@@ -1826,20 +1861,24 @@ class KnightNew : KCCreature // replaces Knight
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			KNIG H 3;
 			KNIG H 3 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			KNIG H 3;
 			KNIG H 3 A_KCPain();
 			KNIG HH 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			KNIG H 3;
 			KNIG H 3 A_KCPain();
 			KNIG HHHH 3;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			KNIG I 6;
 			KNIG J 6 A_Scream();
 			KNIG K 6;
@@ -2183,21 +2222,25 @@ class DeathKnight : KCCreature
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			DKNT H 2;
 			DKNT H 2 A_KCPain();
 			goto PainShield;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			DKNT H 2;
 			DKNT H 2 A_KCPain();
 			DKNT HH 2;
 			goto PainShield;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			DKNT H 2;
 			DKNT H 2 A_KCPain();
 			DKNT HHHH 2;
 			goto PainShield;
 
 		PainShield:
+			#### # 0 A_TimeFreezeCheckPain();
 			DKNT T 1 // A_SetReflectiveInvulnerable
 			{
 				A_DeathKnightShieldOn();
@@ -2239,6 +2282,7 @@ class DeathKnight : KCCreature
 			}
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			DKNT I 0 Bright A_SpawnProjectile("DKSword",44,32,-90,0);
 			DKNT I 8 Bright 
 			{
@@ -2687,20 +2731,24 @@ class WizardNew : KCCreature // replaces Wizard
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			WZRD E 3 A_GhostOff();
 			WZRD E 3 A_FloatPain(0,8,64);
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			WZRD E 3 A_GhostOff();
 			WZRD E 3 A_FloatPain(0,8,64);
 			WZRD EE 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			WZRD E 3 A_GhostOff();
 			WZRD E 3 A_FloatPain(0,8,64);
 			WZRD EEEE 3;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			WZRD F 6 A_GhostOff();
 			WZRD G 6 A_Scream();
 			WZRD HI 6;
@@ -2912,21 +2960,25 @@ class GreaterDisciple : KCCreature
 			}
 			Goto See;
 		Pain: 
+			#### # 0 A_TimeFreezeCheckPain();
 			DISC G 2;
 			DISC G 2 A_KCPain(); 
 			Goto See; 
 		Pain.Fist: 
+			#### # 0 A_TimeFreezeCheckPain();
 			DISC G 2;
 			DISC G 2 A_KCPain(); 
 			DISC GG 2;
 			Goto See; 
 		Pain.Kick: 
+			#### # 0 A_TimeFreezeCheckPain();
 			DISC G 2;
 			DISC G 2 A_KCPain(); 
 			DISC GGGG 2;
 			Goto See; 
 
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			DISC H 8 Bright A_Scream();
 			DISC I 5 Bright;
 			DISC J 5 Bright;
@@ -3301,6 +3353,7 @@ class HereticApprenticeNew : KCCreature
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			APDP E 0 // A_UnsetInvulnerable
 			{
 				bNOPAIN = false;
@@ -3311,6 +3364,7 @@ class HereticApprenticeNew : KCCreature
 			APDP E 2 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			APDP E 0 // A_UnsetInvulnerable
 			{
 				bNOPAIN = false;
@@ -3322,6 +3376,7 @@ class HereticApprenticeNew : KCCreature
 			APDP EE 2;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			APDP E 0 // A_UnsetInvulnerable
 			{
 				bNOPAIN = false;
@@ -3334,6 +3389,7 @@ class HereticApprenticeNew : KCCreature
 			Goto See;
 
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			APDP E 0 // A_UnsetInvulnerable
 			{
 				bNOPAIN = false;
@@ -3685,23 +3741,27 @@ class Banshee : KCCreature
 			Goto See;
 
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			BANS A 5 A_GiveInventory("BansheePainToken",5);
 			BANS A 5 A_FloatPain(0,6,96);
 			BANS A 5 A_JumpIfInventory("BansheePainToken",25,"Missile4");
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			BANS A 5 A_GiveInventory("BansheePainToken",5);
 			BANS A 5 A_FloatPain(0,6,96);
 			BANS A 5;
 			BANS A 5 A_JumpIfInventory("BansheePainToken",25,"Missile4");
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			BANS A 5 A_GiveInventory("BansheePainToken",5);
 			BANS A 5 A_FloatPain(0,6,96);
 			BANS AA 5;
 			BANS A 5 A_JumpIfInventory("BansheePainToken",25,"Missile4");
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			BANS G 2 A_Scream();
 			BANS H 2 A_NoBlocking();
 			BANS I 2 A_SpawnProjectile("SpawnFire", 0, 0, 0);
@@ -4015,20 +4075,24 @@ class IronLichNew : KCCreature // replaces IronLich
 			}
 			goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			LICH A 4;
 			LICH A 4 A_KCPain();
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			LICH A 4;
 			LICH A 4 A_KCPain();
 			LICH AA 4;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			LICH A 4;
 			LICH A 4 A_KCPain();
 			LICH AAAA 4;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			LICH C 7;
 			LICH D 7 A_Scream();
 			LICH EF 7;
@@ -4387,9 +4451,11 @@ class IceLich : KCCreature
 			Loop;
 
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			ILCH A 0 A_KCPain();
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			ILCH A 3 A_Scream();
 			ILCH A 1 A_IceGuyDie();
 			Stop;
@@ -4894,10 +4960,12 @@ class BloodLich : KCCreature
 			}
 			goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			BLCH A 0 A_KCPain();
 			goto See;
 
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			BLCH C 7 
 			{
 				if (random(1,256) <= 160) { A_PainDie("HereticImpLeader"); }
@@ -5202,20 +5270,24 @@ class ClinkNew : KCCreature // replaces Clink
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			CLNK H 3 A_SetInventory("ClinkLungeAttackStatus",0);
 			CLNK H 3 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			CLNK H 3 A_SetInventory("ClinkLungeAttackStatus",0);
 			CLNK H 3 A_KCPain();
 			CLNK HH 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			CLNK H 3 A_SetInventory("ClinkLungeAttackStatus",0);
 			CLNK H 3 A_KCPain();
 			CLNK HHHH 3;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			CLNK IJ 6
 			{
 				A_SetInventory("ClinkLungeAttackStatus",0);
@@ -5489,20 +5561,24 @@ class DarkClink : KCCreature //Recolour by Bouncy, new (edited) sprites by Phobu
 			Goto See;
 
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			DCLK H 5;
 			DCLK H 5 A_KCPain(1,random(18,22),8,0,0,55);
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			DCLK H 5;
 			DCLK H 5 A_KCPain(1,random(18,22),8,0,0,110);
 			DCLK HH 5;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			DCLK H 5;
 			DCLK H 5 A_KCPain(1,random(18,22),8,0,0,165);
 			DCLK HHHH 5;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			DCLK I 5;
 			DCLK J 5 A_Scream();
 			DCLK K 5;
@@ -5649,20 +5725,24 @@ class BeastNew : KCCreature // replaces Beast
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			BEAS G 3;
 			BEAS G 3 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			BEAS G 3;
 			BEAS G 3 A_KCPain();
 			BEAS GG 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			BEAS G 3;
 			BEAS G 3 A_KCPain();
 			BEAS GGGG 3;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			BEAS R 6;
 			BEAS S 6 A_Scream();
 			BEAS TUV 6;
@@ -5671,6 +5751,7 @@ class BeastNew : KCCreature // replaces Beast
 			BEAS Z -1;
 			Stop;
 		XDeath:
+			#### # 0 A_TimeFreezeCheckDeath();
 			BEAS J 5;
 			BEAS K 6 A_Scream();
 			BEAS L 5;
@@ -5922,17 +6003,20 @@ class ShadowBeast : KCCreature
 			Goto See;
 
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(2,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(8,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
 			BDEM GG 4;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			TNT1 A 0 A_Jump((16 + (CountInv("MonsterLevel") / A_CheckMonsterLevelDiv(16,true,self))), "Spread");
 			BDEM G 2;
 			BDEM G 4 A_KCPain();
@@ -5940,6 +6024,7 @@ class ShadowBeast : KCCreature
 			Goto See;
 
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			BDEM R 8;
 			BDEM S 8 A_Scream();
 			BDEM TUVWX 6;
@@ -6836,20 +6921,24 @@ class MaulotaurNew : MaulotaurBase // replaces Minotaur
 			MNTR U 2 A_MinotaurCharge();
 			Loop;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			MNTR E 3;
 			MNTR E 6 A_KCPain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			MNTR E 3;
 			MNTR E 6 A_KCPain();
 			MNTR EE 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			MNTR E 3;
 			MNTR E 6 A_KCPain();
 			MNTR EEEE 3;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			MNTR F 6 A_MinotaurDeath();
 			MNTR G 5;
 			MNTR H 6 A_Scream();
@@ -7103,20 +7192,24 @@ class SnakeNew : KCCreature // replaces Snake
 			}
 			goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			SNKE E 3;
 			SNKE E 3 A_KCPain();
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			SNKE E 3;
 			SNKE E 3 A_KCPain();
 			SNKE EE 3;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			SNKE E 3;
 			SNKE E 3 A_KCPain();
 			SNKE EEEE 3;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			SNKE G 5;
 			SNKE H 5 A_Scream();
 			SNKE IJKL 5;
@@ -7346,20 +7439,24 @@ class HellGuard : KCCreature
 			}
 			goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			HLGD G 2;
 			HLGD G 2 A_KCPain();
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			HLGD G 2;
 			HLGD G 2 A_KCPain();
 			HLGD GG 2;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			HLGD G 2;
 			HLGD G 2 A_KCPain();
 			HLGD GGGG 2;
 			goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			HLGD H 6;
 			HLGD I 6 A_Scream();
 			HLGD J 6;
@@ -7556,24 +7653,29 @@ class Serpathor : KCCreature
 			}
 			Goto Missile+1;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			SBTC H 3;
 			SBTC H 3 A_KCPain(1,random(18,22),8,0,0,75);
 			goto See;
 		Pain.Fire:
+			#### # 0 A_TimeFreezeCheckPain();
 			SBTC H 3 A_KCPain(1,random(18,22),8,0,0,25);
 			goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			SBTC H 3;
 			SBTC H 3 A_KCPain(1,random(18,22),8,0,0,150);
 			SBTC HH 3;
 			goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			SBTC H 3;
 			SBTC H 3 A_KCPain(1,random(18,22),8,0,0,225);
 			SBTC HHHH 3;
 			goto See;
 
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			SBTC I 5 A_Scream();
 			SBTC JKLM 5;
 			SBTC N 5 A_NoBlocking();
@@ -8070,17 +8172,21 @@ class DSparilMountedNew : DSparilBase // replaces Sorcerer1
 			}
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			SRCR Q 6 A_Sor1Pain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			SRCR Q 6 A_Sor1Pain();
 			SRCR Q 6;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			SRCR Q 6 A_Sor1Pain();
 			SRCR QQ 6;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			SRCR E 7;
 			SRCR F 7 A_Scream();
 			SRCR G 7;
@@ -8260,15 +8366,18 @@ class DSparilUnmountedNew : DSparilBase // replaces Sorcerer2
 			SOR2 G 12 A_StartSound("dsparil/sight", CHAN_BODY, CHANF_DEFAULT, 1, ATTN_NONE);
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			SOR2 Q 3;
 			SOR2 Q 6 A_Sor2Pain();
 			Goto See;
 		Pain.Fist:
+			#### # 0 A_TimeFreezeCheckPain();
 			SOR2 Q 3;
 			SOR2 Q 6 A_Sor2Pain();
 			SOR2 Q 3;
 			Goto See;
 		Pain.Kick:
+			#### # 0 A_TimeFreezeCheckPain();
 			SOR2 Q 3;
 			SOR2 Q 6 A_Sor2Pain();
 			SOR2 QQ 3;
@@ -8311,6 +8420,7 @@ class DSparilUnmountedNew : DSparilBase // replaces Sorcerer2
 			SOR2 LKJIHG 6;
 			Goto See;
 		Death:
+			#### # 0 A_TimeFreezeCheckDeath();
 			SDTH A 8 A_Sor2DthInit();
 			SDTH B 8;
 			SDTH C 8 A_StartSound("dsparil/scream", CHAN_BODY, CHANF_DEFAULT, 1, ATTN_NONE);
