@@ -3874,6 +3874,16 @@ class KCCreature : KCBaseZSC
 		return freeze;
 	}
 	
+	void A_TimeFreezeCheckMissile()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
+	void A_TimeFreezeCheckMelee()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
 	void A_TimeFreezeCheckPain()
 	{
 		if (A_CheckKCTimeFreeze()) A_SetTics(1);
