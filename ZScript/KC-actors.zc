@@ -4723,6 +4723,24 @@ class KCCreature : KCBaseZSC
 			if (!bQUICKTORETALIATE) bQUICKTORETALIATE = true;
 		}
 	}
+	
+	int A_CheckBlackHoleSpeedPenalty()
+	{
+		int numofpenalities = 0;
+		if (CountInv("BlackHoleSpeedPenalty1")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty1b")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty2")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty2b")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty3")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty3b")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty4")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty4b")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty5")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty5b")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty6")) numofpenalities++;
+		if (CountInv("BlackHoleSpeedPenalty6b")) numofpenalities++;
+		return numofpenalities;
+	}
 
 	void A_FastChaseCalc(int base = 3, int leveldivisor = 24)
 	{
@@ -4786,7 +4804,7 @@ class KCCreature : KCBaseZSC
 		int RandRoll = random(1,1024);
 		if (kc_monsterlevelenabledflags)
 		{
-			A_StopSound (CHAN_WEAPON);
+			A_StopSound(CHAN_WEAPON);
 			if (!CountInv("HadesTeleportCooldown")) 
 			{
 				if (A_CheckMonsterLevel((minlevel*9),1,true,self))
@@ -4811,14 +4829,18 @@ class KCCreature : KCBaseZSC
 			}
 		}
 		
-		if (splittype2 == 1)
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(24,32));
+		if (random(1,256) <= bholechance)
 		{
-			SetStateLabel("Teleport");
-		}
-		else
-		if (splittype2 == 2)
-		{
-			SetStateLabel("Teleport2");
+			if (splittype2 == 1)
+			{
+				SetStateLabel("Teleport");
+			}
+			else
+			if (splittype2 == 2)
+			{
+				SetStateLabel("Teleport2");
+			}
 		}
 	}
 	void A_HadesTeleportChoose(int minlevel = 90)
@@ -4852,14 +4874,18 @@ class KCCreature : KCBaseZSC
 			}
 		}
 		
-		if (splittype2 == 1)
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(24,32));
+		if (random(1,256) <= bholechance)
 		{
-			SetStateLabel("Teleport");
-		}
-		else
-		if (splittype2 == 2)
-		{
-			SetStateLabel("Teleport2");
+			if (splittype2 == 1)
+			{
+				SetStateLabel("Teleport");
+			}
+			else
+			if (splittype2 == 2)
+			{
+				SetStateLabel("Teleport2");
+			}
 		}
 	}
 
@@ -5506,13 +5532,17 @@ class KCCreature : KCBaseZSC
 	
 	void A_GDTeleport(statelabel tele = "Blur")
 	{
-		if (target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+		if (random(1,256) <= bholechance)
 		{
-			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,1024) <= 640) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,1024) <= randompick(533,533,534)) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,1024) <= randompick(426,426,427)) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
-			else { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+			if (target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,1024) <= 640) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,1024) <= randompick(533,533,534)) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,1024) <= randompick(426,426,427)) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+				else { if (random(1,1024) <= 320) { SetStateLabel(tele); } }
+			}
 		}
 	}
 	
@@ -5523,34 +5553,46 @@ class KCCreature : KCBaseZSC
 
 	void A_HETeleport(statelabel tele = "TeleportChoose")
 	{
-		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,24));
+		if (random(1,256) <= bholechance)
 		{
-			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,256) <= 144) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,256) <= 120) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 96) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,256) <= 72) { SetStateLabel(tele); } }
-			else { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+			if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(180,2,true,self)) { if (random(1,256) <= 144) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { if (random(1,256) <= 120) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 96) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,-1,true,self)) { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+				else { if (random(1,256) <= 72) { SetStateLabel(tele); } }
+			}
 		}
 	}
 
 	void A_HOTeleport(statelabel tele = "TeleportChoose")
 	{
-		if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(9,12));
+		if (random(1,256) <= bholechance)
 		{
-			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { if (random(1,256) <= 68) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 56) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { if (random(1,256) <= 44) { SetStateLabel(tele); } }
-			else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,-1,true,self)) { if (random(1,256) <= 32) { SetStateLabel(tele); } }
-			else { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+			if (!CountInv("HadesTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { if (random(1,256) <= 68) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { if (random(1,256) <= 56) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { if (random(1,256) <= 44) { SetStateLabel(tele); } }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,-1,true,self)) { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+				else { if (random(1,256) <= 32) { SetStateLabel(tele); } }
+			}
 		}
 	}
 
 	void A_HadesSphereTeleport(statelabel tele = "Teleport", int chance = 128, int chancemax = 1024)
 	{
-		if (!CountInv("HSphereTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+		int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(36,48));
+		if (random(1,256) <= bholechance)
 		{
-			if (random(1,chancemax) <= chance) { SetStateLabel(tele); }
-			if (kcdebug_monsterspecialai) Console.Printf("HSTele: Target - %s (%d / %d)", target.GetClassName(), chance, chancemax);
+			if (!CountInv("HSphereTeleportCooldown") && target && CheckIfTargetInLOS(0, JLOSF_DEADNOJUMP))
+			{
+				if (random(1,chancemax) <= chance) { SetStateLabel(tele); }
+				if (kcdebug_monsterspecialai) Console.Printf("HSTele: Target - %s (%d / %d)", target.GetClassName(), chance, chancemax);
+			}
 		}
 	}
 	

@@ -1666,21 +1666,30 @@ mixin class MonsterCollider
 					 infl == "DMBallMini" || 
 					 infl == "DMBall2")) 
 			{
-				int bhlvl1chance = randompick(1,1,1,2);
-				int bhlvl2chance = 5;
-				int bhlvl3chance = 25;
+				double bhlvl1chance = 1.25;
+				double bhlvl2chance = 2.5;
+				double bhlvl3chance = 5;
+				double bhlvl4chance = 8.75;
+				double bhlvl5chance = 13.75;
+				double bhlvl6chance = 20;
 				if (infl == "DMBall2")
 				{
 					bhlvl1chance = 1;
-					bhlvl2chance = random(2,3);
-					bhlvl3chance = randompick(6,6,6,7);
+					bhlvl2chance = 2;
+					bhlvl3chance = 4;
+					bhlvl4chance = 7;
+					bhlvl5chance = 11;
+					bhlvl6chance = 16;
 					BHoleFactor *= 2;
 				}
 				if (infl == "DMBallMini")
 				{
-					bhlvl1chance = randompick(8,9);
-					bhlvl2chance = 20;
-					bhlvl3chance = 100;
+					bhlvl1chance = 3;
+					bhlvl2chance = 6;
+					bhlvl3chance = 12;
+					bhlvl4chance = 21;
+					bhlvl5chance = 33;
+					bhlvl6chance = 48;
 					BHoleFactor *= 0.5;
 				}
 				if (random(1,bhlvl1chance) <= 1)
@@ -1703,6 +1712,30 @@ mixin class MonsterCollider
 							else
 							{
 								if (!CountInv("BlackHoleSpeedPenalty3b")) A_SetInventory("BlackHoleSpeedPenalty3b",1);
+							}
+							if (random(1,bhlvl4chance) <= 1) 
+							{
+								if (!CountInv("BlackHoleSpeedPenalty4")) A_SetInventory("BlackHoleSpeedPenalty4",1);
+								else
+								{
+									if (!CountInv("BlackHoleSpeedPenalty4b")) A_SetInventory("BlackHoleSpeedPenalty4b",1);
+								}
+								if (random(1,bhlvl5chance) <= 1) 
+								{
+									if (!CountInv("BlackHoleSpeedPenalty5")) A_SetInventory("BlackHoleSpeedPenalty5",1);
+									else
+									{
+										if (!CountInv("BlackHoleSpeedPenalty5b")) A_SetInventory("BlackHoleSpeedPenalty5b",1);
+									}
+									if (random(1,bhlvl6chance) <= 1) 
+									{
+										if (!CountInv("BlackHoleSpeedPenalty6")) A_SetInventory("BlackHoleSpeedPenalty6",1);
+										else
+										{
+											if (!CountInv("BlackHoleSpeedPenalty6b")) A_SetInventory("BlackHoleSpeedPenalty6b",1);
+										}
+									}
+								}
 							}
 						}
 					}

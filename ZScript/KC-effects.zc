@@ -4067,12 +4067,34 @@ class JustRevived : PlaceHolderItem
 	}
 }
 
-class BlackHoleSpeedPenalty1 : BasePercentSpeedBonus { default { Speed 0.75; Powerup.Duration 49; Inventory.MaxAmount 1; } }
-class BlackHoleSpeedPenalty1b : BlackHoleSpeedPenalty1 { }
-class BlackHoleSpeedPenalty2 : BlackHoleSpeedPenalty1 { }
-class BlackHoleSpeedPenalty2b : BlackHoleSpeedPenalty1 { }
-class BlackHoleSpeedPenalty3 : BlackHoleSpeedPenalty1 { }
-class BlackHoleSpeedPenalty3b : BlackHoleSpeedPenalty1 { }
+class BlackHoleSpeedPenaltyBase : BasePercentSpeedBonus 
+{
+	default
+	{
+		Speed 0.75;
+		Powerup.Duration 49;
+		Inventory.MaxAmount 1; 
+	}
+	
+	override double GetSpeedFactor() 
+	{
+		Speed = frandom(0.625,0.75);
+		return Speed;
+	}
+}
+
+class BlackHoleSpeedPenalty1 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty1b : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty2 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty2b : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty3 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty3b : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty4 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty4b : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty5 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty5b : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty6 : BlackHoleSpeedPenaltyBase { }
+class BlackHoleSpeedPenalty6b : BlackHoleSpeedPenaltyBase { }
 
 class PowerProtectionTimeCheck : PowerProtection
 {

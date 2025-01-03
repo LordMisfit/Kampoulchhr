@@ -5012,21 +5012,30 @@ class CompatVulnItem : PlaceholderItem
 					 infl == "DMBallMini" || 
 					 infl == "DMBall2")) 
 			{
-				int bhlvl1chance = randompick(1,1,1,2);
-				int bhlvl2chance = 5;
-				int bhlvl3chance = 25;
+				double bhlvl1chance = 1.25;
+				double bhlvl2chance = 2.5;
+				double bhlvl3chance = 5;
+				double bhlvl4chance = 10;
+				double bhlvl5chance = 20;
+				double bhlvl6chance = 40;
 				if (infl == "DMBall2")
 				{
 					bhlvl1chance = 1;
-					bhlvl2chance = random(2,3);
-					bhlvl3chance = randompick(6,6,6,7);
+					bhlvl2chance = 2;
+					bhlvl3chance = 4;
+					bhlvl4chance = 8;
+					bhlvl5chance = 16;
+					bhlvl6chance = 32;
 					BHoleFactor *= 2;
 				}
 				if (infl == "DMBallMini")
 				{
-					bhlvl1chance = randompick(8,9);
-					bhlvl2chance = 20;
-					bhlvl3chance = 100;
+					bhlvl1chance = 5;
+					bhlvl2chance = 10;
+					bhlvl3chance = 20;
+					bhlvl4chance = 40;
+					bhlvl5chance = 80;
+					bhlvl6chance = 160;
 					BHoleFactor *= 0.5;
 				}
 				if (random(1,bhlvl1chance) <= 1)
@@ -5049,6 +5058,30 @@ class CompatVulnItem : PlaceholderItem
 							else
 							{
 								if (!owner.CountInv("BlackHoleSpeedPenalty3b")) owner.A_SetInventory("BlackHoleSpeedPenalty3b",1);
+							}
+							if (random(1,bhlvl4chance) <= 1) 
+							{
+								if (!owner.CountInv("BlackHoleSpeedPenalty4")) owner.A_SetInventory("BlackHoleSpeedPenalty4",1);
+								else
+								{
+									if (!owner.CountInv("BlackHoleSpeedPenalty4b")) owner.A_SetInventory("BlackHoleSpeedPenalty4b",1);
+								}
+								if (random(1,bhlvl5chance) <= 1) 
+								{
+									if (!owner.CountInv("BlackHoleSpeedPenalty5")) owner.A_SetInventory("BlackHoleSpeedPenalty5",1);
+									else
+									{
+										if (!owner.CountInv("BlackHoleSpeedPenalty5b")) owner.A_SetInventory("BlackHoleSpeedPenalty5b",1);
+									}
+									if (random(1,bhlvl6chance) <= 1) 
+									{
+										if (!owner.CountInv("BlackHoleSpeedPenalty6")) owner.A_SetInventory("BlackHoleSpeedPenalty6",1);
+										else
+										{
+											if (!owner.CountInv("BlackHoleSpeedPenalty6b")) owner.A_SetInventory("BlackHoleSpeedPenalty6b",1);
+										}
+									}
+								}
 							}
 						}
 					}

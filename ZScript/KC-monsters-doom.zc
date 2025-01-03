@@ -6121,6 +6121,9 @@ class CacodemonNew : KCCreature
 			}
 			HEAD F 6;
 			Goto See;
+		Pain.BlackHole:
+			#### # 0 A_TimeFreezeCheckPain();
+			Goto Pain+2;
 
 		Pain.Plasma:
 			#### # 0 A_TimeFreezeCheckPain();
@@ -6552,6 +6555,9 @@ class Cacolantern : CacodemonNew
 			}
 			HED2 F 6;
 			Goto See;
+		Pain.BlackHole:
+			#### # 0 A_TimeFreezeCheckPain();
+			Goto Pain+2;
 
 		Pain.Plasma:
 			#### # 0 A_TimeFreezeCheckPain();
@@ -7033,6 +7039,9 @@ class Abaddon : Cacolantern
 			}
 			HED3 F 6;
 			Goto See;
+		Pain.BlackHole:
+			#### # 0 A_TimeFreezeCheckPain();
+			Goto Pain+2;
 
 		Pain.Plasma:
 			#### # 0 A_TimeFreezeCheckPain();
@@ -7541,6 +7550,10 @@ class PainElementalNew : KCCreature
 				A_SetTics(randompick(0,3,6));
 			}
 			Goto See;
+		Pain.BlackHole:
+			#### # 0 A_TimeFreezeCheckPain();
+			Goto Pain+2;
+
 		Shadowsplit1:
 			TNT1 A 0
 			{
@@ -14872,9 +14885,14 @@ class PyroDemon : BaronofHellNew
 			PYRO E 0 A_DynamicMusic();
 			PYRO E 0 
 			{
-				if (!(CountInv("PyroDemonTeleportCooldown")))
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					if (random (1,256) <= 32) { return resolvestate("Missile4"); }
+					if (!(CountInv("PyroDemonTeleportCooldown")))
+					{
+						if (random (1,256) <= 32) { return resolvestate("Missile4"); }
+						return resolvestate(null);
+					}
 					return resolvestate(null);
 				}
 				return resolvestate(null);
@@ -15060,19 +15078,24 @@ class PyroDemon : BaronofHellNew
 			PYRO O 1 A_FaceTarget();
 			PYRO O 0
 			{
-				if (!(CountInv("PyroDemonTeleportCooldown")))
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					A_SetInvulnerable();
-					A_SpawnProjectile("EscapeExplosion",28,10,0,0);
-					A_Mushroom("Pyroball",16); //,MSF_DontHurt
-					if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(225,1,true,self))
+					if (!(CountInv("PyroDemonTeleportCooldown")))
 					{
-						A_Mushroom("Pyroball",8); //,MSF_DontHurt
+						A_SetInvulnerable();
+						A_SpawnProjectile("EscapeExplosion",28,10,0,0);
+						A_Mushroom("Pyroball",16); //,MSF_DontHurt
+						if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(225,1,true,self))
+						{
+							A_Mushroom("Pyroball",8); //,MSF_DontHurt
+						}
 					}
-				}
-				else
-				{
-					return resolvestate("See");
+					else
+					{
+						return resolvestate("See");
+					}
+					return resolvestate(null);
 				}
 				return resolvestate(null);
 			}
@@ -15199,9 +15222,14 @@ class PyroDemon : BaronofHellNew
 			#### # 0 A_TimeFreezeCheckPain();
 			PYRO A 0
 			{
-				if (!(CountInv("PyroDemonTeleportCooldown")))
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					if (random (1,256) <= 8) { return resolvestate("Missile4"); }
+					if (!(CountInv("PyroDemonTeleportCooldown")))
+					{
+						if (random(1,256) <= 8) { return resolvestate("Missile4"); }
+						return resolvestate(null);
+					}
 					return resolvestate(null);
 				}
 				return resolvestate(null);
@@ -15213,9 +15241,14 @@ class PyroDemon : BaronofHellNew
 			#### # 0 A_TimeFreezeCheckPain();
 			PYRO A 0
 			{
-				if (!(CountInv("PyroDemonTeleportCooldown")))
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					if (random (1,256) <= 2) { return resolvestate("Missile4"); }
+					if (!(CountInv("PyroDemonTeleportCooldown")))
+					{
+						if (random(1,256) <= 2) { return resolvestate("Missile4"); }
+						return resolvestate(null);
+					}
 					return resolvestate(null);
 				}
 				return resolvestate(null);
@@ -15227,9 +15260,14 @@ class PyroDemon : BaronofHellNew
 			#### # 0 A_TimeFreezeCheckPain();
 			PYRO A 0
 			{
-				if (!(CountInv("PyroDemonTeleportCooldown")))
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					if (random (1,256) <= 6) { return resolvestate("Missile4"); }
+					if (!(CountInv("PyroDemonTeleportCooldown")))
+					{
+						if (random(1,256) <= 6) { return resolvestate("Missile4"); }
+						return resolvestate(null);
+					}
 					return resolvestate(null);
 				}
 				return resolvestate(null);
@@ -15253,10 +15291,15 @@ class PyroDemon : BaronofHellNew
 			PYRO Q 0 Bright;
 			PYRO Q 0
 			{
-				if (random (1,256) <= 240) 
+				int bholechance = 256 - (A_CheckBlackHoleSpeedPenalty() * random(12,16));
+				if (random(1,256) <= bholechance)
 				{
-					A_TakeInventory("PyroDemonTeleportCooldown",9999);
-					return resolvestate("Missile4"); 
+					if (random(1,256) <= 240) 
+					{
+						A_TakeInventory("PyroDemonTeleportCooldown",9999);
+						return resolvestate("Missile4"); 
+					}
+					return resolvestate(null);
 				}
 				return resolvestate(null);
 			}

@@ -352,14 +352,17 @@ class CustomInventoryExt : CustomInventory
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int chancebase1 = 1;
+		if (CurSector.IsSecret()) chancebase1 *= random(2,3);
+		
 		if (HeiwaPlayer(playera))
 		{
-			if (!bDROPPED && random(1,basechance) <= 1)
+			if (!bDROPPED && random(1,basechance) <= chancebase1)
 			{
-				int user_type = random(1,20);
+				int user_type = random(1,24);
 				string spawntype;
 				if (user_type >= 1 && user_type <= 4) spawntype = "VitalCapsule";
-				if (user_type >= 5 && user_type <= 8)  spawntype = "SpeedCapsule";
+				if (user_type >= 5 && user_type <= 8) spawntype = "SpeedCapsule";
 				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
 				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
 				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
@@ -3155,9 +3158,12 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int chancebase1 = 1;
+		if (CurSector.IsSecret()) chancebase1 *= random(2,3);
+		
 		if (HeiwaPlayer(playera))
 		{
-			if (!bDROPPED && random(1,basechance) <= 1)
+			if (!bDROPPED && random(1,basechance) <= chancebase1)
 			{
 				int user_type = random(1,24);
 				string spawntype;
@@ -4167,9 +4173,12 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		int basechance = 1;
+		if (CurSector.IsSecret()) basechance *= 4;
+
 		if (playera.CountInv("BackpackTier2"))
 		{
-			if (random(1,9) <= 1)
+			if (random(1,9) <= basechance)
 			{
 				A_SpawnItemEx("CombatPack",tid:tid);
 				Destroy();
@@ -4178,7 +4187,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 		else
 		if (playera.CountInv("BackpackTier1"))
 		{
-			if (random(1,24) <= 1)
+			if (random(1,24) <= basechance)
 			{
 				A_SpawnItemEx("CombatPack",tid:tid);
 				Destroy();
@@ -4186,7 +4195,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 		}
 		else
 		{
-			if (random(1,64) <= 1)
+			if (random(1,64) <= basechance)
 			{
 				A_SpawnItemEx("CombatPack",tid:tid);
 				Destroy();
@@ -4206,9 +4215,11 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= 0.334;
 				else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= 0.5;
 				else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
+				int basechance3 = 1;
+				if (CurSector.IsSecret()) basechance3 *= random(2,3);
 				if (!bDROPPED)
 				{
-					if (random(1,basechance) <= 1)
+					if (random(1,basechance) <= basechance3)
 					{
 						bool spawned;
 						actor mo;
@@ -4227,7 +4238,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				else
 				{
 					basechance *= 4;
-					if (random(1,basechance) <= 1)
+					if (random(1,basechance) <= basechance3)
 					{
 						bool spawned;
 						actor mo;
@@ -4240,7 +4251,9 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 					}
 					else
 					{
-						if (random(1,16) <= 1) invoker.A_SpawnOtherBKPK();
+						int basechance4 = 1;
+						if (CurSector.IsSecret()) basechance4 *= random(2,3);
+						if (random(1,16) <= basechance4) invoker.A_SpawnOtherBKPK();
 					}
 				}
 			}
@@ -4469,6 +4482,7 @@ class BaseAmmoSpawner : KCBaseZSC
 		double spread4 = 1.75;
 		double spread5 = 2.0;
 		int droprate = basedroprate;
+		if (CurSector.IsSecret()) droprate *= random(2,3);
 		if (bDROPPED) 
 		{
 			droprate *= dropfactor;

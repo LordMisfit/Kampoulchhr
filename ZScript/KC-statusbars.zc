@@ -4734,7 +4734,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "BHGen" ||
 					(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) ||
 					PlayerWeapon is "ImpalerXBow" ||
-					PlayerWeapon is "EvilWarriorShield")
+					(PlayerWeapon is "EvilWarriorShield" && EWS && !CPlayerPawn.CountInv("EWShieldDefendMode")))
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
@@ -4767,7 +4767,7 @@ class KCStatusBarMain : BaseStatusBar
 				else if (PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE\c-");
 				else if (PlayerWeapon is "Incinerator") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
-				else if (PlayerWeapon is "EvilWarriorShield" && EWS)
+				else if (PlayerWeapon is "EvilWarriorShield" && EWS && !CPlayerPawn.CountInv("EWShieldDefendMode"))
 				{
 					if (EWS.ammo_type == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO MP USE\c-");
 														 else LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO DEVIL'S FOOD USE\c-");
