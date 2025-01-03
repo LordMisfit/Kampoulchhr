@@ -132,6 +132,26 @@ class KCBaseZSC : Actor
 		return freeze;
 	}
 	
+	void A_TimeFreezeCheckMissile()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
+	void A_TimeFreezeCheckMelee()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
+	void A_TimeFreezeCheckPain()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
+	void A_TimeFreezeCheckDeath()
+	{
+		if (A_CheckKCTimeFreeze()) A_SetTics(1);
+	}
+	
 	action bool A_CheckBerserk()
 	{
 		bool check = false;

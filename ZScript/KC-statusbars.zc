@@ -4685,6 +4685,7 @@ class KCStatusBarMain : BaseStatusBar
 			let CalB = CalamityBlade(CPlayerPawn.FindInventory("CalamityBlade"));
 			let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
 			let SawT = SawThrower(CPlayerPawn.FindInventory("SawThrower"));
+			let EWS = EvilWarriorShield(CPlayerPawn.FindInventory("EvilWarriorShield"));
 			
 			// Reload
 			LegendStr = "";
@@ -4732,7 +4733,8 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "Incinerator" ||
 					PlayerWeapon is "BHGen" ||
 					(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) ||
-					PlayerWeapon is "ImpalerXBow")
+					PlayerWeapon is "ImpalerXBow" ||
+					PlayerWeapon is "EvilWarriorShield")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
@@ -4765,6 +4767,11 @@ class KCStatusBarMain : BaseStatusBar
 				else if (PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade")) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE\c-");
 				else if (PlayerWeapon is "Incinerator") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
+				else if (PlayerWeapon is "EvilWarriorShield" && EWS)
+				{
+					if (EWS.ammo_type == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO MP USE\c-");
+														 else LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO DEVIL'S FOOD USE\c-");
+				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
@@ -4799,7 +4806,13 @@ class KCStatusBarMain : BaseStatusBar
 							}
 							else
 							{
-								LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~10 CELLS/CHARGE]\c-");
+								if (CalB.CalamityFireModeType <= 0) 
+								{
+									if (CPlayerPawn.CountInv("CalamityBladeUpgrade")) LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~6 CELLS/CHARGE]\c-");
+																															 else LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~10 CELLS/CHARGE]\c-");
+								}
+								if (CalB.CalamityFireModeType == 1) LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~10 PP/CHARGE]\c-");
+								if (CalB.CalamityFireModeType >= 2) LegendStr.AppendFormat(" = \c[blue]CHARGE MAIN-FIRE [~10 MP/CHARGE]\c-");
 							}
 						}
 					}
@@ -4842,7 +4855,8 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "CalamityBlade" && (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 2)) ||
 					PlayerWeapon is "Translocator" ||
 					PlayerWeapon is "ImpalerXBow" ||
-					PlayerWeapon is "SawThrower")
+					PlayerWeapon is "SawThrower" ||
+					PlayerWeapon is "EvilWarriorShield")
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
@@ -4893,7 +4907,13 @@ class KCStatusBarMain : BaseStatusBar
 							}
 							else
 							{
-								LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~3 CELLS/CHARGE]\c-");
+								if (CalB.CalamityFireModeType <= 0) 
+								{
+									if (CPlayerPawn.CountInv("CalamityBladeUpgrade")) LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~2 CELLS/CHARGE]\c-");
+																															 else LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~3 CELLS/CHARGE]\c-");
+								}
+								if (CalB.CalamityFireModeType == 1) LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~3 PP/CHARGE]\c-");
+								if (CalB.CalamityFireModeType >= 2) LegendStr.AppendFormat(" = \c[blue]CHARGE SMALL-FIRE [~3 MP/CHARGE]\c-");
 							}
 						}
 					}
@@ -4908,6 +4928,11 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]5-WAY SPREAD SHOT [~3 ARROWS]\c-");
 				if (PlayerWeapon is "SawThrower") LegendStr.AppendFormat(" = \c[blue]MELEE CHOPPER ATTACK\c-");
+				if (PlayerWeapon is "EvilWarriorShield") 
+				{
+					if (CPlayerPawn.CountInv("EWShieldDefendMode")) LegendStr.AppendFormat(" = \c[blue]UNGUARD WITH SHIELD\c-");
+																										 else LegendStr.AppendFormat(" = \c[blue]GUARD WITH SHIELD\c-");
+				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			

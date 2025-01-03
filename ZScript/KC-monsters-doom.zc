@@ -636,6 +636,7 @@ class PlasmaGuy : KCCreature
 				A_FaceTarget();
 			}
 		Missile1:
+			#### # 0 A_TimeFreezeCheckMissile();
 			ZMAY F 3 Bright 
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
@@ -828,6 +829,7 @@ class RocketLauncherGuy : KCCreature
 				A_FaceTarget();
 			}
 		Missile1:
+			#### # 0 A_TimeFreezeCheckMissile();
 			MPO2 F 10 bright
 			{
 				if (user_attacktype == 1)
@@ -3199,7 +3201,7 @@ class WolfensteinSSNew : KCCreature replaces WolfensteinSS
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(0); }
 				A_CPosRefire();
 			}
-			Goto Missile+2;
+			Goto Missile+3;
 		Pain:
 			#### # 0 A_TimeFreezeCheckPain();
 			SSWV H 3;
@@ -7981,7 +7983,7 @@ class LostSoulNew : KCCreature
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_FaceTarget(); }
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
 			}
-			Goto Missile+3;
+			Goto Missile+4;
 		Pain:
 			#### # 0 A_TimeFreezeCheckPain();
 			SKUL E 3 BRIGHT;
@@ -8123,7 +8125,7 @@ class LostSoulAnnoying : LostSoulNew
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_FaceTarget(); }
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
 			}
-			Goto Missile+3;
+			Goto Missile+4;
 		Pain:
 			#### # 0 A_TimeFreezeCheckPain();
 			SKUL E 0 Bright
@@ -8298,9 +8300,9 @@ class ForgottenOne : LostSoulNew
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
 			}
-			Goto Missile+9;
+			Goto Missile+10;
 			FRGO C 0 Bright;
-			Goto Missile+6;
+			Goto Missile+7;
 		StopCharge:
 			FRGO C 0 A_Stop();
 			Goto See;
@@ -10750,7 +10752,7 @@ class ArachnotronNew : KCCreature
 				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(randompick(0,0,1,1,1)); }
 				A_SpidRefire();
 			}
-			Goto Missile+3;
+			Goto Missile+4;
 		Pain:
 			#### # 0 A_TimeFreezeCheckPain();
 			BSPI I 3;
@@ -19460,7 +19462,7 @@ class HadesOverLord : KCCreature
 				A_SpidRefire();
 			}
 			OVER J 0 A_Jump(32,"See");
-			goto Missile3+4;
+			goto Missile3+5;
 
 		Melee:
 			#### # 0 A_TimeFreezeCheckMelee();

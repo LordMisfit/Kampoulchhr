@@ -40,6 +40,7 @@ class PigNew : KCCreature // replaces Pig
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0;
 			PIGY A 5 A_FaceTarget();
 			PIGY A 10 
@@ -162,6 +163,7 @@ class FireDemonNew : KCCreature // replaces FireDemon
 			FDMN D 6 Bright A_KCPain();
 			Goto Chase;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("Chase");
 			TNT1 A 0 A_DynamicMusic();
 			FDMN K 3 Bright 
@@ -287,6 +289,7 @@ class FireDemonLeader : FireDemonNew
 			FDNL DDDD 3 Bright;
 			Goto Chase;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("Chase");
 			TNT1 A 0 A_DynamicMusic();
 			FDNL K 3 Bright 
@@ -457,6 +460,7 @@ class FireDemonCommander : FireDemonNew
 			FDNC DDDD 3 Bright;
 			Goto Chase;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("Chase");
 			TNT1 A 0 A_DynamicMusic();
 			FDNC K 3 Bright 
@@ -630,6 +634,7 @@ class FireDemonQueen : FireDemonNew
 			FDNQ DDDD 3 Bright;
 			Goto Chase;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_Jump(48,"Clone");
 			TNT1 A 0 A_CheckIfTargetDead("Chase");
 			TNT1 A 0 A_DynamicMusic();
@@ -737,6 +742,7 @@ class FireDemonQueenClone : FireDemonQueen
 			FDNQ AAAAAAA 1 Bright A_FadeIn(0.10);
 			Goto Chase;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("Chase");
 			TNT1 A 0 A_DynamicMusic();
 			FDNQ K 4 Bright 
@@ -1201,6 +1207,7 @@ class EttinNew : KCCreature // replaces Ettin
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0 A_DynamicMusic();
 			ETTN EF 6
 			{
@@ -1448,6 +1455,7 @@ class EttinCommander : EttinNew
 			CETN HH 7;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0 A_DynamicMusic();
 			CETN EF 6
 			{
@@ -1465,6 +1473,7 @@ class EttinCommander : EttinNew
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_DynamicMusic();
 			CETN EF 6
 			{
@@ -1567,6 +1576,7 @@ class Bormereth : KCCreature
 			}
 			Loop;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			BORM A 0;
 			TNT1 A 0 A_Jump(60,"Missile2");
 			TNT1 A 0 A_Jump(128,"Missile1b");
@@ -1722,6 +1732,7 @@ class Bormereth : KCCreature
 			}
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			BORM EF 6
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(75,2,true,self)) { A_SetTics(4); }
@@ -2303,6 +2314,7 @@ class CentaurNew : KCCreature // replaces Centaur
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0 A_DynamicMusic();
 			CENT H 5 
 			{
@@ -2494,6 +2506,7 @@ class SlaughtaurNew : CentaurNew //replaces CentaurLeader
 	States
 	{
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0 A_DynamicMusic();
 			CENT H 5 
 			{
@@ -2518,6 +2531,7 @@ class SlaughtaurNew : CentaurNew //replaces CentaurLeader
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_DynamicMusic();
 		MissilePhase1:
 			CENT E 1
@@ -2766,6 +2780,7 @@ class GreenChaosSerpentNew : KCCreature // replaces Demon1
 			DEMN EEEE 4;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			DEMN E 0 A_DynamicMusic();
 			DEMN E 6
 			{
@@ -2793,6 +2808,7 @@ class GreenChaosSerpentNew : KCCreature // replaces Demon1
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			DEMN E 0 A_DynamicMusic();
 			DEMN E 5 
 			{
@@ -2945,6 +2961,7 @@ class BrownChaosSerpentNew : GreenChaosSerpentNew // replaces Demon2
 			DEM2 EEEE 4;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			DEM2 E 0 A_DynamicMusic();
 			DEM2 E 6
 			{
@@ -2972,6 +2989,7 @@ class BrownChaosSerpentNew : GreenChaosSerpentNew // replaces Demon2
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			DEM2 E 0 A_DynamicMusic();
 			DEM2 E 5
 			{
@@ -3230,6 +3248,7 @@ class MagmaChaosSerpentNew : GreenChaosSerpentNew
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			RDMN E 0 A_DynamicMusic();
 			RDMN E 6
 			{
@@ -3257,6 +3276,7 @@ class MagmaChaosSerpentNew : GreenChaosSerpentNew
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			RDMN E 0 A_DynamicMusic();
 			RDMN E 5
 			{
@@ -3540,6 +3560,7 @@ class BlackChaosSerpentNew : BrownChaosSerpentNew
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			DEM4 E 0 A_DynamicMusic();
 			DEM4 E 6
 			{
@@ -3567,6 +3588,7 @@ class BlackChaosSerpentNew : BrownChaosSerpentNew
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			DEM4 E 0 A_DynamicMusic();
 			DEM4 E 5
 			{
@@ -3809,6 +3831,7 @@ class EtherealChaosSerpentNew : GreenChaosSerpentNew
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			DEM5 E 0 A_DynamicMusic();
 			DEM5 E 6
 			{
@@ -3836,6 +3859,7 @@ class EtherealChaosSerpentNew : GreenChaosSerpentNew
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			DEM5 E 0 A_DynamicMusic();
 			DEM5 E 5
 			{
@@ -4080,6 +4104,7 @@ class IceGuyNew : KCCreature // replaces IceGuy
 			ICEY A 1 A_KCPain();
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			ICEY E 0 A_DynamicMusic(); 
 			ICEY EF 3 
 			{
@@ -4310,6 +4335,7 @@ class StalkerNew : KCCreature // replaces Serpent
 			}
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			SSPT A 0 A_DynamicMusic();
 			SSPT A 1 A_UnHideThing();
 			SSPT A 1 
@@ -4446,6 +4472,7 @@ class StalkerLeaderNew : StalkerNew // replaces SerpentLeader
 	States
 	{
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			SSPT N 5
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(3); }
@@ -4591,6 +4618,7 @@ class IceStalker : StalkerNew
 			}
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			ISPT A 1 A_UnHideThing();
 			ISPT A 1 A_StartSound("SerpentBirth",CHAN_VOICE);
 			ISPT B 3 
@@ -4793,6 +4821,7 @@ class IceStalkerLeader : StalkerLeaderNew
 			}
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			ISPT A 1 A_UnHideThing();
 			ISPT A 1 A_StartSound("SerpentBirth",CHAN_VOICE);
 			ISPT B 3 
@@ -4814,6 +4843,7 @@ class IceStalkerLeader : StalkerLeaderNew
 			}
 			Goto Dive;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			ISPT N 5 
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(1); }
@@ -5142,6 +5172,7 @@ class BishopNew : KCCreature // replaces Bishop
 			BISH CCC 6 A_BishopPainBlur(64);
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("See");
 			TNT1 A 0 A_DynamicMusic();
 			BISH ADE 3 
@@ -5407,6 +5438,7 @@ class DarkDisciple : BishopNew
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("See");
 			TNT1 A 0 A_DynamicMusic();
 			HDIS ADE 3
@@ -5669,6 +5701,7 @@ class VampireKC : BishopNew
 			Goto See;
 
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("See");
 			TNT1 A 0 A_DynamicMusic();
 			VAM1 X 0 Bright A_Jump(96,"Missile2");
@@ -6385,6 +6418,7 @@ class DarkPatriarch : BishopNew
 			DPTR A 0 A_SpawnItemEx("PatriarchBlur");
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("See");
 			TNT1 A 0 A_DynamicMusic();
 			DPTR A 3 
@@ -6586,6 +6620,7 @@ class DarkPatriarchClone : DarkPatriarch
 			DPTR A 0 A_SpawnItem("PatriarchBlurClone");
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 A_CheckIfTargetDead("See");
 			TNT1 A 0 A_DynamicMusic();
 			DPTR A 3 
@@ -6880,6 +6915,7 @@ class WraithNew : KCCreature // replaces Wraith
 			WRTH HH 6;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			WRTH E 0 A_DynamicMusic();
 			WRTH E 6
 			{
@@ -6904,6 +6940,7 @@ class WraithNew : KCCreature // replaces Wraith
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			WRTH E 0 A_DynamicMusic();
 			WRTH EF 6
 			{
@@ -7109,6 +7146,7 @@ class DragonNew : KCCreature // replaces Dragon
 			DRAG F 15;
 			Goto See+4;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			DRAG E 8 Fast
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(135,2,true,self)) { A_SetTics(2); }
@@ -8275,6 +8313,7 @@ class HeresiarchNew : KCUniqueBoss // replaces Heresiarch
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 
 			{
 				A_ShieldCheck();
@@ -8606,7 +8645,9 @@ class ClericBossNew : KCCreature // replaces ClericBoss
 			CLER HHHH 4;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			CLER E 0 A_DynamicMusic(); 
 			CLER EF 8 
 			{
@@ -9047,7 +9088,9 @@ class FighterBossNew : KCCreature // replaces FighterBoss
 			PLAY GGGG 4;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			PLAY E 8
 			{
 				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
@@ -9217,7 +9260,9 @@ class MageBossNew : KCCreature // replaces MageBoss
 			MAGE GGGG 4;
 			Goto See;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			MAGE E 0 A_DynamicMusic();
 			MAGE E 8
 			{
@@ -10138,6 +10183,7 @@ class KoraxNew : KCUniqueBoss // replaces Korax
 			KORX HHH 5;
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			KORX E 0 A_DynamicMusic(); 
 			KORX E 2 Bright 
 			{
@@ -10359,6 +10405,7 @@ class MaulotaurFriendNew : MaulotaurFriendBase // replaces MinotaurFriend
 			}
 			Loop;
 		Melee:
+			#### # 0 A_TimeFreezeCheckMelee();
 			TNT1 A 0 
 			{
 				A_SetInventory("MaulotaurChargeDefense",0);
@@ -10389,6 +10436,7 @@ class MaulotaurFriendNew : MaulotaurFriendBase // replaces MinotaurFriend
 			}
 			Goto See;
 		Missile:
+			#### # 0 A_TimeFreezeCheckMissile();
 			TNT1 A 0 
 			{
 				A_SetInventory("MaulotaurChargeDefense",0);

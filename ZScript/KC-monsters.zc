@@ -87,7 +87,7 @@ class KCScriptedMarine : KCCreature // replaces ScriptedMarine
 			PLAY E 4 A_MarineNoise;
 			PLAY E 4 A_M_Saw;
 			PLAY E 0 A_M_SawRefire;
-			goto Melee.Chainsaw+1;
+			goto Melee.Chainsaw+2;
 
 		Missile:
 			#### # 0 A_TimeFreezeCheckMissile();
@@ -139,7 +139,7 @@ class KCScriptedMarine : KCCreature // replaces ScriptedMarine
 				A_M_FireCGun(0);
 			}
 			PLAY A 0 A_M_Refire(0, "See");
-			Goto Missile.Chaingun+3;
+			Goto Missile.Chaingun+4;
 		Missile.Rocket:
 			#### # 0 A_TimeFreezeCheckMissile();
 			PLAY E 8;
@@ -157,7 +157,7 @@ class KCScriptedMarine : KCCreature // replaces ScriptedMarine
 			}
 			PLAY F 3 BRIGHT A_M_FirePlasma;
 			PLAY A 0 A_M_Refire(0, "See");
-			Goto Missile.Plasma+1;
+			Goto Missile.Plasma+2;
 		Missile.Railgun:
 			#### # 0 A_TimeFreezeCheckMissile();
 			PLAY E 4 A_M_CheckAttack;
@@ -1586,7 +1586,7 @@ class UltraMastermind : SpiderMastermindNew
 			SSWV EE 10 A_FaceTarget();
 			SSWV GE 4 Bright A_CPosAttack();
 			SSWV G 1 A_SpidRefire();
-			goto Missile+2;
+			goto Missile+3;
 		Death:
 			#### # 0 A_TimeFreezeCheckDeath();
 			SSWV I 5;
