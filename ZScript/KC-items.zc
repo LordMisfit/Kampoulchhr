@@ -2733,6 +2733,8 @@ class KCArmor : BasicArmor
 			
 			if (random(1,16) <= (random(7,9) + (8 - (skill * 2)))) 
 			{
+				double spbkpkarmorbonus = 0.10;
+				if (MiscItem) spbkpkarmorbonus = MiscItem.spbkpkarmorbonus;
 				oldsaved = saved;
 				savebase = 0.00;
 				int BKPKBonus;
@@ -2744,7 +2746,7 @@ class KCArmor : BasicArmor
 						double maxsavebase = frandompick(0.75,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,1.0);
 						savebase += (BKPKBonus * frandompick(0.0025,0.005,0.0075,0.01,0.0125));
 						savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
-						if (savebase >= (0.04 * BKPKBonus)) savebase = (0.04 * BKPKBonus);
+						if (savebase >= (spbkpkarmorbonus * BKPKBonus)) savebase = (spbkpkarmorbonus * BKPKBonus);
 						if (savebase >= maxsavebase) savebase = maxsavebase;
 					}
 				}
