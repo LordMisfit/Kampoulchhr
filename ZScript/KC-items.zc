@@ -370,6 +370,8 @@ class CustomInventoryExt : CustomInventory
 				if (user_type >= 21 && user_type <= 24) spawntype = "SensesCapsule";
 				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
 				if (bCOUNTITEM) level.total_items--;
+				if (bCOUNTSECRET) level.total_secrets--;
+				if (bCOUNTKILL) level.total_monsters--;
 				self.Destroy();
 			}
 		}
@@ -1685,6 +1687,8 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 						[spawned, mo] = A_SpawnItemEx("HealthBonusBig",0,0,0,0,0,0,0,0,tid);
 						if (mo) mo.bDROPPED = true;
 						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
 					}
 				}
@@ -1697,6 +1701,8 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 						[spawned, mo] = A_SpawnItemEx("HealthBonusBig",0,0,0,0,0,0,0,0,tid);
 						if (mo) mo.bDROPPED = false;
 						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
 					}
 					else
@@ -3177,6 +3183,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				if (user_type >= 21 && user_type <= 24) spawntype = "SensesCapsule";
 				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
 				if (bCOUNTITEM) level.total_items--;
+				if (bCOUNTSECRET) level.total_secrets--;
+				if (bCOUNTKILL) level.total_monsters--;
 				self.Destroy();
 			}
 		}
@@ -3196,6 +3204,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 						[spawned, mo] = A_SpawnItemEx("ArmorBonusBig",0,0,0,0,0,0,0,0,tid);
 						if (mo) mo.bDROPPED = true;
 						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
 					}
 				}
@@ -3208,6 +3218,8 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 						[spawned, mo] = A_SpawnItemEx("ArmorBonusBig",0,0,0,0,0,0,0,0,tid);
 						if (mo) mo.bDROPPED = false;
 						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
 					}
 					else

@@ -3,8 +3,11 @@ mixin class SecretChecker
 	action bool A_CheckSecret()
 	{
 		bool secret = false;
-		if (CurSector.IsSecret()) secret = true;
-		if (bCOUNTSECRET) secret = true;
+		if (!bDROPPED)
+		{
+			if (CurSector.IsSecret()) secret = true;
+			if (bCOUNTSECRET) secret = true;
+		}
 		return secret;
 	}
 }
@@ -3570,6 +3573,8 @@ mixin class ItemFallSpotCheck
 					 texman.GetName(self.floorpic) == "ABLACK"))
 			{
 				if (bCOUNTITEM) level.total_items--;
+				if (bCOUNTSECRET) level.total_secrets--;
+				if (bCOUNTKILL) level.total_monsters--;
 				Spawn("ItemFallSpot", (pos.x, pos.y, pos.z), NO_REPLACE);
 				if (kcdebug_itempitfalls) Console.Printf("%s [%p] \c[green](EEWeapon)\c- fell into a bottomless pit! [tic: %d]", GetClassName(), self, gametic);
 				Destroy();
