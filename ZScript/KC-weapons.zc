@@ -4959,7 +4959,7 @@ class PistolSpawner : WeaponSpawner replaces Pistol
 		{
 			dropchancemax = 7;
 			dropchance = 2;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -5120,7 +5120,7 @@ class ShotgunSpawner : WeaponSpawner replaces Shotgun
 		{
 			dropchancemax = 7;
 			dropchance = 2;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa()) 
 		{
@@ -5414,7 +5414,7 @@ class SuperShotgunSpawner : WeaponSpawner replaces SuperShotgun
 		{
 			dropchancemax = 7;
 			dropchance = randompick(4,4,5);
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa()) 
 		{
@@ -5796,7 +5796,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 		{
 			dropchancemax = 7;
 			dropchance = 2;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -5809,7 +5809,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 			{
 				dropchancemax = 7;
 				dropchance = 4;
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 			if (random(1,8) <= 1) 
 			{
@@ -5835,7 +5835,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 			{
 				dropchancemax = 7;
 				dropchance = 2;
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 			droptypespecial = "TommyGun";
 			droptypeammo = "TommAmmo";
@@ -6028,7 +6028,7 @@ class RocketLauncherSpawner : WeaponSpawner replaces RocketLauncher
 		{
 			dropchancemax = 7;
 			dropchance = 4;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6473,7 +6473,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 		{
 			dropchancemax = 7;
 			dropchance = 4;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6486,7 +6486,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 			{
 				dropchancemax = 10;
 				dropchance = random(3,5);
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 			droptypespecial = "TeslaCannon";
 			droptypeammo = "Bolts";
@@ -6509,7 +6509,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 			{
 				dropchancemax = 16;
 				dropchance = 1;
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 			droptypespecial = "TeslaCannon";
 			droptypeammo = "Bolts";
@@ -6813,7 +6813,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		{
 			dropchancemax = 7;
 			dropchance = 4;
-			if (CurSector.IsSecret()) dropchance *= random(2,3);
+			if (A_CheckSecret()) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6834,7 +6834,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 			{
 				dropchancemax = 10;
 				dropchance = random(3,5);
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 		}
 		else
@@ -6851,7 +6851,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 			{
 				dropchancemax = 16;
 				dropchance = 1;
-				if (CurSector.IsSecret()) dropchance *= random(2,3);
+				if (A_CheckSecret()) dropchance *= random(2,3);
 			}
 		}
 		

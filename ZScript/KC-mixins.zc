@@ -1,3 +1,14 @@
+mixin class SecretChecker
+{
+	action bool A_CheckSecret()
+	{
+		bool secret = false;
+		if (CurSector.IsSecret()) secret = true;
+		if (bCOUNTSECRET) secret = true;
+		return secret;
+	}
+}
+
 mixin class TimerCheck
 {
 	bool A_CheckNoTimer()

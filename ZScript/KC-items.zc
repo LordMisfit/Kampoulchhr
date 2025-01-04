@@ -80,6 +80,7 @@ class CustomInventoryExt : CustomInventory
 	mixin HUDRecovery;
 	mixin TimerCheck;
 	*/
+	mixin SecretChecker;
 	mixin ItemFallSpotCheck;
 	string texname;
 	int user_type;
@@ -353,7 +354,7 @@ class CustomInventoryExt : CustomInventory
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
-		if (CurSector.IsSecret()) chancebase1 *= random(2,3);
+		if (A_CheckSecret()) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -2999,6 +3000,7 @@ class KCArmorPickup : BasicArmorPickup
 class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 {
 	mixin HUDRecovery;
+	mixin SecretChecker;
 	int user_type;
 	int framenum;
 	default
@@ -3159,7 +3161,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
-		if (CurSector.IsSecret()) chancebase1 *= random(2,3);
+		if (A_CheckSecret()) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -3452,6 +3454,7 @@ class ArmorBonusBig : ArmorBonus2
 class KCGreenArmor : KCArmorPickup replaces GreenArmor
 {
 	mixin HUDRecovery;
+	mixin SecretChecker;
 	mixin TSASpawnCheck;
 	default
 	{
@@ -3631,7 +3634,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 							basechance -= (timefreezes * basediv2);
 						}
 						int randroll = 1;
-						if (CurSector.IsSecret())
+						if (A_CheckSecret())
 						{
 							basechance /= random(2,3);
 							randroll *= random(2,3);
@@ -3711,6 +3714,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 class KCBlueArmor : KCArmorPickup replaces BlueArmor
 {
 	mixin HUDRecovery;
+	mixin SecretChecker;
 	mixin TSASpawnCheck;
 	default
 	{
@@ -3888,7 +3892,7 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 							basechance -= (timefreezes * basediv2);
 						}
 						int randroll = 1;
-						if (CurSector.IsSecret())
+						if (A_CheckSecret())
 						{
 							basechance /= random(2,3);
 							randroll *= random(2,3);
@@ -3958,6 +3962,7 @@ class KCHeavyArmorForMegasphere : KCArmorPickup
 class KCHeavyArmor : KCArmorPickup
 {
 	mixin HUDRecovery;
+	mixin SecretChecker;
 	mixin TSASpawnCheck;
 	default
 	{
@@ -4139,7 +4144,7 @@ class KCHeavyArmor : KCArmorPickup
 							basechance -= (timefreezes * basediv2);
 						}
 						int randroll = 1;
-						if (CurSector.IsSecret())
+						if (A_CheckSecret())
 						{
 							basechance /= random(2,3);
 							randroll *= random(2,3);
@@ -4192,7 +4197,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int basechance = 1;
-		if (CurSector.IsSecret()) basechance *= 4;
+		if (A_CheckSecret()) basechance *= 4;
 
 		if (playera.CountInv("BackpackTier2"))
 		{
@@ -4234,7 +4239,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= 0.5;
 				else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
 				int basechance3 = 1;
-				if (CurSector.IsSecret()) basechance3 *= random(2,3);
+				if (A_CheckSecret()) basechance3 *= random(2,3);
 				if (!bDROPPED)
 				{
 					if (random(1,basechance) <= basechance3)
@@ -4270,7 +4275,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 					else
 					{
 						int basechance4 = 1;
-						if (CurSector.IsSecret()) basechance4 *= random(2,3);
+						if (A_CheckSecret()) basechance4 *= random(2,3);
 						if (random(1,16) <= basechance4) invoker.A_SpawnOtherBKPK();
 					}
 				}
@@ -4492,6 +4497,7 @@ class HasteSphere : CustomInventoryExt
 }
 class BaseAmmoSpawner : KCBaseZSC
 {
+	mixin SecretChecker;
 	void A_AmmoDrops(string droptyp = "ClipNew", int basedroprate = 200, double dropfactor = 0.125)
 	{
 		double spread1 = 1.0;
@@ -4500,7 +4506,7 @@ class BaseAmmoSpawner : KCBaseZSC
 		double spread4 = 1.75;
 		double spread5 = 2.0;
 		int droprate = basedroprate;
-		if (CurSector.IsSecret()) droprate *= random(2,3);
+		if (A_CheckSecret()) droprate *= random(2,3);
 		if (bDROPPED) 
 		{
 			droprate *= dropfactor;
