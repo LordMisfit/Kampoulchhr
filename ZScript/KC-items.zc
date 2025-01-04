@@ -3630,8 +3630,14 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 							basechance *= basediv;
 							basechance -= (timefreezes * basediv2);
 						}
+						int randroll = 1;
+						if (CurSector.IsSecret())
+						{
+							basechance /= random(2,3);
+							randroll *= random(2,3);
+						}
 						int rollrand = random(1,basechance);
-						if (rollrand <= 1)
+						if (rollrand <= randroll)
 						{
 							A_TSASpawnMessage();
 							Destroy();
@@ -3881,8 +3887,14 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 							basechance *= basediv;
 							basechance -= (timefreezes * basediv2);
 						}
+						int randroll = 1;
+						if (CurSector.IsSecret())
+						{
+							basechance /= random(2,3);
+							randroll *= random(2,3);
+						}
 						int rollrand = random(1,basechance);
-						if (rollrand <= 1)
+						if (rollrand <= randroll)
 						{
 							A_TSASpawnMessage();
 							Destroy();
@@ -4126,8 +4138,14 @@ class KCHeavyArmor : KCArmorPickup
 							basechance *= basediv;
 							basechance -= (timefreezes * basediv2);
 						}
+						int randroll = 1;
+						if (CurSector.IsSecret())
+						{
+							basechance /= random(2,3);
+							randroll *= random(2,3);
+						}
 						int rollrand = random(1,basechance);
-						if (rollrand <= 1)
+						if (rollrand <= randroll)
 						{
 							A_TSASpawnMessage();
 							Destroy();
