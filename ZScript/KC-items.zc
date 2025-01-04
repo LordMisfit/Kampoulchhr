@@ -2662,14 +2662,15 @@ class KCArmor : BasicArmor
 	
 	override void AbsorbDamage (int damage, Name damageType, out int newdamage, Actor inflictor, Actor source, int flags)
 	{
+		int saved;
+		//
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-
+		int olddamage = damage;
 		string infl, sour, vict;
 		if (owner == null) vict = "NONE"; else vict = owner.GetClassName();
 		if (inflictor == null) infl = "NONE"; else infl = inflictor.GetClassName();
 		if (source == null) sour = "NONE"; else sour = source.GetClassName();
-		int saved;
 		double initSavePercent = SavePercent;
 		
 		KCPlayerPawn PlayPawn;
@@ -2681,6 +2682,8 @@ class KCArmor : BasicArmor
 			SavePercent *= (1.0 - PlayPawn.PlayerArmorIgnoreFactor);
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]SavePercent:\c- \c[brick]%.4f\c- \c[gold][%.4f]\c", SavePercent, initSavePercent);
 		}
+		if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]Damage: %d", damage);
+		//
 		
 		if (!DamageTypeDefinition.IgnoreArmor(damageType))
 		{
@@ -2698,7 +2701,9 @@ class KCArmor : BasicArmor
 					saved = MAX(0,  MaxAbsorb - AbsorbCount);
 				}
 			}
-			
+			//
+			//
+			//
 			int firstsaved = saved;
 			
 			int oldsaved = saved;
@@ -2737,9 +2742,9 @@ class KCArmor : BasicArmor
 					if (BKPKBonus > 0) 
 					{
 						double maxsavebase = frandompick(0.75,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,0.875,1.0);
-						savebase += (BKPKBonus * frandom(0.01,0.05));
+						savebase += (BKPKBonus * frandompick(0.0025,0.005,0.0075,0.01,0.0125));
 						savebase *= frandompick(0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
-						if (savebase >= (0.10 * BKPKBonus)) savebase = (0.10 * BKPKBonus);
+						if (savebase >= (0.04 * BKPKBonus)) savebase = (0.04 * BKPKBonus);
 						if (savebase >= maxsavebase) savebase = maxsavebase;
 					}
 				}
@@ -2768,7 +2773,9 @@ class KCArmor : BasicArmor
 				saved *= (1.0 - savebase);
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]armor - saved [post Misc]:\c- \c[brick]%d\c- \c[gold][%d]\c", saved, oldsaved);
 			}
-			
+			//
+			//
+			//
 			if (Amount < saved)
 			{
 				saved = Amount;
@@ -2804,11 +2811,13 @@ class KCArmor : BasicArmor
 			}
 			damage = newdamage;
 		}
-		SavePercent = initSavePercent;
+		if (Amount > 0) SavePercent = initSavePercent;
 
+		if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]Damage: %d vs [%d], SavePercent: %.8f vs [%.8f]", damage, olddamage, SavePercent, initSavePercent);
 		// Once the armor has absorbed its part of the damage, then apply its damage factor, if any, to the player
 		if ((damage > 0) && (ArmorType != 'None')) // KCArmor is not going to have any damage factor, so skip it.
 		{
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[darkgreen]Damage: %d vs [%d]", newdamage, olddamage);
 			newdamage = ApplyDamageFactors(ArmorType, damageType, damage, damage);
 		}
 	}
@@ -4247,9 +4256,11 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				int basechance = 1024;
 				int basechance2 = 32;
-				if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= 0.334;
-				else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= 0.5;
-				else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
+				if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= frandom(0.375,0.5);
+				else if (playera.CountInv("SpecialBackpackBonus") > 15) basechance *= frandom(0.5,0.625);
+				else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= frandom(0.625,0.75);
+				else if (playera.CountInv("SpecialBackpackBonus") > 5) basechance *= frandom(0.75,0.875);
+				else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= frandom(0.875,1.000);
 				int basechance3 = 1;
 				if (A_CheckSecret()) basechance3 *= random(2,3);
 				if (!bDROPPED)

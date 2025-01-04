@@ -6403,14 +6403,18 @@ class KC_EventHandler : EventHandler
 							playera.CountInv("SpecialBackpackBonus") < 25)
 					{
 						basechance = kc_inventorydroprate13;
-						if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= 0.334;
-						else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= 0.5;
-						else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= 0.667;
+						if (playera.CountInv("SpecialBackpackBonus") > 20) basechance *= frandom(0.375,0.5);
+						else if (playera.CountInv("SpecialBackpackBonus") > 15) basechance *= frandom(0.5,0.625);
+						else if (playera.CountInv("SpecialBackpackBonus") > 10) basechance *= frandom(0.625,0.75);
+						else if (playera.CountInv("SpecialBackpackBonus") > 5) basechance *= frandom(0.75,0.875);
+						else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= frandom(0.875,1.000);
 						basechance *= kc_inventorydropratemulti;
 						basechance *= skillmult;
 						luckbase = 1.0 + (monsterrating * 0.5); // (4096)
 						if (playera.CountInv("SpecialBackpackBonus") > 20) luckbase = 1.75 + (monsterrating * 0.875);
+						else if (playera.CountInv("SpecialBackpackBonus") > 15) luckbase = 1.625 + (monsterrating * 0.8125);
 						else if (playera.CountInv("SpecialBackpackBonus") > 10) luckbase = 1.5 + (monsterrating * 0.75);
+						else if (playera.CountInv("SpecialBackpackBonus") > 15) luckbase = 1.375 + (monsterrating * 0.6875);
 						else if (playera.CountInv("SpecialBackpackBonus") > 0) luckbase = 1.25 + (monsterrating * 0.625);
 						if (victim.bBOSS)
 						{
