@@ -8059,6 +8059,7 @@ class KC_EventHandler : EventHandler
 					pitch: e.AttackPitch,
 					flags: CMF_AIMDIRECTION);
 			}
+			return true;
 		}
 		
 		/*
@@ -8075,9 +8076,10 @@ class KC_EventHandler : EventHandler
 				x: e.AttackOffsetSide,
 				z: e.AttackZ);
 			spawnee.pitch = savedPitch;
+			return true;
 		}
 		*/
-		return true;
+		return false;
 	}
 }
 
