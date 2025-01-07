@@ -371,6 +371,7 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Hotkeys
 			string LegendStr = "";
+			string LegendStrFake = "";
 			string UserKeyString;
 			Array<String> UserKeys;
 			int LegendFlags = flags;
@@ -1148,6 +1149,7 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				// Hotkeys
 				string LegendStr = "";
+				string LegendStrFake = "";
 				string UserKeyString;
 				Array<String> UserKeys;
 				LegendScale.x *= 1.5;
@@ -4525,9 +4527,11 @@ class KCStatusBarMain : BaseStatusBar
 		return DigY;
 	}
 	
-	string ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
+	string, bool ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
 	{
+		bool isUnboundKey;
 		string LegendStr = "";
+		string LegendStrFake = "";
 		string UserKeyString;
 		Array<String> UserKeys;
 		
@@ -4542,9 +4546,13 @@ class KCStatusBarMain : BaseStatusBar
 		}
 		else 
 		{
-			if (showunbound) LegendStr.AppendFormat("\c[red][unb]\c-");
+			if (showunbound) 
+			{
+				LegendStr.AppendFormat("\c[red][unb]\c-");
+				isUnboundKey = true;
+			}
 		}
-		return LegendStr;
+		return LegendStr, isUnboundKey;
 	}
 
 	int, int, int, int DrawFSHUDKeyLegend(int VisiblePlayerLevel, int candash, int dashcost, int dashmaxcharge)
@@ -4559,6 +4567,9 @@ class KCStatusBarMain : BaseStatusBar
 		//**************
 		if (kchud_keylegendspot >= 0)
 		{
+			bool isUnboundKey = false;
+			string LegendStr = "";
+			string LegendStrFake = "";
 			int legendtimer;
 			int LX;
 			int LY;
@@ -4570,7 +4581,9 @@ class KCStatusBarMain : BaseStatusBar
 			int FlashTimer = level.time;
 			int FlashTimerMod = 32;
 			// Quick Kick Bind
-			string LegendStr = "";
+			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			LX = -296;
 			LY = -35;
 			if (kchud_keylegendspot >= 1)
@@ -4583,52 +4596,73 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Time Freeze
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			if (MiscItem)
 			{
 				LegendStr.AppendFormat(ReturnKeyBind1("KC_TimeStop", true, false));
+				[LegendStrFake, isUnboundKey] = ReturnKeyBind1("KC_TimeStop", true, false);
 				
 				FlashTimerMod = 32;
+				if (isUnboundKey) FlashTimerMod = 14;
 				FlashTimer = level.time % FlashTimerMod;
-				if (MiscItem.timestopcooldown1tics > 0)
+				if (isUnboundKey)
 				{
 					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[Red]");
-																					 else LegendStr.AppendFormat(" = \c[Brick]");
+																					 else LegendStr.AppendFormat(" = \c[Fire]");
 				}
 				else
 				{
-					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[HeiwaDeluge]");
-																					 else LegendStr.AppendFormat(" = \c[Purple]");
+					if (MiscItem.timestopcooldown1tics > 0)
+					{
+						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[Red]");
+																						 else LegendStr.AppendFormat(" = \c[Brick]");
+					}
+					else
+					{
+						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat(" = \c[HeiwaDeluge]");
+																						 else LegendStr.AppendFormat(" = \c[Purple]");
+					}
 				}
 				LY += LYInc;
 				double sec = double(MiscItem.timefreeze1duration);
 				double sec2 = double(MiscItem.timefreeze1cooldown * MiscItem.timefreeze1cooldownratio2);
-				if (MiscItem.timestopcooldown1tics)
+				if (isUnboundKey)
 				{
-					double sec3 = double(MiscItem.timestopcooldown1tics * 1.0 / TICRATE);
-					LegendStr.AppendFormat("[ON COOLDOWN]\c- ");
-					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec3);
-																					 else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec3);
+					if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red]PLEASE BIND YOUR TIME-FREEZE KEY IMMEDIATELY!!\c-");
+																					 else LegendStr.AppendFormat("\c[Fire]PLEASE BIND YOUR TIME-FREEZE KEY IMMEDIATELY!!\c-");
 				}
 				else
 				{
-					
-					if (MiscItem.timestopstate) 
+					if (MiscItem.timestopcooldown1tics)
 					{
-						LegendStr.AppendFormat("TIME UNFREEZE\c- ");
-						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec2);
-																						else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec2);
+						double sec3 = double(MiscItem.timestopcooldown1tics * 1.0 / TICRATE);
+						LegendStr.AppendFormat("[ON COOLDOWN]\c- ");
+						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec3);
+																						 else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec3);
 					}
-					else 
+					else
 					{
-						LegendStr.AppendFormat("TIME FREEZE\c- ");
-						if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[lightblue][~%.2f Secs]\c-", sec);
-																						else LegendStr.AppendFormat("\c[sapphire][~%.2f Secs]\c-", sec);
+						if (MiscItem.timestopstate) 
+						{
+							LegendStr.AppendFormat("TIME UNFREEZE\c- ");
+							if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[red][~%.2f Secs]\c-", sec2);
+																							else LegendStr.AppendFormat("\c[Brick][~%.2f Secs]\c-", sec2);
+						}
+						else 
+						{
+							LegendStr.AppendFormat("TIME FREEZE\c- ");
+							if (FlashTimer > FlashTimerMod * 0.5) LegendStr.AppendFormat("\c[lightblue][~%.2f Secs]\c-", sec);
+																							else LegendStr.AppendFormat("\c[sapphire][~%.2f Secs]\c-", sec);
+						}
 					}
 				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			bool cankick = true;
 			if (MiscItem) cankick = MiscItem.cankick;
 			if ((PlayerWeapon is 'MarineWeapon' || PlayerWeapon is 'HeiwaWeapon') && cankick)
@@ -4643,6 +4677,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Dash
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			if (DashMaxCharge >= dashcost && candash)
 			{
 				LY += LYInc;
@@ -4689,6 +4725,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Reload
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			if (PlayerWeapon is "Glock21")
 			{
 				LY += LYInc;
@@ -4716,6 +4754,8 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			// Weapon Specific Binds
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			string UserKeyString5;
 			Array<String> UserKeys5;
 			string temp1, temp2;
@@ -4790,6 +4830,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Primary Fires
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			if (PlayerWeapon is "Translocator" ||
 					(PlayerWeapon is "CalamityBlade" && (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 1)) ||
 					PlayerWeapon is "SawThrower")
@@ -4800,6 +4842,7 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					LY -= LYInc;
 					LegendStr = "";
+					LegendStrFake = "";
 					if (SawT && SawT.revtimes >= 20)
 					{
 						LY += LYInc;
@@ -4849,6 +4892,8 @@ class KCStatusBarMain : BaseStatusBar
 			
 			// Alt-Fires
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			if ((PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable) ||
 					PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
@@ -4950,12 +4995,26 @@ class KCStatusBarMain : BaseStatusBar
 			}
 			
 			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			string UserKeyString6;
 			Array<String> UserKeys6;
+
+			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			string UserKeyString7;
 			Array<String> UserKeys7;
+
+			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			string UserKeyString8;
 			Array<String> UserKeys8;
+
+			LegendStr = "";
+			LegendStrFake = "";
+			isUnboundKey = false;
 			string UserKeyString9;
 			Array<String> UserKeys9;
 		}
