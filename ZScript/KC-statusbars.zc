@@ -4776,8 +4776,20 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "ImpalerXBow" ||
 					(PlayerWeapon is "EvilWarriorShield" && EWS && !CPlayerPawn.CountInv("EWShieldDefendMode")))
 			{
+				int timermod1 = 70;
+				
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
+				if (PlayerWeapon is "ImpalerXBow" ||
+						(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade") && CalB))
+				{
+					if (level.time % timermod1 > timermod1 * 0.5)
+					{
+						LegendStr.AppendFormat("\c[white]+\c[green]");
+						LegendStr.AppendFormat(ReturnKeyBind1("+user3", true, false));
+					}
+				}
+				
 				if (PlayerWeapon is "FistMarine" || PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
 				else if (PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable && numberknifes > 1) 
 				{
@@ -4810,16 +4822,48 @@ class KCStatusBarMain : BaseStatusBar
 				}
 				else if (PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade") && CalB) 
 				{
-					if (CalB.CalamityFireModeType == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE TO \c[purple]PSI/PP\c-");
-					else if (CalB.CalamityFireModeType == 1) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE TO \c[blue]MAGIC/MP\c-");
-					else if (CalB.CalamityFireModeType == 2) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO & FIRE MODE TO \c[orange]CELLS\c-");
+					LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO/FIRE MODE");
+					if (level.time % timermod1 > timermod1 * 0.5)
+					{
+						if (CalB.CalamityFireModeType == 2) LegendStr.AppendFormat(" BACKWARD TO \c[purple]PSI/PP\c-");
+						else if (CalB.CalamityFireModeType == 1) LegendStr.AppendFormat(" BACKWARD TO \c[orange]CELLS\c-");
+						else if (CalB.CalamityFireModeType == 0) LegendStr.AppendFormat(" BACKWARD TO \c[blue]MAGIC/MP\c-");
+					}
+					else
+					{
+						if (CalB.CalamityFireModeType == 0) LegendStr.AppendFormat(" = FORWARD TO \c[purple]PSI/PP\c-");
+						else if (CalB.CalamityFireModeType == 1) LegendStr.AppendFormat(" = FORWARD TO \c[blue]MAGIC/MP\c-");
+						else if (CalB.CalamityFireModeType == 2) LegendStr.AppendFormat(" = FORWARD TO \c[orange]CELLS\c-");
+					}
 				}
 				else if (PlayerWeapon is "Incinerator" && Incn) 
 				{
 					if (Incn.FireMode == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO \c[sapphire]FROSTFIRE FLAMES\c[blue]\c-");
 					else if (Incn.FireMode == 1) LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO \c[fire]STANDARD FLAMES\c[blue]\c-");
 				}
-				else if (PlayerWeapon is "ImpalerXBow") LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL\c-");
+				else if (PlayerWeapon is "ImpalerXBow") 
+				{
+					LegendStr.AppendFormat(" = \c[blue]CHANGE ZOOM LEVEL [");
+					if (level.time % timermod1 > timermod1 * 0.5)
+					{
+						LegendStr.AppendFormat("BACKWARD TO \c[gold]");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 4) LegendStr.AppendFormat("2X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 3) LegendStr.AppendFormat("1.5X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 2) LegendStr.AppendFormat("1.25X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 1) LegendStr.AppendFormat("1X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 0) LegendStr.AppendFormat("4X");
+					}
+					else
+					{
+						LegendStr.AppendFormat("FORWARD TO \c[gold]");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 0) LegendStr.AppendFormat("1.25X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 1) LegendStr.AppendFormat("1.5X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 2) LegendStr.AppendFormat("2X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 3) LegendStr.AppendFormat("4X");
+						if (CPlayerPawn.CountInv("ImpalerBowZoom") == 4) LegendStr.AppendFormat("1X");
+					}
+					LegendStr.AppendFormat("\c[blue]]\c-");
+				}
 				else if (PlayerWeapon is "EvilWarriorShield" && EWS && !CPlayerPawn.CountInv("EWShieldDefendMode"))
 				{
 					if (EWS.ammo_type == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE TO \c[sapphire]MP\c[blue] USE\c-");
