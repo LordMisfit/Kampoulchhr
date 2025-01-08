@@ -4781,6 +4781,7 @@ class KCStatusBarMain : BaseStatusBar
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+user4", true, false));
 				if (PlayerWeapon is "ImpalerXBow" ||
+						(PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable && numberknifes > 1) ||
 						(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade") && CalB))
 				{
 					if (level.time % timermod1 > timermod1 * 0.5)
@@ -4793,7 +4794,14 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "FistMarine" || PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]GUARD MODE\c-");
 				else if (PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable && numberknifes > 1) 
 				{
-					LegendStr.AppendFormat(" = \c[blue]CHANGE NUMBER OF KNIFES THROWN PER TOSS\c-");
+					if (level.time % timermod1 > timermod1 * 0.5)
+					{
+						LegendStr.AppendFormat(" = \c[sapphire]DECREASE\c[blue] OF KNIFES THROWN PER TOSS BY 1\c-");
+					}
+					else
+					{
+						LegendStr.AppendFormat(" = \c[sapphire]INCREASE\c[blue] OF KNIFES THROWN PER TOSS BY 1\c-");
+					}
 				}
 				else if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
 				else if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");

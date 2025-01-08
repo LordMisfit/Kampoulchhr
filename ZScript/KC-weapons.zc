@@ -7712,6 +7712,7 @@ class TommyGun : MarineWeapon
 		Scale 0.6;
 		Weapon.Kickback 150;
 		//Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "Thompson Machine Gun";
 	}
 	
 	action bool A_DualTMGCheck()
@@ -8439,6 +8440,7 @@ class Devastator : MarineWeapon
 		Weapon.AmmoUse1 1;
 		Weapon.AmmoUse2 1;
 		//Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "Devastator Weapon";
 	}
 	
 	action bool A_DualDevCheck()
@@ -9641,6 +9643,7 @@ class ImpalerXBow : MarineWeapon
 		+WEAPON.NOALERT;
 		+WEAPON.ALT_AMMO_OPTIONAL;
 		//Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "Impaler Crossbow";
 	}
 	
 	action int A_BowBerserkCheck(int tic)
@@ -10128,6 +10131,7 @@ class TeslaCannon : MarineWeapon
 		Weapon.Kickback 50;
 		//attacksound "Tesla/Fire1";
 		//Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "Tesla Cannon";
 	}
 	
 	action bool A_DualTeslaCheck()
@@ -12493,6 +12497,7 @@ class Deviation : MarineWeapon // replaces RocketLauncher
 		Weapon.SlotNumber 5;
 		Scale 0.85;
 		Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "''Deviation'' Dumb Missile Launcher";
 	}
 	States
 	{
@@ -13075,8 +13080,8 @@ class FistHeiwa : MarineWeapon // replaces Fist
 		+WEAPON.MELEEWEAPON;
 		+INVENTORY.UNDROPPABLE;
 		+INVENTORY.UNTOSSABLE;
-		Tag "Fist";
-		Obituary "%o chewed on %k's fist.";
+		Tag "Fists / Uppercut / Hand-to-Hand";
+		Obituary "%o chewed on %k's fists.";
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}
 	
@@ -17523,6 +17528,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		Inventory.PickupMessage "You got the \cxE-11 Blaster Rifle\c-! \cx[Slot 4]\c-";
 		+WEAPON.AMMO_OPTIONAL;
 		Inventory.RestrictedTo "HeiwaPlayer";
+		Tag "E-11 Blaster Rifle";
 	}
 	
 	action void A_SetShotNum()
