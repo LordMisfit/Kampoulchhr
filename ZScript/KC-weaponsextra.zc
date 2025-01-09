@@ -1024,11 +1024,20 @@ class CalamityBlade : MarineWeapon
 		Idle:
 			CBLD A 4
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 4; // 16
 				if (bDROPPED)
 				{
 					modpackdropchance = 16; // 192;
 					if (random(1,64) <= 1) modpackdropchance = 8;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(1,2);
+						modpackdropchance /= random(1,2);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.00625,0.25,1.25);
@@ -1040,7 +1049,7 @@ class CalamityBlade : MarineWeapon
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("CalamityBladeUpgrade"))
 							{

@@ -11,6 +11,7 @@ class KCWeaponBase : Weapon
 	const SKILL_OMEGA = 8;
 	
 	mixin DmgCalc;
+	mixin SecretChecker;
 	mixin InvWeaponShare;
 	mixin ActorStateReplace;
 	mixin HUDRecovery;
@@ -8110,11 +8111,20 @@ class TommyGun : MarineWeapon
 		Idle:
 			TOMM A 4
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -8126,7 +8136,7 @@ class TommyGun : MarineWeapon
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("TommyGunUpgrade"))
 							{
@@ -9065,11 +9075,20 @@ class DevastatorGenerator : CustomInventoryExt
 		Spawn: 
 			DVGG A 4 NoDelay
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -9081,7 +9100,7 @@ class DevastatorGenerator : CustomInventoryExt
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("DevastatorUpgrade"))
 							{
@@ -14302,11 +14321,20 @@ Class BlasterPickup : CustomInventoryExt
 		Spawn:
 			BLAP A 4
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -14318,7 +14346,7 @@ Class BlasterPickup : CustomInventoryExt
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("BlasterPistolUpgrade"))
 							{
@@ -14507,11 +14535,20 @@ Class BlasterPistol : MarineWeapon
 		Spawn:
 			BLAP A 4 NoDelay
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -14523,7 +14560,7 @@ Class BlasterPistol : MarineWeapon
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("BlasterPistolUpgrade"))
 							{
@@ -15720,11 +15757,20 @@ class Riotgun : MarineWeapon
 		Spawn:
 			SW30 Z 4 NoDelay
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -15736,7 +15782,7 @@ class Riotgun : MarineWeapon
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("RiotGunUpgrade"))
 							{
@@ -18058,11 +18104,20 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 		Spawn:
 			E11B A 4 NoDelay
 			{
+				int basemodpackchance = 1;
 				int modpackdropchance = 16; // 32
 				if (bDROPPED)
 				{
 					modpackdropchance = 64; // 192;
 					if (random(1,32) <= 1) modpackdropchance = 32;
+				}
+				else
+				{
+					if (A_CheckSecret())
+					{
+						basemodpackchance = random(2,3);
+						modpackdropchance /= random(2,3);
+					}
 				}
 				let globalvars = KCGlobalVariables.Get();
 				double dropbasechance = GetModPackChanceAlter(0.025,0.25,1.25);
@@ -18074,7 +18129,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 					if (!invoker.modpackspawnattempt)
 					{
 						//Console.Printf("[%s]: modpackspawnattempt: %d [chance: %d]", GetClassName(), invoker.modpackspawnattempt, modpackdropchance);
-						if (random(1,modpackdropchance) <= 1)
+						if (random(1,modpackdropchance) <= basemodpackchance)
 						{
 							if (!playera.CountInv("BlasterRifleUpgrade"))
 							{
