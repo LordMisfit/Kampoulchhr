@@ -16,6 +16,8 @@ class PlayerStatItem : Inventory
 	// 3 - ??????
 	// 4 - ??????
 	
+	array<int> titemadd;
+	
 	int tfaftimgbasefade;
 	int tfaftimgbasefade2;
 	
@@ -678,12 +680,16 @@ class PlayerStatItem : Inventory
 					
 					if (itemtimer >= 1)
 					{
+						titemadd.Resize(3);
 						owner.A_SetInventory("TimeSeraphBangle",1);
 						owner.A_SetInventory("TimeSeraphBangle",0);
+						titemadd[2] = 1;
 						owner.A_SetInventory("TimeSeraphPocketWatch",1);
 						owner.A_SetInventory("TimeSeraphPocketWatch",0);
+						titemadd[1] = 1;
 						owner.A_SetInventory("TimeSeraphCharm",1);
 						owner.A_SetInventory("TimeSeraphCharm",0);
+						titemadd[0] = 1;
 					}
 					
 					// Init Level Table

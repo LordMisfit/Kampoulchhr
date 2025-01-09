@@ -985,7 +985,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("CharmEnergyGive",1);
-				playera.A_PrintBold("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-");
+				if (MiscItem && MiscItem.titemadd[0] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-");
 			}
 			stop;
 		Use:
@@ -1110,7 +1110,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("PWatchEnergyGive",1);
-				playera.A_PrintBold("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-");
+				if (MiscItem && MiscItem.titemadd[1] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-");
 			}
 			stop;
 		Use:
@@ -1248,7 +1248,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("BangleEnergyGive",1);
-				playera.A_PrintBold("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-");
+				if (MiscItem && MiscItem.titemadd[2] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-");
 			}
 			stop;
 		Use:
