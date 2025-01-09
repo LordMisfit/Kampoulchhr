@@ -1310,6 +1310,7 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				//Console.Printf("KnifeHeiwa");
 				bool KnifeAltUsable = false;
+				int knifethrowreqlevel = 15;
 				int numberknifes;
 				int NumOfKnives;
 				int KnifeCost;
@@ -1317,7 +1318,8 @@ class KCStatusBarMain : BaseStatusBar
 				if (FoundKnife && MiscItem)
 				{
 					//Console.Printf("FoundKnife");
-					if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
+					knifethrowreqlevel = (A_GetKnifeSpd() * 0.75);
+					if (MiscItem.TruePlayerLevel >= knifethrowreqlevel) KnifeAltUsable = true;
 					numberknifes = FoundKnife.maxthrowableknives;
 					NumOfKnives = FoundKnife.knifespertoss;
 					KnifeCost = FoundKnife.throwmpcost;
@@ -3537,6 +3539,7 @@ class KCStatusBarMain : BaseStatusBar
 		wsname = "ChainsawMarine";
 		if (A_CheckForHeiwa()) 
 		{
+			int knifethrowreqlevel = 15;
 			wsname = "KnifeHeiwa";
 			bool KnifeAltUsable = false;
 			int numberknifes;
@@ -3545,7 +3548,8 @@ class KCStatusBarMain : BaseStatusBar
 			let FoundKnife = KnifeHeiwa(CPlayerPawn.FindInventory("KnifeHeiwa"));
 			if (FoundKnife && MiscItem)
 			{
-				if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
+				knifethrowreqlevel = (A_GetKnifeSpd() * 0.75);
+				if (MiscItem.TruePlayerLevel >= knifethrowreqlevel) KnifeAltUsable = true;
 				numberknifes = FoundKnife.maxthrowableknives;
 				NumOfKnives = FoundKnife.knifespertoss;
 				KnifeCost = FoundKnife.throwmpcost;
@@ -4745,11 +4749,13 @@ class KCStatusBarMain : BaseStatusBar
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
 			
+			int knifethrowreqlevel = 15;
 			bool KnifeAltUsable = false;
 			int numberknifes;
 			if (FoundKnife && MiscItem)
 			{
-				if (MiscItem.TruePlayerLevel >= (A_GetKnifeSpd() * 0.75)) KnifeAltUsable = true;
+				knifethrowreqlevel = (A_GetKnifeSpd() * 0.75);
+				if (MiscItem.TruePlayerLevel >= knifethrowreqlevel) KnifeAltUsable = true;
 				numberknifes = FoundKnife.maxthrowableknives;
 			}
 			// Weapon Specific Binds
@@ -4958,7 +4964,7 @@ class KCStatusBarMain : BaseStatusBar
 			LegendStr = "";
 			LegendStrFake = "";
 			isUnboundKey = false;
-			if ((PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable) ||
+			if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife) ||
 					PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
@@ -4982,17 +4988,30 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
-				if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife && KnifeAltUsable)) 
+				if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife)) 
 				{
-					int NumOfKnives = FoundKnife.knifespertoss;
-					int KnifeCost = FoundKnife.throwmpcost;
-					int trueMPCost;
-					for (int i = 0; i < NumOfKnives; i++)
+					if (KnifeAltUsable)
 					{
-						trueMPCost += (KnifeCost + i);
+						int NumOfKnives = FoundKnife.knifespertoss;
+						int KnifeCost = FoundKnife.throwmpcost;
+						int trueMPCost;
+						for (int i = 0; i < NumOfKnives; i++)
+						{
+							trueMPCost += (KnifeCost + i);
+						}
+						if (NumOfKnives > 1) LegendStr.AppendFormat(" = \c[blue]THROW %d KNIFE COPIES \c[brick][%d MP]\c-", NumOfKnives, trueMPCost);
+														else LegendStr.AppendFormat(" = \c[blue]THROW %d KNIFE COPY \c[brick][%d MP]\c-", NumOfKnives, trueMPCost);
 					}
-					if (NumOfKnives > 1) LegendStr.AppendFormat(" = \c[blue]THROW %d KNIFE COPIES \c[brick][%d MP]\c-", NumOfKnives, trueMPCost);
-													else LegendStr.AppendFormat(" = \c[blue]THROW %d KNIFE COPY \c[brick][%d MP]\c-", NumOfKnives, trueMPCost);
+					else
+					{
+						if (MiscItem)
+						{
+							if (MiscItem.TruePlayerLevel < knifethrowreqlevel)
+							{
+								LegendStr.AppendFormat(" = \c[brick][REACH LVL %d TO USE]", knifethrowreqlevel);							
+							}
+						}
+					}
 				}
 				if (PlayerWeapon is "PistolMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
