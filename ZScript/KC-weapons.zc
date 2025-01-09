@@ -951,6 +951,9 @@ class KCWeaponBase : Weapon
 	
 	action void A_Destroy()
 	{
+		if (bCOUNTITEM) level.total_items--;
+		if (bCOUNTSECRET) level.total_secrets--;
+		if (bCOUNTKILL) level.total_monsters--;
 		self.Destroy();
 	}
 	
@@ -9105,6 +9108,9 @@ class DevastatorGenerator : CustomInventoryExt
 							if (!playera.CountInv("DevastatorUpgrade"))
 							{
 								A_SpawnItemEx("DevastatorModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
 								self.Destroy();
 							}
 						}
@@ -14351,6 +14357,9 @@ Class BlasterPickup : CustomInventoryExt
 							if (!playera.CountInv("BlasterPistolUpgrade"))
 							{
 								A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
 								self.Destroy();
 							}
 						}

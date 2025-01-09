@@ -952,6 +952,9 @@ class KCBaseZSC : Actor
 	
 	void A_Destroy()
 	{
+		if (bCOUNTITEM) level.total_items--;
+		if (bCOUNTSECRET) level.total_secrets--;
+		if (bCOUNTKILL) level.total_monsters--;
 		self.Destroy();
 	}
 }
