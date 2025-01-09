@@ -69,7 +69,7 @@ class kc_ListMenuNote : ListMenuItem
 		
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("+user4", true, false));
-		quote.AppendFormat("\c- = \c[sapphire]Guards with Fist\c[green]. Guarding with your fists \c[red]substantially slows you down\c[green], however it \c[sapphire]immensely reduces damage from attacks, and \c[HeiwaDeluge]further more reduces damage from melee attacks\c[green], including the \c[brick]stomps of Cyberdemons\c[green]. Additionally, dashing in this mode will make you do a \c[orange]shoulder tackle\c[green] that can damage enemies as you pass through them with it. :V");
+		quote.AppendFormat("\c- = \c[sapphire]Guards with Fist\c[green]. Guarding with your fists \c[red]substantially slows you down\c[green], however it \c[sapphire]immensely reduces damage from attacks, and \c[HeiwaDeluge]further more greatly reduces damage from melee attacks\c[green], including the \c[brick]stomps of Cyberdemons\c[green]. Additionally, dashing in this mode will make you do a \c[orange]shoulder tackle\c[green] that can damage enemies as you pass through them with it. :V");
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
@@ -95,14 +95,14 @@ class kc_ListMenuNote : ListMenuItem
 		
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("+user1", true, false));
-		quote.AppendFormat("\c- = \c[sapphire]Quick-Kick \c[orange](usable with any weapon equipped)\c-");
+		quote.AppendFormat("\c- = \c[sapphire]Quick-Kick \c[orange](usable with any weapon equipped)\c[green]. Kicks will often stun foes for extended periods of time, along with having a \c[gold]higher chance -to- stun them than most firearm attacks\c[green].");
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat(ReturnKeyBind1("+user3", true, false));
 		quote.AppendFormat(" \c[white]OR\c- \c[gold]");
 		quote.AppendFormat("2x tap same direction");
-		quote.AppendFormat("\c- = \c[sapphire]Dash");
+		quote.AppendFormat("\c- = \c[sapphire]Dash. Your dash ability \c[brick]consumes some energy which will then replenish slowly\c[green], but it can be used for a \c[lightblue]brief burst of speed\c[green] with a moment of \c[gold]invincibility frames\c[green], as well as allow you to \c[olive]dash THROUGH obstacles and foes, allowing you to escape being cornered\c[green]. If you get stuck inside an object after dashing, dash again to escape. You can also \c[lightblue]dash in mid air\c[green] as well. If you're underwater, or using a flying powerup, you can \c[olive]dash vertically by aiming vertically\c[green]. If you're in berserk, dashing through foes will also \c[lightblue]deal them damage\c[green].");
 		add(quote);
 		
 		[tipno, quote] = TipPreface(tipno, quote);
@@ -133,15 +133,11 @@ class kc_ListMenuNote : ListMenuItem
 		quote.AppendFormat("It is possible to find \c[blue]modification packs\c[green] (or Mod Packs) for various firearm weapons of Heiwa's as you progress. Once grabbed, it \c[sapphire]permanently upgrades the weapon in question in various ways\c[green], sometimes giving weapons \c[gold]alternate/new attack modes\c[green] as well. <.<");
 		add(quote);
 		
-		/*
 		[tipno, quote] = TipPreface(tipno, quote);
 		quote.AppendFormat("Some of your weapons melee attacks are -silent- vs classic Doom's fist. Not ALWAYS, but it's likely due to this you can end up not triggering monster closet ambushes. If you want/need to try to wake these closets up, hit ");
 		quote.AppendFormat(ReturnKeyBind1("Whistl", true, false));
-		quote.AppendFormat("\c[green] to whistle to try to wake them up at various locations in the current level. \c[green]Whistling also automatically occurs if you press ");
-		quote.AppendFormat(ReturnKeyBind1("RecallAll", true, false));
-		quote.AppendFormat("\c[green] to recall any summoned ally to your position too \c[orange](though if you have no allies to recall, it doesn't go off)\c[green].");
-		add(quote);
-		*/
+		quote.AppendFormat("\c[green] to whistle to try to wake them up at various locations in the current level.", true, false);
+
 		//[tipno, quote] = TipPreface(tipno, quote);
 		//quote.AppendFormat("");
 		//add(quote);

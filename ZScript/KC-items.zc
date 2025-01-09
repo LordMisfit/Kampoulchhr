@@ -985,6 +985,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("CharmEnergyGive",1);
+				playera.A_PrintBold("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-");
 			}
 			stop;
 		Use:
@@ -1109,6 +1110,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("PWatchEnergyGive",1);
+				playera.A_PrintBold("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-");
 			}
 			stop;
 		Use:
@@ -1148,7 +1150,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				else
 				{
 					playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
-					A_PrintBold("\c[HeiwaDeluge]Unfortunately, the Pocket Watch is sealed and fails to function as it currently is...\c-");
+					playera.A_PrintBold("\c[HeiwaDeluge]Unfortunately, the Pocket Watch is sealed and fails to function as it currently is...\c-");
 				}
 			}
 			Fail;
@@ -1246,6 +1248,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("BangleEnergyGive",1);
+				playera.A_PrintBold("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-");
 			}
 			stop;
 		Use:
@@ -1351,7 +1354,7 @@ class MiniBerserk : CustomInventoryExt
 		+COUNTITEM;
 		+DONTGIB;
 		+INVENTORY.ALWAYSPICKUP;
-		Inventory.PickupMessage "You have found a \crMini Berserk Pack\c-! Rip and Tear em' apart!";
+		Inventory.PickupMessage "You have found a \crMini Berserk Pack\c-! Rip and Tear em' apart! \c[fire](All melee damage x10, ~2x melee weapon speed)";
 		Inventory.PickupSound "getberserkpack";
 	}
 	
@@ -1492,7 +1495,7 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 		+COUNTITEM;
 		+DONTGIB;
 		+INVENTORY.ALWAYSPICKUP;
-		Inventory.PickupMessage "You have found a \crBerserk Pack\c-! Rip and Tear em' apart!";
+		Inventory.PickupMessage "You have found a \crBerserk Pack\c-! Rip and Tear em' apart! \c[fire](All melee damage x10, ~2x melee weapon speed)\c-";
 		Inventory.PickupSound "getberserkpack";
 	}
 	
@@ -2274,7 +2277,7 @@ class BlurSphere2 : CustomInventoryExt replaces BlurSphere
 		+INVENTORY.ALWAYSPICKUP;
 		+INVENTORY.BIGPOWERUP;
 		RenderStyle "Translucent";
-		Inventory.PickupMessage "\c[brick]Invisibility!";
+		Inventory.PickupMessage "\c[brick]Invisibility! \c[lightblue](Evasion Chance +~33.4%)";
 		Inventory.PickupSound "powerups/invis";
 	}
 	
@@ -5608,8 +5611,10 @@ class RiotGunModpack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("RiotGunUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Riot Gun Mod Pack.");
 			}
 			Stop;
 	}
@@ -5646,8 +5651,10 @@ class TommyGunModpack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("TommyGunUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Tommy Gun Mod Pack.");
 			}
 			Stop;
 	}
@@ -5684,8 +5691,10 @@ class BlasterRifleModpack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("BlasterRifleUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Blaster Rifle Mod Pack.");
 			}
 			Stop;
 	}
@@ -5722,8 +5731,10 @@ class BlasterPistolModpack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("BlasterPistolUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Blaster Pistol Mod Pack.");
 			}
 			Stop;
 	}
@@ -5735,7 +5746,7 @@ class DevastatorModpack : BaseModPack
 	{
 		Tag "Devastator Modpack";
 		Inventory.Icon "DVMDA0";
-		Inventory.PickupMessage "You picked up a Devastator Mod Pack.";
+		Inventory.PickupMessage "You picked up a Devastator Weapon Mod Pack.";
 	}
 	
 	override void PostBeginPlay()
@@ -5760,8 +5771,10 @@ class DevastatorModpack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("DevastatorUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Devastator Weapon Mod Pack.");
 			}
 			Stop;
 	}
@@ -5798,8 +5811,10 @@ class CalamityBladeModPack : BaseModPack
 		Pickup:
 			TNT1 A 0 
 			{
+				actor playera = players[0].mo;
 				A_GiveInventory("CalamityBladeUpgrade",1);
 				invoker.grabbed = true;
+				playera.A_PrintBold("You picked up a Calamity Blade Mod Pack.");
 			}
 			Stop;
 	}

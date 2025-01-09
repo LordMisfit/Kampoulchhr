@@ -1313,6 +1313,7 @@ class KC_EventHandler : EventHandler
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1') e1m8exitroommon = true;
 				if (level.mapname == "E1M8" &&
 						level.GetChecksum() == '058fb092ea1b70da1e3cbf501c4a91a1' &&
+						level.time <= 3 &&
 						(spawnname ~== "BaronOfHell" ||
 						 spawnname ~== "BaronOfHellNew" ||
 						 spawnname ~== "BaronOfHellClassic" ||
@@ -1325,12 +1326,14 @@ class KC_EventHandler : EventHandler
 						 spawnname ~== "Hierophant")) e1m8baron = true;
 				if (level.mapname == "E2M8" &&
 						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
+						level.time <= 3 &&
 						(spawnname ~== "Cyberdemon" ||
 						 spawnname ~== "CyberdemonNew" ||
 						 spawnname ~== "CyberdemonClassic" ||
 						 spawnname ~== "Annihilator")) e2m8cyber = true;
 				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
+						 level.time <= 3 &&
 						 (level.mapname == "E3M8" ||
 							level.mapname == "E4M8") &&
 						(spawnname ~== "SpiderMastermind" ||

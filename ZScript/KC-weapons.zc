@@ -12815,6 +12815,7 @@ Class Translocator : MarineWeapon
 		KCWeaponBase.PickupChan3 CHAN_ITEM;
 
 		Inventory.PickupMessage "You got the \c[fire]Translocator Telebeacon System\c-! \cx[Slot 8]\c-";
+		Tag "Translocator Telebeacon System";
 
 		Weapon.AmmoGive 1;
 		Weapon.AmmoUse1 1;
@@ -19113,10 +19114,10 @@ class DustBlower : MarineWeapon
 		KCWeaponBase.PickupChan3 CHAN_ITEM;
 		
 		Weapon.SelectionOrder 450;
-		Inventory.PickupMessage "You got a \c[fire]Dust Blower!\c- \cx[Slot 8]\c-";
+		Inventory.PickupMessage "You got a \c[fire]Phobos Dust Blower!\c- \cx[Slot 8]\c-";
 		Weapon.SlotNumber 8;
 		Weapon.Kickback 20000;
-		Tag "Dust Blower";
+		Tag "Phobos Dust Blower";
 		+WEAPON.NOAUTOAIM;
 	}
 	States
@@ -19130,7 +19131,10 @@ class DustBlower : MarineWeapon
 				invoker.blowing = false;
 				invoker.vaccing = false;
 				A_WeaponReady(); 
-				A_StopSound(7); 
+				A_StopSound(1007);
+				A_StopSound(1008);
+				A_StopSound(1009);
+				A_StopSound(1010);
 			}
 			Loop;
 		Deselect:
@@ -19139,7 +19143,10 @@ class DustBlower : MarineWeapon
 				invoker.blowing = false;
 				invoker.vaccing = false;
 				A_Lower(12); 
-				A_StopSound(7); 
+				A_StopSound(1007);
+				A_StopSound(1008);
+				A_StopSound(1009);
+				A_StopSound(1010);
 			}
 			Loop;
 		Select:
@@ -19148,6 +19155,10 @@ class DustBlower : MarineWeapon
 				invoker.blowing = false;
 				invoker.vaccing = false;
 				A_Raise(12);
+				A_StopSound(1007);
+				A_StopSound(1008);
+				A_StopSound(1009);
+				A_StopSound(1010);
 			}
 			Loop;
 		Fire:
@@ -19160,20 +19171,109 @@ class DustBlower : MarineWeapon
 		Hold:
 			PDBZ BBB 2
 			{
+				bool spawned;
+				actor mo;
+				int chance1 = random(24,40);
+				int chance2 = (chance1 * 0.25);
+				int chance3 = (chance2 * 0.25);
 				invoker.blowing = true;
 				invoker.vaccing = false;
 				if (waterlevel > 2)
 				{
 					A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
-					A_StartSound("weapons/airblow/underwater",7,CHANF_LOOPING,0.7);
+					A_StartSound("weapons/airblow/underwater",1007,CHANF_LOOPING,0.7);
 					A_ChangeVelocity(cos(pitch)*-4,0,sin(pitch)*4,CVF_RELATIVE);
 				}
 				else
 				{
-					A_StartSound("weapons/airblow/surface",7,CHANF_LOOPING,0.7);
+					A_StartSound("weapons/airblow/surface",1007,CHANF_LOOPING,0.7);
 					A_ChangeVelocity(cos(pitch)*-0.5,0,sin(pitch)*1.1,CVF_RELATIVE);
 				}
-				A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+				[spawned, mo] = A_FireProjectile("PhobosAir",frandom(-5.5,5.5),false,0,0); // A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+				if (mo && random(1,256) <= 16) 
+				{
+					mo.bDONTRIP = true;
+					mo.bDONTBLAST = true;
+				}
+				
+				if (random(1,256) <= chance1)
+				{
+					if (waterlevel > 2)
+					{
+						A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
+						A_StartSound("weapons/airblow/underwater",1008,CHANF_LOOPING,0.7);
+						A_ChangeVelocity(cos(pitch)*-4,0,sin(pitch)*4,CVF_RELATIVE);
+					}
+					else
+					{
+						A_StartSound("weapons/airblow/surface",1008,CHANF_LOOPING,0.7);
+						A_ChangeVelocity(cos(pitch)*-0.5,0,sin(pitch)*1.1,CVF_RELATIVE);
+					}
+					A_FireProjectile("PhobosAir",frandom(-3.75,3.75),false,0,0); // A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+					if (mo && random(1,256) <= 16) 
+					{
+						mo.bDONTRIP = true;
+						mo.bDONTBLAST = true;
+					}
+					
+					if (random(1,256) <= chance2)
+					{
+						if (waterlevel > 2)
+						{
+							A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
+							A_StartSound("weapons/airblow/underwater",1009,CHANF_LOOPING,0.7);
+							A_ChangeVelocity(cos(pitch)*-4,0,sin(pitch)*4,CVF_RELATIVE);
+						}
+						else
+						{
+							A_StartSound("weapons/airblow/surface",1009,CHANF_LOOPING,0.7);
+							A_ChangeVelocity(cos(pitch)*-0.5,0,sin(pitch)*1.1,CVF_RELATIVE);
+						}
+						A_FireProjectile("PhobosAir",frandom(-2.0,2.0),false,0,0); // A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+						if (mo && random(1,256) <= 16) 
+						{
+							mo.bDONTRIP = true;
+							mo.bDONTBLAST = true;
+						}
+						
+						if (random(1,256) <= chance3)
+						{
+							if (waterlevel > 2)
+							{
+								A_SpawnItemEx("Bubble",16,3,24,0,0,2,0,0,210);
+								A_StartSound("weapons/airblow/underwater",1010,CHANF_LOOPING,0.7);
+								A_ChangeVelocity(cos(pitch)*-4,0,sin(pitch)*4,CVF_RELATIVE);
+							}
+							else
+							{
+								A_StartSound("weapons/airblow/surface",1010,CHANF_LOOPING,0.7);
+								A_ChangeVelocity(cos(pitch)*-0.5,0,sin(pitch)*1.1,CVF_RELATIVE);
+							}
+							A_FireProjectile("PhobosAir",frandom(-0.25,0.25),false,0,0); // A_FireProjectile("PhobosAir",random(-2,2),false,7,0);
+							if (mo && random(1,256) <= 16) 
+							{
+								mo.bDONTRIP = true;
+								mo.bDONTBLAST = true;
+							}
+						
+						}
+						else
+						{
+							A_StopSound(1010); 
+						}
+					}
+					else
+					{
+						A_StopSound(1009); 
+						A_StopSound(1010); 
+					}
+				}
+				else
+				{
+					A_StopSound(1008); 
+					A_StopSound(1009); 
+					A_StopSound(1010); 
+				}
 			}
 			PDBZ B 2 A_ReFire;
 			PDBZ B 2 
@@ -19229,7 +19329,7 @@ class PhobosAir : KCProjectile
 		Projectile;
 		Radius 8;
 		Height 8;
-		Damage 1;
+		DamageFunction (randompick(0,0,0,1,1,1,2,2) + randompick(0,0,0,0,0,0,0,1));
 		Speed 16;
 		Renderstyle "Add";
 		Alpha 0.15;
