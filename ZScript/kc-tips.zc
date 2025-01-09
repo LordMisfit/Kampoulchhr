@@ -138,6 +138,14 @@ class kc_ListMenuNote : ListMenuItem
 		quote.AppendFormat(ReturnKeyBind1("Whistl", true, false));
 		quote.AppendFormat("\c[green] to whistle to try to wake them up at various locations in the current level.", true, false);
 
+		[tipno, quote] = TipPreface(tipno, quote);
+		quote.AppendFormat("The \c[fire]Blaster Pistol\c[green] and \c[fire]EF-11 Blaster Rifle\c[green] weapons possess a \c[sapphire]rechargeable on-board battery\c[green] that both allows a free full-powered shot \c[grey](and per Blaster Pistol if you are dual-wielding them)\c[green], but will also allow them to fire much weaker shots infinitely if you lack cells or the on-board battery isn't charged (or if you change the fire more to always fire weaker shots). This allows \c[yellow]both weapons to be used to some degree in a pinch with no ammo\c[green], though the Blaster Pistol's weakened shots \c[orange]disperse after a set distance\c[green], while the Blaster Rifle's will not, but \c[orange]are a lot weaker\c[green].");
+		add(quote);
+		
+		//[tipno, quote] = TipPreface(tipno, quote);
+		//quote.AppendFormat("");
+		//add(quote);
+
 		//[tipno, quote] = TipPreface(tipno, quote);
 		//quote.AppendFormat("");
 		//add(quote);

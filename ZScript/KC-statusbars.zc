@@ -1486,15 +1486,15 @@ class KCStatusBarMain : BaseStatusBar
 				if (shieldmeterlength > 1.5) shieldmeterlength = 1.5;
 				dun = TexMan.CheckForTexture("SHLDUNIT", TexMan.TYPE_MiscPatch);
 
-				let BlR = BlasterRifle(CPlayerPawn.FindInventory("BlasterRifle"));
-				if (BlR)
+				let BlsR = BlasterRifle(CPlayerPawn.FindInventory("BlasterRifle"));
+				if (BlsR)
 				{
 					if (MiscItem)
 					{
-						shieldenergy = BlR.spareshotregentimer;
+						shieldenergy = BlsR.spareshotregentimer;
 						shieldenergymax = 350;
 						
-						if (shieldenergymax && (BlR.spareshots < BlR.spareshotsmax))
+						if (shieldenergymax && (BlsR.spareshots < BlsR.spareshotsmax))
 						{
 							shieldenergypercent = shieldenergy * 100 / shieldenergymax;
 							int shieldbarunits = shieldenergypercent * shieldmeterlength;
@@ -1503,7 +1503,7 @@ class KCStatusBarMain : BaseStatusBar
 						}
 						usealtammo = 0;
 						
-						if (BlR.firetype == 1)
+						if (BlsR.firetype == 1)
 						{
 							lowpowermode = 1;
 						}
@@ -1511,8 +1511,8 @@ class KCStatusBarMain : BaseStatusBar
 					int jx, jy;
 					jx = -13; // -20;
 					jy = -24;
-					int clipsize = BlR.spareshotsmax;
-					int clipleft = BlR.spareshots;
+					int clipsize = BlsR.spareshotsmax;
+					int clipleft = BlsR.spareshots;
 					int ClipRatio;
 					if (clipsize > 0) 
 					{
@@ -4762,11 +4762,11 @@ class KCStatusBarMain : BaseStatusBar
 			if (PlayerWeapon is "FistMarine" ||
 					PlayerWeapon is "FistHeiwa" ||
 					(PlayerWeapon is "KnifeHeiwa" && KnifeAltUsable && numberknifes > 1) ||
-					PlayerWeapon is "Glock21" ||
-					PlayerWeapon is "BlasterPistol" ||
+					(PlayerWeapon is "Glock21" && Glk21) ||
+					(PlayerWeapon is "BlasterPistol" && BstP) ||
 					PlayerWeapon is "RiotGun" ||
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
-					PlayerWeapon is "BlasterRifle" ||
+					(PlayerWeapon is "BlasterRifle" && BlsR) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
 					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
@@ -4803,15 +4803,27 @@ class KCStatusBarMain : BaseStatusBar
 						LegendStr.AppendFormat(" = \c[sapphire]INCREASE\c[blue] OF KNIFES THROWN PER TOSS BY 1\c-");
 					}
 				}
-				else if (PlayerWeapon is "Glock21") LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO FUNCTION\c-");
-				else if (PlayerWeapon is "BlasterPistol") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
+				else if (PlayerWeapon is "Glock21" && Glk21) 
+				{
+					if (Glk21.ammomode == 0) LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO TYPE TO NON-PENETRATION ROUNDS\c-");
+															else LegendStr.AppendFormat(" = \c[blue]CHANGE AMMO TYPE TO PENETRATION ROUNDS\c-");
+				}
+				else if (PlayerWeapon is "BlasterPistol" && BstP) 
+				{
+					if (BstP.altshottype == 0) LegendStr.AppendFormat(" = \c[blue]TURNS CELL CONSUMPTION OFF\c-");
+																else LegendStr.AppendFormat(" = \c[blue]TURNS CELL CONSUMPTION ON\c-");
+				}
 				else if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				else if (PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns"))
 				{
 					if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]DUAL WIELDING MODE\c-");
 																												else LegendStr.AppendFormat(" = \c[blue]SINGLE WIELDING MODE\c-");
 				}
-				else if (PlayerWeapon is "BlasterRifle") LegendStr.AppendFormat(" = \c[blue]TOGGLE CELL CONSUMPTION\c-");
+				else if (PlayerWeapon is "BlasterRifle" && BlsR) 
+				{
+					if (BlsR.firetype == 0) LegendStr.AppendFormat(" = \c[blue]TURNS CELL CONSUMPTION OFF\c-");
+														 else LegendStr.AppendFormat(" = \c[blue]TURNS CELL CONSUMPTION ON\c-");
+				}
 				else if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]CHANGE ATTACK\c-");
 				else if (PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators"))
 				{
@@ -4954,7 +4966,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "SuperShotgunMarine" ||
 					PlayerWeapon is "ChaingunMarine" ||
 					PlayerWeapon is "TommyGun" ||
-					PlayerWeapon is "BlasterRifle" ||
+					(PlayerWeapon is "BlasterRifle" && BlsR) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
 					PlayerWeapon is "Deviation" ||
 					PlayerWeapon is "Devastator" ||
@@ -4990,7 +5002,11 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
 				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
-				if (PlayerWeapon is "BlasterRifle") LegendStr.AppendFormat(" = \c[blue]LASER SHOTBURST [~1-3 CELLS/SHOT]\c-");
+				if (PlayerWeapon is "BlasterRifle" && BlsR) 
+				{
+					if (BlsR.firetype == 0) LegendStr.AppendFormat(" = \c[blue]LASER SHOTBURST [~1-3 CELLS/SHOT]\c-");
+														 else LegendStr.AppendFormat(" = \c[blue]LASER SHOTBURST\c-");
+				}
 				if (PlayerWeapon is "RocketLauncherMarine") LegendStr.AppendFormat(" = \c[blue]ROCKET SHOTBURST\c-");
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "Deviation") LegendStr.AppendFormat(" = \c[blue]DRUNKEN ROCKET [FASTER FIRE]\c-");
