@@ -515,6 +515,7 @@ class PlayerStatItem : Inventory
 			let globalvars = KCGlobalVariables.Get();
 			if (globalvars)
 			{
+				titemadd.Resize(3);
 				// Initalization Stuff
 				InitStuff();
 				
@@ -680,7 +681,6 @@ class PlayerStatItem : Inventory
 					
 					if (itemtimer >= 1)
 					{
-						titemadd.Resize(3);
 						owner.A_SetInventory("TimeSeraphBangle",1);
 						owner.A_SetInventory("TimeSeraphBangle",0);
 						titemadd[2] = 1;
