@@ -1826,6 +1826,7 @@ class HealthBonusBig : CustomInventoryExt
 
 class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 {
+	bool spawnroll;
 	default
 	{
 		+FLOATBOB;
@@ -1840,6 +1841,38 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 	States
 	{
 		Spawn:
+			SOUL A 0 Bright
+			{
+				if (invoker.spawnroll && 
+						A_CheckSecret() && 
+						!bDROPPED)
+				{
+					actor playera = players[0].mo;
+					int chance = 64;
+					int chance2 = 1;
+					if (playera.CountInv("PlayingDoom1")) 
+					{
+						chance = randompick(8,16,16,16,16,16,16,16);
+						chance2 = randompick(1,1,1,1,2,2,2,3);
+					}
+					else
+					{
+						chance = randompick(32,64,64,64,64,64,64,64);
+						chance2 = randompick(1,1,1,1,1,1,1,2);
+					}
+					
+					if (random(1,chance) <= chance2)
+					{
+						A_SpawnItemEx("MegaSphere2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
+						self.Destroy();
+					}
+					invoker.spawnroll = true;
+				}
+			}
+		Idle:
 			SOUL ABCD 6 Bright;
 			Loop;
 		Pickup:
