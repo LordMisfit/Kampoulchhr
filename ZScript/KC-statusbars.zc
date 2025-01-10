@@ -4530,6 +4530,8 @@ class KCStatusBarMain : BaseStatusBar
 	
 	string, bool ReturnKeyBind1(string keybindget, bool showunbound, bool colored)
 	{
+		int unbflashtimermod = 28;
+		int unbflashtimermodhalf = (unbflashtimermod * 0.5);
 		bool isUnboundKey;
 		string LegendStr = "";
 		string LegendStrFake = "";
@@ -4545,12 +4547,16 @@ class KCStatusBarMain : BaseStatusBar
 			if (colored) LegendStr.AppendFormat("%s", UserKeys[0]);
 							else LegendStr.AppendFormat("\c[gold]%s\c-", UserKeys[0]);
 		}
-		else 
+		else
 		{
 			if (showunbound) 
 			{
-				LegendStr.AppendFormat("\c[red][unb]\c-");
 				isUnboundKey = true;
+				if (isUnboundKey)
+				{
+					if (level.time % unbflashtimermod > unbflashtimermodhalf) LegendStr.AppendFormat("\c[red]'%s'\c-", keybindget);
+																															 else LegendStr.AppendFormat("\c[red][unb]\c-", keybindget);
+				}
 			}
 		}
 		return LegendStr, isUnboundKey;

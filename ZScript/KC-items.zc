@@ -2978,6 +2978,8 @@ class KCArmorPickup : BasicArmorPickup
 {
 	mixin GrabArmorItems;
 	mixin ItemFallSpotCheck;
+	int firstticspawn;
+	bool isasecret;
 	
 	int A_CheckMaxArmor(int fSaveAmount) // KCArmorPickup
 	{
@@ -3600,115 +3602,160 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		Spawn:
 			TNT1 A 0 NoDelay
 			{
-				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
-				int timefreezes;
-				if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
-				int basechance = (kc_inventorydroprate5 * 0.25);
-				double skillmult = 1;
-				if (skill <= 0) skillmult = 0.667;
-				if (skill == 1) skillmult = 0.8;
-				if (skill == 2) skillmult = 1;
-				if (skill == 3) skillmult = 1.25;
-				if (skill >= 4) skillmult = 1.5;
-
-				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
+				if (!firstticspawn)
 				{
-					if (!bDROPPED && timefreezes)
+					if (A_CheckSecret()) isasecret = true;
+					actor playera = players[0].mo;
+					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+					int timefreezes;
+					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+					int basechance = (kc_inventorydroprate5 * 0.25);
+					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					
+					double skillmult = 1;
+					if (skill <= 0) skillmult = 0.667;
+					if (skill == 1) skillmult = 0.8;
+					if (skill == 2) skillmult = 1;
+					if (skill == 3) skillmult = 1.25;
+					if (skill >= 4) skillmult = 1.5;
+
+					if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 					{
-						double basediv = 0.5;
-						double basediv2 = 0.125;
-						if ((playera.CountInv("KCTimeFreezer1") ||
-								 playera.CountInv("KCTimeFreezer2") ||
-								 playera.CountInv("KCTimeFreezer3")))
+						if (!bDROPPED && timefreezes)
 						{
-							basediv = 0.5;
-							basediv2 = 0.125;
+							double basediv = 0.5;
+							double basediv2 = 0.125;
+							if ((playera.CountInv("KCTimeFreezer1") ||
+									 playera.CountInv("KCTimeFreezer2") ||
+									 playera.CountInv("KCTimeFreezer3")))
+							{
+								basediv = 0.5;
+								basediv2 = 0.125;
+							}
+							else
+							{
+								basediv = 0.9375;
+								basediv2 = 0.25;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 1) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 2) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (timefreezes >= 20)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 40)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 80)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 160)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 320)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 640)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 1280)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 2560)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 5120)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 10240)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 20480)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							int randroll = 1;
+							if (A_CheckSecret())
+							{
+								basechance /= random(2,3);
+								randroll *= random(2,3);
+							}
+							int rollrand = random(1,basechance);
+							if (rollrand <= randroll)
+							{
+								A_TSASpawnMessage();
+								Destroy();
+							}
 						}
-						else
+					}
+					
+					if (!bDROPPED)
+					{
+						int chance1 = 16;
+						int chance2 = 1;
+						if (isasecret)
 						{
-							basediv = 0.9375;
-							basediv2 = 0.25;
+							chance1 /= random(2,3);
+							chance2 *= random(2,3);
 						}
-						if (MiscItem.TimeArmorRelicsOwned >= 1) 
+						if (random(1,chance1) <= chance2)
 						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 2) 
-						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (timefreezes >= 20)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 40)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 80)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 160)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 320)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 640)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 1280)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 2560)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 5120)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 10240)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 20480)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						int randroll = 1;
-						if (A_CheckSecret())
-						{
-							basechance /= random(2,3);
-							randroll *= random(2,3);
-						}
-						int rollrand = random(1,basechance);
-						if (rollrand <= randroll)
-						{
-							A_TSASpawnMessage();
-							Destroy();
+							string armortype1 = "KCBlueArmor";
+							if (random(1,chance1) <= chance2) armortype1 = "KCHeavyArmor";
+							bool spawned;
+							actor mo;
+							[spawned, mo] = A_SpawnItemEx(armortype1,flags:SXF_NOCHECKPOSITION,tid:tid);
+							if (mo) 
+							{
+								mo.bDROPPED = bDROPPED;
+								mo.bCOUNTITEM = bCOUNTITEM;
+								mo.bCOUNTSECRET = bCOUNTSECRET;
+								mo.bCOUNTKILL = bCOUNTKILL;
+								KCArmorPickup mo2;
+								mo2 = KCArmorPickup(mo);
+								if (mo2)
+								{
+									mo2.firstticspawn++;
+									if (mo2.firstticspawn <= 0) mo2.firstticspawn = 1;
+								}
+							}
+							if (bCOUNTITEM) level.total_items--;
+							if (bCOUNTSECRET) level.total_secrets--;
+							if (bCOUNTKILL) level.total_monsters--;
+							self.Destroy();
 						}
 					}
 				}
+				
+				firstticspawn++;
 				bNOTIMEFREEZE = false;
 			}
 		Idle:
@@ -3858,115 +3905,158 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		Spawn:
 			TNT1 A 0 NoDelay
 			{
-				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
-				int timefreezes;
-				if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
-				int basechance = (kc_inventorydroprate5 * 0.125);
-				double skillmult = 1;
-				if (skill <= 0) skillmult = 0.667;
-				if (skill == 1) skillmult = 0.8;
-				if (skill == 2) skillmult = 1;
-				if (skill == 3) skillmult = 1.25;
-				if (skill >= 4) skillmult = 1.5;
-
-				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
+				if (!firstticspawn)
 				{
-					if (!bDROPPED && timefreezes)
+					if (A_CheckSecret()) isasecret = true;
+					actor playera = players[0].mo;
+					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+					int timefreezes;
+					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+					int basechance = (kc_inventorydroprate5 * 0.125);
+					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					
+					double skillmult = 1;
+					if (skill <= 0) skillmult = 0.667;
+					if (skill == 1) skillmult = 0.8;
+					if (skill == 2) skillmult = 1;
+					if (skill == 3) skillmult = 1.25;
+					if (skill >= 4) skillmult = 1.5;
+
+					if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 					{
-						double basediv = 0.5;
-						double basediv2 = 0.125;
-						if ((playera.CountInv("KCTimeFreezer1") ||
-								 playera.CountInv("KCTimeFreezer2") ||
-								 playera.CountInv("KCTimeFreezer3")))
+						if (!bDROPPED && timefreezes)
 						{
-							basediv = 0.5;
-							basediv2 = 0.125;
+							double basediv = 0.5;
+							double basediv2 = 0.125;
+							if ((playera.CountInv("KCTimeFreezer1") ||
+									 playera.CountInv("KCTimeFreezer2") ||
+									 playera.CountInv("KCTimeFreezer3")))
+							{
+								basediv = 0.5;
+								basediv2 = 0.125;
+							}
+							else
+							{
+								basediv = 0.9375;
+								basediv2 = 0.25;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 1) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 2) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (timefreezes >= 20)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 40)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 80)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 160)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 320)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 640)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 1280)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 2560)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 5120)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 10240)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 20480)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							int randroll = 1;
+							if (A_CheckSecret())
+							{
+								basechance /= random(2,3);
+								randroll *= random(2,3);
+							}
+							int rollrand = random(1,basechance);
+							if (rollrand <= randroll)
+							{
+								A_TSASpawnMessage();
+								Destroy();
+							}
 						}
-						else
+					}
+					
+					if (!bDROPPED)
+					{
+						int chance1 = 16;
+						int chance2 = 1;
+						if (isasecret)
 						{
-							basediv = 0.9375;
-							basediv2 = 0.25;
+							chance1 /= random(2,3);
+							chance2 *= random(2,3);
 						}
-						if (MiscItem.TimeArmorRelicsOwned >= 1) 
+						if (random(1,chance1) <= chance2)
 						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 2) 
-						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (timefreezes >= 20)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 40)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 80)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 160)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 320)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 640)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 1280)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 2560)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 5120)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 10240)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 20480)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						int randroll = 1;
-						if (A_CheckSecret())
-						{
-							basechance /= random(2,3);
-							randroll *= random(2,3);
-						}
-						int rollrand = random(1,basechance);
-						if (rollrand <= randroll)
-						{
-							A_TSASpawnMessage();
-							Destroy();
+							string armortype1 = "KCHeavyArmor";
+							bool spawned;
+							actor mo;
+							[spawned, mo] = A_SpawnItemEx(armortype1,flags:SXF_NOCHECKPOSITION,tid:tid);
+							if (mo) 
+							{
+								mo.bDROPPED = bDROPPED;
+								mo.bCOUNTITEM = bCOUNTITEM;
+								mo.bCOUNTSECRET = bCOUNTSECRET;
+								mo.bCOUNTKILL = bCOUNTKILL;
+								KCArmorPickup mo2;
+								mo2 = KCArmorPickup(mo);
+								if (mo2)
+								{
+									mo2.firstticspawn++;
+									if (mo2.firstticspawn <= 0) mo2.firstticspawn = 1;
+								}
+							}
+							if (bCOUNTITEM) level.total_items--;
+							if (bCOUNTSECRET) level.total_secrets--;
+							if (bCOUNTKILL) level.total_monsters--;
+							self.Destroy();
 						}
 					}
 				}
+				firstticspawn++;
 				bNOTIMEFREEZE = false;
 			}
 		Idle:
@@ -4110,115 +4200,122 @@ class KCHeavyArmor : KCArmorPickup
 		Spawn:
 			TNT1 A 0 NoDelay
 			{
-				actor playera = players[0].mo;
-				let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
-				int timefreezes;
-				if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
-				int basechance = (kc_inventorydroprate5 * 0.0625);
-				double skillmult = 1;
-				if (skill <= 0) skillmult = 0.667;
-				if (skill == 1) skillmult = 0.8;
-				if (skill == 2) skillmult = 1;
-				if (skill == 3) skillmult = 1.25;
-				if (skill >= 4) skillmult = 1.5;
-
-				if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
+				if (!firstticspawn)
 				{
-					if (!bDROPPED && timefreezes)
+					if (A_CheckSecret()) isasecret = true;
+					actor playera = players[0].mo;
+					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
+					int timefreezes;
+					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
+					int basechance = (kc_inventorydroprate5 * 0.0625);
+					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					
+					double skillmult = 1;
+					if (skill <= 0) skillmult = 0.667;
+					if (skill == 1) skillmult = 0.8;
+					if (skill == 2) skillmult = 1;
+					if (skill == 3) skillmult = 1.25;
+					if (skill >= 4) skillmult = 1.5;
+
+					if (MiscItem && MiscItem.TSArtifactSpawnCooldown <= 0)
 					{
-						double basediv = 0.5;
-						double basediv2 = 0.125;
-						if ((playera.CountInv("KCTimeFreezer1") ||
-								 playera.CountInv("KCTimeFreezer2") ||
-								 playera.CountInv("KCTimeFreezer3")))
+						if (!bDROPPED && timefreezes)
 						{
-							basediv = 0.5;
-							basediv2 = 0.125;
-						}
-						else
-						{
-							basediv = 0.9375;
-							basediv2 = 0.25;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 1) 
-						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (MiscItem.TimeArmorRelicsOwned >= 2) 
-						{
-							basediv *= 2;
-							basediv2 *= 0.5;
-						}
-						if (timefreezes >= 20)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 40)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 80)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 160)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 320)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 640)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 1280)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 2560)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 5120)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 10240)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						if (timefreezes >= 20480)
-						{
-							basechance *= basediv;
-							basechance -= (timefreezes * basediv2);
-						}
-						int randroll = 1;
-						if (A_CheckSecret())
-						{
-							basechance /= random(2,3);
-							randroll *= random(2,3);
-						}
-						int rollrand = random(1,basechance);
-						if (rollrand <= randroll)
-						{
-							A_TSASpawnMessage();
-							Destroy();
+							double basediv = 0.5;
+							double basediv2 = 0.125;
+							if ((playera.CountInv("KCTimeFreezer1") ||
+									 playera.CountInv("KCTimeFreezer2") ||
+									 playera.CountInv("KCTimeFreezer3")))
+							{
+								basediv = 0.5;
+								basediv2 = 0.125;
+							}
+							else
+							{
+								basediv = 0.9375;
+								basediv2 = 0.25;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 1) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (MiscItem.TimeArmorRelicsOwned >= 2) 
+							{
+								basediv *= 2;
+								basediv2 *= 0.5;
+							}
+							if (timefreezes >= 20)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 40)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 80)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 160)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 320)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 640)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 1280)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 2560)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 5120)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 10240)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							if (timefreezes >= 20480)
+							{
+								basechance *= basediv;
+								basechance -= (timefreezes * basediv2);
+							}
+							int randroll = 1;
+							if (A_CheckSecret())
+							{
+								basechance /= random(2,3);
+								randroll *= random(2,3);
+							}
+							int rollrand = random(1,basechance);
+							if (rollrand <= randroll)
+							{
+								A_TSASpawnMessage();
+								Destroy();
+							}
 						}
 					}
 				}
+				firstticspawn++;
 				bNOTIMEFREEZE = false;
 			}
 		Idle:
