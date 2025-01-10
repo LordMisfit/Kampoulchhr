@@ -2921,18 +2921,15 @@ class KCStatusBarMain : BaseStatusBar
 				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_green, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
 				DigY += sepery;
 				
-				if (kcdebug_showextrametersalways)
-				{
-					hudstat = "IQ : ";
-					hudstat.AppendFormat("%d", (MiscItem.IQPieces+2));
-					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_purple, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
-					DigY += sepery;
-					
-					hudstat = "SEN: ";
-					hudstat.AppendFormat("%d", (MiscItem.SensesPieces+2));
-					DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
-					DigY += sepery;
-				}
+				hudstat = "IQ : ";
+				hudstat.AppendFormat("%d", (MiscItem.IQPieces+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_purple, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
+				
+				hudstat = "SEN: ";
+				hudstat.AppendFormat("%d", (MiscItem.SensesPieces+2));
+				DrawString(mConFont, hudstat, (DigX, DigY), DI_TEXT_ALIGN_LEFT, font.cr_blue, FontAlpha, FontWrapWidth, FontLineSpace, FontScale); // 41, -43
+				DigY += sepery;
 				
 				hudstat = "GUT: ";
 				hudstat.AppendFormat("%d", (MiscItem.PlayerGUTS+2));
@@ -5194,23 +5191,20 @@ class KCStatusBarMain : BaseStatusBar
 			// Draw PP/MP/HCLR
 			if (A_CheckForHeiwa() && MiscItem)
 			{
-				if (kcdebug_showextrametersalways)
+				if (MiscItem.MaxPsychicPoints > 0)
 				{
-					if (MiscItem.MaxPsychicPoints > 0)
-					{
-						yinc -= 20;
-						yinc = A_DrawFSPsychic(1.0, yinc);
-					}
-					if (MiscItem.MaxMagicPoints > 0)
-					{
-						yinc -= 20;
-						yinc = A_DrawFSMagic(1.0, yinc);
-					}
-					if (MiscItem.HellcoreOverheatLevel)
-					{
-						yinc -= 20;
-						yinc = A_DrawFSHellcore(1.0, yinc);
-					}
+					yinc -= 20;
+					yinc = A_DrawFSPsychic(1.0, yinc);
+				}
+				if (MiscItem.MaxMagicPoints > 0)
+				{
+					yinc -= 20;
+					yinc = A_DrawFSMagic(1.0, yinc);
+				}
+				if (MiscItem.HellcoreOverheatLevel)
+				{
+					yinc -= 20;
+					yinc = A_DrawFSHellcore(1.0, yinc);
 				}
 			}
 			
