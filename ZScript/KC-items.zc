@@ -5893,6 +5893,7 @@ class RandomModpack : CustomInventoryExt
 				ThinkerIterator RMPackFinder = ThinkerIterator.Create("RandomModpack");
 				bool spawned;
 				actor mo;
+				int modtype;
 				RandomModpack mo2;
 				int numfound = 0;
 				while (mo = Actor(RMPackFinder.Next()))
@@ -5901,18 +5902,63 @@ class RandomModpack : CustomInventoryExt
 					if (mo2 != self) numfound++;
 				}
 				
-				if (numfound < 4)
+				if (numfound < 5)
 				{
 					actor playera = players[0].mo;
-					for (int i = 0; i < 16; i++)
+					for (int i = 0; i < 17; i++)
 					{
-						int rand = random(1,5);
-						//Console.Printf("i: %d / 16, rand: %d / 5", i, rand);
-						if (rand <= 1)
+						int rand = random(1,6);
+						//Console.Printf("i: %d / 16, rand: %d / 6", i, rand);
+						if (i >= 16)
 						{
-							if (!playera.CountInv("TommyGunUpgrade"))
+							if (rand <= 1)
 							{
-								[spawned, mo] = A_SpawnItemEx("TommyGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+								[spawned, mo] = A_SpawnItemEx("TommyGun",flags:SXF_NOCHECKPOSITION,tid:tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
+								self.Destroy();
+								break;
+							}
+							if (rand == 2)
+							{
+								[spawned, mo] = A_SpawnItemEx("BlasterRifle",flags:SXF_NOCHECKPOSITION,tid:tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
+								self.Destroy();
+								break;
+							}
+							if (rand == 3)
+							{
+								[spawned, mo] = A_SpawnItemEx("BlasterPistol",flags:SXF_NOCHECKPOSITION,tid:tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
+								self.Destroy();
+								break;
+							}
+							if (rand == 4)
+							{
+								[spawned, mo] = A_SpawnItemEx("RiotGun",flags:SXF_NOCHECKPOSITION,tid:tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
+								self.Destroy();
+								break;
+							}
+							if (rand == 5)
+							{
+								[spawned, mo] = A_SpawnItemEx("Devastator",flags:SXF_NOCHECKPOSITION,tid:tid);
+								if (bCOUNTITEM) level.total_items--;
+								if (bCOUNTSECRET) level.total_secrets--;
+								if (bCOUNTKILL) level.total_monsters--;
+								self.Destroy();
+								break;
+							}
+							if (rand >= 6)
+							{
+								[spawned, mo] = A_SpawnItemEx("CalamityBlade",flags:SXF_NOCHECKPOSITION,tid:tid);
 								if (bCOUNTITEM) level.total_items--;
 								if (bCOUNTSECRET) level.total_secrets--;
 								if (bCOUNTKILL) level.total_monsters--;
@@ -5920,64 +5966,79 @@ class RandomModpack : CustomInventoryExt
 								break;
 							}
 						}
-						if (rand == 2)
+						else
 						{
-							if (!playera.CountInv("BlasterRifleUpgrade"))
+							if (rand <= 1)
 							{
-								[spawned, mo] = A_SpawnItemEx("BlasterRifleModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-								if (bCOUNTITEM) level.total_items--;
-								if (bCOUNTSECRET) level.total_secrets--;
-								if (bCOUNTKILL) level.total_monsters--;
-								self.Destroy();
-								break;
+								if (!playera.CountInv("TommyGunUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("TommyGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
 							}
-						}
-						if (rand == 3)
-						{
-							if (!playera.CountInv("BlasterPistolUpgrade"))
+							if (rand == 2)
 							{
-								[spawned, mo] = A_SpawnItemEx("BlasterPistolModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-								if (bCOUNTITEM) level.total_items--;
-								if (bCOUNTSECRET) level.total_secrets--;
-								if (bCOUNTKILL) level.total_monsters--;
-								self.Destroy();
-								break;
+								if (!playera.CountInv("BlasterRifleUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("BlasterRifleModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
 							}
-						}
-						if (rand == 4)
-						{
-							if (!playera.CountInv("RiotGunUpgrade"))
+							if (rand == 3)
 							{
-								[spawned, mo] = A_SpawnItemEx("RiotGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-								if (bCOUNTITEM) level.total_items--;
-								if (bCOUNTSECRET) level.total_secrets--;
-								if (bCOUNTKILL) level.total_monsters--;
-								self.Destroy();
-								break;
+								if (!playera.CountInv("BlasterPistolUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("BlasterPistolModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
 							}
-						}
-						if (rand == 5)
-						{
-							if (!playera.CountInv("DevastatorUpgrade"))
+							if (rand == 4)
 							{
-								[spawned, mo] = A_SpawnItemEx("DevastatorModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-								if (bCOUNTITEM) level.total_items--;
-								if (bCOUNTSECRET) level.total_secrets--;
-								if (bCOUNTKILL) level.total_monsters--;
-								self.Destroy();
-								break;
+								if (!playera.CountInv("RiotGunUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("RiotGunModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
 							}
-						}
-						if (rand >= 6)
-						{
-							if (!playera.CountInv("CalamityBladeUpgrade"))
+							if (rand == 5)
 							{
-								[spawned, mo] = A_SpawnItemEx("CalamityBladeModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
-								if (bCOUNTITEM) level.total_items--;
-								if (bCOUNTSECRET) level.total_secrets--;
-								if (bCOUNTKILL) level.total_monsters--;
-								self.Destroy();
-								break;
+								if (!playera.CountInv("DevastatorUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("DevastatorModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
+							}
+							if (rand >= 6)
+							{
+								if (!playera.CountInv("CalamityBladeUpgrade"))
+								{
+									[spawned, mo] = A_SpawnItemEx("CalamityBladeModpack",flags:SXF_NOCHECKPOSITION,tid:tid);
+									if (bCOUNTITEM) level.total_items--;
+									if (bCOUNTSECRET) level.total_secrets--;
+									if (bCOUNTKILL) level.total_monsters--;
+									self.Destroy();
+									break;
+								}
 							}
 						}
 					}
