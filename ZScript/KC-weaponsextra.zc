@@ -1037,6 +1037,11 @@ class CalamityBlade : MarineWeapon
 					{
 						basemodpackchance = random(1,2);
 						modpackdropchance /= random(1,2);
+						if (A_CheckSecret() >= 2)
+						{
+							basemodpackchance = random(1,2);
+							modpackdropchance /= random(1,2);
+						}
 					}
 				}
 				let globalvars = KCGlobalVariables.Get();

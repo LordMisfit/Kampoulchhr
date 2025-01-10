@@ -355,6 +355,7 @@ class CustomInventoryExt : CustomInventory
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
 		if (A_CheckSecret()) chancebase1 *= random(2,3);
+		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -1843,7 +1844,7 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 		Spawn:
 			SOUL A 0 Bright
 			{
-				if (invoker.spawnroll && 
+				if (!invoker.spawnroll && 
 						A_CheckSecret() && 
 						!bDROPPED)
 				{
@@ -1854,11 +1855,21 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 					{
 						chance = randompick(8,16,16,16,16,16,16,16);
 						chance2 = randompick(1,1,1,1,2,2,2,3);
+						if (A_CheckSecret() >= 2) 
+						{
+							chance = randompick(2,4,4,4,4,4,4,4);
+							chance2 = randompick(1,1,2,2,3,3,4,5);
+						}
 					}
 					else
 					{
 						chance = randompick(32,64,64,64,64,64,64,64);
 						chance2 = randompick(1,1,1,1,1,1,1,2);
+						if (A_CheckSecret() >= 2) 
+						{
+							chance = randompick(8,16,16,32,32,32,32,32);
+							chance2 = randompick(1,1,1,1,2,2,2,3);
+						}
 					}
 					
 					if (random(1,chance) <= chance2)
@@ -2979,7 +2990,7 @@ class KCArmorPickup : BasicArmorPickup
 	mixin GrabArmorItems;
 	mixin ItemFallSpotCheck;
 	int firstticspawn;
-	bool isasecret;
+	int isasecret;
 	
 	int A_CheckMaxArmor(int fSaveAmount) // KCArmorPickup
 	{
@@ -3220,6 +3231,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
 		if (A_CheckSecret()) chancebase1 *= random(2,3);
+		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -3604,13 +3616,17 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 			{
 				if (!firstticspawn)
 				{
-					if (A_CheckSecret()) isasecret = true;
+					isasecret = A_CheckSecret();
 					actor playera = players[0].mo;
 					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 					int timefreezes;
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					int basechance = (kc_inventorydroprate5 * 0.25);
-					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					if (isasecret) 
+					{
+						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					}
 					
 					double skillmult = 1;
 					if (skill <= 0) skillmult = 0.667;
@@ -3707,6 +3723,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 							{
 								basechance /= random(2,3);
 								randroll *= random(2,3);
+								if (A_CheckSecret() >= 2)
+								{
+									basechance /= random(2,3);
+									randroll *= random(2,3);
+								}
 							}
 							int rollrand = random(1,basechance);
 							if (rollrand <= randroll)
@@ -3725,6 +3746,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 						{
 							chance1 /= random(2,3);
 							chance2 *= random(2,3);
+							if (isasecret >= 2)
+							{
+								chance1 /= random(2,3);
+								chance2 *= random(2,3);
+							}
 						}
 						if (random(1,chance1) <= chance2)
 						{
@@ -3907,13 +3933,17 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 			{
 				if (!firstticspawn)
 				{
-					if (A_CheckSecret()) isasecret = true;
+					isasecret = A_CheckSecret();
 					actor playera = players[0].mo;
 					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 					int timefreezes;
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					int basechance = (kc_inventorydroprate5 * 0.125);
-					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					if (isasecret) 
+					{
+						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					}
 					
 					double skillmult = 1;
 					if (skill <= 0) skillmult = 0.667;
@@ -4010,6 +4040,11 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 							{
 								basechance /= random(2,3);
 								randroll *= random(2,3);
+								if (A_CheckSecret() >= 2)
+								{
+									basechance /= random(2,3);
+									randroll *= random(2,3);
+								}
 							}
 							int rollrand = random(1,basechance);
 							if (rollrand <= randroll)
@@ -4028,6 +4063,11 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 						{
 							chance1 /= random(2,3);
 							chance2 *= random(2,3);
+							if (isasecret >= 2)
+							{
+								chance1 /= random(2,3);
+								chance2 *= random(2,3);
+							}
 						}
 						if (random(1,chance1) <= chance2)
 						{
@@ -4202,13 +4242,17 @@ class KCHeavyArmor : KCArmorPickup
 			{
 				if (!firstticspawn)
 				{
-					if (A_CheckSecret()) isasecret = true;
+					isasecret = A_CheckSecret();
 					actor playera = players[0].mo;
 					let MiscItem = PlayerStatItem(Playera.FindInventory("PlayerStatItem"));
 					int timefreezes;
 					if (MiscItem) timefreezes = (MiscItem.timefreeze1timesused + MiscItem.timefreeze2timesused + MiscItem.timefreeze3timesused);
 					int basechance = (kc_inventorydroprate5 * 0.0625);
-					if (isasecret) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					if (isasecret) 
+					{
+						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+					}
 					
 					double skillmult = 1;
 					if (skill <= 0) skillmult = 0.667;
@@ -4305,6 +4349,11 @@ class KCHeavyArmor : KCArmorPickup
 							{
 								basechance /= random(2,3);
 								randroll *= random(2,3);
+								if (A_CheckSecret() >= 2)
+								{
+									basechance /= random(2,3);
+									randroll *= random(2,3);
+								}
 							}
 							int rollrand = random(1,basechance);
 							if (rollrand <= randroll)
@@ -4357,6 +4406,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int basechance = 1;
 		if (A_CheckSecret()) basechance *= 4;
+		if (A_CheckSecret() >= 2) basechance *= 4;
 
 		if (playera.CountInv("BackpackTier2"))
 		{
@@ -4401,6 +4451,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				else if (playera.CountInv("SpecialBackpackBonus") > 0) basechance *= frandom(0.875,1.000);
 				int basechance3 = 1;
 				if (A_CheckSecret()) basechance3 *= random(2,3);
+				if (A_CheckSecret() >= 2) basechance3 *= random(2,3);
 				if (!bDROPPED)
 				{
 					if (random(1,basechance) <= basechance3)
@@ -4437,6 +4488,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 					{
 						int basechance4 = 1;
 						if (A_CheckSecret()) basechance4 *= random(2,3);
+						if (A_CheckSecret() >= 2) basechance4 *= random(2,3);
 						if (random(1,16) <= basechance4) invoker.A_SpawnOtherBKPK();
 					}
 				}
@@ -4668,6 +4720,7 @@ class BaseAmmoSpawner : KCBaseZSC
 		double spread5 = 2.0;
 		int droprate = basedroprate;
 		if (A_CheckSecret()) droprate *= random(2,3);
+		if (A_CheckSecret() >= 2) droprate *= random(2,3);
 		if (bDROPPED) 
 		{
 			droprate *= dropfactor;

@@ -1,12 +1,12 @@
 mixin class SecretChecker
 {
-	action bool A_CheckSecret()
+	action int A_CheckSecret()
 	{
-		bool secret = false;
+		int secret = false;
 		if (!bDROPPED)
 		{
-			if (CurSector.IsSecret()) secret = true;
-			if (bCOUNTSECRET) secret = true;
+			if (CurSector.IsSecret()) secret++;
+			if (bCOUNTSECRET) secret++;
 		}
 		return secret;
 	}
