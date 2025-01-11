@@ -4969,7 +4969,24 @@ class PistolSpawner : WeaponSpawner replaces Pistol
 		}
 		if (A_CheckForHeiwa())
 		{
-			if (random(1,8) <= 1) 
+			int dropchance2 = 1;
+			int dropchance2max = 8;
+			if (A_CheckSecret())
+			{
+				dropchance2 = randompick(1,2);
+				dropchancemax = randompick(6,7,7,7,8);
+				if (A_CheckSecret() >= 2)
+				{
+					dropchance2 = randompick(1,1,2,2,2);
+					dropchancemax = randompick(4,5,5,6,7);
+					if (A_CheckSecret() >= 3)
+					{
+						dropchance2 = randompick(1,2,3,3,4,5);
+						dropchancemax = randompick(3,4,5,5,6);
+					}
+				}
+			}
+			if (random(1,dropchance2max) <= dropchance2) 
 			{
 				droptypespecial = "BlasterPickup";
 				droptypeammo = "CellNew";
@@ -5132,7 +5149,24 @@ class ShotgunSpawner : WeaponSpawner replaces Shotgun
 		}
 		if (A_CheckForHeiwa()) 
 		{
-			if (random(1,16) <= 1)
+			int dropchance2 = 1;
+			int dropchance2max = 16;
+			if (A_CheckSecret())
+			{
+				dropchance2 = randompick(1,2);
+				dropchancemax = randompick(12,13,14,15,16);
+				if (A_CheckSecret() >= 2)
+				{
+					dropchance2 = randompick(1,1,2,2,2);
+					dropchancemax = randompick(8,10,11,12,14);
+					if (A_CheckSecret() >= 3)
+					{
+						dropchance2 = randompick(1,2,3,3,4,5);
+						dropchancemax = randompick(6,8,10,11,12);
+					}
+				}
+			}
+			if (random(1,dropchance2max) <= dropchance2) 
 			{
 				droptypespecial = "RiotGun";
 				droptypeammo = "ShellNew";
@@ -5428,7 +5462,24 @@ class SuperShotgunSpawner : WeaponSpawner replaces SuperShotgun
 		}
 		if (A_CheckForHeiwa()) 
 		{
-			if (random(1,8) <= 1)
+			int dropchance2 = 1;
+			int dropchance2max = 8;
+			if (A_CheckSecret())
+			{
+				dropchance2 = randompick(1,2);
+				dropchancemax = randompick(6,7,7,7,8);
+				if (A_CheckSecret() >= 2)
+				{
+					dropchance2 = randompick(1,1,2,2,2);
+					dropchancemax = randompick(4,5,5,6,7);
+					if (A_CheckSecret() >= 3)
+					{
+						dropchance2 = randompick(1,2,3,3,4,5);
+						dropchancemax = randompick(3,4,5,5,6);
+					}
+				}
+			}
+			if (random(1,dropchance2max) <= dropchance2) 
 			{
 				droptypespecial = "RiotGun";
 				droptypeammo = "ShellNew";
@@ -5825,7 +5876,25 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
-			if (random(1,8) <= 1) 
+
+			int dropchance2 = 1;
+			int dropchance2max = 8;
+			if (A_CheckSecret())
+			{
+				dropchance2 = randompick(1,2);
+				dropchancemax = randompick(6,7,7,7,8);
+				if (A_CheckSecret() >= 2)
+				{
+					dropchance2 = randompick(1,1,2,2,2);
+					dropchancemax = randompick(4,5,5,6,7);
+					if (A_CheckSecret() >= 3)
+					{
+						dropchance2 = randompick(1,2,3,3,4,5);
+						dropchancemax = randompick(3,4,5,5,6);
+					}
+				}
+			}
+			if (random(1,dropchance2max) <= dropchance2) 
 			{
 				droptypespecial = "BlasterRifle";
 				droptypeammo = "CellNew";
@@ -6050,7 +6119,24 @@ class RocketLauncherSpawner : WeaponSpawner replaces RocketLauncher
 		}
 		if (A_CheckForHeiwa())
 		{
-			if (random(1,8) <= 1) 
+			int dropchance2 = 1;
+			int dropchance2max = 8;
+			if (A_CheckSecret())
+			{
+				dropchance2 = randompick(1,2);
+				dropchancemax = randompick(6,7,7,7,8);
+				if (A_CheckSecret() >= 2)
+				{
+					dropchance2 = randompick(1,1,2,2,2);
+					dropchancemax = randompick(4,5,5,6,7);
+					if (A_CheckSecret() >= 3)
+					{
+						dropchance2 = randompick(1,2,3,3,4,5);
+						dropchancemax = randompick(3,4,5,5,6);
+					}
+				}
+			}
+			if (random(1,dropchance2max) <= dropchance2) 
 			{
 				droptypespecial = "Deviation";
 				droptypeammo = "RocketAmmoNew";
