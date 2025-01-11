@@ -1039,8 +1039,13 @@ class CalamityBlade : MarineWeapon
 						modpackdropchance /= random(1,2);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(1,2);
-							modpackdropchance /= random(1,2);
+							basemodpackchance = randompick(1,1,2);
+							modpackdropchance /= randompick(1,2,2);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,1,1,1,2);
+								modpackdropchance /= randompick(1,2,2,2);
+							}
 						}
 					}
 				}

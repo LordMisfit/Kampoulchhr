@@ -4,60 +4,63 @@ mixin class SecretChecker
 	{
 		actor playera = players[0].mo;
 		int secretmap = 0;
-		if (playera.CountInv("PlayingDoom1") ||
-				playera.CountInv("PlayingHeretic")) 
+		if (!bDROPPED)
 		{
-			if (level.GetChecksum() == '1dbf91738492fb0e29836a2d66406cf1' || 
-					level.mapname == "E1M9")
+			if (playera.CountInv("PlayingDoom1") ||
+					playera.CountInv("PlayingHeretic")) 
 			{
-				secretmap = 9;
+				if (level.GetChecksum() == '1dbf91738492fb0e29836a2d66406cf1' || 
+						level.mapname == "E1M9")
+				{
+					secretmap = 9;
+				}
+				if (level.GetChecksum() == '8A6399FAAA2E68649D4E4B16642074BE' || 
+						level.mapname == "E2M9")
+				{
+					secretmap = 18;
+				}
+				if (level.GetChecksum() == 'FE97DCB9E6235FB3C52AE7C143160D73' || 
+						level.mapname == "E3M9")
+				{
+					secretmap = 27;
+				}
+				if (level.GetChecksum() == '78556d238ffec8058cacc48b847e1fab' || 
+						level.mapname == "E4M9")
+				{
+					secretmap = 36;
+				}
+				if (level.mapname == "E5M9")
+				{
+					secretmap = 45;
+				}
+				if (level.mapname == "E6M9")
+				{
+					secretmap = 54;
+				}
 			}
-			if (level.GetChecksum() == '8A6399FAAA2E68649D4E4B16642074BE' || 
-					level.mapname == "E2M9")
+			else
+			if (playera.CountInv("PlayingDoom2") || 
+					playera.CountInv("PlayingTNT") || 
+					playera.CountInv("PlayingPlutonia")) 
 			{
-				secretmap = 18;
+				if (level.GetChecksum() == '3ff94e27423f91c1585b3396f0c03459' || 
+						level.mapname == "MAP31")
+				{
+					secretmap = 31;
+				}
+				if (level.GetChecksum() == 'aa4ca3fc891d13821accabd836e29eb5' || 
+						level.mapname == "MAP32")
+				{
+					secretmap = 32;
+				}
 			}
-			if (level.GetChecksum() == 'FE97DCB9E6235FB3C52AE7C143160D73' || 
-					level.mapname == "E3M9")
+			else
+			if (playera.CountInv("PlayingPSXDoom"))
 			{
-				secretmap = 27;
-			}
-			if (level.GetChecksum() == '78556d238ffec8058cacc48b847e1fab' || 
-					level.mapname == "E4M9")
-			{
-				secretmap = 36;
-			}
-			if (level.mapname == "E5M9")
-			{
-				secretmap = 45;
-			}
-			if (level.mapname == "E6M9")
-			{
-				secretmap = 54;
-			}
-		}
-		else
-		if (playera.CountInv("PlayingDoom2") || 
-				playera.CountInv("PlayingTNT") || 
-				playera.CountInv("PlayingPlutonia")) 
-		{
-			if (level.GetChecksum() == '3ff94e27423f91c1585b3396f0c03459' || 
-					level.mapname == "MAP31")
-			{
-				secretmap = 31;
-			}
-			if (level.GetChecksum() == 'aa4ca3fc891d13821accabd836e29eb5' || 
-					level.mapname == "MAP32")
-			{
-				secretmap = 32;
-			}
-		}
-		else
-		if (playera.CountInv("PlayingPSXDoom"))
-		{
-			if (level.mapname == "MAP59")
-			{
-				secretmap = 59;
+				if (level.mapname == "MAP59")
+				{
+					secretmap = 59;
+				}
 			}
 		}
 		return secretmap;
@@ -70,6 +73,7 @@ mixin class SecretChecker
 		{
 			if (CurSector.IsSecret()) secret++;
 			if (bCOUNTSECRET) secret++;
+			if (A_CheckSecretMap()) secret++;
 		}
 		return secret;
 	}

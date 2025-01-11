@@ -356,6 +356,7 @@ class CustomInventoryExt : CustomInventory
 		int chancebase1 = 1;
 		if (A_CheckSecret()) chancebase1 *= random(2,3);
 		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
+		if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -1859,6 +1860,11 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 						{
 							chance = randompick(2,4,4,4,4,4,4,4);
 							chance2 = randompick(1,1,2,2,3,3,4,5);
+							if (A_CheckSecret() >= 3) 
+							{
+								chance = randompick(1,1,1,2,2,2,2,2);
+								chance2 = randompick(1,1,1,1,1,2,2,2);
+							}
 						}
 					}
 					else
@@ -1869,6 +1875,11 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 						{
 							chance = randompick(8,16,16,32,32,32,32,32);
 							chance2 = randompick(1,1,1,1,2,2,2,3);
+							if (A_CheckSecret() >= 3) 
+							{
+								chance = randompick(2,4,8,8,16,16,16,16);
+								chance2 = randompick(1,1,1,1,1,1,2,2);
+							}
 						}
 					}
 					
@@ -3232,6 +3243,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 		int chancebase1 = 1;
 		if (A_CheckSecret()) chancebase1 *= random(2,3);
 		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
+		if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
 		
 		if (HeiwaPlayer(playera))
 		{
@@ -3626,6 +3638,7 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 					{
 						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 3) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 					}
 					
 					double skillmult = 1;
@@ -3727,6 +3740,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 								{
 									basechance /= random(2,3);
 									randroll *= random(2,3);
+									if (A_CheckSecret() >= 3)
+									{
+										basechance /= random(2,3);
+										randroll *= random(2,3);
+									}
 								}
 							}
 							int rollrand = random(1,basechance);
@@ -3750,6 +3768,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 							{
 								chance1 /= random(2,3);
 								chance2 *= random(2,3);
+								if (isasecret >= 3)
+								{
+									chance1 /= random(2,3);
+									chance2 *= random(2,3);
+								}
 							}
 						}
 						if (random(1,chance1) <= chance2)
@@ -3943,6 +3966,7 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 					{
 						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 3) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 					}
 					
 					double skillmult = 1;
@@ -4044,6 +4068,11 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 								{
 									basechance /= random(2,3);
 									randroll *= random(2,3);
+									if (A_CheckSecret() >= 3)
+									{
+										basechance /= random(2,3);
+										randroll *= random(2,3);
+									}
 								}
 							}
 							int rollrand = random(1,basechance);
@@ -4067,6 +4096,11 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 							{
 								chance1 /= random(2,3);
 								chance2 *= random(2,3);
+								if (isasecret >= 3)
+								{
+									chance1 /= random(2,3);
+									chance2 *= random(2,3);
+								}
 							}
 						}
 						if (random(1,chance1) <= chance2)
@@ -4252,6 +4286,7 @@ class KCHeavyArmor : KCArmorPickup
 					{
 						basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 						if (isasecret >= 2) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
+						if (isasecret >= 3) basechance /= randompick(2,3,3,4,4,4,4,4,4,4,4,4,4,5,5,6);
 					}
 					
 					double skillmult = 1;
@@ -4353,6 +4388,11 @@ class KCHeavyArmor : KCArmorPickup
 								{
 									basechance /= random(2,3);
 									randroll *= random(2,3);
+									if (A_CheckSecret() >= 3)
+									{
+										basechance /= random(2,3);
+										randroll *= random(2,3);
+									}
 								}
 							}
 							int rollrand = random(1,basechance);
@@ -4407,6 +4447,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 		int basechance = 1;
 		if (A_CheckSecret()) basechance *= 4;
 		if (A_CheckSecret() >= 2) basechance *= 4;
+		if (A_CheckSecret() >= 3) basechance *= 4;
 
 		if (playera.CountInv("BackpackTier2"))
 		{
@@ -4452,6 +4493,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 				int basechance3 = 1;
 				if (A_CheckSecret()) basechance3 *= random(2,3);
 				if (A_CheckSecret() >= 2) basechance3 *= random(2,3);
+				if (A_CheckSecret() >= 3) basechance3 *= random(2,3);
 				if (!bDROPPED)
 				{
 					if (random(1,basechance) <= basechance3)
@@ -4489,6 +4531,7 @@ class Backpack2 : CustomInventoryExt replaces Backpack
 						int basechance4 = 1;
 						if (A_CheckSecret()) basechance4 *= random(2,3);
 						if (A_CheckSecret() >= 2) basechance4 *= random(2,3);
+						if (A_CheckSecret() >= 3) basechance4 *= random(2,3);
 						if (random(1,16) <= basechance4) invoker.A_SpawnOtherBKPK();
 					}
 				}
@@ -4721,6 +4764,7 @@ class BaseAmmoSpawner : KCBaseZSC
 		int droprate = basedroprate;
 		if (A_CheckSecret()) droprate *= random(2,3);
 		if (A_CheckSecret() >= 2) droprate *= random(2,3);
+		if (A_CheckSecret() >= 3) droprate *= random(2,3);
 		if (bDROPPED) 
 		{
 			droprate *= dropfactor;

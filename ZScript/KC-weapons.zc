@@ -4965,6 +4965,7 @@ class PistolSpawner : WeaponSpawner replaces Pistol
 			dropchance = 2;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -5127,6 +5128,7 @@ class ShotgunSpawner : WeaponSpawner replaces Shotgun
 			dropchance = 2;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa()) 
 		{
@@ -5422,6 +5424,7 @@ class SuperShotgunSpawner : WeaponSpawner replaces SuperShotgun
 			dropchance = randompick(4,4,5);
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa()) 
 		{
@@ -5805,6 +5808,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 			dropchance = 2;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -5819,6 +5823,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				dropchance = 4;
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 			if (random(1,8) <= 1) 
 			{
@@ -5846,6 +5851,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				dropchance = 2;
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 			droptypespecial = "TommyGun";
 			droptypeammo = "TommAmmo";
@@ -6040,6 +6046,7 @@ class RocketLauncherSpawner : WeaponSpawner replaces RocketLauncher
 			dropchance = 4;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6486,6 +6493,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 			dropchance = 4;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6500,6 +6508,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 				dropchance = random(3,5);
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 			droptypespecial = "TeslaCannon";
 			droptypeammo = "Bolts";
@@ -6524,6 +6533,7 @@ class PlasmaRifleSpawner : WeaponSpawner replaces PlasmaRifle
 				dropchance = 1;
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 			droptypespecial = "TeslaCannon";
 			droptypeammo = "Bolts";
@@ -6829,6 +6839,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 			dropchance = 4;
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
 		if (A_CheckForHeiwa())
 		{
@@ -6851,6 +6862,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 				dropchance = random(3,5);
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 		}
 		else
@@ -6869,6 +6881,7 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 				dropchance = 1;
 				if (A_CheckSecret()) dropchance *= random(2,3);
 				if (A_CheckSecret() >= 2) dropchance *= random(2,3);
+				if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 			}
 		}
 		
@@ -8142,8 +8155,13 @@ class TommyGun : MarineWeapon
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
@@ -9111,8 +9129,13 @@ class DevastatorGenerator : CustomInventoryExt
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
@@ -14365,8 +14388,13 @@ Class BlasterPickup : CustomInventoryExt
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
@@ -14587,8 +14615,13 @@ Class BlasterPistol : MarineWeapon
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
@@ -15814,8 +15847,13 @@ class Riotgun : MarineWeapon
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
@@ -18166,8 +18204,13 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 						modpackdropchance /= random(2,3);
 						if (A_CheckSecret() >= 2)
 						{
-							basemodpackchance = random(2,3);
-							modpackdropchance /= random(2,3);
+							basemodpackchance = randompick(2,2,3);
+							modpackdropchance /= randompick(2,3,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basemodpackchance = randompick(1,2,2,3);
+								modpackdropchance /= randompick(2,3,3,4);
+							}
 						}
 					}
 				}
