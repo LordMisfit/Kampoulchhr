@@ -4722,6 +4722,7 @@ class KCStatusBarMain : BaseStatusBar
 			let Glk21 = Glock21(CPlayerPawn.FindInventory("Glock21"));
 			let BstP = BlasterPistol(CPlayerPawn.FindInventory("BlasterPistol"));
 			let RitGn = RiotGun(CPlayerPawn.FindInventory("RiotGun"));
+			let TmyG = TommyGun(CPlayerPawn.FindInventory("TommyGun"));
 			let BlsR = BlasterRifle(CPlayerPawn.FindInventory("BlasterRifle"));
 			let Incn = Incinerator(CPlayerPawn.FindInventory("Incinerator"));
 			let BHGn = BHGen(CPlayerPawn.FindInventory("BHGen"));
@@ -4777,8 +4778,8 @@ class KCStatusBarMain : BaseStatusBar
 					(PlayerWeapon is "TommyGun" && CPlayerPawn.CountInv("DualTommyGuns")) ||
 					(PlayerWeapon is "BlasterRifle" && BlsR) ||
 					PlayerWeapon is "RocketLauncherMarine" ||
-					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
-					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTommyGuns")) ||
+					(PlayerWeapon is "Devastator" && CPlayerPawn.CountInv("DualDevastators")) ||
+					(PlayerWeapon is "TeslaCannon" && CPlayerPawn.CountInv("DualTeslaCannons")) ||
 					(PlayerWeapon is "Incinerator" && Incn) ||
 					(PlayerWeapon is "BHGen" && BHGn) ||
 					(PlayerWeapon is "CalamityBlade" && CPlayerPawn.CountInv("CalamityBladeUpgrade") && CalB) ||
@@ -5023,7 +5024,18 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "SuperShotgunMarine") LegendStr.AppendFormat(" = \c[blue]QUICK SHOT [<ACCURATE]\c-");
 				if (PlayerWeapon is "RiotGun") LegendStr.AppendFormat(" = \c[blue]CHANGE FIRE MODE\c-");
 				if (PlayerWeapon is "ChaingunMarine") LegendStr.AppendFormat(" = \c[blue]MINIGUN SPEEDFIRE\c-");
-				if (PlayerWeapon is "TommyGun") LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS\c-");
+				if (PlayerWeapon is "TommyGun") 
+				{
+					if (CPlayerPawn.CountInv("DualTommyGuns"))
+					{
+						if (CPlayerPawn.CountInv("DualTommyGunsDisabled")) LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS [22 BULLETS]\c-");
+																													else LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS [44 BULLETS]\c-");
+					}
+					else
+					{
+						LegendStr.AppendFormat(" = \c[blue]SPREAD-OUT SHOTS [22 BULLETS]\c-");
+					}
+				}
 				if (PlayerWeapon is "BlasterRifle" && BlsR) 
 				{
 					if (BlsR.firetype == 0) LegendStr.AppendFormat(" = \c[blue]LASER SHOTBURST [~1-3 CELLS/SHOT]\c-");
@@ -5033,7 +5045,18 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "Deviation") LegendStr.AppendFormat(" = \c[blue]DRUNKEN ROCKET [FASTER FIRE]\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST [~2-10 CELLS/SHOT]\c-");
-				if (PlayerWeapon is "TeslaCannon") LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
+				if (PlayerWeapon is "TeslaCannon") 
+				{
+					if (CPlayerPawn.CountInv("DualTeslaCannons"))
+					{
+						if (CPlayerPawn.CountInv("DualTeslaCannonsDisabled")) LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
+																														 else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+					}
+					else
+					{
+						LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
+					}
+				}
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");
 				if (PlayerWeapon is "BHGen") 
 				{
