@@ -1699,7 +1699,24 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 				}
 				else
 				{
-					if (random(1,1024) <= random(6,10))
+					int basechancemax = 1024;
+					int basechance = random(6,10);
+					if (A_CheckSecret())
+					{
+						basechancemax /= random(2,3);
+						basechance *= random(2,3);
+						if (A_CheckSecret() >= 2)
+						{
+							basechancemax /= random(2,3);
+							basechance *= random(2,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basechancemax /= random(2,3);
+								basechance *= random(2,3);
+							}
+						}
+					}
+					if (random(1,basechancemax) <= basechance)
 					{
 						actor mo;
 						bool spawned;
@@ -3287,7 +3304,24 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 				}
 				else
 				{
-					if (random(1,1024) <= random(6,10))
+					int basechancemax = 1024;
+					int basechance = random(6,10);
+					if (A_CheckSecret())
+					{
+						basechancemax /= random(2,3);
+						basechance *= random(2,3);
+						if (A_CheckSecret() >= 2)
+						{
+							basechancemax /= random(2,3);
+							basechance *= random(2,3);
+							if (A_CheckSecret() >= 3)
+							{
+								basechancemax /= random(2,3);
+								basechance *= random(2,3);
+							}
+						}
+					}
+					if (random(1,basechancemax) <= basechance)
 					{
 						actor mo;
 						bool spawned;
