@@ -4969,6 +4969,7 @@ class KCStatusBarMain : BaseStatusBar
 			LegendStrFake = "";
 			isUnboundKey = false;
 			if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife) ||
+					PlayerWeapon is "FistHeiwa" ||
 					PlayerWeapon is "PistolMarine" ||
 					PlayerWeapon is "Glock21" ||
 					PlayerWeapon is "BlasterPistol" ||
@@ -4992,6 +4993,7 @@ class KCStatusBarMain : BaseStatusBar
 			{
 				LY += LYInc;
 				LegendStr.AppendFormat(ReturnKeyBind1("+altattack", true, false));
+				if (PlayerWeapon is "FistHeiwa") LegendStr.AppendFormat(" = \c[blue]THROW AN UPPERCUT\c-");
 				if ((PlayerWeapon is "KnifeHeiwa" && FoundKnife)) 
 				{
 					if (KnifeAltUsable)
