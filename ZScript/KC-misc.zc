@@ -809,9 +809,9 @@ class PlayerStatItem : Inventory
 
 						atkfct = deffct = spdfct = jmpfct = suvfct = mssfct = evdfct = 1.00;
 						double variance = 0.10;
-						heiwavhardmodifier = false;
 						if (A_CheckForHeiwa())
 						{
+							heiwavhardmodifier = false;
 							if (TrueGameSkill == SKILL_VERY_EASY)
 							{
 								MaxHealthTrue = 45;
@@ -842,7 +842,7 @@ class PlayerStatItem : Inventory
 							}
 							if (TrueGameSkill == SKILL_VERY_HARD)
 							{
-								if (random(1,8) <= 1) heiwavhardmodifier = true;
+								heiwavhardmodifier = GetCVar("kcheiwa_vhardmodifier");
 								MaxHealthTrue = 30;
 								MaxPsychicPoints = 10;
 								MaxMagicPoints = 10;
