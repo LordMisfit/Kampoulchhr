@@ -9986,6 +9986,11 @@ class PlayerDashJump : Inventory
 				Owner.A_StartSound("player/airjump",CHAN_BODY,CHANF_OVERLAP,dashsndvol);
 			}
 			
+			if (owner.CountInv("FistPlayerBlockHold")) 
+			{
+				Owner.A_StartSound("stackledash", randompick[statitem](180,181), CHANF_OVERLAP, frandom[statitem](0.825,0.975), ATTN_NORM, frandom[statitem](1.125,1.25));
+			}
+			
 			if (owner.CountInv("HWShieldBlockHold")) 
 			{
 				Owner.A_StartSound("shielddash1", randompick[statitem](180,181), CHANF_OVERLAP, frandom[statitem](0.65,0.95), ATTN_NORM, frandom[statitem](0.667,1.333));
