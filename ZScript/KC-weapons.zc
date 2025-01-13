@@ -10742,6 +10742,8 @@ class TeslaSmoke : KCBaseZSC
 		+CLIENTSIDEONLY
 		+RIPPER;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	States
 	{
@@ -10765,6 +10767,8 @@ class TeslaFX : KCBaseZSC
 		+NOINTERACTION;
 		+NOTELEPORT;
 		-TELESTOMP;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -10787,6 +10791,8 @@ class KCBlueFlare : KCBaseLensflare
 	default
 	{
 		Scale 0.4;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -10823,6 +10829,8 @@ class TeslaBallBig : KCFastProjectile
 		+NOEXTREMEDEATH;
 		+THRUGHOST;
 		+FORCERADIUSDMG;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		ActiveSound "weap/tsla/see";
 		SeeSound "Shoot/Tesla";
 		DeathSound "";
@@ -10868,6 +10876,8 @@ class TeslaBallBigDual : TeslaBallBig
 	default
 	{
 		DamageFunction (180 * random(1,8)); // DamageFunction (random(84,188));
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	override void Tick()
@@ -10950,6 +10960,8 @@ class TeslaExplosion : KCProjectile
 		+BLOODLESSIMPACT;
 		+RIPPER;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		ProjectileKickback 50;
 	}
 	
@@ -10973,6 +10985,8 @@ class TeslaExplosionDual : KCProjectile
 		+RIPPER;
 		+DONTREFLECT;
 		ProjectileKickback 50;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -11008,6 +11022,8 @@ class TeslaDebris : KCProjectile
 		+WINDTHRUST;
 		-NOGRAVITY;
 		-SOLID;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		
 		//Health 5;
 		//Speed 10;
@@ -11044,6 +11060,8 @@ class BoltShrink1 : KCBaseZSC
 		Alpha 0.5;
 		RenderStyle "Add";
 		+NOINTERACTION;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -11196,6 +11214,8 @@ class TeslaProjectile : KCFastProjectile
 		+BLOODLESSIMPACT; //No more insane blood on wall
 		+FOILINVUL;
 		+THRUGHOST;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		ProjectileKickback 50;
 	}
@@ -11233,6 +11253,8 @@ class TeslaProjectile2 : TeslaProjectile
 		+BLOODLESSIMPACT; //No more insane blood on wall
 		+FOILINVUL;
 		+THRUGHOST;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		Obituary "%o was fried to charred cinders by %k's Tesla Cannon.";
 		ProjectileKickback 50;
 	}
@@ -11698,6 +11720,8 @@ class DMBall : KCProjectile
 		+NODAMAGETHRUST;
 		+FORCERADIUSDMG;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BlackHoleSuck()
@@ -11836,6 +11860,8 @@ class DMBallMini : DMBall
 		+NODAMAGETHRUST;
 		+FORCERADIUSDMG;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BlackHoleSuck()
@@ -11973,6 +11999,8 @@ class DMBall2 : DMBall
 		+NODAMAGETHRUST;
 		+FORCERADIUSDMG;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BlackHoleSuck()
@@ -12074,6 +12102,8 @@ class DMBTrail : KCProjectile
 		RenderStyle "Translucent";
 		Alpha 0.70;
 		Scale 0.7;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -12143,6 +12173,8 @@ class BlackHole : KCProjectile
 		+FORCERADIUSDMG;
 		+EXTREMEDEATH;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BHoleAOE()
@@ -12238,6 +12270,8 @@ class BlackHoleMini : BlackHole
 		+FORCERADIUSDMG;
 		+EXTREMEDEATH;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BHoleAOE()
@@ -12344,6 +12378,8 @@ class BlackHole2 : BlackHole
 		+FORCERADIUSDMG;
 		+EXTREMEDEATH;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_BHoleAOE()
@@ -12431,6 +12467,8 @@ class BHSmoke : KCBaseZSC
 	{
 		+NOINTERACTION
 		+FORCEXYBILLBOARD
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		RenderStyle "Translucent";
 		Alpha 0.70;
 		Scale 2.2;
@@ -12490,6 +12528,8 @@ class BHExplosion : KCProjectile
 		+NOINTERACTION;
 		+FORCEXYBILLBOARD;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -12754,6 +12794,8 @@ class DumbRocket : DeviationRocketBase
 				A_SetScale(1.5);
 				A_Quake(1.5, 4, 0, 768, "nosound/silent");
 				A_Quake(6, 4, 0, 384, "nosound/silent");
+				bCASTSPRITESHADOW = false;
+				bNOSPRITESHADOW = true;
 			}
 			TNT1 A 0 A_Explode(192,192,XF_HURTSOURCE,false,(randompick(32,64,64,64,64,64,96) * 1.5));
 			TNT1 AAAAAAAAAA 0 bright A_SpawnItemEx("Smoke", 0, 0, 0, random(2,-2), random(2,-2), 1+random(1,-3), 0, 128, 0);
@@ -12794,6 +12836,8 @@ class DumbRocketShotgun : DeviationRocketBase
 				A_SetScale(0.75);
 				A_Quake(0.75, 4, 0, 384, "nosound/silent");
 				A_Quake(3, 4, 0, 192, "nosound/silent");
+				bCASTSPRITESHADOW = false;
+				bNOSPRITESHADOW = true;
 			}
 			TNT1 A 0 A_Explode(96,96,XF_HURTSOURCE,false,(randompick(32,64,64,64,64,64,96) * 0.75));
 			TNT1 AAAAAAAAAA 0 bright A_SpawnItemEx("Smoke", 0, 0, 0, random(2,-2), random(2,-2), 1+random(1,-3), 0, 128, 0);
@@ -12854,6 +12898,8 @@ class DeviationRocket : DeviationRocketBase
 				A_SetScale(1.5);
 				A_Quake(1.5, 4, 0, 768, "nosound/silent");
 				A_Quake(6, 4, 0, 384, "nosound/silent");
+				bCASTSPRITESHADOW = false;
+				bNOSPRITESHADOW = true;
 			}
 			TNT1 A 0 A_Explode(192,192,XF_HURTSOURCE,false,(randompick(32,64,64,64,64,64,96) * 1.5));
 			TNT1 AAAAAAAAAA 0 bright A_SpawnItemEx("Smoke", 0, 0, 0, random(2,-2), random(2,-2), 1+random(1,-3), 0, 128, 0);
@@ -12872,6 +12918,8 @@ class Smoke : KCBaseZSC
 		RenderStyle "Add";
 		+NOCLIP;
 		+NOGRAVITY;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -14999,6 +15047,8 @@ Class BlastTrail : KCBaseZSC
 	{
 		+NOINTERACTION;
 		RenderStyle "Add";
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
    
 	States
@@ -15059,6 +15109,8 @@ Class PistolBlast : SingleDamageRipper
 		Decal "BlasterScorch";
 		Scale 0.8;
 		+SPAWNSOUNDSOURCE;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	void A_CalcDmg()
@@ -15118,7 +15170,8 @@ Class PistolBlastWeak : PistolBlast
 		Translation "192:207=168:183", "240:247=184:191";
 		Decal "BlasterScorch";
 		Scale 0.5667; // 0.8
-		
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		+SPAWNSOUNDSOURCE;
 	}
 	
@@ -15237,6 +15290,8 @@ class BulletPuffSW : SWPuff
 		Decal "ShadowWarriorBulletChip";
 		Renderstyle "Translucent";
 		Alpha 0.75;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -15283,6 +15338,8 @@ class SWRiotBullet : KCBulletTracer // KCFastProjectile
 		+DONTREFLECT;
 		+BLOODSPLATTER;
 		+NODAMAGETHRUST;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -15309,6 +15366,8 @@ class SWRiotBulletRip : KCBulletTracerSingleRipper // KCFastProjectile
 		+DONTREFLECT;
 		+BLOODSPLATTER;
 		+NODAMAGETHRUST;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -17276,6 +17335,8 @@ class KnifeSummonCircle : KCProjectile
 		Alpha 0.8;
 		+NOINTERACTION;
 		+FORCEXYBILLBOARD;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		RenderStyle "Translucent";
 	}
 	
@@ -17301,6 +17362,8 @@ class ThrownKnifeTrail : KCProjectile
 		Alpha 0.8;
 		+NOINTERACTION;
 		+FORCEXYBILLBOARD;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		RenderStyle "Translucent";
 	}
 	
@@ -18349,6 +18412,8 @@ class Blaster_RifleShot : KCFastProjectile
 		//SeeSound "weapons/blstrpst";
 		DeathSound "weapons/blstrhit";
 		RenderStyle "Add";
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -18419,6 +18484,8 @@ class Blaster_RifleShotRipper : SingleDamageFastRipper
 		//SeeSound "weapons/blstrpst";
 		DeathSound "weapons/blstrhit";
 		RenderStyle "Add";
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	States
@@ -18470,6 +18537,12 @@ class Blaster_RifleShotRipperWeak : Blaster_RifleShotRipper
 
 class Blaster_RifleShot_Hit : RedParticleFountain
 {
+	default
+	{
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
+	}
+	
 	States
 	{
 		Spawn:
@@ -18495,6 +18568,8 @@ class Blaster_RifleShot_Trail : KCBaseZSC
 		+NOGRAVITY;
 		+NOINTERACTION;
 		+NOCLIP;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		Speed 1;
 		Translation "112:127=171:191";
 		Scale 1.0;
@@ -19222,6 +19297,8 @@ class EvilWarriorShieldBall : KCProjectile
 		RenderStyle "Add";
 		+RANDOMIZE;
 		+RIPPER;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		DamageType "Zap";
 		Alpha 0.8;
 		Scale 0.4;
@@ -19587,6 +19664,8 @@ class PhobosAir : KCProjectile
 		DamageType "Wind";
 		+MTHRUSPECIES;
 		+THRUSPECIES;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		Tag "Dust Blower Blast";
 	}
 	

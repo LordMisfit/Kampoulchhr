@@ -189,6 +189,8 @@ class IncineratorFlame : KCProjectile
 		RenderStyle 'Add';
 		DamageType "Fire";
 		Alpha 0.75;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 
 	// Randomly mirror the sprite and randomize
@@ -467,6 +469,8 @@ class IncineratorFrostFlame : KCFrostMissile
 		RenderStyle 'Add';
 		DamageType "Ice";
 		Alpha 0.75;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 
 	// Randomly mirror the sprite and randomize
@@ -1586,6 +1590,8 @@ class CalamityRipper : KCProjectile
 		+BRIGHT;
 		+NODAMAGETHRUST;
 		+DONTREFLECT;
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 		RenderStyle 'Add';
 		Deathsound "calamityblade/explode";
 	}
@@ -1838,6 +1844,8 @@ class CalamityRipperSmall : KCProjectile
 		+DONTREFLECT;
 		RenderStyle 'Add';
 		Deathsound "calamityblade/explode";
+		-CASTSPRITESHADOW;
+		+NOSPRITESHADOW;
 	}
 	
 	override void PostBeginPlay()
