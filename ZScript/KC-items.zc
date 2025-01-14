@@ -987,7 +987,7 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("CharmEnergyGive",1);
-				if (MiscItem && MiscItem.titemadd[0] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-");
+				if (MiscItem && MiscItem.titemadd[0] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
 		Use:
@@ -1112,7 +1112,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("PWatchEnergyGive",1);
-				if (MiscItem && MiscItem.titemadd[1] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-");
+				if (MiscItem && MiscItem.titemadd[1] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
 		Use:
@@ -1152,7 +1152,7 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				else
 				{
 					playera.A_StartSound("inv_fail",84,CHANF_DEFAULT,1.0,ATTN_NORM);
-					playera.A_PrintBold("\c[HeiwaDeluge]Unfortunately, the Pocket Watch is sealed and fails to function as it currently is...\c-");
+					playera.A_PrintBold(String.Format("\c[HeiwaDeluge]Unfortunately, the Pocket Watch is sealed and fails to function as it currently is...\c-"), frandom(3.25,3.75));
 				}
 			}
 			Fail;
@@ -1250,7 +1250,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("BangleEnergyGive",1);
-				if (MiscItem && MiscItem.titemadd[2] > 0) playera.A_PrintBold("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-");
+				if (MiscItem && MiscItem.titemadd[2] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
 		Use:
@@ -5881,7 +5881,7 @@ class RiotGunModpack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("RiotGunUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[white]You picked up a Riot Gun Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[white]You picked up a Riot Gun Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
@@ -5924,7 +5924,7 @@ class TommyGunModpack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("TommyGunUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[grey]You picked up a Tommy Gun Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[grey]You picked up a Tommy Gun Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
@@ -5967,7 +5967,7 @@ class BlasterRifleModpack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("BlasterRifleUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[red]You picked up a Blaster Rifle Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[red]You picked up a Blaster Rifle Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
@@ -6010,7 +6010,7 @@ class BlasterPistolModpack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("BlasterPistolUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[red]You picked up a Blaster Pistol Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[red]You picked up a Blaster Pistol Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
@@ -6053,7 +6053,7 @@ class DevastatorModpack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("DevastatorUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[red]You picked up a Devastator Weapon Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[red]You picked up a Devastator Weapon Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
@@ -6096,7 +6096,7 @@ class CalamityBladeModPack : BaseModPack
 				actor playera = players[0].mo;
 				A_GiveInventory("CalamityBladeUpgrade",1);
 				invoker.grabbed = true;
-				playera.A_PrintBold("\c[fire]You picked up a Calamity Blade Mod Pack.");
+				playera.A_PrintBold(String.Format("\c[fire]You picked up a Calamity Blade Mod Pack."), frandom(3.25,3.75));
 			}
 			Stop;
 	}
