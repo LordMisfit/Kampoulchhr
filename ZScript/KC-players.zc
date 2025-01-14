@@ -3232,6 +3232,7 @@ class KCPlayerPawn : PlayerPawn
 				
 				// Tier 3 Enemies [i.e. extremely-high armor bypass, usually very powerful/ancient/eldritch named bosses [ol' Nyarly in Strange Aeons, etc.]
 				if (sour == "Nyarlathotep" ||
+						sour == "ArchangelusB" ||
 						sour == "EviternatusAnta" ||
 						sour == "EviternatusBete" ||
 						sour == "EviternatusCeph")
@@ -3240,8 +3241,9 @@ class KCPlayerPawn : PlayerPawn
 					rand1 += 10 + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(1.0,true,KCSource));
 					randarmign += (frandompick(0.030,0.035,0.04,0.045,0.05) * kc_enemyarmorignorefactor);
 				}
-				else // Tier 2 Enemies [i.e. very-high armor bypass, usually named bosses [Serpent Riders, Pennywise in HTC2, and the Dinah Doppelgangers] V:]
-				if (sour == "PennywiseBoss" ||
+				else // Tier 2 Enemies [i.e. very-high armor bypass, usually named bosses [Serpent Riders, Pennywise in HTC2]
+				if (sour == "ArchangelusA" ||
+						sour == "PennywiseBoss" ||
 						sour == "ThamuzNew" ||
 						sour == "TchernobogNew" ||
 						sour == "Tchernobog" ||
@@ -3286,7 +3288,13 @@ class KCPlayerPawn : PlayerPawn
 					randarmign += (frandompick(0.0075,0.00875,0.01,0.01125,0.0125) * kc_enemyarmorignorefactor);
 				}
 				else // Tier -1 Enemies (enemies with WEAKER armor bypass on average versus even Tier 0s :V)
-				if (sour == "")
+				if (sour == "EvilDeadHandNew" ||
+						sour == "JumpingSkullNew" ||
+						sour == "TinyBingoNew" ||
+						sour == "BabyClownNew" ||
+						sour == "BabyClown2New" ||
+						sour == "LengSpiderling" ||
+						sour == "PossessedBalloonNew")
 				{
 					ignoretier = -1;
 					rand1 += randompick(0,0,0,0,0,1,1,1) + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.0625,true,KCSource));
@@ -3306,7 +3314,38 @@ class KCPlayerPawn : PlayerPawn
 				}
 				
 				double finalsourceignore = (random(0,rand1) * randarmign);
-				if (finalsourceignore > 0.75) finalsourceignore = 0.75;
+				double ignorecap1 = 1.00;
+				if (skill <= SKILL_VERY_EASY)
+				{
+					if (armortier == 1) ignorecap1 = 0.625;
+					if (armortier == 2) ignorecap1 = 0.25;
+					if (armortier >= 3) ignorecap1 = 0.0;
+				}
+				if (skill == SKILL_EASY)
+				{
+					if (armortier == 1) ignorecap1 = 0.6875;
+					if (armortier == 2) ignorecap1 = 0.375;
+					if (armortier >= 3) ignorecap1 = 0.0625;
+				}
+				if (skill == SKILL_NORMAL)
+				{
+					if (armortier == 1) ignorecap1 = 0.75;
+					if (armortier == 2) ignorecap1 = 0.5;
+					if (armortier >= 3) ignorecap1 = 0.375;
+				}
+				if (skill == SKILL_HARD)
+				{
+					if (armortier == 1) ignorecap1 = 0.875;
+					if (armortier == 2) ignorecap1 = 0.75;
+					if (armortier >= 3) ignorecap1 = 0.625;
+				}
+				if (skill >= SKILL_VERY_HARD)
+				{
+					if (armortier == 1) ignorecap1 = 0.9375;
+					if (armortier == 2) ignorecap1 = 0.875;
+					if (armortier >= 3) ignorecap1 = 0.8125;
+				}
+				if (finalsourceignore > ignorecap1) finalsourceignore = ignorecap1;
 				PlayerArmorIgnoreFactor += (finalsourceignore * (1.00 - PlayerArmorIgnoreFactor));
 				if (kcdebug_playerdamagemobj) Console.Printf("Tier %d Armor Ignoring Type: [Level: %d], rand1: %d, randarmign: %.8f, PlayerArmorIgnoreFactor: %.8f", ignoretier, source.CountInv("MonsterLevel"), rand1, randarmign, PlayerArmorIgnoreFactor);
 			}
