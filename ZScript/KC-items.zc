@@ -5430,6 +5430,7 @@ class VitalCapsule : StatCaspuleBase
 					MiscItem.VitalityPieces++;
 					globalvars.VitalityPieces++;
 					//playera.A_GiveInventory("PlayerVIT",1);
+					playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5461,6 +5462,7 @@ class IQCapsule : StatCaspuleBase
 					MiscItem.IQPieces++;
 					globalvars.IQPieces++;
 					//playera.A_GiveInventory("PlayerIQ",1);
+					playera.A_PrintBold(String.Format("Picked up an \cnIQ Capsule\c-! \c[purple]Max PP permanently increased by 5!\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5492,6 +5494,7 @@ class SensesCapsule : StatCaspuleBase
 					MiscItem.SensesPieces++;
 					globalvars.SensesPieces++;
 					//playera.A_GiveInventory("PlayerSenses",1);
+					playera.A_PrintBold(String.Format("Picked up an \cnSenses Capsule\c-! \c[lightblue]Max MP permanently increased by 5!\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5523,6 +5526,7 @@ class GutsCapsule : StatCaspuleBase
 					MiscItem.PlayerGUTS++;
 					globalvars.PlayerGUTS++;
 					playera.A_GiveInventory("PlayerGUTS",1);
+					playera.A_PrintBold(String.Format("Picked up a \cnGuts Capsule\c-! \c[orange]Critical Hit Chance permenantly increased slightly!\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5554,6 +5558,7 @@ class SpeedCapsule : StatCaspuleBase
 					MiscItem.PlayerSPD++;
 					globalvars.PlayerSPD++;
 					playera.A_GiveInventory("PlayerSPD",1);
+					playera.A_PrintBold(String.Format("Picked up a \cnSpeed Capsule\c-! \c[sapphire]Speed permanently increased by 1!\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5585,6 +5590,7 @@ class LuckCapsule : StatCaspuleBase
 					MiscItem.PlayerLUCK++;
 					globalvars.PlayerLUCK++;
 					playera.A_GiveInventory("PlayerLUCK",1);
+					playera.A_PrintBold(String.Format("Picked up a \cnLuck Capsule\c-! \c[gold]Luck permanently increased by 1!\c-"), frandom(3.25,3.75));
 				}
 			}
 			Stop;
@@ -5620,6 +5626,8 @@ class SpecialBackpack : CustomInventoryExt
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				if (HeiwaPlayer(playera))
 				{
+					playera.A_PrintBold(String.Format("Picked up an odd beige and pink backpack..."), frandom(3.25,3.75));
+					
 					double maskpitch = 1.00;
 					if (playera.waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
 					string voicenm;
