@@ -5266,9 +5266,15 @@ class CompatVulnItem : PlaceholderItem
 								}
 								nm = "DeviationRocket";
 								nn = "DumbRocket";
+								no = "DeviationGrenade";
+								np = "DeviationGrenadeBoom";
+								nq = "DeviationGrenadeMiniBoom";
 								if (inflictor && 
 										(inflictor.GetClassName() == nm ||
-										inflictor.GetClassName() == nn))
+										inflictor.GetClassName() == nn ||
+										inflictor.GetClassName() == no ||
+										inflictor.GetClassName() == np ||
+										inflictor.GetClassName() == nq))
 								{
 									TOTALFactor *= 2.0;
 								}
@@ -5289,9 +5295,15 @@ class CompatVulnItem : PlaceholderItem
 							}
 							nm = "DeviationRocket";
 							nn = "DumbRocket";
+							no = "DeviationGrenade";
+							np = "DeviationGrenadeBoom";
+							nq = "DeviationGrenadeMiniBoom";
 							if (inflictor && 
 									(inflictor.GetClassName() == nm ||
-									inflictor.GetClassName() == nn) && 
+									inflictor.GetClassName() == nn ||
+									inflictor.GetClassName() == no ||
+									inflictor.GetClassName() == np ||
+									inflictor.GetClassName() == nq) && 
 									inflictor.bFORCERADIUSDMG &&
 									flags & DMG_EXPLOSION)
 							{

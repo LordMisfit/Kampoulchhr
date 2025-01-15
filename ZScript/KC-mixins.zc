@@ -648,7 +648,7 @@ mixin class DmgCalc
 		double damage;
 		double previousdamage;
 		int strengthcounter;
-		String nm, nn, no, np;
+		string nm, nn, no, np, nq, nr, ns;
 		// Character Check [base damage]
 		damage = random(randompick(15,18,18),27); // vs random(12,18); [punch]
 		if (HeiwaPlayer(playera)) damage = random(randompick(12,15,15),21); // vs random(8,12); [punch]
@@ -742,7 +742,7 @@ mixin class DmgCalc
 		double damage;
 		double previousdamage;
 		int strengthcounter;
-		String nm, nn, no, np;
+		string nm, nn, no, np, nq, nr, ns;
 
 		// Character Check [base damage]
 		damage = random(12,18); // random(18,24);
@@ -1095,7 +1095,7 @@ mixin class MonsterCollider
 	Actor playeriskiller;
 	
 	class<Actor> extracheck, extracheck2, extracheck3, extracheck4;
-	string nm, nn, no, np;
+	string nm, nn, no, np, nq, nr, ns;
 	
 	const HeiwaHPBoostTimerMult = 2.5;
 
@@ -2752,9 +2752,15 @@ mixin class MonsterCollider
 					}
 					nm = "DeviationRocket";
 					nn = "DumbRocket";
+					no = "DeviationGrenade";
+					np = "DeviationGrenadeBoom";
+					nq = "DeviationGrenadeMiniBoom";
 					if (inflictor && 
 							(inflictor.GetClassName() == nm ||
-							inflictor.GetClassName() == nn))
+							inflictor.GetClassName() == nn ||
+							inflictor.GetClassName() == no ||
+							inflictor.GetClassName() == np ||
+							inflictor.GetClassName() == nq))
 					{
 						TOTALFactor *= 2.0;
 					}
@@ -2776,9 +2782,15 @@ mixin class MonsterCollider
 				}
 				nm = "DeviationRocket";
 				nn = "DumbRocket";
+				no = "DeviationGrenade";
+				np = "DeviationGrenadeBoom";
+				nq = "DeviationGrenadeMiniBoom";
 				if (inflictor && 
 						(inflictor.GetClassName() == nm ||
-						inflictor.GetClassName() == nn) && 
+						inflictor.GetClassName() == nn ||
+						inflictor.GetClassName() == no ||
+						inflictor.GetClassName() == np ||
+						inflictor.GetClassName() == nq) && 
 						inflictor.bFORCERADIUSDMG &&
 						flags & DMG_EXPLOSION)
 				{

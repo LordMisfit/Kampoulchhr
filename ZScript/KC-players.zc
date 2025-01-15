@@ -4069,7 +4069,8 @@ class KCPlayerPawn : PlayerPawn
 						if (ActualLevel <= 200 && damage < 1) damage = 1;
 						useflatdefense = false;
 					}
-					if (DeviationRocketBase(inflictor))
+					if (DeviationRocketBase(inflictor) ||
+							DeviationGrenade(inflictor))
 					{
 						damage = ceil(damage * (0.875 - (ActualLevel * 0.000625)));
 						if (ActualLevel <= 200 && damage < 1) damage = 1;
