@@ -4070,11 +4070,23 @@ class KCPlayerPawn : PlayerPawn
 						useflatdefense = false;
 					}
 					if (DeviationRocketBase(inflictor) ||
-							DeviationGrenade(inflictor))
+							DeviationGrenade(inflictor) ||
+							DeviationGrenadeBoom(inflictor) ||
+							DeviationGrenadeMiniBoom(inflictor))
 					{
-						damage = ceil(damage * (0.875 - (ActualLevel * 0.000625)));
-						if (ActualLevel <= 200 && damage < 1) damage = 1;
-						useflatdefense = false;
+						if (CountInv("DeviationUpgrade"))
+						{
+							damage *= frandom(0.50,0.67);
+							damage = ceil(damage * (0.5 - (ActualLevel * 0.0025)));
+							if (ActualLevel <= 200 && damage < 1) damage = 1;
+							useflatdefense = true;
+						}
+						else
+						{
+							damage = ceil(damage * (0.875 - (ActualLevel * 0.000625)));
+							if (ActualLevel <= 200 && damage < 1) damage = 1;
+							useflatdefense = false;
+						}
 					}
 					if (TeslaBallBig(inflictor))
 					{

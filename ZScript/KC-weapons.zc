@@ -12672,6 +12672,7 @@ class BHExplosion2 : BHExplosion
 class Deviation : MarineWeapon // replaces RocketLauncher
 {
 	int firemode;
+	int shotcounter;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -12715,69 +12716,163 @@ class Deviation : MarineWeapon // replaces RocketLauncher
 		AltFire:
 			RPRL A 0 
 			{
-				if (invoker.firemode <= 0) A_StartSound("weapons/gemifire",CHAN_WEAPON);
+				if (invoker.firemode == 0) 
+				{
+					A_StartSound("weapons/gemifire",CHAN_WEAPON);
+				}
 				else 
+				if (invoker.firemode == 1) 
 				{
 					A_StartSound("devigrenadefire",331);
 					A_StartSound("devigrenadefire2",332);
 					A_StartSound("devigrenadefire3",333);
 				}
+				else 
+				if (invoker.firemode >= 2) 
+				{
+					if (invoker.shotcounter % 2 == 1) 
+					{
+						A_StartSound("devigrenadefire",331);
+						A_StartSound("devigrenadefire2",332);
+						A_StartSound("devigrenadefire3",333);
+					}
+					else
+					{
+						A_StartSound("weapons/gemifire",CHAN_WEAPON);
+					}
+				}
 			}
 			RPRL A 0 A_GunFlash();
-			RPRL BC 1 Bright;
+			RPRL B 1 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(0);
+			}
+			RPRL C 1 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(0,1,1,1));
+			}
 			RPRL C 0 
 			{
-				if (invoker.firemode <= 0)
+				A_Recoil(frandom(2.25,4.5));
+				if (invoker.firemode >= 2)
 				{
-					A_Recoil(frandom(2.25,4.5));
-					A_FireProjectile("DumbRocket",frandom(4.5,-4.5),1,0,0);
+					if (invoker.shotcounter % 2 == 1) A_FireProjectile("DeviationGrenade",frandom(4.5,-4.5),1,0,0);
+																			 else A_FireProjectile("DumbRocket",frandom(4.5,-4.5),1,0,0);
+				}
+				else
+				if (invoker.firemode == 1)
+				{
+					A_FireProjectile("DeviationGrenade",frandom(4.5,-4.5),1,0,0);
 				}
 				else
 				{
-					A_Recoil(frandom(2.25,4.5));
-					A_FireProjectile("DeviationGrenade",frandom(4.5,-4.5),1,0,0);
+					A_FireProjectile("DumbRocket",frandom(4.5,-4.5),1,0,0);
 				}
+				invoker.shotcounter++;
 			}
-			RPRL DEF 1 Bright;
-			RPRL A 3;
+			RPRL D 1 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(0);
+			}
+			RPRL E 1 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(0,1));
+			}
+			RPRL F 1 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(0);
+			}
+			RPRL A 3
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(random(1,2));
+			}
 			Goto Ready;
 		AltFlash:
-			TNT1 A 5 A_Light2();
-			TNT1 A 3 A_Light1();
+			TNT1 A 5 
+			{
+				A_Light2();
+				if (CountInv("DeviationUpgrade")) A_SetTics(random(2,3));
+			}
+			TNT1 A 3 
+			{
+				A_Light1();
+				if (CountInv("DeviationUpgrade")) A_SetTics(random(1,2));
+			}
 			TNT1 A 0 A_Light0();
 			Stop;
 		Fire:
 			RPRL A 0 
 			{
-				if (invoker.firemode <= 0) A_StartSound("weapons/gemifire",CHAN_WEAPON);
+				if (invoker.firemode == 0) 
+				{
+					A_StartSound("weapons/gemifire",CHAN_WEAPON);
+				}
 				else 
+				if (invoker.firemode == 1) 
 				{
 					A_StartSound("devigrenadefire",331);
 					A_StartSound("devigrenadefire2",332);
 					A_StartSound("devigrenadefire3",333);
 				}
+				else 
+				if (invoker.firemode >= 2) 
+				{
+					if (invoker.shotcounter % 2 == 1) 
+					{
+						A_StartSound("devigrenadefire",331);
+						A_StartSound("devigrenadefire2",332);
+						A_StartSound("devigrenadefire3",333);
+					}
+					else
+					{
+						A_StartSound("weapons/gemifire",CHAN_WEAPON);
+					}
+				}
 			}
 			RPRL A 0 A_GunFlash();
-			RPRL BC 2 Bright;
+			RPRL BC 2 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(0,1,1,1,1,2));
+			}
 			RPRL C 0 
 			{
-				if (invoker.firemode <= 0)
+				A_Recoil(frandom(0.225,0.45));
+				if (invoker.firemode >= 2)
 				{
-					A_Recoil(frandom(0.225,0.45));
-					A_FireProjectile("DeviationRocket",frandom(0.45,-0.45),1,0,0);
+					if (invoker.shotcounter % 2 == 1) A_FireProjectile("DeviationGrenade",frandom(0.45,-0.45),1,0,0);
+																			 else A_FireProjectile("DeviationRocket",frandom(0.45,-0.45),1,0,0);
+				}
+				else
+				if (invoker.firemode == 1)
+				{
+					A_FireProjectile("DeviationGrenade",frandom(0.45,-0.45),1,0,0);
 				}
 				else
 				{
-					A_Recoil(frandom(0.225,0.45));
-					A_FireProjectile("DeviationGrenade",frandom(0.45,-0.45),1,0,0);
+					A_FireProjectile("DeviationRocket",frandom(0.45,-0.45),1,0,0);
 				}
+				invoker.shotcounter++;
 			}
-			RPRL DEF 2 Bright;
-			RPRL A 6;
+			RPRL DEF 2 Bright
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(0,1,1,1,1,2));
+			}
+			RPRL A 6
+			{
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(2,3,3,3,3,4));
+			}
 			Goto Ready;
 		Flash:
-			TNT1 A 10 A_Light2();
-			TNT1 A 6 A_Light1();
+			TNT1 A 10 
+			{
+				A_Light2();
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(4,5,5,5,5,6));
+			}
+			TNT1 A 6 
+			{
+				A_Light1();
+				if (CountInv("DeviationUpgrade")) A_SetTics(randompick(2,3,3,3,3,4));
+			}
 			TNT1 A 0 A_Light0();
 			Stop;
 			
@@ -12794,16 +12889,47 @@ class Deviation : MarineWeapon // replaces RocketLauncher
 				A_StartSound("sw/sticky_stick",334);
 				A_StartSound("sw/sticky_click",335);
 				A_StartSound("sw/sticky_scan",336);
-				if (invoker.firemode == 0)
+				int buttons = GetPlayerInput(INPUT_BUTTONS);
+				
+				if (buttons & BT_USER3)
 				{
-					invoker.firemode = 1;
-					A_Print("Grenades");
+					if (invoker.firemode == 0)
+					{
+						invoker.firemode = 2;
+						A_Print("Rockets & Grenades [alternates]");
+					}
+					else
+					if (invoker.firemode == 1)
+					{
+						invoker.firemode = 0;
+						A_Print("Rockets");
+					}
+					else
+					if (invoker.firemode == 2)
+					{
+						invoker.firemode = 1;
+						A_Print("Grenades");
+					}
 				}
 				else
-				if (invoker.firemode == 1)
 				{
-					invoker.firemode = 0;
-					A_Print("Rockets");
+					if (invoker.firemode == 0)
+					{
+						invoker.firemode = 1;
+						A_Print("Grenades");
+					}
+					else
+					if (invoker.firemode == 1)
+					{
+						invoker.firemode = 2;
+						A_Print("Rockets & Grenades [alternates]");
+					}
+					else
+					if (invoker.firemode == 2)
+					{
+						invoker.firemode = 0;
+						A_Print("Rockets");
+					}
 				}
 			}
 			RPRL A 8

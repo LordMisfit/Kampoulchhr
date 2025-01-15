@@ -5276,7 +5276,8 @@ class CompatVulnItem : PlaceholderItem
 										inflictor.GetClassName() == np ||
 										inflictor.GetClassName() == nq))
 								{
-									TOTALFactor *= 2.0;
+									if (source && source.CountInv("DeviationUpgrade")) TOTALFactor *= 3.6;
+																																else TOTALFactor *= 2.0;
 								}
 							}
 						}
@@ -5307,7 +5308,8 @@ class CompatVulnItem : PlaceholderItem
 									inflictor.bFORCERADIUSDMG &&
 									flags & DMG_EXPLOSION)
 							{
-								TOTALFactor *= 0.5;
+								if (source && source.CountInv("DeviationUpgrade")) TOTALFactor *= 0.875;
+																															else TOTALFactor *= 0.5;
 							}
 							nm = "TeslaBallBig";
 							nn = "TeslaBallBigDual";
