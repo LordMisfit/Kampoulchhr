@@ -16609,6 +16609,14 @@ class CyberdemonNew : KCCreature
 			CYBR M 10 A_NoBlocking();
 			CYBR NO 10;
 			CYBR P 30;
+			CYBR P 0
+			{
+				if (level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
+						(IsDoom1() && level.mapname == "E2M8"))
+				{
+					A_SetTics(110);
+				}
+			}
 			CYBR P -1 A_BossDeath();
 			Stop;
 		Ice:
@@ -17391,6 +17399,14 @@ class Annihilator : CyberdemonNew
 			ANNI M 10 Bright A_NoBlocking();
 			ANNI NO 10 Bright;
 			ANNI P 30;
+			ANNI P 0
+			{
+				if (level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
+						(IsDoom1() && level.mapname == "E2M8"))
+				{
+					A_SetTics(110);
+				}
+			}
 			ANNI P -1 A_BossDeath();
 		Ice:
 			ANNI G 5 A_GenericFreezeDeath();
@@ -17730,6 +17746,14 @@ class SpiderMastermindNew : KCCreature
 			SPID K 10 A_NoBlocking();
 			SPID LMNOPQR 10;
 			SPID S 30;
+			SPID S 0
+			{
+				if (level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' &&
+						(IsDoom1() && level.mapname == "E3M8"))
+				{
+					A_SetTics(130);
+				}
+			}
 			SPID S -1 A_BossDeath();
 			Stop;
 		Ice:
@@ -17784,7 +17808,6 @@ class Demolisher : SpiderMastermindNew
 		ActiveSound "spider/active";
 		Obituary "%o felt the power of the Spider-Demolisher.";
 	}
-	
 	
 	private void A_SPosAttackInternal()
 	{
@@ -18124,6 +18147,14 @@ class Demolisher : SpiderMastermindNew
 			DEMO K 10 Bright A_NoBlocking();
 			DEMO LMNOPQR 10 Bright;
 			DEMO S 30;
+			DEMO S 0
+			{
+				if (level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' &&
+						(IsDoom1() && level.mapname == "E3M8"))
+				{
+					A_SetTics(130);
+				}
+			}
 			DEMO S -1 A_BossDeath();
 			Stop;
 		Ice:

@@ -115,6 +115,28 @@ class KCBaseZSC : Actor
 		return damage;
 	}
 	
+	bool IsDoom1()
+	{
+		bool Doom1 = false;
+		if (Wads.CheckNumForName("KC-DOOM1", Wads.ns_global, -1, true) != -1) 
+		{
+			Doom1 = true;
+			//Console.Printf("Doom1: %d", Doom1);
+		}
+		return Doom1;
+	}
+	
+	bool IsDoom2()
+	{
+		bool Doom2 = false;
+		if (Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
+		{
+			Doom2 = true;
+			//Console.Printf("Doom2: %d", Doom2);
+		}
+		return Doom2;
+	}
+	
 	bool A_CheckUOHYM()
 	{
 		bool UOHYM = false;

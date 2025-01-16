@@ -917,6 +917,17 @@ class PlayerTargettedMonster : PlaceholderItemUndrop
 		}
 		return Doom1;
 	}
+	
+	bool IsDoom2()
+	{
+		bool Doom2 = false;
+		if (Wads.CheckNumForName("KC-DOOM2", Wads.ns_global, -1, true) != -1)
+		{
+			Doom2 = true;
+			//Console.Printf("Doom2: %d", Doom2);
+		}
+		return Doom2;
+	}
 
 	void A_SpeakToBoss(int type = 0, int voiceset = 0)
 	{
