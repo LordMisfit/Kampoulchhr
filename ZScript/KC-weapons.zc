@@ -4361,6 +4361,11 @@ class FistMarine : MarineWeapon replaces Fist
 
 class WeaponSpawner : CustomInventoryExt
 {
+	default
+	{
+		+NOTIMEFREEZE;
+	}
+	
 	action bool A_CheckForHeiwa()
 	{
 		bool result = false;
