@@ -3313,6 +3313,20 @@ class KCPlayerPawn : PlayerPawn
 					randarmign *= frandom(1.75,2.25);
 				}
 				
+				nm = "CCards_Actor_AssassinBuff";
+				if (source.CountInv(nm))
+				{
+					rand1 *= int(frandom(1.25,1.75));
+					randarmign *= frandom(1.25,1.75);
+				}
+				
+				nm = "LDLegendaryMonsterTransformed";
+				if (source.CountInv(nm))
+				{
+					rand1 *= int(frandom(1.5,2.0));
+					randarmign *= frandom(1.5,2.0);
+				}
+				
 				double finalsourceignore = (random(0,rand1) * randarmign);
 				double ignorecap1 = 1.00;
 				if (skill <= SKILL_VERY_EASY)

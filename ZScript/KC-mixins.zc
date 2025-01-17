@@ -1649,6 +1649,14 @@ mixin class MonsterCollider
 				{
 					if (source && source.CountInv("DevastatorUpgrade")) ExplosivesFactor = frandompick(0.875,0.8889,0.9375);
 				}
+				if (infl == "DeviationRocket" || 
+						infl == "DumbRocket" || 
+						infl == "DeviationGrenade" || 
+						infl == "DeviationGrenadeBoom" || 
+						infl == "DeviationGrenadeMiniBoom") 
+				{
+					if (source && source.CountInv("DeviationUpgrade")) ExplosivesFactor = frandompick(0.875,0.8889,0.9375);
+				}
 				ActorDefenseIgnoreFactor += (ExplosivesFactor * (1.00 - ActorDefenseIgnoreFactor));
 			}
 			

@@ -1,5 +1,10 @@
 class KCE1M1FirstMarineDrop : CustomInventoryExt
 {
+	default
+	{
+		+NOTIMEFREEZE;
+	}
+	
 	States
 	{
 		Spawn:
@@ -6278,7 +6283,7 @@ class RandomModpack : CustomInventoryExt
 							}
 						}
 					}
-					
+					/*
 					if (!(playera.CountInv("BlasterRifleUpgrade") ||
 								playera.CountInv("TommyGunUpgrade") ||
 								playera.CountInv("BlasterPistolUpgrade") ||
@@ -6292,6 +6297,7 @@ class RandomModpack : CustomInventoryExt
 						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
 					}
+					*/
 				}
 			}
 			TNT1 A 1 Bright;
