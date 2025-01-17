@@ -5,7 +5,7 @@ Unlike "Aetherius" and "Explosive Expedition", my previous two GZDoom gameplay m
 
 Heiwa is an alternative 'incarnation' of a character from yet another non-game based fictional work of my own. A sort of alternate reality version, even to the point that as it is soon learned, she doesn't even remember her true name or the memories of her friends and family.
 
-Hailing from the late 1990s, the 15-year old Heiwa only goes by that "name" as it is the one 'nickname' or 'codename' she can even remember of her old life, even as she suddenly finds herself on the moon of Phobos in the year 2145 (the setting of E1M1 of The Ultimate Doom), with but her wits and a family heirloom knife from her maternal grandfather, a fallen Vietnam veteran who died of mysterious reasons himself during the war.
+Hailing from the late 1990s, the 15-year old Heiwa only goes by that "name" as it is the one 'nickname' or 'codename' she can even remember of her old life, even as she suddenly finds herself on the moon of Phobos in the year 2145 (the setting of E1M1 of The Ultimate Doom), with but only her wits and a family heirloom knife from her maternal grandfather, a fallen Vietnam veteran who died of mysterious reasons himself during the war.
 
 Additionally, the Doom Marine of this specific universe/timeline, whom would've been there instead of her, has vanished from Phobos at the same moment Heiwa would appear in his place, effectively swapping Heiwa into HIS role, leaving her to fend for herself against the increasing hordes of Hell across multiple war and combat theatres, and the original marine's fate entirely unknown.
 
