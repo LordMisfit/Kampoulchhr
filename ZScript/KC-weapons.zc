@@ -6650,8 +6650,16 @@ class RocketLauncherMarine : MarineWeapon //replaces RocketLauncher
 			MISF CD 2 Bright A_Light2();
 			Goto LightDone;
 		Spawn:
+			LAUN A 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			LAUN A -1;
+			Stop;
+		IdleB:
+			LAUN B -1;
 			Stop;
 	}
 }
