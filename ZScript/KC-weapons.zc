@@ -7053,13 +7053,29 @@ class BFG9000Spawner : WeaponSpawner replaces BFG9000
 		int dropchance = 2;
 		if (bDROPPED)
 		{
-			dropchancemax = 35;
-			dropchance = 4;
+			if (A_CheckForHeiwa())
+			{
+				dropchancemax = randompick(33,33,33,34,34,34,34,35);
+				dropchance = randompick(4,5,5,5,5,6,6,6);
+			}
+			else
+			{
+				dropchancemax = 35;
+				dropchance = 4;
+			}
 		}
 		else
 		{
-			dropchancemax = 7;
-			dropchance = 4;
+			if (A_CheckForHeiwa())
+			{
+				dropchancemax = randompick(5,5,5,6,6,6,6,7);
+				dropchance = randompick(4,5,5,5,5,6,6,6);
+			}
+			else
+			{
+				dropchancemax = 7;
+				dropchance = 4;
+			}
 			if (A_CheckSecret()) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
@@ -7200,8 +7216,16 @@ class BFG9000Marine : MarineWeapon //replaces BFG9000
 			BFGG B 20 A_ReFire;
 			Goto Ready;
 		Spawn:
+			BFUG A 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			BFUG A -1;
+			Stop;
+		IdleB:
+			BFUG B -1;
 			Stop;
 	}
 }
