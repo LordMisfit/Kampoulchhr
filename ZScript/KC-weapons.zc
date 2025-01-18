@@ -5523,8 +5523,16 @@ class ShotgunMarine : MarineWeapon //replaces Shotgun
 			SHTF B 3 Bright A_Light2;
 			Goto LightDone;
 		Spawn:
+			SHOT A 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			SHOT A -1;
+			Stop;
+		IdleB:
+			SHOT B -1;
 			Stop;
 	}
 }
@@ -6661,6 +6669,22 @@ class RocketLauncherMarine : MarineWeapon //replaces RocketLauncher
 		IdleB:
 			LAUN B -1;
 			Stop;
+			/*
+			LAUN B 25
+			{
+				A_SetTics(random(25,35));
+			}
+			LAUN BBBB 2
+			{
+				if (IfPlayerDist(2048,0)) A_SpawnItemEx("KCSmokeSpawner",frandom(-10,10),frandom(-10,10),frandom(0,5),flags:SXF_NOCHECKPOSITION);
+				A_SetTics(randompick(2,2,2,2,2,3,3,3,4,4));
+			}
+			LAUN B 5
+			{
+				A_SetTics(random(5,8));
+			}
+			loop;
+			*/
 	}
 }
 
