@@ -20237,6 +20237,9 @@ class DustBlower : MarineWeapon
 class PhobosAir : KCProjectile
 {
 	int user_vertvel;
+	int munchsmoke;
+	int smokerand;
+	mixin SmokeDetector;
 	default
 	{
 		Projectile;
@@ -20266,6 +20269,49 @@ class PhobosAir : KCProjectile
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 		Tag "Dust Blower Blast";
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (level.time % randompick(4,4,4,5,5) == 3) 
+		{
+			munchsmoke = true;
+			smokerand = randompick(4,5,6);
+		}
+		else
+		{
+			munchsmoke = randompick(false,false,false,true);
+			smokerand = 25;
+		}
+		super.PostBeginPlay();
+	}
+	
+	override void Tick()
+	{
+		if (munchsmoke)
+		{
+			actor playera = players[0].mo;
+			if (!(playera.CountInv("KCTimeFreezer1") ||
+						playera.CountInv("KCTimeFreezer2") ||
+						playera.CountInv("KCTimeFreezer3")))
+			{
+				if (GetAge() <= 25)
+				{
+					if (GetAge() % 25 == (smokerand * 0) ||
+							GetAge() % 25 == (smokerand * 1) ||
+							GetAge() % 25 == (smokerand * 2) ||
+							GetAge() % 25 == (smokerand * 3) ||
+							GetAge() % 25 == (smokerand * 4) ||
+							GetAge() % 25 == (smokerand * 5) ||
+							GetAge() % 25 == (smokerand * 6) ||
+							GetAge() % 25 == (smokerand * 7) ||
+							GetAge() % 25 == (smokerand * 8) ||
+							GetAge() % 25 == (smokerand * 9) ||
+							GetAge() % 25 == (smokerand * 10)) A_PreCheckSmoke(128,double(1.0/32),double(1.0/16),0.0);
+				}
+			}
+		}
+		super.Tick();
 	}
 	
 	States 
