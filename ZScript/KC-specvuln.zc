@@ -5406,6 +5406,11 @@ class CompatVulnItem : PlaceholderItem
 							{
 								double factor1 = frandompick(0.2,0.25);
 								double factor2 = frandompick(0.6,0.75);
+								if (damageType == 'Translocator')
+								{
+									factor1 = frandompick(0.6,0.625);
+									factor2 = frandompick(0.8,0.875);
+								}
 								if (MiscItem.timestoptype == 1) // Defensive
 								{
 									TOTALFactor *= factor1;

@@ -42,6 +42,9 @@ class KCWeaponBase : Weapon
 	property DamageIgnoreFactor3: DmgIgnoreFctr3;
 	property DamageIgnoreFactor4: DmgIgnoreFctr4;
 	property DamageIgnoreFactor5: DmgIgnoreFctr5;
+	
+	bool IsBrokenWeaponForHeiwa;
+	property IsHeiwaBrokenWeapon: IsBrokenWeaponForHeiwa;
 
 	int PickupChannel;
 	int PickupChannel2;
@@ -65,6 +68,121 @@ class KCWeaponBase : Weapon
 		+WEAPON.NOAUTOAIM;
 		+DONTGIB;
 	}
+	
+	override void Touch (Actor toucher)
+	{
+		if (kcdebug_checkpickups) Console.Printf("Touch [gametic: %d]", gametic);
+		bool localPickUp;
+		let player = toucher.player;
+		if (player)
+		{
+			if (kcdebug_checkpickups) Console.Printf("Touch - toucher.player: %s", toucher.GetClassName());
+
+			if (A_CheckForHeiwa() && IsBrokenWeaponForHeiwa)
+			{
+				if (kcdebug_checkpickups) Console.Printf("Touch - IsBrokenWeaponForHeiwa: %d", IsBrokenWeaponForHeiwa);
+				let currentitemtype = toucher.FindInventory(AmmoType1);
+				if (currentitemtype) 
+				{
+					if (kcdebug_checkpickups) Console.Printf("checktype: %s, amt: %d / %d", currentitemtype.GetClassName(), currentitemtype.Amount, currentitemtype.MaxAmount);
+					if (currentitemtype.Amount >= currentitemtype.MaxAmount) 
+					{
+						if (kcdebug_checkpickups) Console.Printf("maxed ammo, should reject");
+						return;
+					}
+				}
+			}
+
+			// If a voodoo doll touches something, pretend the real player touched it instead.
+			toucher = player.mo;
+			// Client already picked this up, so ignore them.
+			if (HasPickedUpLocally(toucher))
+				return;
+
+			if (kcdebug_checkpickups) Console.Printf("Touch - localPickUp");
+			localPickUp = CanPickUpLocally(toucher) && !ShouldStay() && !ShouldRespawn();
+		}
+
+		bool localview = toucher.CheckLocalView();
+		if (kcdebug_checkpickups) Console.Printf("Touch - Check !toucher.CanTouchItem");
+		if (!toucher.CanTouchItem(self))
+			return;
+
+		if (kcdebug_checkpickups) Console.Printf("Touch - Check localPickUp");
+		Inventory give = self;
+		if (localPickUp)
+		{
+			give = Inventory(Spawn(GetClass()));
+			if (!give)
+				return;
+		}
+
+		if (kcdebug_checkpickups) Console.Printf("Touch - CallTryPickup");
+		bool res;
+		[res, toucher] = give.CallTryPickup(toucher);
+		if (!res)
+		{
+			if (give != self)
+				give.Destroy();
+
+			return;
+		}
+
+		// This is the only situation when a pickup flash should ever play.
+		if (PickupFlash != NULL && !ShouldStay())
+		{
+			Spawn(PickupFlash, Pos, ALLOW_REPLACE);
+		}
+
+		if (!bQuiet)
+		{
+			PrintPickupMessage(localview, PickupMessage ());
+
+			// Special check so voodoo dolls picking up items cause the
+			// real player to make noise.
+			if (player != NULL)
+			{
+				PlayPickupSound (player.mo);
+				if (!bNoScreenFlash && player.playerstate != PST_DEAD)
+				{
+					player.bonuscount = BONUSADD;
+				}
+			}
+			else
+			{
+				PlayPickupSound (toucher);
+			}
+		}							
+
+		// [RH] Execute an attached special (if any)
+		DoPickupSpecial (toucher);
+
+		if (bCountItem)
+		{
+			if (player != NULL)
+			{
+				player.itemcount++;
+			}
+			level.found_items++;
+		}
+
+		if (bCountSecret)
+		{
+			Actor ac = player != NULL? Actor(player.mo) : toucher;
+			ac.GiveSecret(true, true);
+		}
+
+		if (localPickUp)
+			PickUpLocally(toucher);
+
+		//Added by MC: Check if item taken was the roam destination of any bot
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (players[i].Bot != NULL && self == players[i].Bot.dest)
+				players[i].Bot.dest = NULL;
+		}
+	}
+	
 	override void PlayPickupSound(Actor toucher)
 	{
 		double atten;
@@ -3428,7 +3546,9 @@ class FistMarine : MarineWeapon replaces Fist
 		+INVENTORY.UNTOSSABLE;
 		Tag "Fist";
 		Obituary "%o chewed on %k's fist.";
+
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	action void A_PunchKiais(int basechance = 75)
@@ -4897,9 +5017,11 @@ class ChainsawMarine : MarineWeapon // replaces Chainsaw
 		Inventory.PickupMessage "Picked up a \caChainsaw\c-! Find some meat! \cx[Slot 1]\c-";
 		Obituary "$OB_MPCHAINSAW";
 		Tag "$TAG_CHAINSAW";
-		+WEAPON.MELEEWEAPON		
-		+WEAPON.NOAUTOSWITCHTO
+		+WEAPON.MELEEWEAPON;
+		+WEAPON.NOAUTOSWITCHTO;
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	States
@@ -5059,7 +5181,9 @@ class PistolMarine : MarineWeapon //replaces Pistol
 		+WEAPON.WIMPY_WEAPON
 		Inventory.PickupMessage "Picked up a \cupistol\c-! \cx[Slot 2]\c-";
 		Tag "$TAG_PISTOL";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
@@ -5240,43 +5364,11 @@ class ShotgunMarine : MarineWeapon //replaces Shotgun
 		Inventory.PickupMessage "Picked up a \cushotgun\c-! \cx[Slot 3]\c-";
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
-	override bool CanPickup(Actor toucher)
-	{
-		if (toucher == null) return false;
-
-		int rsize = RestrictedToPlayerClass.Size();
-		//Console.Printf("rsize: %d", rsize);
-		if (rsize > 0)
-		{
-			for (int i=0; i < rsize; i++)
-			{
-				if (toucher is RestrictedToPlayerClass[i]) 
-				{
-					return true;
-				}
-			}
-			//Console.Printf("@n3km");
-			return false;
-		}
-
-		rsize = ForbiddenToPlayerClass.Size();
-		if (rsize > 0)
-		{
-			for (int i=0; i < rsize; i++)
-			{
-				if (toucher is ForbiddenToPlayerClass[i]) return false;
-			}
-		}
-		
-		let currentitemtype = toucher.FindInventory("Shell");
-		//Console.Printf("@#$$@$");
-		if (currentitemtype && currentitemtype.Amount >= currentitemtype.MaxAmount) return false;
-		return true;
-	}
-
 	override String PickupMessage()
 	{
 		string msg = PickupMsg;
@@ -5551,7 +5643,9 @@ class SuperShotgunMarine : MarineWeapon //replaces SuperShotgun
 		Inventory.PickupMessage "Picked up a \cusuper shotgun\c-! \cx[Slot 3]\c-";
 		Obituary "$OB_MPSSHOTGUN";
 		Tag "$TAG_SUPERSHOTGUN";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
@@ -5997,7 +6091,9 @@ class ChaingunMarine : MarineWeapon //replaces Chaingun
 		Inventory.PickupMessage "Picked up a \cuchaingun\c-! \cx[Slot 4]\c-";
 		Obituary "$OB_MPCHAINGUN";
 		Tag "$TAG_CHAINGUN";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
@@ -6215,7 +6311,9 @@ class RocketLauncherMarine : MarineWeapon //replaces RocketLauncher
 		+WEAPON.NOALERT;
 		Inventory.PickupMessage "Picked up a \carocket launcher\c-! \cx[Slot 5]\c-";
 		Tag "$TAG_ROCKETLAUNCHER";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
@@ -6685,7 +6783,9 @@ class PlasmaRifleMarine : MarineWeapon //replaces PlasmaRifle
 		Weapon.AmmoType2 "Cell";
 		Tag "$TAG_PLASMARIFLE";
 		Inventory.PickupMessage "Picked up a \cvplasma rifle\c-! \cx[Slot 6]\c-";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
@@ -7024,7 +7124,9 @@ class BFG9000Marine : MarineWeapon //replaces BFG9000
 		+WEAPON.NOAUTOFIRE;
 		Inventory.PickupMessage "Picked up a \cvBFG9000\c-! \cx[Slot 7]\c-";
 		Tag "$TAG_BFG9000";
+		
 		Inventory.RestrictedTo "KCPlayer";
+		KCWeaponBase.IsHeiwaBrokenWeapon 1;
 	}
 	
 	override String PickupMessage()
