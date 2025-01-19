@@ -530,7 +530,8 @@ class PlayerStatItem : Inventory
 				if (TrueGameSkill == SKILL_NORMAL) LVLfactArmr = 0.03;
 				if (TrueGameSkill == SKILL_HARD) LVLfactArmr = 0.025;
 				if (TrueGameSkill >= SKILL_VERY_HARD) LVLfactArmr = 0.02;
-				LVLfactArmr *= 0.25;
+				if (A_CheckForHeiwa()) LVLfactArmr *= 0.5;
+													else LVLfactArmr *= 0.25;
 				if (owner.waterlevel >= 3) LVLfactArmr *= 0.75;
 				else if (owner.waterlevel == 2) LVLfactArmr *= 0.91667;
 				else if (owner.waterlevel == 1) LVLfactArmr *= 0.975;
@@ -541,7 +542,8 @@ class PlayerStatItem : Inventory
 				if (TrueGameSkill == SKILL_NORMAL) ATKfactArmr = 0.06;
 				if (TrueGameSkill == SKILL_HARD) ATKfactArmr = 0.05;
 				if (TrueGameSkill >= SKILL_VERY_HARD) ATKfactArmr = 0.04;
-				ATKfactArmr *= 0.25;
+				if (A_CheckForHeiwa()) ATKfactArmr *= 0.375;
+													else ATKfactArmr *= 0.25;
 				if (owner.waterlevel >= 3) ATKfactArmr *= 0.75;
 				else if (owner.waterlevel == 2) ATKfactArmr *= 0.91667;
 				else if (owner.waterlevel == 1) ATKfactArmr *= 0.975;
@@ -552,7 +554,8 @@ class PlayerStatItem : Inventory
 				if (TrueGameSkill == SKILL_NORMAL) LVLfactWeap = 0.03;
 				if (TrueGameSkill == SKILL_HARD) LVLfactWeap = 0.025;
 				if (TrueGameSkill >= SKILL_VERY_HARD) LVLfactWeap = 0.02;
-				LVLfactWeap *= 0.25;
+				if (A_CheckForHeiwa()) LVLfactWeap *= 0.5;
+													else LVLfactWeap *= 0.25;
 				if (owner.waterlevel >= 3) LVLfactWeap *= 0.75;
 				else if (owner.waterlevel == 2) LVLfactWeap *= 0.91667;
 				else if (owner.waterlevel == 1) LVLfactWeap *= 0.975;
@@ -563,7 +566,8 @@ class PlayerStatItem : Inventory
 				if (TrueGameSkill == SKILL_NORMAL) ATKfactWeap = 0.06;
 				if (TrueGameSkill == SKILL_HARD) ATKfactWeap = 0.05;
 				if (TrueGameSkill >= SKILL_VERY_HARD) ATKfactWeap = 0.04;
-				ATKfactWeap *= 0.25;
+				if (A_CheckForHeiwa()) ATKfactWeap *= 0.375;
+													else ATKfactWeap *= 0.25;
 				if (owner.waterlevel >= 3) ATKfactWeap *= 0.75;
 				else if (owner.waterlevel == 2) ATKfactWeap *= 0.91667;
 				else if (owner.waterlevel == 1) ATKfactWeap *= 0.975;
@@ -3545,16 +3549,19 @@ class PlayerStatItem : Inventory
 					{
 						ArmorWeight = HARMORWEIGHTGREEN;
 						if (berserked) ArmorWeight *= 0.4;
+						if (ArmorRatio >= GREENARMORVALDOUBLE) ArmorRatio = GREENARMORVALDOUBLE;
 					}
 					if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 					{
 						ArmorWeight = HARMORWEIGHTBLUE;
 						if (berserked) ArmorWeight *= 0.4;
+						if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 					}
 					if (darmortype == 3) // Red Armor [Doom-type] (350% of HP max)
 					{
 						ArmorWeight = HARMORWEIGHTRED;
 						if (berserked) ArmorWeight *= 0.4;
+						if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
 					}
 				}
 				else
@@ -3563,23 +3570,26 @@ class PlayerStatItem : Inventory
 					{
 						ArmorWeight = MARMORWEIGHTGREEN;
 						if (berserked) ArmorWeight *= 0.6;
+						if (ArmorRatio >= GREENARMORVALDOUBLE) ArmorRatio = GREENARMORVALDOUBLE;
 					}
 					if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 					{
 						ArmorWeight = MARMORWEIGHTBLUE;
 						if (berserked) ArmorWeight *= 0.6;
+						if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 					}
 					if (darmortype == 3) // Red Armor [Doom-type] (350% of HP max)
 					{
 						ArmorWeight = MARMORWEIGHTRED;
 						if (berserked) ArmorWeight *= 0.6;
+						if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
 					}
 				}
 				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
 				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
-			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
+			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorHealthFactor: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorHealthFactor, ArmorRatio, ArmorAmt, BMaxArmor);
 			
 			ArmorEnc *= kc_armorencumbrance;
 			ArmorEncL = ArmorEnc;
@@ -3591,6 +3601,7 @@ class PlayerStatItem : Inventory
 			if (ArmorEncEft <= 0.25) ArmorEncEft = 0.25;
 			if (ArmorEncEft > 1.0) ArmorEncEft = 1.0;
 			ArmorEnc *= ArmorEncEft;
+			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEncEft: %.8f", ArmorEncEft);
 			
 			if (!owner.CountInv("KCPowerKampoul")) 
 			{
@@ -8485,16 +8496,19 @@ class PlayerStatItem : Inventory
 				{
 					ArmorWeight = HARMORWEIGHTGREEN;
 					if (berserked) ArmorWeight *= 0.4;
+					if (ArmorRatio >= GREENARMORVALDOUBLE) ArmorRatio = GREENARMORVALDOUBLE;
 				}
 				if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 				{
 					ArmorWeight = HARMORWEIGHTBLUE;
 					if (berserked) ArmorWeight *= 0.4;
+					if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 				}
 				if (darmortype == 3) // Blue Armor [Doom-type] (350% of HP max)
 				{
 					ArmorWeight = HARMORWEIGHTRED;
 					if (berserked) ArmorWeight *= 0.4;
+					if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
 				}
 			}
 			else
@@ -8503,23 +8517,26 @@ class PlayerStatItem : Inventory
 				{
 					ArmorWeight = MARMORWEIGHTGREEN;
 					if (berserked) ArmorWeight *= 0.6;
+					if (ArmorRatio >= GREENARMORVALDOUBLE) ArmorRatio = GREENARMORVALDOUBLE;
 				}
 				if (darmortype == 2) // Blue Armor [Doom-type] (200% of HP max)
 				{
 					ArmorWeight = MARMORWEIGHTBLUE;
 					if (berserked) ArmorWeight *= 0.6;
+					if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 				}
 				if (darmortype == 3) // Red Armor [Doom-type] (350% of HP max)
 				{
 					ArmorWeight = MARMORWEIGHTRED;
 					if (berserked) ArmorWeight *= 0.6;
+					if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
 				}
 			}
 			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
 			ArmorEnc = (ArmorWeight * ArmorRatio);
 		}
-		if (kcdebug_speedcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorRatio, ArmorAmt, BMaxArmor);
+		if (kcdebug_speedcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorHealthFactor: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorHealthFactor, ArmorRatio, ArmorAmt, BMaxArmor);
 		
 		ArmorEnc *= kc_armorencumbrance;
 		ArmorEncL = ArmorEnc;
@@ -8531,6 +8548,7 @@ class PlayerStatItem : Inventory
 		if (ArmorEncEft <= 0.25) ArmorEncEft = 0.25;
 		if (ArmorEncEft > 1.0) ArmorEncEft = 1.0;
 		ArmorEnc *= ArmorEncEft;
+		if (kcdebug_speedcalcs) Console.Printf("ArmorEncEft: %.8f", ArmorEncEft);
 
 		if (kcdebug_speedcalcs) Console.Printf("%.8f (%.8f), kc_armorencumbrance: %.8f, armordiffmod: %.8f", ArmorEnc, ArmorEncL, kc_armorencumbrance, armordiffmod);
 		if (ArmorEnc < 0.0) ArmorEnc = 0.0;
