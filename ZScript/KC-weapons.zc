@@ -7044,8 +7044,16 @@ class PlasmaRifleMarine : MarineWeapon //replaces PlasmaRifle
 			}
 			Goto Ready;
 		Spawn:
+			PLAS A 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			PLAS A -1;
+			Stop;
+		IdleB:
+			PLAS B -1;
 			Stop;
 	}
 }
