@@ -5940,8 +5940,16 @@ class SuperShotgunMarine : MarineWeapon //replaces SuperShotgun
 			SHT2 J 3 Bright A_Light2;
 			Goto LightDone;
 		Spawn:
+			SGN2 A 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			SGN2 A -1;
+			Stop;
+		IdleB:
+			SGN2 B -1;
 			Stop;
 	}
 }
