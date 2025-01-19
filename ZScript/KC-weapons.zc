@@ -6192,8 +6192,16 @@ class ChaingunMarine : MarineWeapon //replaces Chaingun
 			CHGG AAAABBBBCCCCDDDD 1 A_WeaponReady();
 			Goto Ready;
 		Spawn:
+			MGUN B 0 NoDelay
+			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
+			}
 		Idle:
 			MGUN A -1;
+			Stop;
+		IdleB:
+			MGUN B -1;
 			Stop;
 	}
 }
