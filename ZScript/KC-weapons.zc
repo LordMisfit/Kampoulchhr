@@ -5202,10 +5202,16 @@ class PistolMarine : MarineWeapon //replaces Pistol
 		Spawn:
 			2PIS E 0 NoDelay
 			{
+				if (A_CheckForHeiwa()) return resolvestate("IdleB");
+													else return resolvestate("Idle");
 			}
 		Idle:
 			2PIS E -1;
-			Loop;
+			stop;
+		IdleB:
+			2PIS G -1;
+			stop;
+		
 		Ready:
 			2PIS A 1 A_WeaponReady();
 			Loop;
