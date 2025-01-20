@@ -5052,12 +5052,21 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					if (CPlayerPawn.CountInv("DualTeslaCannons"))
 					{
-						if (CPlayerPawn.CountInv("DualTeslaCannonsDisabled")) LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
-																														 else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+						if (CPlayerPawn.CountInv("DualTeslaCannonsDisabled")) 
+						{
+							if (CPlayerPawn.CountInv("Bolts") >= 35) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [35 TESLA ROUNDS]\c-");
+																									else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+						}
+						else 
+						{
+							if (CPlayerPawn.CountInv("Bolts") >= 70) LegendStr.AppendFormat(" = \c[blue]ULTRA CHARGEBURST [70 TESLA ROUNDS]\c-");
+																									else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+						}
 					}
 					else
 					{
-						LegendStr.AppendFormat(" = \c[blue]TESLA CHARGEBURST [35 TESLA ROUNDS]\c-");
+						if (CPlayerPawn.CountInv("Bolts") >= 35) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [35 TESLA ROUNDS]\c-");
+																								else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
 					}
 				}
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");

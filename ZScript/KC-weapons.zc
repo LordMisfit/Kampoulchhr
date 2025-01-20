@@ -10727,6 +10727,7 @@ class TeslaCannon : MarineWeapon
 				return resolvestate(null);
 			}
 			Goto Ready;
+			
 		AltFlash:
 			TNT1 A 0
 			{
@@ -10741,6 +10742,35 @@ class TeslaCannon : MarineWeapon
 			
 		AltFireDual:
 			TNT1 A 0;
+			TNT1 A 0 A_JumpIfInventory("Bolts", 70, 1); // TeslaCharge
+			Goto FireDual;
+			TESL A 0 
+			{
+				A_StartSound("Tesla/AltCharge1",CHAN_WEAPON); // 1.2 seconds (38 Tics)
+				A_StartSound("Tesla/AltCharge1",844); // 1.2 seconds (38 Tics)
+			}
+			TES3 KL 3 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH); // 6 Tics
+			TES3 MNABCDEFGHIJ 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH); // 30 Tics
+			TES3 EFGHIJEFGHIJ 1 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH); // 36 Tics
+			TE3F A 0 BRIGHT 
+			{
+				A_StartSound("Tesla/AltFire1",CHAN_WEAPON);
+				A_StartSound("Tesla/AltFire1",844);
+			}
+			//TE3F A 0 BRIGHT A_GunFlash();
+			TNT1 A 0 A_FireProjectile("TeslaBallBigDual",0,1,5);
+			TNT1 A 0 A_TakeInventory("Bolts", 69); // TeslaCharge
+			TE3F A 2 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
+			TE3F BC 1 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
+			TE3F D 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
+			TAKR ABCD 3 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
+			TAKR D 0
+			{
+				if (A_DualTeslaCheck()) return resolvestate("ReadyDual");
+				return resolvestate(null);
+			}
+			Goto ReadyDual;
+
 		AltHoldDual:
 			TNT1 A 0;
 		FireDual:
@@ -11068,7 +11098,7 @@ class TeslaBallBigDual : TeslaBallBig
 {
 	default
 	{
-		DamageFunction (180 * random(1,8)); // DamageFunction (random(84,188));
+		DamageFunction (randompick(160,180,180,180,180,180,180,200) * random(randompick(1,2,2,2,2,2,2,2,2,3),8)); // vs DamageFunction (80 * random(1,8)); // DamageFunction (random(84,188));
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 	}
@@ -11185,7 +11215,11 @@ class TeslaExplosionDual : KCProjectile
 	States
 	{
 		Spawn:
-			TNT1 A 1 A_Explode(frandom(81,108),126,XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning");
+			TNT1 A 1 
+			{
+				double dmgmult = frandompick(0.75,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.25);
+				A_Explode((frandom(81,108)*dmgmult),(126*dmgmult),XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning");
+			}
 			Stop;
 	}
 }

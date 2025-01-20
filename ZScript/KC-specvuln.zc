@@ -5323,11 +5323,15 @@ class CompatVulnItem : PlaceholderItem
 							nn = "TeslaBallBigDual";
 							no = "TeslaProjectile";
 							np = "TeslaProjectile2";
+							nq = "TeslaExplosion";
+							nr = "TeslaExplosionDual";
 							if (inflictor && 
 									(inflictor.GetClassName() == nm ||
 									 inflictor.GetClassName() == nn ||
 									 inflictor.GetClassName() == no ||
-									 inflictor.GetClassName() == np) && 
+									 inflictor.GetClassName() == np ||
+									 inflictor.GetClassName() == nq ||
+									 inflictor.GetClassName() == nr) && 
 									inflictor.bFORCERADIUSDMG &&
 									flags & DMG_EXPLOSION)
 							{
