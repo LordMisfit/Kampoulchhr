@@ -10456,6 +10456,8 @@ class ImpalerBoltsBig : ImpalerBolts
 
 class TeslaCannon : MarineWeapon
 {
+	int altcost;
+	int altcost2;
 	default
 	{
 		Inventory.PickupSound "misc/w_pkup";
@@ -10541,6 +10543,12 @@ class TeslaCannon : MarineWeapon
 		}
 	}
 	
+	action void A_SetAltFireCost()
+	{
+		invoker.altcost = 35;
+		invoker.altcost2 = 70;
+	}
+	
 	states
 	{
 		Spawn:
@@ -10568,6 +10576,7 @@ class TeslaCannon : MarineWeapon
 				if (CountInv("DualTeslaCannons")) A_WeaponReady(WRF_ALLOWUSER4);
 																		 else A_WeaponReady();
 				if (A_DualTeslaCheck()) return resolvestate("ReadyDual");
+				A_SetAltFireCost();
 				return resolvestate(null);
 			}
 			loop;
@@ -10577,6 +10586,7 @@ class TeslaCannon : MarineWeapon
 				if (CountInv("DualTeslaCannons")) A_WeaponReady(WRF_ALLOWUSER4);
 																		 else A_WeaponReady();
 				if (!A_DualTeslaCheck()) return resolvestate("Ready");
+				A_SetAltFireCost();
 				return resolvestate(null);
 			}
 			Loop;
@@ -10584,6 +10594,7 @@ class TeslaCannon : MarineWeapon
 		Select:
 			TESR ABCDEF 1 
 			{
+				A_SetAltFireCost();
 				A_Raise(12);
 				if (A_DualTeslaCheck()) return resolvestate("SelectDual");
 				return resolvestate(null);
@@ -10593,6 +10604,7 @@ class TeslaCannon : MarineWeapon
 		SelectDual:
 			TAKR ABCDEF 1
 			{
+				A_SetAltFireCost();
 				A_Raise(12);
 				if (!A_DualTeslaCheck()) return resolvestate("Select");
 				return resolvestate(null);
@@ -10602,6 +10614,7 @@ class TeslaCannon : MarineWeapon
 		Deselect:
 			TESR FEDCBA 1 
 			{
+				A_SetAltFireCost();
 				A_Lower(12);
 				if (A_DualTeslaCheck()) return resolvestate("DeselectDual");
 				return resolvestate(null);
@@ -10611,6 +10624,7 @@ class TeslaCannon : MarineWeapon
 		DeselectDual:
 			TAKR FEDCBA 1 
 			{
+				A_SetAltFireCost();
 				A_Lower(12);
 				if (!A_DualTeslaCheck()) return resolvestate("Deselect");
 				return resolvestate(null);
@@ -10621,6 +10635,7 @@ class TeslaCannon : MarineWeapon
 		Fire:
 			TNT1 A 0
 			{
+				A_SetAltFireCost();
 				if (A_DualTeslaCheck()) return resolvestate("FireDual");
 				return resolvestate(null);
 			}
@@ -10704,10 +10719,11 @@ class TeslaCannon : MarineWeapon
 		AltFire:
 			TNT1 A 0
 			{
+				A_SetAltFireCost();
 				if (A_DualTeslaCheck()) return resolvestate("AltFireDual");
 				return resolvestate(null);
 			}
-			TNT1 A 0 A_JumpIfInventory("Bolts", 35, 1); // TeslaCharge
+			TNT1 A 0 A_JumpIfInventory("Bolts", invoker.altcost, 1); // TeslaCharge
 			Goto Fire;
 			TESL A 0 A_StartSound("Tesla/AltCharge1",CHAN_WEAPON); // 1.2 seconds (38 Tics)
 			TES2 KL 3 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH); // 6 Tics
@@ -10716,7 +10732,7 @@ class TeslaCannon : MarineWeapon
 			TE2F A 0 BRIGHT A_StartSound("Tesla/AltFire1",CHAN_WEAPON);
 			TE2F A 0 BRIGHT A_GunFlash();
 			TNT1 A 0 A_FireProjectile("TeslaBallBig",0,1,5);
-			TNT1 A 0 A_TakeInventory("Bolts", 34); // TeslaCharge
+			TNT1 A 0 A_TakeInventory("Bolts", (invoker.altcost-1)); // TeslaCharge
 			TE2F A 2 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
 			TE2F BC 1 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
 			TE2F D 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
@@ -10742,7 +10758,7 @@ class TeslaCannon : MarineWeapon
 			
 		AltFireDual:
 			TNT1 A 0;
-			TNT1 A 0 A_JumpIfInventory("Bolts", 70, 1); // TeslaCharge
+			TNT1 A 0 A_JumpIfInventory("Bolts", invoker.altcost2, 1); // TeslaCharge
 			Goto FireDual;
 			TESL A 0 
 			{
@@ -10759,7 +10775,7 @@ class TeslaCannon : MarineWeapon
 			}
 			//TE3F A 0 BRIGHT A_GunFlash();
 			TNT1 A 0 A_FireProjectile("TeslaBallBigDual",0,1,5);
-			TNT1 A 0 A_TakeInventory("Bolts", 69); // TeslaCharge
+			TNT1 A 0 A_TakeInventory("Bolts", (invoker.altcost2-1)); // TeslaCharge
 			TE3F A 2 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
 			TE3F BC 1 BRIGHT A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
 			TE3F D 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH|WRF_DISABLESWITCH);
@@ -11043,7 +11059,7 @@ class TeslaBallBig : KCFastProjectile
 		Mass 200;
 		Scale 0.4;
 		XScale 1.55;
-		DamageFunction (80 * random(1,8)); // DamageFunction (random(84,188));
+		DamageFunction (160 * random(1,4)); // DamageFunction (random(84,188));
 		DamageType "Lightning";
 		RenderStyle "Add";
 		Alpha 1;
@@ -11098,7 +11114,7 @@ class TeslaBallBigDual : TeslaBallBig
 {
 	default
 	{
-		DamageFunction (randompick(160,180,180,180,180,180,180,200) * random(randompick(1,2,2,2,2,2,2,2,2,3),8)); // vs DamageFunction (80 * random(1,8)); // DamageFunction (random(84,188));
+		DamageFunction (randompick(320,360,360,360,360,360,360,400) * random(randompick(1,2,2,2,2,2,2,2,2,3),4)); // vs DamageFunction (80 * random(1,8)); // DamageFunction (random(84,188));
 		-CASTSPRITESHADOW;
 		+NOSPRITESHADOW;
 	}
@@ -11164,7 +11180,11 @@ class TeslaBallBigDual : TeslaBallBig
 			NULL BBBBBBBBBBB 0 A_SpawnItemEx("TeslaDebris",frandom(-15,15),frandom(-15,15),frandom(-15,15),frandom(-1,1),frandom(-3,3),frandom(0,1));
 			TNT1 A 0 A_SpawnItemEx("TeslaExplosionDual", 0, 64);
 			TNT1 A 0 A_SpawnItemEx("TeslaExplosionDual", 0, -64);
-			NULL AAAAAAAA 0 A_Explode(frandom(81,108),384,XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning"); //great painchance
+			NULL AAAAAAAA 0 
+			{
+				double dmgmult = frandompick(0.75,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.25);
+				A_Explode((frandom(81,108)*dmgmult),(384*dmgmult),XF_HURTSOURCE,false,0,0,10,"KCBulletPuff","Lightning");
+			}
 			Stop;
 		Death.Sky:
 			NULL B 1;
@@ -11434,7 +11454,7 @@ class TeslaProjectile : KCFastProjectile
 		Radius 4;
 		Height 8;
 		RenderStyle "Add";
-		DamageFunction (10 * random(1,8)); //DamageFunction (random(24,32));
+		DamageFunction (20 * random(1,4)); //DamageFunction (random(24,32));
 		DamageType "Lightning";
 		PROJECTILE;
 		+FORCERADIUSDMG;
@@ -11473,7 +11493,7 @@ class TeslaProjectile2 : TeslaProjectile
 		Height 8;
 		Scale 0.5;
 		RenderStyle "Add";
-		DamageFunction (5 * random(1,8)); //DamageFunction (random(24,32));
+		DamageFunction (10 * random(1,4)); //DamageFunction (random(24,32));
 		DamageType "Lightning";
 		PROJECTILE;
 		+FORCERADIUSDMG;

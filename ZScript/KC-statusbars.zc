@@ -4726,6 +4726,7 @@ class KCStatusBarMain : BaseStatusBar
 			let TmyG = TommyGun(CPlayerPawn.FindInventory("TommyGun"));
 			let BlsR = BlasterRifle(CPlayerPawn.FindInventory("BlasterRifle"));
 			let Incn = Incinerator(CPlayerPawn.FindInventory("Incinerator"));
+			let TslC = TeslaCannon(CPlayerPawn.FindInventory("TeslaCannon"));
 			let BHGn = BHGen(CPlayerPawn.FindInventory("BHGen"));
 			let CalB = CalamityBlade(CPlayerPawn.FindInventory("CalamityBlade"));
 			let TrsLoc = Translocator(CPlayerPawn.FindInventory("Translocator"));
@@ -4983,7 +4984,7 @@ class KCStatusBarMain : BaseStatusBar
 					PlayerWeapon is "Deviation" ||
 					PlayerWeapon is "Devastator" ||
 					PlayerWeapon is "PlasmaRifleMarine" ||
-					PlayerWeapon is "TeslaCannon" ||
+					(PlayerWeapon is "TeslaCannon" && TslC) ||
 					PlayerWeapon is "BFG9000Marine" ||
 					PlayerWeapon is "BHGen" ||
 					(PlayerWeapon is "CalamityBlade" && (CalB.CalamityFireType == 0 || CalB.CalamityFireType == 2)) ||
@@ -5048,25 +5049,25 @@ class KCStatusBarMain : BaseStatusBar
 				if (PlayerWeapon is "Devastator") LegendStr.AppendFormat(" = \c[blue]SHOTGUN MISSILE BURST\c-");
 				if (PlayerWeapon is "Deviation") LegendStr.AppendFormat(" = \c[blue]DRUNKEN ROCKET [FASTER FIRE]\c-");
 				if (PlayerWeapon is "PlasmaRifleMarine") LegendStr.AppendFormat(" = \c[blue]PLASMA SHOTBURST [~2-10 CELLS/SHOT]\c-");
-				if (PlayerWeapon is "TeslaCannon") 
+				if (PlayerWeapon is "TeslaCannon" && TslC) 
 				{
 					if (CPlayerPawn.CountInv("DualTeslaCannons"))
 					{
 						if (CPlayerPawn.CountInv("DualTeslaCannonsDisabled")) 
 						{
-							if (CPlayerPawn.CountInv("Bolts") >= 35) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [35 TESLA ROUNDS]\c-");
-																									else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+							if (CPlayerPawn.CountInv("Bolts") >= TslC.altcost) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [%d TESLA ROUNDS]\c-", TslC.altcost);
+																														else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
 						}
 						else 
 						{
-							if (CPlayerPawn.CountInv("Bolts") >= 70) LegendStr.AppendFormat(" = \c[blue]ULTRA CHARGEBURST [70 TESLA ROUNDS]\c-");
-																									else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+							if (CPlayerPawn.CountInv("Bolts") >= TslC.altcost2) LegendStr.AppendFormat(" = \c[blue]ULTRA CHARGEBURST [%d TESLA ROUNDS]\c-", TslC.altcost2);
+																														 else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
 						}
 					}
 					else
 					{
-						if (CPlayerPawn.CountInv("Bolts") >= 35) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [35 TESLA ROUNDS]\c-");
-																								else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
+						if (CPlayerPawn.CountInv("Bolts") >= TslC.altcost) LegendStr.AppendFormat(" = \c[blue]CHARGEBURST [%d TESLA ROUNDS]\c-", TslC.altcost);
+																													else LegendStr.AppendFormat(" = \c[blue]STANDARD SHOTS\c-");
 					}
 				}
 				if (PlayerWeapon is "BFG9000Marine") LegendStr.AppendFormat(" = \c[blue]BFG2704 [~40 CELLS]\c-");
