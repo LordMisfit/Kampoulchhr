@@ -3587,6 +3587,7 @@ class PlayerStatItem : Inventory
 				}
 				ArmorWeight *= ArmorHealthFactor;
 				ArmorWeight *= armordiffmod;
+				ArmorWeight *= (1.00 - (owner.CountInv("SpecialBackpackBonus") * 0.025));
 				ArmorEnc = (ArmorWeight * ArmorRatio);
 			}
 			if (kcdebug_jumpingcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorHealthFactor: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorHealthFactor, ArmorRatio, ArmorAmt, BMaxArmor);
@@ -8534,6 +8535,7 @@ class PlayerStatItem : Inventory
 			}
 			ArmorWeight *= ArmorHealthFactor;
 			ArmorWeight *= armordiffmod;
+			ArmorWeight *= (1.00 - (owner.CountInv("SpecialBackpackBonus") * 0.025));
 			ArmorEnc = (ArmorWeight * ArmorRatio);
 		}
 		if (kcdebug_speedcalcs) Console.Printf("ArmorEnc: %.8f, ArmorWeight: %.8f, ArmorHealthFactor: %.8f, ArmorRatio: %.8f (%d / %d)", ArmorEnc, ArmorWeight, ArmorHealthFactor, ArmorRatio, ArmorAmt, BMaxArmor);
