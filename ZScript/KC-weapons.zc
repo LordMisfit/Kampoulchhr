@@ -10545,8 +10545,17 @@ class TeslaCannon : MarineWeapon
 	
 	action void A_SetAltFireCost()
 	{
-		invoker.altcost = 35;
-		invoker.altcost2 = 70;
+		actor playera = players[0].mo;
+		if (playera.CountInv("TeslaCannonUpgrade"))
+		{
+			invoker.altcost = 21;
+			invoker.altcost2 = 42;
+		}
+		else
+		{
+			invoker.altcost = 35;
+			invoker.altcost2 = 70;
+		}
 	}
 	
 	states
