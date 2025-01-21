@@ -354,27 +354,38 @@ class CustomInventoryExt : CustomInventory
 		return result;
 	}
 	
-	action void A_CapsuleSpawn(int basechance)
+	action void A_CapsuleSpawnHI(int basechance)
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
-		if (A_CheckSecret()) chancebase1 *= random(2,3);
-		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
-		if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
+
+		int user_type = random(1,100);
+		if (user_type >= 1 && user_type <= 96)
+		{
+			if (A_CheckSecret()) chancebase1 *= random(2,3);
+			if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
+			if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
+		}
+		else
+		{
+			if (A_CheckSecret()) chancebase1 *= randompick(1,1,1,1,2);
+			if (A_CheckSecret() >= 2) chancebase1 *= randompick(1,1,1,1,2);
+			if (A_CheckSecret() >= 3) chancebase1 *= randompick(1,1,1,1,2);
+		}
 		
 		if (HeiwaPlayer(playera))
 		{
 			if (!bDROPPED && random(1,basechance) <= chancebase1)
 			{
-				int user_type = random(1,24);
 				string spawntype;
-				if (user_type >= 1 && user_type <= 4) spawntype = "VitalCapsule";
-				if (user_type >= 5 && user_type <= 8) spawntype = "SpeedCapsule";
-				if (user_type >= 9 && user_type <= 12) spawntype = "IQCapsule";
-				if (user_type >= 13 && user_type <= 16) spawntype = "GutsCapsule";
-				if (user_type >= 17 && user_type <= 20) spawntype = "LuckCapsule";
-				if (user_type >= 21 && user_type <= 24) spawntype = "SensesCapsule";
+				if (user_type >= 1 && user_type <= 16) spawntype = "VitalCapsule";
+				if (user_type >= 17 && user_type <= 32) spawntype = "SpeedCapsule";
+				if (user_type >= 33 && user_type <= 48) spawntype = "IQCapsule";
+				if (user_type >= 49 && user_type <= 64) spawntype = "GutsCapsule";
+				if (user_type >= 65 && user_type <= 80) spawntype = "LuckCapsule";
+				if (user_type >= 81 && user_type <= 96) spawntype = "SensesCapsule";
+				if (user_type >= 97) spawntype = "LemonMerinquePie";
 				A_SpawnItemEx(spawntype,0.0,0.0,0.0,0.0,0.0,0.0,0,SXF_NOCHECKPOSITION,0,tid);
 				if (bCOUNTITEM) level.total_items--;
 				if (bCOUNTSECRET) level.total_secrets--;
@@ -1313,7 +1324,11 @@ class Stimpack2 : CustomInventoryExt replaces Stimpack
 	States
 	{
 		Spawn:
-			STIM A 0 NoDelay;
+			STIM A 0 NoDelay
+			{
+				A_CapsuleSpawnHI(128); // 16384
+			}
+		Idle:
 			STIM A -1;
 			Stop;
 		Success:
@@ -1368,7 +1383,11 @@ class MiniBerserk : CustomInventoryExt
 	States
 	{
 		Spawn:
-			MBSK A 0 NoDelay;
+			MBSK A 0 NoDelay
+			{
+				A_CapsuleSpawnHI(32); // 16384
+			}
+		Idle:
 			MBSK A -1;
 			Stop;
 		Pickup:
@@ -1456,7 +1475,11 @@ class Medikit2 : CustomInventoryExt replaces Medikit
 	States
 	{
 		Spawn:
-			MEDI A 0 NoDelay;
+			MEDI A 0 NoDelay
+			{
+				A_CapsuleSpawnHI(64); // 16384
+			}
+		Idle:
 			MEDI A -1;
 			Stop;
 		Success:
@@ -1511,7 +1534,7 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 		Spawn:
 			PSTR A 0 NoDelay
 			{
-				A_CapsuleSpawn(16);
+				A_CapsuleSpawnHI(16);
 			}
 		Idle:
 			PSTR A -1;
@@ -1734,7 +1757,7 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 					}
 					else
 					{
-						A_CapsuleSpawn(4096); // 16384
+						A_CapsuleSpawnHI(4096); // 16384
 					}
 				}
 			}
@@ -1801,7 +1824,7 @@ class HealthBonusBig : CustomInventoryExt
 		Spawn:
 			BON3 A 0 NoDelay
 			{
-				A_CapsuleSpawn((4096/random(6,10))); // 16384
+				A_CapsuleSpawnHI((4096/random(6,10))); // 16384
 			}
 			goto Float;
 		Float:
@@ -1872,46 +1895,75 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 						!bDROPPED)
 				{
 					actor playera = players[0].mo;
-					int chance = 64;
+					int chance = 32;
 					int chance2 = 1;
-					if (playera.CountInv("PlayingDoom1")) 
+					if (A_CheckSecret() >= 1) 
 					{
-						chance = randompick(8,16,16,16,16,16,16,16);
-						chance2 = randompick(1,1,1,1,2,2,2,3);
+						chance = randompick(16,32,32,32,32);
+						chance2 = randompick(1,1,1,1,2);
 						if (A_CheckSecret() >= 2) 
 						{
-							chance = randompick(2,4,4,4,4,4,4,4);
-							chance2 = randompick(1,1,2,2,3,3,4,5);
-							if (A_CheckSecret() >= 3) 
+							chance = randompick(16,32,32,32);
+							chance2 = randompick(1,1,1,2);
+							if (A_CheckSecret() >= 2) 
 							{
-								chance = randompick(1,1,1,2,2,2,2,2);
-								chance2 = randompick(1,1,1,1,1,2,2,2);
-							}
-						}
-					}
-					else
-					{
-						chance = randompick(32,64,64,64,64,64,64,64);
-						chance2 = randompick(1,1,1,1,1,1,1,2);
-						if (A_CheckSecret() >= 2) 
-						{
-							chance = randompick(8,16,16,32,32,32,32,32);
-							chance2 = randompick(1,1,1,1,2,2,2,3);
-							if (A_CheckSecret() >= 3) 
-							{
-								chance = randompick(2,4,8,8,16,16,16,16);
-								chance2 = randompick(1,1,1,1,1,1,2,2);
+								chance = randompick(16,32,32);
+								chance2 = randompick(1,1,2);
 							}
 						}
 					}
 					
 					if (random(1,chance) <= chance2)
 					{
-						A_SpawnItemEx("MegaSphere2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						A_SpawnItemEx("LemonMerinquePie",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
 						if (bCOUNTITEM) level.total_items--;
 						if (bCOUNTSECRET) level.total_secrets--;
 						if (bCOUNTKILL) level.total_monsters--;
 						self.Destroy();
+					}
+					else
+					{
+						chance = 64;
+						chance2 = 1;
+						if (playera.CountInv("PlayingDoom1")) 
+						{
+							chance = randompick(8,16,16,16,16,16,16,16);
+							chance2 = randompick(1,1,1,1,2,2,2,3);
+							if (A_CheckSecret() >= 2) 
+							{
+								chance = randompick(2,4,4,4,4,4,4,4);
+								chance2 = randompick(1,1,2,2,3,3,4,5);
+								if (A_CheckSecret() >= 3) 
+								{
+									chance = randompick(1,1,1,2,2,2,2,2);
+									chance2 = randompick(1,1,1,1,1,2,2,2);
+								}
+							}
+						}
+						else
+						{
+							chance = randompick(32,64,64,64,64,64,64,64);
+							chance2 = randompick(1,1,1,1,1,1,1,2);
+							if (A_CheckSecret() >= 2) 
+							{
+								chance = randompick(8,16,16,32,32,32,32,32);
+								chance2 = randompick(1,1,1,1,2,2,2,3);
+								if (A_CheckSecret() >= 3) 
+								{
+									chance = randompick(2,4,8,8,16,16,16,16);
+									chance2 = randompick(1,1,1,1,1,1,2,2);
+								}
+							}
+						}
+						
+						if (random(1,chance) <= chance2)
+						{
+							A_SpawnItemEx("MegaSphere2",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							if (bCOUNTITEM) level.total_items--;
+							if (bCOUNTSECRET) level.total_secrets--;
+							if (bCOUNTKILL) level.total_monsters--;
+							self.Destroy();
+						}
 					}
 					invoker.spawnroll = true;
 				}
@@ -2030,6 +2082,7 @@ class Soulsphere2 : CustomInventoryExt replaces SoulSphere
 
 class MiniSoulsphere : CustomInventoryExt
 {
+	bool spawnroll;
 	default
 	{
 		Height 16;
@@ -2047,6 +2100,43 @@ class MiniSoulsphere : CustomInventoryExt
 	States
 	{
 		Spawn:
+			SOUL A 0 Bright
+			{
+				if (!invoker.spawnroll && 
+						A_CheckSecret() && 
+						!bDROPPED)
+				{
+					actor playera = players[0].mo;
+					int chance = 128;
+					int chance2 = 1;
+					if (A_CheckSecret() >= 1) 
+					{
+						chance = randompick(64,128,128,128,128);
+						chance2 = randompick(1,1,1,1,2);
+						if (A_CheckSecret() >= 2) 
+						{
+							chance = randompick(64,128,128,128);
+							chance2 = randompick(1,1,1,2);
+							if (A_CheckSecret() >= 2) 
+							{
+								chance = randompick(64,128,128);
+								chance2 = randompick(1,1,2);
+							}
+						}
+					}
+					
+					if (random(1,chance) <= chance2)
+					{
+						A_SpawnItemEx("LemonMerinquePie",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
+						self.Destroy();
+					}
+					invoker.spawnroll = true;
+				}
+			}
+		Idle:
 			SOUL ABCD 4 Bright
 			{
 				A_SetTics(random(3,6));
@@ -2163,6 +2253,7 @@ class MiniSoulsphere : CustomInventoryExt
 
 class Megasphere2 : CustomInventoryExt replaces MegaSphere
 {
+	bool spawnroll;
 	default
 	{
 		+FLOATBOB;
@@ -2176,6 +2267,43 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 	States
 	{
 		Spawn:
+			MEGA A 0 Bright
+			{
+				if (!invoker.spawnroll && 
+						A_CheckSecret() && 
+						!bDROPPED)
+				{
+					actor playera = players[0].mo;
+					int chance = 8;
+					int chance2 = 1;
+					if (A_CheckSecret() >= 1) 
+					{
+						chance = randompick(4,8,8,8,8);
+						chance2 = randompick(1,1,1,1,2);
+						if (A_CheckSecret() >= 2) 
+						{
+							chance = randompick(4,8,8,8);
+							chance2 = randompick(1,1,1,2);
+							if (A_CheckSecret() >= 2) 
+							{
+								chance = randompick(4,8,8);
+								chance2 = randompick(1,1,2);
+							}
+						}
+					}
+					
+					if (random(1,chance) <= chance2)
+					{
+						A_SpawnItemEx("LemonMerinquePie",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+						if (bCOUNTITEM) level.total_items--;
+						if (bCOUNTSECRET) level.total_secrets--;
+						if (bCOUNTKILL) level.total_monsters--;
+						self.Destroy();
+					}
+					invoker.spawnroll = true;
+				}
+			}
+		Idle:
 			MEGA ABCD 6 BRIGHT;
 			Loop;
 		Pickup:
@@ -3258,7 +3386,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	}
 	
 	
-	action void A_CapsuleSpawn(int basechance)
+	action void A_CapsuleSpawnAI(int basechance)
 	{
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
@@ -3339,7 +3467,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 					}
 					else
 					{
-						A_CapsuleSpawn(4096); // 16384
+						A_CapsuleSpawnAI(4096); // 16384
 					}
 				}
 			}
@@ -3530,7 +3658,7 @@ class ArmorBonusBig : ArmorBonus2
 		Spawn:
 			BON4 A 0 NoDelay
 			{
-				A_CapsuleSpawn((4096/random(6,10))); // 16384
+				A_CapsuleSpawnAI((4096/random(6,10))); // 16384
 			}
 			goto Idle;
 		Idle:
@@ -6553,7 +6681,14 @@ class LemonMerinquePie : CustomInventoryExt
 				int healdiff = player.mo.health - oldhealth;
 				//if (healdiff) invoker.A_RecoverHUD(healdiff, 0, true);
 				let MiscItem = PlayerStatItem(player.mo.FindInventory("PlayerStatItem"));
-				if (MiscItem) MiscItem.HPRegenBoostTimer += (random(675,975) * 2.5);
+				if (MiscItem) 
+				{
+					MiscItem.HPRegenBoostTimer += (random(675,975) * 2.5);
+					MiscItem.CurrentPsychicPoints = (MiscItem.MaxPsychicPoints * 2);
+					MiscItem.PPRegenBoostTimer += (random(225,325) * 2.5);
+					MiscItem.CurrentMagicPoints = (MiscItem.MaxMagicPoints * 2);
+					MiscItem.PPRegenBoostTimer += (random(225,325) * 2.5);
+				}
 
 				double maskpitch = 1.00;
 				if (MiscItem && MiscItem.CanTalkUnderwater)
