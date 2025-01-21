@@ -5375,7 +5375,7 @@ class KC_EventHandler : EventHandler
 					}
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [mana]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
 				}
-
+				
 				// Ammo/Weapons
 				string droptype;
 				droptimes = 1;
@@ -6336,7 +6336,7 @@ class KC_EventHandler : EventHandler
 							victim.A_SpawnItemEx("KampoulSphere",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
 						}
 					}
-
+					
 					// Capsules [Type 12] (Heiwa Only)
 					if (A_CheckForHeiwaPlayer())
 					{
@@ -6400,7 +6400,71 @@ class KC_EventHandler : EventHandler
 							else if (user_type >= 24 && user_type <= 25) victim.A_SpawnItemEx("LuckCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
 						}
 					}
+					
+					// Pie [Type 15] (Heiwa Only)
+					if (A_CheckForHeiwaPlayer())
+					{
+						basechance = kc_inventorydroprate15;
+						basechance *= kc_inventorydropratemulti;
+						basechance *= skillmult;
+						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned)) basechance *= 8;
+						if (A_CheckBlooM()) basechance *= 0.5;
+						if (A_CheckUOHYM()) basechance *= 2;
+						luckbase = 1.9375 + (monsterrating * 0.3875); // (512)
+						if (victim.bBOSS) // Boss-flagged monsters have a much higher chance to drop a Pie as their initial drop
+						{
+							if (i % 8 == 0)
+							{
+								basechance *= 0.125;
+								luckbase *= 8.0;
+							}
+							else
+							{
+								basechance *= 0.75;
+								luckbase *= 1.334;
+							}
+						}
+						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
+						luckbase *= kc_luckfactor;
+						luckbase *= sielgraceluckboost;
+						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
+						maxchance = basechance;
+						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
+						nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
+						nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
+						if (i > 0) maxchance *= 16;
+						if (maxchance < (kc_inventorydroprate15 * minmultlevel)) maxchance = (kc_inventorydroprate15 * minmultlevel);
+						if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [capsules]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 
+						rollrand = random(1,maxchance);
+						if (rollrand <= 1)
+						{
+							double raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							double raredropsndvol = frandom(1.75,2.25);
+							int raredropsndchannel = randompick(193,194,224,225,266,267);
+							string raredropsndname = "Capsule/Spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							raredropsndvol = frandom(1.75,2.25);
+							raredropsndchannel = randompick(293,294,324,325,366,367);
+							raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+							raredropsndpitch = frandompick(0.75,0.875,1.0,1.125,1.25);
+							raredropsndvol = frandom(1.75,2.25);
+							raredropsndchannel = randompick(393,394,424,425,466,467);
+							raredropsndname = "ultrarareitem/spawn";
+							victim.A_StartSound(raredropsndname,raredropsndchannel,CHANF_OVERLAP|CHANF_NOPAUSE,raredropsndvol,ATTN_NONE,raredropsndpitch);
+
+							user_type = random(1,25);
+							if (user_type >= 1 && user_type <= 5) victim.A_SpawnItemEx("VitalCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+							else if (user_type >= 6 && user_type <= 10) victim.A_SpawnItemEx("SpeedCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+							else if (user_type >= 11 && user_type <= 15) victim.A_SpawnItemEx("IQCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+							else if (user_type >= 16 && user_type <= 20) victim.A_SpawnItemEx("SensesCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+							else if (user_type >= 21 && user_type <= 23) victim.A_SpawnItemEx("GutsCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+							else if (user_type >= 24 && user_type <= 25) victim.A_SpawnItemEx("LuckCapsule",0.0,0.0,0.0,frandom(-25.0,25.0),frandom(-25.0,25.0),frandom(-12.5,12.5),SXF_NOCHECKPOSITION);
+						}
+					}
+					
 					// ???????? [Type 13] (Heiwa Only)
 					if (A_CheckForHeiwaPlayer() &&
 							playera.CountInv("SpecialBackpackBonus") < 25)
