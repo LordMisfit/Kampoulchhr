@@ -1184,6 +1184,10 @@ mixin class DynMusicControl
 								playpawn.CountInv("KCPowerStrength")) actionmult = frandom(10.5,13.5);
 																								 else actionmult = frandom(2.625,3.375);
 					}
+					double foodfactor = 1.00;
+					double basefdfct = 1.00;
+					if (playpawn.CountInv("PowerLMPieBuff")) foodfactor += (basefdfct * 0.32);
+					actionmult *= foodfactor;
 					
 					if (MiscItem.DynMusFightTimer > 0) actionmult *= frandompick(0.875,1.0,1.0,1.125,1.125,1.125,1.25,1.25,1.25,1.25,1.375,1.375,1.375,1.5,1.5,1.625);
 					
@@ -2044,6 +2048,10 @@ mixin class MonsterCollider
 			if (!FoundPlayer && inflictor) FoundPlayer = KCPlayerPawn(inflictor);
 			if (FoundPlayer)
 			{
+				double FoodFactor = 0.00;
+				IF (FoundPlayer.CountInv("PowerLMPieBuff")) FoodFactor += 0.25; // Lemon Merinque Pie :V
+				if (FoodFactor > 0.00) ActorDefenseIgnoreFactor += (FoodFactor * (1.00 - ActorDefenseIgnoreFactor));
+
 				if (mod == 'Fist' || 
 						mod == 'Kick')
 				{
@@ -2075,7 +2083,8 @@ mixin class MonsterCollider
 			if (mod == 'Translocator') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			if (mod == 'Massacre') ActorDefenseIgnoreFactor += (1.00 * (1.00 - ActorDefenseIgnoreFactor));
 			
-			if (PhobosAir(inflictor) || PhobosAir(source))
+			if (PhobosAir(inflictor) || 
+					PhobosAir(source))
 			{
 				string nm = "CCards_Actor_Ghost"; 
 				if (CountInv(nm))

@@ -2545,6 +2545,12 @@ class PlayerStatItem : Inventory
 			SPDEvadeCheck += LUKEvaAlt;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0b - SPD Evade Check (luck check)]: %.4f\c-", SPDEvadeCheck);
 			
+			// Food
+			double FoodEvaAlt = 0.0;
+			if (owner.CountInv("PowerLMPieBuff")) FoodEvaAlt += (BaseEVA * 0.16);
+			SPDEvadeCheck += FoodEvaAlt;
+			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 0d - SPD Evade Check (food check)]: %.4f (%.4f)\c-", SPDEvadeCheck, FoodEvaAlt);
+
 			// Weapon
 			weapon = owner.player.ReadyWeapon;
 			double WeapEvaAlt = 0.0;
@@ -3167,6 +3173,13 @@ class PlayerStatItem : Inventory
 				if (Owner.CountInv("KnifePlayerSwing3")) TotalMass *= 3;
 				if (Owner.CountInv("KnifePlayerSwing4")) TotalMass *= 4.875;
 			}
+
+			// Food
+			double mealbuff = 1.0;
+			if (Owner.CountInv("PowerLMPieBuff")) mealbuff += 0.5;
+			TotalMass *= mealbuff;
+			if (kcdebug_masscalcs) Console.Printf("Mass [Buffs]: %d", TotalMass);
+
 			If (weapon is "EvilWarriorShield")
 			{
 				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
@@ -3479,6 +3492,10 @@ class PlayerStatItem : Inventory
 			if (Owner.CountInv("PowerSlow")) BuffJumpZ *= 0.834;
 			if (berserked) BuffJumpZ *= 1.334;
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Buffs]: %.8f", BuffJumpZ);
+
+			double FoodJumpZ = 1.0;
+			if (owner.CountInv("PowerLMPieBuff")) FoodJumpZ += 0.04;
+			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [Food Buffs]: %.8f", FoodJumpZ);
 
 			// Armor
 			double ArmorJumpZ = 1.00;
@@ -7685,6 +7702,21 @@ class PlayerStatItem : Inventory
 			}
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - Landing): %.8f", LandingFactor);
 			
+			double BuffFactor = 1.00;
+			if (Owner.CountInv("PowerGuard")) BuffFactor *= 2;
+			if (Owner.CountInv("PowerWeaken")) BuffFactor *= 0.5;
+			if (Owner.CountInv("PowerInvisibility") || 
+					Owner.CountInv("KCPowerInvisibility") || 
+					Owner.CountInv("PowerGhost"))
+			{
+				BuffFactor *= frandompick[statitem](1.00,1.00,1.125,1.125,1.25);
+				if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0) BuffFactor *= frandompick[statitem](1.00,1.00,1.125,1.125,1.25);
+			}
+
+			double foodbufffactor = 1.0;
+			if (owner.CountInv("PowerLMPieBuff")) foodbufffactor += 0.20;
+			BuffFactor *= foodbufffactor;
+			
 			double KCFactor = 1.0;
 			if (owner.CountInv("KCPowerKampoul")) KCFactor *= 2.5;
 			if (MercyInvulnOnSiel) KCFactor *= 2.5;
@@ -7712,6 +7744,7 @@ class PlayerStatItem : Inventory
 												 * ATKFactor
 												 * SkillFactor
 												 * LandingFactor
+												 * BuffFactor
 												 * KCFactor
 												 * TSAFactor
 												 * KillComboFct
@@ -8034,6 +8067,25 @@ class PlayerStatItem : Inventory
 				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - KnifeSwing): [IGNORED - dmgflrtype]");
 			}
 			
+			// Buffs
+			double BuffFactor = 1.00;
+			if (Owner.CountInv("PowerGuard")) BuffFactor *= 0.5;
+			if (Owner.CountInv("PowerWeaken")) BuffFactor *= 2;
+			if (berserked) BuffFactor *= frandompick[statitem](0.8,0.9,0.9,0.9,1.0);
+			if (Owner.CountInv("PowerInvisibility") || 
+					Owner.CountInv("KCPowerInvisibility") || 
+					Owner.CountInv("PowerGhost"))
+			{
+				BuffFactor *= frandompick[statitem](1.00,1.00,0.875,0.875,0.75);
+				if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0) BuffFactor *= frandompick[statitem](1.00,1.00,0.875,0.875,0.75);
+			}
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - Buff): %.8f", BuffFactor);
+			
+			double foodbufffactor = 1.0;
+			if (owner.CountInv("PowerLMPieBuff")) foodbufffactor += 0.20;
+			foodbufffactor = (1 / foodbufffactor);
+			BuffFactor *= foodbufffactor;
+
 			// Translocatior
 			double TranslocatorFactor = 1.00;
 			if (tfcooldown > 0)
@@ -8137,6 +8189,7 @@ class PlayerStatItem : Inventory
 												 * PlayerFistBlockFactor
 												 * PlayerKnifeSwingFactor
 												 * WeaponFactor
+												 * BuffFactor
 												 * TranslocatorFactor
 												 * SkillFactor
 												 * KCFactor
@@ -8325,6 +8378,24 @@ class PlayerStatItem : Inventory
 			HUDSpeed *= BerserkFactor;
 			if (kcdebug_speedcalcs) Console.Printf("SpeedX [Berserk]: %.8f", BerserkFactor);
 		}
+		
+		double BuffFactor = 1.0;
+		if (Owner.CountInv("PowerNoDrown")) 
+		{
+			if (owner.waterlevel >= 3) BuffFactor *= 0.875;
+														else BuffFactor *= 0.9875;
+		}
+		if (Owner.CountInv("PowerHaste")) BuffFactor *= 1.3334;
+		if (Owner.CountInv("PowerSlow")) BuffFactor *= 0.6667;
+		
+		double foodbufffactor = 1.0;
+		if (owner.CountInv("PowerLMPieBuff")) foodbufffactor += 0.20;
+		BuffFactor *= foodbufffactor;
+		
+		Speed *= BuffFactor;
+		HUDSpeed *= BuffFactor;
+		if (kcdebug_speedcalcs) Console.Printf("SpeedX [Buffs]: %.8f", BuffFactor);
+		
 		//
 		double stopbase = 1.00;
 		if (Owner.CountInv("IsKicking") && owner.player.onground)
@@ -9224,6 +9295,8 @@ class PlayerDashJump : Inventory
 		if (Owner.waterlevel == 2) DashSpdMul *= 0.875;
 		if (Owner.waterlevel >= 3) DashSpdMul *= 0.75;
 		
+		if (owner.CountInv("PowerLMPieBuff")) DashSpdMul += 0.16;
+		
 		UserCmd cmd = Owner.player.cmd;
 		if (Owner.vel.z <= 0)
 		{
@@ -9333,6 +9406,11 @@ class PlayerDashJump : Inventory
 			DashSpeed *= 0.67;
 			DashCost *= 1.5;
 			MaxDashCooldown *= 1.75;
+		}
+		if (owner.CountInv("PowerLMPieBuff"))
+		{
+			DashCost -= 10;
+			MaxDashCooldown -= 5;
 		}
 		if (kcdebug_showdashinformation) Console.Printf("DashSpeed: %.8f", DashSpeed);
 		if (kcdebug_showdashinformation) Console.Printf("DashCost [post powerup/health checks]: %d", DashCost);

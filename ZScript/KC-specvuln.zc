@@ -5145,6 +5145,10 @@ class CompatVulnItem : PlaceholderItem
 			if (!FoundPlayer && inflictor) FoundPlayer = KCPlayerPawn(inflictor);
 			if (FoundPlayer)
 			{
+				double FoodFactor = 0.00;
+				IF (FoundPlayer.CountInv("PowerLMPieBuff")) FoodFactor += 0.25; // Lemon Merinque Pie :V
+				if (FoodFactor > 0.00) ActorDefenseIgnoreFactor += (FoodFactor * (1.00 - ActorDefenseIgnoreFactor));
+
 				if (mod == 'Fist' || 
 						mod == 'Kick')
 				{

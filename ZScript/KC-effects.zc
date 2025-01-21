@@ -5036,6 +5036,94 @@ class MonsterCCardsNukeFlash : KCBaseZSC
 	}
 }
 
+class PowerFoodATK : PowerDamageTimeCheck
+{
+	double ticpiece;
+	default
+	{
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void Tick ()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
+	}
+}
+
+class PowerFoodDEF : PowerProtectionTimeCheck
+{
+	double ticpiece;
+	default
+	{
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.HUBPOWER;
+		+INVENTORY.ADDITIVETIME;
+	}
+	
+	override void Tick ()
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (owner)
+		{
+			if (!A_CheckNoTimer())
+			{
+				EffectTics--;
+			}
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
+	}
+}
+
+class PowerLMPieBuff : PowerFoodATK
+{
+	default
+	{
+		Inventory.Icon "LMPEB0";
+		Powerup.Duration -180;
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (!passive && damage > 0)
+		{
+			double TOTALFactor = 2.5;
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_attackbuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.4;
+			if (damageType == 'Falling' ||
+					damageType == 'Crush' ||
+					damageType == 'Drowning' ||
+					damageType == 'Slime' ||
+					damageType == 'Magma') TOTALFactor = 0.7;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
 // Secret Fixer Event [by Player701] (for fixing the "issue" with needing to stand on the 
 // ground of secret-flagged sectors to get credit for them)
 class SecretFixer : Inventory

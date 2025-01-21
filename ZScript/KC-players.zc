@@ -442,6 +442,7 @@ class KCPlayerPawn : PlayerPawn
 			// Buffs
 			double BuffAirControl = 1.00;
 			if (A_CheckBerserk()) BuffAirControl *= 1.334;
+			if (CountInv("PowerLMPieBuff")) BuffAirControl *= 3.0;
 			
 			// ?
 			double ssa = 1.00;
@@ -3186,6 +3187,10 @@ class KCPlayerPawn : PlayerPawn
 			if (CountInv("PowerGuard")) BuffFactor += 0.75; // Guard Sphere
 			if (CountInv("PowerWeaken")) BuffFactor -= 0.375;
 			if (BuffFactor > 0.00) PlayerDefenseIgnoreFactor = (PlayerDefenseIgnoreFactor * (1.00 - BuffFactor));
+			
+			double FoodFactor = 0.00;
+			if (CountInv("PowerLMPieBuff")) FoodFactor += 0.25; // Lemon Merinque Pie
+			if (FoodFactor > 0.00) PlayerDefenseIgnoreFactor = (PlayerDefenseIgnoreFactor * (1.00 - FoodFactor));
 		}
 		
 		double PSIFactor = frandompick(0.625,0.75,0.75,0.75,0.75,0.75,0.875);

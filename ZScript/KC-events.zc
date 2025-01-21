@@ -6845,14 +6845,17 @@ class KC_EventHandler : EventHandler
 						double alterchance = 1.0;
 						if (source)
 						{
+							if (source.CountInv("PowerLMPieBuff")) alterchance += 0.32;
 						}
 						else
 						if (inflicter)
 						{
+							if (inflicter.CountInv("PowerLMPieBuff")) alterchance += 0.32;
 						}
 						else
 						if (mastor)
 						{
+							if (mastor.CountInv("PowerLMPieBuff")) alterchance += 0.32;
 						}
 						ExpGain *= alterchance;
 
