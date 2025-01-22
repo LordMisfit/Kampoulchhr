@@ -3783,7 +3783,8 @@ class PlayerStatItem : Inventory
 			{
 				if (Owner.CountInv("HWShieldBlockHold")) BaseEncFactor = (-0.25 * (1.0 + (HellWarriorShieldLevel * 0.0015625)));
 																						else BaseEncFactor = (-0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
-				if (berserked) BaseEncFactor *= 0.25;
+				if (A_CheckForHeiwa()) BaseEncFactor *= 1.334;
+				if (berserked) BaseEncFactor *= 0.5;
 				if (A_CheckForHeiwa())
 				{
 					double basebonus = 0.875;
@@ -8876,7 +8877,7 @@ class PlayerStatItem : Inventory
 				tempfactor1 = -0.375;
 				
 				if (berserked) tempfactor1 *= 0.25;
-				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
 				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
@@ -8898,7 +8899,39 @@ class PlayerStatItem : Inventory
 				tempfactor1 = -0.375;
 				
 				if (berserked) tempfactor1 *= 0.25;
-				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 1.667)) ));
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
+				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
+			}
+			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;
+			tempfactor1 *= tempfactor2;
+		}
+		If (weapon is "EvilWarriorShield")
+		{
+			if (Owner.CountInv("HWShieldBlockHold")) tempfactor1 = (-0.25 * (1.0 + (HellWarriorShieldLevel * 0.0015625)));
+																					else tempfactor1 = (-0.10 * (1.0 + (HellWarriorShieldLevel * 0.00625)));
+			if (A_CheckForHeiwa()) tempfactor1 *= 1.334;
+			if (berserked) tempfactor1 *= 0.5;
+			if (A_CheckForHeiwa())
+			{
+				double basebonus = 0.875;
+				if (berserked) basebonus = 0.8125;
+				if (TruePlayerLevel >= 10) tempfactor1 *= basebonus;
+				if (TruePlayerLevel >= 20) tempfactor1 *= basebonus;
+				if (TruePlayerLevel >= 30) tempfactor1 *= basebonus;
+				if (TruePlayerLevel >= 40) tempfactor1 *= basebonus;
+				if (TruePlayerLevel >= 50) tempfactor1 *= basebonus;
+				if (TruePlayerLevel >= 60) tempfactor1 *= (basebonus*basebonus);
+				if (TruePlayerLevel >= 70) tempfactor1 *= (basebonus*basebonus);
+				if (TruePlayerLevel >= 80) tempfactor1 *= (basebonus*basebonus);
+				if (TruePlayerLevel >= 90) tempfactor1 *= (basebonus*basebonus);
+				if (TruePlayerLevel >= 100) tempfactor1 *= (basebonus*basebonus);
+				if (TruePlayerLevel >= 120) tempfactor1 *= (basebonus*basebonus*basebonus);
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(HeiwaWeapLevel * 2.5)) ));
+				if (tempfactor2 <= HeiwaLowFact2) tempfactor2 = HeiwaLowFact2;
+			}
+			else
+			{
+				tempfactor2 = (1.00 - (TruePlayerLevel * double(1.0 /(MarineWeapLevel * 1.667)) ));
 				if (tempfactor2 <= MarineLowFact2) tempfactor2 = MarineLowFact2;
 			}
 			if (tempfactor2 >= 1.0) tempfactor2 = 1.0;

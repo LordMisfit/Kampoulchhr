@@ -3491,32 +3491,32 @@ class KCPlayerPawn : PlayerPawn
 					{
 						randvar1 = (0.125 - (HellWarriorShieldLevel * 0.00625));
 						randvar2 = (0.1667 - (HellWarriorShieldLevel * 0.008334));
-						damage *= frandom(randvar1,randvar2);
-						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (randvar1 <= 0.015625) randvar1 = 0.015625;
+						if (randvar2 <= 0.00390625) randvar2 = 0.00390625;
 					}
 					else
 					{
 						randvar1 = (0.25 - (HellWarriorShieldLevel * 0.0125));
 						randvar2 = (0.3334 - (HellWarriorShieldLevel * 0.01667));
-						damage *= frandom(randvar1,randvar2);
-						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+						if (randvar1 <= 0.0625) randvar1 = 0.0625;
+						if (randvar2 <= 0.015625) randvar2 = 0.015625;
 					}
+					damage *= frandom(randvar1,randvar2);
+					if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
 				}
 				else
+				if (CountInv("EWShieldIdleMode"))
 				{
-					if (CountInv("EWShieldIdleMode"))
-					{
-						randvar1 = (0.50 - (HellWarriorShieldLevel * 0.025));
-						randvar2 = (0.6667 - (HellWarriorShieldLevel * 0.03334));
-						damage *= frandom(randvar1,randvar2);
-						if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-						if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
-					}
+					randvar1 = (0.50 - (HellWarriorShieldLevel * 0.025));
+					randvar2 = (0.6667 - (HellWarriorShieldLevel * 0.03334));
+					if (randvar1 <= 0.125) randvar1 = 0.125;
+					if (randvar2 <= 0.03125) randvar2 = 0.03125;
+					damage *= frandom(randvar1,randvar2);
+					if (random(1,2) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					if (random(1,4) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
+					if (random(1,8) <= int(1 + (HellWarriorShieldLevel * 0.1))) damage *= frandom(randvar1,randvar2);
 				}
 			}
 		}

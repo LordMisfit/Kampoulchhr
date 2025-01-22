@@ -3181,7 +3181,7 @@ class HellWarriorShieldLevel : WeaponUpgradeItem
 { 
 	default
 	{
-		Inventory.MaxAmount 10;
+		Inventory.MaxAmount 20;
 	} 
 }
 class EWShieldIdleMode : PlaceholderItem { }
@@ -5094,10 +5094,33 @@ class PowerFoodDEF : PowerProtectionTimeCheck
 
 class PowerLMPieBuff : PowerFoodATK
 {
+	int timer;
+	string texname;
 	default
 	{
 		Inventory.Icon "LMPEB0";
 		Powerup.Duration -180;
+	}
+	
+	override void Tick()
+	{
+		int baseinc = 28;
+		timer++;
+		if (timer % baseinc >= 0 && timer % baseinc <= 1) texname = "LMPEB0";
+		if (timer % baseinc >= 2 && timer % baseinc <= 3) texname = "LMPEC0";
+		if (timer % baseinc >= 4 && timer % baseinc <= 5) texname = "LMPED0";
+		if (timer % baseinc >= 6 && timer % baseinc <= 7) texname = "LMPEE0";
+		if (timer % baseinc >= 8 && timer % baseinc <= 9) texname = "LMPEF0";
+		if (timer % baseinc >= 10 && timer % baseinc <= 11) texname = "LMPEG0";
+		if (timer % baseinc >= 12 && timer % baseinc <= 13) texname = "LMPEH0";
+		if (timer % baseinc >= 14 && timer % baseinc <= 15) texname = "LMPEI0";
+		if (timer % baseinc >= 16 && timer % baseinc <= 17) texname = "LMPEH0";
+		if (timer % baseinc >= 18 && timer % baseinc <= 19) texname = "LMPEG0";
+		if (timer % baseinc >= 20 && timer % baseinc <= 21) texname = "LMPEF0";
+		if (timer % baseinc >= 22 && timer % baseinc <= 23) texname = "LMPEE0";
+		if (timer % baseinc >= 24 && timer % baseinc <= 25) texname = "LMPED0";
+		if (timer % baseinc >= 26 && timer % baseinc <= 27) texname = "LMPEC0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
