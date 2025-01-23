@@ -19046,6 +19046,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				double recoil = frandom(0.075,0.1125);
 				if (invoker.spareshots > 0)
 				{
+					if (invoker.shotcount > invoker.spareshots) invoker.shotcount = invoker.spareshots;
 					shottype = "Blaster_RifleShot";
 					if (CountInv("BlasterRifleUpgrade")) 
 					{
@@ -19083,12 +19084,17 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 
 				for (int i = 0; i < invoker.shotcount; i++)
 				{
-					double ang = (random(-16,16) * 0.16);
-					double pch = (random(-16,16) * 0.16);
+					double ang = (frandom(-16,16) * 0.16);
+					double pch = (frandom(-16,16) * 0.16);
 					if (invoker.truefiretype >= 1)
 					{
-						ang = (random(-20,20) * 0.2);
-						pch = (random(-20,20) * 0.2);
+						ang = (frandom(-20,20) * 0.2);
+						pch = (frandom(-20,20) * 0.2);
+					}
+					if (i == 0)
+					{
+						ang *= 0.167;
+						pch *= 0.167;
 					}
 					if (CountInv("BlasterRifleUpgrade"))
 					{
