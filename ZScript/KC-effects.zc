@@ -5147,8 +5147,10 @@ class PowerLMPieBuff : PowerFoodATK
 	}
 }
 
-class IsBlinded : TempDefenseBuff
+class IsSilenced : TempDefenseBuff
 {
+	int timer;
+	string texname;
 	default
 	{
 		Inventory.Icon "";
@@ -5158,6 +5160,62 @@ class IsBlinded : TempDefenseBuff
 	
 	override void Tick()
 	{
+		int baseinc = 16;
+		timer++;
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "MUTEA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "MUTEB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "MUTEC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "MUTEB0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
+		if (owner)
+		{
+			let TimeItem = KCTimeFreezer(owner.FindInventory("KCTimeFreezer"));
+			if (GetAge() == 0) 
+			{
+				//owner.A_StartSound("misc/blinded",CHAN_5,CHANF_DEFAULT,1.0,ATTN_NORM);
+				if (HeiwaPlayer(owner))
+				{
+					//owner.A_StopSound(CHAN_VOICE); 
+					//owner.A_StartSound("",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM); 
+				}
+			}
+			if ((owner.CountInv("KCTimeFreezer1") ||
+					 owner.CountInv("KCTimeFreezer2") ||
+					 owner.CountInv("KCTimeFreezer3"))) 
+			{
+				EffectTics -= randompick(3,4,4,5,5,5,5,5,5,5,5,5,5,5,5,6,6,7);
+			}
+			else EffectTics--;
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
+	}
+}
+
+class IsBlinded : TempDefenseBuff
+{
+	int timer;
+	string texname;
+	default
+	{
+		Inventory.Icon "";
+		Powerup.Duration -5;
+		Powerup.Color "00 00 00", 0.00;
+	}
+	
+	override void Tick()
+	{
+		int baseinc = 16;
+		timer++;
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "BLNDA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "BLNDB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "BLNDC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "BLNDB0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
 		if (owner)
 		{
 			let TimeItem = KCTimeFreezer(owner.FindInventory("KCTimeFreezer"));
@@ -5207,6 +5265,8 @@ class IsBlinded : TempDefenseBuff
 
 class FallenAsleep : TempDefenseBuff
 {
+	int timer;
+	string texname;
 	default
 	{
 		Inventory.Icon "";
@@ -5216,6 +5276,14 @@ class FallenAsleep : TempDefenseBuff
 	
 	override void Tick()
 	{
+		int baseinc = 16;
+		timer++;
+		if (timer % baseinc >= (baseinc*0.00) && timer % baseinc <= ((baseinc*0.25)-1)) texname = "SLEPA0";
+		if (timer % baseinc >= (baseinc*0.25) && timer % baseinc <= ((baseinc*0.50)-1)) texname = "SLEPB0";
+		if (timer % baseinc >= (baseinc*0.50) && timer % baseinc <= ((baseinc*0.75)-1)) texname = "SLEPC0";
+		if (timer % baseinc >= (baseinc*0.75) && timer % baseinc <= ((baseinc*1.00)-1)) texname = "SLEPB0";
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+
 		if (owner)
 		{
 			let TimeItem = KCTimeFreezer(owner.FindInventory("KCTimeFreezer"));

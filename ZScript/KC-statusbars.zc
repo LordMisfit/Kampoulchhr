@@ -841,6 +841,9 @@ class KCStatusBarMain : BaseStatusBar
 				if (PowerHalve(item)) ItemFontCLR = font.CR_Brick;
 				if (PowerWeaken(item)) ItemFontCLR = font.CR_Brick;
 				if (PowerSlow(item)) ItemFontCLR = font.CR_Brick;
+				if (FallenAsleep(item)) ItemFontCLR = font.CR_Brick;
+				if (IsBlinded(item)) ItemFontCLR = font.CR_Brick;
+				if (IsSilenced(item)) ItemFontCLR = font.CR_Brick;
 				if (TSArtifactsInUse(item))
 				{
 					if (MiscItem)
@@ -877,7 +880,12 @@ class KCStatusBarMain : BaseStatusBar
 						Debuff = true;
 					}
 				}
+				if (PowerHalve(item)) Debuff = true;
+				if (PowerWeaken(item)) Debuff = true;
 				if (PowerSlow(item)) Debuff = true;
+				if (FallenAsleep(item)) Debuff = true;
+				if (IsBlinded(item)) Debuff = true;
+				if (IsSilenced(item)) Debuff = true;
 				if (IsPoisoned(item)) 
 				{
 					ItemEffectTics = CPlayerPawn.player.poisoncount;
@@ -935,7 +943,6 @@ class KCStatusBarMain : BaseStatusBar
 							if (MiscItem.drownDebufflevel >= 10) PosDiff = (randompick(-4,-3,-2,-1,0,1,2,3,4), randompick(-4,-3,-2,-1,0,1,2,3,4));
 						}
 						if (IsPoisoned(item)) PosDiff = (randompick(-2,-1,0,1,2), randompick(-2,-1,0,1,2));
-						if (PowerSlow(item)) PosDiff = (randompick(-1,0,1), randompick(-1,0,1));
 					}
 					DrawTexture(icon, pos+PosDiff, DI_SCREEN_RIGHT_TOP, (1.0*transp), (POWERUPICONSIZE, POWERUPICONSIZE));
 					pos.x -= POWERUPICONSIZE;
