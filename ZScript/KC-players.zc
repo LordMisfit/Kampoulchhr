@@ -76,6 +76,7 @@ class KCPlayerPawn : PlayerPawn
 	int originalmass;
 	
 	int firsttic;
+	int jiggle_jump, jiggle_crouch, jiggle_left, jiggle_right, jiggle_up, jiggle_down;	int actortimer;
 	int buttons, input;
 	
 	double TotalAirControl;
@@ -502,6 +503,129 @@ class KCPlayerPawn : PlayerPawn
 					Console.Printf(playerposdebug);
 				}
 			}
+			
+			//********************************************************************************
+			//*Allows the player to "jiggle" out of sleep faster by pressing movement keys :V*
+			//********************************************************************************
+			buttons = GetPlayerInput(INPUT_BUTTONS);
+			int jiggledecrease = random(4,6);
+			if (A_CheckKCTimeFreeze()) jiggledecrease *= randompick(3,4,4,5,5,5,5,5,5,5,5,5,5,5,5,6,6,7);
+			
+			int jigglecooldown = random(2,3);
+			int jigglewarmup = 5;
+			if (jiggle_jump > 0) jiggle_jump -= 1;
+			if (jiggle_crouch > 0) jiggle_crouch -= 1;
+			if (jiggle_left > 0) jiggle_left -= 1;
+			if (jiggle_right > 0) jiggle_right -= 1;
+			if (jiggle_up > 0) jiggle_up -= 1;
+			if (jiggle_down > 0) jiggle_down -= 1;
+			if (jiggle_jump < 0) jiggle_jump = 0;
+			if (jiggle_crouch < 0) jiggle_crouch = 0;
+			if (jiggle_left < 0) jiggle_left = 0;
+			if (jiggle_right < 0) jiggle_right = 0;
+			if (jiggle_up < 0) jiggle_up = 0;
+			if (jiggle_down < 0) jiggle_down = 0;
+			
+			let SleepItem = FallenAsleep(self.FindInventory("FallenAsleep"));
+			if (SleepItem) // ... put to sleep.
+			{
+				if (((buttons & BT_JUMP) && sv_allowjump) | buttons & BT_MOVEUP) // "Crouch"
+				{
+					if (jiggle_jump < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump += jigglewarmup;
+						jiggle_crouch -= jigglecooldown;
+						jiggle_left -= jigglecooldown;
+						jiggle_right -= jigglecooldown;
+						jiggle_up -= jigglecooldown;
+						jiggle_down -= jigglecooldown;
+					}
+				}
+				else
+				if (((buttons & BT_CROUCH) && sv_allowcrouch) | buttons & BT_MOVEDOWN) // "Crouch"
+				{
+					if (jiggle_crouch < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump -= jigglecooldown;
+						jiggle_crouch += jigglewarmup;
+						jiggle_left -= jigglecooldown;
+						jiggle_right -= jigglecooldown;
+						jiggle_up -= jigglecooldown;
+						jiggle_down -= jigglecooldown;
+					}
+				}
+				else
+				if (buttons & BT_LEFT | buttons & BT_MOVELEFT) // Move "Left"
+				{
+					if (jiggle_left < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump -= jigglecooldown;
+						jiggle_crouch -= jigglecooldown;
+						jiggle_left += jigglewarmup;
+						jiggle_right -= jigglecooldown;
+						jiggle_up -= jigglecooldown;
+						jiggle_down -= jigglecooldown;
+					}
+				}
+				else
+				if (buttons & BT_RIGHT | buttons & BT_MOVERIGHT) // Move "Right"
+				{
+					if (jiggle_right < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump -= jigglecooldown;
+						jiggle_crouch -= jigglecooldown;
+						jiggle_left -= jigglecooldown;
+						jiggle_right += jigglewarmup;
+						jiggle_up -= jigglecooldown;
+						jiggle_down -= jigglecooldown;
+					}
+				}
+				else
+				if (buttons & BT_FORWARD | buttons & BT_LOOKUP) // Move "Forward/Up"
+				{
+					if (jiggle_up < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump -= jigglecooldown;
+						jiggle_crouch -= jigglecooldown;
+						jiggle_left -= jigglecooldown;
+						jiggle_right -= jigglecooldown;
+						jiggle_up += jigglewarmup;
+						jiggle_down -= jigglecooldown;
+					}
+				}
+				else
+				if (buttons & BT_BACK | buttons & BT_LOOKDOWN) // Move "Backwards/Down"
+				{
+					if (jiggle_down < 1)
+					{
+						SleepItem.EffectTics -= jiggledecrease; // Subtract
+						
+						jiggle_jump -= jigglecooldown;
+						jiggle_crouch -= jigglecooldown;
+						jiggle_left -= jigglecooldown;
+						jiggle_right -= jigglecooldown;
+						jiggle_up -= jigglecooldown;
+						jiggle_down += jigglewarmup;
+					}
+				}
+				
+				if (SleepItem.EffectTics <= 0) RemoveInventory(SleepItem);
+				else
+				{
+					if (kcdebug_playermove) Console.Printf("Jiggle - Sleep Time: %d, Jump: %d, Crouch: %d, Left: %d, Right: %d, Up: %d, Down: %d", SleepItem.EffectTics, jiggle_jump, jiggle_crouch, jiggle_left, jiggle_right, jiggle_up, jiggle_down);
+				}
+			}
+			
 			/*
 			double posf;
 			posf = cursector.NextLowestFloorAt(pos.x, pos.y, pos.z, 0, maxstepheight);

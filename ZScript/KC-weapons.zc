@@ -2567,6 +2567,11 @@ class KCWeaponBase : Weapon
 					if (kcdebug_weaponstatdisplays2) Console.Printf("GrandControlLayer (%s) - 2a [%d]", GetClassName(), gametic);
 					if (GetPlayerInput(INPUT_BUTTONS) & BT_USER1)
 					{
+						if (CountInv("FallenAsleep"))
+						{
+							A_PrintBold(String.Format("\cgQuick Kick can't be used while you've been put to sleep!"), frandom(0.685,0.8));
+						}
+						else
 						if (CountInv("IsUnconscious"))
 						{
 							A_PrintBold(String.Format("\cgYou're currently incapacitated, and thus can't quick kick!"), frandom(1.0875,1.25));

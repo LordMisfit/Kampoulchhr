@@ -216,6 +216,8 @@ class PlayerStatItem : Inventory
 	int ClassCheck;
 	int itemtimer;
 	int buttons;
+	int oldbuttons;
+	int FreezePlayer;
 	int TrueGameSkill;
 	int CurrentArmorClass;
 	int CurrentMaxArmor;
@@ -1119,6 +1121,18 @@ class PlayerStatItem : Inventory
 				//*************************
 				MercyInvulnStuff();
 				
+				// Sleep Check
+				if (owner.CountInv("FallenAsleep"))
+				{
+					owner.player.cheats |= CF_FROZEN; // Turns on Freezing
+					owner.player.cheats |= CF_TOTALLYFROZEN; // Turns on Total Freezing
+				}
+				else
+				{
+					owner.player.cheats &= ~CF_FROZEN; // Turns off Total Freezing
+					owner.player.cheats &= ~CF_TOTALLYFROZEN; // Turns off Total Freezing
+				}
+
 				//**************************************************
 				//* RenderStyle Stuff [Dashing, Invisibility, etc] *
 				//**************************************************
@@ -1165,6 +1179,15 @@ class PlayerStatItem : Inventory
 				else
 				{
 					if (owner.CountInv("DebugTimeFreezer")) owner.A_SetInventory("DebugTimeFreezer",0);
+				}
+				
+				//*************************************
+				//*Blacken Screen if Blinded or Asleep*
+				//*************************************
+				if (playeractor)
+				{
+					if (owner.CountInv("IsBlinded")) owner.A_SetBlend("00 00 00", 0.975, 25); // Constant Run
+					if (owner.CountInv("FallenAsleep")) owner.A_SetBlend("00 00 00", 0.9875, 25); // Constant Run
 				}
 				
 				//***************
@@ -1812,10 +1835,27 @@ class PlayerStatItem : Inventory
 							int temp5 = floor(VitalityPieces * 1.6);
 							if (berserked) inc += randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
 												else inc += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
+												
+							if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0)
+							{
+								inc *= 0.1;
+								if (inc < 1 && random(1,16) <= 15) inc = 1;
+							}
 							
 							BaseRegenMulti = inc;
-							if (HPRegenBoostTimer > 0) inc *= 2.5;
-							if (HPRegenBoostTimer < 0) inc *= 0.4;
+							if (HPRegenBoostTimer > 0) 
+							{
+								if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0)
+								{
+									if (inc <= 0) inc = 1;
+									inc *= 20;
+								}
+								else inc *= 2.5;
+							}
+							if (HPRegenBoostTimer < 0) 
+							{
+								inc *= 0.4;
+							}
 							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Regen]: %d, inc: %d", HPRegenBoostTimer, inc);
 							
 							double ssa = 1.00;
@@ -1908,27 +1948,33 @@ class PlayerStatItem : Inventory
 								}
 								if (kcdebug_hpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 							}
-
+							
+							if (owner.CountInv("FallenAsleep")) inc = floor(inc * 5); // Sleep = 5x Regen Speed
+							
 							if (berserked) 
 							{
 								if (A_CheckForHeiwa()) inc = floor(inc * frandom[statitem](2.5,4.0));
 																	else inc = floor(inc * frandom[statitem](1.5,2.0));
 							}
-
-							if (!timestoptype)
+							
+							if (owner.CountInv("FallenAsleep")) FreezePlayer++;
+							if (FreezePlayer <= 0)
 							{
-								if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = floor(inc * 0.4);
-								if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = floor(inc * 0.5);
-								if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = floor(inc * 0.6);
-								if (owner.player.jumpTics < 0) inc = floor(inc * 0.4);
-								if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
-								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
-							}
-							else
-							{
-								if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(4.2,5.0));
-								if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
-								if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(1.16,1.2));
+								if (!timestoptype)
+								{
+									if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = floor(inc * 0.4);
+									if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = floor(inc * 0.5);
+									if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = floor(inc * 0.6);
+									if (owner.player.jumpTics < 0) inc = floor(inc * 0.4);
+									if (owner.player.jumpTics > 0) inc = floor(inc * 0.7);
+									if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+								}
+								else
+								{
+									if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(4.2,5.0));
+									if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * 1.8);
+									if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = floor(inc * frandom(1.16,1.2));
+								}
 							}
 							
 							if (kc_healthregendegentype >= 1)
@@ -2036,10 +2082,23 @@ class PlayerStatItem : Inventory
 							int temp5 = floor(VitalityPieces * 0.8);
 							if (berserked) inc -= randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
 												else inc -= randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
+							if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0) 
+							{
+								inc *= 0.1;
+								if (inc < 1 && random(1,16) <= 15) inc = 1;
+							}
 							
 							BaseRegenMulti = inc;
 							if (HPRegenBoostTimer > 0) inc *= 0.4;
-							if (HPRegenBoostTimer < 0) inc *= 2.5;
+							if (HPRegenBoostTimer < 0) 
+							{
+								if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0)
+								{
+									if (inc <= 0) inc = 1;
+									inc *= 20;
+								}
+								else inc *= 2.5;
+							}
 							if (kcdebug_hpregen) Console.Printf("HPRegenBoostTimer [Degen]: %d, inc: %d", HPRegenBoostTimer, inc);
 							
 							
@@ -2105,29 +2164,47 @@ class PlayerStatItem : Inventory
 								}
 							}
 							
+							if (owner.CountInv("FallenAsleep")) inc = ceil(inc * 0.2); // Sleep = x0.2 degen speed
+							
 							if (berserked) 
 							{
 								if (A_CheckForHeiwa()) inc = ceil(inc * frandom[statitem](0.25,0.4));
 																	else inc = ceil(inc * frandom[statitem](0.5,0.667));
 							}
 							
-							if (!timestoptype)
+							if (owner.CountInv("FallenAsleep")) FreezePlayer++;
+							if (FreezePlayer <= 0)
 							{
-								if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = ceil(inc * 2.5);
-								if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = ceil(inc * 2.0);
-								if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = ceil(inc * 1.666666666666667);
-								if (owner.player.jumpTics < 0) inc = ceil(inc * 2.5);
-								if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
-								if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
-							}
-							else
-							{
-								if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(4.2,5.0)));
-								if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / 1.8));
-								if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(1.16,1.2)));
+								if (!timestoptype)
+								{
+									if (buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) inc = ceil(inc * 2.5);
+									if (buttons & BT_ATTACK || buttons & BT_ALTATTACK) inc = ceil(inc * 2.0);
+									if (buttons & BT_MOVEUP || buttons & BT_MOVEDOWN) inc = ceil(inc * 1.666666666666667);
+									if (owner.player.jumpTics < 0) inc = ceil(inc * 2.5);
+									if (owner.player.jumpTics > 0) inc = ceil(inc * 1.75);
+									if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * 0.5555555555555556);
+								}
+								else
+								{
+									if (timestoptype <= 0) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(4.2,5.0)));
+									if (timestoptype == 1) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / 1.8));
+									if (timestoptype >= 2) if (buttons & BT_CROUCH && owner.player.crouchfactor < 1.00 && level.IsCrouchingAllowed() && owner.player.jumpTics == 0) inc = ceil(inc * (1.0 / frandom(1.16,1.2)));
+								}
 							}
 							
 							if (kc_healthregendegentype >= 1)
+							{
+								if (CurrentHealth >= (MaxHealthTrue * 3.0)) inc = ceil(inc * 1.5);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.75)) inc = ceil(inc * 1.4375);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.50)) inc = ceil(inc * 1.375);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.25)) inc = ceil(inc * 1.3125);
+								else if (CurrentHealth >= (MaxHealthTrue * 2.00)) inc = ceil(inc * 1.25);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.75)) inc = ceil(inc * 1.1875);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.125);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.0625);
+								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
+							}
+							else
 							{
 								if (CurrentHealth >= (MaxHealthTrue * 3.0)) inc = ceil(inc * 2.0);
 								else if (CurrentHealth >= (MaxHealthTrue * 2.75)) inc = ceil(inc * 1.875);
@@ -2137,18 +2214,6 @@ class PlayerStatItem : Inventory
 								else if (CurrentHealth >= (MaxHealthTrue * 1.75)) inc = ceil(inc * 1.375);
 								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.25);
 								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.125);
-								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
-							}
-							else
-							{
-								if (CurrentHealth >= (MaxHealthTrue * 3.0)) inc = ceil(inc * 3.0);
-								else if (CurrentHealth >= (MaxHealthTrue * 2.75)) inc = ceil(inc * 2.75);
-								else if (CurrentHealth >= (MaxHealthTrue * 2.50)) inc = ceil(inc * 2.5);
-								else if (CurrentHealth >= (MaxHealthTrue * 2.25)) inc = ceil(inc * 2.25);
-								else if (CurrentHealth >= (MaxHealthTrue * 2.00)) inc = ceil(inc * 2.0);
-								else if (CurrentHealth >= (MaxHealthTrue * 1.75)) inc = ceil(inc * 1.75);
-								else if (CurrentHealth >= (MaxHealthTrue * 1.50)) inc = ceil(inc * 1.5);
-								else if (CurrentHealth >= (MaxHealthTrue * 1.25)) inc = ceil(inc * 1.25);
 								else if (CurrentHealth >= (MaxHealthTrue * 1.00)) inc = ceil(inc * 1.0);
 							}
 							if (A_CheckForHeiwa()) 
@@ -2319,6 +2384,8 @@ class PlayerStatItem : Inventory
 						if (kcdebug_ppregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 					}
 					
+					if (owner.CountInv("FallenAsleep")) inc *= 5;
+					
 					if (inc < 0) inc = 0;
 					//genticsHUD = inc;
 					PPRegenTimer += inc;
@@ -2447,7 +2514,9 @@ class PlayerStatItem : Inventory
 						}
 						if (kcdebug_mpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 					}
-
+					
+					if (owner.CountInv("FallenAsleep")) inc *= 5;
+					
 					if (inc < 0) inc = 0;
 					//genticsHUD = inc;
 					MPRegenTimer += inc;
