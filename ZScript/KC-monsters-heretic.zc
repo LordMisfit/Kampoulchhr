@@ -5097,7 +5097,7 @@ class CurseSpell : KCEffectProjectile
 		A_StatusEffectChecker(basechance);
 		if (random(1,user_ailmentmaxchance) <= actualroll && user_canafflict)
 		{
-			user_random = random(1,12);
+			user_random = random(1,13);
 			if (user_random >= 1 && user_random <= 4)
 			{
 				A_InflictWeaken(random(630,1050),sndchannel);
@@ -5109,6 +5109,10 @@ class CurseSpell : KCEffectProjectile
 			if (user_random >= 9 && user_random <= 12)
 			{
 				A_InflictSlow(random(315,525),sndchannel);
+			}
+			if (user_random >= 13)
+			{
+				A_InflictSleep(random(315,525),sndchannel);
 			}
 		}
 	}

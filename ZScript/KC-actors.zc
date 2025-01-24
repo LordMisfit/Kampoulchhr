@@ -2494,6 +2494,24 @@ class KCEffectProjectile : KCProjectile
 		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSlow)");
 	}
 	
+	void A_InflictSleep(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("FallenAsleep"))
+		{
+			playera.SetInventory("FallenAsleep",1);
+			let SleepItem = FallenAsleep(playera.FindInventory("FallenAsleep"));
+			if (SleepItem) SleepItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SleepItem = FallenAsleep(playera.FindInventory("FallenAsleep"));
+			if (SleepItem) SleepItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("DraQue/fallasleep",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSleep)");
+	}
+	
 	int A_StatusEffectChecker(int basechance)
 	{
 		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile [\c[green]%s\c[orange])", GetClassName());
@@ -2834,6 +2852,24 @@ class KCEffectFastProjectile : KCFastProjectile
 		}
 		player.A_StartSound("debuff/spddown",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
 		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSlow)");
+	}
+	
+	void A_InflictSleep(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("FallenAsleep"))
+		{
+			playera.SetInventory("FallenAsleep",1);
+			let SleepItem = FallenAsleep(playera.FindInventory("FallenAsleep"));
+			if (SleepItem) SleepItem.EffectTics = basetime;
+		}
+		else
+		{
+			let SleepItem = FallenAsleep(playera.FindInventory("FallenAsleep"));
+			if (SleepItem) SleepItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("DraQue/fallasleep",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSleep)");
 	}
 	
 	int A_StatusEffectChecker(int basechance)
