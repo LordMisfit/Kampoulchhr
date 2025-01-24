@@ -3488,7 +3488,7 @@ class DarkSeeker : KCEffectProjectile
 					A_StatusEffectChecker(4);
 					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
 					{
-						user_random = random(1,13);
+						user_random = random(1,14);
 						if (user_random >= 1 && user_random <= 4)
 						{
 							A_InflictWeaken(random(105,175),401);
@@ -3501,9 +3501,13 @@ class DarkSeeker : KCEffectProjectile
 						{
 							A_InflictSlow(random(105,175),401);
 						}
-						if (user_random >= 13)
+						if (user_random == 13)
 						{
 							A_InflictSleep(random(105,175),401);
+						}
+						if (user_random == 14)
+						{
+							A_InflictBlind(random(105,175),401);
 						}
 					}
 				}
@@ -3547,7 +3551,7 @@ class DarkFast : KCEffectProjectile
 					A_StatusEffectChecker(8);
 					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
 					{
-						user_random = random(1,13);
+						user_random = random(1,14);
 						if (user_random >= 1 && user_random <= 4)
 						{
 							A_InflictWeaken(random(105,175),401);
@@ -3560,9 +3564,13 @@ class DarkFast : KCEffectProjectile
 						{
 							A_InflictSlow(random(105,175),401);
 						}
-						if (user_random >= 13)
+						if (user_random == 13)
 						{
 							A_InflictSleep(random(105,175),401);
+						}
+						if (user_random == 14)
+						{
+							A_InflictBlind(random(105,175),401);
 						}
 					}
 				}
@@ -3604,7 +3612,7 @@ class DarkNormal : KCEffectProjectile
 					A_StatusEffectChecker(4);
 					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
 					{
-						user_random = random(1,13);
+						user_random = random(1,14);
 						if (user_random >= 1 && user_random <= 4)
 						{
 							A_InflictWeaken(random(105,175),401);
@@ -3617,9 +3625,13 @@ class DarkNormal : KCEffectProjectile
 						{
 							A_InflictSlow(random(105,175),401);
 						}
-						if (user_random >= 13)
+						if (user_random == 13)
 						{
 							A_InflictSleep(random(105,175),401);
+						}
+						if (user_random == 14)
+						{
+							A_InflictBlind(random(105,175),401);
 						}
 					}
 				}
@@ -3680,7 +3692,7 @@ class DarkStrong : KCEffectProjectile
 					A_StatusEffectChecker(2);
 					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
 					{
-						user_random = random(1,13);
+						user_random = random(1,14);
 						if (user_random >= 1 && user_random <= 4)
 						{
 							A_InflictWeaken(random(105,175),401);
@@ -3693,9 +3705,13 @@ class DarkStrong : KCEffectProjectile
 						{
 							A_InflictSlow(random(105,175),401);
 						}
-						if (user_random >= 13)
+						if (user_random == 13)
 						{
 							A_InflictSleep(random(105,175),401);
+						}
+						if (user_random == 14)
+						{
+							A_InflictBlind(random(105,175),401);
 						}
 					}
 				}
@@ -6862,7 +6878,7 @@ class CacolanternBall : KCEffectProjectile
 					A_StatusEffectChecker(8);
 					if (random(1,user_ailmentmaxchance) <= 1 && user_canafflict)
 					{
-						user_random = random(1,13);
+						user_random = random(1,14);
 						if (user_random >= 1 && user_random <= 4)
 						{
 							A_InflictWeaken(random(105,175),401);
@@ -6875,9 +6891,13 @@ class CacolanternBall : KCEffectProjectile
 						{
 							A_InflictSlow(random(105,175),401);
 						}
-						if (user_random >= 13)
+						if (user_random == 13)
 						{
 							A_InflictSleep(random(105,175),401);
+						}
+						if (user_random == 14)
+						{
+							A_InflictBlind(random(105,175),401);
 						}
 					}
 				}
@@ -16329,7 +16349,7 @@ class CurseBall : KCEffectProjectile
 		A_StatusEffectChecker(basechance);
 		if (random(1,user_ailmentmaxchance) <= actualroll && user_canafflict)
 		{
-			user_random = random(1,13);
+			user_random = random(1,14);
 			if (user_random >= 1 && user_random <= 4)
 			{
 				A_InflictWeaken(inflicttics,sndchannel);
@@ -16342,9 +16362,13 @@ class CurseBall : KCEffectProjectile
 			{
 				A_InflictSlow(inflicttics,sndchannel);
 			}
-			if (user_random >= 13)
+			if (user_random == 13)
 			{
 				A_InflictSleep(inflicttics,sndchannel);
+			}
+			if (user_random == 14)
+			{
+				A_InflictBlind(inflicttics,sndchannel);
 			}
 		}
 	}

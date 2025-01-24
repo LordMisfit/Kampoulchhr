@@ -2512,6 +2512,24 @@ class KCEffectProjectile : KCProjectile
 		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSleep)");
 	}
 	
+	void A_InflictBlind(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("IsBlinded"))
+		{
+			playera.SetInventory("IsBlinded",1);
+			let BlindItem = IsBlinded(playera.FindInventory("IsBlinded"));
+			if (BlindItem) BlindItem.EffectTics = basetime;
+		}
+		else
+		{
+			let BlindItem = IsBlinded(playera.FindInventory("IsBlinded"));
+			if (BlindItem) BlindItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("misc/blinded",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictBlind)");
+	}
+	
 	int A_StatusEffectChecker(int basechance)
 	{
 		if (kcdebug_inflictstatuseffect) Console.Printf("\c[orange](KCEffectProjectile [\c[green]%s\c[orange])", GetClassName());
@@ -2870,6 +2888,24 @@ class KCEffectFastProjectile : KCFastProjectile
 		}
 		playera.A_StartSound("DraQue/fallasleep",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
 		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictSleep)");
+	}
+	
+	void A_InflictBlind(int basetime = 35, int sndchannel = 401)
+	{
+		actor playera = players[0].mo;
+		if (!playera.CountInv("IsBlinded"))
+		{
+			playera.SetInventory("IsBlinded",1);
+			let BlindItem = IsBlinded(playera.FindInventory("IsBlinded"));
+			if (BlindItem) BlindItem.EffectTics = basetime;
+		}
+		else
+		{
+			let BlindItem = IsBlinded(playera.FindInventory("IsBlinded"));
+			if (BlindItem) BlindItem.EffectTics += basetime;
+		}
+		playera.A_StartSound("misc/blinded",sndchannel,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.9,1.1));
+		if (kcdebug_inflictstatuseffect) Console.Printf("(A_InflictBlind)");
 	}
 	
 	int A_StatusEffectChecker(int basechance)

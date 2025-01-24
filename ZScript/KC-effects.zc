@@ -5149,6 +5149,60 @@ class PowerLMPieBuff : PowerFoodATK
 
 class IsBlinded : TempDefenseBuff
 {
+	default
+	{
+		Inventory.Icon "";
+		Powerup.Duration -5;
+		Powerup.Color "00 00 00", 0.00;
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			let TimeItem = KCTimeFreezer(owner.FindInventory("KCTimeFreezer"));
+			if (GetAge() == 0) 
+			{
+				//owner.A_StartSound("misc/blinded",CHAN_5,CHANF_DEFAULT,1.0,ATTN_NORM);
+				if (HeiwaPlayer(owner))
+				{
+					//owner.A_StopSound(CHAN_VOICE); 
+					//owner.A_StartSound("",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM); 
+				}
+			}
+			if ((owner.CountInv("KCTimeFreezer1") ||
+					 owner.CountInv("KCTimeFreezer2") ||
+					 owner.CountInv("KCTimeFreezer3"))) 
+			{
+				EffectTics -= randompick(3,4,4,5,5,5,5,5,5,5,5,5,5,5,5,6,6,7);
+			}
+			else EffectTics--;
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (!passive && damage > 0)
+		{
+			double TOTALFactor = 1.0;
+			if (random[statitem](1,16) <= 1) TOTALFactor *= 0.2; else TOTALFactor *= 0.8;
+			
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_attackbuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 1.0;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
 }
 
 class FallenAsleep : TempDefenseBuff
@@ -5167,7 +5221,7 @@ class FallenAsleep : TempDefenseBuff
 			let TimeItem = KCTimeFreezer(owner.FindInventory("KCTimeFreezer"));
 			if (GetAge() == 0) 
 			{
-				owner.A_StartSound("DraQue/fallasleep",CHAN_5,CHANF_DEFAULT,1.0,ATTN_NORM);
+				//owner.A_StartSound("DraQue/fallasleep",CHAN_5,CHANF_DEFAULT,1.0,ATTN_NORM);
 				if (HeiwaPlayer(owner))
 				{
 					//owner.A_StopSound(CHAN_VOICE); 
