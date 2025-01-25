@@ -16202,7 +16202,7 @@ class SWRiotBullet : KCBulletTracer // KCFastProjectile
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",randompick(0,0,0,1),-2.5);
 			loop;
 		Death:
 		Crash:  
@@ -16230,7 +16230,7 @@ class SWRiotBulletRip : KCBulletTracerSingleRipper // KCFastProjectile
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",randompick(0,0,0,1),-2.5);
 			loop;
 		Death:
 		Crash:  

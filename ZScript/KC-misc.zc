@@ -1895,6 +1895,12 @@ class PlayerStatItem : Inventory
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 20;
 							if (owner.CountInv("KCPowerKampoul")) inc *= frandom(32,48);
 							if (kcdebug_hpregen) Console.Printf("post powerup inc: %d, tic: %d", inc, gametic);
+							
+							if (owner.CountInv("PowerHaste")) inc = floor(inc * 1.25);
+							if (owner.CountInv("PowerSlow")) inc = floor(inc * 0.8);
+							if (owner.CountInv("PoisonCount")) inc = floor(inc * (random[statitem](2,6) * 0.125));
+							if (owner.CountInv("FallenAsleep")) inc = floor(inc * 5); // Sleep = 5x Regen Speed
+							
 							if (timestoptype > 0)
 							{
 								boostf = 1.125;
@@ -1948,8 +1954,6 @@ class PlayerStatItem : Inventory
 								}
 								if (kcdebug_hpregen) Console.Printf("time stop final - inc: %d, tic: %d", inc, gametic);
 							}
-							
-							if (owner.CountInv("FallenAsleep")) inc = floor(inc * 5); // Sleep = 5x Regen Speed
 							
 							if (berserked) 
 							{
@@ -2136,6 +2140,12 @@ class PlayerStatItem : Inventory
 							}
 							if (owner.CountInv("KCPowerInvuln") || owner.CountInv("PowerInvulnerable")) inc *= 0.05;
 							if (owner.CountInv("KCPowerKampoul")) inc *= (1.0 / frandom(32,48));
+							
+							if (owner.CountInv("PowerHaste")) inc = ceil(inc * 1.25);
+							if (owner.CountInv("PowerSlow")) inc = ceil(inc * 0.8);
+							if (owner.CountInv("PoisonCount")) inc = ceil((inc * 8) / (random[statitem](2,6) * 0.125));
+							if (owner.CountInv("FallenAsleep")) inc = ceil(inc * 0.2); // Sleep = x0.2 degen speed
+							
 							if (timestoptype > 0)
 							{
 								double boostf = double(1.0 / 1.125);
@@ -2164,7 +2174,6 @@ class PlayerStatItem : Inventory
 								}
 							}
 							
-							if (owner.CountInv("FallenAsleep")) inc = ceil(inc * 0.2); // Sleep = x0.2 degen speed
 							
 							if (berserked) 
 							{
@@ -10619,7 +10628,10 @@ class PlayerDashJump : Inventory
 				if (pushingdirection != 0) basechargeint *= 0.25;
 				basecharge *= (1.0 + (TruePlayerLevel * basechargeint) + (TruePlayerSPD * basechargeint));
 				if (kcdebug_showdashinformation) Console.Printf("basecharge [dash]: %d, basechargeint: %.8f", basecharge, basechargeint);
+				
 				if (owner.CountInv("KCPowerKampoul")) basecharge *= 4;
+				if (owner.CountInv("PoisonCount")) basecharge = floor(basecharge * 0.667);
+				
 				if (kcdebug_dashcheat) basecharge *= 4;
 				DashCharge += basecharge;
 				if (DashCharge > DashMaxCharge) DashCharge = DashMaxCharge;

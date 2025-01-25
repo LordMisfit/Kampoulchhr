@@ -33,7 +33,7 @@ class ZombieBulletTracer : KCBulletTracer
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("ZombieBulletTracerTrail",6,-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("ZombieBulletTracerTrail",random(2,3),-2.5);
 			loop;
 		XDeath:
 			TNT1 A 1; //A_SpawnItem("BulletPuff");

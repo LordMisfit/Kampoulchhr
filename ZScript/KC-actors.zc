@@ -3006,7 +3006,7 @@ class KCBulletTracer : KCFastProjectile
 		+NODAMAGETHRUST;
 		Renderstyle "Add";
 		Alpha 1.0;
-		Scale 1.0;
+		Scale 0.5;
 		decal "BulletChip";
 		KCFastProjectile.TimeUnFreezeSpeedUpFactor 8.0;
 		KCFastProjectile.TimeFreezeSlowDownFactor 0.125;
@@ -3150,7 +3150,7 @@ class KCBulletTracer : KCFastProjectile
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(1,2),-2.5);
 			loop;
 		XDeath:
 			TNT1 A 1; //A_SpawnItem("BulletPuff")
@@ -3173,6 +3173,7 @@ class KCBulletTracerTrail : KCBaseZSC
 		Projectile;
 		+CLIENTSIDEONLY;
 		+NOINTERACTION;
+		+NOBLOCKMAP;
 		+NOCLIP;
 		+DONTSPLASH;
 		Scale 0.5;
@@ -3709,7 +3710,7 @@ class KCBulletTracerSingleRipper : SingleDamageFastRipper
 		Projectile;
 		Renderstyle "Add";
 		Alpha 1.0;
-		Scale 1.0;
+		Scale 0.5;
 		decal "BulletChip";
 		KCFastProjectile.TimeUnFreezeSpeedUpFactor 8.0;
 		KCFastProjectile.TimeFreezeSlowDownFactor 0.125;
@@ -3841,7 +3842,7 @@ class KCBulletTracerSingleRipper : SingleDamageFastRipper
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(3,4),-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("KCBulletTracerTrail",random(1,2),-2.5);
 			loop;
 		XDeath:
 			TNT1 A 1; //A_SpawnItem("BulletPuff")

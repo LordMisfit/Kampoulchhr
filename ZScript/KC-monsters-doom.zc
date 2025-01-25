@@ -1078,7 +1078,7 @@ class ZombieRepeaterTracer : KCBulletTracer
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("ZombieRepeaterTracerTrail",6,-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("ZombieRepeaterTracerTrail",random(3,4),-2.5);
 			loop;
 		XDeath:
 			TNT1 A 1 A_SpawnItem("RepeaterPuff");
@@ -8995,7 +8995,7 @@ class IncarnateGlareTracer : KCBulletTracer
 		Spawn:
 			TNT1 A 0 NoDelay bright;
 		Idle:
-			TNT1 A 1 bright A_SpawnTracerTrail("IncarnateGlareTracerTrail",6,-2.5);
+			TNT1 A 1 bright A_SpawnTracerTrail("IncarnateGlareTracerTrail",random(3,4),-2.5);
 			loop;
 		XDeath:
 			INPF ABCDE 3 Bright;
