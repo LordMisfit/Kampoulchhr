@@ -9421,6 +9421,12 @@ class PlayerDashJump : Inventory
 				}
 			}
 		}
+		bool istsagliding = false;
+		if (Owner.CountInv("TSArmorTier3Plus") || 
+				Owner.CountInv("TSArmorTier2")) 
+		{
+			if (cmd.buttons & BT_CROUCH) istsagliding = true;
+		}
 		
 		if (weapon is "FistHeiwa" &&
 				owner.CountInv("FistPlayerBlockItem")) 
@@ -10306,7 +10312,8 @@ class PlayerDashJump : Inventory
 				if (kc_flightswimpitchdash && 
 						(owner.waterlevel >= 3 || 
 						 (owner.bNOGRAVITY || 
-						  owner.bFLY)))
+						  owner.bFLY) ||
+							istsagliding))
 				{
 					if (kcdebug_showdashinformation) Console.Printf("DashSpeed: %.8f, DashDir: %.8f, DashPitch: %.8f", DashSpeed, DashDir, DashPitch);
 					Owner.Vel3DFromAngle(DashSpeed, DashDir, DashPitch);

@@ -6793,3 +6793,91 @@ class LemonMerinquePie : CustomInventoryExt
 			stop;
 	}
 }
+
+class HeiwaAllWeapons : CustomInventoryExt
+{
+	default
+	{
+		radius 20;
+		height 20;
+		scale 0.44;
+		mass 666;
+		+DONTGIB;
+		+FLOATBOB;
+		+INVENTORY.ALWAYSPICKUP;
+		+INVENTORY.BIGPOWERUP;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0;
+			TNT1 A 4 bright;
+			loop;
+		Pickup:
+			TNT1 A 0
+			{
+				int giveamt = 99999999;
+				A_GiveInventory("Backpack",giveamt);
+				A_GiveInventory("Backpack2",giveamt);
+				A_GiveInventory("BackpackTier1",giveamt);
+				A_GiveInventory("BackpackTier2",giveamt);
+				A_GiveInventory("FistHeiwa",giveamt);
+				A_GiveInventory("KnifeHeiwa",giveamt);
+				A_GiveInventory("Glock21",giveamt);
+				A_GiveInventory("Clip",giveamt);
+				A_GiveInventory("BlasterPistol",giveamt);
+				A_GiveInventory("DualBlasterPistols",giveamt);
+				A_GiveInventory("Cell",giveamt);
+				A_GiveInventory("Riotgun",giveamt);
+				A_GiveInventory("Shell",giveamt);
+				A_GiveInventory("TommyGun",giveamt);
+				A_GiveInventory("TommAmmo",giveamt);
+				A_GiveInventory("DualTommyGuns",giveamt);
+				A_GiveInventory("BlasterRifle",giveamt);
+				A_GiveInventory("Deviation",giveamt);
+				A_GiveInventory("RocketAmmo",giveamt);
+				A_GiveInventory("Devastator",giveamt);
+				A_GiveInventory("DualDevastators",giveamt);
+				A_GiveInventory("MiniRockets",giveamt);
+				A_GiveInventory("TeslaCannon",giveamt);
+				A_GiveInventory("DualTeslaCannons",giveamt);
+				A_GiveInventory("Bolts",giveamt);
+				A_GiveInventory("BHGen",giveamt);
+				A_GiveInventory("Incinerator",giveamt);
+				A_GiveInventory("CalamityBlade",giveamt);
+				A_GiveInventory("Translocator",giveamt);
+				A_GiveInventory("DustBlower",giveamt);
+				A_GiveInventory("EvilWarriorShield",giveamt);
+				A_GiveInventory("HellWarriorShieldLevel",giveamt);
+				A_GiveInventory("PikeAmmo",giveamt);
+				A_GiveInventory("ImpalerXBow",giveamt);
+				A_GiveInventory("ImpalerBolts",giveamt);
+				A_GiveInventory("SawThrower",giveamt);
+				A_GiveInventory("Saws",giveamt);
+				
+				A_GiveInventory("TommyGunModpack",giveamt);
+				A_GiveInventory("BlasterRifleModpack",giveamt);
+				A_GiveInventory("BlasterPistolModpack",giveamt);
+				A_GiveInventory("DevastatorModpack",giveamt);
+				A_GiveInventory("RiotGunModpack",giveamt);
+				A_GiveInventory("CalamityBladeModPack",giveamt);
+			}
+			TNT1 A 1;
+			TNT1 A 0
+			{
+				int giveamt = 99999999;
+				A_GiveInventory("Clip",giveamt);
+				A_GiveInventory("Cell",giveamt);
+				A_GiveInventory("Shell",giveamt);
+				A_GiveInventory("TommAmmo",giveamt);
+				A_GiveInventory("RocketAmmo",giveamt);
+				A_GiveInventory("MiniRockets",giveamt);
+				A_GiveInventory("Bolts",giveamt);
+				A_GiveInventory("PikeAmmo",giveamt);
+				A_GiveInventory("ImpalerBolts",giveamt);
+				A_GiveInventory("Saws",giveamt);
+			}
+			Stop;
+	}
+}

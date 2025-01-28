@@ -5494,6 +5494,7 @@ class CompatVulnItem : PlaceholderItem
 					
 					nm = "CCards_Actor_StoneDeath";
 					nn = "CCards_Actor_MysteryEgg";
+					no = "CCards_Actor_AttentionCurse";
 					if (Level.MapName != "TITLEMAP" &&
 							source && 
 							(prevtarget != source || owner.CountInv("TimeFreezeHasNoTarget") || owner.CountInv("TimeFreezeHasATarget")) && 
@@ -5526,6 +5527,7 @@ class CompatVulnItem : PlaceholderItem
 									inflictor.GetClassName() == "ImpalerMissile3"))
 							{
 								newdamage *= frandompick(2.0000,2.50);
+								if (owner.CountInv(no)) damage *= frandompick(3.0000,3.75);
 							}
 							else newdamage *= frandompick(1.3334,1.50);
 						}
@@ -5540,6 +5542,7 @@ class CompatVulnItem : PlaceholderItem
 									inflictor.GetClassName() == "ImpalerMissile3"))
 							{
 								newdamage *= frandompick(1.5000,1.75);
+								if (owner.CountInv(no)) damage *= frandompick(2.0000,2.5);
 							}
 							else newdamage *= frandompick(1.1667,1.25);
 						}

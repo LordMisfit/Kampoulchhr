@@ -2558,6 +2558,7 @@ mixin class MonsterCollider
 		
 		nm = "CCards_Actor_StoneDeath";
 		nn = "CCards_Actor_MysteryEgg";
+		no = "CCards_Actor_AttentionCurse";
 		bool surprisehit = false;
 		if (Level.MapName != "TITLEMAP" &&
 				source && 
@@ -2591,6 +2592,7 @@ mixin class MonsterCollider
 						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
 					damage *= frandompick(2.0000,2.50);
+					if (CountInv(no)) damage *= frandompick(3.0000,3.75);
 				}
 				else damage *= frandompick(1.3334,1.50);
 			}
@@ -2605,6 +2607,7 @@ mixin class MonsterCollider
 						 inflictor.GetClassName() == "ImpalerMissile3"))
 				{
 					damage *= frandompick(1.5000,1.75);
+					if (CountInv(no)) damage *= frandompick(2.0000,2.5);
 				}
 				else damage *= frandompick(1.1667,1.25);
 			}
