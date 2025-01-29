@@ -2589,10 +2589,27 @@ class KCWeaponBase : Weapon
 							}
 						}
 					}
+					if (GetPlayerInput(INPUT_BUTTONS) & BT_USER4)
+					{
+						if (CountInv("FallenAsleep"))
+						{
+						}
+						else
+						if (CountInv("IsUnconscious"))
+						{
+						}
+						else
+						{
+							if (weapon is "KnifeHeiwa") A_Overlay(-102,"User4Extra",true);
+							if (weapon is "ImpalerXBow") A_Overlay(-102,"User4Extra",true);
+							if (weapon is "EvilWarriorShield") A_Overlay(-102,"User4Extra",true);
+						}
+					}
 				}
 				else
 				{
 					if (kcdebug_weaponstatdisplays2) Console.Printf("GrandControlLayer (%s) - 2b [%d]", GetClassName(), gametic);
+					A_ClearOverlays(-102,-102,true);
 					A_ClearOverlays(-2,-2,true);
 					A_ClearOverlays(8,8,true);
 				}
@@ -10148,7 +10165,7 @@ class ImpalerXBow : MarineWeapon
 			{
 				A_SetInventory("ImpalerBowRealReady",1);
 				A_SetInventory("ImpalerBowFakeReady",0);
-				A_WeaponReady(WRF_ALLOWUSER4);
+				A_WeaponReady();
 			}
 			Loop;
 		FakeReady:
@@ -10156,7 +10173,7 @@ class ImpalerXBow : MarineWeapon
 			{
 				A_SetInventory("ImpalerBowFakeReady",1);
 				A_SetInventory("ImpalerBowRealReady",0);
-				A_WeaponReady(WRF_ALLOWUSER4);
+				A_WeaponReady();
 			}
 			Loop;
 		Fire:
@@ -10381,6 +10398,7 @@ class ImpalerXBow : MarineWeapon
 			Goto RealReady;
 		
 		// Zoom :V
+		/*
 		User4:
 			CBOW A 0
 			{
@@ -10418,6 +10436,22 @@ class ImpalerXBow : MarineWeapon
 				A_SetTics(tic);
 			}
 			goto RealReady;
+		*/
+		User4Extra:
+			TNT1 A 17
+			{
+				A_SetTics(random(17,18));
+				A_BowSetZoom();
+				
+				int TruePlayerLevel = invoker.ActualLevel;
+				int tic = 5;
+				if (TruePlayerLevel >= (A_GetXBowSpd(0) * 6)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd(0) * 10)) tic -= 1;
+				if (TruePlayerLevel >= (A_GetXBowSpd(0) * 14)) tic -= 1;
+				if (tic < 1) tic = 1;
+				A_SetTics(tic);
+			}
+			stop;
 	}	
 }
 
@@ -17274,7 +17308,7 @@ class KnifeHeiwa : MarineWeapon
 				invoker.A_GetMPCost();
 				invoker.knifebarrageno = 0;
 				A_PKnifeSwingOff();
-				A_WeaponReady(WRF_ALLOWUSER4);
+				A_WeaponReady();
 			}
 			loop;
 		Deselect:
@@ -18129,8 +18163,13 @@ class KnifeHeiwa : MarineWeapon
 				invoker.knifebarrageno = 0;
 			}
 			Goto Ready;
+		
+		/*
 		User4:
-			"####" # 0
+			goto Ready;
+		*/
+		User4Extra:
+			TNT1 A 0
 			{
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
 				int TruePlayerLevel = invoker.ActualLevel;
@@ -18171,11 +18210,11 @@ class KnifeHeiwa : MarineWeapon
 				}
 				if (kcdebug_rangedmg) Console.Printf("knifespertoss %d / maxthrowableknives: %d", invoker.knifespertoss, invoker.maxthrowableknives);
 			}
-			"####" # 8
+			TNT1 A 8
 			{
 				A_SetTics(random(8,12));
 			}
-			goto Ready;
+			stop;
 	}
 }
 
@@ -19689,7 +19728,7 @@ class EvilWarriorShield : MarineWeapon
 		if (MiscItem)
 		{
 			int HellWarriorShieldLevel = MiscItem.HellWarriorShieldLevel;
-			temp = (invoker.default.BobSpeed + (HellWarriorShieldLevel * (invoker.default.BobSpeed * 0.10)));
+			temp = (invoker.default.BobSpeed + (HellWarriorShieldLevel * (invoker.default.BobSpeed * 0.05)));
 		}
 		if (A_CheckBerserk()) temp *= 0.25;
 		if (CountInv("EWShieldDefendMode") > 0) temp *= 0.25;
@@ -19718,7 +19757,7 @@ class EvilWarriorShield : MarineWeapon
 		Ready:
 			EWS0 D 1
 			{
-				A_WeaponReady(WRF_ALLOWUSER4);
+				A_WeaponReady();
 				A_GetBobSpeed();
 				A_GetShieldCosts();
 			}
@@ -20017,21 +20056,18 @@ class EvilWarriorShield : MarineWeapon
 			Goto Ready;
 			
 		// Fire Mode
+		/*
 		User4:
-			EWS0 A 0
+			goto Ready;
+		*/
+		User4Extra:
+			TNT1 A 0
 			{
-				if (invoker.ammo_type == 0)
-				{
-					invoker.ammo_type = 1;
-				}
-				else
-				if (invoker.ammo_type == 1)
-				{
-					invoker.ammo_type = 0;
-				}
+						 if (invoker.ammo_type == 0) invoker.ammo_type = 1;
+				else if (invoker.ammo_type == 1) invoker.ammo_type = 0;
 			}
 			EWS0 A 8;
-			goto Ready;
+			stop;
 
 		Spawn:
 			EWSH ABCDEFGH 3

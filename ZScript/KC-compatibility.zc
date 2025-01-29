@@ -233,6 +233,18 @@ Class KCLevelCompatibility : LevelPostProcessor
 				{
 					break;
 				}
+				case '8391b0eb996c55b5ed4343d18b8ad2c8': // tnt.wad map01
+				{
+					AddThing(15,(-256,-64,0),0,SKILLS_ALL,MODES_ALL); // DeadMarine
+					AddThing(27001,(-256,-64,0),0,SKILLS_ALL,MODES_ALL); // KCE1M1FirstMarineDrop
+					break;
+				}
+				case 'acf8b3fa7f972ff969127ab920c6c12d': // plutonia.wad map01
+				{
+					AddThing(15,(-32,-96,0),0,SKILLS_ALL,MODES_ALL); // DeadMarine
+					AddThing(27001,(-32,-96,0),0,SKILLS_ALL,MODES_ALL); // KCE1M1FirstMarineDrop
+					break;
+				}
 				
 				case '94893a0dc429a22adc4b3a73da537e16': // map25
 				{
@@ -266,17 +278,6 @@ Class KCLevelCompatibility : LevelPostProcessor
 						if (GetThingEdNum(i) != 30205 ) continue;
 						SetThingEdNum(i,31205);
 					}
-					break;
-				}
-
-				case '24d49c309a3c6ede7745d7675e5bf19c': // EPIC2.WAD Map14
-				{
-					// Adds a Roman CandleWhip at your start position because it's the only hitscan 
-					// weapon normally in Dinah's arsenal and you need a hitscan weapon to escape 
-					// the first part [or use "MDK" in the console while aiming at the switch in 
-					// question] :V
-					AddThing(10729,(2463,-735,672),0,SKILLS_ALL,MODES_ALL); 
-					if (kcdebug_showcompatibility) Console.Printf("LOLE IPEC TOW AMP14");
 					break;
 				}
 

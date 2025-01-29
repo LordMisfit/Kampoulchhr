@@ -356,6 +356,7 @@ class CustomInventoryExt : CustomInventory
 	
 	action void A_CapsuleSpawnHI(int basechance)
 	{
+		if (bDROPPED) basechance *= 16;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
@@ -363,20 +364,32 @@ class CustomInventoryExt : CustomInventory
 		int user_type = random(1,100);
 		if (user_type >= 1 && user_type <= 96)
 		{
-			if (A_CheckSecret()) chancebase1 *= random(2,3);
-			if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
-			if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
+			if (A_CheckSecret())
+			{
+				chancebase1 *= randompick(2,2,3);
+				if (A_CheckSecret() >= 2) 
+				{
+					chancebase1 *= randompick(2,2,3);
+					if (A_CheckSecret() >= 3) chancebase1 *= randompick(2,2,3);
+				}
+			}
 		}
 		else
 		{
-			if (A_CheckSecret()) chancebase1 *= randompick(1,1,1,1,2);
-			if (A_CheckSecret() >= 2) chancebase1 *= randompick(1,1,1,1,2);
-			if (A_CheckSecret() >= 3) chancebase1 *= randompick(1,1,1,1,2);
+			if (A_CheckSecret()) 
+			{
+				chancebase1 *= randompick(1,1,1,2,2,3);
+				if (A_CheckSecret() >= 2) 
+				{
+					chancebase1 *= randompick(1,1,1,2,2,3);
+					if (A_CheckSecret() >= 3) chancebase1 *= randompick(1,1,1,2,2,3);
+				}
+			}
 		}
 		
 		if (HeiwaPlayer(playera))
 		{
-			if (!bDROPPED && random(1,basechance) <= chancebase1)
+			if (random(1,basechance) <= chancebase1)
 			{
 				string spawntype;
 				if (user_type >= 1 && user_type <= 16) spawntype = "VitalCapsule";
@@ -910,6 +923,35 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 		string type = GetClassName();
 		if (playera.CountInv(type)) Destroy();
 	}
+	
+	void TSAHum()
+	{
+		actor playera = players[0].mo;
+		double snd1vol = 1.00;
+		double snd2vol = 0.10;
+		double snd3vol = 0.10;
+		if ((playera.CountInv("KCTimeFreezer1") ||
+				 playera.CountInv("KCTimeFreezer2") ||
+				 playera.CountInv("KCTimeFreezer3")))
+		{
+			snd1vol = 1.0;
+			snd2vol = 1.0;
+			snd3vol = 1.0;
+		}
+		else
+		{
+			snd1vol = 0.5;
+			snd2vol = 0.1;
+			snd3vol = 0.1;
+		}
+		Console.Printf("vol1: %.8f, vol2: %.8f, vol3: %.8f", snd1vol, snd2vol, snd3vol);
+		A_StartSound("tsartifact/hum1",101,CHANF_LOOPING,snd1vol,ATTN_NORM,1.0);
+		A_SoundVolume(101,snd1vol);
+		A_StartSound("tsartifact/hum2",102,CHANF_LOOPING,snd2vol,ATTN_NORM,1.0);
+		A_SoundVolume(102,snd2vol);
+		A_StartSound("tsartifact/hum3",103,CHANF_LOOPING,snd3vol,ATTN_NORM,1.0);
+		A_SoundVolume(103,snd2vol);
+	}
 }
 
 class TimeSeraphCharm : BaseTimeSeraphArtifact
@@ -986,16 +1028,16 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSCH A 1 BRIGHT;
+			TSCH A 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle1:
-			TSCH B 1 BRIGHT;
+			TSCH B 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle2:
-			TSCH C 1 BRIGHT;
+			TSCH C 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle3:
-			TSCH D 1 BRIGHT;
+			TSCH D 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
@@ -1003,6 +1045,9 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("CharmEnergyGive",1);
+				A_StopSound(101);
+				A_StopSound(102);
+				A_StopSound(103);
 				if (MiscItem && MiscItem.titemadd[0] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'With great protection comes great responsibility...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
@@ -1111,16 +1156,16 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSPW A 1 BRIGHT;
+			TSPW A 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle1:
-			TSPW B 1 BRIGHT;
+			TSPW B 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle2:
-			TSPW C 1 BRIGHT;
+			TSPW C 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle3:
-			TSPW D 1 BRIGHT;
+			TSPW D 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
@@ -1128,6 +1173,9 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("PWatchEnergyGive",1);
+				A_StopSound(101);
+				A_StopSound(102);
+				A_StopSound(103);
 				if (MiscItem && MiscItem.titemadd[1] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'With great responsibility, one can unlock a future self...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
@@ -1234,7 +1282,7 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 	States
 	{
 		Spawn:
-			TSBG A 1 BRIGHT
+			TSBG A 0 BRIGHT
 			{
 				invoker.CheckExistance();
 				actor playera = players[0].mo;
@@ -1249,16 +1297,16 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSBG A 1 BRIGHT;
+			TSBG A 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle1:
-			TSBG B 1 BRIGHT;
+			TSBG B 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle2:
-			TSBG C 1 BRIGHT;
+			TSBG C 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Idle3:
-			TSBG D 1 BRIGHT;
+			TSBG D 1 BRIGHT { invoker.TSAHum(); }
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
@@ -1266,6 +1314,9 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 				playera.A_SetInventory("BangleEnergyGive",1);
+				A_StopSound(101);
+				A_StopSound(102);
+				A_StopSound(103);
 				if (MiscItem && MiscItem.titemadd[2] > 0) playera.A_PrintBold(String.Format("\c[HeiwaDeluge]'The capacity to safely interpret which cannot usually be interpreted...'\c-"), frandom(3.25,3.75));
 			}
 			stop;
@@ -1326,7 +1377,7 @@ class Stimpack2 : CustomInventoryExt replaces Stimpack
 		Spawn:
 			STIM A 0 NoDelay
 			{
-				A_CapsuleSpawnHI(128); // 16384
+				A_CapsuleSpawnHI(128); // Stimpack
 			}
 		Idle:
 			STIM A -1;
@@ -1385,7 +1436,7 @@ class MiniBerserk : CustomInventoryExt
 		Spawn:
 			MBSK A 0 NoDelay
 			{
-				A_CapsuleSpawnHI(32); // 16384
+				A_CapsuleSpawnHI(32); // Mini-Berserk
 			}
 		Idle:
 			MBSK A -1;
@@ -1477,7 +1528,7 @@ class Medikit2 : CustomInventoryExt replaces Medikit
 		Spawn:
 			MEDI A 0 NoDelay
 			{
-				A_CapsuleSpawnHI(64); // 16384
+				A_CapsuleSpawnHI(64); // Medikit
 			}
 		Idle:
 			MEDI A -1;
@@ -1534,7 +1585,7 @@ class Berserk2 : CustomInventoryExt replaces Berserk
 		Spawn:
 			PSTR A 0 NoDelay
 			{
-				A_CapsuleSpawnHI(16);
+				A_CapsuleSpawnHI(16); // Berserk
 			}
 		Idle:
 			PSTR A -1;
@@ -1757,7 +1808,7 @@ class HealthBonus2 : CustomInventoryExt replaces HealthBonus
 					}
 					else
 					{
-						A_CapsuleSpawnHI(4096); // 16384
+						A_CapsuleSpawnHI(4096); // Health Bonus
 					}
 				}
 			}
@@ -1824,7 +1875,7 @@ class HealthBonusBig : CustomInventoryExt
 		Spawn:
 			BON3 A 0 NoDelay
 			{
-				A_CapsuleSpawnHI((4096/random(6,10))); // 16384
+				A_CapsuleSpawnHI((4096/random(9,11))); // Super Health Bonus
 			}
 			goto Float;
 		Float:
@@ -3388,16 +3439,23 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 	
 	action void A_CapsuleSpawnAI(int basechance)
 	{
+		if (bDROPPED) basechance *= 16;
 		actor playera = players[0].mo;
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		int chancebase1 = 1;
-		if (A_CheckSecret()) chancebase1 *= random(2,3);
-		if (A_CheckSecret() >= 2) chancebase1 *= random(2,3);
-		if (A_CheckSecret() >= 3) chancebase1 *= random(2,3);
+		if (A_CheckSecret()) 
+		{
+			chancebase1 *= randompick(2,2,3);
+			if (A_CheckSecret() >= 2) 
+			{
+				chancebase1 *= randompick(2,2,3);
+				if (A_CheckSecret() >= 3) chancebase1 *= randompick(2,2,3);
+			}
+		}
 		
 		if (HeiwaPlayer(playera))
 		{
-			if (!bDROPPED && random(1,basechance) <= chancebase1)
+			if (random(1,basechance) <= chancebase1)
 			{
 				int user_type = random(1,24);
 				string spawntype;
@@ -3467,7 +3525,7 @@ class ArmorBonus2 : KCArmorBonus replaces ArmorBonus
 					}
 					else
 					{
-						A_CapsuleSpawnAI(4096); // 16384
+						A_CapsuleSpawnAI(4096); // Armor Bonus
 					}
 				}
 			}
@@ -3658,7 +3716,7 @@ class ArmorBonusBig : ArmorBonus2
 		Spawn:
 			BON4 A 0 NoDelay
 			{
-				A_CapsuleSpawnAI((4096/random(6,10))); // 16384
+				A_CapsuleSpawnAI((4096/random(9,11))); // Super Armor Bonus
 			}
 			goto Idle;
 		Idle:
