@@ -9409,7 +9409,7 @@ class PlayerDashJump : Inventory
 		if (owner.CountInv("PowerLMPieBuff")) DashSpdMul += 0.16;
 		
 		UserCmd cmd = Owner.player.cmd;
-		if (Owner.vel.z <= 0)
+		if (Owner.vel.z <= -0.0001)
 		{
 			if (Owner.CountInv("TSArmorTier3Plus") || 
 					Owner.CountInv("TSArmorTier2")) 
