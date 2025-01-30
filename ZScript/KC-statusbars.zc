@@ -4746,10 +4746,13 @@ class KCStatusBarMain : BaseStatusBar
 				{
 					LegendStr.AppendFormat(" = \c[blue]DASH\c-");
 				}
-				if (CPlayerPawn.CountInv("TSArmorTier3Plus") || 
-						CPlayerPawn.CountInv("TSArmorTier2")) 
+				if (kc_flightswimpitchdash &&
+						(CPlayerPawn.waterlevel >= 3 || 
+						 (CPlayerPawn.bNOGRAVITY || CPlayerPawn.bFLY) ||
+						 ((CPlayerPawn.CountInv("TSArmorTier3Plus") || 
+						   CPlayerPawn.CountInv("TSArmorTier2")) && CPlayerPawn.buttons & BT_CROUCH))) 
 				{
-					if (CPlayerPawn.buttons & BT_CROUCH) LegendStr.AppendFormat(" \c[fire][3D MOVEMENT]\c-");
+					LegendStr.AppendFormat(" \c[fire][3D MOVEMENT]\c-");
 				}
 				if (LegendStr != "") DrawString(mConFont, LegendStr, (LX, LY), LegendFlags, LegendFontCLR, LegendAlpha, -1, 4, LegendScale);
 			}
