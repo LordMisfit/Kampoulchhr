@@ -9425,7 +9425,10 @@ class PlayerDashJump : Inventory
 		if (Owner.CountInv("TSArmorTier3Plus") || 
 				Owner.CountInv("TSArmorTier2")) 
 		{
-			if (cmd.buttons & BT_CROUCH) istsagliding = true;
+			if (Owner.vel.z <= -0.0001)
+			{
+				if (cmd.buttons & BT_CROUCH) istsagliding = true;
+			}
 		}
 		
 		if (weapon is "FistHeiwa" &&

@@ -4750,7 +4750,9 @@ class KCStatusBarMain : BaseStatusBar
 						(CPlayerPawn.waterlevel >= 3 || 
 						 (CPlayerPawn.bNOGRAVITY || CPlayerPawn.bFLY) ||
 						 ((CPlayerPawn.CountInv("TSArmorTier3Plus") || 
-						   CPlayerPawn.CountInv("TSArmorTier2")) && CPlayerPawn.buttons & BT_CROUCH))) 
+						   CPlayerPawn.CountInv("TSArmorTier2")) && 
+							 CPlayerPawn.buttons & BT_CROUCH && 
+							 CPlayerPawn.vel.z <= -0.0001))) 
 				{
 					LegendStr.AppendFormat(" \c[fire][3D MOVEMENT]\c-");
 				}
