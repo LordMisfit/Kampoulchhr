@@ -1835,7 +1835,17 @@ class PlayerStatItem : Inventory
 							int temp5 = floor(VitalityPieces * 1.6);
 							if (berserked) inc += randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
 												else inc += randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
-												
+							
+							double NewRegMul = 1.0;
+							if (sielsgracetrueactivations > 0)
+							{
+								double basemult = 1.0;
+								NewRegMul *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+								if (NewRegMul >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+								if (NewRegMul <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+								inc *= NewRegMul;
+							}
+							
 							if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0)
 							{
 								inc *= 0.1;
@@ -2086,6 +2096,17 @@ class PlayerStatItem : Inventory
 							int temp5 = floor(VitalityPieces * 0.8);
 							if (berserked) inc -= randompick(temp1,temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5,temp5);
 												else inc -= randompick(temp1,temp2,temp2,temp2,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp3,temp4,temp4,temp4,temp5);
+							
+							double NewRegMul = 1.0;
+							if (sielsgracetrueactivations > 0)
+							{
+								double basemult = 1.0;
+								NewRegMul *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+								if (NewRegMul <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+								if (NewRegMul >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+								inc *= NewRegMul;
+							}
+							
 							if (owner.CountInv("UOHInCL") > 0 || owner.CountInv("UOHInBR") > 0) 
 							{
 								inc *= 0.1;
@@ -2674,10 +2695,10 @@ class PlayerStatItem : Inventory
 			double NewEvdFct = evdfct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewEvdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewEvdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewEvdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewEvdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewEvdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
-				
+				double basemult = 1.0;
+				NewEvdFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewEvdFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewEvdFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewEvdFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewEvdFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 			}
 			EvasionRate *= NewEvdFct;
 			if (kcdebug_showevadestuff) Console.Printf("    \cwEvasion Rate [STEP 1x - Base (NewEvdFct)]: %.4f\c-, NewEvdFct: %.8f", EvasionRate, NewEvdFct);
@@ -2755,9 +2776,10 @@ class PlayerStatItem : Inventory
 			double NewSuvFct = suvfct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewSuvFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewSuvFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewSuvFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewSuvFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewSuvFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				double basemult = 1.0;
+				NewSuvFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewSuvFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewSuvFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewSuvFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewSuvFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 			}
 			if (kcdebug_survivalrate) Console.Printf("SurvivalRate [NewSuvFct]: %.8f (%.8f)", NewSuvFct, suvfct);
 
@@ -3269,10 +3291,10 @@ class PlayerStatItem : Inventory
 			double NewMssFct = mssfct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewMssFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewMssFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewMssFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewMssFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewMssFct = (0.667 + (sielsgracetrueactivations * 0.0834));
-				
+				double basemult = 1.0;
+				NewMssFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewMssFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewMssFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewMssFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewMssFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 			}
 			TotalMass *= NewMssFct;
 			if (kcdebug_masscalcs && NewMssFct) Console.Printf("Mass [NewMssFct]: %d, NewMssFct: %.8f", TotalMass, NewMssFct);
@@ -3921,9 +3943,10 @@ class PlayerStatItem : Inventory
 			double NewJmpFct = jmpfct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewJmpFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewJmpFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewJmpFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewJmpFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewJmpFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				double basemult = 1.0;
+				NewJmpFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewJmpFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewJmpFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewJmpFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewJmpFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 			}
 			if (kcdebug_jumpingcalcs) Console.Printf("JumpZ [jmpfct]: %.8f (%.8f)", NewJmpFct, jmpfct);
 			
@@ -5751,7 +5774,19 @@ class PlayerStatItem : Inventory
 		if (levelbonustype == 0)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain3,vitgain3);
 		if (levelbonustype == 1)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain2,vitgain3);
 		if (levelbonustype >= 2)  VitalPieceGain += frandompick[statitem](vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain0,vitgain1,vitgain1,vitgain1,vitgain1,vitgain1);
-		if (HeiwaPlayer(owner) && heiwavhardmodifier) VitalPieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+		if (HeiwaPlayer(owner)) 
+		{
+			if (heiwavhardmodifier) VitalPieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+			double NewVitMul = 1.0;
+			if (sielsgracetrueactivations > 0)
+			{
+				double basemult = 0.25;
+				NewVitMul *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewVitMul >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewVitMul = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewVitMul <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewVitMul = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+				VitalPieceGain *= NewVitMul;
+			}
+		}
 		VitalityPieces += VitalPieceGain;
 
 		int VitalityPiecesAdd = floor(int(VitalityPieces));
@@ -5799,7 +5834,19 @@ class PlayerStatItem : Inventory
 		if (levelbonustype == 0)  IQPieceGain += frandompick[statitem](iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain3,iqgain3);
 		if (levelbonustype == 1)  IQPieceGain += frandompick[statitem](iqgain0,iqgain0,iqgain0,iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain2,iqgain3);
 		if (levelbonustype >= 2)  IQPieceGain += frandompick[statitem](iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain0,iqgain1,iqgain1,iqgain1,iqgain1,iqgain1);
-		if (HeiwaPlayer(owner) && heiwavhardmodifier) IQPieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+		if (HeiwaPlayer(owner)) 
+		{
+			if (heiwavhardmodifier) IQPieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+			double NewIQMul = 1.0;
+			if (sielsgracetrueactivations > 0)
+			{
+				double basemult = 0.25;
+				NewIQMul *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewIQMul >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewIQMul = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewIQMul <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewIQMul = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+				IQPieceGain *= NewIQMul;
+			}
+		}
 		IQPieces += IQPieceGain;
 
 		int IQPiecesAdd = floor(int(IQPieces));
@@ -5834,7 +5881,19 @@ class PlayerStatItem : Inventory
 		if (levelbonustype == 0)  SensePieceGain += frandompick[statitem](sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain3,sensegain3);
 		if (levelbonustype == 1)  SensePieceGain += frandompick[statitem](sensegain0,sensegain0,sensegain0,sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain2,sensegain3);
 		if (levelbonustype >= 2)  SensePieceGain += frandompick[statitem](sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain0,sensegain1,sensegain1,sensegain1,sensegain1,sensegain1);
-		if (HeiwaPlayer(owner) && heiwavhardmodifier) SensePieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+		if (HeiwaPlayer(owner) && heiwavhardmodifier) 
+		{
+			SensePieceGain *= frandompick(1.25,1.5,1.5,1.5,1.75);
+			double NewSenMul = 1.0;
+			if (sielsgracetrueactivations > 0)
+			{
+				double basemult = 0.25;
+				NewSenMul *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewSenMul >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewSenMul = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewSenMul <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewSenMul = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+				SensePieceGain *= NewSenMul;
+			}
+		}
 		SensesPieces += SensePieceGain;
 
 		int SensesPiecesAdd = floor(int(SensesPieces));
@@ -7812,11 +7871,42 @@ class PlayerStatItem : Inventory
 			double NewAtkFct = atkfct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewAtkFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-				if (NewAtkFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewAtkFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-				if (NewAtkFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewAtkFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+				double basemult = 1.0;
+				NewAtkFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewAtkFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				if (NewAtkFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+				/*
+				if (owner.health <= (MaxHealthTrue * frandom(0.3,0.4)))
+				{
+					basemult = frandom(0.2,0.3);
+					NewAtkFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+					if (NewAtkFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+					if (NewAtkFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+					if (owner.health <= (MaxHealthTrue * frandom(0.09,0.16)))
+					{
+						basemult = frandom(0.15,0.35);
+						NewAtkFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+						if (NewAtkFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+						if (NewAtkFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+						if (owner.health <= (MaxHealthTrue * frandom(0.027,0.064)))
+						{
+							basemult = frandom(0.1,0.4);
+							NewAtkFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+							if (NewAtkFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+							if (NewAtkFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+							if (owner.health <= (MaxHealthTrue * frandom(0.0081,0.016)))
+							{
+								basemult = frandom(0.05,0.45);
+								NewAtkFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+								if (NewAtkFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+								if (NewAtkFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewAtkFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+							}
+						}
+					}
+				}
+				*/
+				if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - atkfct): %.8f [%.8f]", NewAtkFct, atkfct);
 			}
-			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - atkfct): %.8f [%.8f]", NewAtkFct, atkfct);
 
 			double TOTALFactor = 1.0
 												 * LVLFactor
@@ -8255,11 +8345,42 @@ class PlayerStatItem : Inventory
 			double NewDefFct = deffct;
 			if (sielsgracetrueactivations > 0)
 			{
-				NewDefFct *= (1.0 - (sielsgracetrueactivations * 0.125));
-				if (NewDefFct <= (0.667 - (sielsgracetrueactivations * 0.0834))) NewDefFct = (0.667 - (sielsgracetrueactivations * 0.0834));
-				if (NewDefFct >= (1.5 - (sielsgracetrueactivations * 0.1875))) NewDefFct = (1.5 + (sielsgracetrueactivations * 0.1875));
+				double basemult = 1.0;
+				NewDefFct *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+				if (NewDefFct <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+				if (NewDefFct >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+				/*
+				if (owner.health <= (MaxHealthTrue * frandom(0.3,0.4)))
+				{
+					basemult = frandom(0.4,0.6);
+					NewDefFct *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+					if (NewDefFct <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+					if (NewDefFct >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+					if (owner.health <= (MaxHealthTrue * frandom(0.09,0.16)))
+					{
+						basemult = frandom(0.3,0.7);
+						NewDefFct *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+						if (NewDefFct <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+						if (NewDefFct >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+						if (owner.health <= (MaxHealthTrue * frandom(0.027,0.064)))
+						{
+							basemult = frandom(0.2,0.8);
+							NewDefFct *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+							if (NewDefFct <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+							if (NewDefFct >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+							if (owner.health <= (MaxHealthTrue * frandom(0.0081,0.016)))
+							{
+								basemult = frandom(0.1,0.9);
+								NewDefFct *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+								if (NewDefFct <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
+								if (NewDefFct >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewDefFct = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+							}
+						}
+					}
+				}
+				*/
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - NewDefFct): %.8f (%.8f)", NewDefFct, deffct);
 			}
-			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - NewDefFct): %.8f (%.8f)", NewDefFct, deffct);
 			
 			double TOTALFactor = 1.0
 												 * LVLFactor
@@ -9032,9 +9153,10 @@ class PlayerStatItem : Inventory
 		double NewSpdFct = spdfct;
 		if (sielsgracetrueactivations > 0)
 		{
-			NewSpdFct *= (1.0 + (sielsgracetrueactivations * 0.125));
-			if (NewSpdFct >= (1.5 + (sielsgracetrueactivations * 0.1875))) NewSpdFct = (1.5 + (sielsgracetrueactivations * 0.1875));
-			if (NewSpdFct <= (0.667 + (sielsgracetrueactivations * 0.0834))) NewSpdFct = (0.667 + (sielsgracetrueactivations * 0.0834));
+			double basemult = 1.0;
+			NewSpdFct *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
+			if (NewSpdFct >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewSpdFct = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
+			if (NewSpdFct <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewSpdFct = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 		}
 		Speed *= NewSpdFct;
 		if (kcdebug_speedcalcs) Console.Printf("SpeedX [NewSpdFct]: %.8f (%.8f)", NewSpdFct, spdfct);

@@ -4059,7 +4059,7 @@ class KC_EventHandler : EventHandler
 			if (MiscItem)
 			{
 				if (MiscItem.sielsgraceluckcooldown > 0) sielgraceluckboost *= frandompick(2.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,7.5);
-				if (MiscItem.sielsgracetrueactivations > 0) sielgraceluckboost *= (1.0 + (MiscItem.sielsgracetrueactivations * 0.1));
+				if (MiscItem.sielsgracetrueactivations > 0) sielgraceluckboost *= (1.0 + (MiscItem.sielsgracetrueactivations * frandom(SIELGRACESTATBOOSTBASELIMIT2BASE,SIELGRACESTATBOOSTBASELIMIT1BASE)));
 			}
 
 			int Kills = playera.CountInv("KillsCount");
