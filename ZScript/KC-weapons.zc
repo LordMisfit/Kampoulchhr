@@ -15555,20 +15555,20 @@ Class BlasterPistol : MarineWeapon
 			{
 				if (A_CheckBerserk())
 				{
-					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
-					if (spreadfactor < 0.1667) spreadfactor = 0.1667;
+					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.05));
+					if (spreadfactor < 0.04167) spreadfactor = 0.04167;
 				}
 				else
 				{
-					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.05));
-					if (spreadfactor < 0.04167) spreadfactor = 0.04167;
+					spreadfactor = (1.0 - (MiscItem.TruePlayerLevel * 0.025));
+					if (spreadfactor < 0.1667) spreadfactor = 0.1667;
 				}
 			}
 			if (CountInv("BlasterPistolUpgrade")) spreadfactor *= 0.667;
 			
-			shotangle = (3.0 * spreadfactor);
-			shotpitch = (3.0 * spreadfactor);
-			shotheight = (frandom(-2.25,2.25) * spreadfactor);
+			shotangle = (6.0 * spreadfactor);
+			shotpitch = (6.0 * spreadfactor);
+			shotheight = (frandom(-4.5,4.5) * spreadfactor);
 			double recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor);
 			if (CountInv("BlasterPistolUpgrade")) recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * (spreadfactor * spreadfactor));
 			A_Recoil(recl);

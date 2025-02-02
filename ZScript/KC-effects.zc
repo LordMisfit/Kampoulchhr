@@ -5121,6 +5121,15 @@ class PowerLMPieBuff : PowerFoodATK
 		if (timer % baseinc >= 24 && timer % baseinc <= 25) texname = "LMPED0";
 		if (timer % baseinc >= 26 && timer % baseinc <= 27) texname = "LMPEC0";
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+		
+		if (owner)
+		{
+			EffectTics--;
+		}
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+		if (EffectTics <= 0) Destroy();
 	}
 	
 	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)

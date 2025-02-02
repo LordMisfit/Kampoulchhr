@@ -1839,7 +1839,7 @@ class PlayerStatItem : Inventory
 							double NewRegMul = 1.0;
 							if (sielsgracetrueactivations > 0)
 							{
-								double basemult = 1.0;
+								double basemult = 0.5;
 								NewRegMul *= (1.0 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
 								if (NewRegMul >= (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT1 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
 								if (NewRegMul <= (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT2 + (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
@@ -2100,7 +2100,7 @@ class PlayerStatItem : Inventory
 							double NewRegMul = 1.0;
 							if (sielsgracetrueactivations > 0)
 							{
-								double basemult = 1.0;
+								double basemult = 0.5;
 								NewRegMul *= (1.0 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASE * basemult)));
 								if (NewRegMul <= (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT2 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT2BASE * basemult)));
 								if (NewRegMul >= (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)))) NewRegMul = (SIELGRACESTATBOOSTBASELIMIT1 - (sielsgracetrueactivations * (SIELGRACESTATBOOSTBASELIMIT1BASE * basemult)));
