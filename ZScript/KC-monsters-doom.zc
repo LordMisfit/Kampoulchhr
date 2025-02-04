@@ -20041,6 +20041,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			{
 				bINVULNERABLE = true;
 				bNODAMAGE = true;
+				bNOPAIN = true;
 			}
 		}
 		else
@@ -20048,6 +20049,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			bBUDDHA = false;
 			bINVULNERABLE = false;
 			bNODAMAGE = false;
+			bNOPAIN = false;
 		}
 		super.Tick();
 	}
@@ -20068,6 +20070,10 @@ class BossBrainNew : BossBrain replaces BossBrain
 				if (icwes)
 				{
 					icwes.SetStateLabel("SpawnIn");
+					if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d')
+					{
+						level.Lines[593].sidedef[0].SetTexture(1, TexMan.CheckForTexture("ZZZFAC4A", TexMan.Type_Wall));
+					}
 				}
 			}
 		}
