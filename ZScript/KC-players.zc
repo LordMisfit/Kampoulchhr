@@ -3383,6 +3383,7 @@ class KCPlayerPawn : PlayerPawn
 						sour == "NyarlathotepLesser" ||
 						sour == "StarSpawn" ||
 						sour == "SpiderGod" ||
+						IceWeaselAvatar(KCSource) || 
 						DSparilUnmountedNew(KCSource) || 
 						KoraxNew(KCSource))
 				{
@@ -3402,6 +3403,7 @@ class KCPlayerPawn : PlayerPawn
 						BruiserDemon(KCSource) ||
 						CyBruiser(KCSource) ||
 						ArchonOfHell(KCSource) ||
+						KXCelt(KCSource) ||
 						PyroDemon(KCSource) ||
 						FighterBossNew(KCSource) ||
 						ClericBossNew(KCSource) ||
@@ -3425,7 +3427,8 @@ class KCPlayerPawn : PlayerPawn
 						sour == "BabyClownNew" ||
 						sour == "BabyClown2New" ||
 						sour == "LengSpiderling" ||
-						sour == "PossessedBalloonNew")
+						sour == "PossessedBalloonNew" ||
+						CeltIceClone(KCSource))
 				{
 					ignoretier = -1;
 					rand1 += randompick(0,0,0,0,0,1,1,1) + ((KCSource.CountInv("MonsterLevel")) * KCSource.A_CheckMonsterLevelMult(0.0625,true,KCSource));
@@ -3526,6 +3529,51 @@ class KCPlayerPawn : PlayerPawn
 	
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
+		if ((inflictor && IceWeaselAvatar(inflictor)) ||
+				(source && IceWeaselAvatar(source)))
+		{
+			if (CountInv("VisitedTNT31"))
+			{
+				if (CountInv("FoundIceWeaselItem"))
+				{
+					damage *= 0.5;
+				}
+				else
+				{
+					damage *= 2.0;
+				}
+			}
+		}
+		if ((inflictor && KXCelt(inflictor)) ||
+				(source && KXCelt(source)))
+		{
+			if (CountInv("VisitedTNT31"))
+			{
+				if (CountInv("FoundIceWeaselItem"))
+				{
+					damage *= 0.5;
+				}
+				else
+				{
+					damage *= 2.0;
+				}
+			}
+		}
+		if ((inflictor && CeltIceClone(inflictor)) ||
+				(source && CeltIceClone(source)))
+		{
+			if (CountInv("VisitedTNT31"))
+			{
+				if (CountInv("FoundIceWeaselItem"))
+				{
+					damage *= 0.5;
+				}
+				else
+				{
+					damage *= 2.0;
+				}
+			}
+		}
 		if (((inflictor && HellKnight(inflictor)) || 
 				(source && HellKnight(source))) &&
 				Mod == 'melee') damage *= 0.5;
@@ -5715,6 +5763,7 @@ class HeiwaPlayer : KCPlayerPawn
 	{
 		super.Tick(); // KEEP THIS HERE ELSE OTHER FUNCTIONS RELATED TO THIS BREAK :V
 		A_SetTranslation("HeiwaDeluge");
+		if (level.time <= 5 && level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e') A_GiveInventory("VisitedTNT31"); // Gives Heiwa the 'flag' for visiting Pharaoh [TNT MAP31] for stuff later. Hope you find the hidden item, or else... >:V 
 		bNOTIMEFREEZE = true; // "Heiwa" is UNBREAKABLELY IMMUNE to all forms of time freeze, period >:V
 		
 		if (InStateSequence(curstate,ResolveState("Death")) ||

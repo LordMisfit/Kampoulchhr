@@ -19972,6 +19972,7 @@ class OverHorn2 : OverFlesh1
 
 class BossBrainNew : BossBrain replaces BossBrain
 {
+	int specials1, specials2, specials3, specials4;
 	mixin MonsterCollider;
 	default
 	{
@@ -20012,6 +20013,66 @@ class BossBrainNew : BossBrain replaces BossBrain
 		if (A_CheckKCTimeFreeze()) A_SetTics(1);
 	}
 	
+	int A_CheckIWs()
+	{
+		int num;
+		if (CountInv("BossBrainIsTNT"))
+		{
+			bool activeiceweasel = false;
+			ThinkerIterator iceweasel = ThinkerIterator.Create("IceWeaselAvatar");
+			Actor icweas;
+			while (icweas = IceWeaselAvatar(iceweasel.Next()))
+			{
+				if (icweas.bISMONSTER && icweas.health > 0)
+				{
+					num++;
+				}
+			}
+		}
+		return num;
+	}
+	
+	override void Tick()
+	{
+		if (A_CheckIWs()) 
+		{
+			bBUDDHA = true;
+			if (health <= 5) 
+			{
+				bINVULNERABLE = true;
+				bNODAMAGE = true;
+			}
+		}
+		else
+		{
+			bBUDDHA = false;
+			bINVULNERABLE = false;
+			bNODAMAGE = false;
+		}
+		super.Tick();
+	}
+	
+	void A_SpawnIceWeaselAvatar()
+	{
+		if (!A_CheckIWs())
+		{
+			//Console.Printf("A_SpawnIceWeaselAvatar");
+			bool spawned;
+			actor mo;
+			//[spawned, mo] = A_SpawnItemEx("IceWeaselAvatar",3072,-640,0,0.0,0.0,0.0,frandom(0,360),SXF_ABSOLUTEPOSITION|SXF_NOCHECKPOSITION);
+			mo = Spawn("IceWeaselAvatar", (3072, -640, 0), NO_REPLACE);
+			if (mo)
+			{
+				IceWeaselAvatar icwes;
+				icwes = IceWeaselAvatar(mo);
+				if (icwes)
+				{
+					icwes.SetStateLabel("SpawnIn");
+				}
+			}
+		}
+	}
+	
 	States
 	{
 		BrainExplode:
@@ -20023,7 +20084,57 @@ class BossBrainNew : BossBrain replaces BossBrain
 			Stop;
 		Pain:
 			#### # 0 A_TimeFreezeCheckPain();
-			BBRN B 36 A_BrainPain();
+			BBRN B 1
+			{
+				if (CountInv("BossBrainIsTNT"))
+				{
+					//Console.Printf("BossBrainIsTNT: %d / %d", health, (SpawnHealth() + Stamina));
+					if (health >= ((SpawnHealth() + Stamina) * 0.825) && 
+							health <= ((SpawnHealth() + Stamina) * 0.95))
+					{
+						if (specials1 == 0)
+						{
+							specials1++;
+							A_SpawnIceWeaselAvatar();
+						}
+						if (specials1 > 1) specials1 = 1;
+					}
+					else
+					if (health >= ((SpawnHealth() + Stamina) * 0.5) && 
+							health <= ((SpawnHealth() + Stamina) * 0.75))
+					{
+						if (specials2 == 0)
+						{
+							specials2++;
+							A_SpawnIceWeaselAvatar();
+						}
+						if (specials2 > 1) specials2 = 1;
+					}
+					else
+					if (health >= ((SpawnHealth() + Stamina) * 0.25) && 
+							health <= ((SpawnHealth() + Stamina) * 0.375))
+					{
+						if (specials3 == 0)
+						{
+							specials3++;
+							A_SpawnIceWeaselAvatar();
+						}
+						if (specials3 > 1) specials3 = 1;
+					}
+					else
+					if (health >= ((SpawnHealth() + Stamina) * 0.05) && 
+							health <= ((SpawnHealth() + Stamina) * 0.125))
+					{
+						if (specials4 == 0)
+						{
+							specials4++;
+							A_SpawnIceWeaselAvatar();
+						}
+						if (specials4 > 1) specials4 = 1;
+					}
+				}
+			}
+			BBRN B 34 A_BrainPain();
 			Goto Spawn;
 		Death:
 			#### # 0 A_TimeFreezeCheckDeath();
@@ -20038,6 +20149,15 @@ class BossBrainNew : BossBrain replaces BossBrain
 			}
 			BBRN BBBBBBBBB 10;
 			BBRN BB 10;
+			BBRN B 10;
+		DeathCheck:
+			BBRN B 5;
+			BBRN B 5
+			{
+				if (A_CheckIWs()) return resolvestate("DeathCheck");
+				return resolvestate(null);
+			}
+		FinalDeath:
 			BBRN B -1 A_BrainDie();
 			Stop;
 	}
@@ -20087,22 +20207,62 @@ class BossEyeNew : BossEye replaces BossEye
 		+BOSS;
 	}
 	
+	void A_GetTimeFactor()
+	{
+		bosseyetimefactor = 1.0;
+		if (user_bosseyetype > 0)
+		{
+			if (skill <= 0) bosseyetimefactor = 1.5;
+			if (skill == 1) bosseyetimefactor = 1.25;
+			if (skill == 2) bosseyetimefactor = 1.0;
+			if (skill == 3) bosseyetimefactor = 0.8;
+			if (skill >= 4) bosseyetimefactor = 0.667;
+			if (master)
+			{
+				if (master.CountInv("BossBrainIsTNT"))
+				{
+					bosseyetimefactor *= 1.5;
+				}
+				if (master.CountInv("BossBrainIsPlutonia"))
+				{
+					bosseyetimefactor *= 1.125;
+				}
+				bool activeiceweasel = false;
+				ThinkerIterator iceweasel = ThinkerIterator.Create("IceWeaselAvatar");
+				Actor icweas;
+				while (icweas = IceWeaselAvatar(iceweasel.Next()))
+				{
+					if (icweas.bISMONSTER && icweas.health > 0)
+					{
+						activeiceweasel = true;
+					}
+				}
+				if (activeiceweasel) bosseyetimefactor *= 3;
+			}
+		}
+		else
+		{
+			if (skill <= 0) bosseyetimefactor = 1.125;
+			if (skill == 1) bosseyetimefactor = 1.0625;
+			if (skill == 2) bosseyetimefactor = 1.0;
+			if (skill == 3) bosseyetimefactor = 0.95;
+			if (skill >= 4) bosseyetimefactor = 0.9167;
+		}
+	}
+	
 	States
 	{
 		Spawn:
 			SSWV A 10 
 			{
 				A_Look();
-				if (skill <= 0) bosseyetimefactor = 1.5;
-				if (skill == 1) bosseyetimefactor = 1.25;
-				if (skill == 2) bosseyetimefactor = 1.0;
-				if (skill == 3) bosseyetimefactor = 0.8;
-				if (skill >= 4) bosseyetimefactor = 0.667;
+				A_GetTimeFactor();
 			}
 			Loop;
 		See:
 			SSWV A 181 
 			{
+				A_GetTimeFactor();
 				A_BrainAwake();
 				if (user_bosseyetype > 0) A_SetTics(tics*frandom(0.45,0.55)*bosseyetimefactor);
 														 else A_SetTics(tics*frandom(0.9,1.1)*bosseyetimefactor);
@@ -20110,6 +20270,7 @@ class BossEyeNew : BossEye replaces BossEye
 		Shoot:
 			SSWV A 150 
 			{
+				A_GetTimeFactor();
 				if (user_bosseyetype > 0) 
 				{
 					double timefactor = 1.00;
@@ -20121,9 +20282,11 @@ class BossEyeNew : BossEye replaces BossEye
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.25)) timefactor = frandom(0.3,0.334);
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.125)) timefactor = frandom(0.2,0.25);
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05)) timefactor = frandom(0.1,0.125);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactor = frandom(0.025,0.0375);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactor = frandom(0.05,0.075);
 					}
-					A_SetTics(tics*(frandom(0.675,0.825) * timefactor)*bosseyetimefactor);
+					int ticamt = (tics * (frandom(0.675,0.825) * timefactor) * bosseyetimefactor);
+					if (ticamt <= 15) ticamt = 15;
+					A_SetTics(ticamt);
 				}
 				else 
 				{
@@ -20211,6 +20374,7 @@ class BossEyeNew : BossEye replaces BossEye
 		}
 	}
 }
+
 class SpawnShotNew : SpawnShot
 {
 	Default

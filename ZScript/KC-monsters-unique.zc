@@ -16,18 +16,44 @@ class KXCelt : KCCreature
 		HitObituary "%o was frozen to death by Celt";
 		Bloodcolor "7c7c98";
 		Species "Celt";
-		+DontHarmSpecies;
-		+NoTarget;
-		+FloorClip;
-		+MissileMore;
-		+NoRadiusDmg;
-		+Boss;
-		+DontHurtSpecies;
+		+DONTHARMSPECIES;
+		+NOTARGET;
+		+FLOORCLIP;
+		//+MISSILEMORE;
+		+DONTHARMCLASS;
 		Tag "Celt";
 		SeeSound "Celt/see";
 		PainSound "Celt/pain";
 		DeathSound "Celt/death";
 		ActiveSound "Celt/idle";
+		
+		RadiusDamageFactor 0.75;
+		DamageFactor "Holy", 3.25;
+		DamageFactor "Magic", 0.334;
+		DamageFactor "PSI", 3;
+		DamageFactor "Ice", 0.125;
+		DamageFactor "Fire", 0.25;
+		DamageFactor "Lightning", 1.75;
+		DamageFactor "Explosive", 0.75;
+		Damagefactor "IncarnateGlare", 5;
+		MissileChanceMult 0.5;
+	}
+	
+	void A_CeltDefaultIceParticle()
+	{
+		A_SpawnItemEx("KXCeltIceParticle", frandom(24, 32), 0, 4, 0, 0, (frandom(20,35)*0.1), frandom(0,360), 128);
+	}
+	
+	void A_CeltChargeIceParticles()
+	{
+		if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) 
+		{
+			A_SetTics(0); 
+		}
+		else
+		{
+			A_CeltDefaultIceParticle();
+		}
 	}
 	
 	States
@@ -37,22 +63,22 @@ class KXCelt : KCCreature
 			Loop;
 		See:
 			TNT1 A 0 { user_celt = 0; }
-			CELT A 0 A_Chase();
-			CELT AAA 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT A 0 A_Chase();
-			CELT AAA 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT A 0 A_Chase();
-			CELT BBB 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT B 0 A_Chase();
-			CELT BBB 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT B 0 A_Chase();
-			CELT CCC 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT C 0 A_Chase();
-			CELT CCC 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT D 0 A_Chase();
-			CELT DDD 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT D 0 A_Chase();
-			CELT DDD 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			CELT AABBCCDD 3 
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+				
+				if (A_CheckRange(1024,"Null")) { } else 
+				{
+					if (GetCVar("kc_gfxeffectlevel") == 0) 
+					{
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+					} 
+				}
+			}
 			Loop;
 		Melee:
 		Missile:
@@ -60,61 +86,177 @@ class KXCelt : KCCreature
 			TNT1 A 0 A_Jump(128,"Ring", "DiamondDust");
 			TNT1 A 0 A_Jump(128,"Clone");
 		Spread:
-			CELT EF 8 Bright A_FaceTarget();
-			CELT GGGGGGGGGGGGGGG 0 Bright A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
-			CELT H 3 Bright;
+			CELT EF 8 Bright 
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT G 0 Bright 
+			{
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			}
+			CELT H 3 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+			}
 			CELT H 0 A_Jump(128,1);
 			Goto See;
-			CELT IJ 8 Bright A_FaceTarget();
-			CELT KKKKKKKKKKKKKKK 0 Bright A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
-			CELT L 3 Bright;
+			CELT IJ 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT K 0 Bright 
+			{
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("CeltIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			}
+			CELT L 3
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+			}
 			CELT L 0 A_Jump(64,"Ring");
 			Goto See;
 		AnotherSpread:
-			CELT MN 8 Bright A_FaceTarget();
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,0,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,15,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,30,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,45,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,60,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,75,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,-15,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,-30,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,-45,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,-60,0);
-			CELT O 0 Bright A_SpawnProjectile("CeltIceBigShot",28,0,-75,0);
-			CELT OP 4 Bright;
+			CELT MN 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT O 0 Bright 
+			{
+				double angint = 15;
+				double shotheight = 28;
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*5),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*4),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*3),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*2),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*1),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*0),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*-1),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*-2),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*-3),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*-4),0);
+				A_SpawnProjectile("CeltIceBigShot",shotheight,0,(angint*-5),0);
+			}
+			CELT OP 4 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+			}
 			Goto See;
 		Ring:
-			CELT MN 8 Bright A_FaceTarget();
+			TNT1 A 0 { user_celt = 0; }
+			CELT MN 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
 			Goto RingLooping;
 		RingLooping:
 			TNT1 A 0 A_SpawnProjectile("CeltIceMiniShot2",28,0,user_celt,CMF_ABSOLUTEANGLE);
-			TNT1 A 0 { user_celt+= 2; }
-			TNT1 A 0 A_JumpIf(user_celt>360,1);
+			TNT1 A 0 
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_celt += 2; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { user_celt += 4; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_celt += 6; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_celt += 8; }
+				else { user_celt += 10; }
+			}
+			TNT1 A 0 A_JumpIf(user_celt >= 360, 1);
 			Loop;
 			TNT1 A 0 { user_celt = 0; }
-			CELT OP 8 Bright;
+			CELT OP 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
 			Goto See;
 		DiamondDust: 
-			CELT MMMMMMMM 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			CELT MMMM 1 A_CeltDefaultIceParticle();
+			CELT MMMM 1 A_CeltChargeIceParticles();
 			CELT A 0 Bright A_FaceTarget();
-			CELT MMMMMMMM 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			CELT MMMM 1 A_CeltDefaultIceParticle();
+			CELT MMMM 1 A_CeltChargeIceParticles();
 			CELT A 0 Bright A_FaceTarget();
-			CELT NNNNNNNN 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT A 0 Bright A_FaceTarget();
-			CELT O 4 Bright A_SpawnProjectile("CeltDiamondDust",28,0,0,0);
-			CELT P 4 Bright;
+			CELT NNNN 1 A_CeltDefaultIceParticle();
+			CELT NNNN 1 A_CeltChargeIceParticles();
+			CELT O 4 Bright 
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+				A_SpawnProjectile("CeltDiamondDust",28,0,0,0);
+			}
+			CELT P 4 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+			}
 			Goto See;
 		Clone:
-			CELT QQQQQQQQQQ 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
-			CELT Q 0 A_SpawnProjectile("CeltIceCloneSpawner",2,0,90,2,0);
-			CELT Q 0 A_SpawnProjectile("CeltIceCloneSpawner",2,0,-90,2,0);
-			CELT QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			CELT QQQQQ 1 A_CeltDefaultIceParticle();
+			CELT QQQQQ 1 A_CeltChargeIceParticles();
+			CELT Q 0 
+			{
+				A_SpawnProjectile("CeltIceCloneSpawner",2,0,90,2,0);
+				A_SpawnProjectile("CeltIceCloneSpawner",2,0,-90,2,0);
+			}
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 A_CeltDefaultIceParticle();
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 A_CeltChargeIceParticles();
 			Goto See;
 		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
 			CELT Q 2;
-			CELT Q 2 A_Pain();
+			CELT Q 2 A_KCPain();
 			Goto See;
 		Death:
 			CELT R 10 Bright A_Scream();
@@ -190,6 +332,7 @@ class CeltIceBigShotTrail : KCProjectile
 		Damage 0;
 		PROJECTILE;
 		RenderStyle "Add";
+		DamageType "Ice";
 		Translation "0:255=%[0.00,0.00,1.84]:[1.24,1.24,2.00]";
 		+ClientSideOnly;
 		+Randomize;
@@ -264,6 +407,7 @@ class CeltIceMiniShotTrail : KCProjectile
 		Damage 0;
 		PROJECTILE;
 		RenderStyle "Add";
+		DamageType "Ice";
 		+ClientSideOnly;
 		+Randomize;
 		Alpha 1.0;
@@ -289,6 +433,7 @@ class CeltDiamondDust : KCProjectile
 		Translation "0:255=%[0.00,0.00,2.00]:[2.00,2.00,2.00]";
 		RenderStyle "Add";
 		Projectile;
+		DamageType "Ice";
 		Decal "RevenantScorch";
 	}
 	
@@ -315,6 +460,7 @@ class CeltDiamondDustTail : KCProjectile
 		Speed 0;
 		Damage 0;
 		RenderStyle "Add";
+		DamageType "Ice";
 		Projectile;
 		+DontSplash;
 		+ClientSideOnly;
@@ -365,6 +511,7 @@ class CeltIceCloneSpawner : PlasmaBallNew
 		Damage 0;
 		SeeSound "";
 		DeathSound "";
+		DamageType "Ice";
 		Translation "0:255=%[0.00,0.00,2.00]:[2.00,2.00,2.00]";
 	}
 	
@@ -378,7 +525,7 @@ class CeltIceCloneSpawner : PlasmaBallNew
 		Death:
 			CELT YYYYYYXXXXXXWWWWWWVVVVVVUUUUUUTTTTTTSSSSSSRRRRRR 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
 			TNT1 A 0 A_StartSound("misc/freeze",CHAN_AUTO,CHANF_DEFAULT,1.0);
-			TNT1 A 0 Bright A_SpawnItemEx("CeltIceClone",0,0,1,0,0,0,0);
+			TNT1 A 0 Bright A_SpawnItemEx("CeltIceClone",0,0,1,0,0,0,0,SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
 			Stop;
 	}
 }
@@ -403,6 +550,17 @@ class CeltIceClone : BaronOfHellNew
 		BloodColor "7c7c98";
 		Translation "Ice";
 		Tag "Celt";
+
+		RadiusDamageFactor 1.5;
+		DamageFactor "Holy", 4.875;
+		DamageFactor "Magic", 0.667;
+		DamageFactor "PSI", 1.5;
+		DamageFactor "Ice", 0.25;
+		DamageFactor "Fire", 0.5;
+		DamageFactor "Lightning", 2.5;
+		DamageFactor "Explosive", 1.5;
+		Damagefactor "IncarnateGlare", 12.5;
+		MissileChanceMult 0.25;
 	}
 	
 	States
@@ -411,7 +569,10 @@ class CeltIceClone : BaronOfHellNew
 			CELT AB 10 A_Look();
 			Loop;
 		See:
-			CELT AABBCCDD 3 A_Chase();
+			CELT AABBCCDD 3 
+			{
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+			}
 			Loop;
 		Melee:
 		Missile:
@@ -429,6 +590,7 @@ class CeltIceClone : BaronOfHellNew
 			CELT Q 2;
 			CELT Q 2 A_Pain();
 			Goto See;
+		Ice:
 		Death:
 			CELT Q 5 A_IceGuyDie();
 			Stop;
@@ -453,6 +615,7 @@ class KXCeltIceParticle : KCProjectile
 		Radius 1;
 		Height 1;
 		RenderStyle "Add";
+		DamageType "Ice";
 	}
 	
 	States
@@ -483,7 +646,9 @@ class KXCeltIceParticle2 : KCProjectile
 		Scale 0.2;
 		Gravity 0.8;
 		RenderStyle "Add";
+		DamageType "Ice";
 	}
+	
 	States
 	{
 		Spawn:
@@ -492,5 +657,711 @@ class KXCeltIceParticle2 : KCProjectile
 		Death:
 			IRTB ABCDEFGHI 1 Bright A_FadeOut(0.04);
 			Wait;
+	}
+}
+
+// IW
+class IceWeaselAvatar : KXCelt
+{
+	default
+	{
+		//$Category Monsters
+		//$Title Ice Weasel
+		Health 3600; // 3000
+		Scale 1.334;
+		Radius 32; // 24;
+		Height 96; // 64;
+		Mass 90000;
+		Speed 14; // 18;
+		Monster;
+		Obituary "%o was chilled to the bone by the Ice Weasel's incredible frozen might";
+		HitObituary "%o was chilled to the bone by the Ice Weasel's incredible frozen might";
+		Bloodcolor "7c7c98";
+		Species "Celt";
+		+NORADIUSDMG;
+		+BOSS;
+		+DONTHARMSPECIES;
+		+NOTARGET;
+		+FLOORCLIP;
+		//+MISSILEMORE;
+		+DONTHARMCLASS;
+		+NOTELEFRAG;
+		+NOINFIGHTING;
+		Tag "The Ice Weasel";
+		SeeSound "Celt/see2";
+		PainSound "Celt/pain";
+		DeathSound "Celt/death";
+		ActiveSound "Celt/idle";
+		
+		PainChance 5; // 20;
+		RadiusDamageFactor 0.375;
+		DamageFactor "Holy", 2.5;
+		PainChance "Holy", 12.5;
+		DamageFactor "Magic", 0.334;
+		PainChance "Magic", 3;
+		DamageFactor "PSI", 3;
+		PainChance "PSI", 15;
+		DamageFactor "Ice", 0.0625;
+		PainChance "Ice", 0;
+		DamageFactor "Fire", 0.125;
+		PainChance "Fire", 1;
+		DamageFactor "Lightning", 1.375;
+		PainChance "Lightning", 6;
+		DamageFactor "Explosive", 0.5;
+		PainChance "Explosive", 3;
+		Damagefactor "IncarnateGlare", 2.25;
+		PainChance "IncarnateGlare", 22.5;
+		Damagefactor "Translocator", 0;
+		PainChance "Translocator", 0;
+		MissileChanceMult 0.125;
+		RenderStyle "Add";
+		Alpha 1.0;
+	}
+	
+	void A_WeaselIceSpread(int type)
+	{
+		if (type <= 0)
+		{
+			if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self))
+			{
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+				A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			}
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+			A_SpawnProjectile("WeaselIceMiniShot",28,0,random(-10,10),2,random(-5,5));
+		}
+	}
+	
+	void A_WeaselDeath()
+	{
+	}
+	
+	states
+	{
+		SpawnIn:
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 Bright 
+			{
+				A_StartSound("Celt/see2",1,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
+				A_StartSound("Celt/see2",2,CHANF_DEFAULT,1.0,ATTN_NONE,0.9);
+				A_StartSound("Celt/see2",3,CHANF_DEFAULT,1.0,ATTN_NONE,1.1);
+				A_StartSound("Celt/see2",4,CHANF_DEFAULT,1.0,ATTN_NONE,0.8);
+				A_StartSound("Celt/see2",5,CHANF_DEFAULT,1.0,ATTN_NONE,1.2);
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				if (random(1,4) <= 2) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			}
+			CELT Q 1
+			{
+				actor playera = players[0].mo;
+				if (playera) target = playera;
+			}
+			goto See;
+		Spawn:
+			CELT AB 10 A_Look();
+			Loop;
+		See:
+			TNT1 A 0 { user_celt = 0; }
+			CELT AABBCCDD 3 
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { bAVOIDMELEE = true; }
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(2); }
+				A_KCChase("Melee","Missile",0,1,3,1,1);
+				
+				if (A_CheckRange(1024,"Null")) { } else 
+				{
+					if (GetCVar("kc_gfxeffectlevel") == 0) 
+					{
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+						A_CeltDefaultIceParticle();
+					} 
+				}
+			}
+			Loop;
+		Melee:
+		Missile:
+			TNT1 A 0 A_Jump(128,"Spread","AnotherSpread");
+			TNT1 A 0 A_Jump(128,"Ring", "DiamondDust");
+			TNT1 A 0 A_Jump(128,"Clone");
+		Spread:
+			CELT EF 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT G 0 Bright 
+			{
+				A_WeaselIceSpread(0);
+			}
+			CELT H 3 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+			}
+			CELT H 0 A_Jump(128,1);
+			Goto See;
+			CELT IJ 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT K 0 Bright 
+			{
+				A_WeaselIceSpread(0);
+			}
+			CELT L 3
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(1); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(2); }
+			}
+			CELT L 0 A_Jump(64,"Ring");
+			Goto See;
+		AnotherSpread:
+			CELT MN 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			CELT O 0 Bright 
+			{
+				double angint = frandompick(8.5,11.75,11.75,15,15,15,15,15,15,18.25,18.25,21.5);
+				double shotheight = 28;
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*5),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*4),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*3),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*2),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*1),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*0),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*-1),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*-2),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*-3),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*-4),0);
+				A_SpawnProjectile("WeaselIceBigShot",shotheight,0,(angint*-5),0);
+			}
+			CELT OP 4 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+			}
+			Goto See;
+		Ring:
+			TNT1 A 0 { user_celt = 0; }
+			CELT MN 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			Goto RingLooping;
+		RingLooping:
+			TNT1 A 0 
+			{
+				A_SpawnProjectile("WeaselIceMiniShot2",28,0,user_celt,CMF_ABSOLUTEANGLE);
+			}
+			TNT1 A 0 
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { user_celt += 1; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { user_celt += 2; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { user_celt += 3; }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { user_celt += 4; }
+				else { user_celt += 5; }
+			}
+			TNT1 A 0 A_JumpIf(user_celt >= 360, 1);
+			Loop;
+			TNT1 A 0 { user_celt = 0; }
+			CELT OP 8 Bright
+			{
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(120,2,true,self)) { A_SetTics(4); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(5); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(60,2,true,self)) { A_SetTics(6); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(30,2,true,self)) { A_SetTics(7); }
+				A_FaceTarget();
+			}
+			Goto See;
+		DiamondDust: 
+			CELT MMMM 1 
+			{
+				A_CeltDefaultIceParticle();
+				A_CeltDefaultIceParticle();
+				A_FaceTarget();
+			}
+			CELT MMMM 1 
+			{
+				A_CeltChargeIceParticles();
+				A_CeltChargeIceParticles();
+				A_FaceTarget();
+			}
+			CELT MMMM 1 
+			{
+				A_CeltDefaultIceParticle();
+				A_CeltDefaultIceParticle();
+				A_FaceTarget();
+			}
+			CELT NNNN 1 
+			{
+				A_CeltChargeIceParticles();
+				A_CeltChargeIceParticles();
+				A_FaceTarget();
+			}
+			CELT NNNN 1 
+			{
+				A_CeltDefaultIceParticle();
+				A_CeltDefaultIceParticle();
+				A_FaceTarget();
+			}
+			CELT NNNN 1 
+			{
+				A_CeltChargeIceParticles();
+				A_CeltChargeIceParticles();
+				A_FaceTarget();
+			}
+			CELT O 4 Bright 
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+				A_SpawnProjectile("WeaselDiamondDust",28,0,0,0);
+			}
+			CELT P 4 Bright
+			{
+				A_FaceTarget();
+				if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(90,2,true,self)) { A_SetTics(2); }
+				else if (kc_monsterlevelenabledflags && A_CheckMonsterLevel(45,2,true,self)) { A_SetTics(3); }
+			}
+			Goto See;
+		Clone:
+			CELT QQQQQ 1 
+			{
+				A_CeltDefaultIceParticle();
+				A_CeltDefaultIceParticle();
+			}
+			CELT QQQQQ 1 
+			{
+				A_CeltChargeIceParticles();
+				A_CeltChargeIceParticles();
+			}
+			CELT Q 0 
+			{
+				A_SpawnProjectile("WeaselIceCloneSpawner",2,0,90,2,0);
+				A_SpawnProjectile("WeaselIceCloneSpawner",2,0,-90,2,0);
+			}
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 
+			{
+				A_CeltDefaultIceParticle();
+				A_CeltDefaultIceParticle();
+			}
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 
+			{
+				A_CeltChargeIceParticles();
+				A_CeltChargeIceParticles();
+			}
+			Goto See;
+		Pain:
+			#### # 0 A_TimeFreezeCheckPain();
+			CELT Q 2;
+			CELT Q 2 A_KCPain();
+			Goto See;
+		Pain.Electric: 
+		Pain.Electricity: 
+		Pain.Lightning: 
+		Pain.Thunder: 
+		Pain.Shock:
+			#### # 0 A_TimeFreezeCheckPain();
+			CELT Q 2;
+			CELT Q 2 A_KCPain();
+			CELT QQQQ 2;
+			Goto See;
+		Death:
+			CELT R 10 Bright A_Scream();
+			CELT STUV 10 Bright;
+			TNT1 A 0 
+			{
+				A_StartSound("Celt/CometDeath",7,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.0,1.0));
+				A_StartSound("Celt/CometDeath",8,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.96,1.04));
+				A_StartSound("Celt/CometDeath",9,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.92,1.08));
+				A_StartSound("Celt/CometDeath",10,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.88,1.12));
+				A_StartSound("Celt/CometDeath",11,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.84,1.16));
+				A_StartSound("Celt/CometDeath",12,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.80,1.20));
+			}
+			TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0 
+			{
+				A_SpawnItemEx("KXCeltIceParticle2",0,0,5,frandom(-15,15),frandom(-15,15),frandom(5,15),random(1,360));
+				A_SpawnItemEx("KXCeltIceParticle2",0,0,5,frandom(-15,15),frandom(-15,15),frandom(5,15),random(1,360));
+				A_SpawnItemEx("KXCeltIceParticle2",0,0,5,frandom(-15,15),frandom(-15,15),frandom(5,15),random(1,360));
+			}
+			CELT U 0 Bright A_NoBlocking();
+			#### ########## 1 Bright 
+			{
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				if (random(1,2) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				if (random(1,4) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				if (random(1,8) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				if (random(1,16) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01);
+			}
+			#### ########## 1 Bright 
+			{
+				if (random(1,32) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				A_Fadeout(0.01); 
+			}
+			#### # 0 Bright
+			{
+				A_WeaselDeath();
+			}
+			Stop;
+	}
+}
+
+class WeaselIceBigShot : KCProjectile
+{
+	default
+	{
+		Radius 5; // 3;
+		Height 5; // 3;
+		Scale 1.67;
+		Speed 28; // 20;
+		Damage 12; // 8;
+		Projectile;
+		RenderStyle "Add";
+		DamageType "Ice";
+		SeeSound "Celt/IceShot";
+		DeathSound "Celt/IceHit";
+		Translation "0:255=%[0.00,0.00,1.84]:[1.24,1.24,2.00]";
+		Decal "RevenantScorch";
+	}
+	
+	States
+	{
+		Spawn:
+			IBAL AABB 2 Bright A_SpawnItemEx("WeaselIceBigShotTrail",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+			Loop;
+		Death:
+			IBAL AAAAAAAAAA 0 A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			IBAL DEFGHI 4 Bright;
+			Stop;
+	}
+}
+
+class WeaselIceBigShotTrail : KCProjectile
+{
+	default
+	{
+		Radius 2; // 1;
+		Height 2; // 1;
+		Speed 0;
+		Damage 0;
+		PROJECTILE;
+		RenderStyle "Add";
+		Translation "0:255=%[0.00,0.00,1.84]:[1.24,1.24,2.00]";
+		+ClientSideOnly;
+		+Randomize;
+		Alpha 0.9;
+		DamageType "Ice";
+	}
+	
+	States
+	{
+		Spawn:
+			IBAL A 1 Bright A_FadeOut(0.04);
+			IBAL A 0 A_SetScale(scale.x-0.03);
+			IBAL A 1 Bright A_FadeOut(0.04);
+			IBAL A 0 A_SetScale(scale.x-0.03);
+			IBAL A 1 Bright A_FadeOut(0.04);
+			IBAL A 0 A_SetScale(scale.x-0.03);
+			IBAL A 1 Bright A_FadeOut(0.04);
+			IBAL A 0 A_SetScale(scale.x-0.03);
+			IBAL B 1 Bright A_FadeOut(0.04);
+			IBAL B 0 A_SetScale(scale.x-0.03);
+			IBAL B 1 Bright A_FadeOut(0.04);
+			IBAL B 0 A_SetScale(scale.x-0.03);
+			IBAL B 1 Bright A_FadeOut(0.04);
+			IBAL B 0 A_SetScale(scale.x-0.03);
+			IBAL B 1 Bright A_FadeOut(0.04);
+			IBAL B 0 A_SetScale(scale.x-0.03);
+			Loop;
+	}
+}
+
+class WeaselDiamondDust : KCProjectile
+{
+	default
+	{
+		Radius 19; // 13;
+		Height 11; // 8;
+		Scale 1.34;
+		Speed 30; // 25;
+		Damage 0; // 0;
+		Projectile;
+		SeeSound "CELT/comet";
+		Translation "0:255=%[0.00,0.00,2.00]:[2.00,2.00,2.00]";
+		RenderStyle "Add";
+		Projectile;
+		Decal "RevenantScorch";
+		DamageType "Ice";
+	}
+	
+	States
+	{
+		Spawn:
+			ICOM AAAABBBBCCCC 1 Bright A_SpawnItemEx("WeaselDiamondDustTail", 0, 0, 0, 0, 0, 0, 0, 128);
+			Loop;
+		Death:
+			ICOM A 0 
+			{
+				A_StartSound("Celt/CometDeath",7,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.0,1.0));
+				A_StartSound("Celt/CometDeath",8,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.95,1.05));
+				A_StartSound("Celt/CometDeath",9,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.9,1.1));
+			}
+			ICOM A 0 Bright 
+			{
+				A_Explode(480,320,0);
+			}
+			ICOM AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0 
+			{
+				A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				if (random(1,4) <= 2) A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			}
+			ICOM DDDEEEFFFGGGHHHIII 1 Bright 
+			{
+				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+				if (random(1,4) <= 2) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			}
+			Stop;
+	}
+}
+
+class WeaselDiamondDustTail : KCProjectile
+{
+	default
+	{
+		Radius 2; // 1;
+		Height 2; // 1;
+		Speed 0;
+		Damage 0;
+		RenderStyle "Add";
+		Projectile;
+		+DontSplash;
+		+ClientSideOnly;
+		DamageType "Ice";
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 2;
+			IRTB ABCDEFGHI 1 Bright;
+			Stop;
+	}
+}
+
+class WeaselRealDiamondDust : KCProjectile
+{
+	default
+	{
+		Radius 18; // 15;
+		Height 10; // 8;
+		Speed 28; // 20;
+		Damage 5; // 2;
+		Scale 1.25;
+		Projectile;
+		+Ripper;
+		BounceType "Hexen";
+		Obituary "%o was frozen by Celt.";
+		DamageType "Ice";
+	}
+	
+	States
+	{
+		Spawn: 
+			IRME ABCDEFGHIJKLMNS 2 Bright;
+			IRME S 1 A_FadeOut(0.01);
+			Wait;
+	}
+}
+
+class WeaselIceCloneSpawner : PlasmaBallNew
+{
+	default
+	{
+		RenderStyle "Normal";
+		Radius 32; // 24;
+		Height 2; // 1;
+		Speed 13; // 9;
+		BounceType "Hexen";
+		Damage 0;
+		SeeSound "";
+		DeathSound "";
+		Translation "0:255=%[0.00,0.00,2.00]:[2.00,2.00,2.00]";
+		DamageType "Ice";
+	}
+	
+	States
+	{
+		Spawn:
+			CELT ZZZZZZZZZZZZZZZZZZZZZZZZZZZ 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			//CELT ZZZZZZZZZZZZZZZZZZZZZZZZZZZ 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			TNT1 A 0 A_Stop();
+			TNT1 A 0 A_StartSound("misc/freeze",CHAN_AUTO,CHANF_DEFAULT,1.0);
+			Goto Death;
+		Death:
+			CELT YYYXXXWWWVVVUUUTTTSSSRRR 1 A_SpawnItemEx("KXCeltIceParticle", Random(24, 32), 0, 4, 0, 0, (Random(20, 35)*0.1), Random(0, 360), 128);
+			TNT1 A 0 A_StartSound("misc/freeze",CHAN_AUTO,CHANF_DEFAULT,1.0);
+			TNT1 A 0 Bright A_SpawnItemEx("KXCelt",0,0,1,0,0,0,0,SXF_TRANSFERPOINTERS|SXF_NOCHECKPOSITION);
+			Stop;
+	}
+}
+
+class WeaselIceMiniShot : KCProjectile
+{
+	default
+	{
+		Radius 5; // 3;
+		Height 5; // 3;
+		Scale 1.67;
+		Speed 45; // 35;
+		Damage 7; // 3;
+		Projectile;
+		RenderStyle "Add";
+		DamageType "Ice";
+		SeeSound "Celt/IceShot";
+		DeathSound "Celt/IceHit";
+	}
+	
+	States
+	{
+		Spawn:
+			IPRJ AAABBBCCC 1 Bright A_SpawnItemEx("WeaselIceMiniShotTrail",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+			Loop;
+		Death:
+			IPRJ AAA 0 A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-4,4),frandom(-4,4),frandom(-4,4),random(1,360));
+			IPRJ DEFGH 3 Bright;
+			Stop;
+	}
+}
+
+class WeaselIceMiniShot2 : WeaselIceMiniShot
+{
+	default
+	{
+		Radius 4; // 3;
+		Height 4; // 3;
+		Scale 1.34;
+		Speed 18; // 12;
+		Damage 5; // 3;
+	}
+	
+	States
+	{
+		Spawn:
+			IPRJ AAABBBCCC 1 Bright 
+			{
+				if (level.time % 3 == 1) A_SpawnItemEx("WeaselIceMiniShotTrail",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+			}
+			Loop;
+		Death:
+			IPRJ AAA 0 A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-4,4),frandom(-4,4),frandom(-4,4),random(1,360));
+			IPRJ DEFGH 3 Bright;
+			Stop;
+	}
+}
+
+class WeaselIceMiniShotTrail : KCProjectile
+{
+	default
+	{
+		Radius 1;
+		Height 1;
+		Speed 0;
+		Damage 0;
+		PROJECTILE;
+		RenderStyle "Add";
+		+ClientSideOnly;
+		+Randomize;
+		Alpha 1.0;
+	}
+	States
+	{
+		Spawn:
+			IPRJ AABBCC 1 Bright A_FadeOut(0.14);
+			Stop;
 	}
 }
