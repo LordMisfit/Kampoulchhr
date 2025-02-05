@@ -179,7 +179,7 @@ class IncineratorFlame : KCProjectile
 		Projectile;
 		Radius 13;
 		Height 8;
-		DamageFunction (10 * random(1,4));
+		DamageFunction (finaldamagedealt);
 		Speed 40;
 		ExplosionDamage 5;
 		ExplosionRadius 64;
@@ -197,6 +197,10 @@ class IncineratorFlame : KCProjectile
 	// its scale a bit to add more variety:
 	override void PostBeginPlay()
 	{
+		finaldamagedealt = (10 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.25;
+		
 		Super.PostBeginPlay();
 		bSPRITEFLIP = random[incin](0,1);
 		scale *= frandom[incin](0.7, 1);
@@ -205,6 +209,10 @@ class IncineratorFlame : KCProjectile
 
 	override void Tick()
 	{
+		finaldamagedealt = (10 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.25;
+		
 		Super.Tick();
 		// When the projectile dies, it sets its scale to 33%
 		// of what it was. During death we'll gradually bring it back to scale:
@@ -238,6 +246,9 @@ class IncineratorFlame : KCProjectile
 	
 	action void A_IncineratorExplode(int dam = 5)
 	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) dam *= 1.25;
+		
 		A_Explode(dam,64,XF_HURTSOURCE,false,32,0,0,"","Fire");
 	}
 
@@ -318,7 +329,7 @@ class IncineratorFlameBig : IncineratorFlame
 		Projectile;
 		Radius 13;
 		Height 8;
-		DamageFunction (40 * random(1,4));
+		DamageFunction (finaldamagedealt);
 		Speed 40;
 		ExplosionDamage 25;
 		ExplosionRadius 64;
@@ -335,6 +346,10 @@ class IncineratorFlameBig : IncineratorFlame
 	// its scale a bit to add more variety:
 	override void PostBeginPlay()
 	{
+		finaldamagedealt = (40 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.25;
+		
 		Super.PostBeginPlay();
 		bSPRITEFLIP = random[incin](0,1);
 		scale *= frandom[incin](0.7, 1);
@@ -343,6 +358,10 @@ class IncineratorFlameBig : IncineratorFlame
 
 	override void Tick()
 	{
+		finaldamagedealt = (40 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.25;
+		
 		Super.Tick();
 		// When the projectile dies, it sets its scale to 33%
 		// of what it was. During death we'll gradually bring it back to scale:
@@ -376,6 +395,9 @@ class IncineratorFlameBig : IncineratorFlame
 	
 	action void A_IncineratorExplode(int dam = 25)
 	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) dam *= 1.25;
+		
 		A_Explode(dam,112,XF_HURTSOURCE,false,56,0,0,"","Fire");
 	}
 
@@ -459,7 +481,7 @@ class IncineratorFrostFlame : KCFrostMissile
 		Projectile;
 		Radius 13;
 		Height 8;
-		DamageFunction (10 * random(1,4));
+		DamageFunction (finaldamagedealt);
 		Speed 40;
 		ExplosionDamage 5;
 		ExplosionRadius 64;
@@ -477,7 +499,11 @@ class IncineratorFrostFlame : KCFrostMissile
 	// its scale a bit to add more variety:
 	override void PostBeginPlay()
 	{
+		finaldamagedealt = (10 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.5;
 		Super.PostBeginPlay();
+		
 		bSPRITEFLIP = random[incin](0,1);
 		scale *= frandom[incin](0.7, 1);
 		defscale = scale; //record scale after randomization
@@ -485,7 +511,11 @@ class IncineratorFrostFlame : KCFrostMissile
 
 	override void Tick()
 	{
+		finaldamagedealt = (10 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.5;
 		Super.Tick();
+		
 		// When the projectile dies, it sets its scale to 33%
 		// of what it was. During death we'll gradually bring it back to scale:
 		if (!isFrozen() && !bMissile)
@@ -518,6 +548,9 @@ class IncineratorFrostFlame : KCFrostMissile
 	
 	action void A_IncineratorExplode(int dam = 5)
 	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) dam *= 1.5;
+
 		A_Explode(dam,64,XF_HURTSOURCE,false,32,0,0,"","Ice");
 	}
 
@@ -598,7 +631,7 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 		Projectile;
 		Radius 13;
 		Height 8;
-		DamageFunction (40 * random(1,4));
+		DamageFunction (finaldamagedealt);
 		Speed 40;
 		ExplosionDamage 25;
 		ExplosionRadius 64;
@@ -614,6 +647,10 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 	// its scale a bit to add more variety:
 	override void PostBeginPlay()
 	{
+		finaldamagedealt = (40 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.5;
+
 		Super.PostBeginPlay();
 		bSPRITEFLIP = random[incin](0,1);
 		scale *= frandom[incin](0.7, 1);
@@ -622,6 +659,10 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 
 	override void Tick()
 	{
+		finaldamagedealt = (40 * random(1,4));
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) finaldamagedealt *= 1.5;
+		
 		Super.Tick();
 		// When the projectile dies, it sets its scale to 33%
 		// of what it was. During death we'll gradually bring it back to scale:
@@ -655,6 +696,9 @@ class IncineratorFrostFlameBig : IncineratorFrostFlame
 	
 	action void A_IncineratorExplode(int dam = 25)
 	{
+		actor playera = players[0].mo;
+		if (playera.CountInv("FoundIceWeaselItem")) dam *= 1.5;
+		
 		A_Explode(dam,112,XF_HURTSOURCE,false,56,0,0,"","Ice");
 	}
 

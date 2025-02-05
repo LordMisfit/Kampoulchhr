@@ -954,6 +954,63 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 	}
 }
 
+class IceWeaselArtifact : CustomInventoryExt
+{
+	default
+	{
+		//$Category KC Artifacts
+		Height 24;
+		Radius 12;
+		Inventory.PickupMessage "\c[HeiwaChamosis](Huh!? The fuck is this thing...!? It's cold to the touch!)";
+		Inventory.Icon "CMFRA0";
+		Tag "";
+		+FLOATBOB
+		+DONTGIB
+		+COUNTITEM;
+		+INVENTORY.HUBPOWER
+		+INVENTORY.PERSISTENTPOWER
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.KEEPDEPLETED
+		Inventory.PickupFlash "PickupFlash";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		scale 0.5;
+		Inventory.PickupSound "misc/p_pkup";
+		CustomInventoryExt.PickupSound1Heiwa "";
+		CustomInventoryExt.PickupSound2 "";
+		CustomInventoryExt.PickupSound2Heiwa "Heiwa/ThatsSus";
+		CustomInventoryExt.PickupSound3 "ICWS/Artifact";
+		CustomInventoryExt.PickupChan1 CHAN_ITEM;
+		CustomInventoryExt.PickupChan2 CHAN_VOICE;
+		CustomInventoryExt.PickupChan3 CHAN_ITEM;
+	}
+	
+	override String PickupMessage()
+	{
+		string msg = PickupMsg;
+		return PickupMsg;
+	}
+	
+	States
+	{
+		Spawn:
+			CMFR A -1 Bright NoDelay
+			{
+				actor playera = players[0].mo;
+			}
+			stop;
+		Pickup:
+			TNT1 A 0
+			{
+				actor playera = players[0].mo;
+				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+				playera.A_SetInventory("FoundIceWeaselItem",1);
+				if (MiscItem) playera.A_PrintBold(String.Format("\c[HeiwaChamosis](Huh!? The fuck is this thing...!? It's cold to the touch!)"), frandom(3.25,3.75));
+			}
+			stop;
+	}
+}
+
 class TimeSeraphCharm : BaseTimeSeraphArtifact
 {
 	default
