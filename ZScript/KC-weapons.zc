@@ -13976,6 +13976,10 @@ Class Translocator : MarineWeapon
 			loop;
 			
 		Ready:
+			VTLW D 0
+			{
+				if (invoker.beacon) Player.SetPSprite(PSP_WEAPON,invoker.FindState("ReadyLaunched"));
+			}
 			VTLW D 1 A_WeaponReady();
 			Loop;
 		ReadyLaunched:

@@ -288,10 +288,18 @@ class KXCelt : KCCreature
 			CELT Q 2 A_KCPain();
 			Goto See;
 		Death:
-			CELT R 10 Bright A_Scream();
-			CELT STUV 10 Bright;
-			TNT1 A 0 
+			CELT R 10 Bright 
 			{
+				A_KillChildren("Massacre");
+				A_Scream();
+			}
+			CELT STUV 10 Bright
+			{
+				A_KillChildren("Massacre");
+			}
+			TNT1 A 0
+			{
+				A_KillChildren("Massacre");
 				A_StartSound("Celt/CometDeath",CHAN_7,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
 				if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e')
 				{
@@ -305,7 +313,11 @@ class KXCelt : KCCreature
 			}
 			TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("KXCeltIceParticle2",0,0,5,frandom(-15,15),frandom(-15,15),frandom(5,15),random(1,360));
 			TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("KXCeltIceParticle",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
-			TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 1 Bright A_SpawnItemEx("CeltRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 1 Bright 
+			{
+				A_KillChildren("Massacre");
+				A_SpawnItemEx("CeltRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
+			}
 			CELT U 0 Bright 
 			{
 				A_NoBlocking();
@@ -828,8 +840,6 @@ class IceWeaselAvatar : KXCelt
 		Damagefactor "Translocator", 0;
 		PainChance "Translocator", 0;
 		MissileChanceMult 0.125;
-		RenderStyle "Add";
-		Alpha 1.0;
 	}
 	
 	void A_WeaselIceSpread(int type)
@@ -866,13 +876,18 @@ class IceWeaselAvatar : KXCelt
 	states
 	{
 		SpawnIn:
-			CELT QQQQQQQQQQQQQQQQQQQQ 1 Bright 
+			CELT Q 0 Bright 
 			{
+				A_Quake(3, 105, 0, 5120, "nosound/silent");
+				A_Quake(6, 105, 0, 2560, "nosound/silent");
 				A_StartSound("Celt/see2",1,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
 				A_StartSound("Celt/see2",2,CHANF_DEFAULT,1.0,ATTN_NONE,0.9);
 				A_StartSound("Celt/see2",3,CHANF_DEFAULT,1.0,ATTN_NONE,1.1);
 				A_StartSound("Celt/see2",4,CHANF_DEFAULT,1.0,ATTN_NONE,0.8);
 				A_StartSound("Celt/see2",5,CHANF_DEFAULT,1.0,ATTN_NONE,1.2);
+			}
+			CELT QQQQQQQQQQQQQQQQQQQQ 1 Bright 
+			{
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				if (random(1,4) <= 2) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 			}
@@ -1137,11 +1152,25 @@ class IceWeaselAvatar : KXCelt
 			CELT QQQQ 2;
 			Goto See;
 		Death:
-			CELT R 0 Bright A_KillChildren("Massacre");
-			CELT R 10 Bright A_Scream();
-			CELT STUV 10 Bright;
+			CELT R 0 Bright 
+			{
+				A_SetRenderStyle(1.0,STYLE_Add);
+				A_KillChildren("Massacre");
+			}
+			CELT R 10 Bright 
+			{
+				A_Scream();
+				A_KillChildren("Massacre");
+			}
+			CELT STUV 10 Bright
+			{
+				A_KillChildren("Massacre");
+			}
 			TNT1 A 0 
 			{
+				A_KillChildren("Massacre");
+				A_Quake(3, 105, 0, 5120, "nosound/silent");
+				A_Quake(6, 105, 0, 2560, "nosound/silent");
 				A_StartSound("Celt/CometDeath",7,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.0,1.0));
 				A_StartSound("Celt/CometDeath",8,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.96,1.04));
 				A_StartSound("Celt/CometDeath",9,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(0.92,1.08));
@@ -1158,6 +1187,7 @@ class IceWeaselAvatar : KXCelt
 			CELT U 0 Bright A_NoBlocking();
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
@@ -1166,6 +1196,7 @@ class IceWeaselAvatar : KXCelt
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
@@ -1173,37 +1204,44 @@ class IceWeaselAvatar : KXCelt
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				if (random(1,2) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				if (random(1,4) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				if (random(1,8) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				if (random(1,16) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01);
 			}
 			#### ########## 1 Bright 
 			{
+				A_KillChildren("Massacre");
 				if (random(1,32) <= 1) A_SpawnItemEx("WeaselRealDiamondDust",0,0,0,frandom(-10,10),frandom(-10,10),frandom(-10,10),random(1,360));
 				A_Fadeout(0.01); 
 			}
