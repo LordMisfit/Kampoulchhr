@@ -7129,6 +7129,7 @@ class KC_EventHandler : EventHandler
 							bool voicecheck = false;
 							if (kc_heiwaextravoices && kc_heiwaoneliners && !MiscItem.OneLinerCooldown)
 							{
+								nm = "CCards_Actor_AssassinBuff";
 								if (MiscItem.OneLinerCooldown <= 0 ||
 										waslegendary ||
 										victim.CountInv(nm))
@@ -7149,7 +7150,9 @@ class KC_EventHandler : EventHandler
 									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
 									if (playera.CountInv("LowHealth")) basechance *= 1.5;
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
+									nm = "CCards_Actor_AssassinBuff";
 									if (waslegendary || victim.CountInv(nm)) basechance *= 5;
+									if (IceWeaselAvatar(victim)) basechance *= 5;
 
 									if (infl == "FistPuff" || infl == "UppercutPuff" || infl == "KickPuff" || infl == "KickPuffNoThrust") basechance *= frandompick(3.5,4,4.5);
 									if (victim.bBOSS) basechance *= 8;
@@ -7165,6 +7168,7 @@ class KC_EventHandler : EventHandler
 
 									int maxchance = 256;
 									if (waslegendary || victim.CountInv(nm)) maxchance *= 0.25;
+									if (IceWeaselAvatar(victim)) maxchance *= 0.25;
 									if (kcdebug_worlddied) Console.Printf("%d / %d", basechance, maxchance);
 									if (random(1,maxchance) <= basechance && (MiscItem && MiscItem.CanTalkUnderwater))
 									{
