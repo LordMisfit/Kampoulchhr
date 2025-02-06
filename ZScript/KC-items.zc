@@ -991,6 +991,19 @@ class IceWeaselArtifact : CustomInventoryExt
 		return PickupMsg;
 	}
 	
+	void CeltSpawnFlags(actor mo)
+	{
+		if (mo)
+		{
+			KXCelt celt;
+			celt = KXCelt(mo);
+			if (celt)
+			{
+				celt.user_ressurrectstr = random(25,35);
+			}
+		}
+	}
+	
 	States
 	{
 		Spawn:
@@ -1012,35 +1025,11 @@ class IceWeaselArtifact : CustomInventoryExt
 						double ypos = 1216.0;
 						actor mo;
 						mo = Spawn("KXCelt", (xpos, ypos, 0), NO_REPLACE);
-						if (mo)
-						{
-							KXCelt celt;
-							celt = KXCelt(mo);
-							if (celt)
-							{
-								celt.user_ressurrectstr = random(25,35);
-							}
-						}
+						invoker.CeltSpawnFlags(mo);
 						mo = Spawn("KXCelt", (xpos, (ypos+128.0), 0), NO_REPLACE);
-						if (mo)
-						{
-							KXCelt celt;
-							celt = KXCelt(mo);
-							if (celt)
-							{
-								celt.user_ressurrectstr = random(25,35);
-							}
-						}
+						invoker.CeltSpawnFlags(mo);
 						mo = Spawn("KXCelt", (xpos, (ypos-128.0), 0), NO_REPLACE);
-						if (mo)
-						{
-							KXCelt celt;
-							celt = KXCelt(mo);
-							if (celt)
-							{
-								celt.user_ressurrectstr = random(25,35);
-							}
-						}
+						invoker.CeltSpawnFlags(mo);
 					}
 					playera.A_SetInventory("FoundIceWeaselItem",1);
 				}

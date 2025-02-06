@@ -610,6 +610,45 @@ class VisitedTNT31 : PlaceHolderItem
 
 class FoundIceWeaselItem : PlaceHolderItem 
 {
+	void CeltSpawnFlags(actor mo)
+	{
+		if (mo)
+		{
+			KXCelt celt;
+			celt = KXCelt(mo);
+			if (celt)
+			{
+				celt.user_ressurrectstr = random(25,35);
+			}
+		}
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			if (level.GetChecksum() == 'd99ad22ff21a41b4eecdb3a7c803d75e')
+			{
+				if (level.maptime == 0)
+				{
+					actor mo;
+					mo = Spawn("KXCelt", (264, 7808, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+					mo = Spawn("KXCelt", (640, 7816, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+					mo = Spawn("KXCelt", (128, 7632, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+					mo = Spawn("KXCelt", (696, 7624, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+					mo = Spawn("KXCelt", (368, 7920, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+					mo = Spawn("KXCelt", (528, 7920, 0), NO_REPLACE);
+					CeltSpawnFlags(mo);
+				}
+			}
+		}
+		super.Tick();
+	}
 }
 
 class BossBrainHolder : PlaceHolderItem 
