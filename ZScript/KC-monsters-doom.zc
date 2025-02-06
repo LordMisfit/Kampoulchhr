@@ -20106,6 +20106,16 @@ class BossBrainNew : BossBrain replaces BossBrain
 		super.Tick();
 	}
 	
+	void A_RemoveMBLs(int secnum)
+	{
+		uint tempflags = level.Lines[secnum].flags;
+		if (tempflags & Line.ML_BLOCKMONSTERS) 
+		{
+			tempflags &= ~Line.ML_BLOCKMONSTERS;
+			level.Lines[secnum].flags = tempflags;
+		}
+	}
+	
 	void A_SpawnIceWeaselAvatar(int timecheck)
 	{
 		if (!A_CheckIWs())
@@ -20146,13 +20156,53 @@ class BossBrainNew : BossBrain replaces BossBrain
 				icwes = IceWeaselAvatar(mo);
 				if (icwes)
 				{
+					uint tempflags;
 					icwes.timesspawned = uniquespecial1;
 					icwes.spawnnum = timecheck;
 					icwes.user_ressurrectstr = ((uniquespecial1 - 1) * (random(6,10) + (uniquespecial1 - 1)));
 					icwes.SetStateLabel("SpawnIn");
 					if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d')
 					{
+						// lines 448-451 [remove action 97, disable monster blocking]
+						level.Lines[448].special = 0;
+						A_RemoveMBLs(448);
+						level.Lines[448].args[1] = 13;
+						level.Lines[449].special = 0;
+						A_RemoveMBLs(449);
+						level.Lines[449].args[1] = 13;
+						Level.ExecuteSpecial(37, null, level.Lines[449], false, 0, 32, 8, 1);
+						level.Lines[450].special = 0;
+						A_RemoveMBLs(450);
+						level.Lines[450].args[1] = 13;
+						level.Lines[451].special = 0;
+						A_RemoveMBLs(451);
+						level.Lines[451].args[1] = 13;
+
+						// lines 452-455 [remove action 97, disable monster blocking]
+						level.Lines[452].special = 0;
+						A_RemoveMBLs(452);
+						level.Lines[452].args[1] = 12;
+						level.Lines[453].special = 0;
+						A_RemoveMBLs(453);
+						level.Lines[453].args[1] = 12;
+						Level.ExecuteSpecial(37, null, level.Lines[453], false, 0, 32, 8, 1);
+						level.Lines[454].special = 0;
+						A_RemoveMBLs(454);
+						level.Lines[454].args[1] = 12;
+						level.Lines[455].special = 0;
+						A_RemoveMBLs(455);
+						level.Lines[455].args[1] = 12;
+
 						level.Lines[593].sidedef[0].SetTexture(1, TexMan.CheckForTexture("ZZZFAC4A", TexMan.Type_Wall));
+
+						// Sectors 91 [lower sector by 8 (to z0), set texture to 'FLAT10', brightness to 150]
+						level.Sectors[91].SetTexture(sector.floor, TexMan.CheckForTexture("FLAT10", TexMan.Type_Flat));
+						level.Sectors[91].lightlevel = 150;
+						
+						// Sectors 92 [lower sector by 8 (to z0), set texture to 'FLAT10', brightness to 150]
+						level.Sectors[92].SetTexture(sector.floor, TexMan.CheckForTexture("FLAT10", TexMan.Type_Flat));
+						level.Sectors[92].lightlevel = 150;
+						
 						level.ChangeSky(TexMan.CheckForTexture("TNTSKY3A",TexMan.Type_Any),TexMan.CheckForTexture("",TexMan.Type_Any));
 					}
 				}

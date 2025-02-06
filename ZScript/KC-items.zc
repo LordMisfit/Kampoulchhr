@@ -1008,8 +1008,10 @@ class IceWeaselArtifact : CustomInventoryExt
 				{
 					if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e')
 					{
+						double xpos = -2912.0; // -1824.0;
+						double ypos = 1216.0;
 						actor mo;
-						mo = Spawn("KXCelt", (-1824, 1216, 0), NO_REPLACE);
+						mo = Spawn("KXCelt", (xpos, ypos, 0), NO_REPLACE);
 						if (mo)
 						{
 							KXCelt celt;
@@ -1019,7 +1021,7 @@ class IceWeaselArtifact : CustomInventoryExt
 								celt.user_ressurrectstr = random(25,35);
 							}
 						}
-						mo = Spawn("KXCelt", (-1824, 1344, 0), NO_REPLACE);
+						mo = Spawn("KXCelt", (xpos, (ypos+128.0), 0), NO_REPLACE);
 						if (mo)
 						{
 							KXCelt celt;
@@ -1029,7 +1031,7 @@ class IceWeaselArtifact : CustomInventoryExt
 								celt.user_ressurrectstr = random(25,35);
 							}
 						}
-						mo = Spawn("KXCelt", (-1824, 1088, 0), NO_REPLACE);
+						mo = Spawn("KXCelt", (xpos, (ypos-128.0), 0), NO_REPLACE);
 						if (mo)
 						{
 							KXCelt celt;

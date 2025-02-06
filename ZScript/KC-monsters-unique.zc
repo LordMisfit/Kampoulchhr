@@ -837,7 +837,7 @@ class IceWeaselAvatar : KXCelt
 		PainChance 5; // 20;
 		RadiusDamageFactor 0.375;
 		DamageFactor "Holy", 2.5;
-		PainChance "Holy", 12.5;
+		PainChance "Holy", 13;
 		DamageFactor "Magic", 0.334;
 		PainChance "Magic", 3;
 		DamageFactor "PSI", 3;
@@ -851,7 +851,7 @@ class IceWeaselAvatar : KXCelt
 		DamageFactor "Explosive", 0.5;
 		PainChance "Explosive", 3;
 		Damagefactor "IncarnateGlare", 2.25;
-		PainChance "IncarnateGlare", 22.5;
+		PainChance "IncarnateGlare", 23;
 		Damagefactor "Translocator", 0;
 		PainChance "Translocator", 0;
 		MissileChanceMult 0.125;
@@ -879,12 +879,65 @@ class IceWeaselAvatar : KXCelt
 		}
 	}
 	
+	void A_AddMBLs(int secnum)
+	{
+		uint tempflags = level.Lines[secnum].flags;
+		if (tempflags & Line.ML_BLOCKMONSTERS) 
+		{
+		}
+		else
+		{
+			tempflags |= Line.ML_BLOCKMONSTERS;
+			level.Lines[secnum].flags = tempflags;
+		}
+	}
+	
 	void A_WeaselDeath()
 	{
 		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d')
 		{
+			// lines 448-451 [add back action 97, sector tag 13, make lines block monsters]
+			level.Lines[448].special = 70;
+			A_AddMBLs(448);
+			level.Lines[448].args[1] = 13;
+			level.Lines[449].special = 70;
+			A_AddMBLs(449);
+			level.Lines[449].args[1] = 13;
+			Level.ExecuteSpecial(37, null, level.Lines[449], false, 0, 32, 8, 0);
+			level.Lines[450].special = 70;
+			A_AddMBLs(450);
+			level.Lines[450].args[1] = 13;
+			level.Lines[451].special = 70;
+			A_AddMBLs(451);
+			level.Lines[451].args[1] = 13;
+			
+			// lines 452-455 [add back action 97, sector tag 12, make lines block monsters]
+			level.Lines[452].special = 70;
+			A_AddMBLs(452);
+			level.Lines[452].args[1] = 12;
+			level.Lines[453].special = 70;
+			A_AddMBLs(453);
+			level.Lines[453].args[1] = 12;
+			Level.ExecuteSpecial(37, null, level.Lines[453], false, 0, 32, 8, 0);
+			level.Lines[454].special = 70;
+			A_AddMBLs(454);
+			level.Lines[454].args[1] = 12;
+			level.Lines[455].special = 70;
+			A_AddMBLs(455);
+			level.Lines[455].args[1] = 12;
+			
 			level.Lines[593].sidedef[0].SetTexture(1, TexMan.CheckForTexture("ZZZFACE4", TexMan.Type_Wall));
-			Level.ChangeSky(TexMan.CheckForTexture("SKY3",TexMan.Type_Any),TexMan.CheckForTexture("",TexMan.Type_Any));
+
+			// Sectors 91 [raise sector by 8 (to z8), change floor flat to 'GATE2', brightness to 255]
+			level.Sectors[91].SetTexture(sector.floor, TexMan.CheckForTexture("GATE2", TexMan.Type_Flat));
+			level.Sectors[91].lightlevel = 255;
+			
+			// Sectors 92 [raise sector by 8 (to z8), change floor flat to 'GATE1', brightness to 255]
+			level.Sectors[92].SetTexture(sector.floor, TexMan.CheckForTexture("GATE1", TexMan.Type_Flat));
+			level.Sectors[92].lightlevel = 255;
+			//Level.ExecuteSpecial(37, null, null, false, tag, int.max, abs(height), height < 0 ? 1 : 0);
+
+			level.ChangeSky(TexMan.CheckForTexture("SKY3",TexMan.Type_Any),TexMan.CheckForTexture("",TexMan.Type_Any));
 			if (spawnnum >= 4)
 			{
 				ThinkerIterator bossbrain = ThinkerIterator.Create("BossBrainNew");
@@ -1162,7 +1215,7 @@ class IceWeaselAvatar : KXCelt
 			CELT Q 2;
 			CELT Q 2 
 			{
-				A_KCPain(1,random(54,66),random(2,3),0,0,47.5);
+				A_KCPain(1,random(54,66),random(2,3),0,0,random(47,48));
 			}
 			Goto See;
 		Pain.Electric: 
