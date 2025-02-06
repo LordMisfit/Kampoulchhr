@@ -1158,6 +1158,7 @@ class KC_EventHandler : EventHandler
 	{
 		// Level Tweaks
 		// Micro-Boss
+		if (spawnname ~== "CeltIceClone") LevelCheck -= random(random(-1,-2),-3);
 
 		// Mini-Boss
 		if (spawnname ~== "SpiderMastermind") LevelCheck += random(random(1,2),3);
@@ -1170,8 +1171,10 @@ class KC_EventHandler : EventHandler
 		if (spawnname ~== "Annihilator") LevelCheck += random(random(1,2),3);
 
 		// Tier 1 Boss
+		if (spawnname ~== "KXCelt") LevelCheck += random(random(2,4),6);
 
 		// Tier 2 Boss
+		if (spawnname ~== "IceWeaselAvatar") LevelCheck += random(random(3,6),9);
 
 		if (Peasant(spawnee)) LevelCheck /= 4;
 		else
@@ -1304,6 +1307,9 @@ class KC_EventHandler : EventHandler
 			bool e1m8baron = false;
 			bool e2m8cyber = false;
 			bool e34m8spider = false;
+			bool IoSSpawned = false;
+			bool TNTIoSSpawned = false;
+			bool PlutIoSSpawned = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
 			{
@@ -1340,6 +1346,13 @@ class KC_EventHandler : EventHandler
 						 spawnname ~== "SpiderMastermindNew" ||
 						 spawnname ~== "SpiderMastermindClassic" ||
 						 spawnname ~== "Demolisher")) e34m8spider = true;
+				if (spawnee.bBOSSSPAWNED || 
+						spawnee.CountInv("IoSMinion"))
+				{
+					IoSSpawned = true;
+					if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') TNTIoSSpawned = true;
+					if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') PlutIoSSpawned = true;
+				}
 
 				if (A_CheckUOHYM() && level.mapname == "MAP01")
 				{
@@ -1381,7 +1394,7 @@ class KC_EventHandler : EventHandler
 				if (e1m8exitroommon) baselinelevel += random(10,15);
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
-
+				
 				if (kcdebug_monsterscaling) Console.Printf("ninelivescurse: %d, nineliveslifecount: %d", ninelivescurse, nineliveslifecount);
 				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
 				int LevelErrorRange;
@@ -1424,6 +1437,11 @@ class KC_EventHandler : EventHandler
 					if (e1m8exitroommon) basedivfactor *= 0.334;
 					if (e1m8baron) basedivfactor *= 0.334;
 					if (e2m8cyber || e34m8spider) basedivfactor *= 0.1667;
+					if (IoSSpawned)
+					{
+						if (TNTIoSSpawned) basedivfactor *= 1.334;
+						if (PlutIoSSpawned) basedivfactor *= 0.75;
+					}
 
 					if (ninelivescurse)
 					{
@@ -1486,8 +1504,13 @@ class KC_EventHandler : EventHandler
 					baseadd *= frandompick(0.4375,0.5,0.5,0.5,0.5,0.5,0.5,0.5625);
 					multbase += baseadd;
 					if (e1m8exitroommon) multbase *= 2.5;
-					if (e1m8baron) basedivfactor *= 3.25;
-					if (e2m8cyber || e34m8spider) basedivfactor *= 4.0;
+					if (e1m8baron) multbase *= 3.25;
+					if (e2m8cyber || e34m8spider) multbase *= 4.0;
+					if (IoSSpawned)
+					{
+						if (TNTIoSSpawned) multbase *= 0.9;
+						if (PlutIoSSpawned) multbase *= frandom(1.111,1.112);
+					}
 
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
 
@@ -1520,6 +1543,12 @@ class KC_EventHandler : EventHandler
 					if (kc_enemyscalingplevel && globalvars && MiscItem)
 					{
 						int TruePlayerLevel = A_GetPlayerLevel(1);
+						if (IoSSpawned)
+						{
+							TruePlayerLevel *= frandom(0.6,1.667);
+							if (TNTIoSSpawned) TruePlayerLevel *= 0.8;
+							if (PlutIoSSpawned) TruePlayerLevel *= 1.25;
+						}
 						TruePlayerLevel += baselinelevel;
 						LevelCheck += TruePlayerLevel;
 						if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [PlayerLevel Check]: %d (PlayLvl: +%d), monsterrating: %d", LevelCheck, TruePlayerLevel, monsterrating);
@@ -1563,6 +1592,7 @@ class KC_EventHandler : EventHandler
 						if (DSparilUnmountedNew(spawnee)) LevelCheck += random(15,30);
 						if (Korax(spawnee)) LevelCheck += random(15,30);
 						if (KoraxNew(spawnee)) LevelCheck += random(15,30);
+						if (IceWeaselAvatar(spawnee)) LevelCheck += random(15,30);
 						if (spawnname ~== "ThamuzNew" || spawnname ~== "TchernobogNew") LevelCheck += random(15,30);
 						// Tier 3 Boss
 						if (spawnname ~== "PennywiseBoss") LevelCheck += random(23,45);
@@ -1570,12 +1600,13 @@ class KC_EventHandler : EventHandler
 
 						if (gameinfo.GameType == GAME_Doom)
 						{
-							if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1 && level.GetChecksum() == "c50823f3e0b0504a403e0574af3f68e3")
+							if (Wads.CheckNumForName("KC-UNFAM", Wads.ns_global, -1, true) != -1 && 
+									level.GetChecksum() == "c50823f3e0b0504a403e0574af3f68e3")
 							{
 								if (spawnee.TID == 251)
 								{
 									PreviousLevelCheck = LevelCheck;
-									LevelCheck *= 2;
+									LevelCheck *= 3;
 									if (kcdebug_monsterscaling) Console.Printf("\ckMonsterLevel [Unfamiliar E3M8 boss]: %d (Previous: %d), monsterrating: %d", LevelCheck, PreviousLevelCheck, monsterrating);
 								}
 							}

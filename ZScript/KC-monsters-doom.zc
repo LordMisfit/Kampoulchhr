@@ -19973,6 +19973,8 @@ class OverHorn2 : OverFlesh1
 class BossBrainNew : BossBrain replaces BossBrain
 {
 	int specials1, specials2, specials3, specials4;
+	int uniquespecial1;
+	int miracles;
 	mixin MonsterCollider;
 	default
 	{
@@ -20032,21 +20034,71 @@ class BossBrainNew : BossBrain replaces BossBrain
 		return num;
 	}
 	
+	void A_BrainPain()
+	{
+		A_StartSound("brain/pain", CHAN_VOICE, CHANF_DEFAULT, 1, ATTN_NONE);
+		if (level.GetChecksum() == '5eecd88f4491f516d590ce4bbf45f532') 
+		{ 
+			A_Quake(4, 105, 0, 16384, "nosound/silent");
+			A_Quake(8, 105, 0, 8192, "nosound/silent");
+		}
+		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') 
+		{ 
+			A_Quake(3, 105, 0, 16384, "nosound/silent");
+			A_Quake(6, 105, 0, 8192, "nosound/silent");
+		}
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') 
+		{ 
+			A_Quake(3, 105, 0, 16384, "nosound/silent");
+			A_Quake(6, 105, 0, 8192, "nosound/silent");
+		}
+	}
+	
+	void A_BrainScream2()
+	{
+		if (level.GetChecksum() == '5eecd88f4491f516d590ce4bbf45f532') 
+		{ 
+			A_Quake(6, 305, 0, 32768, "nosound/silent");
+			A_Quake(12, 305, 0, 16384, "nosound/silent");
+		}
+		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') 
+		{ 
+			A_Quake(5, 210, 0, 32768, "nosound/silent");
+			A_Quake(10, 210, 0, 16384, "nosound/silent");
+		}
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') 
+		{ 
+			A_Quake(5, 210, 0, 32768, "nosound/silent");
+			A_Quake(10, 210, 0, 16384, "nosound/silent");
+		}
+	}
+	
 	override void Tick()
 	{
+		if (level.time % 32)
+		{
+			string montag = "Icon of Sin";
+			if (level.GetChecksum() == '5eecd88f4491f516d590ce4bbf45f532') montag = "Daemonlord Baphomet"; // Doom 2 MAP30
+			if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') montag = "Demon-Spitter"; // TNT MAP30
+			if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') montag = "Gatekeeper"; // Plutonia MAP30
+			SetTag(montag);
+		}
 		if (A_CheckIWs()) 
 		{
 			bBUDDHA = true;
-			if (health <= 5) 
-			{
-				bINVULNERABLE = true;
-				bNODAMAGE = true;
-				bNOPAIN = true;
-			}
+			bINVULNERABLE = true;
+			bNODAMAGE = true;
+			bNOPAIN = true;
 		}
 		else
 		{
-			bBUDDHA = false;
+			if (miracles <= 0)
+			{
+				if (CountInv("BossBrainIsTNT")) bBUDDHA = true;
+																	 else bBUDDHA = false;
+			}
+			else bBUDDHA = false;
+			
 			bINVULNERABLE = false;
 			bNODAMAGE = false;
 			bNOPAIN = false;
@@ -20054,21 +20106,50 @@ class BossBrainNew : BossBrain replaces BossBrain
 		super.Tick();
 	}
 	
-	void A_SpawnIceWeaselAvatar()
+	void A_SpawnIceWeaselAvatar(int timecheck)
 	{
 		if (!A_CheckIWs())
 		{
-			//Console.Printf("A_SpawnIceWeaselAvatar");
 			bool spawned;
 			actor mo;
-			//[spawned, mo] = A_SpawnItemEx("IceWeaselAvatar",3072,-640,0,0.0,0.0,0.0,frandom(0,360),SXF_ABSOLUTEPOSITION|SXF_NOCHECKPOSITION);
 			mo = Spawn("IceWeaselAvatar", (3072, -640, 0), NO_REPLACE);
 			if (mo)
 			{
+				if (timecheck >= 4 && 
+						health <= 1)
+				{
+					health = 1;
+				}
+				else
+				if (timecheck == 3 && 
+						health <= ((SpawnHealth() + Stamina) * 0.25))
+				{
+					health = ((SpawnHealth() + Stamina) * 0.25);
+				}
+				else
+				if (timecheck == 2 && 
+						health <= ((SpawnHealth() + Stamina) * 0.5))
+				{
+					health = ((SpawnHealth() + Stamina) * 0.5);
+				}
+				else
+				if (timecheck <= 1 && 
+						health <= ((SpawnHealth() + Stamina) * 0.825))
+				{
+					health = ((SpawnHealth() + Stamina) * 0.825);
+				}
+
+				bBUDDHA = true;
+				bINVULNERABLE = true;
+				bNODAMAGE = true;
+				bNOPAIN = true;
 				IceWeaselAvatar icwes;
 				icwes = IceWeaselAvatar(mo);
 				if (icwes)
 				{
+					icwes.timesspawned = uniquespecial1;
+					icwes.spawnnum = timecheck;
+					icwes.user_ressurrectstr = ((uniquespecial1 - 1) * (random(6,10) + (uniquespecial1 - 1)));
 					icwes.SetStateLabel("SpawnIn");
 					if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d')
 					{
@@ -20102,7 +20183,8 @@ class BossBrainNew : BossBrain replaces BossBrain
 						if (specials1 == 0)
 						{
 							specials1++;
-							A_SpawnIceWeaselAvatar();
+							uniquespecial1++;
+							A_SpawnIceWeaselAvatar(1);
 						}
 						if (specials1 > 1) specials1 = 1;
 					}
@@ -20113,7 +20195,8 @@ class BossBrainNew : BossBrain replaces BossBrain
 						if (specials2 == 0)
 						{
 							specials2++;
-							A_SpawnIceWeaselAvatar();
+							uniquespecial1++;
+							A_SpawnIceWeaselAvatar(2);
 						}
 						if (specials2 > 1) specials2 = 1;
 					}
@@ -20124,18 +20207,20 @@ class BossBrainNew : BossBrain replaces BossBrain
 						if (specials3 == 0)
 						{
 							specials3++;
-							A_SpawnIceWeaselAvatar();
+							uniquespecial1++;
+							A_SpawnIceWeaselAvatar(3);
 						}
 						if (specials3 > 1) specials3 = 1;
 					}
 					else
-					if (health >= ((SpawnHealth() + Stamina) * 0.05) && 
-							health <= ((SpawnHealth() + Stamina) * 0.125))
+					if (health >= 1 && 
+							health <= ((SpawnHealth() + Stamina) * 0.20))
 					{
 						if (specials4 == 0)
 						{
 							specials4++;
-							A_SpawnIceWeaselAvatar();
+							uniquespecial1++;
+							A_SpawnIceWeaselAvatar(4);
 						}
 						if (specials4 > 1) specials4 = 1;
 					}
@@ -20149,6 +20234,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			{
 				if (kc_iconofsindthkillminions) A_KillChildren("Massacre");
 				A_BrainScream();
+				A_BrainScream2();
 			}
 			BBRN B 0 
 			{
@@ -20214,6 +20300,38 @@ class BossEyeNew : BossEye replaces BossEye
 		+BOSS;
 	}
 	
+	bool A_CheckIceWeaselTNT()
+	{
+		bool activeiceweasel = false;
+		ThinkerIterator iceweasel = ThinkerIterator.Create("IceWeaselAvatar");
+		Actor icweas;
+		while (icweas = IceWeaselAvatar(iceweasel.Next()))
+		{
+			if (icweas.bISMONSTER && icweas.health > 0)
+			{
+				activeiceweasel = true;
+			}
+		}
+		return activeiceweasel;
+	}
+	
+	void A_BrainAwake()
+	{
+		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') 
+		{
+			A_StartSound("demonspitter/sight", CHAN_VOICE, CHANF_DEFAULT, 2.0, ATTN_NONE, 1.0);
+		}
+		else
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369')
+		{
+			A_StartSound("gatekeeper/sight", CHAN_VOICE, CHANF_DEFAULT, 2.0, ATTN_NONE, 1.0);
+		}
+		else
+		{
+			A_StartSound("brain/sight", CHAN_VOICE, CHANF_DEFAULT, 2, ATTN_NONE, 1.0);
+		}
+	}
+	
 	void A_GetTimeFactor()
 	{
 		bosseyetimefactor = 1.0;
@@ -20234,17 +20352,7 @@ class BossEyeNew : BossEye replaces BossEye
 				{
 					bosseyetimefactor *= 1.125;
 				}
-				bool activeiceweasel = false;
-				ThinkerIterator iceweasel = ThinkerIterator.Create("IceWeaselAvatar");
-				Actor icweas;
-				while (icweas = IceWeaselAvatar(iceweasel.Next()))
-				{
-					if (icweas.bISMONSTER && icweas.health > 0)
-					{
-						activeiceweasel = true;
-					}
-				}
-				if (activeiceweasel) bosseyetimefactor *= 3;
+				if (A_CheckIceWeaselTNT()) bosseyetimefactor *= 5;
 			}
 		}
 		else
@@ -20281,15 +20389,18 @@ class BossEyeNew : BossEye replaces BossEye
 				if (user_bosseyetype > 0) 
 				{
 					double timefactor = 1.00;
+					double timefactorsub = 0.00;
 					if (master)
 					{
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.95)) timefactor = frandom(0.925,0.95);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.667)) timefactor = frandom(0.625,0.667);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.4)) timefactor = frandom(0.375,0.4);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.25)) timefactor = frandom(0.3,0.334);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.125)) timefactor = frandom(0.2,0.25);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05)) timefactor = frandom(0.1,0.125);
-						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactor = frandom(0.05,0.075);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.95))  timefactorsub = frandom(0.05,0.075);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.667)) timefactorsub = frandom(0.334,0.375);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.4))   timefactorsub = frandom(0.6,0.625);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.25))  timefactorsub = frandom(0.667,0.7);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.125)) timefactorsub = frandom(0.75,0.8);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05))  timefactorsub = frandom(0.875,0.9);
+						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactorsub = frandom(0.925,0.95);
+						if (A_CheckIceWeaselTNT()) timefactorsub *= 0.0625;
+						timefactor -= timefactorsub;
 					}
 					int ticamt = (tics * (frandom(0.675,0.825) * timefactor) * bosseyetimefactor);
 					if (ticamt <= 15) ticamt = 15;

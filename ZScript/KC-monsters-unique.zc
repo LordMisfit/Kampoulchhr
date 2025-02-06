@@ -130,7 +130,7 @@ class KXCelt : KCCreature
 		Missile:
 			TNT1 A 0 A_Jump(128,"Spread","AnotherSpread");
 			TNT1 A 0 A_Jump(128,"Ring", "DiamondDust");
-			TNT1 A 0 A_Jump(128,"Clone");
+			TNT1 A 0 A_Jump(64,"Clone"); // 128
 		Spread:
 			CELT EF 8 Bright 
 			{
@@ -789,6 +789,8 @@ class KXCeltIceParticle2 : KCProjectile
 // IW
 class IceWeaselAvatar : KXCelt
 {
+	int timesspawned;
+	int spawnnum;
 	default
 	{
 		//$Category Monsters
@@ -870,6 +872,19 @@ class IceWeaselAvatar : KXCelt
 		{
 			level.Lines[593].sidedef[0].SetTexture(1, TexMan.CheckForTexture("ZZZFACE4", TexMan.Type_Wall));
 			Level.ChangeSky(TexMan.CheckForTexture("SKY3",TexMan.Type_Any),TexMan.CheckForTexture("",TexMan.Type_Any));
+			if (spawnnum >= 4)
+			{
+				ThinkerIterator bossbrain = ThinkerIterator.Create("BossBrainNew");
+				BossBrainNew bssbrn;
+				while (bssbrn = BossBrainNew(bossbrain.Next()))
+				{
+					if (bssbrn.health > 0)
+					{
+						bssbrn.miracles++;
+						bssbrn.bBUDDHA = false;
+					}
+				}
+			}
 		}
 	}
 	
@@ -926,7 +941,7 @@ class IceWeaselAvatar : KXCelt
 		Missile:
 			TNT1 A 0 A_Jump(128,"Spread","AnotherSpread");
 			TNT1 A 0 A_Jump(128,"Ring", "DiamondDust");
-			TNT1 A 0 A_Jump(128,"Clone");
+			TNT1 A 0 A_Jump(16,"Clone"); // 128
 		Spread:
 			CELT EF 8 Bright
 			{
