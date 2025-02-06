@@ -7365,10 +7365,10 @@ object PikeAmmoBig
 flickerlight ICEWEPENDANT
 {
 	color 0.203125 0.46484375 0.70703125
-	size 24
-	secondarySize 36
+	size 72
+	secondarySize 108
 	chance 0.3
-	offset 0 16 0
+	offset 0 25 0
 	attenuate 1
 }
 
@@ -7387,9 +7387,54 @@ flickerlight CELT1
 	attenuate 1
 }
 
+flickerlight CELT2
+{
+	color 0.203125 0.46484375 0.70703125
+	size 16
+	secondarySize 21
+	chance 0.3
+	offset 0 0 0
+	attenuate 1
+}
+
+flickerlight CELT3
+{
+	color 0.203125 0.46484375 0.70703125
+	size 32
+	secondarySize 42
+	chance 0.3
+	offset 0 0 0
+	attenuate 1
+}
+
 object KXCelt
 {
 	Frame CELT { Light CELT1 }
+}
+
+object CeltIceBigShot
+{
+	Frame IBAL { Light CELT2 }
+}
+
+object CeltIceMiniShot
+{
+	Frame IPRJ { Light CELT2 }
+}
+
+object CeltIceMiniShot2
+{
+	Frame IPRJ { Light CELT2 }
+}
+
+object CeltDiamondDust
+{
+	Frame ICOM { Light CELT3 }
+}
+
+object CeltRealDiamondDust
+{
+	Frame IRME { Light CELT3 }
 }
 
 flickerlight ICEWEASEL1
@@ -7401,8 +7446,52 @@ flickerlight ICEWEASEL1
 	offset 0 48 0
 	attenuate 1
 }
+flickerlight ICEWEASEL2
+{
+	color 0.203125 0.46484375 0.70703125
+	size 21
+	secondarySize 32
+	chance 0.3
+	offset 0 0 0
+	attenuate 1
+}
+
+flickerlight ICEWEASEL3
+{
+	color 0.203125 0.46484375 0.70703125
+	size 43
+	secondarySize 59
+	chance 0.3
+	offset 0 0 0
+	attenuate 1
+}
 
 object IceWeaselAvatar
 {
 	Frame CELT { Light ICEWEASEL1 }
+}
+
+object WeaselIceBigShot
+{
+	Frame IBAL { Light ICEWEASEL2 }
+}
+
+object WeaselIceMiniShot
+{
+	Frame IPRJ { Light ICEWEASEL2 }
+}
+
+object WeaselIceMiniShot2
+{
+	Frame IPRJ { Light ICEWEASEL2 }
+}
+
+object WeaselDiamondDust
+{
+	Frame ICOM { Light ICEWEASEL3 }
+}
+
+object WeaselRealDiamondDust
+{
+	Frame IRME { Light ICEWEASEL3 }
 }

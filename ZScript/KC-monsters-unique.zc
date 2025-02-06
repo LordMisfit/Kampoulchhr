@@ -1,6 +1,7 @@
 class KXCelt : KCCreature
 {
 	int user_celt;
+	int check1;
 	default
 	{
 		//$Category Monsters
@@ -75,12 +76,24 @@ class KXCelt : KCCreature
 			//Console.Printf("num: %d", num);
 			if (num <= 0)
 			{
-				int rand = random(1,3);
-				vector3 artspot = (-2928, -2016, 0);
-				if (rand <= 1) artspot = (-2928, -2016, 0);
-				if (rand == 2) artspot = (-1216, -1216, 0);
-				if (rand >= 3) artspot = (2400, 2304, 0);
-				actor mo = Spawn("IceWeaselArtifact", artspot, NO_REPLACE);
+				int num2;
+				ThinkerIterator IWArt = ThinkerIterator.Create("IceWeaselArtifact");
+				IceWeaselArtifact icwart;
+				while (icwart = IceWeaselArtifact(IWArt.Next()))
+				{
+					num2++;
+				}
+				actor playera = players[0].mo;
+				if (num2 <= 0 &&
+						!playera.CountInv("FoundIceWeaselItem"))
+				{
+					int rand = random(1,3);
+					vector3 artspot = (-2928, -2016, 0);
+					if (rand <= 1) artspot = (-2928, -2016, 0);
+					if (rand == 2) artspot = (-1216, -1216, 0);
+					if (rand >= 3) artspot = (2400, 2304, 0);
+					actor mo = Spawn("IceWeaselArtifact", artspot, NO_REPLACE);
+				}
 			}
 		}
 	}

@@ -1004,7 +1004,44 @@ class IceWeaselArtifact : CustomInventoryExt
 			{
 				actor playera = players[0].mo;
 				let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-				playera.A_SetInventory("FoundIceWeaselItem",1);
+				if (!playera.CountInv("FoundIceWeaselItem"))
+				{
+					if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e')
+					{
+						actor mo;
+						mo = Spawn("KXCelt", (-1824, 1216, 0), NO_REPLACE);
+						if (mo)
+						{
+							KXCelt celt;
+							celt = KXCelt(mo);
+							if (celt)
+							{
+								celt.user_ressurrectstr = random(25,35);
+							}
+						}
+						mo = Spawn("KXCelt", (-1824, 1344, 0), NO_REPLACE);
+						if (mo)
+						{
+							KXCelt celt;
+							celt = KXCelt(mo);
+							if (celt)
+							{
+								celt.user_ressurrectstr = random(25,35);
+							}
+						}
+						mo = Spawn("KXCelt", (-1824, 1088, 0), NO_REPLACE);
+						if (mo)
+						{
+							KXCelt celt;
+							celt = KXCelt(mo);
+							if (celt)
+							{
+								celt.user_ressurrectstr = random(25,35);
+							}
+						}
+					}
+					playera.A_SetInventory("FoundIceWeaselItem",1);
+				}
 				if (MiscItem) playera.A_PrintBold(String.Format("\c[HeiwaChamosis](Huh!? The fuck is this thing...!? It's cold to the touch!)"), frandom(3.25,3.75));
 			}
 			stop;
