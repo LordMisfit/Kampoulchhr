@@ -85,6 +85,7 @@ class CustomInventoryExt : CustomInventory
 	mixin HUDRecovery;
 	mixin TimerCheck;
 	*/
+	mixin TimeFreezeChecker;
 	mixin SecretChecker;
 	mixin ItemFallSpotCheck;
 	string texname;
@@ -930,9 +931,7 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 		double snd1vol = 1.00;
 		double snd2vol = 0.10;
 		double snd3vol = 0.10;
-		if ((playera.CountInv("KCTimeFreezer1") ||
-				 playera.CountInv("KCTimeFreezer2") ||
-				 playera.CountInv("KCTimeFreezer3")))
+		if (CheckTimeFreeze())
 		{
 			snd1vol = 1.0;
 			snd2vol = 1.0;
@@ -940,17 +939,38 @@ class BaseTimeSeraphArtifact : CustomInventoryExt
 		}
 		else
 		{
-			snd1vol = 0.5;
+			snd1vol = 1.0;
 			snd2vol = 0.1;
 			snd3vol = 0.1;
 		}
 		//Console.Printf("vol1: %.8f, vol2: %.8f, vol3: %.8f", snd1vol, snd2vol, snd3vol);
-		A_StartSound("tsartifact/hum1",101,CHANF_LOOPING,snd1vol,ATTN_NORM,1.0);
-		A_SoundVolume(101,snd1vol);
-		A_StartSound("tsartifact/hum2",102,CHANF_LOOPING,snd2vol,ATTN_NORM,1.0);
-		A_SoundVolume(102,snd2vol);
-		A_StartSound("tsartifact/hum3",103,CHANF_LOOPING,snd3vol,ATTN_NORM,1.0);
-		A_SoundVolume(103,snd2vol);
+		if (level.time % 35 == 1)
+		{
+			A_StartSound("tsartifact/hum1",101,CHANF_LOOPING,snd1vol,ATTN_NORM,1.0);
+			A_StartSound("tsartifact/hum2",102,CHANF_LOOPING,snd2vol,ATTN_NORM,1.0);
+			A_StartSound("tsartifact/hum3",103,CHANF_LOOPING,snd3vol,ATTN_NORM,1.0);
+		}
+		else
+		{
+			A_SoundVolume(101,snd1vol);
+			A_SoundVolume(102,snd2vol);
+			A_SoundVolume(103,snd2vol);
+		}
+	}
+	
+	override void Tick()
+	{
+		if (!owner)
+		{
+			TSAHum();
+		}
+		else
+		{
+			A_StopSound(101);
+			A_StopSound(102);
+			A_StopSound(103);
+		}
+		super.Tick();
 	}
 }
 
@@ -1113,16 +1133,16 @@ class TimeSeraphCharm : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSCH A 1 BRIGHT { invoker.TSAHum(); }
+			TSCH A 1 BRIGHT;
 			goto Spawn;
 		Idle1:
-			TSCH B 1 BRIGHT { invoker.TSAHum(); }
+			TSCH B 1 BRIGHT;
 			goto Spawn;
 		Idle2:
-			TSCH C 1 BRIGHT { invoker.TSAHum(); }
+			TSCH C 1 BRIGHT;
 			goto Spawn;
 		Idle3:
-			TSCH D 1 BRIGHT { invoker.TSAHum(); }
+			TSCH D 1 BRIGHT;
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
@@ -1241,16 +1261,16 @@ class TimeSeraphPocketWatch : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSPW A 1 BRIGHT { invoker.TSAHum(); }
+			TSPW A 1 BRIGHT;
 			goto Spawn;
 		Idle1:
-			TSPW B 1 BRIGHT { invoker.TSAHum(); }
+			TSPW B 1 BRIGHT;
 			goto Spawn;
 		Idle2:
-			TSPW C 1 BRIGHT { invoker.TSAHum(); }
+			TSPW C 1 BRIGHT;
 			goto Spawn;
 		Idle3:
-			TSPW D 1 BRIGHT { invoker.TSAHum(); }
+			TSPW D 1 BRIGHT;
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
@@ -1382,16 +1402,16 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 			}
 			Loop;
 		Idle0:
-			TSBG A 1 BRIGHT { invoker.TSAHum(); }
+			TSBG A 1 BRIGHT;
 			goto Spawn;
 		Idle1:
-			TSBG B 1 BRIGHT { invoker.TSAHum(); }
+			TSBG B 1 BRIGHT;
 			goto Spawn;
 		Idle2:
-			TSBG C 1 BRIGHT { invoker.TSAHum(); }
+			TSBG C 1 BRIGHT;
 			goto Spawn;
 		Idle3:
-			TSBG D 1 BRIGHT { invoker.TSAHum(); }
+			TSBG D 1 BRIGHT;
 			goto Spawn;
 		Pickup:
 			TNT1 A 0
