@@ -1310,6 +1310,7 @@ class KC_EventHandler : EventHandler
 			bool IoSSpawned = false;
 			bool TNTIoSSpawned = false;
 			bool PlutIoSSpawned = false;
+			bool PlutMap11Vile = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
 			{
@@ -1346,6 +1347,18 @@ class KC_EventHandler : EventHandler
 						 spawnname ~== "SpiderMastermindNew" ||
 						 spawnname ~== "SpiderMastermindClassic" ||
 						 spawnname ~== "Demolisher")) e34m8spider = true;
+				if (level.GetChecksum() == '1ef7deaeca03de03bf363a3193757b5c') // Plutonia Map11
+				{
+					PlutMap11Vile = false;
+					if (Archvile(spawnee) ||
+							ArchvileNew(spawnee) ||
+							Diabloist(spawnee) ||
+							spawnname ~== "Archvile_" ||
+							spawnname ~== "ArchvileClassic")
+					{
+						PlutMap11Vile = true;
+					}
+				}
 				if (spawnee.bBOSSSPAWNED || 
 						spawnee.CountInv("IoSMinion"))
 				{
@@ -1394,6 +1407,7 @@ class KC_EventHandler : EventHandler
 				if (e1m8exitroommon) baselinelevel += random(10,15);
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
+				if (PlutMap11Vile) baselinelevel += random(12,15);
 				
 				if (kcdebug_monsterscaling) Console.Printf("ninelivescurse: %d, nineliveslifecount: %d", ninelivescurse, nineliveslifecount);
 				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
@@ -1439,9 +1453,10 @@ class KC_EventHandler : EventHandler
 					if (e2m8cyber || e34m8spider) basedivfactor *= 0.1667;
 					if (IoSSpawned)
 					{
-						if (TNTIoSSpawned) basedivfactor *= 1.334;
-						if (PlutIoSSpawned) basedivfactor *= 0.75;
+						if (TNTIoSSpawned) basedivfactor *= 2;
+						if (PlutIoSSpawned) basedivfactor *= 0.5;
 					}
+					if (PlutMap11Vile) basedivfactor *= 0.25;
 
 					if (ninelivescurse)
 					{
