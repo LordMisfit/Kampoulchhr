@@ -102,6 +102,8 @@ class PlayerStatItem : Inventory
 	
 	double CC_TAO_Kills;
 	
+	int LMPieBerserkGrabbed;
+	
 	int ArmorGrabTimer;
 	int fighttimermod;
 	bool heiwavhardmodifier;
@@ -523,8 +525,16 @@ class PlayerStatItem : Inventory
 				
 				timeusemulti = random(2,3); // random(1,1,1,1,1,1,1,2);
 				
-				if (owner.CountInv("PowerStrength") || owner.CountInv("KCPowerStrength")) berserked = true;
-				else berserked = false;
+				if (owner.CountInv("PowerStrength") || 
+						owner.CountInv("KCPowerStrength")) 
+				{
+					berserked = true;
+				}
+				else 
+				{
+					berserked = false;
+					if (LMPieBerserkGrabbed > 0) LMPieBerserkGrabbed = 0;
+				}
 				
 				LVLfactArmr = 0.02;
 				if (TrueGameSkill <= SKILL_VERY_EASY) LVLfactArmr = 0.04;

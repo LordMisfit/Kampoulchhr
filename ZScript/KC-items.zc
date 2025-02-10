@@ -6872,71 +6872,88 @@ class LemonMerinquePie : CustomInventoryExt
 				if (player.mo.CountInv("PowerStrength") || 
 						player.mo.CountInv("KCPowerStrength"))
 				{
-					int atk, def, vit, iq, sen, guts, spd, luck;
-					int bonusstatboost = random(2,3);
-					int bonusstatboost2 = random(4,7);
-					actor playera = players[0].mo;
-					let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
-					let globalvars = KCGlobalVariables.Get();
-					if (MiscItem && 
-							playera && 
-							globalvars)
+					if (!MiscItem.LMPieBerserkGrabbed)
 					{
-						bonusstatboost2 = atk = random(4,7);
-						MiscItem.PlayerATK += bonusstatboost2;
-						globalvars.PlayerATK += bonusstatboost2;
-						playera.A_GiveInventory("PlayerATK",bonusstatboost2);
-						bonusstatboost2 = def = random(4,7);
-						MiscItem.PlayerDEF += bonusstatboost2;
-						globalvars.PlayerDEF += bonusstatboost2;
-						playera.A_GiveInventory("PlayerDEF",bonusstatboost2);
-						
-						bonusstatboost = vit = random(2,3);
-						MiscItem.VitalityPieces += bonusstatboost;
-						globalvars.VitalityPieces += bonusstatboost;
-						bonusstatboost = iq = random(2,3);
-						MiscItem.IQPieces += bonusstatboost;
-						globalvars.IQPieces += bonusstatboost;
-						bonusstatboost = sen = random(2,3);
-						MiscItem.SensesPieces += bonusstatboost;
-						globalvars.SensesPieces += bonusstatboost;
+						int atk, def, vit, iq, sen, guts, spd, luck;
+						int bonusstatboost = random(2,3);
+						int bonusstatboost2 = random(4,7);
+						actor playera = players[0].mo;
+						let globalvars = KCGlobalVariables.Get();
+						if (MiscItem && 
+								playera && 
+								globalvars)
+						{
+							bonusstatboost2 = atk = random(4,7);
+							MiscItem.PlayerATK += bonusstatboost2;
+							globalvars.PlayerATK += bonusstatboost2;
+							playera.A_GiveInventory("PlayerATK",bonusstatboost2);
+							bonusstatboost2 = def = random(4,7);
+							MiscItem.PlayerDEF += bonusstatboost2;
+							globalvars.PlayerDEF += bonusstatboost2;
+							playera.A_GiveInventory("PlayerDEF",bonusstatboost2);
+							
+							bonusstatboost = vit = random(2,3);
+							MiscItem.VitalityPieces += bonusstatboost;
+							globalvars.VitalityPieces += bonusstatboost;
+							bonusstatboost = iq = random(2,3);
+							MiscItem.IQPieces += bonusstatboost;
+							globalvars.IQPieces += bonusstatboost;
+							bonusstatboost = sen = random(2,3);
+							MiscItem.SensesPieces += bonusstatboost;
+							globalvars.SensesPieces += bonusstatboost;
 
-						bonusstatboost2 = guts = random(4,7);
-						MiscItem.PlayerGUTS += bonusstatboost2;
-						globalvars.PlayerGUTS += bonusstatboost2;
-						playera.A_GiveInventory("PlayerGUTS",bonusstatboost2);
-						bonusstatboost2 = spd = random(4,7);
-						MiscItem.PlayerSPD += bonusstatboost2;
-						globalvars.PlayerSPD += bonusstatboost2;
-						playera.A_GiveInventory("PlayerSPD",bonusstatboost2);
-						bonusstatboost2 = luck = random(4,7);
-						MiscItem.PlayerLUCK += bonusstatboost2;
-						globalvars.PlayerLUCK += bonusstatboost2;
-						playera.A_GiveInventory("PlayerLUCK",bonusstatboost2);
-						
-						string piebgain = "";
-						piebgain.AppendFormat("\c[red]+%d Attack!\n", atk);
-						piebgain.AppendFormat("\c[olive]+%d Defense!\n", def);
-						piebgain.AppendFormat("\c[lightblue]+%d Speed!\n", spd);
-						piebgain.AppendFormat("\c[green]+%d Vitality! (\c[brick]+%d Max HP!\c[green])\n", vit, (vit*15));
-						piebgain.AppendFormat("\c[purple]+%d IQ! (+%d Max PP!)\n", iq, (iq*5));
-						piebgain.AppendFormat("\c[lightblue]+%d Senses! (+%d Max MP!)\n", sen, (sen*5));
-						piebgain.AppendFormat("\c[fire]+%d Guts!\n", guts);
-						piebgain.AppendFormat("\c[gold]+%d Luck!", luck);
-						playera.A_PrintBold(String.Format(piebgain), frandom(3.25,3.75));
-						//invoker.A_FadeOut(1.0,FTF_REMOVE);
-					}
-					if (!player.mo.CountInv("PowerLMPieBuff"))
-					{
-						player.mo.SetInventory("PowerLMPieBuff",1);
-						let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-						if (BerserkItem) BerserkItem.EffectTics = 600 * TICRATE;
+							bonusstatboost2 = guts = random(4,7);
+							MiscItem.PlayerGUTS += bonusstatboost2;
+							globalvars.PlayerGUTS += bonusstatboost2;
+							playera.A_GiveInventory("PlayerGUTS",bonusstatboost2);
+							bonusstatboost2 = spd = random(4,7);
+							MiscItem.PlayerSPD += bonusstatboost2;
+							globalvars.PlayerSPD += bonusstatboost2;
+							playera.A_GiveInventory("PlayerSPD",bonusstatboost2);
+							bonusstatboost2 = luck = random(4,7);
+							MiscItem.PlayerLUCK += bonusstatboost2;
+							globalvars.PlayerLUCK += bonusstatboost2;
+							playera.A_GiveInventory("PlayerLUCK",bonusstatboost2);
+							
+							string piebgain = "";
+							piebgain.AppendFormat("\c[red]+%d Attack!\n", atk);
+							piebgain.AppendFormat("\c[olive]+%d Defense!\n", def);
+							piebgain.AppendFormat("\c[lightblue]+%d Speed!\n", spd);
+							piebgain.AppendFormat("\c[green]+%d Vitality! (\c[brick]+%d Max HP!\c[green])\n", vit, (vit*15));
+							piebgain.AppendFormat("\c[purple]+%d IQ! (+%d Max PP!)\n", iq, (iq*5));
+							piebgain.AppendFormat("\c[lightblue]+%d Senses! (+%d Max MP!)\n", sen, (sen*5));
+							piebgain.AppendFormat("\c[fire]+%d Guts!\n", guts);
+							piebgain.AppendFormat("\c[gold]+%d Luck!", luck);
+							playera.A_PrintBold(String.Format(piebgain), frandom(3.25,3.75));
+							//invoker.A_FadeOut(1.0,FTF_REMOVE);
+						}
+						if (!player.mo.CountInv("PowerLMPieBuff"))
+						{
+							player.mo.SetInventory("PowerLMPieBuff",1);
+							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+							if (BerserkItem) BerserkItem.EffectTics = 600 * TICRATE;
+						}
+						else
+						{
+							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+							if (BerserkItem) BerserkItem.EffectTics += 600 * TICRATE;
+						}
 					}
 					else
 					{
-						let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-						if (BerserkItem) BerserkItem.EffectTics += 600 * TICRATE;
+						if (!player.mo.CountInv("PowerLMPieBuff"))
+						{
+							player.mo.SetInventory("PowerLMPieBuff",1);
+							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+							if (BerserkItem) BerserkItem.EffectTics = 390 * TICRATE;
+						}
+						else
+						{
+							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+							if (BerserkItem) BerserkItem.EffectTics += 390 * TICRATE;
+						}
 					}
+					MiscItem.LMPieBerserkGrabbed++;
 				}
 				else
 				{

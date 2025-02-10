@@ -1311,6 +1311,7 @@ class KC_EventHandler : EventHandler
 			bool TNTIoSSpawned = false;
 			bool PlutIoSSpawned = false;
 			bool PlutMap11Vile = false;
+			bool PlutMap32Foe = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
 			{
@@ -1337,7 +1338,11 @@ class KC_EventHandler : EventHandler
 						(spawnname ~== "Cyberdemon" ||
 						 spawnname ~== "CyberdemonNew" ||
 						 spawnname ~== "CyberdemonClassic" ||
-						 spawnname ~== "Annihilator")) e2m8cyber = true;
+						 spawnname ~== "Annihilator")) 
+				{
+					e2m8cyber = true;
+					if (kcdebug_monsterscaling) Console.Printf("e2m8cyber: %d", e2m8cyber);
+				}
 				if ((level.GetChecksum() == 'ef128313112110ed6c1549af96af26c9' ||
 						 level.GetChecksum() == '2DC939E508AB8EB68AF79D5B60568711') &&
 						 level.time <= 3 &&
@@ -1346,7 +1351,11 @@ class KC_EventHandler : EventHandler
 						(spawnname ~== "SpiderMastermind" ||
 						 spawnname ~== "SpiderMastermindNew" ||
 						 spawnname ~== "SpiderMastermindClassic" ||
-						 spawnname ~== "Demolisher")) e34m8spider = true;
+						 spawnname ~== "Demolisher")) 
+				{
+					e34m8spider = true;
+					if (kcdebug_monsterscaling) Console.Printf("e34m8spider: %d", e34m8spider);
+				}
 				if (level.GetChecksum() == '1ef7deaeca03de03bf363a3193757b5c') // Plutonia Map11
 				{
 					PlutMap11Vile = false;
@@ -1357,8 +1366,15 @@ class KC_EventHandler : EventHandler
 							spawnname ~== "ArchvileClassic")
 					{
 						PlutMap11Vile = true;
+						if (kcdebug_monsterscaling) Console.Printf("PlutMap11Vile: %d", PlutMap11Vile);
 					}
 				}
+				if (level.GetChecksum() == 'd5f64e02679a81b82006af34a6a8eac3') // Plutonia Map32
+				{
+					PlutMap32Foe = true;
+					if (kcdebug_monsterscaling) Console.Printf("PlutMap32Foe: %d", PlutMap32Foe);
+				}
+				
 				if (spawnee.bBOSSSPAWNED || 
 						spawnee.CountInv("IoSMinion"))
 				{
@@ -1407,7 +1423,12 @@ class KC_EventHandler : EventHandler
 				if (e1m8exitroommon) baselinelevel += random(10,15);
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
-				if (PlutMap11Vile) baselinelevel += random(12,15);
+				if (PlutMap11Vile) baselinelevel += random(15,18);
+				if (PlutMap32Foe) 
+				{
+					if (spawnee.bBOSS) baselinelevel += random(24,30);
+												else baselinelevel += random(12,15);
+				}
 				
 				if (kcdebug_monsterscaling) Console.Printf("ninelivescurse: %d, nineliveslifecount: %d", ninelivescurse, nineliveslifecount);
 				if (kcdebug_monsterscaling) Console.Printf("\c[gold][MonsterStatsSet], tic: %d, actor: %p [%s]\c-", gametic, spawnee, spawnname);
@@ -1457,6 +1478,10 @@ class KC_EventHandler : EventHandler
 						if (PlutIoSSpawned) basedivfactor *= 0.5;
 					}
 					if (PlutMap11Vile) basedivfactor *= 0.25;
+					if (PlutMap32Foe) 
+					{
+						if (spawnee.bBOSS) basedivfactor *= 0.5;
+					} 							else basedivfactor *= 0.75;
 
 					if (ninelivescurse)
 					{
@@ -1523,9 +1548,13 @@ class KC_EventHandler : EventHandler
 					if (e2m8cyber || e34m8spider) multbase *= 4.0;
 					if (IoSSpawned)
 					{
-						if (TNTIoSSpawned) multbase *= 0.9;
-						if (PlutIoSSpawned) multbase *= frandom(1.111,1.112);
+						if (TNTIoSSpawned) multbase *= 0.8;
+						if (PlutIoSSpawned) multbase *= 1.25;
 					}
+					if (PlutMap32Foe) 
+					{
+						if (spawnee.bBOSS) multbase *= 1.5;
+					} 							else multbase *= 1.125;
 
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
 
@@ -5913,14 +5942,23 @@ class KC_EventHandler : EventHandler
 							{
 								if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses \c[orange][Attempt %d / %d]", (i+1), armorbonusrolls);
 								string armortype = "ArmorBonus2";
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
@@ -5947,10 +5985,15 @@ class KC_EventHandler : EventHandler
 						for (int i = 0; i < healthbonusrolls; i++)
 						{
 							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Health Bonuses \c[orange][Attempt %d / %d]", (i+1), healthbonusrolls);
-							string teatype = "HealthBonus2";
-							if (random(1,(baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							if (random(1,(baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(teatype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							string healbontype = "HealthBonus2";
+							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,(baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,(baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
 					}
 				}
@@ -8884,6 +8927,7 @@ class KC_StaticEventHandler : StaticEventHandler
 	//If any world has loaded, then we're done handling new games case
 	override void WorldLoaded(WorldEvent e)
 	{
+		if (kcdebug_checksumprintout) Console.Printf("\cyMapCheckSum:\cx %s", level.GetChecksum());
 		actor playera = players[0].mo;
 		array<int> fs_textures;
 		array<string> fs_sndinfo;
