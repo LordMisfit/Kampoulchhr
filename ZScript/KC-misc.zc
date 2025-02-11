@@ -103,6 +103,7 @@ class PlayerStatItem : Inventory
 	double CC_TAO_Kills;
 	
 	int LMPieBerserkGrabbed;
+	int LMPieBerserkCooldown;
 	
 	int ArmorGrabTimer;
 	int fighttimermod;
@@ -505,6 +506,22 @@ class PlayerStatItem : Inventory
 		return check;
 	}
 	
+	void ExtraneousSpawns()
+	{
+		if (owner)
+		{
+			if (level.GetChecksum() == 'd5f64e02679a81b82006af34a6a8eac3') // plutonia.wad map32
+			{
+				actor mo;
+				if (level.maptime == 0) mo = Spawn("RandomModPack", (832,1600,0), NO_REPLACE);
+				if (level.maptime == 1) mo = Spawn("RandomModPack", (2336,-1440,0), NO_REPLACE);
+				if (level.maptime == 2) mo = Spawn("RandomModPack", (1760,-864,0), NO_REPLACE);
+				if (level.maptime == 3) mo = Spawn("RandomModPack", (-352,112,0), NO_REPLACE);
+				if (level.maptime == 4) mo = Spawn("RandomModPack", (-2016,672,0), NO_REPLACE);
+			}
+		}
+	}
+	
 	override void DoEffect()
 	{
 		let playeractor = KCPlayerPawn(owner);
@@ -523,6 +540,9 @@ class PlayerStatItem : Inventory
 				// Initalization Stuff
 				InitStuff();
 				
+				// Extraneous Spawns
+				ExtraneousSpawns();
+				
 				timeusemulti = random(2,3); // random(1,1,1,1,1,1,1,2);
 				
 				if (owner.CountInv("PowerStrength") || 
@@ -533,7 +553,6 @@ class PlayerStatItem : Inventory
 				else 
 				{
 					berserked = false;
-					if (LMPieBerserkGrabbed > 0) LMPieBerserkGrabbed = 0;
 				}
 				
 				LVLfactArmr = 0.02;
@@ -1501,15 +1520,29 @@ class PlayerStatItem : Inventory
 				drowndebufftimer = 0;
 				owner.A_SetInventory("DrownDebuffBase",0);
 			}
+				
+			if (LMPieBerserkGrabbed > 0)
+			{
+				if (LMPieBerserkCooldown > 0) 
+				{
+					LMPieBerserkCooldown--;
+				}
+				else
+				{
+					LMPieBerserkGrabbed = 0;
+					LMPieBerserkCooldown = 0;
+				}
+			}
 			
 			if (kcdebug_misccooldowntimers)
 			{
-				Console.Printf("\c[HeiwaDeluge]sielsgracecooldown: %d\c-, whistlecooldown: %d, OneLinerCooldown: %d, OneLinerTimerCool: %d, \c[HeiwaDeluge]TSArtifactSpawnCooldown: %d\c-, drowndebufftimer: %d", 
+				Console.Printf("\c[HeiwaDeluge]sielsgracecooldown: %d\c-, whistlecooldown: %d, OneLinerCooldown: %d, OneLinerTimerCool: %d, \c[HeiwaDeluge]TSArtifactSpawnCooldown: %d\c-, \c[gold]LMPieBerserkCooldown: %d\c-, drowndebufftimer: %d", 
 												sielsgracecooldown, 
 												whistlecooldown,
 												OneLinerCooldown,
 												OneLinerTimerCool, 
 												TSArtifactSpawnCooldown,
+												LMPieBerserkCooldown,
 												drowndebufftimer);
 			}
 		}

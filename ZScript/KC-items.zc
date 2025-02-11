@@ -6857,32 +6857,41 @@ class LemonMerinquePie : CustomInventoryExt
 				if (MiscItem && MiscItem.CanTalkUnderwater)
 				{
 					if (waterlevel >= 3 && MiscItem.CanTalkUnderwater >= 2) maskpitch *= 1.259921885;
-					//A_StopSound(CHAN_VOICE);
-					//A_StartSound("Dinah/eatgourmet",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+					//player.mo.A_StopSound(CHAN_VOICE);
+					//player.mo.A_StartSound("Dinah/eatgourmet",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
 				else
 				{
-					//A_StopSound(CHAN_VOICE);
-					//A_StartSound("Dinah/eat",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
+					//player.mo.A_StopSound(CHAN_VOICE);
+					//player.mo.A_StartSound("Dinah/eat",CHAN_VOICE,CHANF_DEFAULT,1.0,ATTN_NORM,maskpitch);
 				}
+				player.mo.A_StartSound("lemonpie/pickup1",231,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+				player.mo.A_StartSound("microwave/ding",232,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
 				A_SetBlend("f1 ff f1",0.1,random(10,15));
 				//player.mo.A_GiveInventory("PowerLMPieBuff");
 				//player.mo.A_GiveInventory("PowerMealBuff2");
 				Console.Printf("\c[orange]Ate an EXTREMELY delicious \c[yellow]Lemon Meringue Pie\c[orange]! \c[green]+%d (Over)HP\c[orange]!", temp3);
+				int piebuffsecs = 180;
 				if (player.mo.CountInv("PowerStrength") || 
 						player.mo.CountInv("KCPowerStrength"))
 				{
-					if (!MiscItem.LMPieBerserkGrabbed)
+					actor playera = players[0].mo;
+					let globalvars = KCGlobalVariables.Get();
+					bool givepermabuff = false;
+					
+					int piesate = MiscItem.LMPieBerserkGrabbed;
+					int atk, def, vit, iq, sen, guts, spd, luck;
+					
+					if (MiscItem && 
+							playera && 
+							globalvars)
 					{
-						int atk, def, vit, iq, sen, guts, spd, luck;
-						int bonusstatboost = random(2,3);
-						int bonusstatboost2 = random(4,7);
-						actor playera = players[0].mo;
-						let globalvars = KCGlobalVariables.Get();
-						if (MiscItem && 
-								playera && 
-								globalvars)
+						if (piesate <= 0)
 						{
+							piebuffsecs = 600;
+							int bonusstatboost = random(2,3);
+							int bonusstatboost2 = random(4,7);
+							
 							bonusstatboost2 = atk = random(4,7);
 							MiscItem.PlayerATK += bonusstatboost2;
 							globalvars.PlayerATK += bonusstatboost2;
@@ -6914,60 +6923,136 @@ class LemonMerinquePie : CustomInventoryExt
 							MiscItem.PlayerLUCK += bonusstatboost2;
 							globalvars.PlayerLUCK += bonusstatboost2;
 							playera.A_GiveInventory("PlayerLUCK",bonusstatboost2);
-							
-							string piebgain = "";
-							piebgain.AppendFormat("\c[red]+%d Attack!\n", atk);
-							piebgain.AppendFormat("\c[olive]+%d Defense!\n", def);
-							piebgain.AppendFormat("\c[lightblue]+%d Speed!\n", spd);
-							piebgain.AppendFormat("\c[green]+%d Vitality! (\c[brick]+%d Max HP!\c[green])\n", vit, (vit*15));
-							piebgain.AppendFormat("\c[purple]+%d IQ! (+%d Max PP!)\n", iq, (iq*5));
-							piebgain.AppendFormat("\c[lightblue]+%d Senses! (+%d Max MP!)\n", sen, (sen*5));
-							piebgain.AppendFormat("\c[fire]+%d Guts!\n", guts);
-							piebgain.AppendFormat("\c[gold]+%d Luck!", luck);
-							playera.A_PrintBold(String.Format(piebgain), frandom(3.25,3.75));
-							//invoker.A_FadeOut(1.0,FTF_REMOVE);
-						}
-						if (!player.mo.CountInv("PowerLMPieBuff"))
-						{
-							player.mo.SetInventory("PowerLMPieBuff",1);
-							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-							if (BerserkItem) BerserkItem.EffectTics = 600 * TICRATE;
+							givepermabuff = true;
+							MiscItem.LMPieBerserkCooldown += (1200 * TICRATE);
 						}
 						else
 						{
-							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-							if (BerserkItem) BerserkItem.EffectTics += 600 * TICRATE;
+							if (random(1,8) <= randompick(1,1,1,2))
+							{
+								if (piesate >= 5)
+								{
+									piebuffsecs = 285;
+									int bonusstatboost = randompick(0,0,0,1);
+									int bonusstatboost2 = random(1,randompick(1,1,1,2));
+									
+									bonusstatboost2 = atk = random(1,randompick(1,1,1,2));
+									MiscItem.PlayerATK += bonusstatboost2;
+									globalvars.PlayerATK += bonusstatboost2;
+									playera.A_GiveInventory("PlayerATK",bonusstatboost2);
+									bonusstatboost2 = def = random(1,randompick(1,1,1,2));
+									MiscItem.PlayerDEF += bonusstatboost2;
+									globalvars.PlayerDEF += bonusstatboost2;
+									playera.A_GiveInventory("PlayerDEF",bonusstatboost2);
+									
+									bonusstatboost = vit = randompick(0,0,0,1);
+									MiscItem.VitalityPieces += bonusstatboost;
+									globalvars.VitalityPieces += bonusstatboost;
+									bonusstatboost = iq = randompick(0,0,0,1);
+									MiscItem.IQPieces += bonusstatboost;
+									globalvars.IQPieces += bonusstatboost;
+									bonusstatboost = sen = randompick(0,0,0,1);
+									MiscItem.SensesPieces += bonusstatboost;
+									globalvars.SensesPieces += bonusstatboost;
+		
+									bonusstatboost2 = guts = random(1,randompick(1,1,1,2));
+									MiscItem.PlayerGUTS += bonusstatboost2;
+									globalvars.PlayerGUTS += bonusstatboost2;
+									playera.A_GiveInventory("PlayerGUTS",bonusstatboost2);
+									bonusstatboost2 = spd = random(1,randompick(1,1,1,2));
+									MiscItem.PlayerSPD += bonusstatboost2;
+									globalvars.PlayerSPD += bonusstatboost2;
+									playera.A_GiveInventory("PlayerSPD",bonusstatboost2);
+									bonusstatboost2 = luck = random(1,randompick(1,1,1,2));
+									MiscItem.PlayerLUCK += bonusstatboost2;
+									globalvars.PlayerLUCK += bonusstatboost2;
+									playera.A_GiveInventory("PlayerLUCK",bonusstatboost2);
+									MiscItem.LMPieBerserkCooldown += (480 * TICRATE);
+								}
+								else
+								{
+									piebuffsecs = 390;
+									int bonusstatboost = randompick(1,1,2);
+									int bonusstatboost2 = random(2,randompick(3,4));
+									
+									bonusstatboost2 = atk = random(2,randompick(3,4));
+									MiscItem.PlayerATK += bonusstatboost2;
+									globalvars.PlayerATK += bonusstatboost2;
+									playera.A_GiveInventory("PlayerATK",bonusstatboost2);
+									bonusstatboost2 = def = random(2,randompick(3,4));
+									MiscItem.PlayerDEF += bonusstatboost2;
+									globalvars.PlayerDEF += bonusstatboost2;
+									playera.A_GiveInventory("PlayerDEF",bonusstatboost2);
+									
+									bonusstatboost = vit = randompick(1,1,2);
+									MiscItem.VitalityPieces += bonusstatboost;
+									globalvars.VitalityPieces += bonusstatboost;
+									bonusstatboost = iq = randompick(1,1,2);
+									MiscItem.IQPieces += bonusstatboost;
+									globalvars.IQPieces += bonusstatboost;
+									bonusstatboost = sen = randompick(1,1,2);
+									MiscItem.SensesPieces += bonusstatboost;
+									globalvars.SensesPieces += bonusstatboost;
+		
+									bonusstatboost2 = guts = random(2,randompick(3,4));
+									MiscItem.PlayerGUTS += bonusstatboost2;
+									globalvars.PlayerGUTS += bonusstatboost2;
+									playera.A_GiveInventory("PlayerGUTS",bonusstatboost2);
+									bonusstatboost2 = spd = random(2,randompick(3,4));
+									MiscItem.PlayerSPD += bonusstatboost2;
+									globalvars.PlayerSPD += bonusstatboost2;
+									playera.A_GiveInventory("PlayerSPD",bonusstatboost2);
+									bonusstatboost2 = luck = random(2,randompick(3,4));
+									MiscItem.PlayerLUCK += bonusstatboost2;
+									globalvars.PlayerLUCK += bonusstatboost2;
+									playera.A_GiveInventory("PlayerLUCK",bonusstatboost2);
+									MiscItem.LMPieBerserkCooldown += (720 * TICRATE);
+								}
+								givepermabuff = true;
+							}
+							else
+							{
+								piebuffsecs = 180;
+								MiscItem.LMPieBerserkCooldown += (240 * TICRATE);
+							}
 						}
 					}
-					else
+					
+					if (givepermabuff)
 					{
-						if (!player.mo.CountInv("PowerLMPieBuff"))
-						{
-							player.mo.SetInventory("PowerLMPieBuff",1);
-							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-							if (BerserkItem) BerserkItem.EffectTics = 390 * TICRATE;
-						}
-						else
-						{
-							let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-							if (BerserkItem) BerserkItem.EffectTics += 390 * TICRATE;
-						}
+						string piebgain = "";
+						if (atk) piebgain.AppendFormat("\c[red]+%d Attack!\n", atk);
+						if (def) piebgain.AppendFormat("\c[olive]+%d Defense!\n", def);
+						if (spd) piebgain.AppendFormat("\c[lightblue]+%d Speed!\n", spd);
+						if (vit) piebgain.AppendFormat("\c[green]+%d Vitality! (\c[brick]+%d Max HP!\c[green])\n", vit, (vit*15));
+						if (iq) piebgain.AppendFormat("\c[purple]+%d IQ! (+%d Max PP!)\n", iq, (iq*5));
+						if (sen) piebgain.AppendFormat("\c[lightblue]+%d Senses! (+%d Max MP!)\n", sen, (sen*5));
+						if (guts) piebgain.AppendFormat("\c[fire]+%d Guts!\n", guts);
+						if (luck) piebgain.AppendFormat("\c[gold]+%d Luck!", luck);
+						playera.A_PrintBold(String.Format(piebgain), frandom(3.25,3.75));
+						double pitcherr = frandom(0.05,0.125);
+						playera.A_StartSound("player/statsup",233,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+						playera.A_StartSound("player/statsup",234,CHANF_DEFAULT,1.0,ATTN_NORM,(1.0+pitcherr));
+						playera.A_StartSound("player/statsup",235,CHANF_DEFAULT,1.0,ATTN_NORM,(1.0-pitcherr));
+						//invoker.A_FadeOut(1.0,FTF_REMOVE);
+						MiscItem.LMPieBerserkGrabbed++;
 					}
-					MiscItem.LMPieBerserkGrabbed++;
 				}
 				else
 				{
-					if (!player.mo.CountInv("PowerLMPieBuff"))
-					{
-						player.mo.SetInventory("PowerLMPieBuff",1);
-						let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-						if (BerserkItem) BerserkItem.EffectTics = 180 * TICRATE;
-					}
-					else
-					{
-						let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
-						if (BerserkItem) BerserkItem.EffectTics += 180 * TICRATE;
-					}
+					piebuffsecs = 180;
+				}
+
+				if (!player.mo.CountInv("PowerLMPieBuff"))
+				{
+					player.mo.SetInventory("PowerLMPieBuff",1);
+					let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+					if (BerserkItem) BerserkItem.EffectTics = piebuffsecs * TICRATE;
+				}
+				else
+				{
+					let BerserkItem = PowerLMPieBuff(player.mo.FindInventory("PowerLMPieBuff"));
+					if (BerserkItem) BerserkItem.EffectTics += piebuffsecs * TICRATE;
 				}
 			}
 			stop;

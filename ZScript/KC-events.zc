@@ -5792,7 +5792,6 @@ class KC_EventHandler : EventHandler
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [weapon/ammo]: {%d vs %d} (%d) \c[orange][%d / %d]", rollrand, maxchance, basechance, (i+1), droptimes);
 				}
 
-
 				// Heal Items
 				droptimes = 1;
 				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
@@ -6395,7 +6394,7 @@ class KC_EventHandler : EventHandler
 												 (MiscItem.totalcompleted * allitemsfactorkmsp));
 						luckbase *= (1.00 + (MiscItem.sielsgraceactivations * frandom(2.25,3.75)));
 						luckbase *= kc_luckfactor;
-						luckbase *= sielgraceluckboost;
+						luckbase *= 1.0 + (sielgraceluckboost * 0.25);
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
@@ -6456,7 +6455,7 @@ class KC_EventHandler : EventHandler
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
-						luckbase *= sielgraceluckboost;
+						luckbase *= 1.0 + (sielgraceluckboost * 0.5);
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
@@ -6520,7 +6519,7 @@ class KC_EventHandler : EventHandler
 						}
 						luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 						luckbase *= kc_luckfactor;
-						luckbase *= sielgraceluckboost;
+						luckbase *= 1.0 + (sielgraceluckboost * 0.125);
 						if (PLuck) basechance -= (TrueLuck * frandompick((luckbase*0),(luckbase*0.25),(luckbase*0.25),(luckbase*0.25),(luckbase*0.5),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase*2)));
 						maxchance = basechance;
 						nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
@@ -7239,6 +7238,7 @@ class KC_EventHandler : EventHandler
 									if (playera.CountInv("DecentHealth")) basechance *= 1.25;
 									if (playera.CountInv("LowHealth")) basechance *= 1.5;
 									if (playera.CountInv("CriticalHealth")) basechance *= 1.875;
+									if (playera.CountInv("PowerLMPieBuff")) basechance *= 2.125;
 									nm = "CCards_Actor_AssassinBuff";
 									if (waslegendary || victim.CountInv(nm)) basechance *= 5;
 									if (IceWeaselAvatar(victim)) basechance *= 5;
