@@ -1311,6 +1311,8 @@ class KC_EventHandler : EventHandler
 			bool TNTIoSSpawned = false;
 			bool PlutIoSSpawned = false;
 			bool PlutMap11Vile = false;
+			bool PlutMap2628Foe = false;
+			bool PlutMap2930Foe = false;
 			bool PlutMap32Foe = false;
 			bool exception = CheckExceptions(spawnee);
 			if (spawnee.bISMONSTER && !practicetarget && !exception)
@@ -1369,6 +1371,21 @@ class KC_EventHandler : EventHandler
 						if (kcdebug_monsterscaling) Console.Printf("PlutMap11Vile: %d", PlutMap11Vile);
 					}
 				}
+				if (Wads.CheckNumForName("KC-PLTNA", Wads.ns_global, -1, true) != -1 && 
+						(level.mapname == "MAP26" ||
+						 level.mapname == "MAP27" ||
+						 level.mapname == "MAP28"))
+				{
+					PlutMap2628Foe = true;
+					if (kcdebug_monsterscaling) Console.Printf("PlutMap2628Foe: %d", PlutMap2628Foe);
+				}
+				if (Wads.CheckNumForName("KC-PLTNA", Wads.ns_global, -1, true) != -1 && 
+						(level.mapname == "MAP29" ||
+						 level.mapname == "MAP39"))
+				{
+					PlutMap2930Foe = true;
+					if (kcdebug_monsterscaling) Console.Printf("PlutMap2930Foe: %d", PlutMap2930Foe);
+				}
 				if (level.GetChecksum() == 'd5f64e02679a81b82006af34a6a8eac3') // Plutonia Map32
 				{
 					PlutMap32Foe = true;
@@ -1424,6 +1441,8 @@ class KC_EventHandler : EventHandler
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
 				if (PlutMap11Vile) baselinelevel += random(15,18);
+				if (PlutMap2628Foe) baselinelevel += random(6,12);
+				if (PlutMap2930Foe) baselinelevel += random(15,30);
 				if (PlutMap32Foe) 
 				{
 					if (spawnee.bBOSS) baselinelevel += random(24,30);
@@ -1478,6 +1497,8 @@ class KC_EventHandler : EventHandler
 						if (PlutIoSSpawned) basedivfactor *= 0.5;
 					}
 					if (PlutMap11Vile) basedivfactor *= 0.25;
+					if (PlutMap2628Foe) basedivfactor *= 0.625;
+					if (PlutMap2930Foe) basedivfactor *= 0.4125;
 					if (PlutMap32Foe) 
 					{
 						if (spawnee.bBOSS) basedivfactor *= 0.5;
@@ -1551,10 +1572,21 @@ class KC_EventHandler : EventHandler
 						if (TNTIoSSpawned) multbase *= 0.8;
 						if (PlutIoSSpawned) multbase *= 1.25;
 					}
+					if (PlutMap2628Foe)
+					{
+						if (spawnee.bBOSS) multbase *= 1.25;
+													else multbase *= 1.0625;
+					}
+					if (PlutMap2930Foe)
+					{
+						if (spawnee.bBOSS) multbase *= 1.375;
+													else multbase *= 1.09875;
+					}
 					if (PlutMap32Foe) 
 					{
 						if (spawnee.bBOSS) multbase *= 1.5;
-					} 							else multbase *= 1.125;
+													else multbase *= 1.125;
+					}
 
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
 
@@ -4047,6 +4079,171 @@ class KC_EventHandler : EventHandler
 		if (A_CheckUOHYM()) basechance *= 4;
 		return basechance;
 	}
+	
+	int, int A_GetDropTimesLuckCheck(int PLuck, int droptimes, int maxdroptimes, int TrueLuck, double luckbase)
+	{
+		double mult1 = 0.0;
+		double mult2 = 0.125;
+		double mult3 = 0.25;
+		double mult4 = 0.375;
+		double mult5 = 0.5;
+		double mult6 = 0.625;
+		double mult7 = 0.75;
+		double mult8 = 0.875;
+		double mult9 = 1.0;
+		if (PLuck) 
+		{
+			droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*mult1),(luckbase*mult2),(luckbase*mult3),(luckbase*mult3),(luckbase*mult4),(luckbase*mult4),(luckbase*mult4),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult6),(luckbase*mult6),(luckbase*mult6),(luckbase*mult7),(luckbase*mult7),(luckbase*mult8),(luckbase*mult9))));
+			maxdroptimes = floor(maxdroptimes + ((TrueLuck*0.25) * frandompick((luckbase*mult1),(luckbase*mult2),(luckbase*mult3),(luckbase*mult3),(luckbase*mult4),(luckbase*mult4),(luckbase*mult4),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult5),(luckbase*mult6),(luckbase*mult6),(luckbase*mult6),(luckbase*mult7),(luckbase*mult7),(luckbase*mult8),(luckbase*mult9))));
+		}
+		return droptimes, maxdroptimes;
+	}
+	
+	int, int A_DropTimesCap(int droptimes, int maxdroptimes, actor victim)
+	{
+		if (victim)
+		{
+			Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [start]", droptimes, maxdroptimes);
+			double basemaxhpcheck = 4000;
+			double basemultadd = 15.0;
+			double basemult = 1.0;
+			
+			double getfactor = ((victim.SpawnHealth() * 1.0) / basemaxhpcheck);
+			Console.Printf("\c[sapphire]getfactor: %.8f [base]", getfactor);
+			getfactor *= basemultadd;
+			getfactor += basemult;
+			Console.Printf("\c[sapphire]getfactor: %.8f [final]", getfactor);
+			maxdroptimes *= getfactor;
+			
+			if (droptimes >= maxdroptimes) droptimes = maxdroptimes;
+			Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [end]", droptimes, maxdroptimes);
+		}
+		return droptimes, maxdroptimes;
+	}
+	
+	int, int A_DropCheckInflSour(int droptimes, int maxdroptimes, int lvldivider, actor inflicter, actor source)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		
+		int TruePlayerLevel = 0;
+		if (kc_expgains && MiscItem) TruePlayerLevel = MiscItem.PlayerLevel;
+		if (inflicter && ((source && KCPlayerPawn(source))))
+		{
+			if (TruePlayerLevel >= lvldivider) 
+			{
+				droptimes += (TruePlayerLevel / lvldivider);
+				maxdroptimes += (TruePlayerLevel / lvldivider);
+			}
+		}
+		else
+		if (inflicter && KCPlayerPawn(inflicter))
+		{
+			if (TruePlayerLevel >= lvldivider) 
+			{
+				droptimes += (TruePlayerLevel / lvldivider);
+				maxdroptimes += (TruePlayerLevel / lvldivider);
+			}
+		}
+		return droptimes, maxdroptimes;
+	}
+	
+	int, int A_GetDropTimes(int type, int monsterrating)
+	{
+		int droptimes = 1;
+		int maxdroptimes = 2;
+		if (type <= 0)
+		{
+			droptimes = 1;
+			maxdroptimes = 2;
+			if (monsterrating == 1) 
+			{
+				droptimes = randompick(1,1,1,1,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 2) 
+			{
+				droptimes = randompick(1,1,1,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 3) 
+			{
+				droptimes = randompick(1,1,2,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 4) 
+			{
+				droptimes = randompick(1,2,2,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 5) 
+			{
+				droptimes = randompick(2,2,2,2,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating == 6) 
+			{
+				droptimes = randompick(2,2,2,3,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating == 7) 
+			{
+				droptimes = randompick(2,2,3,3,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating >= 8) 
+			{
+				droptimes = randompick(2,3,3,3,4);
+				maxdroptimes = 8;
+			}
+		}
+		if (type >= 1)
+		{
+			droptimes = 1;
+			maxdroptimes = 2;
+			if (monsterrating == 1) 
+			{
+				droptimes = randompick(1,1,1,1,1,1,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 2) 
+			{
+				droptimes = randompick(1,1,1,1,1,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 3) 
+			{
+				droptimes = randompick(1,1,1,1,2,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 4) 
+			{
+				droptimes = randompick(1,1,1,2,2,2,2);
+				maxdroptimes = 4;
+			}
+			if (monsterrating == 5) 
+			{
+				droptimes = randompick(1,1,2,2,2,2,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating == 6) 
+			{
+				droptimes = randompick(1,2,2,2,2,3,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating == 7) 
+			{
+				droptimes = randompick(2,2,2,2,3,3,3);
+				maxdroptimes = 6;
+			}
+			if (monsterrating >= 8) 
+			{
+				droptimes = randompick(2,2,2,3,3,3,4);
+				maxdroptimes = 8;
+			}
+		}
+		return droptimes, maxdroptimes;
+	}
 
 	int A_UOHYMDropCheck(int droptimes)
 	{
@@ -4152,7 +4349,7 @@ class KC_EventHandler : EventHandler
 			if (skill == 2) skillmult = 1;
 			if (skill == 3) skillmult = 1.25;
 			if (skill >= 4) skillmult = 1.5;
-			int droptimes;
+			int droptimes, maxdroptimes;
 			int lvldivider;
 			int basechance;
 			int maxchance;
@@ -4371,33 +4568,22 @@ class KC_EventHandler : EventHandler
 			if (candropitems)
 			{
 				if (kcdebug_worlddied) Console.Printf("candropitems [post]: %d", candropitems);
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(0,monsterrating);
 
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 35;
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= bossdropmulti;
+					maxdroptimes *= bossdropmulti;
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= bossdropmulti;
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					// Specific Drops from Specific Monsters
@@ -5379,32 +5565,21 @@ class KC_EventHandler : EventHandler
 				}
 
 				// Mana
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,1,1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(1,1,2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(1,2,2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,2,2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(1,monsterrating);
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= bossdropmulti;
+					maxdroptimes *= bossdropmulti;
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= bossdropmulti;
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					// Mana [Type 14]
@@ -5453,32 +5628,21 @@ class KC_EventHandler : EventHandler
 				
 				// Ammo/Weapons
 				string droptype;
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(0,monsterrating);
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 50;
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= bossdropmulti;
+					maxdroptimes *= bossdropmulti;
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= bossdropmulti;
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					// Weapons/Backpacks [Type 6]
@@ -5793,33 +5957,21 @@ class KC_EventHandler : EventHandler
 				}
 
 				// Heal Items
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(0,monsterrating);
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 35;
-
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= (bossdropmulti * 2);
+					maxdroptimes *= (bossdropmulti * 2);
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= (bossdropmulti * 2);
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					double rand = 2.0;
@@ -5853,32 +6005,21 @@ class KC_EventHandler : EventHandler
 					if (kcdebug_worlddiedmonsterdrops) Console.Printf("maxchance [heal]: %d (%d) \c[orange][%d / %d]", maxchance, basechance, (i+1), droptimes);
 				}
 
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(0,monsterrating);
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 70;
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= bossdropmulti;
+					maxdroptimes *= bossdropmulti;
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= bossdropmulti;
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					double rand = 2.0;
@@ -5898,8 +6039,8 @@ class KC_EventHandler : EventHandler
 					nm = "CCards_Actor_Maestro"; if (vict == nm) maxchance /= random(16,32);
 					nm = "CCards_Actor_Horror"; if (vict == nm) maxchance /= random(8,16);
 					nm = "CCards_Actor_MiniMonsterPowerup"; if (victim.CountInv(nm)) maxchance *= random(2,4);
-					if (A_CheckForHeiwaPlayer()) maxchance *= 2.5;
-					if (i > 0) maxchance *= 5;
+					if (A_CheckForHeiwaPlayer()) maxchance *= 1.25;
+					if (i > 0) maxchance *= 2.5;
 					if (maxchance < (kc_inventorydroprate8 * minmultlevel)) maxchance = (kc_inventorydroprate8 * minmultlevel);
 
 					int rollrand = random(1,maxchance);
@@ -5913,17 +6054,20 @@ class KC_EventHandler : EventHandler
 						//Full Armor Drops
 						user_type = random(1,100);
 						if (user_type >= 1 && user_type <= 67) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-						else if (user_type >= 68 && user_type <= 89) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-						else if (user_type >= 90 && user_type <= 98) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
-						else if (user_type >= 99) { victim.A_SpawnItemEx("KCHeavyArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 68 && user_type <= 88) { victim.A_SpawnItemEx("KCGreenArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 89 && user_type <= 95) { victim.A_SpawnItemEx("KCBlueArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
+						else if (user_type >= 96) { victim.A_SpawnItemEx("KCHeavyArmor",frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION); }
 					}
 					else
 					{
 						if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Armor Bonuses [Attempt]");
 						armorbonusrolls = 1;
 
-						// If Spawned via Fractal Chooks, Pain Elementals
-						if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned))
+						// If Spawned via Pain Elementals
+						if (KCCVict && 
+								(KCCVict.isPEspawned || 
+								 KCCVict.isHEspawned || 
+								 KCCVict.isHOspawned))
 						{
 							armorbonusrolls /= 2;
 							if (armorbonusrolls < 1)
@@ -5998,32 +6142,21 @@ class KC_EventHandler : EventHandler
 				}
 
 				// Random Inventory Item Drops
-				droptimes = 1;
-				if (monsterrating == 1) droptimes = randompick(1,1,1,1,2);
-				if (monsterrating == 2) droptimes = randompick(1,1,1,2,2);
-				if (monsterrating == 3) droptimes = randompick(1,1,2,2,2);
-				if (monsterrating == 4) droptimes = randompick(1,2,2,2,2);
-				if (monsterrating == 5) droptimes = randompick(2,2,2,2,3);
-				if (monsterrating == 6) droptimes = randompick(2,2,2,3,3);
-				if (monsterrating == 7) droptimes = randompick(2,2,3,3,3);
-				if (monsterrating >= 8) droptimes = randompick(2,3,3,3,4);
+				[droptimes, maxdroptimes] = A_GetDropTimes(0,monsterrating);
 				luckbase = 0.0625 + (monsterrating * 0.015625);
 				luckbase *= (1.0 + (MiscItem.totalcompleted * allcompletefactor) + (MiscItem.totalcompleted * allkillsfactor) + (MiscItem.totalcompleted * allsecretsfactor) + (MiscItem.totalcompleted * allitemsfactor));
 				luckbase *= kc_luckfactor;
 				luckbase *= sielgraceluckboost;
 				lvldivider = 70;
-				if (PLuck) droptimes = floor(droptimes + (TrueLuck * frandompick((luckbase*0),(luckbase*0.5),(luckbase*0.5),(luckbase),(luckbase),(luckbase),(luckbase*2),(luckbase*2))));
+				[droptimes, maxdroptimes] = A_GetDropTimesLuckCheck(PLuck, droptimes, maxdroptimes, TrueLuck, luckbase);
 				if (A_CheckUOHYM()) droptimes = A_UOHYMDropCheck(droptimes);
-				if (inflicter && ((source && KCPlayerPawn(source))))
+				[droptimes, maxdroptimes] = A_DropCheckInflSour(droptimes, maxdroptimes, lvldivider, inflicter, source);
+				if (victim.bBOSS) 
 				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
+					droptimes *= bossdropmulti;
+					maxdroptimes *= bossdropmulti;
 				}
-				else
-				if (inflicter && KCPlayerPawn(inflicter))
-				{
-					if (MiscItem && TruePlayerLevel >= lvldivider) droptimes += (TruePlayerLevel / lvldivider);
-				}
-				if (victim.bBOSS) droptimes *= bossdropmulti;
+				[droptimes, maxdroptimes] = A_DropTimesCap(droptimes,maxdroptimes,victim);
 				for (int i; i < droptimes; i++)
 				{
 					// Primary [Type 1]
