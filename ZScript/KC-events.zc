@@ -1441,8 +1441,16 @@ class KC_EventHandler : EventHandler
 				if (e1m8baron) baselinelevel += random(20,30);
 				if (e2m8cyber || e34m8spider) baselinelevel += random(40,50);
 				if (PlutMap11Vile) baselinelevel += random(15,18);
-				if (PlutMap2628Foe) baselinelevel += random(6,12);
-				if (PlutMap2930Foe) baselinelevel += random(15,30);
+				if (PlutMap2628Foe) 
+				{
+					if (spawnee.bBOSS) baselinelevel += random(9,18);
+												else baselinelevel += random(5,10); // 6,12
+				}
+				if (PlutMap2930Foe) 
+				{
+					if (spawnee.bBOSS) baselinelevel += random(18,36);
+												else baselinelevel += random(12,24); // 15,30
+				}
 				if (PlutMap32Foe) 
 				{
 					if (spawnee.bBOSS) baselinelevel += random(24,30);
@@ -1496,9 +1504,17 @@ class KC_EventHandler : EventHandler
 						if (TNTIoSSpawned) basedivfactor *= 2;
 						if (PlutIoSSpawned) basedivfactor *= 0.5;
 					}
-					if (PlutMap11Vile) basedivfactor *= 0.25;
-					if (PlutMap2628Foe) basedivfactor *= 0.625;
-					if (PlutMap2930Foe) basedivfactor *= 0.4125;
+					if (PlutMap11Vile) basedivfactor *= 0.375; // 0.25
+					if (PlutMap2628Foe) 
+					{
+						if (spawnee.bBOSS) basedivfactor *= 0.5; // 0.375
+													else basedivfactor *= 0.75; // 0.625
+					}
+					if (PlutMap2930Foe) 
+					{
+						if (spawnee.bBOSS) basedivfactor *= 0.375; // 0.25;
+													else basedivfactor *= 0.6375; // 0.4125;
+					}
 					if (PlutMap32Foe) 
 					{
 						if (spawnee.bBOSS) basedivfactor *= 0.5;
@@ -1574,18 +1590,18 @@ class KC_EventHandler : EventHandler
 					}
 					if (PlutMap2628Foe)
 					{
-						if (spawnee.bBOSS) multbase *= 1.25;
-													else multbase *= 1.0625;
+						if (spawnee.bBOSS) multbase *= 1.125; // 1.25;
+													else multbase *= 1.03125; // 1.0625;
 					}
 					if (PlutMap2930Foe)
 					{
-						if (spawnee.bBOSS) multbase *= 1.375;
-													else multbase *= 1.09875;
+						if (spawnee.bBOSS) multbase *= 1.1875; // 1.375;
+													else multbase *= 1.049375; // 1.09875;
 					}
 					if (PlutMap32Foe) 
 					{
-						if (spawnee.bBOSS) multbase *= 1.5;
-													else multbase *= 1.125;
+						if (spawnee.bBOSS) multbase *= 1.375; // 1.5;
+													else multbase *= 1.0875; // 1.125;
 					}
 
 					if (kcdebug_monsterscaling) Console.Printf("multbase: %.8f, monsterrating: %d", multbase, monsterrating);
