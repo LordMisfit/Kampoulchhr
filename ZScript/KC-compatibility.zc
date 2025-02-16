@@ -261,6 +261,36 @@ Class KCLevelCompatibility : LevelPostProcessor
 					AddThing(15,(-32,-96,0),0,SKILLS_ALL,MODES_ALL); // DeadMarine
 					AddThing(27001,(-32,-96,0),0,SKILLS_ALL,MODES_ALL); // KCE1M1FirstMarineDrop
 				}
+				case '279bb50468fe9f5b36c6d821e4902369': // plutonia.wad map30
+				{
+					uint n = GetThingCount();
+					
+					for (uint i = 0; i < n; i++)
+					{
+						if (IsThingMonster(GetThingEdNum(i)))
+						{
+							if (i == 72 ||
+									i == 73 ||
+									i == 74 ||
+									i == 75 ||
+									i == 76 ||
+									i == 149 ||
+									i == 150 ||
+									i == 152 ||
+									i == 153 ||
+									i == 154 ||
+									i == 155 ||
+									i == 156 ||
+									i == 157)
+							{
+								//i.A_GiveInventory("E1M8ExitRoomMonster",1);
+								SetThingID(i, 30);
+								//SetThingFlags(i, GetThingFlags(i) | MTF_NOCOUNT);
+							}
+						}
+					}
+					break;
+				}
 				case 'fdbc01a2533805055e56e8d9b14bf7db': // plutonia.wad map31
 				{
 					AddThing(16,(0,768,0),0,SKILLS_ALL,MODES_ALL); // Cyberdemon-type

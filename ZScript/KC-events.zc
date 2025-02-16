@@ -2762,6 +2762,15 @@ class KC_EventHandler : EventHandler
 					spawnee.A_GiveInventory("E1M8ExitRoomMonster",1);
 				}
 			}
+			
+			if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369' &&
+					level.mapname == "MAP30")
+			{
+				if (spawnee.bISMONSTER &&
+						!spawnee.bCOUNTKILL)
+				{
+				}
+			}
 
 			bool exception = CheckExceptions(spawnee);
 			if (!KCBaseZSC(spawnee) &&
