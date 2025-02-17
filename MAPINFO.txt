@@ -200,65 +200,140 @@ defaultmap
 
 Intermission Inter_KCPlutEnd
 {
-	TextScreen
+	Image
 	{
 		Music = "1stdepart"
-		Background = "$BGFLAT30", 1
+		Background = "GATEKEP0"
+		Time = -1
+	}
+	Fader
+	{
+		Background = "GATEKEP0"
+		Time = -70
+		FadeType = FadeOut
+	}
+	Image
+	{
+		Background = "BLAKINTM"
+		Time = -18
+	}
+	Fader
+	{
+		Background = "GATEKEP1"
+		Time = -70
+		FadeType = FadeIn
+	}
+	TextScreen
+	{
+		Background = "GATEKEP1"
 		TextSpeed = 2
 		TextLump = "win1msg"
 	}
 	Fader
 	{
-		Background = "RROCK16", 1
-		Time = -105
+		Background = "GATEKEP1"
+		Time = -70
 		FadeType = FadeOut
+	}
+	Image
+	{
+		Background = "BLAKINTM"
+		Time = -18
 	}
 	Fader
 	{
-		Background = "RROCK20", 1
-		Time = -105
+		Background = "GATEKEP2"
+		Time = -70
 		FadeType = FadeIn
 	}
 	TextScreen
 	{
-		Background = "RROCK20", 1
+		Background = "GATEKEP2"
 		TextSpeed = 2
 		TextLump = "win2msg"
 	}
 	Fader
 	{
-		Background = "RROCK20", 1
-		Time = -105
+		Background = "GATEKEP2"
+		Time = -70
 		FadeType = FadeOut
+	}
+	Image
+	{
+		Background = "BLAKINTM"
+		Time = -18
 	}
 	Fader
 	{
-		Background = "RROCK17", 1
-		Time = -105
+		Background = "GATEKEP3"
+		Time = -70
 		FadeType = FadeIn
 	}
 	TextScreen
 	{
-		Background = "RROCK17", 1
+		Background = "GATEKEP3"
 		TextSpeed = 2
 		TextLump = "win3msg"
 	}
 	Fader
 	{
-		Background = "RROCK17", 1
-		Time = -105
+		Background = "GATEKEP3"
+		Time = -70
 		FadeType = FadeOut
+	}
+	Image
+	{
+		Background = "BLAKINTM"
+		Time = -18
 	}
 	Fader
 	{
-		Background = "BOSSBACK"
-		Time = -105
+		Background = "GATEKEP4"
+		Time = -70
 		FadeType = FadeIn
 	}
 	TextScreen
 	{
-		Background = "BOSSBACK", 1
+		Background = "GATEKEP4"
 		TextSpeed = 2
 		TextLump = "win4msg"
+	}
+	Fader
+	{
+		Music = "BLANKMUS"
+		Background = "GATEKEP4"
+		Time = -140
+		FadeType = Fadeout
+	}
+	Image
+	{
+		Music = "BLANKMUS"
+		Background = "BLAKINTM"
+		Time = -140
+	}
+	Fader
+	{
+		Music = "howibegn"
+		Background = "PLUTFIN1"
+		Time = -210
+		FadeType = FadeIn
+	}
+	TextScreen
+	{
+		Background = "PLUTFIN2"
+		TextSpeed = 2
+		TextLump = "stingmsg"
+	}
+	Fader
+	{
+		Music = "BLANKMUS"
+		Background = "PLUTFIN2"
+		Time = -420
+		FadeType = FadeOut
+	}
+	Image
+	{
+		Music = "BLANKMUS"
+		Background = "BLAKINTM"
 	}
 }

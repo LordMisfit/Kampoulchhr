@@ -20015,6 +20015,39 @@ class BossBrainNew : BossBrain replaces BossBrain
 		if (A_CheckKCTimeFreeze()) A_SetTics(1);
 	}
 	
+	int A_CheckGatekeeperPlutonia(int type)
+	{
+		int val = 0;
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') // plutonia.wad map30
+		{
+			ThinkerIterator GKeepMon = ThinkerIterator.Create("Actor");
+			Actor GKMonster;
+			while (GKMonster = Actor(GKeepMon.Next()))
+			{
+				if (type == 30)
+				{
+					if (GKMonster.bISMONSTER &&
+							GKMonster.TID == 30 && 
+							GKMonster.health > 0)
+					{
+						val++;
+					}
+				}
+				else
+				{
+					if (GKMonster.bISMONSTER && 
+							(GKMonster.bBOSSSPAWNED || 
+							 GKMonster.CountInv("IoSMinion")) && 
+							GKMonster.health > 0)
+					{
+						val++;
+					}
+				}
+			}
+		}
+		return val;
+	}
+	
 	int A_CheckIWs()
 	{
 		int num;
@@ -20047,7 +20080,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			A_Quake(3, 105, 0, 16384, "nosound/silent");
 			A_Quake(6, 105, 0, 8192, "nosound/silent");
 		}
-		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') 
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') // plutonia.wad map30
 		{ 
 			A_Quake(3, 105, 0, 16384, "nosound/silent");
 			A_Quake(6, 105, 0, 8192, "nosound/silent");
@@ -20066,7 +20099,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			A_Quake(5, 210, 0, 32768, "nosound/silent");
 			A_Quake(10, 210, 0, 16384, "nosound/silent");
 		}
-		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') 
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') // plutonia.wad map30
 		{ 
 			A_Quake(5, 210, 0, 32768, "nosound/silent");
 			A_Quake(10, 210, 0, 16384, "nosound/silent");
@@ -20083,6 +20116,7 @@ class BossBrainNew : BossBrain replaces BossBrain
 			if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') montag = "Gatekeeper"; // Plutonia MAP30
 			SetTag(montag);
 		}
+		
 		if (A_CheckIWs()) 
 		{
 			bBUDDHA = true;
@@ -20349,6 +20383,40 @@ class BossEyeNew : BossEye replaces BossEye
 		+BOSS;
 	}
 	
+	
+	int A_CheckGatekeeperPlutonia(int type)
+	{
+		int val = 0;
+		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') // plutonia.wad map30
+		{
+			ThinkerIterator GKeepMon = ThinkerIterator.Create("Actor");
+			Actor GKMonster;
+			while (GKMonster = Actor(GKeepMon.Next()))
+			{
+				if (type == 30)
+				{
+					if (GKMonster.bISMONSTER &&
+							GKMonster.TID == 30 && 
+							GKMonster.health > 0)
+					{
+						val++;
+					}
+				}
+				else
+				{
+					if (GKMonster.bISMONSTER && 
+							(GKMonster.bBOSSSPAWNED || 
+							 GKMonster.CountInv("IoSMinion")) && 
+							GKMonster.health > 0)
+					{
+						val++;
+					}
+				}
+			}
+		}
+		return val;
+	}
+	
 	bool A_CheckIceWeaselTNT()
 	{
 		bool activeiceweasel = false;
@@ -20400,6 +20468,9 @@ class BossEyeNew : BossEye replaces BossEye
 				if (master.CountInv("BossBrainIsPlutonia"))
 				{
 					bosseyetimefactor *= 1.125;
+					bosseyetimefactor *= (1.0 + (A_CheckGatekeeperPlutonia(0) * 0.125));
+					bosseyetimefactor *= (1.0 + (A_CheckGatekeeperPlutonia(30) * double(4.0/13.0)));
+					Console.Printf("bosseyetimefactor: %.8f", bosseyetimefactor);
 				}
 				if (A_CheckIceWeaselTNT()) bosseyetimefactor *= 5;
 			}
@@ -20448,7 +20519,17 @@ class BossEyeNew : BossEye replaces BossEye
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.125)) timefactorsub = frandom(0.75,0.8);
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.05))  timefactorsub = frandom(0.875,0.9);
 						if (master.health <= ((master.SpawnHealth() + master.Stamina) * 0.005)) timefactorsub = frandom(0.925,0.95);
-						if (A_CheckIceWeaselTNT()) timefactorsub *= 0.0625;
+						if (master.CountInv("BossBrainIsTNT"))
+						{
+							if (A_CheckIceWeaselTNT()) timefactorsub *= 0.0625;
+						}
+						if (master.CountInv("BossBrainIsPlutonia"))
+						{
+							timefactorsub *= 0.25;
+							timefactorsub *= (1.0 - (A_CheckGatekeeperPlutonia(0) * 0.03125));
+							timefactorsub *= (1.0 - (A_CheckGatekeeperPlutonia(30) * double(1.0/13.0)));
+							Console.Printf("timefactorsub: %.8f", timefactorsub);
+						}
 						timefactor -= timefactorsub;
 					}
 					int ticamt = (tics * (frandom(0.675,0.825) * timefactor) * bosseyetimefactor);
