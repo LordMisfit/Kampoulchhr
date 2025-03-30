@@ -7807,8 +7807,9 @@ class PlayerStatItem : Inventory
 		double tempmax;
 		if (!passive && damage > 0) // If the owner [usually the player] of the item is the ATTACKER
 		{
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (pre-attack MiscItem): %d", damage);
 			double tempatkfactor = baseatkfct;
-			if (kcdebug_actordmgdisplays) Console.Printf("    (\czPlayerStatItem input [STEP 5 (\cwsuper.DamageMobj\cz)]\c-: \cydmg = %d\c-)", damage);
+			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("    (\czPlayerStatItem input [STEP 5 (\cwsuper.DamageMobj\cz)]\c-: \cydmg = %d\c-)", damage);
 			
 			// Level
 			double LVLFactor = 1.00;
@@ -7983,6 +7984,9 @@ class PlayerStatItem : Inventory
 		basedeffct *= kc_pdeffactor;
 		if (passive && damage > 0) // If the owner [usually the player] of the item is the DEFENDER
 		{
+			int origdmg = damage;
+			//playtookhealthdmgtsa
+			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (pre-defense MiscItem): %d", damage);
 			bool dmgflrtype = false;
 			if ((damageType == 'Slime' || 
 					damageType == 'Lava' || 
@@ -8441,6 +8445,16 @@ class PlayerStatItem : Inventory
 												 * NewDefFct;
 			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("\c[gold]Damage (passive - Total): %.8f", TOTALFactor);
+			
+			// Locks in the reduced amount of damage taken if you still received some damage to
+			// HP through the Time Seraph's Armor, but prevents the native super.DamageMobj from
+			// increasing said HP damage above its original calculation from earlier. This 
+			// basically nulls the above calculations as well. :P
+			if (playeractor && playeractor.playtookhealthdmgtsa)
+			{
+				if (newdamage > playeractor.playtookhealthdmgtsa) newdamage = playeractor.playtookhealthdmgtsa;
+				if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("\c[gold]Damage (detected TSA health damage taken): %d vs [%d], olddmg: %d vs [%d]", newdamage, playeractor.playtookhealthdmgtsa, damage, origdmg);
+			}
 			
 			if (playeractor && newdamage <= 0) 
 			{
