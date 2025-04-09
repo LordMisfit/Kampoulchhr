@@ -2513,7 +2513,7 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				KPlayer = KCPlayerPawn(playera);
 				if (KPlayer)
 				{
-					//Console.Printf("armortier: %d", KPlayer.armortier);
+					if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
 					armortier = KPlayer.armortier;
 				}
 				let armr = KCArmor(playera.FindInventory("KCArmor"));
@@ -2521,18 +2521,18 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				{
 					if (armortier >= 2) 
 					{
-						//Console.Printf("has armor: blue or heavy tier");
+						if (kcdebug_armordisplays) Console.Printf("has armor: blue or heavy tier");
 						playera.A_GiveInventory("KCHeavyArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 					else
 					{
-						//Console.Printf("has armor: green tier");
+						if (kcdebug_armordisplays) Console.Printf("has armor: green tier");
 						playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 				}
 				else
 				{
-					Console.Printf("has no armor at all");
+					if (kcdebug_armordisplays) Console.Printf("has no armor at all");
 					playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 				}
 				
@@ -3937,6 +3937,15 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 		}
 		else
 		{
+			int armortier;
+			KCPlayerPawn KPlayer;
+			KPlayer = KCPlayerPawn(playera);
+			if (KPlayer)
+			{
+				if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
+				armortier = KPlayer.armortier;
+			}
+			
 			// If you already have more armor than this item gives you, you can't
 			// use it.
 			if (armor.Amount >= SaveAmount + armor.BonusCount)
@@ -3945,6 +3954,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 			}
 			// Don't use it if you're picking it up and already have some.
 			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+			// Don't use it if your armor tier is Blue/Heavy Armor
+			if (armortier >= 2)
 			{
 				return false;
 			}
@@ -4188,7 +4202,7 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 			KPlayer = KCPlayerPawn(playera);
 			if (KPlayer)
 			{
-				//Console.Printf("armortier: %d", KPlayer.armortier);
+				if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
 				armortier = KPlayer.armortier;
 			}
 			if (armortier <= 2) 
@@ -4273,6 +4287,15 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 		}
 		else
 		{
+			int armortier;
+			KCPlayerPawn KPlayer;
+			KPlayer = KCPlayerPawn(playera);
+			if (KPlayer)
+			{
+				if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
+				armortier = KPlayer.armortier;
+			}
+			
 			// If you already have more armor than this item gives you, you can't
 			// use it.
 			if (armor.Amount >= SaveAmount + armor.BonusCount)
@@ -4281,6 +4304,11 @@ class KCBlueArmor : KCArmorPickup replaces BlueArmor
 			}
 			// Don't use it if you're picking it up and already have some.
 			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+			// Don't use it if your armor tier is Heavy Armor
+			if (armortier >= 3)
 			{
 				return false;
 			}
@@ -4513,7 +4541,7 @@ class KCHeavyArmorForMegasphere : KCArmorPickup
 			KPlayer = KCPlayerPawn(playera);
 			if (KPlayer)
 			{
-				//Console.Printf("armortier: %d", KPlayer.armortier);
+				if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
 				armortier = KPlayer.armortier;
 			}
 			if (armortier <= 3) 
