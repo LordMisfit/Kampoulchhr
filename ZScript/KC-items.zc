@@ -2508,20 +2508,31 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				
 					playera.health = CurrentHealth;
 				}
+				int armortier;
+				KCPlayerPawn KPlayer;
+				KPlayer = KCPlayerPawn(playera);
+				if (KPlayer)
+				{
+					//Console.Printf("armortier: %d", KPlayer.armortier);
+					armortier = KPlayer.armortier;
+				}
 				let armr = KCArmor(playera.FindInventory("KCArmor"));
 				if (armr)
 				{
-					if (armr.amount >= (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE))
+					if (armortier >= 2) 
 					{
+						//Console.Printf("has armor: blue or heavy tier");
 						playera.A_GiveInventory("KCHeavyArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 					else
 					{
+						//Console.Printf("has armor: green tier");
 						playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 				}
 				else
 				{
+					Console.Printf("has no armor at all");
 					playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 				}
 				
@@ -4172,7 +4183,15 @@ class KCBlueArmorForMegasphere : KCArmorPickup replaces BlueArmorForMegasphere
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (MiscItem.truearmortype <= 2) 
+			int armortier;
+			KCPlayerPawn KPlayer;
+			KPlayer = KCPlayerPawn(playera);
+			if (KPlayer)
+			{
+				//Console.Printf("armortier: %d", KPlayer.armortier);
+				armortier = KPlayer.armortier;
+			}
+			if (armortier <= 2) 
 			{
 				A_GrabArmorHUD();
 				
@@ -4489,7 +4508,15 @@ class KCHeavyArmorForMegasphere : KCArmorPickup
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		if (MiscItem)
 		{
-			if (MiscItem.truearmortype <= 3) 
+			int armortier;
+			KCPlayerPawn KPlayer;
+			KPlayer = KCPlayerPawn(playera);
+			if (KPlayer)
+			{
+				//Console.Printf("armortier: %d", KPlayer.armortier);
+				armortier = KPlayer.armortier;
+			}
+			if (armortier <= 3) 
 			{
 				A_GrabArmorHUD();
 				SaveAmount = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);

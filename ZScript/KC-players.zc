@@ -1097,7 +1097,7 @@ class KCPlayerPawn : PlayerPawn
 	{
 		if (self.findInventory(weap))
 		{
-			weapons.push(weap); // weapons.push(Int(weap));
+			weapons.push(weap);
 			self.takeInventory(weap, 1);
 		}
 	}
@@ -1106,7 +1106,7 @@ class KCPlayerPawn : PlayerPawn
 	{
 		if (self.findInventory(ammo))
 		{
-			ammos.push(ammo); // ammos.push(Int(ammo));
+			ammos.push(ammo);
 			ammosamt.push(CountInv(ammo));
 			self.SetInventory(ammo, 0);
 		}
@@ -1116,7 +1116,7 @@ class KCPlayerPawn : PlayerPawn
 	{
 		if (self.findInventory(invi))
 		{
-			invitems.push(invi); // invitems.push(Int(invi));
+			invitems.push(invi);
 			invitemsamt.push(CountInv(invi));
 			self.takeInventory(invi, CountInv(invi));
 		}
