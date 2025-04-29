@@ -20105,18 +20105,21 @@ class BossBrainNew : BossBrain replaces BossBrain
 	
 	void A_BrainScream2()
 	{
-		if (level.GetChecksum() == '5eecd88f4491f516d590ce4bbf45f532') 
+		if (level.GetChecksum() == '5eecd88f4491f516d590ce4bbf45f532') // Doom 2 MAP30
 		{ 
+			//if (kchuhwhat_bits1 & 2) {} else { kchuhwhat_bits1 += 2; }
 			A_Quake(6, 305, 0, 32768, "nosound/silent");
 			A_Quake(12, 305, 0, 16384, "nosound/silent");
 		}
-		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') 
+		if (level.GetChecksum() == '42b68b84ff8e55f264c31e6f4cfea82d') // TNT map30
 		{ 
+			//if (CVar.FindCVar("kchuhwhat_bits1") & 4) {} else { kchuhwhat_bits1 += 4; }
 			A_Quake(5, 210, 0, 32768, "nosound/silent");
 			A_Quake(10, 210, 0, 16384, "nosound/silent");
 		}
 		if (level.GetChecksum() == '279bb50468fe9f5b36c6d821e4902369') // plutonia.wad map30
 		{ 
+			//if (kchuhwhat_bits1 & 8) {} else { kchuhwhat_bits1 += 8; }
 			A_Quake(5, 210, 0, 32768, "nosound/silent");
 			A_Quake(10, 210, 0, 16384, "nosound/silent");
 		}

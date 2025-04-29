@@ -1319,8 +1319,27 @@ class KC_EventHandler : EventHandler
 			bool PlutMap2930Foe = false;
 			bool PlutMap32Foe = false;
 			bool exception = CheckExceptions(spawnee);
-			if (spawnee.bISMONSTER && !practicetarget && !exception)
+			bool isamonster = false;
+			if (spawnee.bISMONSTER) 
 			{
+				if (kcdebug_monsterscaling) Console.Printf("\c[gold]spawnee.bISMONSTER\c-, spawnname: %s", spawnname);
+				isamonster = true;
+			}
+			else
+			{
+				nm = "CCards_Actor_AllyMarine"; if (spawnname == nm) isamonster = true;
+				if (isamonster)
+				{
+					if (kcdebug_monsterscaling) Console.Printf("\c[brick]!spawnee.bISMONSTER\c-, \c[sapphire]spawnname: %s\c-", spawnname);
+				}
+				else
+				{
+					if (kcdebug_monsterscaling >= 2) Console.Printf("\c[red]!spawnee.bISMONSTER\c-, \c[brick]spawnname: %s\c-", spawnname);
+				}
+			}
+			if (isamonster && !practicetarget && !exception)
+			{
+				if (kcdebug_monsterscaling) Console.Printf("\c[sapphire]isamonster && !practicetarget && !exception");
 				double baselinelevel = 0;
 				if (spawnee.CountInv("E1M8ExitRoomMonster") &&
 						level.mapname == "E1M8" &&
@@ -1337,7 +1356,11 @@ class KC_EventHandler : EventHandler
 						 spawnname ~== "ArchonOfHell" ||
 						 spawnname ~== "PyroDemon" ||
 						 spawnname ~== "FlyingBalrogDVDS" ||
-						 spawnname ~== "Hierophant")) e1m8baron = true;
+						 spawnname ~== "Hierophant"))
+				{ 
+					if (kcdebug_monsterscaling) Console.Printf("e1m8baron: %d", e1m8baron);
+					e1m8baron = true;
+				}
 				if (level.mapname == "E2M8" &&
 						level.GetChecksum() == 'effe91df41ad41f6973c06f0ad67ddb9' &&
 						level.time <= 3 &&
@@ -7444,7 +7467,9 @@ class KC_EventHandler : EventHandler
 										double voicevol = frandom(1.25,1.75);
 										if (playera && A_CheckBerserk(playera))  voicevol *= frandompick(1.125,1.125,1.125,1.25,1.25,1.5);
 										int randvoice = random(1,11);
-										if (victim.GetClassName() == "GermanDog")
+										if (victim.GetClassName() == "GermanDog" ||
+												victim.GetClassName() == "CCards_Actor_AllyMarine" ||
+												victim.GetClassName() == "CCards_Actor_PossessedMarine")
 										{
 											randvoice = random(1,2);
 											if (randvoice == 1)

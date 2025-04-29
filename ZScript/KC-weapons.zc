@@ -9532,7 +9532,7 @@ class SawThrower : MarineWeapon
 	action void A_SawTSetMaxDurability()
 	{
 		invoker.revtimes = 0;
-		invoker.sawmaxdurability = 1050;
+		invoker.sawmaxdurability = 2100;
 	}
 	
 	action void A_SawTCheckDurability()
@@ -15924,7 +15924,7 @@ Class BlasterPistol : MarineWeapon
 				if (invoker.altshottype == 0)
 				{
 					invoker.altshottype = 1;
-					A_Print("Never Consume Cells [all shots are weakened by default]");
+					A_Print("Never Consume Cells [all non-battery charged shots are weakened by default]");
 				}
 				else
 				if (invoker.altshottype == 1)
@@ -19233,7 +19233,7 @@ class BlasterRifle : MarineWeapon // DoomWeapon 2001
 				if (invoker.firetype == 0)
 				{
 					invoker.firetype = 1;
-					A_Print("Never Consume Cells [all shots are weakened by default]");
+					A_Print("Never Consume Cells [all non-battery charged shots are weakened by default]");
 				}
 				else
 				if (invoker.firetype == 1)
