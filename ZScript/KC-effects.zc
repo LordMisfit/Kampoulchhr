@@ -4522,7 +4522,46 @@ class E1M8ExitRoomMonster : PlaceholderItem
 	}
 }
 
-class ChaingunCooldown : KCPowerup
+class BaseCooldown : KCPowerup
+{
+	default
+	{
+		+INVENTORY.UNTOSSABLE;
+	}
+	
+	override void Tick()
+	{
+		if (owner)
+		{
+			actor playera = players[0].mo;
+			bool TimeItem = false;
+			if (playera.CountInv("KCTimeFreezer") ||
+					playera.CountInv("KCTimeFreezer1") ||
+					playera.CountInv("KCTimeFreezer2") ||
+					playera.CountInv("KCTimeFreezer3")) TimeItem = true;
+			
+			if (TimeItem)
+			{
+			}
+			else
+			{
+				EffectTics--;
+			}
+			//Console.Printf("[%s]: %d", self.GetClassName(), EffectTics);
+			
+			if (EffectTics <= 0) 
+			{
+				Destroy();
+			}
+		}
+		else Destroy();
+		
+		// Powerups cannot exist outside an inventory
+		if (Owner == NULL) Destroy();
+	}
+}
+
+class ChaingunCooldown : BaseCooldown
 {
 	default
 	{
@@ -4531,7 +4570,7 @@ class ChaingunCooldown : KCPowerup
 	}
 }
 
-class HadesTeleportCooldown : KCPowerup
+class HadesTeleportCooldown : BaseCooldown
 {
 	default
 	{
@@ -4540,7 +4579,7 @@ class HadesTeleportCooldown : KCPowerup
 	}
 }
 
-class HSphereTeleportCooldown : KCPowerup
+class HSphereTeleportCooldown : BaseCooldown
 {
 	default
 	{
@@ -4549,7 +4588,7 @@ class HSphereTeleportCooldown : KCPowerup
 	}
 }
 
-class ShadowSplitCooldown : KCPowerup
+class ShadowSplitCooldown : BaseCooldown
 {
 	default
 	{
@@ -4558,11 +4597,29 @@ class ShadowSplitCooldown : KCPowerup
 	}
 }
 
-class MinigunCooldown : KCPowerup
+class MinigunCooldown : BaseCooldown
 {
 	default
 	{
 		Powerup.Duration -4;
+		+INVENTORY.UNTOSSABLE;
+	}
+}
+
+class PyroDemonTeleportCooldown : BaseCooldown
+{
+	default
+	{
+		Powerup.Duration -4;
+		+INVENTORY.UNTOSSABLE;
+	}
+}
+
+class SpidMastChaingunCooldown : BaseCooldown
+{
+	default
+	{
+		Powerup.Duration -2;
 		+INVENTORY.UNTOSSABLE;
 	}
 }
@@ -4576,23 +4633,6 @@ class RailgunCharge : PlaceholderItem
 	}
 }
 
-class PyroDemonTeleportCooldown : KCPowerup
-{
-	default
-	{
-		Powerup.Duration -4;
-		+INVENTORY.UNTOSSABLE;
-	}
-}
-
-class SpidMastChaingunCooldown : KCPowerup
-{
-	default
-	{
-		Powerup.Duration -2;
-		+INVENTORY.UNTOSSABLE;
-	}
-}
 // ?
 class ResetInventory : PlaceholderItem 
 {
