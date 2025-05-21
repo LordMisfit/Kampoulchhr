@@ -3086,7 +3086,7 @@ class KC_EventHandler : EventHandler
 				}
 			}
 
-			if (true)
+			if (!KCNPC(spawnee))
 			{
 				int basemonsterrating = spawnee.CountInv("MonsterRating");
 				bool practicetarget;
@@ -3760,7 +3760,7 @@ class KC_EventHandler : EventHandler
 				string comblog = "";
 				comblog.AppendFormat("\c[red]*\c- ");
 				showdmglog = false;
-				if (victim.bCOUNTKILL || specialtype || specialtype2) showdmglog = true;
+				if (victim.bCOUNTKILL || specialtype || specialtype2 || KCNPC(victim)) showdmglog = true;
 				if (PracticeTarget(victim) || PracticeTarget2(victim)) showdmglog = true;
 				if (BossBrainNew(victim)) showdmglog = true;
 				if (KCPlayerPawn(victim)) showdmglog = false;
@@ -3786,7 +3786,8 @@ class KC_EventHandler : EventHandler
 						if (flags & DMG_EXPLOSION) comblog.AppendFormat(" \c[brick][AOE]\c-");
 						if (victim.health <= 0)
 						{
-							comblog.AppendFormat(" \c[brick]%s dies!\c-", victname);
+							if (KCNPC(victim)) comblog.AppendFormat(" \c[orange]%s has been knocked senseless!\c-", victname);
+							ELSE comblog.AppendFormat(" \c[brick]%s dies!\c-", victname);
 						}
 					}
 					else
@@ -3903,7 +3904,7 @@ class KC_EventHandler : EventHandler
 				if (kcdebug_hitsounds) Console.Printf("playdthsounds: %d (%s)", playdthsounds, vict);
 				if (playdthsounds)
 				{
-					if (victim.health <= 0 && kc_q3aqckillsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2))
+					if (victim.health <= 0 && kc_q3aqckillsounds2 && victim.bISMONSTER && (victim.bCOUNTKILL || specialtype || specialtype2 || KCNPC(victim)))
 					{
 						if (source || inflicter)
 						{
@@ -3914,10 +3915,9 @@ class KC_EventHandler : EventHandler
 							if (victim.bFRIENDLY)
 							{
 								if (kcdebug_hitsounds) Console.Printf("[deathsound] victim is friendly: %s", victim.GetClassName());
-								/*
-								if (?(victim))
+								if (KCNPC(victim))
 								{
-									if (kcdebug_hitsounds) Console.Printf("[deathsound] victim is DDAFDNPC Type: %s", victim.GetClassName());
+									if (kcdebug_hitsounds) Console.Printf("[deathsound] victim is KCNPC Type: %s", victim.GetClassName());
 									playedsound = "misc/whoops";
 									if (kc_q3aqchitsoundtype >= 0)
 									{
@@ -3927,7 +3927,6 @@ class KC_EventHandler : EventHandler
 								}
 								else
 								{
-								*/
 									if (kc_q3aqckillsoundtype == 0) playedsound = "misc/killsndAlly";
 									if (kc_q3aqckillsoundtype == 1) playedsound = "misc/killsndDEDAlly";
 									if (kc_q3aqckillsoundtype >= 0)
@@ -3935,14 +3934,13 @@ class KC_EventHandler : EventHandler
 										victim.A_StopSound(12);
 										victim.A_StartSound(playedsound, 12, CHANF_DEFAULT, (kc_q3aqckillsoundvol * frandom(0.75,1.25)), ATTN_NONE);
 									}
-							//}
+								}
 							}
 							else
 							if (playpawn)
 							{
 								if (kcdebug_hitsounds) Console.Printf("[deathsound] playpawn: %s", playpawn.GetClassName());
-								/*
-								if (?(victim))
+								if (KCNPC(victim))
 								{
 									playedsound = "misc/whoops";
 									if (kc_q3aqchitsoundtype >= 0)
@@ -3952,7 +3950,6 @@ class KC_EventHandler : EventHandler
 									}
 								}
 								else
-								*/
 								if (!victim.bFRIENDLY)
 								{
 									if (kc_q3aqckillsoundtype == 0) playedsound = "misc/killsnd";
@@ -3972,8 +3969,7 @@ class KC_EventHandler : EventHandler
 								if (othermon)
 								{
 									if (kcdebug_hitsounds) Console.Printf("[deathsound] othermon: %s", othermon.GetClassName());
-									/*
-									if (?(victim))
+									if (KCNPC(victim))
 									{
 										playedsound = "misc/whoops";
 										if (kc_q3aqchitsoundtype >= 0)
@@ -3983,7 +3979,6 @@ class KC_EventHandler : EventHandler
 										}
 									}
 									else
-									*/
 									if (othermon.bFRIENDLY && !victim.bFRIENDLY)
 									{
 										if (kcdebug_hitsounds) Console.Printf("[deathsound] othermon: %s kills %s (ally kills)", othermon.GetClassName(), victim.GetClassName());
@@ -4032,6 +4027,7 @@ class KC_EventHandler : EventHandler
 							(victim.bCOUNTKILL || 
 							specialtype || 
 							specialtype2 || 
+							KCNPC(victim) || 
 							BossBrainNew(victim)) && 
 							victim.CountInv("TempNoHitSound") <= 0)
 					{
@@ -4580,6 +4576,7 @@ class KC_EventHandler : EventHandler
 			if (!victim.bFRIENDLY && (victim.bCOUNTKILL || specialtype)) candropitems = true;
 			if (PracticeTarget(victim) ||
 					PracticeTarget2(victim) ||
+					KCNPC(victim) || 
 					Computer(victim) ||
 					ExplosiveBarrel(victim) ||
 					Pod(victim) ||
@@ -7403,6 +7400,7 @@ class KC_EventHandler : EventHandler
 						// BUILD-style oneliner for kills [optional]
 						bool playoneliner = false;
 						if (inflicter == playera || source == playera || mastor == playera) playoneliner = true;
+						if (KCNPC(victim)) playoneliner = false;
 						nm = "PennywiseToy1"; extracheck = nm; if (vict == extracheck) playoneliner = false;
 						if (!playerkill) playoneliner = false;
 

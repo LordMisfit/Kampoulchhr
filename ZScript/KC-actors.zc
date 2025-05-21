@@ -7159,6 +7159,24 @@ class PlayerWhistle : KCBaseZSC
 	}
 }
 
+// A subclass for the NPC unique monsters
+class KCNPC : KCCreature abstract
+{
+	default
+	{
+		MONSTER;
+		+NEVERTARGET;
+		+FLOORCLIP;
+		+NOINFIGHTING;
+		+NOBLOOD;
+		+DONTTHRUST;
+		+NODAMAGETHRUST;
+		+LOOKALLAROUND;
+		+NOICEDEATH;
+		-COUNTKILL;
+	}
+}
+
 // Practice Target
 class PracticeTarget : KCCreature //21333
 {
