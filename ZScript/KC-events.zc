@@ -59,6 +59,21 @@ class KC_EventHandler : EventHandler
 		if (Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true) != -1) CCards = true;
 		return CCards;
 	}
+	
+	bool A_CCardsCheckHoloSentry(actor victim)
+	{
+		bool isholosentry;
+		int d = Wads.CheckNumForName("CCDAILIES", Wads.ns_global, -1, true);
+		if (victim.bSOLID == false &&
+				victim.bBRIGHT == true &&
+				((victim.alpha == 0.5 && victim.GetRenderStyle() == STYLE_ADD) ||
+				(victim.alpha == 0.0 && victim.GetRenderStyle() == STYLE_NONE)) &&
+				d != -1) 
+		{
+			isholosentry = true;
+		}
+		return isholosentry;
+	}
 
 	int A_GetPlayerLevel(int type = 0)
 	{
@@ -1319,6 +1334,7 @@ class KC_EventHandler : EventHandler
 			bool PlutMap2930Foe = false;
 			bool PlutMap32Foe = false;
 			bool exception = CheckExceptions(spawnee);
+			bool isholosentry = A_CCardsCheckHoloSentry(spawnee);
 			bool isamonster = false;
 			if (spawnee.bISMONSTER) 
 			{
@@ -2768,6 +2784,7 @@ class KC_EventHandler : EventHandler
 
 		if (spawnee)
 		{
+			bool isholosentry = A_CCardsCheckHoloSentry(spawnee);
 			string targname;
 
 			if (spawnee.target) targname = spawnee.target.GetClassName();
@@ -2807,6 +2824,15 @@ class KC_EventHandler : EventHandler
 			{
 				if (spawnee.bISMONSTER)
 				{
+					if (isholosentry)
+					{
+						if (spawnee.bCOUNTKILL) 
+						{
+							spawnee.bCOUNTKILL = false;
+							level.total_monsters -= 1;
+						}
+					}
+					
 					if (A_CheckForHeiwaPlayer()) spawnee.bNOTIMEFREEZE = false;
 				}
 
@@ -3347,7 +3373,7 @@ class KC_EventHandler : EventHandler
 				// Monster "Scaling"
 				MonsterStatsSet(spawnee, basemonsterrating, practicetarget, specialenemy, ispeasant);
 			}
-
+			
 			//
 			if (kc_usealteredmonsters)
 			{
@@ -6937,6 +6963,7 @@ class KC_EventHandler : EventHandler
 			KCCreature KCC;
 			KCC = KCCreature(victim);
 			bool exception = CheckExceptions(victim);
+			bool isholosentry = A_CCardsCheckHoloSentry(victim);
 
 			bool isCCardsIllusion = false;
 			if (victim)
@@ -7287,6 +7314,8 @@ class KC_EventHandler : EventHandler
 							}
 						}
 						EXPGain *= kc_expmultiplier;
+						
+						if (isholosentry) ExpGain *= frandompick(0.125,0.167,0.167,0.167,0.25,0.25,0.25,0.25,0.25,0.33,0.33,0.33,0.5);
 
 						KCCreature KCC;
 						KCC = KCCreature(victim);
@@ -7319,7 +7348,9 @@ class KC_EventHandler : EventHandler
 								int ExpNew = playera.CountInv("ExpPts");
 								int ExpNeeded = playera.CountInv("ExpPtsNeeded");
 								int PlayerLevel = playera.CountInv("PlayerLevel");
-								if (kc_showexpgains && ExpGain)
+								if (kc_showexpgains && 
+										ExpGain && 
+										!isholosentry)
 								{
 									double fact = (1.00 + (MiscItem.KillComboCount * 0.01));
 									int basegain = (105 * fact);
@@ -7570,6 +7601,7 @@ class KC_EventHandler : EventHandler
 
 					// Item Drop Action
 					if (KCC && KCC.user_dontdroprandomstuff) { }
+					else if (isholosentry) { } 
 					else
 					{
 						if (mod != 'Crush' ||

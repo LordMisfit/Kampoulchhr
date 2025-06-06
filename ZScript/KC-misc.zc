@@ -7589,6 +7589,92 @@ class PlayerStatItem : Inventory
 		ClassCheck++;
 		itemtimer++;
 		
+		// Heiwa-Unique Interaction with Daisy Rescue Card Effect: gives a random permanent stat
+		// bonus upon completion. Luck to you if you get it as a perma card due to this. V:
+		string nm = "CCards_Actor_DaisyFound";
+		if (owner.CountInv("CCards_Actor_DaisyFound") > 0)
+		{
+			owner.A_SetInventory("CCards_Actor_DaisyFound",0);
+			int boost = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
+			string DaisySaveQuote = "Saving Daisy has boosted your ";
+			if (random(1,16) <= 13) // Gives 1-3 ATK/DEF/SPD/GUT/LUK [mpre often 2]
+			{
+				int randroll = random(1,5);
+				boost = randompick(1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3);
+				
+				if (randroll <= 1) // ATK
+				{
+					PlayerATK += boost;
+					globalvars.PlayerATK += boost;
+					owner.A_GiveInventory("PlayerATK",boost);
+					DaisySaveQuote.AppendFormat("\c[brick]Attack\c- ");
+				}
+				else
+				if (randroll == 2) // DEF
+				{
+					PlayerDEF += boost;
+					globalvars.PlayerDEF += boost;
+					owner.A_GiveInventory("PlayerDEF",boost);
+					DaisySaveQuote.AppendFormat("\c[olive]Defense\c- ");
+				}
+				else
+				if (randroll == 3) // SPD
+				{
+					PlayerSPD += boost;
+					globalvars.PlayerSPD += boost;
+					owner.A_GiveInventory("PlayerSPD",boost);
+					DaisySaveQuote.AppendFormat("\c[sapphire]Speed\c- ");
+				}
+				else
+				if (randroll == 4) // GUT
+				{
+					PlayerGUTS += boost;
+					globalvars.PlayerGUTS += boost;
+					owner.A_GiveInventory("PlayerGUTS",boost);
+					DaisySaveQuote.AppendFormat("\c[orange]Guts\c- ");
+				}
+				else
+				if (randroll >= 5) // LUK
+				{
+					PlayerLUCK += boost;
+					globalvars.PlayerLUCK += boost;
+					owner.A_GiveInventory("PlayerLUCK",boost);
+					DaisySaveQuote.AppendFormat("\c[gold]Luck\c- ");
+				}
+			}
+			else // Gives 1-3 VIT/IQ/SEN [more often 1]
+			{
+				int randroll = random(1,3);
+				boost = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,3);
+				
+				if (randroll <= 1) // VIT
+				{
+					VitalityPieces++;
+					globalvars.VitalityPieces++;
+					DaisySaveQuote.AppendFormat("\c[brick]Vitality\c- ");
+				}
+				else
+				if (randroll == 2) // IQ
+				{
+					IQPieces++;
+					globalvars.IQPieces++;
+					DaisySaveQuote.AppendFormat("\c[purple]IQ\c- ");
+				}
+				else
+				if (randroll >= 3) // SEN
+				{
+					SensesPieces++;
+					globalvars.SensesPieces++;
+					DaisySaveQuote.AppendFormat("\c[lightblue]Senses\c- ");
+				}
+			}
+			DaisySaveQuote.AppendFormat("by %d!", boost);
+			owner.A_StartSound("Capsule/Pickup",1440,CHANF_DEFAULT,1.0,ATTN_NORM,1.0);
+			owner.A_StartSound("Capsule/Pickup",1441,CHANF_DEFAULT,1.0,ATTN_NORM,0.9);
+			owner.A_StartSound("Capsule/Pickup",1442,CHANF_DEFAULT,1.0,ATTN_NORM,1.1);
+			owner.A_PrintBold(String.Format("%s", DaisySaveQuote), frandom(3.25,3.75));
+		}
+		
 		if (IsMorphed > 0)
 		{
 			if (IsMorphed == 1 && MorphTimer == 0) 
