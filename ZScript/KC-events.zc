@@ -3659,6 +3659,7 @@ class KC_EventHandler : EventHandler
 				nm = "KC_CCards_Actor_AbominationCurse"; if (victim.CountInv(nm)) specialtype += 524288;
 				nm = "KC_CCards_Actor_Dexterity"; if (victim.CountInv(nm)) specialtype += 1048576;
 				nm = "KC_CCards_Actor_LeapAbility"; if (victim.CountInv(nm)) specialtype += 2097152;
+				nm = "CCards_Actor_Santa"; if (victim.GetClassName() == nm) specialtype += 4194304;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;
@@ -4408,6 +4409,10 @@ class KC_EventHandler : EventHandler
 				if (MiscItem.sielsgracetrueactivations > 0) sielgraceluckboost *= (1.0 + (MiscItem.sielsgracetrueactivations * frandom(SIELGRACESTATBOOSTBASELIMIT2BASE,SIELGRACESTATBOOSTBASELIMIT1BASE)));
 			}
 
+			if (kcdebug_worlddiedmonsterdrops)
+			{
+				Console.Printf("\c[blue]specialtype:\c- %d", specialtype);
+			}
 			int Kills = playera.CountInv("KillsCount");
 			// Drop Tables
 			string dropname;
@@ -4471,6 +4476,11 @@ class KC_EventHandler : EventHandler
 			{
 				bossdropmulti *= 1.125;
 				skillmult *= 0.8888888888888889;
+			}
+			if (specialtype & 4194304) // CCards_Actor_Santa
+			{
+				bossdropmulti *= 16;
+				skillmult *= 0.0625;
 			}
 
 			if (ninelivescurse)
@@ -7035,6 +7045,7 @@ class KC_EventHandler : EventHandler
 				nm = "KC_CCards_Actor_AbominationCurse"; if (victim.CountInv(nm)) specialtype += 524288;
 				nm = "KC_CCards_Actor_Dexterity"; if (victim.CountInv(nm)) specialtype += 1048576;
 				nm = "KC_CCards_Actor_LeapAbility"; if (victim.CountInv(nm)) specialtype += 2097152;
+				nm = "CCards_Actor_Santa"; if (victim.GetClassName() == nm) specialtype += 4194304;
 				if (Wads.CheckNumForName("KC-STAEONS", Wads.ns_global, -1, true) != -1)
 				{
 					nm = "PurpleTentacle"; if (victim.GetClassName() == nm) specialtype2 += 4;

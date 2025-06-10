@@ -7592,9 +7592,9 @@ class PlayerStatItem : Inventory
 		// Heiwa-Unique Interaction with Daisy Rescue Card Effect: gives a random permanent stat
 		// bonus upon completion. Luck to you if you get it as a perma card due to this. V:
 		string nm = "CCards_Actor_DaisyFound";
-		if (owner.CountInv("CCards_Actor_DaisyFound") > 0)
+		if (owner.CountInv(nm) > 0)
 		{
-			owner.A_SetInventory("CCards_Actor_DaisyFound",0);
+			owner.A_SetInventory(nm,0);
 			int boost = randompick(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
 			string DaisySaveQuote = "Saving Daisy has boosted your ";
 			if (random(1,16) <= 13) // Gives 1-3 ATK/DEF/SPD/GUT/LUK [mpre often 2]
