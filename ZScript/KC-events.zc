@@ -4178,20 +4178,20 @@ class KC_EventHandler : EventHandler
 	{
 		if (victim)
 		{
-			Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [start]", droptimes, maxdroptimes);
+			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [start]", droptimes, maxdroptimes);
 			double basemaxhpcheck = 4000;
 			double basemultadd = 15.0;
 			double basemult = 1.0;
 			
 			double getfactor = ((victim.SpawnHealth() * 1.0) / basemaxhpcheck);
-			Console.Printf("\c[sapphire]getfactor: %.8f [base]", getfactor);
+			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]getfactor: %.8f [base]", getfactor);
 			getfactor *= basemultadd;
 			getfactor += basemult;
-			Console.Printf("\c[sapphire]getfactor: %.8f [final]", getfactor);
+			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]getfactor: %.8f [final]", getfactor);
 			maxdroptimes *= getfactor;
 			
 			if (droptimes >= maxdroptimes) droptimes = maxdroptimes;
-			Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [end]", droptimes, maxdroptimes);
+			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [end]", droptimes, maxdroptimes);
 		}
 		return droptimes, maxdroptimes;
 	}
