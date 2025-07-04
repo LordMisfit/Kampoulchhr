@@ -19609,11 +19609,6 @@ class EvilWarriorShield : MarineWeapon
 		+DONTGIB;
 	}
 	
-	override void Tick()
-	{
-		super.Tick();
-	}
-	
 	override void PostBeginPlay()
 	{
 		actor player = players[0].mo;
@@ -20109,7 +20104,7 @@ class EvilWarriorShield : MarineWeapon
 				}
 			}
 		Idle:
-			EWSH ABCDEFGH 3 NoDelay
+			EWSH ABCDEFGH 3
 			{
 				actor player = players[0].mo;
 				if (player.CountInv("EvilWarriorShield"))
