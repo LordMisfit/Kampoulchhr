@@ -20087,8 +20087,16 @@ class EvilWarriorShield : MarineWeapon
 		User4Extra:
 			TNT1 A 0
 			{
-						 if (invoker.ammo_type == 0) invoker.ammo_type = 1;
-				else if (invoker.ammo_type == 1) invoker.ammo_type = 0;
+				if (invoker.ammo_type == 0) 
+				{
+					invoker.ammo_type = 1;
+					A_Print(String.Format("Using MP for shield shots"));
+				}
+				else if (invoker.ammo_type == 1) 
+				{
+					invoker.ammo_type = 0;
+					A_Print(String.Format("Using Devil's Food for shield shots"));
+				}
 			}
 			TNT1 A 8;
 			stop;
