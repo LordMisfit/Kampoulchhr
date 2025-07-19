@@ -20492,7 +20492,7 @@ class BossEyeNew : BossEye replaces BossEye
 					bosseyetimefactor *= 1.125;
 					bosseyetimefactor *= (1.0 + (A_CheckGatekeeperPlutonia(0) * 0.125));
 					bosseyetimefactor *= (1.0 + (A_CheckGatekeeperPlutonia(30) * double(4.0/13.0)));
-					Console.Printf("bosseyetimefactor: %.8f", bosseyetimefactor);
+					if (kcdebug_bossbraininfo3) Console.Printf("bosseyetimefactor: %.8f", bosseyetimefactor);
 				}
 				if (A_CheckIceWeaselTNT()) bosseyetimefactor *= 5;
 			}
@@ -20550,7 +20550,7 @@ class BossEyeNew : BossEye replaces BossEye
 							timefactorsub *= 0.25;
 							timefactorsub *= (1.0 - (A_CheckGatekeeperPlutonia(0) * 0.03125));
 							timefactorsub *= (1.0 - (A_CheckGatekeeperPlutonia(30) * double(1.0/13.0)));
-							Console.Printf("timefactorsub: %.8f", timefactorsub);
+							if (kcdebug_bossbraininfo3) Console.Printf("timefactorsub: %.8f", timefactorsub);
 						}
 						timefactor -= timefactorsub;
 					}

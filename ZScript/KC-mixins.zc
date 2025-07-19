@@ -3349,19 +3349,19 @@ mixin class MonsterCollider
 				double randlow = (0.004 * random(1,10));
 				if (damfactgtkp <= randlow) damfactgtkp = randlow;
 				damage *= damfactgtkp;
-				Console.Printf("[CubeSpawnCheck] damfactgtkp: %.8f, damage: %d [%d]", damfactgtkp, damage, tdam);
+				if (kcdebug_bossbraininfo3) Console.Printf("[CubeSpawnCheck] damfactgtkp: %.8f, damage: %d [%d]", damfactgtkp, damage, tdam);
 				
 				damfactgtkp = (1.0 - (foundbossbrain.A_CheckGatekeeperPlutonia(30) * double(1.0/13.0)));
 				randlow = (0.004 * random(1,10));
 				if (damfactgtkp <= randlow) damfactgtkp = randlow;
 				damage *= damfactgtkp;
-				Console.Printf("[TID30Check] damfactgtkp: %.8f, damage: %d [%d]", damfactgtkp, damage, tdam);
+				if (kcdebug_bossbraininfo3) Console.Printf("[TID30Check] damfactgtkp: %.8f, damage: %d [%d]", damfactgtkp, damage, tdam);
 			}
 			else
 			if (foundbossbrain.A_CheckIWs()) 
 			{
 				damage *= frandom(0.01,0.1);
-				//Console.Printf("Ice Weasel is Active: -90%% to 99%% damage to IoS!");
+				if (kcdebug_bossbraininfo3) Console.Printf("Ice Weasel is Active: -90%% to 99%% damage to IoS!");
 			}
 			else
 			{
