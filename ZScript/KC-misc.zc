@@ -7994,7 +7994,8 @@ class PlayerStatItem : Inventory
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - TSA): %.8f", TSAFactor);
 			
 			double KillComboFct = 1.0;
-			KillComboFct -= (KillComboCount * 0.002);
+			KillComboFct += (KillComboCount * 0.002);
+			if (KillComboFct <= 1.0) KillComboFct = 1.0;
 			if (KillComboFct >= 4.0) KillComboFct = 4.0;
 			if (kcdebug_attackcalcs || kcdebug_actordmgdisplays) Console.Printf("Damage (!passive - KillComboFct): %.8f", KillComboFct);
 			
@@ -8473,6 +8474,7 @@ class PlayerStatItem : Inventory
 			double KillComboFct = 1.0;
 			KillComboFct -= (KillComboCount * 0.001);
 			if (KillComboFct <= 0.25) KillComboFct = 0.25;
+			if (KillComboFct >= 1.0) KillComboFct = 1.0;
 			if (kcdebug_defensecalcs || kcdebug_playerdamagemobj) Console.Printf("Damage (passive - KillComboFct): %.8f", KillComboFct);
 			
 			double NewDefFct = deffct;

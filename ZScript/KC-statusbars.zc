@@ -2622,6 +2622,7 @@ class KCStatusBarMain : BaseStatusBar
 				if (zoomlvl == 2) scopescale = (3.1875, 3.1875); //3
 				if (zoomlvl == 3) scopescale = (1.78125, 1.78125); //1.5
 				if (zoomlvl >= 4) scopescale = (1.078125, 1.078125); //0.75
+				if (CPlayer.mo.CountInv("TimeSeraphVisor")) scopescale *= 1.25;
 				DrawTexture(ScopeImg, scopepos, displayflags, scopealpha, (-1, -1), scopescale);
 
 				int levelt = level.time % 35;
@@ -2648,7 +2649,11 @@ class KCStatusBarMain : BaseStatusBar
 				if (levelt == 16 || levelt == 19) scopealpha = scopealphabase - (levelf * 1);
 				if (levelt == 17 || levelt == 18) scopealpha = scopealphabase;
 				ScopeImg = TexMan.CheckForTexture("ZOOMSCO2", TexMan.TYPE_MiscPatch);
-				if (CPlayer.mo.CountInv("TimeSeraphVisor")) ScopeImg = TexMan.CheckForTexture("ZOOMSC22", TexMan.TYPE_MiscPatch);
+				if (CPlayer.mo.CountInv("TimeSeraphVisor")) 
+				{
+					scopealpha *= 0.8334;
+					ScopeImg = TexMan.CheckForTexture("ZOOMSC22", TexMan.TYPE_MiscPatch);
+				}
 				DrawTexture(ScopeImg, scopepos, displayflags, scopealpha, (-1, -1), scopescale);
 
 				scopealpha = 1.00;
@@ -2672,7 +2677,11 @@ class KCStatusBarMain : BaseStatusBar
 				if (levelt == 17 || levelt == 18) scopealpha = scopealphabase;
 				
 				ScopeImg = TexMan.CheckForTexture("ZOOMSCOP", TexMan.TYPE_MiscPatch);
-				if (CPlayer.mo.CountInv("TimeSeraphVisor")) ScopeImg = TexMan.CheckForTexture("ZOOMSC12", TexMan.TYPE_MiscPatch);
+				if (CPlayer.mo.CountInv("TimeSeraphVisor")) 
+				{
+					ScopeImg = TexMan.CheckForTexture("ZOOMSC12", TexMan.TYPE_MiscPatch);
+					scopealpha *= 0.667;
+				}
 				DrawTexture(ScopeImg, scopepos, displayflags, scopealpha, (-1, -1), scopescale);
 				SetSize(0, 320, 200);
 			}

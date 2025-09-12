@@ -5735,7 +5735,7 @@ class CompatVulnItem : PlaceholderItem
 					{
 						double basecrushdmgfact;
 						bool isspecial = false;
-						if (FoundPlayer.CountInv("PlayingAugerZenith") && 
+						if (FoundPlayer && FoundPlayer.CountInv("PlayingAugerZenith") && 
 								(BossBrain(self) || BossBrainNew(self))) isspecial = true;
 						if (!isspecial)
 						{

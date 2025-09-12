@@ -10038,6 +10038,9 @@ class ImpalerXBow : MarineWeapon
 	action void A_SetSonicNailStats(actor BombShots, int type)
 	{
 		int TruePlayerLevel = invoker.ActualLevel;
+		double maxdmgf1, maxdmgf2;
+		double plylvlmult = 0.0;
+		double tsvisormult = 1.25;
 		double dmgfactor = 1.0;
 		double dmgfactor2 = 1.0;
 		int basedmg = (75 + (random(-25,25)));
@@ -10048,8 +10051,10 @@ class ImpalerXBow : MarineWeapon
 		{
 			if (CountInv("ImpalerBowZoom") <= 0)
 			{
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.0078125));
-				if (dmgfactor >= 5.0) dmgfactor = 5.0;
+				BombShots.speed *= 1.0;
+				BombShots.A_ScaleVelocity(1.0);
+				plylvlmult = 0.0078125;
+				maxdmgf1 = 5.0;
 				dmgfactor2 = 1.0;
 			}
 			else
@@ -10057,8 +10062,8 @@ class ImpalerXBow : MarineWeapon
 			{
 				BombShots.speed *= 1.25;
 				BombShots.A_ScaleVelocity(1.25);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.01171875));
-				if (dmgfactor >= 7.5) dmgfactor = 7.5;
+				plylvlmult = 0.01171875;
+				maxdmgf1 = 7.5;
 				dmgfactor2 = 1.5625;
 			}
 			else
@@ -10066,8 +10071,8 @@ class ImpalerXBow : MarineWeapon
 			{
 				BombShots.speed *= 1.5;
 				BombShots.A_ScaleVelocity(1.5);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.015625));
-				if (dmgfactor >= 10.0) dmgfactor = 10.0;
+				plylvlmult = 0.015625;
+				maxdmgf1 = 10.0;
 				dmgfactor2 = 1.875;
 			}
 			else
@@ -10075,8 +10080,8 @@ class ImpalerXBow : MarineWeapon
 			{
 				BombShots.speed *= 2.0;
 				BombShots.A_ScaleVelocity(2.0);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.03125));
-				if (dmgfactor >= 20.0) dmgfactor = 20.0;
+				plylvlmult = 0.03125;
+				maxdmgf1 = 20.0;
 				dmgfactor2 = 2.5;
 			}
 			else
@@ -10084,10 +10089,23 @@ class ImpalerXBow : MarineWeapon
 			{
 				BombShots.speed *= 4.0;
 				BombShots.A_ScaleVelocity(4.0);
-				dmgfactor = (1.0 + (TruePlayerLevel * 0.0625));
-				if (dmgfactor >= 40.0) dmgfactor = 40.0;
+				plylvlmult = 0.0625;
+				maxdmgf1 = 40.0;
 				dmgfactor2 = 5.0;
 			}
+			
+
+			if (CountInv("TimeSeraphVisor")) 
+			{
+				BombShots.speed *= tsvisormult;
+				BombShots.A_ScaleVelocity(tsvisormult);
+				plylvlmult *= tsvisormult;
+				maxdmgf1 *= tsvisormult;
+				dmgfactor2 *= tsvisormult;
+			}
+			
+			dmgfactor = (1.0 + (TruePlayerLevel * plylvlmult));
+			if (dmgfactor >= maxdmgf1) dmgfactor = maxdmgf1;
 			
 			basedmg *= dmgfactor;
 			basedmg *= dmgfactor2;
