@@ -5581,7 +5581,7 @@ class CompatVulnItem : PlaceholderItem
 							else bosscritres *= 0.625;
 						}
 						
-						if (FoundPlayer.CountInv("DealCriticalHit"))
+						if (FoundPlayer && FoundPlayer.CountInv("DealCriticalHit"))
 						{
 							criticalhit = true;
 							if (owner.bBOSS && random(1,100) <= bosscritres) 
@@ -5644,7 +5644,7 @@ class CompatVulnItem : PlaceholderItem
 									supercrit = true;
 								}
 								else
-								if (FoundPlayer.CountInv("CheatCritUltimate")) supercrit = true;
+								if (FoundPlayer && FoundPlayer.CountInv("CheatCritUltimate")) supercrit = true;
 								
 								if (supercrit)
 								{
@@ -5656,7 +5656,7 @@ class CompatVulnItem : PlaceholderItem
 								nm = "CCards_Actor_FirebluTotemDefBuff";
 								if (owner.CountInv(nm))
 								{
-									if (FoundPlayer.CountInv("TimeSeraphVisor"))
+									if (FoundPlayer && FoundPlayer.CountInv("TimeSeraphVisor"))
 									{
 										if (supercrit) critdmgmulti *= 100;
 															else critdmgmulti *= 25;

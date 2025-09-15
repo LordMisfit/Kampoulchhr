@@ -4932,6 +4932,8 @@ class KCPlayerPawn : PlayerPawn
 					}
 				}
 				if (flags & DMG_EXPLOSION) combatlogmsg.AppendFormat(" \c[brick][AOE]\c-");
+				if (playabsorbtsadamage) combatlogmsg.AppendFormat(" \c[HeiwaDeluge](Absorbed by the Time Seraph's Armor!)\c-");
+				else if (playtooktsadamage) combatlogmsg.AppendFormat(" \c[HeiwaDeluge](Blocked by the Time Seraph's Armor!)\c-");
 				if (kcdebug_showgametic) combatlogmsg.AppendFormat(" \c[green][tic: %d]\c-", gametic);
 				Console.Printf(combatlogmsg);
 			}
