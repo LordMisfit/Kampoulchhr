@@ -5348,9 +5348,9 @@ class KCPlayerPawn : PlayerPawn
 					}
 					else
 					{
-						if (MiscItem && MiscItem.tfcooldown > 0)
+						if (MiscItem && MiscItem.telebeaconcooldown > 0)
 						{
-							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly - TFCooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TimeFreeze - NonFriendly - telebeaconcooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
 							return false;
 						}
 						else
@@ -5386,9 +5386,9 @@ class KCPlayerPawn : PlayerPawn
 					}
 					else
 					{
-						if (MiscItem && MiscItem.tfcooldown > 0)
+						if (MiscItem && MiscItem.telebeaconcooldown > 0)
 						{
-							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [TFCooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
+							if (kcdebug_generalcollisions & 8) Console.Printf("\c[yellow](PlayerPawn)\c- \c[lightblue]Collision:\c- NotPassive - \c[orange]%s\c- [Friendly] vs (\c[green]%s\c-) [PlayerPawn] = False/No Collision [telebeaconcooldown] {gametic: %d}", other.GetClassName(), GetClassName(), gametic);
 							return false;
 						}
 						else

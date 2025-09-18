@@ -8091,6 +8091,7 @@ class KC_EventHandler : EventHandler
 							if (MiscItem.timestopcooldown1tics > 0)
 							{
 								MiscItem.timestopcooldown1tics = 0;
+								MiscItem.timefreezecooldown = 0;
 								playera.A_SetInventory("KCTimeCooldown",0);
 								playera.A_StartSound("TimeFreezeCooldown",219,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
 								playera.A_SetBlend("264026",0.667,random(random(22,23),27));
@@ -8237,6 +8238,7 @@ class KC_EventHandler : EventHandler
 									if (MiscItem.timestopcooldown1tics <= 0)
 									{
 										MiscItem.timestopcooldown1tics = 0;
+										MiscItem.timefreezecooldown = 0;
 										MiscItem.timestopstate = 1;
 										MiscItem.timestopactivetics = int(MiscItem.timefreeze1duration * TICRATE);
 										MiscItem.timestopactivemaxtics = int(MiscItem.timefreeze1duration * TICRATE);
@@ -8292,6 +8294,8 @@ class KC_EventHandler : EventHandler
 							if (playera.CountInv("KCTimeFreezer1"))
 							{
 								playera.A_SetInventory("KCTimeFreezer1",0);
+								MiscItem.timefreezecooldown += random((TIFRCLDNINT1+(MiscItem.timefreeze1timesused*TIFRCLDNMULT1)),(TIFRCLDNINT2+(MiscItem.timefreeze1timesused*TIFRCLDNMULT2)));
+								if (MiscItem.timefreezecooldown > (TIFRCLDNINT2+(MiscItem.timefreeze1timesused*TIFRCLDNMULT2))) MiscItem.timefreezecooldown = (TIFRCLDNINT2+(MiscItem.timefreeze1timesused*TIFRCLDNMULT2));
 								MiscItem.timestopcooldown1tics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
 								MiscItem.timestopcooldown1maxtics = (int(MiscItem.timefreeze1cooldown * TICRATE) * MiscItem.timefreeze1cooldownratio2);
 								MiscItem.timefreeze1cooldownratio2 = 0.0;
@@ -8316,6 +8320,8 @@ class KC_EventHandler : EventHandler
 							if (playera.CountInv("KCTimeFreezer2"))
 							{
 								playera.A_SetInventory("KCTimeFreezer2",0);
+								MiscItem.timefreezecooldown += random(10,15);
+								if (MiscItem.timefreezecooldown > 15) MiscItem.timefreezecooldown = 15;
 								MiscItem.timestopcooldown2tics = (int(MiscItem.timefreeze2cooldown * TICRATE) * MiscItem.timefreeze2cooldownratio2);
 								MiscItem.timestopcooldown2maxtics = (int(MiscItem.timefreeze2cooldown * TICRATE) * MiscItem.timefreeze2cooldownratio2);
 								MiscItem.timefreeze2cooldownratio2 = 0.0;
@@ -8332,6 +8338,8 @@ class KC_EventHandler : EventHandler
 							if (playera.CountInv("KCTimeFreezer3"))
 							{
 								playera.A_SetInventory("KCTimeFreezer3",0);
+								MiscItem.timefreezecooldown += random(10,15);
+								if (MiscItem.timefreezecooldown > 15) MiscItem.timefreezecooldown = 15;
 								MiscItem.timestopcooldown3tics = (int(MiscItem.timefreeze3cooldown * TICRATE) * MiscItem.timefreeze3cooldownratio2);
 								MiscItem.timestopcooldown3maxtics = (int(MiscItem.timefreeze3cooldown * TICRATE) * MiscItem.timefreeze3cooldownratio2);
 								MiscItem.timefreeze3cooldownratio2 = 0.0;

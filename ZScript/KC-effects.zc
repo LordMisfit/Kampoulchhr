@@ -4207,6 +4207,35 @@ class PowerMorphTimeCheck : PowerMorph
 	mixin TimerCheck;
 }
 
+class TimeFreezeDEFMain : PowerProtectionTimeCheck
+{
+	default 
+	{
+		Damagefactor "normal", 1.00;
+		inventory.icon "";
+		Powerup.Duration 2147483646; 
+	}
+	
+	override void Tick()
+	{
+		Super.Tick();
+		EffectTics = 350;
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor player = players[0].mo;
+		let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.25;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+}
+
+
 class DMGWeakness20Percent : PowerProtectionTimeCheck 
 {
 	default 
@@ -5473,3 +5502,4 @@ class SecretFixer : Inventory
 		}
 	}
 }
+

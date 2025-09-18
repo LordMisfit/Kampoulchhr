@@ -14121,8 +14121,8 @@ Class Translocator : MarineWeapon
 							invoker.dummy.Destroy();
 							if (MiscItem) 
 							{
-								MiscItem.tfcooldown += random(45,59);
-								if (MiscItem.tfcooldown > 59) MiscItem.tfcooldown = 59;
+								MiscItem.telebeaconcooldown += random(45,59);
+								if (MiscItem.telebeaconcooldown > 59) MiscItem.telebeaconcooldown = 59;
 							}
 							A_GiveInventory("TLBeaconAmmo");
 							Player.SetPSprite(PSP_WEAPON,invoker.FindState("Reload"));
