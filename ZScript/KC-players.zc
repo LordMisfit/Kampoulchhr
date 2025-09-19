@@ -1810,8 +1810,13 @@ class KCPlayerPawn : PlayerPawn
 					{
 						if (cmd.buttons & BT_JUMP || cmd.buttons & BT_CROUCH)
 						{
+							A_StartSound("tsarmor/gliding",745,CHANF_LOOPING,1.00,ATTN_NORM,1.00);
 							if (cmd.buttons & BT_JUMP && cmd.buttons & BT_CROUCH) Vel.Z *= frandom(0.1,0.125);
 																															 else Vel.Z *= frandom(0.2,0.25);
+						}
+						else
+						{
+							A_StopSound(745);
 						}
 					}
 				}
