@@ -8908,6 +8908,8 @@ class Devastator : MarineWeapon
 				A_StartSound("weapons/devburt",208,CHANF_DEFAULT,1.0,ATTN_NORM,frandom(0.65,1.35));
 			}
 		}
+
+		double shotfireratio = 1.0;
 		if (devupgrade)
 		{
 			pangle *= 0.667;
@@ -8915,7 +8917,32 @@ class Devastator : MarineWeapon
 			ppitch *= 0.667;
 			ppitch2 *= 0.667;
 			pspwnoff *= 0.667;
+			
+			if (invoker.shotsfired <= 0) shotfireratio = 0.0625;
+			if (invoker.shotsfired == 1) shotfireratio = 0.1875;
+			if (invoker.shotsfired == 2) shotfireratio = 0.3125;
+			if (invoker.shotsfired == 3) shotfireratio = 0.4375;
+			if (invoker.shotsfired == 4) shotfireratio = 0.5625;
+			if (invoker.shotsfired == 5) shotfireratio = 0.6875;
+			if (invoker.shotsfired == 6) shotfireratio = 0.8125;
+			if (invoker.shotsfired == 7) shotfireratio = 0.9375;
+			if (invoker.shotsfired >= 8) shotfireratio = 1.00;
 		}
+		else
+		{
+			if (invoker.shotsfired <= 0) shotfireratio = 0.125;
+			if (invoker.shotsfired == 1) shotfireratio = 0.375;
+			if (invoker.shotsfired == 2) shotfireratio = 0.625;
+			if (invoker.shotsfired == 3) shotfireratio = 0.875;
+			if (invoker.shotsfired >= 4) shotfireratio = 1.0;
+		}
+		
+		pangle *= shotfireratio;
+		pangle2 *= shotfireratio;
+		ppitch *= shotfireratio;
+		ppitch2 *= shotfireratio;
+		pspwnoff *= shotfireratio;
+		
 		for (int i = 0; i < shotsfired; i++)
 		{
 			if (devupgrade)
@@ -19369,7 +19396,7 @@ class Blaster_RifleShotWeak : Blaster_RifleShot
 		Height 2;
 		Scale 0.2;
 		Speed 20.8; // 26;
-		DamageFunction ((randompick(3,4,4,4,5,5,5,5,5,5,5,5,6,6,6,7) * random(randompick(1,1,1,2,2,3),randompick(6,7,7,8,8,8))) / 5);
+		DamageFunction ((randompick(3,4,4,4,5,5,5,5,5,5,5,5,6,6,6,7) * random(randompick(1,1,1,2,2,3),randompick(6,7,7,8,8,8))) / randompick(4,5,5,5,5,5,5,5,5,6));
 		Obituary "%o got blasted by %k, like the rebel scum %g is!";
 		SeeSound "";
 		Scale 0.2;
@@ -19441,7 +19468,7 @@ class Blaster_RifleShotRipperWeak : Blaster_RifleShotRipper
 		Height 4;
 		Scale 0.25;
 		Speed 41.6; // 26;
-		DamageFunction ((randompick(4,4,5,5,5,5,5,5,5,5,6,6,6,6,7,7) * random(randompick(1,1,2,2,3,3),randompick(7,7,7,8,8,9)) / 5));
+		DamageFunction ((randompick(4,4,5,5,5,5,5,5,5,5,6,6,6,6,7,7) * random(randompick(1,1,2,2,3,3),randompick(7,7,7,8,8,9)) / randompick(4,4,5,5,5,5,5,5,6,6)));
 		Obituary "%o got blasted by %k, like the rebel scum %g is!";
 		SeeSound "";
 		Scale 0.2;
