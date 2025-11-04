@@ -13,8 +13,8 @@ class KXCelt : KCCreature
 		Speed 18;
 		PainChance 20;
 		Monster;
-		Obituary "%o was frozen to death by Celt";
-		HitObituary "%o was frozen to death by Celt";
+		Obituary "%o was frozen solid by a Celt";
+		HitObituary "%o was shattered to pieces by a Celt";
 		Bloodcolor "7c7c98";
 		Species "Celt";
 		+DONTHARMSPECIES;
@@ -63,7 +63,7 @@ class KXCelt : KCCreature
 	
 	void A_CeltDeath()
 	{
-		if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e')
+		if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e') // tnt.wad map31
 		{
 			int num;
 			ThinkerIterator celts = ThinkerIterator.Create("KXCelt");
@@ -314,7 +314,7 @@ class KXCelt : KCCreature
 			{
 				A_KillChildren("Massacre");
 				A_StartSound("Celt/CometDeath",CHAN_7,CHANF_DEFAULT,1.0,ATTN_NONE,1.0);
-				if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e')
+				if (level.GetChecksum() == 'a53ae580a4af2b5d0b0893f86914781e') // tnt.wad map31
 				{
 					A_StartSound("Celt/CometDeath",8,CHANF_DEFAULT,1.0,ATTN_NONE,0.9);
 					A_StartSound("Celt/CometDeath",9,CHANF_DEFAULT,1.0,ATTN_NONE,1.1);

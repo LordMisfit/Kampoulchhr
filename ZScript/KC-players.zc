@@ -4245,6 +4245,52 @@ class KCPlayerPawn : PlayerPawn
 		PlayerArmorIgnoreFactor = A_ArmorIgnoreFactor(inflictor, source, damage, mod, flags, angle);
 		
 		// Direct Damage Changes
+		if (mod == 'Plasma')
+		{
+			olddmg = damage;
+			double set1, set2, set3;
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Damage Is Plasma-Style");
+			if (flags & DMG_EXPLOSION)
+			{
+				set1 = (0.75 - (ActualLevel * 0.00484375)); // up to -0.484375 [-0.00484375 per level]
+				if (set1 <= 0.265625) set1 = 0.265625;
+			}
+			else
+			{
+				set1 = (0.875 - (ActualLevel * 0.0034375)); // up to -0.34375 [-0.0034375 per level]
+				if (set1 <= 0.53125) set1 = 0.53125;
+			}
+			
+			damage = ceil(damage * set1);
+			if (ActualLevel <= 100 && damage < 1) damage = 1;
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Plasma-style]: %d (%d)", damage, olddmg);
+		}
+		if (mod == 'Electric' || 
+				mod == 'Electricity' || 
+				mod == 'Thunder' || 
+				mod == 'ShockFloor' || 
+				mod == 'Lightning' || 
+				mod == 'Shock')
+		{
+			olddmg = damage;
+			double set1, set2, set3;
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Damage Is Electric-Style");
+			if (flags & DMG_EXPLOSION)
+			{
+				set1 = (0.50 - (ActualLevel * 0.0046875)); // up to -0.46875 [-0.0046875 per level]
+				if (set1 <= 0.03125) set1 = 0.03125;
+			}
+			else
+			{
+				set1 = (0.750 - (ActualLevel * 0.006875)); // up to -0.6875 [-0.006875 per level]
+				if (set1 <= 0.0625) set1 = 0.0625;
+			}
+			
+			damage = ceil(damage * set1);
+			if (ActualLevel <= 100 && damage < 1) damage = 1;
+			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Electric-style]: %d (%d)", damage, olddmg);
+		}
+		
 		if (flags & DMG_INFLICTOR_IS_PUFF)
 		{
 			if (AttackingActor != self)
