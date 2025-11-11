@@ -4759,6 +4759,7 @@ class KCCreature : KCBaseZSC
 			if (target) Console.Printf("\cx(%s) (gametic: %d) [A_KCChase]\c- NoAtkChance: %d / 10000, Target: %s \cytics: %d\c-", GetClassName(), gametic, NoAtkChance, target.GetClassName(), tics);
 						 else Console.Printf("\cx(%s) (gametic: %d) [A_KCChase]\c- NoAtkChance: %d / 10000 \cytics: %d\c-", GetClassName(), gametic, NoAtkChance, tics);
 		}
+		
 		int BaseWanderChance = 0;
 		if (random(1,10000) <= NoAtkChance)
 		{
