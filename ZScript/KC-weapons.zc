@@ -19824,7 +19824,7 @@ class EvilWarriorShield : MarineWeapon
 			Fail;
 
 		Ready:
-			EWS0 D 1
+			EWS1 D 1
 			{
 				A_WeaponReady();
 				A_GetBobSpeed();
@@ -19833,7 +19833,7 @@ class EvilWarriorShield : MarineWeapon
 			loop;
 
 		Select:
-			EWS0 D 1
+			EWS1 D 1
 			{
 				A_SetInventory("EWShieldIdleMode",1);
 				A_Raise(12);
@@ -19843,7 +19843,7 @@ class EvilWarriorShield : MarineWeapon
 			goto Select;
 
 		Deselect:
-			EWS0 D 1
+			EWS1 D 1
 			{
 				A_SetInventory("EWShieldIdleMode",0);
 				A_Lower(12);
@@ -19853,7 +19853,7 @@ class EvilWarriorShield : MarineWeapon
 			goto Deselect;
 
 		Fire:
-			EWS0 A 0
+			EWS1 A 0
 			{
 				A_GetBobSpeed();
 
@@ -19896,7 +19896,7 @@ class EvilWarriorShield : MarineWeapon
 				}
 				return resolvestate(null);
 			}
-			EWS0 D 2 Bright
+			EWS1 D 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -19908,7 +19908,7 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 				//A_ForcePlayState4("ShieldGuard");
 			}
-			EWS0 C 2 Bright
+			EWS1 C 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -19920,7 +19920,7 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 				//A_ForcePlayState4("ShieldGuard");
 			}
-			EWS0 B 2 Bright
+			EWS1 B 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -19933,7 +19933,7 @@ class EvilWarriorShield : MarineWeapon
 				//A_ForcePlayState4("ShieldGuard");
 			}
 		FireShot:
-			EWS0 A 6 Bright
+			EWS1 I 6 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -19946,13 +19946,13 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 				//A_ForcePlayState4("ShieldGuard2");
 			}
-			EWS0 A 2 Bright
+			EWS1 H 2 Bright
 			{
 				A_PHellWarShot();
 				//A_ForcePlayState4("ShieldFire");
 				A_ForcePlayState("Missile");
 			}
-			EWS0 A 6 Bright
+			EWS1 I 6 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -19965,7 +19965,7 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 				//A_ForcePlayState4("ShieldGuard2");
 			}
-			EWS0 A 0 Bright
+			EWS1 A 0 Bright
 			{
 				actor player = players[0].mo;
 				let MiscItem = PlayerStatItem(Player.FindInventory("PlayerStatItem"));
@@ -20013,7 +20013,7 @@ class EvilWarriorShield : MarineWeapon
 				return resolvestate(null);
 			}
 		FireEnd:
-			EWS0 B 2 Bright
+			EWS1 B 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20024,7 +20024,7 @@ class EvilWarriorShield : MarineWeapon
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
 			}
-			EWS0 C 2 Bright
+			EWS1 C 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20035,7 +20035,7 @@ class EvilWarriorShield : MarineWeapon
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
 			}
-			EWS0 D 2 Bright
+			EWS1 D 2 Bright
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20049,7 +20049,7 @@ class EvilWarriorShield : MarineWeapon
 			Goto Ready;
 
 		AltFire:
-			EWS0 DEF 2
+			EWS1 DEF 2
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20062,7 +20062,7 @@ class EvilWarriorShield : MarineWeapon
 				A_GetBobSpeed();
 			}
 		AltHold:
-			EWS0 G 2 BRIGHT
+			EWS1 G 2 BRIGHT
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20076,7 +20076,7 @@ class EvilWarriorShield : MarineWeapon
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
 			}
-			EWS0 G 0 
+			EWS1 G 0 
 			{
 				A_GetBobSpeed();
 				//A_ForcePlayState4("ShieldGuard");
@@ -20098,7 +20098,7 @@ class EvilWarriorShield : MarineWeapon
 			}
 			goto AltEnd;
 		AltEnd:
-			EWS0 FE 2
+			EWS1 FE 2
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);
@@ -20111,7 +20111,7 @@ class EvilWarriorShield : MarineWeapon
 				A_PHellWarShieldOn();
 				A_GetBobSpeed();
 			}
-			EWS0 D 2
+			EWS1 D 2
 			{
 				actor player = players[0].mo;
 				int buttons = GetPlayerInput(INPUT_BUTTONS);

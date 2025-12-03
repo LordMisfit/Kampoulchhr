@@ -3352,10 +3352,10 @@ class PlayerStatItem : Inventory
 
 			If (weapon is "EvilWarriorShield")
 			{
-				TotalMass *= (1.5 + (HellWarriorShieldLevel * 0.075));
-				if (Owner.CountInv("EWShieldDefendMode")) TotalMass *= (3.5 + (HellWarriorShieldLevel * 0.175));
-				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (1.75 + (HellWarriorShieldLevel * 0.0875));
-				if (berserked) TotalMass *= 2.5;
+				TotalMass *= (2.25 + (HellWarriorShieldLevel * 0.1125));
+				if (Owner.CountInv("EWShieldDefendMode")) TotalMass *= (5.25 + (HellWarriorShieldLevel * 0.2625));
+				if (Owner.CountInv("EWShieldDefendModeExtra")) TotalMass *= (2.625 + (HellWarriorShieldLevel * 0.13125));
+				if (berserked) TotalMass *= 3.75;
 			}
 			
 			double NewMssFct = mssfct;
@@ -7485,24 +7485,24 @@ class PlayerStatItem : Inventory
 		}
 		if (owner.CountInv("EWShieldIdleMode"))
 		{
-			BaseFlatDefValue *= 1.15;
-			BaseFlatDefValueCrush *= 1.06;
-			BaseFlatDefValueDmgFlr *= 1.03;
-			BaseFlatDefValueHUD *= 1.15;
+			BaseFlatDefValue *= 1.30;
+			BaseFlatDefValueCrush *= 1.12;
+			BaseFlatDefValueDmgFlr *= 1.06;
+			BaseFlatDefValueHUD *= 1.30;
 		}
 		if (owner.CountInv("EWShieldDefendMode"))
+		{
+			BaseFlatDefValue *= 1.90;
+			BaseFlatDefValueCrush *= 1.36;
+			BaseFlatDefValueDmgFlr *= 1.18;
+			BaseFlatDefValueHUD *= 1.90;
+		}
+		if (owner.CountInv("EWShieldDefendModeExtra"))
 		{
 			BaseFlatDefValue *= 1.45;
 			BaseFlatDefValueCrush *= 1.18;
 			BaseFlatDefValueDmgFlr *= 1.09;
 			BaseFlatDefValueHUD *= 1.45;
-		}
-		if (owner.CountInv("EWShieldDefendModeExtra"))
-		{
-			BaseFlatDefValue *= 1.225;
-			BaseFlatDefValueCrush *= 1.09;
-			BaseFlatDefValueDmgFlr *= 1.045;
-			BaseFlatDefValueHUD *= 1.225;
 		}
 		if (berserked)
 		{
@@ -7571,7 +7571,7 @@ class PlayerStatItem : Inventory
 			ArmorDefValueDmgFlr *= GuardVal;
 			ArmorDefValueHUD *= GuardVal;
 		}
-		GuardVal = 1.125;
+		GuardVal = 1.25;
 		if (owner.CountInv("EWShieldIdleMode"))
 		{
 			ArmorDefValue *= GuardVal;
@@ -7579,7 +7579,7 @@ class PlayerStatItem : Inventory
 			ArmorDefValueDmgFlr *= GuardVal;
 			ArmorDefValueHUD *= GuardVal;
 		}
-		GuardVal = 1.375;
+		GuardVal = 1.75;
 		if (owner.CountInv("EWShieldDefendMode"))
 		{
 			ArmorDefValue *= GuardVal;
@@ -7587,7 +7587,7 @@ class PlayerStatItem : Inventory
 			ArmorDefValueDmgFlr *= GuardVal;
 			ArmorDefValueHUD *= GuardVal;
 		}
-		GuardVal = 1.25;
+		GuardVal = 1.5;
 		if (owner.CountInv("EWShieldDefendModeExtra"))
 		{
 			ArmorDefValue *= GuardVal;
@@ -8155,7 +8155,6 @@ class PlayerStatItem : Inventory
 				temp1 = ((0.1667 + (HellWarriorShieldLevel * 0.01667)) + (HellWarriorShieldLevel * 0.00625));
 				if (Owner.CountInv("EWShieldDefendMode")) temp2 = ((0.433 + (HellWarriorShieldLevel * 0.0433)) + (HellWarriorShieldLevel * 0.005));
 				if (Owner.CountInv("EWShieldDefendModeExtra")) temp3 = ((0.4866 + (HellWarriorShieldLevel * 0.04866)) + (HellWarriorShieldLevel * 0.001));
-				
 				if (dmgflrtype)
 				{
 					double rand = (random[statitem](0,5) * 0.05);
