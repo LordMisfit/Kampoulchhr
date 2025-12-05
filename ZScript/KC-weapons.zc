@@ -2692,7 +2692,7 @@ class MarineWeapon : KCWeaponBase
 			}
 			goto KickStart;
 		KickStart: // 19
-			LEG2 A 2 
+			LEG3 A 2 
 			{
 				int tic = 2;
 				if (A_CheckBerserk()) tic *= 0.5; 
@@ -2701,7 +2701,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 B 2
+			LEG3 B 2
 			{
 				int tic = 2;
 				if (A_CheckBerserk()) tic *= 0.5; 
@@ -2711,7 +2711,7 @@ class MarineWeapon : KCWeaponBase
 				A_SetInventory("IsKicking",1);
 				A_StartSound("fistswingmedium0",1);
 			}
-			LEG2 C 1
+			LEG3 C 1
 			{
 				int tic = 1;
 				tic = A_GetWaterMeleeCheck(tic);
@@ -2720,7 +2720,7 @@ class MarineWeapon : KCWeaponBase
 				A_SetInventory("IsKicking",1);
 				A_KickKiais(128);
 			}
-			LEG2 D 1
+			LEG3 D 1
 			{
 				int tic = 1;
 				if (A_CheckBerserk()) tic = 0;
@@ -2729,7 +2729,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 E 2 
+			LEG3 E 2 
 			{
 				A_SetInventory("IsKicking",1);
 				A_OverlayOffset(-2,0,0,0);
@@ -2878,7 +2878,7 @@ class MarineWeapon : KCWeaponBase
 				}
 				*/
 			}
-			LEG2 F 5 
+			LEG3 F 5 
 			{
 				A_SetInventory("IsKicking",1);
 
@@ -2888,7 +2888,7 @@ class MarineWeapon : KCWeaponBase
 				if (kcdebug_weaponstatdisplays) Console.Printf("Kicking 8 [shields/hit]: %d", tic);
 				A_SetTics(tic);
 			}
-			LEG2 E 2 
+			LEG3 E 2 
 			{
 				int tic = 2;
 				if (A_CheckBerserk()) tic *= 0.5;
@@ -2897,7 +2897,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 D 1 
+			LEG3 D 1 
 			{ 
 				int tic = 1;
 				tic = A_GetWaterMeleeCheck(tic);
@@ -2905,7 +2905,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 C 1 
+			LEG3 C 1 
 			{ 
 				int tic = 1;
 				if (A_CheckBerserk()) tic = 0;
@@ -2914,7 +2914,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 B 1
+			LEG3 B 1
 			{
 				int tic = 1;
 				tic = A_GetWaterMeleeCheck(tic);
@@ -2922,7 +2922,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 A 1 
+			LEG3 A 1 
 			{
 				int tic = 1;
 				if (A_CheckBerserk()) tic = 0;
@@ -2931,7 +2931,7 @@ class MarineWeapon : KCWeaponBase
 				
 				A_SetInventory("IsKicking",1);
 			}
-			LEG2 A 0 { return resolvestate("KickEnd"); }
+			LEG3 A 0 { return resolvestate("KickEnd"); }
 		KickEnd:
 			TNT1 A 0
 			{
@@ -15553,8 +15553,6 @@ Class BlasterPistol : MarineWeapon
 		Obituary "%o was blasted by %k.";
 		Tag "Blaster Pistol";
 		Scale 0.5;
-		Weapon.WeaponScaleX 0.8;
-		Weapon.WeaponScaleY 1.0;
 		+WEAPON.AMMO_OPTIONAL;
 		Inventory.RestrictedTo "HeiwaPlayer";
 	}

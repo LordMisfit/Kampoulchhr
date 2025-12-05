@@ -1,4 +1,4 @@
-class KCBaseZSC : Actor
+class KCBaseZSC : Actor abstract
 {
 	mixin PlayerCheckGFX;
 	mixin DmgCalc;
@@ -3870,7 +3870,7 @@ class KCBaseLensflare : KCBaseZSC
 	}
 }
 
-class KCCreature : KCBaseZSC
+class KCCreature : KCBaseZSC abstract
 {
 	mixin EvolveMonsters;
 	mixin MonsterCollider;
@@ -7002,7 +7002,7 @@ class KCCreature : KCBaseZSC
 	}
 }
 
-class KCUniqueBoss : KCCreature
+class KCUniqueBoss : KCCreature abstract
 {
 }
 
