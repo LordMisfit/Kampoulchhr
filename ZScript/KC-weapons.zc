@@ -15575,10 +15575,12 @@ Class BlasterPistol : MarineWeapon
 		double shotangle = 0.0;
 		double shotpitch = 0.0;
 		double shotheight = 3;
+		double recl = (frandompick(0.125,0.25,0.25,0.25,0.375));
 		if (invoker.spareshots > 0)
 		{
 			invoker.spareshots--;
 			shotname = "PistolBlast";
+			recl = (frandompick(0.125,0.25,0.25,0.25,0.375));
 			A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
 		}
 		else
@@ -15586,11 +15588,13 @@ Class BlasterPistol : MarineWeapon
 			if (invoker.altshottype == 1 || CountInv("Cell") <= 0)
 			{
 				shotname = "PistolBlastWeak";
+				recl = (frandompick(0.03125,0.0625,0.0625,0.0625,0.09375));
 				A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 0.334, ATTN_NORM, frandom(1.35,1.65));
 			}
 			else
 			{
 				shotname = "PistolBlast";
+				recl = (frandompick(0.125,0.25,0.25,0.25,0.375));
 				A_TakeInventory("Cell",1,TIF_NOTAKEINFINITE);
 				A_StartSound("weapons/blstrpst2", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NORM, frandom(0.9,1.1));
 			}
@@ -15623,8 +15627,8 @@ Class BlasterPistol : MarineWeapon
 			shotangle = (6.0 * spreadfactor);
 			shotpitch = (6.0 * spreadfactor);
 			shotheight = (frandom(-4.5,4.5) * spreadfactor);
-			double recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * spreadfactor);
-			if (CountInv("BlasterPistolUpgrade")) recl = (frandompick(0.125,0.25,0.25,0.25,0.375) * (spreadfactor * spreadfactor));
+			recl *= spreadfactor;
+			if (CountInv("BlasterPistolUpgrade")) recl *= spreadfactor;
 			A_Recoil(recl);
 		}
 		else
