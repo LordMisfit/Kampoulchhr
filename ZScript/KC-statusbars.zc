@@ -49,7 +49,7 @@ class KCStatusBarMain : BaseStatusBar
 		double output = kc_knifespdlvlint; // 20;
 		double oldoutput = output;
 		if (output <= 1.0) output = 1.0;
-		if (kcdebug_meleeinformation) Console.Printf("output: %.8f [%.8f]", output, oldoutput);
+		//if (kcdebug_meleeinformation) Console.Printf("[status bar] output: %.8f [%.8f] (gametic: %d)", output, oldoutput, gametic);
 		return output;
 	}
 	
