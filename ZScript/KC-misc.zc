@@ -4139,7 +4139,7 @@ class PlayerStatItem : Inventory
 					if (MercyInvulnMod >= 75 && MercyInvulnMod <= 89) MercyFlickerAlpha = 0.4375;
 					if (MercyInvulnMod >= 90 && MercyInvulnMod <= 104) MercyFlickerAlpha = 0.375;
 					if (MercyInvulnMod >= 105 && MercyInvulnMod <= 119) MercyFlickerAlpha = 0.3125;
-					if (kcdebug_mercyinvulndisplays) Console.Printf("MercyFlickerAlpha: %.8f, MercyInvulnMod [Timer]: %d [%d]", MercyFlickerAlpha, owner.GetRenderStyle(), MercyInvulnMod, MercyInvulnTimer);
+					if (kcdebug_mercyinvulndisplays && MercyInvulnTimer) Console.Printf("MercyFlickerAlpha: %.8f, MercyInvulnMod [Timer]: %d [%d]", MercyFlickerAlpha, owner.GetRenderStyle(), MercyInvulnMod, MercyInvulnTimer);
 					MercyInvulnTimer -= 20;
 				}
 				else // Timer at zero
@@ -4162,7 +4162,7 @@ class PlayerStatItem : Inventory
 					owner.bINVULNERABLE = 0;
 				}
 			}
-			if (kcdebug_mercyinvulndisplays) Console.Printf("MercyInvuln: %d {%d} [%d]", MercyInvulnOn, MercyInvulnMod, MercyInvulnTimer);
+			if (kcdebug_mercyinvulndisplays && MercyInvulnTimer) Console.Printf("MercyInvuln: %d {%d} [%d]", MercyInvulnOn, MercyInvulnMod, MercyInvulnTimer);
 		}
 	}
 	
@@ -6532,6 +6532,50 @@ class PlayerStatItem : Inventory
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+					if (MercyInvulnOnSiel && MercyInvulnTimer > 0)
+					{
+						timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+						if (level.time % 2) 
+						{
+							timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+						}
+						if (level.time % 3) 
+						{
+							timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+						}
+						if (level.time % 4) 
+						{
+							timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown1tics--;
+						}
+					}
 				}
 				if (timestopcooldown1tics == 0) 
 				{
@@ -6562,6 +6606,50 @@ class PlayerStatItem : Inventory
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+					if (MercyInvulnOnSiel && MercyInvulnTimer > 0)
+					{
+						timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+						if (level.time % 2) 
+						{
+							timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+						}
+						if (level.time % 3) 
+						{
+							timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+						}
+						if (level.time % 4) 
+						{
+							timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown2tics--;
+						}
+					}
 				}
 				if (timestopcooldown2tics == 0) 
 				{
@@ -6592,6 +6680,50 @@ class PlayerStatItem : Inventory
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
 					if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+					if (MercyInvulnOnSiel && MercyInvulnTimer > 0)
+					{
+						timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+						if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+						if (level.time % 2) 
+						{
+							timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+						}
+						if (level.time % 3) 
+						{
+							timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+						}
+						if (level.time % 4) 
+						{
+							timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 3)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 2)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+							if ((owner.CountInv("KCPowerKampoul") && random(1,4) <= 1)) timestopcooldown3tics--;
+						}
+					}
 				}
 				if (timestopcooldown3tics == 0) 
 				{

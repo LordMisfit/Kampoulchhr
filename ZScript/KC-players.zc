@@ -2616,9 +2616,10 @@ class KCPlayerPawn : PlayerPawn
 							sgtimer = 2.669;
 							A_StartSound("sielsgrace4",1284,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
 						}
+						sgtimer += 1.5;
+						sgtimer *= randompick(1,2,2,2,3);
 						
 						MiscItem.MercyInvulnTimer += (sgtimer * (TICRATE * 20));
-						if (kcdebug_survivalrate) Console.Printf("MiscItem.MercyInvulnTimer: %d", MiscItem.MercyInvulnTimer);
 						MiscItem.sielsgraceactive = 0;
 						MiscItem.MercyInvulnOnSiel = true;
 						double sgrestore = frandompick(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.5,1.5,2.0);
@@ -2632,6 +2633,15 @@ class KCPlayerPawn : PlayerPawn
 						A_SetBlend("87 68 99",0.50, fadetime, "87 68 99",0.00);
 						MiscItem.sielsgraceactivations += 1;
 						MiscItem.sielsgracetrueactivations += 1;
+						MiscItem.timestopcooldown1tics = 0;
+						MiscItem.timestopcooldown1maxtics = 0;
+						MiscItem.timefreeze1timesused += (MiscItem.timeusemulti * 20);
+						MiscItem.timestopcooldown2tics = 0;
+						MiscItem.timestopcooldown2maxtics = 0;
+						MiscItem.timefreeze2timesused += (MiscItem.timeusemulti * 20);
+						MiscItem.timestopcooldown3tics = 0;
+						MiscItem.timestopcooldown3maxtics = 0;
+						MiscItem.timefreeze3timesused += (MiscItem.timeusemulti * 20);
 						A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
 						A_SetInventory("sielsgracetrueactivations",MiscItem.sielsgracetrueactivations);
 						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
@@ -2647,6 +2657,11 @@ class KCPlayerPawn : PlayerPawn
 					}
 				}
 			}
+		}
+		let MiscItem = PlayerStatItem(FindInventory("PlayerStatItem"));
+		if (MiscItem)
+		{
+			if ((kcdebug_survivalrate || kcdebug_mercyinvulndisplays) && MiscItem.MercyInvulnTimer) Console.Printf("\c[gold]MiscItem.MercyInvulnTimer: %d (%8f sec)", MiscItem.MercyInvulnTimer, ((MiscItem.MercyInvulnTimer / TICRATE) * 0.05));
 		}
 		
 		int basespeedvelsx;
@@ -3011,6 +3026,9 @@ class KCPlayerPawn : PlayerPawn
 				no = "TimeSeraphVisor";
 				np = "TSArmorTier3Plus";
 				nq = "TimeSeraphBangle";
+				nr = "FistPlayerBlockItem";
+				ns = "FistPlayerBlockExtra";
+				nt = "FistPlayerBlockExtra2";
 				
 				double TSTicDmgMult = 20;
 				
@@ -3050,6 +3068,18 @@ class KCPlayerPawn : PlayerPawn
 					else if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
 														else TSTicDmg *= frandom(0.80,0.90);
 				}
+				if (CountInv(nr))
+				{
+					TSTicDmg *= frandom(0.25,0.75);
+					if (CountInv(ns))
+					{
+						TSTicDmg *= frandom(0.25,0.75);
+						if (CountInv(nt))
+						{
+							TSTicDmg *= frandom(0.25,0.75);
+						}
+					}
+				}
 				if (TSTicDmg) 
 				{
 					double tsaeffectiveness = (1.0 / kc_tsaeffectiveness);
@@ -3062,7 +3092,7 @@ class KCPlayerPawn : PlayerPawn
 						!A_CheckKCTimeFreeze()) TSTicDmg *= (randompick(9,10,10,10,10,10,10,10,10,11) * randompick(2,3,3,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,7,7,8));
 				if (mod == 'CCShadow' && 
 						!A_CheckInvuln() &&
-						!A_CheckKCTimeFreeze()) TSTicDmg *= 5; // The Shadow Trail CCard is 5x more damaging to the TSArmor
+						!A_CheckKCTimeFreeze()) TSTicDmg *= randompick(4,5,5,5,5,5,5,5,6); // The Shadow Trail CCard is 5x more damaging to the TSArmor
 				if (source)
 				{
 					if (sour == "EviternatusAnta" ||
