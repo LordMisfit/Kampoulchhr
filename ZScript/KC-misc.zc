@@ -6397,8 +6397,25 @@ class PlayerStatItem : Inventory
 		let playeractor = KCPlayerPawn(owner);
 		int TickTimer;
 		
-		if (MercyInvulnTimer > 0) owner.A_SetInventory("KCMercyInvulnTimer",1);
-												 else owner.A_SetInventory("KCMercyInvulnTimer",0);
+		if (MercyInvulnTimer > 0)
+		{
+			if (MercyInvulnOnSiel)
+			{
+				owner.A_SetInventory("KCMercyInvulnTimer2",1);
+				owner.A_SetInventory("KCMercyInvulnTimer",0);
+			}
+			else
+			{
+				owner.A_SetInventory("KCMercyInvulnTimer",1);
+				owner.A_SetInventory("KCMercyInvulnTimer2",0);
+			}
+		}
+		else 
+		{
+			owner.A_SetInventory("KCMercyInvulnTimer",0);
+			owner.A_SetInventory("KCMercyInvulnTimer2",0);
+		}
+
 		
 		// Defensive [default]
 		timefreeze1duration = 10.0 + (timefreezedurationinc1 * timefreeze1timesused);

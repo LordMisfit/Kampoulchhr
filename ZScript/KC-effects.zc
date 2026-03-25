@@ -329,6 +329,40 @@ class KCMercyInvulnTimer : EmptyPowerup
 	{
 		Powerup.Duration 2147483645;
 		//Powerup.Colormap 0.0, 0.0, 0.0, 0.5, 0.5, 0.5;
+		Inventory.Icon "KCEMD0";
+	}
+	
+	override void Tick()
+	{
+		EmptyPowerup.Tick();
+		bool debugtick = false;
+
+		int baseinc = 4;
+		timer++;
+		if (timer % baseinc <= 0) texname = "KCEMD0";
+		if (timer % baseinc == 1) texname = "KCEME0";
+		if (timer % baseinc == 2) texname = "KCEMF0";
+		if (timer % baseinc >= 3) texname = "KCEME0";
+		Console.Printf("timer: %d", timer);
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+}
+
+class KCMercyInvulnTimer2 : EmptyPowerup // Siel's Grace specific Mercy Invuln effect :V
+{
+	int EffectTics2;
+	int Dire;
+	double fadeintensity;	
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	mixin TimerCheck;
+	string texname;
+
+	Default
+	{
+		Powerup.Duration 2147483645;
+		//Powerup.Colormap 0.0, 0.0, 0.0, 0.5, 0.5, 0.5;
 		Inventory.Icon "KCEMA0";
 	}
 	
@@ -342,9 +376,61 @@ class KCMercyInvulnTimer : EmptyPowerup
 		if (timer % baseinc <= 0) texname = "KCEMA0";
 		if (timer % baseinc == 1) texname = "KCEMB0";
 		if (timer % baseinc == 2) texname = "KCEMC0";
-		if (timer % baseinc >= 3) texname = "KCEMb0";
+		if (timer % baseinc >= 3) texname = "KCEMB0";
 		Console.Printf("timer: %d", timer);
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+	
+	override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		actor playera = players[0].mo;
+		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
+		if (passive && damage > 0)
+		{
+			double TOTALFactor = 0.0;
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_defensebuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+		else
+		if (!passive && damage > 0)
+		{
+			double TOTALFactor;
+			int randvar = random(1,8);
+			if (randvar <= 1)
+			{
+				TOTALFactor = frandompick(4.0,4.25,4.5,4.75,5.0);
+			}
+			else
+			if (randvar >= 8)
+			{
+				TOTALFactor = frandompick(1.0,1.0625,1.125,1.1875,1.25);
+			}
+			else
+			{
+				TOTALFactor = frandompick(2.0,2.125,2.25,2.375,2.5);
+			}
+			newdamage = max(0, ApplyDamageFactors(GetClass(), damageType, damage, damage * TOTALFactor));
+			if (kcdebug_attackbuffs) Console.Printf("(%s) TOTALFactor: %.8f, damage: %d [%d]", GetClassName(), TOTALFactor, newdamage, damage);
+		}
+	}
+	
+	override double GetSpeedFactor() 
+	{
+		int randvar = random(1,8);
+		if (randvar <= 1)
+		{
+			Speed = frandom(2.25,2.5);
+		}
+		else
+		if (randvar >= 8)
+		{
+			Speed = frandom(1.625,1.75);
+		}
+		else
+		{
+			Speed = frandom(1.3125,1.375);
+		}
+		return Speed;
 	}
 }
 

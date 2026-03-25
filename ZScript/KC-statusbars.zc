@@ -925,7 +925,8 @@ class KCStatusBarMain : BaseStatusBar
 						ItemFontCLR = font.CR_Gray;
 					}
 				}
-				if (KCMercyInvulnTimer(item))
+				if (KCMercyInvulnTimer(item) ||
+						KCMercyInvulnTimer2(item))
 				{
 					if (MiscItem && MiscItem.MercyInvulnTimer > 0) 
 					{
