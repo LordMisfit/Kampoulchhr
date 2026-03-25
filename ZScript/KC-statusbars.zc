@@ -925,6 +925,15 @@ class KCStatusBarMain : BaseStatusBar
 						ItemFontCLR = font.CR_Gray;
 					}
 				}
+				if (KCMercyInvulnTimer(item))
+				{
+					if (MiscItem && MiscItem.MercyInvulnTimer > 0) 
+					{
+						ItemEffectTics = MiscItem.MercyInvulnTimer;
+						ItemEffectSecs = ((MiscItem.MercyInvulnTimer / thinker.TICRATE) * 0.05);
+						ItemFontCLR = font.CR_Gray;
+					}
+				}
 
 				let icon = item.GetPowerupIcon();
 				if (icon.IsValid() && item.amount >= 1)

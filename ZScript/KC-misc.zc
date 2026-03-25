@@ -6396,7 +6396,10 @@ class PlayerStatItem : Inventory
 		let globalvars = KCGlobalVariables.Get();
 		let playeractor = KCPlayerPawn(owner);
 		int TickTimer;
-
+		
+		if (MercyInvulnTimer > 0) owner.A_SetInventory("KCMercyInvulnTimer",1);
+												 else owner.A_SetInventory("KCMercyInvulnTimer",0);
+		
 		// Defensive [default]
 		timefreeze1duration = 10.0 + (timefreezedurationinc1 * timefreeze1timesused);
 		timefreeze1cooldown = 45.0 * timefreeze1cooldownratio;

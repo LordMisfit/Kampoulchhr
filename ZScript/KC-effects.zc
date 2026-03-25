@@ -314,6 +314,40 @@ class KCTimeFreezeExemption : EmptyPowerup
 {
 }
 
+class KCMercyInvulnTimer : EmptyPowerup
+{
+	int EffectTics2;
+	int Dire;
+	double fadeintensity;	
+	int timer;
+	int fadeouttic;
+	double ticpiece;
+	mixin TimerCheck;
+	string texname;
+
+	Default
+	{
+		Powerup.Duration 2147483645;
+		//Powerup.Colormap 0.0, 0.0, 0.0, 0.5, 0.5, 0.5;
+		Inventory.Icon "KCEMA0";
+	}
+	
+	override void Tick()
+	{
+		EmptyPowerup.Tick();
+		bool debugtick = false;
+
+		int baseinc = 4;
+		timer++;
+		if (timer % baseinc <= 0) texname = "KCEMA0";
+		if (timer % baseinc == 1) texname = "KCEMB0";
+		if (timer % baseinc == 2) texname = "KCEMC0";
+		if (timer % baseinc >= 3) texname = "KCEMb0";
+		Console.Printf("timer: %d", timer);
+		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
+	}
+}
+
 class KCTimeCooldown : EmptyPowerup
 {
 	int EffectTics2;
