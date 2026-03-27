@@ -2596,7 +2596,7 @@ class KCPlayerPawn : PlayerPawn
 						A_StopSound(1284);
 						A_StartSound("sielsgrace0",1280,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
 						sgvol = 1.5;
-						if (MiscItem.sielsgraceactivations % 4 == 0) 
+						if (MiscItem.sielsgraceactivations % 4 == 0)
 						{
 							sgtimer = 4.376;
 							A_StartSound("sielsgrace1",1281,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
@@ -2617,7 +2617,15 @@ class KCPlayerPawn : PlayerPawn
 							A_StartSound("sielsgrace4",1284,CHANF_DEFAULT,sgvol,ATTN_NONE,1.00);
 						}
 						sgtimer += 1.5;
-						sgtimer *= randompick(1,2,2,2,3);
+						int randvarmax = 18;
+						if (MiscItem.sielsgraceactivations % 4 == 0) randvarmax = 3;
+						if (MiscItem.sielsgraceactivations % 4 == 1) randvarmax = 7;
+						if (MiscItem.sielsgraceactivations % 4 == 2) randvarmax = 12;
+						if (MiscItem.sielsgraceactivations % 4 == 3) randvarmax = 18;
+						int randvar = random(1,randvarmax);
+						if (randvar <= 1) sgtimer *= frandompick(2.0,3.0,3.0,3.0,4.0);
+						else if (randvar >= randvarmax) sgtimer *= frandompick(1.0,1.5,1.5,1.5,2.0);
+						else sgtimer *= frandompick(1.5,2.25,2.25,2.25,3.0);
 						
 						MiscItem.MercyInvulnTimer += (sgtimer * (TICRATE * 20));
 						MiscItem.sielsgraceactive = 0;
@@ -2644,7 +2652,12 @@ class KCPlayerPawn : PlayerPawn
 						MiscItem.timefreeze3timesused += (MiscItem.timeusemulti * 20);
 						A_SetInventory("sielsgraceactivations",MiscItem.sielsgraceactivations);
 						A_SetInventory("sielsgracetrueactivations",MiscItem.sielsgracetrueactivations);
-						if (MiscItem.sielsgraceactivations < 4) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,0,1));
+						if (MiscItem.sielsgraceactivations < 4) 
+						{
+							if (MiscItem.sielsgraceactivations % 4 == 0) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,randompick(0,1),1,1,1));
+							if (MiscItem.sielsgraceactivations % 4 == 1) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,randompick(0,0,1),1,1));
+							if (MiscItem.sielsgraceactivations % 4 == 2) MiscItem.A_SielsGraceCooldown(randompick(0,0,0,0,0,0,0,0,randompick(0,0,0,1),1));
+						}
 						MiscItem.A_SielsGraceLuckCooldown(300);
 					}
 					else
@@ -2863,6 +2876,7 @@ class KCPlayerPawn : PlayerPawn
 		}
 		if (TimeSeraphArmor)
 		{
+			// Nulls any projectile that inflicts standard Poison Effects of its poisonous properties :P
 			if (inflictor && inflictor.bMISSILE)
 			{
 				if (inflictor.PoisonDamage > 0) inflictor.PoisonDamage = 0;
@@ -2887,7 +2901,7 @@ class KCPlayerPawn : PlayerPawn
 				if (flags & DMG_FOILBUDDHA) flags &= ~DMG_FOILBUDDHA;
 				if (flags & DMG_FOILINVUL) flags &= ~DMG_FOILINVUL;
 				if (flags & DMG_NO_PROTECT) flags &= ~DMG_NO_PROTECT;
-				if (mod == 'Normal') 
+				if (mod == 'Normal')
 				{
 					if (kcdebug_playerdamagemobj) Console.Printf("CCards_NukeExplosion - Normal");
 					damage = 0;
@@ -2922,7 +2936,7 @@ class KCPlayerPawn : PlayerPawn
 					(source && Archvile(source)) ||
 					(inflictor && Archvile(inflictor)))
 			{
-				flags |= DMG_THRUSTLESS;
+				flags |= DMG_THRUSTLESS; // Nulls any thrust/push/knockback from attacks of these kind [this also means you can't Archvile Jump w/ the Armor active >.>;]
 				temperateshield = 1;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Heat-Type Damage): %d [previous: %d]", damage, prevdmg);
@@ -2935,7 +2949,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Frost' || 
 					mod == 'Chill')
 			{
-				flags |= DMG_THRUSTLESS;
+				flags |= DMG_THRUSTLESS; // Nulls any thrust/push/knockback from attacks of these kind
 				temperateshield = 2;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Cold-Type Damage): %d [previous: %d]", damage, prevdmg);
@@ -2950,7 +2964,7 @@ class KCPlayerPawn : PlayerPawn
 					mod == 'Shock' ||
 					mod == 'ShockFloor')
 			{
-				flags |= DMG_THRUSTLESS;
+				flags |= DMG_THRUSTLESS; // Nulls any thrust/push/knockback from attacks of these kind
 				temperateshield = 3;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Electric-Type Damage): %d [previous: %d]", damage, prevdmg);
@@ -2960,7 +2974,7 @@ class KCPlayerPawn : PlayerPawn
 			// Wind based Coverage [blocked entirely by temperates shield :P]
 			if (mod == 'Wind')
 			{
-				flags |= DMG_THRUSTLESS;
+				flags |= DMG_THRUSTLESS; // Nulls any thrust/push/knockback from attacks of these kind
 				temperateshield = 4;
 				damage = 0;
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- Post TSArmor - Damage Full Nullified (Wind-Type Damage): %d [previous: %d]", damage, prevdmg);
@@ -2985,8 +2999,15 @@ class KCPlayerPawn : PlayerPawn
 			// BFG Tracers are greatly mitigated by the Time Seraph's Armor as well.
 			if (mod == 'BFGSplash')
 			{
-				if (random(1,10) <= 9) flags |= DMG_THRUSTLESS;
-				damage *= 0.1;
+				if (random(1,10) <= 9) 
+				{
+					flags |= DMG_THRUSTLESS;
+					damage *= 0.05;
+				}
+				else
+				{
+					damage *= 0.25;
+				}
 			}
 			
 			// Hades Thunder is half Thunder, half dark, so it's 
@@ -3026,9 +3047,6 @@ class KCPlayerPawn : PlayerPawn
 				no = "TimeSeraphVisor";
 				np = "TSArmorTier3Plus";
 				nq = "TimeSeraphBangle";
-				nr = "FistPlayerBlockItem";
-				ns = "FistPlayerBlockExtra";
-				nt = "FistPlayerBlockExtra2";
 				
 				double TSTicDmgMult = 20;
 				
@@ -3058,28 +3076,20 @@ class KCPlayerPawn : PlayerPawn
 					TSTicDmg = (olddmg * frandom(TSTicDmgMult*0.75,TSTicDmgMult));
 					TSTicDmg *= frandom(1.5,2.5);
 				}
-				if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (start vs olddmg): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
+				if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (start vs olddmg, post skill-check): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
+
 				if (CountInv(nm)) TSTicDmg *= frandom(0.667,1.000); 
 				if (CountInv(nn)) TSTicDmg *= frandom(0.083334,0.125);
 				if (CountInv(np)) TSTicDmg *= frandom(0.010421875,0.015625);
+				if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (start vs olddmg, post TS Tier Check): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
 				if (CountInv(nq)) 
 				{
 							 if (CountInv(np)) TSTicDmg *= frandom(0.20,0.60);
 					else if (CountInv(nn)) TSTicDmg *= frandom(0.60,0.80);
 														else TSTicDmg *= frandom(0.80,0.90);
+					if (kcdebug_playerdamagemobj && TSTicDmg && olddmg) Console.Printf("\c[green][CheckTimeSeraphArmor]\c- TSTicDmg (start vs olddmg, post TS Bangle Check): %.8f vs %d [%.8f]", TSTicDmg, olddmg, (TSTicDmg/olddmg));
 				}
-				if (CountInv(nr))
-				{
-					TSTicDmg *= frandom(0.25,0.75);
-					if (CountInv(ns))
-					{
-						TSTicDmg *= frandom(0.25,0.75);
-						if (CountInv(nt))
-						{
-							TSTicDmg *= frandom(0.25,0.75);
-						}
-					}
-				}
+				
 				if (TSTicDmg) 
 				{
 					double tsaeffectiveness = (1.0 / kc_tsaeffectiveness);
@@ -3092,7 +3102,7 @@ class KCPlayerPawn : PlayerPawn
 						!A_CheckKCTimeFreeze()) TSTicDmg *= (randompick(9,10,10,10,10,10,10,10,10,11) * randompick(2,3,3,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,7,7,8));
 				if (mod == 'CCShadow' && 
 						!A_CheckInvuln() &&
-						!A_CheckKCTimeFreeze()) TSTicDmg *= randompick(4,5,5,5,5,5,5,5,6); // The Shadow Trail CCard is 5x more damaging to the TSArmor
+						!A_CheckKCTimeFreeze()) TSTicDmg *= frandompick(4.0,4.5,5.0,5.0,5.0,5.0,5.0,5.5,6.0); // The Shadow Trail CCard is ~5x more damaging to the TSArmor
 				if (source)
 				{
 					if (sour == "EviternatusAnta" ||
@@ -3100,6 +3110,30 @@ class KCPlayerPawn : PlayerPawn
 							sour == "EviternatusCeph" ||
 							sour == "EviternatusDelp") TSTicDmg *= random(20,30);
 				}
+				
+				if (CountInv("FistPlayerBlockItem"))
+				{
+					double fistboost = 1.0;
+					if (CountInv("FistPlayerBlock")) fistboost = 1.25;
+					if (CountInv("FistPlayerBlock2")) fistboost = 1.5;
+					if (CountInv("FistPlayerBlock3")) fistboost = 2.0;
+					if (CountInv("FistPlayerBlock4")) fistboost = 3.0;
+					
+					if (CountInv("FistPlayerBlockExtra")) fistboost = 1.5;
+					if (CountInv("FistPlayerBlockExtra2")) fistboost = 1.5;
+					
+					if (TruePlayerLevel >= 240) fistboost *= 2.0;
+					else if (TruePlayerLevel >= 210) fistboost *= 1.875;
+					else if (TruePlayerLevel >= 180) fistboost *= 1.75;
+					else if (TruePlayerLevel >= 150) fistboost *= 1.625;
+					else if (TruePlayerLevel >= 120) fistboost *= 1.5;
+					else if (TruePlayerLevel >= 90) fistboost *= 1.375;
+					else if (TruePlayerLevel >= 60) fistboost *= 1.25;
+					else if (TruePlayerLevel >= 30) fistboost *= 1.125;
+					
+					TSTicDmg *= (1.0 / fistboost);
+				}
+				
 				if (!temperateshield)
 				{
 					if (!level.isFrozen())
