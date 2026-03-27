@@ -8620,7 +8620,6 @@ class TommyGun : MarineWeapon
 		let MiscItem = PlayerStatItem(playera.FindInventory("PlayerStatItem"));
 		
 		int temp1 = randompick(3,3,3,3,3,3,4,4,4,4,5,5) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
-		if (CountInv("TommyGunUpgrade") > 0) randompick(3,3,3,4,4,4,4,5,5,5,5,6) * random(randompick(1,1,2,2,3,3),randompick(3,3,4,4,5,5));
 		double barrageangoffset = 0.0;
 		double offsetmulti = 1.0;
 		double shotangle = 1.0;
@@ -8628,6 +8627,8 @@ class TommyGun : MarineWeapon
 		barrageangoffset = 0.0;
 		if (type == 0)
 		{
+			if (CountInv("TommyGunUpgrade") > 0) temp1 = randompick(3,3,3,4,4,4,4,5,5,5,5,6) * random(randompick(1,1,2,2,3,3),randompick(3,3,4,4,5,5));
+																			else temp1 = randompick(3,3,3,3,3,3,4,4,4,4,5,5) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
 			shotangle = frandom(0.5,1.0);
 			shotpitch = frandom(0.5,1.0);
 			if (invoker.tommybarrageno <= 1) barrageangoffset = -0.5;
@@ -8654,6 +8655,8 @@ class TommyGun : MarineWeapon
 		}
 		else
 		{
+			if (CountInv("TommyGunUpgrade") > 0) temp1 = (randompick(3,3,3,4,4,4,4,5,5,5,5,6) + randompick(0,1,1,1,1,1,1,1,1,2)) * random(randompick(1,1,2,2,3,3),randompick(3,3,4,4,5,5));
+																			else temp1 = (randompick(3,3,3,3,3,3,4,4,4,4,5,5) + randompick(0,1,1,1,1,1,1,1,1,2)) * random(randompick(1,1,1,2,2,3),randompick(3,3,3,4,4,5));
 			shotangle = frandom(3.0,6.0);
 			shotpitch = frandom(3.0,6.0);
 			if (invoker.tommybarrageno <= 1) barrageangoffset = 2.0;
