@@ -2424,6 +2424,10 @@ class KCPlayerPawn : PlayerPawn
 				{
 					armortier = 3;
 				}
+				if (icon == TexMan.CheckForTexture("HEV2B0", TexMan.TYPE_MiscPatch))
+				{
+					armortier = 4;
+				}
 				
 			}
 			if (kcdebug_armordisplays) Console.Printf("\c[sapphire]Armor -\c- SavePercent: %.8f, Tier: %d, MaxAbsorb: %d, MaxFullAbsorb: %d", savepercent, armortier, MaxAbsorb, MaxFullAbsorb);
@@ -4175,6 +4179,10 @@ class KCPlayerPawn : PlayerPawn
 			{
 				armortier = 3;
 			}
+			if (icon == TexMan.CheckForTexture("HEV2B0", TexMan.TYPE_MiscPatch))
+			{
+				armortier = 4;
+			}
 			
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- Armor SavePercent: %.8f, Tier: %d", savepercent, armortier);
 		}
@@ -5140,6 +5148,7 @@ class KCPlayerPawn : PlayerPawn
 					if (icon == TexMan.CheckForTexture("ARM2A0", TexMan.TYPE_MiscPatch) ||
 							icon == TexMan.CheckForTexture("SHD2A0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * BLUEARMORVALDOUBLE);
 					if (icon == TexMan.CheckForTexture("HEVAB0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * REDARMORVALDOUBLE);
+					if (icon == TexMan.CheckForTexture("HEV2B0", TexMan.TYPE_MiscPatch)) armmax = (MiscItem.MaxHealthTrue * DELUGEARMORVALDOUBLE);
 					if (armmax > 0)
 					{
 						int damagetakefactor = armdmg * 100 / armmax;

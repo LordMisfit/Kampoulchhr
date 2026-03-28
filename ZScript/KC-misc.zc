@@ -3447,6 +3447,13 @@ class PlayerStatItem : Inventory
 					darmortype2 = 3;
 					truearmortype = 3;
 				}
+				else
+				if (icon == TexMan.CheckForTexture("HEV2B0", TexMan.TYPE_MiscPatch))
+				{
+					darmortype = 4;
+					darmortype2 = 4;
+					truearmortype = 4;
+				}
 				if (owner.CountInv("TSArmorTier1") || 
 						owner.CountInv("TSArmorTier2") ||
 						owner.CountInv("TSArmorTier3Plus"))
@@ -3470,6 +3477,11 @@ class PlayerStatItem : Inventory
 					{
 						Base *= 4.75;
 						BaseMulti *= 4.75;
+					}
+					if (darmortype == 4)
+					{
+						Base *= 10.125;
+						BaseMulti *= 10.125;
 					}
 		
 					MassInc = floor(ArmorAmt * Base);
@@ -3784,11 +3796,17 @@ class PlayerStatItem : Inventory
 						if (berserked) ArmorWeight *= 0.4;
 						if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 					}
-					if (darmortype == 3) // Red Armor [Doom-type] (350% of HP max)
+					if (darmortype == 3) // Red Armor [Doom-type] (425% of HP max)
 					{
 						ArmorWeight = HARMORWEIGHTRED;
 						if (berserked) ArmorWeight *= 0.4;
 						if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
+					}
+					if (darmortype == 4) // Grand Armor [Doom-type] (875% of HP max)
+					{
+						ArmorWeight = HARMORWEIGHTDELUGE;
+						if (berserked) ArmorWeight *= 0.4;
+						if (ArmorRatio >= DELUGEARMORVALDOUBLE) ArmorRatio = DELUGEARMORVALDOUBLE;
 					}
 				}
 				else
@@ -3810,6 +3828,12 @@ class PlayerStatItem : Inventory
 						ArmorWeight = MARMORWEIGHTRED;
 						if (berserked) ArmorWeight *= 0.6;
 						if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
+					}
+					if (darmortype == 4) // Grand Armor [Doom-type] (875% of HP max)
+					{
+						ArmorWeight = MARMORWEIGHTDELUGE;
+						if (berserked) ArmorWeight *= 0.6;
+						if (ArmorRatio >= DELUGEARMORVALDOUBLE) ArmorRatio = DELUGEARMORVALDOUBLE;
 					}
 				}
 				ArmorWeight *= ArmorHealthFactor;
@@ -9164,11 +9188,17 @@ class PlayerStatItem : Inventory
 					if (berserked) ArmorWeight *= 0.4;
 					if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 				}
-				if (darmortype == 3) // Blue Armor [Doom-type] (350% of HP max)
+				if (darmortype == 3) // Blue Armor [Doom-type] (425% of HP max)
 				{
 					ArmorWeight = HARMORWEIGHTRED;
 					if (berserked) ArmorWeight *= 0.4;
 					if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
+				}
+				if (darmortype == 4) // Grand Armor [Doom-type] (875% of HP max)
+				{
+					ArmorWeight = HARMORWEIGHTDELUGE;
+					if (berserked) ArmorWeight *= 0.4;
+					if (ArmorRatio >= DELUGEARMORVALDOUBLE) ArmorRatio = DELUGEARMORVALDOUBLE;
 				}
 			}
 			else
@@ -9185,11 +9215,17 @@ class PlayerStatItem : Inventory
 					if (berserked) ArmorWeight *= 0.6;
 					if (ArmorRatio >= BLUEARMORVALDOUBLE) ArmorRatio = BLUEARMORVALDOUBLE;
 				}
-				if (darmortype == 3) // Red Armor [Doom-type] (350% of HP max)
+				if (darmortype == 3) // Red Armor [Doom-type] (425% of HP max)
 				{
 					ArmorWeight = MARMORWEIGHTRED;
 					if (berserked) ArmorWeight *= 0.6;
 					if (ArmorRatio >= REDARMORVALDOUBLE) ArmorRatio = REDARMORVALDOUBLE;
+				}
+				if (darmortype == 4) // Grand Armor [Doom-type] (875% of HP max)
+				{
+					ArmorWeight = MARMORWEIGHTDELUGE;
+					if (berserked) ArmorWeight *= 0.6;
+					if (ArmorRatio >= DELUGEARMORVALDOUBLE) ArmorRatio = DELUGEARMORVALDOUBLE;
 				}
 			}
 			ArmorWeight *= ArmorHealthFactor;
