@@ -2519,14 +2519,28 @@ class Megasphere2 : CustomInventoryExt replaces MegaSphere
 				let armr = KCArmor(playera.FindInventory("KCArmor"));
 				if (armr)
 				{
-					if (armortier >= 2) 
+					if (armortier >= 4) 
+					{
+						if (kcdebug_armordisplays) Console.Printf("has armor: grand tier");
+						playera.A_GiveInventory("KCGrandArmorForMegasphere", 1);
+					}
+					else
+					if (armortier == 3) 
+					{
+						if (kcdebug_armordisplays) Console.Printf("has armor: heavy or grand tier");
+						if (random(1,8) <= 1) playera.A_GiveInventory("KCGrandArmorForMegasphere", 1);
+														 else playera.A_GiveInventory("KCHeavyArmorForMegasphere", 1); //A_MegaSphereArmor();
+					}
+					else
+					if (armortier == 2)
 					{
 						if (kcdebug_armordisplays) Console.Printf("has armor: blue or heavy tier");
 						playera.A_GiveInventory("KCHeavyArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 					else
+					if (armortier <= 1)
 					{
-						if (kcdebug_armordisplays) Console.Printf("has armor: green tier");
+						if (kcdebug_armordisplays) Console.Printf("has armor: green tier or less");
 						playera.A_GiveInventory("KCBlueArmorForMegasphere", 1); //A_MegaSphereArmor();
 					}
 				}
@@ -4166,7 +4180,11 @@ class KCGreenArmor : KCArmorPickup replaces GreenArmor
 						if (random(1,chance1) <= chance2)
 						{
 							string armortype1 = "KCBlueArmor";
-							if (random(1,chance1) <= chance2) armortype1 = "KCHeavyArmor";
+							if (random(1,chance1) <= chance2) 
+							{
+								if (random(1,(chance1 * 2)) <= (chance2 / 2)) armortype1 = "KCGrandArmor";
+																												 else armortype1 = "KCHeavyArmor";
+							}
 							bool spawned;
 							actor mo;
 							[spawned, mo] = A_SpawnItemEx(armortype1,flags:SXF_NOCHECKPOSITION,tid:tid);
@@ -4663,6 +4681,15 @@ class KCHeavyArmor : KCArmorPickup
 		}
 		else
 		{
+			int armortier;
+			KCPlayerPawn KPlayer;
+			KPlayer = KCPlayerPawn(playera);
+			if (KPlayer)
+			{
+				if (kcdebug_armordisplays) Console.Printf("armortier: %d", KPlayer.armortier);
+				armortier = KPlayer.armortier;
+			}
+			
 			// If you already have more armor than this item gives you, you can't
 			// use it.
 			if (armor.Amount >= SaveAmount + armor.BonusCount)
@@ -4671,6 +4698,11 @@ class KCHeavyArmor : KCArmorPickup
 			}
 			// Don't use it if you're picking it up and already have some.
 			if (pickup && armor.Amount > 0 && MaxAmount > 0)
+			{
+				return false;
+			}
+			// Don't use it if your armor tier is Grand Armor
+			if (armortier >= 4)
 			{
 				return false;
 			}

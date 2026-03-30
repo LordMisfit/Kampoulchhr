@@ -7771,13 +7771,22 @@ class PlayerStatItem : Inventory
 			ArmorDefValueDmgFlr += randompick[statitem](0,0,0,0,0,0,0,0,1,1,2,2,3);
 			ArmorDefValueHUD = 5 + armoradd;
 		}
-		if (armtier >= 3)
+		if (armtier == 3)
 		{
 			armoradd = ((ActualLevel * 0.15625) + (TruePlayerDEF * 0.15625));
 			
 			ArmorDefValue += (random[statitem](9,14) + armoradd);
 			ArmorDefValueCrush += randompick[statitem](2,3,3,4,4);
 			ArmorDefValueDmgFlr += randompick[statitem](0,0,0,0,0,1,1,2,2,3,3,4,4);
+			ArmorDefValueHUD = 14 + armoradd;
+		}
+		if (armtier >= 4)
+		{
+			armoradd = ((ActualLevel * 0.390625) + (TruePlayerDEF * 0.390625));
+			
+			ArmorDefValue += (random[statitem](17,26) + armoradd);
+			ArmorDefValueCrush += randompick[statitem](4,4,5,5,6);
+			ArmorDefValueDmgFlr += randompick[statitem](0,0,1,1,2,2,3,3,4,4,5,5,6);
 			ArmorDefValueHUD = 14 + armoradd;
 		}
 		double GuardVal = 2;
@@ -7969,6 +7978,7 @@ class PlayerStatItem : Inventory
 					if (ArmorTier == 1) owner.A_GiveInventory("KCGreenArmor",1);
 					if (ArmorTier == 2) owner.A_GiveInventory("KCBlueArmor",1);
 					if (ArmorTier == 3) owner.A_GiveInventory("KCHeavyArmor",1);
+					if (ArmorTier == 4) owner.A_GiveInventory("KCGrandArmor",1);
 					if (ArmorTier > 0) 
 					{
 						owner.A_TakeInventory("KCArmor",(armsav-1));

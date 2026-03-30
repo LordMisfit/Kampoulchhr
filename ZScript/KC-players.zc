@@ -3440,12 +3440,12 @@ class KCPlayerPawn : PlayerPawn
 		if (source && kc_enemyarmorignorefactor >= 0.001)
 		{
 			int ignoretier = 0;
-			if (kcdebug_playerdamagemobj) Console.Printf("\c[orange]Enemy Bypasses armor [attempt]");
+			if (kcdebug_playerdamagemobj || kcdebug_armordisplays) Console.Printf("\c[orange]Enemy Bypasses armor [attempt]");
 			KCCreature KCSource;
 			KCSource = KCCreature(source);
 			if (KCSource)
 			{
-				if (kcdebug_playerdamagemobj) Console.Printf("\c[sapphire]KCSource found [armor bypass]");
+				if (kcdebug_playerdamagemobj || kcdebug_armordisplays) Console.Printf("\c[sapphire]KCSource found [armor bypass]");
 				int rand1;
 				double randarmign;
 				
@@ -3550,40 +3550,47 @@ class KCPlayerPawn : PlayerPawn
 				}
 				
 				double finalsourceignore = (random(0,rand1) * randarmign);
+				if (armortier == 3) finalsourceignore *= frandompick(0.4,0.67,0.67,0.75,0.75,0.75,0.75,0.75,0.75,0.834,0.834,0.9);
+				if (armortier >= 4) finalsourceignore *= frandompick(0.2,0.34,0.34,0.5,0.5,0.5,0.5,0.5,0.5,0.67,0.67,0.8);
 				double ignorecap1 = 1.00;
 				if (skill <= SKILL_VERY_EASY)
 				{
 					if (armortier == 1) ignorecap1 = 0.625;
 					if (armortier == 2) ignorecap1 = 0.25;
-					if (armortier >= 3) ignorecap1 = 0.0;
+					if (armortier == 3) ignorecap1 = 0.1;
+					if (armortier >= 4) ignorecap1 = 0.04;
 				}
 				if (skill == SKILL_EASY)
 				{
 					if (armortier == 1) ignorecap1 = 0.6875;
 					if (armortier == 2) ignorecap1 = 0.375;
-					if (armortier >= 3) ignorecap1 = 0.0625;
+					if (armortier == 3) ignorecap1 = 0.1625;
+					if (armortier >= 4) ignorecap1 = 0.08125;
 				}
 				if (skill == SKILL_NORMAL)
 				{
 					if (armortier == 1) ignorecap1 = 0.75;
 					if (armortier == 2) ignorecap1 = 0.5;
-					if (armortier >= 3) ignorecap1 = 0.375;
+					if (armortier == 3) ignorecap1 = 0.375;
+					if (armortier >= 4) ignorecap1 = 0.125;
 				}
 				if (skill == SKILL_HARD)
 				{
 					if (armortier == 1) ignorecap1 = 0.875;
 					if (armortier == 2) ignorecap1 = 0.75;
-					if (armortier >= 3) ignorecap1 = 0.625;
+					if (armortier == 3) ignorecap1 = 0.625;
+					if (armortier >= 4) ignorecap1 = 0.375;
 				}
 				if (skill >= SKILL_VERY_HARD)
 				{
 					if (armortier == 1) ignorecap1 = 0.9375;
 					if (armortier == 2) ignorecap1 = 0.875;
-					if (armortier >= 3) ignorecap1 = 0.8125;
+					if (armortier == 3) ignorecap1 = 0.8125;
+					if (armortier >= 4) ignorecap1 = 0.625;
 				}
 				if (finalsourceignore > ignorecap1) finalsourceignore = ignorecap1;
 				PlayerArmorIgnoreFactor += (finalsourceignore * (1.00 - PlayerArmorIgnoreFactor));
-				if (kcdebug_playerdamagemobj) Console.Printf("Tier %d Armor Ignoring Type: [Level: %d], rand1: %d, randarmign: %.8f, PlayerArmorIgnoreFactor: %.8f", ignoretier, source.CountInv("MonsterLevel"), rand1, randarmign, PlayerArmorIgnoreFactor);
+				if (kcdebug_playerdamagemobj || kcdebug_armordisplays) Console.Printf("Tier %d Armor Ignoring Type: [Level: %d], rand1: %d, randarmign: %.8f, PlayerArmorIgnoreFactor: %.8f", ignoretier, source.CountInv("MonsterLevel"), rand1, randarmign, PlayerArmorIgnoreFactor);
 			}
 		}
 		
@@ -4555,6 +4562,7 @@ class KCPlayerPawn : PlayerPawn
 						if (armortier == 1) damage = 1;
 						if (armortier == 2 && random(1,16) > 1) damage = 1;
 						if (armortier == 3 && random(1,128) > 1) damage = 1;
+						if (armortier >= 4 && random(1,512) > 1) damage = 1;
 					}
 				}
 				else
@@ -4589,6 +4597,7 @@ class KCPlayerPawn : PlayerPawn
 						if (armortier == 1) damage = 1;
 						if (armortier == 2 && random(1,4) > 1) damage = 1;
 						if (armortier == 3 && random(1,32) > 1) damage = 1;
+						if (armortier >= 4 && random(1,128) > 1) damage = 1;
 					}
 				}
 				if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [Raw Armor Def]: %d", damage, olddmg);
@@ -4715,6 +4724,11 @@ class KCPlayerPawn : PlayerPawn
 			{
 				damage *= frandom(0.000,0.250);
 				dmg1base = 93.75;
+			}
+			if (armortier >= 4) 
+			{
+				damage *= frandom(0.000,0.0625);
+				dmg1base = 98.4375;
 			}
 			if (frandom(0.1,100.0) > dmg1base && damage < 1) damage = 1;
 			if (kcdebug_playerdamagemobj) Console.Printf("\c[green][DamageMobj]\c- PDamage [CCards Acid w/ Armor]: %d (%d)", damage, olddmg);
