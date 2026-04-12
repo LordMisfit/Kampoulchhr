@@ -1436,6 +1436,17 @@ class TimeSeraphBangle : BaseTimeSeraphArtifact
 					{
 						playera.A_SetInventory("TimeSeraphVisor",0);
 						playera.A_SetInventory("KCPowerTorchBangle",0);
+						int LAmpTics;
+						let LightAmp = KCPowerLightAmp(playera.FindInventory("KCPowerLightAmp"));
+						if (LightAmp) 
+						{
+							LAmpTics = LightAmp.EffectTics;
+							playera.RemoveInventory(LightAmp);
+							
+							playera.SetInventory("KCPowerLightAmp",1);
+							let LightAmp2 = KCPowerLightAmp(playera.FindInventory("KCPowerLightAmp"));
+							if (LightAmp2) LightAmp2.EffectTics = LAmpTics;
+						}
 						playera.A_StopSound(558);
 						playera.A_StartSound("tsbangle/start",558,CHANF_DEFAULT,1.0,ATTN_NONE,frandom(1.00,1.334));
 					}
@@ -6548,6 +6559,49 @@ class BaseModPack : CustomInventoryExt
 		Inventory.InterHubAmount 0;
 		Inventory.MaxAmount 0;
 	}
+
+	void MPackHum()
+	{
+		actor playera = players[0].mo;
+		double snd1vol = 1.00;
+		double snd2vol = 0.10;
+		snd1vol = 0.375;
+		snd2vol = 0.625;
+		string modpackhum2;
+		if (GetClassName() == "RiotGunModpack") modpackhum2 = "misc/modpackhum1";
+		if (GetClassName() == "TommyGunModpack") modpackhum2 = "misc/modpackhum2";
+		if (GetClassName() == "BlasterRifleModpack") modpackhum2 = "misc/modpackhum3";
+		if (GetClassName() == "BlasterPistolModpack") modpackhum2 = "misc/modpackhum4";
+		if (GetClassName() == "DevastatorModpack") modpackhum2 = "misc/modpackhum5";
+		if (GetClassName() == "CalamityBladeModPack") modpackhum2 = "misc/modpackhum6";
+		//Console.Printf("vol1: %.8f, vol2: %.8f, vol3: %.8f", snd1vol, snd2vol, snd3vol);
+		if (level.time % 54 == 1)
+		{
+			A_StartSound("misc/modpackhummain",101,CHANF_DEFAULT,snd1vol,ATTN_NORM,1.0);
+			A_StartSound(modpackhum2,102,CHANF_DEFAULT,snd2vol,ATTN_NORM,1.0);
+			if (modpackhum2 == "") A_StopSound(102);
+		}
+		else
+		{
+			A_SoundVolume(101,snd1vol);
+			A_SoundVolume(102,snd2vol);
+		}
+	}
+	
+	override void Tick()
+	{
+		if (!owner)
+		{
+			MPackHum();
+		}
+		else
+		{
+			A_StopSound(101);
+			A_StopSound(102);
+			A_StopSound(103);
+		}
+		super.Tick();
+	}
 }
 
 class RiotGunModpack : BaseModPack
@@ -6865,7 +6919,7 @@ class RandomModpack : CustomInventoryExt
 							}
 							if (rand == 3)
 							{
-								[spawned, mo] = A_SpawnItemEx("BlasterPistol",flags:SXF_NOCHECKPOSITION,tid:tid);
+								[spawned, mo] = A_SpawnItemEx("BlasterPickup",flags:SXF_NOCHECKPOSITION,tid:tid);
 								if (bCOUNTITEM) level.total_items--;
 								if (bCOUNTSECRET) level.total_secrets--;
 								if (bCOUNTKILL) level.total_monsters--;
@@ -6883,7 +6937,7 @@ class RandomModpack : CustomInventoryExt
 							}
 							if (rand == 5)
 							{
-								[spawned, mo] = A_SpawnItemEx("Devastator",flags:SXF_NOCHECKPOSITION,tid:tid);
+								[spawned, mo] = A_SpawnItemEx("DevastatorGenerator",flags:SXF_NOCHECKPOSITION,tid:tid);
 								if (bCOUNTITEM) level.total_items--;
 								if (bCOUNTSECRET) level.total_secrets--;
 								if (bCOUNTKILL) level.total_monsters--;

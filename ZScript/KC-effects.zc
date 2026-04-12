@@ -377,7 +377,7 @@ class KCMercyInvulnTimer2 : EmptyPowerup // Siel's Grace specific Mercy Invuln e
 		if (timer % baseinc == 1) texname = "KCEMB0";
 		if (timer % baseinc == 2) texname = "KCEMC0";
 		if (timer % baseinc >= 3) texname = "KCEMB0";
-		Console.Printf("timer: %d", timer);
+		if (kcdebug_mercyinvulndisplays) Console.Printf("timer: %d", timer);
 		icon = TexMan.CheckForTexture(texname, TexMan.TYPE_MiscPatch);
 	}
 	

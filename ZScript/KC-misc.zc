@@ -6269,7 +6269,21 @@ class PlayerStatItem : Inventory
 				}
 				else
 				{
-					if (owner.CountInv("KCPowerTorchBangle")) owner.A_SetInventory("KCPowerTorchBangle",0);
+					if (owner.CountInv("KCPowerTorchBangle")) 
+					{
+						owner.A_SetInventory("KCPowerTorchBangle",0);
+						int LAmpTics;
+						let LightAmp = KCPowerLightAmp(owner.FindInventory("KCPowerLightAmp"));
+						if (LightAmp) 
+						{
+							LAmpTics = LightAmp.EffectTics;
+							owner.RemoveInventory(LightAmp);
+							
+							owner.SetInventory("KCPowerLightAmp",1);
+							let LightAmp2 = KCPowerLightAmp(owner.FindInventory("KCPowerLightAmp"));
+							if (LightAmp2) LightAmp2.EffectTics = LAmpTics;
+						}
+					}
 				}
 				if (TimeArmorRelicsUsedBits > 0) owner.A_SetInventory("TSArtifactsInUse",1);
 				if (TSADrainAmt)
