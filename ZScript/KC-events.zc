@@ -189,6 +189,7 @@ class KC_EventHandler : EventHandler
 		A_TmFrzCCardWTick_General("CCards_Actor_ForbiddenGazeToken","KC_CCards_Actor_ForbiddenGazeToken",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_Transmogrifier","KC_CCards_Actor_Transmogrifier",type);
 		A_TmFrzCCardWTick_General("CCards_Actor_EssenceCycle","KC_CCards_Actor_EssenceCycle",type);
+		A_TmFrzCCardWTick_General("CCards_Actor_BloodRainBuff","KC_CCards_Actor_BloodRainBuff",type);
 		//A_TmFrzCCardWTick_General("CCards_Actor_LeapAbility","KC_CCards_Actor_LeapAbility",type);
 	}
 
@@ -4193,6 +4194,17 @@ class KC_EventHandler : EventHandler
 			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]getfactor: %.8f [final]", getfactor);
 			maxdroptimes *= getfactor;
 			
+			if (A_CheckCCards() && droptimes > 2 && maxdroptimes > 2)
+			{
+				if (random(1,8) <= randompick(7,7,7,8)) 
+				{
+					droptimes /= 2;
+					maxdroptimes /= 2;
+					if (droptimes < 1) droptimes = 1;
+					if (maxdroptimes < 1) maxdroptimes = 1;
+				}
+			}
+			
 			if (droptimes >= maxdroptimes) droptimes = maxdroptimes;
 			if (kcdebug_worlddiedmonsterdrops) Console.Printf("\c[sapphire]droptimes: %d, maxdroptimes: %d [end]", droptimes, maxdroptimes);
 		}
@@ -5328,7 +5340,7 @@ class KC_EventHandler : EventHandler
 							}
 							else
 							{
-								droptype = "RocketNew";
+								droptype = "RocketAmmoNew";
 								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBoxNew";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
@@ -5343,7 +5355,7 @@ class KC_EventHandler : EventHandler
 							}
 							else
 							{
-								droptype = "RocketNew";
+								droptype = "RocketAmmoNew";
 								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBoxNew";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
@@ -5358,7 +5370,7 @@ class KC_EventHandler : EventHandler
 							}
 							else
 							{
-								droptype = "RocketNew";
+								droptype = "RocketAmmoNew";
 								if (random(1,16) <= randompick(1,1,1,1,1,2,2,3)) droptype = "RocketBoxNew";
 								victim.A_SpawnItemEx(droptype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
@@ -6027,7 +6039,7 @@ class KC_EventHandler : EventHandler
 									if (user_type == 11) droptype = "ImpalerBolts";
 									if (user_type == 12) droptype = "Bolts";
 									if (user_type == 13) droptype = "CellNew";
-									if (user_type == 14) droptype = "RocketNew";
+									if (user_type == 14) droptype = "RocketAmmoNew";
 									if (user_type == 15) droptype = "CellNew";
 									if (user_type == 16) droptype = "ShellNew";
 									if (user_type == 17) droptype = "CellNew";
@@ -6165,6 +6177,14 @@ class KC_EventHandler : EventHandler
 																 else armorbonusrolls = 0;
 							}
 						}
+						if (A_CheckCCards() && armorbonusrolls >= 2)
+						{
+							if (random(1,8) <= randompick(7,7,7,8)) 
+							{
+								armorbonusrolls /= 2;
+								if (armorbonusrolls < 1) armorbonusrolls = 1;
+							}
+						}
 						// Armor Bonus Drops
 						if (armorbonusrolls > 0)
 						{
@@ -6176,15 +6196,7 @@ class KC_EventHandler : EventHandler
 								string armortype = "ArmorBonus2";
 								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-								if (random(1,(baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-
-								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
-								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
 								if (random(1,(baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
-
-								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
-								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-								if (random(1,(baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 
 								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
@@ -6192,7 +6204,11 @@ class KC_EventHandler : EventHandler
 
 								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
 								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
-								if (random(1,(baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+								if (random(1,(baseval*baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
+								if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) armortype = "ArmorBonusBig";
+								if (random(1,1024) <= 1) armortype = "ArmorBonusBig"; else armortype = "ArmorBonus2";
+								if (random(1,(baseval*baseval*baseval*baseval*baseval*baseval*baseval*baseval)) == 1) victim.A_SpawnItemEx(armortype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 							}
 						}
 					}
@@ -6200,13 +6216,24 @@ class KC_EventHandler : EventHandler
 
 					healthbonusrolls = (randompick(0,0,0,1,1,1,1,2) + (TruePlayerLevel * 0.03125));
 					// If Spawned via Fractal Chooks, Pain Elementals
-					if (KCCVict && (KCCVict.isPEspawned || KCCVict.isHEspawned || KCCVict.isHOspawned))
+					if (KCCVict && 
+							(KCCVict.isPEspawned || 
+							 KCCVict.isHEspawned || 
+							 KCCVict.isHOspawned))
 					{
 						healthbonusrolls /= 2;
 						if (healthbonusrolls < 1)
 						{
 							if (random(1,4) <= 1) healthbonusrolls = 1;
 															 else healthbonusrolls = 0;
+						}
+					}
+					if (A_CheckCCards() && healthbonusrolls >= 2)
+					{
+						if (random(1,8) <= randompick(7,7,7,8)) 
+						{
+							healthbonusrolls /= 2;
+							if (healthbonusrolls < 1) healthbonusrolls = 1;
 						}
 					}
 					// Health Bonuses
@@ -6219,12 +6246,19 @@ class KC_EventHandler : EventHandler
 							if (kcdebug_worlddiedmonsterdrops) Console.Printf("Drop Health Bonuses \c[orange][Attempt %d / %d]", (i+1), healthbonusrolls);
 							string healbontype = "HealthBonus2";
 							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,1024) <= 1) healbontype = "HealthBonusBig"; else healbontype = "HealthBonus2";
 							if (random(1,(baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
 							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,1024) <= 1) healbontype = "HealthBonusBig"; else healbontype = "HealthBonus2";
 							if (random(1,(baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
 							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,1024) <= 1) healbontype = "HealthBonusBig"; else healbontype = "HealthBonus2";
 							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
+
 							if (victim.bBOSS && random(1,3) <= randompick(1,1,2)) healbontype = "HealthBonusBig";
+							if (random(1,1024) <= 1) healbontype = "HealthBonusBig"; else healbontype = "HealthBonus2";
 							if (random(1,(baseval2*baseval2*baseval2*baseval2*baseval2*baseval2*baseval2*baseval2)) <= 1) victim.A_SpawnItemEx(healbontype,frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),frandom(-rand,rand),SXF_NOCHECKPOSITION);
 						}
 					}
