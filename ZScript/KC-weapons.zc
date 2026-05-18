@@ -16180,6 +16180,7 @@ Class BlasterPistol : MarineWeapon
 					if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 1)) tic *= 0.5;
 					if (A_CheckBerserk() & random(1,16) <= 13) tic *= 0.5;
 				}
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [E]: %d", tic);
 				A_SetTics(tic);
 				invoker.firestate = 1;
 				A_BlasterPistolShot();
@@ -16188,6 +16189,7 @@ Class BlasterPistol : MarineWeapon
 			{
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [B1]: %d", tic);
 				A_SetTics(tic);
 				invoker.firestate = 1;
 			}
@@ -16204,6 +16206,7 @@ Class BlasterPistol : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 2.5)) tic = 0;
 				}
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [C1]: %d", tic);
 				A_SetTics(tic);
 				
 				invoker.firestate = 1;
@@ -16214,9 +16217,10 @@ Class BlasterPistol : MarineWeapon
 				invoker.firestate = 1;
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
-				A_SetTics(tic);
 				if (A_CheckBerserk()) tic = 0;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 4)) tic = 0;
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [D]: %d", tic);
+				A_SetTics(tic);
 				
 				if (A_DualBPistolCheck() && !invoker.isleftfiring ) A_Overlay(3,"LeftFire",false);
 			}
@@ -16249,6 +16253,7 @@ Class BlasterPistol : MarineWeapon
 						if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 6)) tic = 0;
 					}
 				}
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [C2]: %d", tic);
 				A_SetTics(tic);
 				if (A_DualBPistolCheck() && !invoker.isleftfiring ) A_Overlay(3,"LeftFire",false);
 			}
@@ -16281,6 +16286,7 @@ Class BlasterPistol : MarineWeapon
 						if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 4.5)) tic = 0;
 					}
 				}
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [B2]: %d", tic);
 				A_SetTics(tic);
 				if (A_DualBPistolCheck() && !invoker.isleftfiring ) A_Overlay(3,"LeftFire",false);
 			}
@@ -16338,6 +16344,7 @@ Class BlasterPistol : MarineWeapon
 						if (A_CheckBerserk()) tic = 2;
 					}
 				}
+				if (kcdebug_blpi_frames) Console.Printf("FireRight2 [A]: %d", tic);
 				A_SetTics(tic);
 			}
 			Goto Ready;
@@ -16367,6 +16374,7 @@ Class BlasterPistol : MarineWeapon
 					if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 1)) tic *= 0.5;
 					if (A_CheckBerserk() & random(1,16) <= 13) tic *= 0.5;
 				}
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [D]: %d", tic);
 				A_SetTics(tic);
 				A_BlasterPistolShot();
 			}
@@ -16375,6 +16383,7 @@ Class BlasterPistol : MarineWeapon
 				invoker.isleftfiring = true;
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [B1]: %d", tic);
 				A_SetTics(tic);
 			}
 			LLPS C 1
@@ -16390,6 +16399,7 @@ Class BlasterPistol : MarineWeapon
 				{
 					if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 2.5)) tic = 0;
 				}
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [C1]: %d", tic);
 				A_SetTics(tic);
 			}
 			LLPS D 1
@@ -16397,9 +16407,10 @@ Class BlasterPistol : MarineWeapon
 				invoker.isleftfiring = true;
 				int TruePlayerLevel = invoker.ActualLevel;
 				int tic = 1;
-				A_SetTics(tic);
 				if (A_CheckBerserk()) tic = 0;
 				if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 4)) tic = 0;
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [D1]: %d", tic);
+				A_SetTics(tic);
 			}
 			LLPS C 2
 			{
@@ -16431,6 +16442,7 @@ Class BlasterPistol : MarineWeapon
 						if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 4.5)) tic = 0;
 					}
 				}
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [C2]: %d", tic);
 				A_SetTics(tic);
 			}
 			LLPS B 2
@@ -16463,12 +16475,12 @@ Class BlasterPistol : MarineWeapon
 						if (TruePlayerLevel >= (A_GetHandToHandSpd(3) * 6)) tic = 0;
 					}
 				}
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [B2]: %d", tic);
 				A_SetTics(tic);
 			}
 			LLPS A 0 
 			{
 				invoker.isleftfiring = true;
-				A_Refire();
 			}
 			LLPS A 4
 			{
@@ -16520,6 +16532,9 @@ Class BlasterPistol : MarineWeapon
 						if (A_CheckBerserk()) tic = 2;
 					}
 				}
+				if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) tic = 0;
+				else if (GetPlayerInput(INPUT_BUTTONS) & BT_ALTATTACK) tic = 0;
+				if (kcdebug_blpi_frames) Console.Printf("LeftFire [A]: %d", tic);
 				A_SetTics(tic);
 			}
 		LeftFireEnd:
