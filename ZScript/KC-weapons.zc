@@ -6154,6 +6154,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 			if (A_CheckSecret() >= 2) dropchance *= random(2,3);
 			if (A_CheckSecret() >= 3) dropchance *= random(2,3);
 		}
+		
 		if (A_CheckForHeiwa())
 		{
 			if (bDROPPED)
@@ -6200,7 +6201,7 @@ class ChaingunSpawner : WeaponSpawner replaces Chaingun
 				droptypeammobig = "TommAmmoBig";
 			}
 		}
-		else
+		else // If Doomguy...
 		{
 			if (bDROPPED)
 			{
@@ -16073,6 +16074,11 @@ Class BlasterPistol : MarineWeapon
 								A_SpawnItemEx("BlasterPistolModPack",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
 								A_Destroy();
 							}
+						}
+						else
+						{
+							A_SpawnItemEx("BlasterPickup",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0,tid);
+							A_Destroy();
 						}
 					}
 				}
