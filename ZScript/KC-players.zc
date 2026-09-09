@@ -2032,6 +2032,10 @@ class KCPlayerPawn : PlayerPawn
 				}
 			}
 		}
+		else
+		{
+			A_StopSound(745);
+		}
 		if (kcdebug_playermove) Console.Printf("\c[orange](FallAndSink() End)\c- Vel.Z: %.4f (timefreezewaterfactor: %.8f [InWaterTime2: %d]) [tic: %d]", Vel.Z, timefreezewaterfactor, InWaterTime2, gametic);
 	}
 	
