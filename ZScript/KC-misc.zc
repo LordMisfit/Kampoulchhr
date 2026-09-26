@@ -6990,6 +6990,7 @@ class PlayerStatItem : Inventory
 			int baseinc = random(12,13);
 			if (level.time % 2 == 0) baseinc = 12;
 			if (level.time % 2 == 1) baseinc = 13;
+			baseinc *= kc_bstpchargespeed;
 			int basetimercap = 350;
 			if (BstP.spareshots < BstP.spareshotsmax) 
 			{
@@ -7050,6 +7051,7 @@ class PlayerStatItem : Inventory
 			if (playeractor.CountInv("BlasterRifleUpgrade")) BlR.spareshotsmax = 5;
 																									else BlR.spareshotsmax = 1;
 			int baseinc = 5;
+			baseinc *= kc_bstrchargespeed;
 			int basetimercap = 350;
 			if (BlR.spareshots < BlR.spareshotsmax) 
 			{
